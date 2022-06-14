@@ -1,0 +1,21 @@
+.pannel {
+  padding: 0 16px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.title {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.select {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}

@@ -1,0 +1,13 @@
+.entity-list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item-wrapper {
+
+}
+
+.item {
+  display: flex;
+  justify-content: flex-start;
+}
