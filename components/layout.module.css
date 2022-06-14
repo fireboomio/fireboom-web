@@ -1,0 +1,10 @@
+.sider-menu {
+  height: 100%;
+  min-height: 100vh;
+}
+
+.menu-bottom {
+  position: absolute;
+  bottom: 48px;
+  width: 100%;
+}
