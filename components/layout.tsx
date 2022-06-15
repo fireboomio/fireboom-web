@@ -11,6 +11,7 @@ const menus = [
   { title: '数据', icon: <AppleOutlined />, link: '/data', position: 'top' },
   { title: '用户', icon: <AppleOutlined />, link: '/user', position: 'top' },
   { title: '存储', icon: <AppleOutlined />, link: '/storage', position: 'top' },
+  { title: 'GraphiQL', icon: <AppleOutlined />, link: '/graphiql', position: 'top' },
   { title: '个人资料', icon: <AppleOutlined />, link: '/profile', position: 'bottom' },
   { title: '设置', icon: <AppleOutlined />, link: '/setting', position: 'bottom' },
   { title: '帮助', icon: <AppleOutlined />, link: '#', position: 'bottom' },
