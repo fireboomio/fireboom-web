@@ -6,7 +6,7 @@ import { GraphQLSchema } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery } from 'graphql'
 import Layout from '@/components/layout'
 import 'graphiql/graphiql.css'
-import styles from './index.module.css'
+import styles from './index.module.scss'
 
 const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
