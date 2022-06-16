@@ -39,7 +39,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <ALayout>
       <Sider
-        className={styles['sider-menu']}
+        className="min-h-screen"
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
@@ -49,7 +49,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
         <Menu theme="dark" mode="inline" items={topMenuItems} />
 
-        <div className={styles['menu-bottom']}>
+        <div className="absolute w-full bottom-12">
           <Divider />
           <Menu theme="dark" mode="inline" items={bottomMenuItems} />
         </div>
