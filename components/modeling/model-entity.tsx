@@ -1,7 +1,7 @@
 import type { Entity } from '@/interfaces/model'
 import { AppleOutlined, MoreOutlined, PlusCircleOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu, Space, Popconfirm,Input } from 'antd'
-import React, { useState,useRef } from 'react'
+import { Button, Dropdown, Menu, Space, Popconfirm, Input } from 'antd'
+import React, { useState, useRef } from 'react'
 
 import type { MenuProps } from 'antd'
 import styles from './model-entity.module.css'
@@ -34,10 +34,9 @@ export default function ModelEntity({ entities }: Props) {
   // const modleNameRef=useRef(null)
   const handleNameClick = () => {
     setShow(false)
-    let modlename=document.getElementById('modleName')?.innerHTML
-    
+    let modlename = document.getElementById('modleName')?.innerHTML
+
     console.log(modlename)
-   
   }
   const menu = (
     <Menu
@@ -45,7 +44,15 @@ export default function ModelEntity({ entities }: Props) {
       items={[
         {
           key: '1',
-          label: <span onClick={e=>{handleNameClick()}}>重命名</span>,
+          label: (
+            <span
+              onClick={(e) => {
+                handleNameClick()
+              }}
+            >
+              重命名
+            </span>
+          ),
           icon: <UserOutlined />,
         },
         {
@@ -87,7 +94,7 @@ export default function ModelEntity({ entities }: Props) {
     />
   )
   return (
-   <>
+    <>
       <div className={styles['entity-list']}>
         <span className={styles['span']}>所有实体</span>
         <Dropdown overlay={list} placement="bottomRight">
@@ -105,15 +112,15 @@ export default function ModelEntity({ entities }: Props) {
             <div className={styles['main']}>
               <AppleOutlined className={styles['icon1']}></AppleOutlined>
               <AppleOutlined className={styles['icon2']}></AppleOutlined>
-              {show?(<div className={styles['content']} id="modleName">{e.name}</div>)
-              :( <Input id="inputName" placeholder="Basic usage" size="small" />)}
-              
+              {show ? (
+                <div className={styles['content']} id="modleName">
+                  {e.name}
+                </div>
+              ) : (
+                <Input id="inputName" placeholder="Basic usage" size="small" />
+              )}
             </div>
-            <Dropdown
-              overlay={menu}
-              placement="bottomRight"
-              
-            >
+            <Dropdown overlay={menu} placement="bottomRight">
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
                   <MoreOutlined></MoreOutlined>

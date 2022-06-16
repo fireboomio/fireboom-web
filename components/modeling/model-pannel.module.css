@@ -7,7 +7,7 @@
 .title {
   margin-top: 24px;
   margin-bottom: 24px;
-  font-size:16px;
+  font-size: 16px;
 }
 .select {
   width: 100%;
@@ -17,20 +17,20 @@
   justify-content: space-between;
   margin-bottom: 24px;
 }
-.manage{
+.manage {
   border-top: 1px solid rgb(92, 87, 87);
 }
-.OptionIcon{
+.OptionIcon {
   margin-right: 10px;
 }
 
-.actions >:hover{
+.actions > :hover {
   opacity: 0.6;
 }
-.selectList{
- width: 20px;
+.selectList {
+  width: 20px;
 }
-.selectContain{
+.selectContain {
   margin-bottom: 24px;
   display: flex;
   justify-content: space-between;

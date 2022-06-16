@@ -1,3 +1,7 @@
+/*
+ * https://github.com/graphql/graphiql/issues/118
+ */
+
 // @ts-ignore
 import GraphiQLExplorer from 'graphiql-explorer'
 import { useEffect, useRef, useState } from 'react'
