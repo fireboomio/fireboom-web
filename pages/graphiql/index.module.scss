@@ -1,13 +1,13 @@
 .global :global {
   .graphiql-container .topBar {
     height: auto;
+  }
 
-    .docExplorerWrap .doc-explorer-title-bar {
-      height: auto;
-    }
+  .docExplorerWrap .doc-explorer-title-bar {
+    height: auto;
+  }
 
-    div.docExplorerWrap > div.doc-explorer-title-bar > div.doc-explorer-rhs {
-      display: none;
-    }
+  .docExplorerWrap > .doc-explorer-title-bar > .doc-explorer-rhs {
+    display: none;
   }
 }

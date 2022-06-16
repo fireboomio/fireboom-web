@@ -2,7 +2,6 @@ import React, { PropsWithChildren, useState } from 'react'
 import { Divider, Layout as ALayout, Menu } from 'antd'
 import { AppleOutlined } from '@ant-design/icons'
 import Link from 'next/link'
-import styles from './layout.module.css'
 
 const { Sider, Content } = ALayout
 
@@ -39,7 +38,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <ALayout>
       <Sider
-        className="min-h-screen"
+        className="h-full min-h-screen"
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
