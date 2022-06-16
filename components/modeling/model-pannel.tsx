@@ -1,9 +1,11 @@
-import { Select, Tooltip, Col, Row } from 'antd'
-import { AppleOutlined } from '@ant-design/icons'
-import styles from './model-pannel.module.css'
-import ModelEntity from './model-entity'
+import { AppleOutlined, QrcodeOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Select, Tooltip } from 'antd'
+
 import { Entity } from '@/interfaces/model'
-import { QrcodeOutlined, InfoCircleOutlined } from '@ant-design/icons'
+
+import ModelEntity from './model-entity'
+import styles from './model-pannel.module.css'
+
 const { Option } = Select
 export default function ModelPannel() {
   const entities: Entity[] = [{ name: 'users' }, { name: 'posts' }, { name: 'comments' }]

@@ -1,9 +1,10 @@
-import type { Entity } from '@/interfaces/model'
 import { AppleOutlined, MoreOutlined, PlusCircleOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu, Space, Popconfirm, Input } from 'antd'
-import React, { useState, useRef } from 'react'
-
+import { Dropdown, Menu, Space, Popconfirm, Input } from 'antd'
 import type { MenuProps } from 'antd'
+import { useState } from 'react'
+
+import type { Entity } from '@/interfaces/model'
+
 import styles from './model-entity.module.css'
 
 interface Props {
@@ -34,7 +35,7 @@ export default function ModelEntity({ entities }: Props) {
   // const modleNameRef=useRef(null)
   const handleNameClick = () => {
     setShow(false)
-    let modlename = document.getElementById('modleName')?.innerHTML
+    const modlename = document.getElementById('modleName')?.innerHTML
 
     console.log(modlename)
   }

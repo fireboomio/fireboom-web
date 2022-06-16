@@ -2,13 +2,14 @@
  * https://github.com/graphql/graphiql/issues/118
  */
 
+import { GraphiQL } from 'graphiql'
 // @ts-ignore
 import GraphiQLExplorer from 'graphiql-explorer'
+import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import { useEffect, useRef, useState } from 'react'
-import GraphiQL from 'graphiql'
-import { GraphQLSchema } from 'graphql'
-import { buildClientSchema, getIntrospectionQuery } from 'graphql'
+
 import Layout from '@/components/layout'
+
 import 'graphiql/graphiql.css'
 import styles from './index.module.scss'
 
@@ -53,12 +54,12 @@ export default function App() {
   useEffect(() => {
     fetcher({
       query: getIntrospectionQuery(),
-    }).then((result: any) => {
+    }).then((result: Record<string, unknown>) => {
       setSchema(buildClientSchema(result.data))
     })
   }, [])
 
-  function fetcher(params: Object): Promise<Object> {
+  function fetcher(params: Record<string, unknown>): Promise<Record<string, unknown>> {
     return fetch('http://localhost:9991/api/main/graphql', {
       method: 'POST',
       headers: {

@@ -1,7 +1,7 @@
-import React, { PropsWithChildren, useState } from 'react'
-import { Divider, Layout as ALayout, Menu } from 'antd'
 import { AppleOutlined } from '@ant-design/icons'
+import { Divider, Layout as ALayout, Menu } from 'antd'
 import Link from 'next/link'
+import { PropsWithChildren, useState } from 'react'
 
 const { Sider, Content } = ALayout
 
