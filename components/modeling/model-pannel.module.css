@@ -12,11 +12,13 @@
 .select {
   width: 100%;
 }
+
 .actions {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
 }
+
 .manage {
   border-top: 1px solid rgb(92, 87, 87);
 }
