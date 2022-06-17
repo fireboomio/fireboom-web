@@ -94,6 +94,7 @@ export default function ModelEntity({ entities }: Props) {
       ]}
     />
   )
+
   return (
     <>
       <div className={styles['entity-list']}>

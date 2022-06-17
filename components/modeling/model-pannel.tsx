@@ -7,6 +7,7 @@ import ModelEntity from './model-entity'
 import styles from './model-pannel.module.css'
 
 const { Option } = Select
+
 export default function ModelPannel() {
   const entities: Entity[] = [{ name: 'users' }, { name: 'posts' }, { name: 'comments' }]
 
@@ -19,9 +20,11 @@ export default function ModelPannel() {
       //事件委托，点击图标才触发事件
       console.log('跳转到页面', currentTarget)
   }
+
   return (
     <div className={styles.pannel}>
       <div className={styles.title}>数据建模</div>
+
       <div className={styles.selectContain}>
         <Select className={styles.select} defaultValue="lucy" onChange={handleChange}>
           <Option value="jack" className={styles.Option}>
@@ -42,6 +45,7 @@ export default function ModelPannel() {
           <InfoCircleOutlined style={{ marginLeft: '4px', fontSize: '15px', display: 'none' }} />
         </Tooltip>
       </div>
+
       <div
         className={styles.actions}
         onClick={(e) => {
