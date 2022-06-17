@@ -43,6 +43,8 @@ module.exports = {
     ],
     'import/no-duplicates': 'error',
     'import/no-unused-modules': 'error',
+    'import/no-unassigned-import': ['error', { allow: ['**/*.css'] }],
+    'import/no-unresolved': ['error', { ignore: ['\\.css$'] }],
     'import/order': [
       'error',
       {

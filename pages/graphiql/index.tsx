@@ -54,12 +54,16 @@ export default function App() {
   useEffect(() => {
     fetcher({
       query: getIntrospectionQuery(),
-    }).then((result: Record<string, unknown>) => {
-      setSchema(buildClientSchema(result.data))
     })
+      // @ts-ignore
+      .then((result: Record<string, unknown>) => setSchema(buildClientSchema(result.data)))
+      .catch((err: Error) => {
+        throw err
+      })
   }, [])
 
-  function fetcher(params: Record<string, unknown>): Promise<Record<string, unknown>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function fetcher(params: Record<string, unknown>): Promise<any> {
     return fetch('http://localhost:9991/api/main/graphql', {
       method: 'POST',
       headers: {
@@ -72,11 +76,10 @@ export default function App() {
         return response.text()
       })
       .then(function (responseBody) {
-        try {
-          return JSON.parse(responseBody)
-        } catch (e) {
-          return responseBody
-        }
+        return JSON.parse(responseBody) as unknown
+      })
+      .catch((err: Error) => {
+        throw err
       })
   }
 

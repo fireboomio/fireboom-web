@@ -1,6 +1,7 @@
+import { Col, Row } from 'antd'
+
 import Layout from '@/components/layout'
 import { ModelPannel, ModelEditor } from '@/components/modeling'
-import { Col, Row } from 'antd'
 
 export default function Modeling() {
   return (
