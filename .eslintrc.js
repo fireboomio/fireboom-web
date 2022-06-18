@@ -38,13 +38,12 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-unused-vars': [
-      'warn',
+      'error',
       { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
     ],
     'import/no-duplicates': 'error',
     'import/no-unused-modules': 'error',
     'import/no-unassigned-import': ['error', { allow: ['**/*.css'] }],
-    'import/no-unresolved': ['error', { ignore: ['\\.css$'] }],
     'import/order': [
       'error',
       {
