@@ -1,7 +1,7 @@
 .pannel {
   padding: 0 16px;
-  font-size: 18px;
   font-weight: 500;
+  font-size: 18px;
 }
 
 .title {
@@ -9,6 +9,7 @@
   margin-bottom: 24px;
   font-size: 16px;
 }
+
 .select {
   width: 100%;
 }
@@ -20,21 +21,20 @@
 }
 
 .manage {
-  border-top: 1px solid rgb(92, 87, 87);
+  border-top: 1px solid rgb(92 87 87);
 }
-.OptionIcon {
+
+.option-icon {
   margin-right: 10px;
 }
 
 .actions > :hover {
   opacity: 0.6;
 }
-.selectList {
-  width: 20px;
-}
-.selectContain {
-  margin-bottom: 24px;
+
+.select-contain {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }

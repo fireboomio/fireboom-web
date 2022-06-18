@@ -3,7 +3,7 @@ import { Select, Tooltip } from 'antd'
 
 import { Entity } from '@/interfaces/model'
 
-import styles from './model-pannel.module.css'
+import styles from './model-pannel.module.scss'
 import ModelEntity from './subs/model-entity'
 
 const { Option } = Select
@@ -26,19 +26,19 @@ export default function ModelPannel() {
       <div className={styles.pannel}>
         <div className={styles.title}>数据建模</div>
 
-        <div className={styles.selectContain}>
+        <div className={styles['select-contain']}>
           <Select className={styles.select} defaultValue="lucy" onChange={handleChange}>
             <Option value="jack" className={styles.Option}>
-              <AppleOutlined className={styles.OptionIcon}></AppleOutlined>Jack
+              <AppleOutlined className={styles['option-icon']}></AppleOutlined>Jack
             </Option>
             <Option value="lucy">
-              <AppleOutlined className={styles.OptionIcon}></AppleOutlined>Lucy
+              <AppleOutlined className={styles['option-icon']}></AppleOutlined>Lucy
             </Option>
             <Option value="Yiminghe">
-              <AppleOutlined className={styles.OptionIcon}></AppleOutlined>yiminghe
+              <AppleOutlined className={styles['option-icon']}></AppleOutlined>yiminghe
             </Option>
             <Option value="manage" className={styles.manage}>
-              <QrcodeOutlined className={styles.OptionIcon} />
+              <QrcodeOutlined className={styles['option-icon']} />
               管理
             </Option>
           </Select>
