@@ -1,16 +1,14 @@
 import { Button } from 'antd'
 import { useContext } from 'react'
-import { useImmer } from 'use-immer'
 
 import { EntitiesContext } from '../model-context'
-import TableItem from './table-item'
+import ModelEntityItem from './model-entity-item'
 
-export default function ModelEntity() {
-  const entities = useContext(EntitiesContext)
-  const [tables, setTables] = useImmer(entities)
+export default function ModelEntityList() {
+  const { entities, setEntities } = useContext(EntitiesContext)
 
   function addTable() {
-    setTables((_) => tables.concat({ name: '' }))
+    setEntities(entities.concat({ id: 4, name: '' }))
   }
 
   return (
@@ -23,8 +21,8 @@ export default function ModelEntity() {
       </div>
 
       <div className="mt-3">
-        {tables.map((entity) => (
-          <TableItem key={entity.name} entity={entity}></TableItem>
+        {entities.map((entity) => (
+          <ModelEntityItem key={entity.name} entity={entity}></ModelEntityItem>
         ))}
       </div>
     </>

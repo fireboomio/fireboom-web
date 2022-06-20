@@ -1,5 +1,11 @@
 import { createContext } from 'react'
+import * as useImmer from 'use-immer'
 
-import { Entity } from '@/interfaces/model'
+import { Entity } from '@/interfaces/modeling'
 
-export const EntitiesContext = createContext([] as Entity[])
+interface EntitiesContextT {
+  entities: Entity[]
+  setEntities: useImmer.Updater<Entity[]>
+}
+
+export const EntitiesContext = createContext({} as EntitiesContextT)
