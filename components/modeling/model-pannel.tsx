@@ -3,6 +3,7 @@ import { Select, Tooltip } from 'antd'
 
 import { Entity } from '@/interfaces/model'
 
+import { EntitiesContext } from './model-context'
 import styles from './model-pannel.module.scss'
 import ModelEntity from './subs/model-entity'
 
@@ -22,7 +23,7 @@ export default function ModelPannel() {
   }
 
   return (
-    <>
+    <EntitiesContext.Provider value={entities}>
       <div className={styles.pannel}>
         <div className={styles.title}>数据建模</div>
 
@@ -62,7 +63,7 @@ export default function ModelPannel() {
         </div>
       </div>
 
-      <ModelEntity entities={entities}></ModelEntity>
-    </>
+      <ModelEntity></ModelEntity>
+    </EntitiesContext.Provider>
   )
 }

@@ -1,15 +1,12 @@
 import { Button } from 'antd'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces/model'
-
+import { EntitiesContext } from '../model-context'
 import TableItem from './table-item'
 
-interface Props {
-  entities: Entity[]
-}
-
-export default function ModelEntity({ entities }: Props) {
+export default function ModelEntity() {
+  const entities = useContext(EntitiesContext)
   const [tables, setTables] = useImmer(entities)
 
   function addTable() {
