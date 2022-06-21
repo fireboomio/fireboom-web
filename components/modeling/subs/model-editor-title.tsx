@@ -6,7 +6,7 @@ export default function ModelEditorTitle() {
 
   return (
     <>
-      <div className="flex justify-start items-center pt-23px pb-23px">
+      <div className="flex justify-start items-center mb-6">
         <span className="text-lg flex-grow">编辑/Article</span>
         <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
         <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
