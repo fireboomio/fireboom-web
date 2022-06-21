@@ -1,9 +1,4 @@
-interface Field {
-  property: string
-  value: string
-  note: string
-  [key: string]: number | string | boolean
-}
+import type { Field } from '@/interfaces/modeling'
 
 export default function ModelEditorContent() {
   const fileds: Field[] = [
