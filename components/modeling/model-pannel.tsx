@@ -1,19 +1,26 @@
 import { AppleOutlined, QrcodeOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Select, Tooltip } from 'antd'
+import { useImmer } from 'use-immer'
 
-import { Entity } from '@/interfaces/model'
+import { Entity } from '@/interfaces/modeling'
 
+import { EntitiesContext } from './model-context'
 import styles from './model-pannel.module.scss'
-import ModelEntity from './subs/model-entity'
+import ModelEntityList from './subs/model-entity-list'
 
 const { Option } = Select
 
 export default function ModelPannel() {
-  const entities: Entity[] = [{ name: 'users' }, { name: 'posts' }, { name: 'comments' }]
+  const [entities, setEntities] = useImmer([
+    { id: 1, name: 'users' },
+    { id: 2, name: 'posts' },
+    { id: 3, name: 'comments' },
+  ] as Entity[])
 
   function handleChange(value: string) {
     console.log(`selected ${value}`)
   }
+
   function goRoute(target: object): void {
     const currentTarget = target as HTMLElement
     if (currentTarget.nodeName == 'svg')
@@ -22,7 +29,7 @@ export default function ModelPannel() {
   }
 
   return (
-    <>
+    <EntitiesContext.Provider value={{ entities, setEntities }}>
       <div className={styles.pannel}>
         <div className={styles.title}>数据建模</div>
 
@@ -62,7 +69,7 @@ export default function ModelPannel() {
         </div>
       </div>
 
-      <ModelEntity entities={entities}></ModelEntity>
-    </>
+      <ModelEntityList></ModelEntityList>
+    </EntitiesContext.Provider>
   )
 }
