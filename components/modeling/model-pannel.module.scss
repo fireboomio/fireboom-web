@@ -38,3 +38,13 @@
   justify-content: space-between;
   margin-bottom: 24px;
 }
+
+.delete-label {
+  :global{
+    .ant-popover-content{
+      .ant-popover-arrow{
+        display: none;
+      }
+    }
+  }
+}

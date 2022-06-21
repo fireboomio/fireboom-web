@@ -1,12 +1,12 @@
 import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces/modeling'
 
 import { EntitiesContext } from '../model-context'
-
+import styles from '../model-pannel.module.scss'
 interface Props {
   entity: Entity
 }
@@ -14,14 +14,26 @@ interface Props {
 export default function ModelEntityItem({ entity }: Props) {
   const { entities, setEntities } = useContext(EntitiesContext)
   const [isEditing, setIsEditing] = useImmer(false)
+  const [isShowOperate, setIsShowOperate] = useImmer(false)
+  const [visible, setVisible] = useImmer(false)
 
-  function handleItemDelete(item: Entity) {
-    setEntities(entities.filter((t) => t.name !== item.name))
+  //删除确认框确认/取消按钮回调
+  const text = '确认删除该实体吗？'
+  const confirm = () => {
+    handleItemDelete(entity)
+  }
+  const cancel = () => {
+    setVisible(false)
   }
 
+  //数据增删更新操作回调
   function handleItemEdit(text: string) {
     updateEntity({ id: entity.id, name: text })
     setIsEditing(false)
+  }
+
+  function handleItemDelete(item: Entity) {
+    setEntities(entities.filter((t) => t.name !== item.name))
   }
 
   function updateEntity(item: Entity) {
@@ -31,6 +43,11 @@ export default function ModelEntityItem({ entity }: Props) {
         entity.name = item.name
       }
     })
+  }
+
+  //设置下拉菜单显示和隐藏效果
+  const handleVisibleChange = (flag: boolean) => {
+    setVisible(flag)
   }
 
   const menu = (
@@ -46,14 +63,38 @@ export default function ModelEntityItem({ entity }: Props) {
         },
         {
           key: '3',
-          label: <span onClick={() => handleItemDelete(entity)}>删除</span>,
+          label: (
+            <Popconfirm
+              placement="right"
+              title={text}
+              onConfirm={confirm}
+              okText="删除"
+              cancelText="取消"
+              onCancel={cancel}
+              overlayClassName={styles['delete-label']}
+              okType={'danger'}
+            >
+              <span>删除</span>,
+            </Popconfirm>
+          ),
         },
       ]}
     />
   )
 
   return (
-    <div className="flex justify-start items-center py-10px" key={entity.name}>
+    <div
+      className="flex justify-start items-center py-10px"
+      style={{ backgroundColor: isShowOperate ? 'Lightgray' : '' }}
+      key={entity.name}
+      onMouseEnter={() => {
+        setIsShowOperate(true)
+      }}
+      onMouseLeave={() => {
+        setIsShowOperate(false)
+        setVisible(false)
+      }}
+    >
       <MoreOutlined className="mx-2px"></MoreOutlined>
       <AppleOutlined className="ml-2px mr-2"></AppleOutlined>
       {isEditing ? (
@@ -68,8 +109,17 @@ export default function ModelEntityItem({ entity }: Props) {
         <div className="text-sm font-normal leading-16px">{entity.name}</div>
       )}
 
-      <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-        <MoreOutlined className="m-auto mr-0 pr-2"></MoreOutlined>
+      <Dropdown
+        overlay={menu}
+        onVisibleChange={handleVisibleChange}
+        visible={visible}
+        trigger={['click']}
+        placement="bottomRight"
+      >
+        <MoreOutlined
+          className="m-auto mr-0 pr-2"
+          style={{ visibility: isShowOperate ? 'visible' : 'hidden' }}
+        ></MoreOutlined>
       </Dropdown>
     </div>
   )
