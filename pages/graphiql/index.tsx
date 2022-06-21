@@ -6,6 +6,7 @@ import { GraphiQL } from 'graphiql'
 // @ts-ignore
 import GraphiQLExplorer from 'graphiql-explorer'
 import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
+import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
 import Layout from '@/components/layout'
@@ -85,6 +86,10 @@ export default function App() {
 
   return (
     <Layout>
+      <Head>
+        <title>GraphiQL</title>
+      </Head>
+
       <div className={`${styles['global']} graphiql-container`}>
         <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
         <GraphiQL
