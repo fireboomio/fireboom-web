@@ -10,7 +10,7 @@ export default function Modeling() {
         <Col span={5}>
           <ModelPannel></ModelPannel>
         </Col>
-        <Col span={19} offset={5}>
+        <Col span={19}>
           <ModelEditor></ModelEditor>
         </Col>
       </Row>
