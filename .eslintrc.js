@@ -54,6 +54,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: [],
       },
     ],
+    'react/self-closing-comp': 'error',
     'no-console': 'warn',
     'array-bracket-newline': ['error', 'consistent'],
     // 'array-bracket-spacing': [

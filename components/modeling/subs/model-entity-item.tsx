@@ -74,7 +74,7 @@ export default function ModelEntityItem({ entity }: Props) {
               overlayClassName={styles['delete-label']}
               okType={'danger'}
             >
-              <span>删除</span>,
+              <span>删除</span>
             </Popconfirm>
           ),
         },
@@ -95,8 +95,8 @@ export default function ModelEntityItem({ entity }: Props) {
         setVisible(false)
       }}
     >
-      <MoreOutlined className="mx-2px"></MoreOutlined>
-      <AppleOutlined className="ml-2px mr-2"></AppleOutlined>
+      <MoreOutlined className="mx-2px" />
+      <AppleOutlined className="ml-2px mr-2" />
       {isEditing ? (
         <Input
           onBlur={(e) => handleItemEdit(e.target.value)}
@@ -119,7 +119,7 @@ export default function ModelEntityItem({ entity }: Props) {
         <MoreOutlined
           className="m-auto mr-0 pr-2"
           style={{ visibility: isShowOperate ? 'visible' : 'hidden' }}
-        ></MoreOutlined>
+        />
       </Dropdown>
     </div>
   )

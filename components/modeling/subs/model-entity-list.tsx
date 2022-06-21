@@ -18,12 +18,12 @@ export default function ModelEntityList() {
         {
           key: '1',
           label: <span onClick={addTable}>模型</span>,
-          icon: <AppleOutlined></AppleOutlined>,
+          icon: <AppleOutlined />,
         },
         {
           key: '2',
           label: <span onClick={addTable}>枚举</span>,
-          icon: <AppleOutlined></AppleOutlined>,
+          icon: <AppleOutlined />,
         },
       ]}
     />
@@ -42,7 +42,7 @@ export default function ModelEntityList() {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem key={entity.name} entity={entity}></ModelEntityItem>
+          <ModelEntityItem key={entity.name} entity={entity} />
         ))}
       </div>
     </>

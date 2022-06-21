@@ -8,10 +8,10 @@ export default function Modeling() {
     <Layout>
       <Row>
         <Col span={5}>
-          <ModelPannel></ModelPannel>
+          <ModelPannel />
         </Col>
         <Col span={19}>
-          <ModelEditor></ModelEditor>
+          <ModelEditor />
         </Col>
       </Row>
     </Layout>

@@ -54,13 +54,16 @@ export default function ModelPannel() {
         <div className={styles['select-contain']}>
           <Select className={styles.select} defaultValue="lucy" onChange={handleChange}>
             <Option value="jack" className={styles.Option}>
-              <AppleOutlined className={styles['option-icon']}></AppleOutlined>Jack
+              <AppleOutlined className={styles['option-icon']} />
+              Jack
             </Option>
             <Option value="lucy">
-              <AppleOutlined className={styles['option-icon']}></AppleOutlined>Lucy
+              <AppleOutlined className={styles['option-icon']} />
+              Lucy
             </Option>
             <Option value="Yiminghe">
-              <AppleOutlined className={styles['option-icon']}></AppleOutlined>yiminghe
+              <AppleOutlined className={styles['option-icon']} />
+              yiminghe
             </Option>
             <Option value="manage" className={styles.manage}>
               <QrcodeOutlined className={styles['option-icon']} />
@@ -73,16 +76,16 @@ export default function ModelPannel() {
         </div>
 
         <div className={styles.actions}>
-          <AppleOutlined onClick={introSpector_one}></AppleOutlined>
-          <AppleOutlined onClick={downLoad_two}></AppleOutlined>
-          <AppleOutlined onClick={upload_three}></AppleOutlined>
-          <AppleOutlined onClick={connectCloudLocal_four}></AppleOutlined>
-          <AppleOutlined onClick={checkThing_fif}></AppleOutlined>
-          <AppleOutlined onClick={entity_Relationship_six}></AppleOutlined>
+          <AppleOutlined onClick={introSpector_one} />
+          <AppleOutlined onClick={downLoad_two} />
+          <AppleOutlined onClick={upload_three} />
+          <AppleOutlined onClick={connectCloudLocal_four} />
+          <AppleOutlined onClick={checkThing_fif} />
+          <AppleOutlined onClick={entity_Relationship_six} />
         </div>
       </div>
 
-      <ModelEntityList></ModelEntityList>
+      <ModelEntityList />
     </EntitiesContext.Provider>
   )
 }

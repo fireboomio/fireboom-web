@@ -5,9 +5,9 @@ import ModelEditorTitle from './subs/model-editor-title'
 export default function ModelEditor() {
   return (
     <div className="p-6">
-      <ModelEditorTitle></ModelEditorTitle>
-      <ModelEditorBreadcrumb></ModelEditorBreadcrumb>
-      <ModelEditorContent></ModelEditorContent>
+      <ModelEditorTitle />
+      <ModelEditorBreadcrumb />
+      <ModelEditorContent />
     </div>
   )
 }

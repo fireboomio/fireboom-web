@@ -13,10 +13,10 @@ export default function ModelEditorBreadcumb() {
           <Breadcrumb.Item>Article</Breadcrumb.Item>
           <Breadcrumb.Item>model</Breadcrumb.Item>
         </Breadcrumb>
-        <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
-        <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
-        <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
-        <AppleOutlined className="text-base" onClick={handleIconClick}></AppleOutlined>
+        <AppleOutlined className="text-base" onClick={handleIconClick} />
+        <AppleOutlined className="text-base" onClick={handleIconClick} />
+        <AppleOutlined className="text-base" onClick={handleIconClick} />
+        <AppleOutlined className="text-base" onClick={handleIconClick} />
       </div>
     </>
   )
