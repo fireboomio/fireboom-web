@@ -21,11 +21,29 @@ export default function ModelPannel() {
     console.log(`selected ${value}`)
   }
 
-  function goRoute(target: object): void {
-    const currentTarget = target as HTMLElement
-    if (currentTarget.nodeName == 'svg')
-      //事件委托，点击图标才触发事件
-      console.log('跳转到页面', currentTarget)
+  //pannel 点击搜索框下6个按钮对应回调
+  function introSpector_one(){
+    console.log('触发introSpector_one操作')
+  }
+
+  function downLoad_two(){
+    console.log('触发downLoad操作')
+  }
+
+  function upload_three(){
+    console.log('触发CloudUploadr操作')
+  }
+
+  function connectCloudLocal_four(){
+    console.log('触发connectCloudLocal操作')
+  }
+
+  function checkThing_fif(){
+    console.log('触发connectCloudLocal操作')
+  }
+
+  function entity_Relationship_six(){
+    console.log('触发Entity_Relationship操作')
   }
 
   return (
@@ -56,16 +74,13 @@ export default function ModelPannel() {
 
         <div
           className={styles.actions}
-          onClick={(e) => {
-            goRoute(e.target)
-          }}
         >
-          <AppleOutlined></AppleOutlined>
-          <AppleOutlined></AppleOutlined>
-          <AppleOutlined></AppleOutlined>
-          <AppleOutlined></AppleOutlined>
-          <AppleOutlined></AppleOutlined>
-          <AppleOutlined></AppleOutlined>
+          <AppleOutlined onClick={introSpector_one}></AppleOutlined>
+          <AppleOutlined onClick={downLoad_two}></AppleOutlined>
+          <AppleOutlined onClick={upload_three}></AppleOutlined>
+          <AppleOutlined onClick={connectCloudLocal_four}></AppleOutlined>
+          <AppleOutlined onClick={checkThing_fif}></AppleOutlined>
+          <AppleOutlined onClick={entity_Relationship_six}></AppleOutlined>
         </div>
       </div>
 
