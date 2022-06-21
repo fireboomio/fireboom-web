@@ -16,7 +16,6 @@ export default function ModelEntityItem({ entity }: Props) {
   const [isEditing, setIsEditing] = useImmer(false)
   const [isShowOperate, setIsShowOperate] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
-  const [isHover,setIsHover] =useImmer(false)
 
   //删除确认框确认/取消按钮回调
   const text = '确认删除该实体吗？'
@@ -86,15 +85,14 @@ export default function ModelEntityItem({ entity }: Props) {
   return (
     <div
       className="flex justify-start items-center py-10px"
-      style={{ backgroundColor:isHover?'Lightgray':'' }}
+      style={{ backgroundColor: isShowOperate ? 'Lightgray' : '' }}
       key={entity.name}
       onMouseEnter={() => {
         setIsShowOperate(true)
-        setIsHover(true)
       }}
       onMouseLeave={() => {
         setIsShowOperate(false)
-        setIsHover(false)
+        setVisible(false)
       }}
     >
       <MoreOutlined className="mx-2px"></MoreOutlined>

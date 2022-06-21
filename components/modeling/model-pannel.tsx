@@ -22,27 +22,27 @@ export default function ModelPannel() {
   }
 
   //pannel 点击搜索框下6个按钮对应回调
-  function introSpector_one(){
+  function introSpector_one() {
     console.log('触发introSpector_one操作')
   }
 
-  function downLoad_two(){
+  function downLoad_two() {
     console.log('触发downLoad操作')
   }
 
-  function upload_three(){
+  function upload_three() {
     console.log('触发CloudUploadr操作')
   }
 
-  function connectCloudLocal_four(){
+  function connectCloudLocal_four() {
     console.log('触发connectCloudLocal操作')
   }
 
-  function checkThing_fif(){
+  function checkThing_fif() {
     console.log('触发connectCloudLocal操作')
   }
 
-  function entity_Relationship_six(){
+  function entity_Relationship_six() {
     console.log('触发Entity_Relationship操作')
   }
 
@@ -72,9 +72,7 @@ export default function ModelPannel() {
           </Tooltip>
         </div>
 
-        <div
-          className={styles.actions}
-        >
+        <div className={styles.actions}>
           <AppleOutlined onClick={introSpector_one}></AppleOutlined>
           <AppleOutlined onClick={downLoad_two}></AppleOutlined>
           <AppleOutlined onClick={upload_three}></AppleOutlined>
