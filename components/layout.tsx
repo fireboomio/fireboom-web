@@ -43,10 +43,13 @@ export default function Layout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="flex justify-center pt-6 pb-6 border-b-1 border-solid border-white-500/50">
+        <div className="flex justify-center items-center px-7 py-5">
           <Link href="/">
-            <Image width={23} height={30} src="https://picsum.photos/200/300" alt="FireBoom" />
+            <a>
+              <Image src="https://picsum.photos/24/32" alt="FireBoom" preview={false} />
+            </a>
           </Link>
+          <span className="text-white ml-3">FireBoom</span>
         </div>
         <Divider />
 
