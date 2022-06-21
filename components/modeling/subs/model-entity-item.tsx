@@ -7,6 +7,7 @@ import type { Entity } from '@/interfaces/modeling'
 
 import { EntitiesContext } from '../model-context'
 import styles from '../model-pannel.module.scss'
+
 interface Props {
   entity: Entity
 }
@@ -14,17 +15,10 @@ interface Props {
 export default function ModelEntityItem({ entity }: Props) {
   const { entities, setEntities } = useContext(EntitiesContext)
   const [isEditing, setIsEditing] = useImmer(false)
-  const [isShowOperate, setIsShowOperate] = useImmer(false)
-  const [visible, setVisible] = useImmer(false)
+  const [isHovering, setIsHovering] = useImmer(false)
 
   //删除确认框确认/取消按钮回调
   const text = '确认删除该实体吗？'
-  const confirm = () => {
-    handleItemDelete(entity)
-  }
-  const cancel = () => {
-    setVisible(false)
-  }
 
   //数据增删更新操作回调
   function handleItemEdit(text: string) {
@@ -45,11 +39,6 @@ export default function ModelEntityItem({ entity }: Props) {
     })
   }
 
-  //设置下拉菜单显示和隐藏效果
-  const handleVisibleChange = (flag: boolean) => {
-    setVisible(flag)
-  }
-
   const menu = (
     <Menu
       items={[
@@ -67,10 +56,9 @@ export default function ModelEntityItem({ entity }: Props) {
             <Popconfirm
               placement="right"
               title={text}
-              onConfirm={confirm}
+              onConfirm={() => handleItemDelete(entity)}
               okText="删除"
               cancelText="取消"
-              onCancel={cancel}
               overlayClassName={styles['delete-label']}
               okType={'danger'}
             >
@@ -84,16 +72,11 @@ export default function ModelEntityItem({ entity }: Props) {
 
   return (
     <div
-      className="flex justify-start items-center py-10px"
-      style={{ backgroundColor: isShowOperate ? 'Lightgray' : '' }}
+      className="flex justify-start items-center py-3"
+      style={isHovering ? { backgroundColor: 'Lightgray' } : {}}
       key={entity.name}
-      onMouseEnter={() => {
-        setIsShowOperate(true)
-      }}
-      onMouseLeave={() => {
-        setIsShowOperate(false)
-        setVisible(false)
-      }}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
       <MoreOutlined className="mx-2px" />
       <AppleOutlined className="ml-2px mr-2" />
@@ -109,16 +92,10 @@ export default function ModelEntityItem({ entity }: Props) {
         <div className="text-sm font-normal leading-16px">{entity.name}</div>
       )}
 
-      <Dropdown
-        overlay={menu}
-        onVisibleChange={handleVisibleChange}
-        visible={visible}
-        trigger={['click']}
-        placement="bottomRight"
-      >
+      <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
         <MoreOutlined
           className="m-auto mr-0 pr-2"
-          style={{ visibility: isShowOperate ? 'visible' : 'hidden' }}
+          style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
       </Dropdown>
     </div>

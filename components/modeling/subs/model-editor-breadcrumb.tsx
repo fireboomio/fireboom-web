@@ -7,17 +7,15 @@ export default function ModelEditorBreadcumb() {
   }
 
   return (
-    <>
-      <div className="flex justify-start items-center my-6">
-        <Breadcrumb className="text-base flex-grow" separator=" ">
-          <Breadcrumb.Item>Article</Breadcrumb.Item>
-          <Breadcrumb.Item>model</Breadcrumb.Item>
-        </Breadcrumb>
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-      </div>
-    </>
+    <div className="flex justify-start items-center my-6">
+      <Breadcrumb className="text-base flex-grow" separator=" ">
+        <Breadcrumb.Item>Article</Breadcrumb.Item>
+        <Breadcrumb.Item>model</Breadcrumb.Item>
+      </Breadcrumb>
+      <AppleOutlined className="text-base" onClick={handleIconClick} />
+      <AppleOutlined className="text-base" onClick={handleIconClick} />
+      <AppleOutlined className="text-base" onClick={handleIconClick} />
+      <AppleOutlined className="text-base" onClick={handleIconClick} />
+    </div>
   )
 }
