@@ -45,7 +45,7 @@ export default function Layout({ children }: PropsWithChildren) {
       >
         <div className="flex justify-center pt-6 pb-6 border-b-1 border-solid border-white-500/50">
           <Link href="/">
-            <Image width={23} height={30} src="https://picsum.photos/200/300" />
+            <Image width={23} height={30} src="https://picsum.photos/200/300" alt="FireBoom" />
           </Link>
         </div>
         <Divider />
