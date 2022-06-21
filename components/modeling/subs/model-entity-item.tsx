@@ -16,11 +16,8 @@ export default function ModelEntityItem({ entity }: Props) {
   const { entities, setEntities } = useContext(EntitiesContext)
   const [isEditing, setIsEditing] = useImmer(false)
   const [isHovering, setIsHovering] = useImmer(false)
+  const [visible, setVisible] = useImmer(false)
 
-  //删除确认框确认/取消按钮回调
-  const text = '确认删除该实体吗？'
-
-  //数据增删更新操作回调
   function handleItemEdit(text: string) {
     updateEntity({ id: entity.id, name: text })
     setIsEditing(false)
@@ -55,10 +52,11 @@ export default function ModelEntityItem({ entity }: Props) {
           label: (
             <Popconfirm
               placement="right"
-              title={text}
+              title="确认删除该实体吗？"
               onConfirm={() => handleItemDelete(entity)}
               okText="删除"
               cancelText="取消"
+              onCancel={() => setVisible(false)}
               overlayClassName={styles['delete-label']}
               okType={'danger'}
             >
@@ -76,7 +74,10 @@ export default function ModelEntityItem({ entity }: Props) {
       style={isHovering ? { backgroundColor: 'Lightgray' } : {}}
       key={entity.name}
       onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onMouseLeave={() => {
+        setIsHovering(false)
+        setVisible(false)
+      }}
     >
       <MoreOutlined className="mx-2px" />
       <AppleOutlined className="ml-2px mr-2" />
@@ -85,14 +86,20 @@ export default function ModelEntityItem({ entity }: Props) {
           onBlur={(e) => handleItemEdit(e.target.value)}
           // @ts-ignore
           onPressEnter={(e) => handleItemEdit(e.target.value as string)}
-          className="text-sm font-normal leading-16px h-22px w-200px"
+          className="text-sm font-normal leading-4 h-5 w-5/7"
           defaultValue={entity.name}
         />
       ) : (
-        <div className="text-sm font-normal leading-16px">{entity.name}</div>
+        <div className="text-sm font-normal leading-4">{entity.name}</div>
       )}
 
-      <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+      <Dropdown
+        overlay={menu}
+        trigger={['click']}
+        placement="bottomRight"
+        visible={visible}
+        onVisibleChange={(v) => setVisible(v)}
+      >
         <MoreOutlined
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}

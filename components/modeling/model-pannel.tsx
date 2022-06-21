@@ -53,7 +53,7 @@ export default function ModelPannel() {
 
         <div className={styles['select-contain']}>
           <Select className={styles.select} defaultValue="lucy" onChange={handleChange}>
-            <Option value="jack" className={styles.Option}>
+            <Option value="jack">
               <AppleOutlined className={styles['option-icon']} />
               Jack
             </Option>
