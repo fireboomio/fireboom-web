@@ -1,5 +1,5 @@
 import { AppleOutlined } from '@ant-design/icons'
-import { Divider, Layout as ALayout, Menu } from 'antd'
+import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { PropsWithChildren, useState } from 'react'
 
@@ -43,7 +43,11 @@ export default function Layout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="logo" />
+        <div className="flex justify-center pt-6 pb-6 border-b-1 border-solid border-white-500/50">
+          <Link href="/">
+            <Image width={23} height={30} src="https://picsum.photos/200/300" />
+          </Link>
+        </div>
         <Divider />
 
         <Menu theme="dark" mode="inline" items={topMenuItems} />
