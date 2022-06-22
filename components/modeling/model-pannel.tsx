@@ -12,9 +12,9 @@ const { Option } = Select
 
 export default function ModelPannel() {
   const [entities, setEntities] = useImmer([
-    { id: 1, name: 'users' },
-    { id: 2, name: 'posts' },
-    { id: 3, name: 'comments' },
+    { id: 1, name: 'users', isEditing: false },
+    { id: 2, name: 'posts', isEditing: false },
+    { id: 3, name: 'comments', isEditing: false },
   ] as Entity[])
 
   function handleChange(value: string) {

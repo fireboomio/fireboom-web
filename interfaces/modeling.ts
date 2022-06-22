@@ -1,7 +1,7 @@
 export interface Entity {
   id: number
   name: string
-  [key: string]: string | number
+  [key: string]: string | number | boolean
 }
 
 export interface Field {

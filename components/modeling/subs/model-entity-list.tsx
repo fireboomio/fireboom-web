@@ -9,7 +9,7 @@ export default function ModelEntityList() {
   const { entities, setEntities } = useContext(EntitiesContext)
 
   function addTable() {
-    setEntities(entities.concat({ id: 4, name: '' }))
+    setEntities(entities.concat({ id: entities.length + 1, name: '', isEditing: true }))
   }
 
   const menu = (
@@ -42,7 +42,7 @@ export default function ModelEntityList() {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem key={entity.name} entity={entity} />
+          <ModelEntityItem key={entity.id} entity={entity} />
         ))}
       </div>
     </>
