@@ -5,6 +5,7 @@
     "string-quotes": null,
     "declaration-colon-newline-after": null,
     "value-list-comma-newline-after": null,
-    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }]
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }],
+    "no-descending-specificity": null
   }
 }
