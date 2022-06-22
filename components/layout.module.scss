@@ -1,0 +1,53 @@
+.sider :global {
+  .ant-menu-item {
+    a {
+      color: #686060;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+
+  .ant-menu:not(.ant-menu-horizontal,.ant-menu-inline-collapsed) .ant-menu-item-icon {
+    padding-left: 6px;
+  }
+
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-active,
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background: linear-gradient(277deg, rgb(243 243 244 / 19%) 0%, #f3f3f4 100%);
+    border-radius: 0 1px 1px 0;
+
+    .ant-menu-item-icon {
+      color: #e92e5e;
+    }
+
+    a {
+      margin-left: 3px;
+      color: #e92e5e;
+      font-weight: 500;
+    }
+  }
+
+  .ant-menu-inline .ant-menu-item-active,
+  .ant-menu-inline .ant-menu-item-selected {
+    &::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 3px;
+      background: linear-gradient(208deg, #e92b5d 0%, #f49b7c 100%);
+      transform: scaleY(1);
+      opacity: 1;
+      content: '';
+    }
+
+    &::after {
+      opacity: 0;
+    }
+  }
+
+  .ant-layout-sider-trigger {
+    background: #fbfbfb;
+  }
+}

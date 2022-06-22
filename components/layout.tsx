@@ -3,6 +3,8 @@ import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { PropsWithChildren, useState } from 'react'
 
+import styles from './layout.module.scss'
+
 const { Sider, Content } = ALayout
 
 const menus = [
@@ -13,7 +15,6 @@ const menus = [
   { title: 'GraphiQL', icon: <AppleOutlined />, link: '/graphiql', position: 'top' },
   { title: '个人资料', icon: <AppleOutlined />, link: '/profile', position: 'bottom' },
   { title: '设置', icon: <AppleOutlined />, link: '/setting', position: 'bottom' },
-  { title: '帮助', icon: <AppleOutlined />, link: '#', position: 'bottom' },
 ]
 
 export default function Layout({ children }: PropsWithChildren) {
@@ -38,30 +39,37 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <ALayout>
       <Sider
-        className="h-full min-h-screen"
+        className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
+        theme="light"
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="flex justify-center items-center px-7 py-5">
+        <div className="flex items-center mx-7 my-5">
           <Link href="/">
             <a>
-              <Image src="https://picsum.photos/24/32" alt="FireBoom" preview={false} />
+              <Image
+                width={26}
+                height={32}
+                src="https://picsum.photos/26/32"
+                alt="FireBoom"
+                preview={false}
+              />
             </a>
           </Link>
-          <span className="text-white ml-3">FireBoom</span>
+          {collapsed || <span className="ml-3 font-bold text-xl">FireBoom</span>}
         </div>
-        <Divider />
+        <Divider className="my-5" />
 
-        <Menu theme="dark" mode="inline" items={topMenuItems} />
+        <Menu className="mt-14 bg-[#FBFBFB]" mode="inline" items={topMenuItems} />
 
         <div className="absolute w-full bottom-12">
-          <Divider />
-          <Menu theme="dark" mode="inline" items={bottomMenuItems} />
+          <Menu className="bg-[#FBFBFB]" mode="inline" items={bottomMenuItems} />
         </div>
       </Sider>
+
       <ALayout className="site-layout">
-        <Content>{children}</Content>
+        <Content className="bg-white">{children}</Content>
       </ALayout>
     </ALayout>
   )
