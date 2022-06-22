@@ -13,7 +13,7 @@ export default function Modeling() {
         <title>数据建模</title>
       </Head>
 
-      <Row>
+      <Row className="h-screen">
         <Col span={5} className={styles['col-left']}>
           <ModelPannel />
         </Col>

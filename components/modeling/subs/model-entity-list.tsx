@@ -31,7 +31,7 @@ export default function ModelEntityList() {
 
   return (
     <>
-      <div className="flex justify-between items-center p-4 my-3">
+      <div className="flex justify-between items-center p-4 my-3 border-[#5f62691a] border-b-1 border-t-1">
         <span className="text-sm font-medium leading-5">所有实体</span>
         <Dropdown overlay={menu} placement="bottomRight">
           <Button type="primary" shape="circle" size="small">
