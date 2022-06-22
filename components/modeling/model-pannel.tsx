@@ -1,5 +1,6 @@
-import { AppleOutlined, QrcodeOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { AppleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Select, Tooltip } from 'antd'
+import type { SelectProps } from 'antd'
 import { useImmer } from 'use-immer'
 
 import { Entity } from '@/interfaces/modeling'
@@ -8,14 +9,31 @@ import { EntitiesContext } from './model-context'
 import styles from './model-pannel.module.scss'
 import ModelEntityList from './subs/model-entity-list'
 
-const { Option } = Select
-
 export default function ModelPannel() {
   const [entities, setEntities] = useImmer([
     { id: 1, name: 'users' },
     { id: 2, name: 'posts' },
     { id: 3, name: 'comments' },
   ] as Entity[])
+
+  const options = [
+    {
+      label: (
+        <>
+          <AppleOutlined /> aaa
+        </>
+      ),
+      value: 'aaa',
+    },
+    {
+      label: (
+        <>
+          <AppleOutlined /> bbb
+        </>
+      ),
+      value: 'bbb',
+    },
+  ]
 
   function handleChange(value: string) {
     console.log(`selected ${value}`)
@@ -52,24 +70,12 @@ export default function ModelPannel() {
         <div className={styles.title}>数据建模</div>
 
         <div className={styles['select-contain']}>
-          <Select className={styles.select} defaultValue="lucy" onChange={handleChange}>
-            <Option value="jack">
-              <AppleOutlined className={styles['option-icon']} />
-              Jack
-            </Option>
-            <Option value="lucy">
-              <AppleOutlined className={styles['option-icon']} />
-              Lucy
-            </Option>
-            <Option value="Yiminghe">
-              <AppleOutlined className={styles['option-icon']} />
-              yiminghe
-            </Option>
-            <Option value="manage" className={styles.manage}>
-              <QrcodeOutlined className={styles['option-icon']} />
-              管理
-            </Option>
-          </Select>
+          <Select
+            className={styles.select}
+            defaultValue="lucy"
+            onChange={handleChange}
+            options={options}
+          />
           <Tooltip title="prompt text">
             <InfoCircleOutlined style={{ marginLeft: '4px', fontSize: '15px', display: 'none' }} />
           </Tooltip>
