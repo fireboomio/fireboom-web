@@ -39,12 +39,9 @@
   margin-bottom: 24px;
 }
 
-.delete-label {
-  :global {
-    .ant-popover-content {
-      .ant-popover-arrow {
-        display: none;
-      }
-    }
+/* stylelint-disable-next-line no-descending-specificity */
+.delete-label :global {
+  .ant-popover-content .ant-popover-arrow {
+    display: none;
   }
 }
