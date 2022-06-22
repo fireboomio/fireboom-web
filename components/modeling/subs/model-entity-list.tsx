@@ -1,9 +1,10 @@
-import { AppleOutlined } from '@ant-design/icons'
+import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
 import { useContext } from 'react'
 
 import { EntitiesContext } from '../model-context'
 import ModelEntityItem from './model-entity-item'
+import styles from './model-entity-list.module.scss'
 
 export default function ModelEntityList() {
   const { entities, setEntities } = useContext(EntitiesContext)
@@ -34,9 +35,12 @@ export default function ModelEntityList() {
       <div className="flex justify-between items-center p-4 my-3 border-[#5f62691a] border-b-1 border-t-1">
         <span className="text-sm font-medium leading-5">所有实体</span>
         <Dropdown overlay={menu} placement="bottomRight">
-          <Button type="primary" shape="circle" size="small">
-            +
-          </Button>
+          <Button
+            className={styles['add-btn']}
+            icon={<PlusOutlined />}
+            shape="circle"
+            size="small"
+          />
         </Dropdown>
       </div>
 

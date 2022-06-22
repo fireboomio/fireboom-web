@@ -8,6 +8,7 @@ import type { Entity } from '@/interfaces/modeling'
 
 import { EntitiesContext } from '../model-context'
 import styles from '../model-pannel.module.scss'
+
 interface Props {
   entity: Entity
 }
@@ -104,7 +105,7 @@ export default function ModelEntityItem({ entity }: Props) {
   return (
     <div
       className="flex justify-start items-center py-3"
-      style={isHovering ? { backgroundColor: 'Lightgray' } : {}}
+      style={isHovering ? { background: '#F8F8F9' } : {}}
       key={entity.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
