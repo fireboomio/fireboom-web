@@ -1,6 +1,5 @@
 import { AppleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Select, Tooltip } from 'antd'
-import type { SelectProps } from 'antd'
 import { useImmer } from 'use-immer'
 
 import { Entity } from '@/interfaces/modeling'

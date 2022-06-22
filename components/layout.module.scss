@@ -1,3 +1,13 @@
+.logo-label {
+  opacity: 1;
+  transition: opacity 0.5s;
+
+  &-collapsed {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+}
+
 .sider :global {
   .ant-menu-item {
     a {
@@ -28,8 +38,8 @@
     }
   }
 
-  .ant-menu-inline .ant-menu-item-active,
-  .ant-menu-inline .ant-menu-item-selected {
+  .ant-menu .ant-menu-item-active,
+  .ant-menu .ant-menu-item-selected {
     &::before {
       position: absolute;
       top: 0;
