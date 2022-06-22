@@ -16,16 +16,24 @@ export default function ModelPannel() {
     { id: 3, name: 'comments' },
   ] as Entity[])
 
-  const menu = ['jack', 'jack1', 'jack2', '管理']
-  const options: SelectProps['options'] = []
-  for (let i = 0; i < menu.length; i++) {
-    const value = menu[i]
-    options.push({
-      label: value,
-      value,
-      disabled: i === 10,
-    })
-  }
+  const options = [
+    {
+      label: (
+        <>
+          <AppleOutlined /> aaa
+        </>
+      ),
+      value: 'aaa',
+    },
+    {
+      label: (
+        <>
+          <AppleOutlined /> bbb
+        </>
+      ),
+      value: 'bbb',
+    },
+  ]
 
   function handleChange(value: string) {
     console.log(`selected ${value}`)
@@ -67,9 +75,7 @@ export default function ModelPannel() {
             defaultValue="lucy"
             onChange={handleChange}
             options={options}
-          >
-            {}
-          </Select>
+          />
           <Tooltip title="prompt text">
             <InfoCircleOutlined style={{ marginLeft: '4px', fontSize: '15px', display: 'none' }} />
           </Tooltip>
