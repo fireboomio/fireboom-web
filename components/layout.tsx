@@ -8,11 +8,12 @@ import styles from './layout.module.scss'
 const { Sider, Content } = ALayout
 
 const menus = [
-  { title: '模型', icon: <AppleOutlined />, link: '/modeling', position: 'top' },
-  { title: '数据', icon: <AppleOutlined />, link: '/data', position: 'top' },
-  { title: '用户', icon: <AppleOutlined />, link: '/user', position: 'top' },
-  { title: '存储', icon: <AppleOutlined />, link: '/storage', position: 'top' },
-  { title: 'GraphiQL', icon: <AppleOutlined />, link: '/graphiql', position: 'top' },
+  { title: '数据建模', icon: <AppleOutlined />, link: '/modeling', position: 'top' },
+  { title: '认证鉴权', icon: <AppleOutlined />, link: '/auth', position: 'top' },
+  { title: '文件存储', icon: <AppleOutlined />, link: '/storage', position: 'top' },
+  { title: '外部源', icon: <AppleOutlined />, link: '/datasource', position: 'top' },
+  { title: 'API管理', icon: <AppleOutlined />, link: '/apimanage', position: 'top' },
+  { title: 'GraphQL', icon: <AppleOutlined />, link: '/graphiql', position: 'top' },
   { title: '个人资料', icon: <AppleOutlined />, link: '/profile', position: 'bottom' },
   { title: '设置', icon: <AppleOutlined />, link: '/setting', position: 'bottom' },
 ]
