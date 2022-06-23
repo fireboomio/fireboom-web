@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import * as useImmer from 'use-immer'
 
-import { Entity } from '@/interfaces/modeling'
+import type { Entity } from '@/interfaces'
 
 interface EntitiesContextT {
   entities: Entity[]

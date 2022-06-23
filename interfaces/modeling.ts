@@ -1,3 +1,8 @@
+export interface SchemaResp {
+  id: number
+  name: string
+}
+
 export interface Entity {
   id: number
   name: string
