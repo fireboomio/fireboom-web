@@ -1,0 +1,50 @@
+.pannel {
+  padding: 0 16px;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.title {
+  margin-top: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.select {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.manage {
+  border-top: 1px solid rgb(92 87 87);
+}
+
+.option-icon {
+  margin-right: 10px;
+}
+
+.actions > :hover {
+  opacity: 0.6;
+}
+
+.select-contain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.delete-label :global {
+  .ant-popover-content .ant-popover-arrow {
+    display: none;
+  }
+}
