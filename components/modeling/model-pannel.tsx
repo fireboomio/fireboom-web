@@ -1,51 +1,57 @@
 import { AppleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { getSchema } from '@mrleebo/prisma-ast'
+import type { Block } from '@mrleebo/prisma-ast'
 import { Select, Tooltip } from 'antd'
 import axios from 'axios'
-import useSWR from 'swr'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Result, Entity, SchemaResp } from '@/interfaces'
+import type { Result, SchemaResp } from '@/interfaces'
 
 import { EntitiesContext } from './model-context'
 import styles from './model-pannel.module.scss'
 import ModelEntityList from './subs/model-entity-list'
 
 interface Props {
-  schemaOpts: SchemaResp[]
+  schemaOptions: SchemaResp[]
 }
 
-const fetcher = (url: string) =>
-  axios.get<Result<string>>(url).then((res) => {
+const fetcher = (url: string, params?: Record<string, string>) =>
+  axios.get<Result<string>>(url, { params: params }).then((res) => {
     return res.data.result
   })
 
-export default function ModelPannel({ schemaOpts }: Props) {
-  const [entities, setEntities] = useImmer([
-    { id: 1, name: 'users', isEditing: false },
-    { id: 2, name: 'posts', isEditing: false },
-    { id: 3, name: 'comments', isEditing: false },
-  ] as Entity[])
+export default function ModelPannel({ schemaOptions }: Props) {
+  const [entities, setEntities] = useImmer([] as Block[])
 
-  const { data, error } = useSWR<string, Error>('http://localhost:8080/schema.json', fetcher)
+  useEffect(() => {
+    fetcher('http://localhost:8080/schema.json')
+      .then((res) => {
+        setEntities(getSchema(res).list.filter((l) => ['model', 'enum'].includes(l.type)))
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
-
-  const schema = getSchema(data)
-  console.log(schema)
-
-  const schOpts = schemaOpts.map((s) => ({
+  const schOpts = schemaOptions.map((s) => ({
     label: (
       <>
         <AppleOutlined /> {s.name}
       </>
     ),
-    value: s.id,
+    value: `${s.id}`,
   }))
 
   function handleChange(value: string) {
-    console.log(`selected ${value}`)
+    fetcher('http://localhost:8080/schema.json', { id: value })
+      .then((res) => {
+        setEntities(getSchema(res).list.filter((l) => ['model', 'enum'].includes(l.type)))
+      })
+      .catch((err: Error) => {
+        throw err
+      })
   }
 
   //pannel 点击搜索框下6个按钮对应回调
@@ -79,9 +85,14 @@ export default function ModelPannel({ schemaOpts }: Props) {
         <div className={styles.title}>数据建模</div>
 
         <div className={styles['select-contain']}>
-          <Select className={styles.select} onChange={handleChange} options={schOpts} />
+          <Select
+            className={styles.select}
+            onChange={handleChange}
+            defaultValue={schOpts[0].value}
+            options={schOpts}
+          />
           <Tooltip title="prompt text">
-            <InfoCircleOutlined style={{ marginLeft: '4px', fontSize: '15px', display: 'none' }} />
+            <InfoCircleOutlined className="ml-1.5 text-base hidden" style={{ color: '#F79500' }} />
           </Tooltip>
         </div>
 

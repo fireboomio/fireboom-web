@@ -31,7 +31,7 @@ export default function Modeling() {
 
       <Row className="h-screen">
         <Col span={5} className={styles['col-left']}>
-          <ModelPannel schemaOpts={schemas} />
+          <ModelPannel schemaOptions={schemas} />
         </Col>
         <Col span={19}>
           <ModelEditor />
