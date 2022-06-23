@@ -47,7 +47,7 @@ export default function Layout({ children }: PropsWithChildren) {
       >
         <div className="flex items-center mx-7 my-5">
           <Link href="/">
-            <a>
+            <a className="flex">
               <Image
                 width={26}
                 height={32}
@@ -55,13 +55,20 @@ export default function Layout({ children }: PropsWithChildren) {
                 alt="FireBoom"
                 preview={false}
               />
+
+              <span
+                className={`${
+                  collapsed ? styles['logo-label-collapsed'] : styles['logo-label']
+                } ml-3 font-bold text-xl`}
+              >
+                FireBoom
+              </span>
             </a>
           </Link>
-          {collapsed || <span className="ml-3 font-bold text-xl">FireBoom</span>}
         </div>
-        <Divider className="my-5" />
+        <Divider className={styles['sider-divider']} />
 
-        <Menu className="mt-14 bg-[#FBFBFB]" mode="inline" items={topMenuItems} />
+        <Menu className="mt-10 bg-[#FBFBFB]" mode="inline" items={topMenuItems} />
 
         <div className="absolute w-full bottom-12">
           <Menu className="bg-[#FBFBFB]" mode="inline" items={bottomMenuItems} />

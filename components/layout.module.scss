@@ -1,3 +1,21 @@
+.sider-divider {
+  height: 1px;
+  margin: 20px 0;
+  border: 1px solid;
+  border-image: linear-gradient(270deg, rgb(176 165 166 / 0%), rgb(188 184 184 / 63%), rgb(120 108 109 / 0%)) 1 1;
+  opacity: 0.5;
+}
+
+.logo-label {
+  opacity: 1;
+  transition: opacity 0.5s;
+
+  &-collapsed {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+}
+
 .sider :global {
   .ant-menu-item {
     a {
@@ -28,8 +46,8 @@
     }
   }
 
-  .ant-menu-inline .ant-menu-item-active,
-  .ant-menu-inline .ant-menu-item-selected {
+  .ant-menu .ant-menu-item-active,
+  .ant-menu .ant-menu-item-selected {
     &::before {
       position: absolute;
       top: 0;
