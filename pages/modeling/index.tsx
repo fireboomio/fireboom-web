@@ -4,7 +4,7 @@ import Head from 'next/head'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { ModelPannel, ModelEditor, ModelEnum } from '@/components/modeling'
+import { ModelPannel, ModelEditor } from '@/components/modeling'
 import type { Result, DBSourceResp, Entity } from '@/interfaces'
 import { ModelingContext } from '@/lib/modeling-context'
 
@@ -16,7 +16,6 @@ const fetcher = (url: string) =>
   })
 
 export default function Modeling() {
-  const [isShowChart, _setIsShowChart] = useImmer(false)
   const [entities, setEntities] = useImmer([] as Entity[])
   const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/tables', fetcher)
 
@@ -35,7 +34,7 @@ export default function Modeling() {
             <ModelPannel sourceOptions={sources} />
           </Col>
           <Col span={19}>
-            <Col span={19}>{isShowChart ? <ModelEditor /> : <ModelEnum />}</Col>
+            <ModelEditor />
           </Col>
         </Row>
       </ModelingContext.Provider>
