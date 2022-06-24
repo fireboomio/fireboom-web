@@ -23,7 +23,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
   const { entities: _, setEntities } = useContext(ModelingContext)
 
   useEffect(() => {
-    fetcher('/api/schemas/1')
+    fetcher(`/api/schemas/${sourceOptions[0].id}`)
       .then((res) => {
         setEntities(
           getSchema(res.body).list.filter((l) => ['enum', 'model'].includes(l.type)) as Entity[]

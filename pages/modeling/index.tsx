@@ -4,7 +4,6 @@ import Head from 'next/head'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import Layout from '@/components/layout'
 import { ModelPannel, ModelEditor } from '@/components/modeling'
 import type { Result, DBSourceResp, Entity } from '@/interfaces'
 import { ModelingContext } from '@/lib/modeling-context'
@@ -24,7 +23,7 @@ export default function Modeling() {
   if (!sources) return <div>loading...</div>
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>FireBoom - 数据建模</title>
       </Head>
@@ -39,6 +38,6 @@ export default function Modeling() {
           </Col>
         </Row>
       </ModelingContext.Provider>
-    </Layout>
+    </>
   )
 }
