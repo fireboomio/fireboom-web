@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { EnumEntitiesContext } from '@/lib/modeling-context'
+import { EnumEntitiesContext } from '@/lib/context'
 
 import ModelEnumItem from './model-enum-item'
 

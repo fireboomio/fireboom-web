@@ -4,8 +4,8 @@ import { Select, Tooltip } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect } from 'react'
 
-import type { Entity, Result, SchemaResp, DBSourceResp } from '@/interfaces'
-import { ModelingContext } from '@/lib/modeling-context'
+import type { Result, SchemaResp, DBSourceResp } from '@/interfaces'
+import { ModelingContext } from '@/lib/context'
 
 import styles from './model-pannel.module.scss'
 import ModelEntityList from './subs/model-entity-list'
@@ -20,15 +20,11 @@ const fetcher = (url: string, params?: Record<string, string>) =>
   })
 
 export default function ModelPannel({ sourceOptions }: Props) {
-  const { entities: _, setEntities } = useContext(ModelingContext)
+  const { blocks: _, setBlocks } = useContext(ModelingContext)
 
   useEffect(() => {
     fetcher(`/api/schemas/${sourceOptions[0].id}`)
-      .then((res) => {
-        setEntities(
-          getSchema(res.body).list.filter((l) => ['enum', 'model'].includes(l.type)) as Entity[]
-        )
-      })
+      .then((res) => setBlocks(getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx }))))
       .catch((err: Error) => {
         throw err
       })
@@ -46,11 +42,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
 
   function handleChange(value: string) {
     fetcher(`/api/schemas/${value}`)
-      .then((res) => {
-        setEntities(
-          getSchema(res.body).list.filter((l) => ['enum', 'model'].includes(l.type)) as Entity[]
-        )
-      })
+      .then((res) => setBlocks(getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx }))))
       .catch((err: Error) => {
         throw err
       })

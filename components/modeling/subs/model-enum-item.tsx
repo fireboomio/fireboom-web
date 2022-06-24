@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces'
-import { EnumEntitiesContext } from '@/lib/modeling-context'
+import { EnumEntitiesContext } from '@/lib/context'
 
 interface Props {
   enumEntity: Entity

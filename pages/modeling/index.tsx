@@ -5,8 +5,8 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelEditor } from '@/components/modeling'
-import type { Result, DBSourceResp, Entity } from '@/interfaces'
-import { ModelingContext } from '@/lib/modeling-context'
+import type { Result, DBSourceResp, Block } from '@/interfaces'
+import { ModelingContext } from '@/lib/context'
 
 import styles from './index.module.scss'
 
@@ -16,7 +16,7 @@ const fetcher = (url: string) =>
   })
 
 export default function Modeling() {
-  const [entities, setEntities] = useImmer([] as Entity[])
+  const [blocks, setBlocks] = useImmer([] as Block[])
   const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/tables', fetcher)
 
   if (error) return <div>failed to load</div>
@@ -28,7 +28,7 @@ export default function Modeling() {
         <title>FireBoom - 数据建模</title>
       </Head>
 
-      <ModelingContext.Provider value={{ entities, setEntities }}>
+      <ModelingContext.Provider value={{ blocks, setBlocks }}>
         <Row className="h-screen">
           <Col span={5} className={styles['col-left']}>
             <ModelPannel sourceOptions={sources} />

@@ -1,23 +1,31 @@
 import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
+import { useImmer } from 'use-immer'
 
-import { ModelingContext } from '@/lib/modeling-context'
+import type { Entity } from '@/interfaces'
+import { ModelingContext } from '@/lib/context'
 
 import ModelEntityItem from './model-entity-item'
 import styles from './model-entity-list.module.scss'
 
-const nextId = 5
-
 export default function ModelEntityList() {
-  const { entities, setEntities } = useContext(ModelingContext)
+  const { blocks, setBlocks } = useContext(ModelingContext)
+  const [entities, setEntities] = useImmer([] as Entity[])
+
+  useEffect(() => {
+    setEntities(blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocks])
 
   function addModel() {
-    setEntities(entities.concat({ id: nextId, name: '', type: 'model', properties: [] }))
+    const data = { id: 5, name: '', type: 'model', properties: [] } as Entity
+    setBlocks(blocks.concat(data))
   }
 
   function addEnum() {
-    setEntities(entities.concat({ id: nextId, name: '', type: 'enum', enumerators: [] }))
+    const data = { id: 5, name: '', type: 'enum', enumerators: [] } as Entity
+    setBlocks(blocks.concat(data))
   }
 
   const menu = (

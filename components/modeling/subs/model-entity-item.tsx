@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces'
-import { ModelingContext } from '@/lib/modeling-context'
+import { ModelingContext } from '@/lib/context'
 
 import styles from '../model-pannel.module.scss'
 
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function ModelEntityItem({ entity }: Props) {
-  const { entities, setEntities } = useContext(ModelingContext)
+  const { blocks, setBlocks } = useContext(ModelingContext)
   const [isHovering, setIsHovering] = useImmer(false)
   const [isEditing, setIsEditing] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
@@ -40,14 +40,14 @@ export default function ModelEntityItem({ entity }: Props) {
   }
 
   function handleItemDelete(item: Entity) {
-    setEntities(entities.filter((t) => t.name !== item.name))
+    setBlocks(blocks.filter((t) => t.id !== item.id))
   }
 
   function updateEntity(item: Entity) {
-    setEntities((draft) => {
-      const entity = draft.find((x) => x.id === item.id)
-      if (entity) {
-        entity.name = item.name
+    setBlocks((draft) => {
+      const element = draft.find((x) => x.id === item.id)
+      if (element) {
+        element.name = item.name
       }
     })
   }

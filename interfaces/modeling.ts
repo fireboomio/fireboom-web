@@ -1,4 +1,4 @@
-import type { Model, Enum } from '@mrleebo/prisma-ast'
+import type { Block as BlockT, Model, Enum } from '@mrleebo/prisma-ast'
 
 export interface DBSourceResp {
   id: number
@@ -8,6 +8,10 @@ export interface DBSourceResp {
 export interface SchemaResp {
   id: number
   body: string
+}
+
+export type Block = BlockT & {
+  id: number
 }
 
 export type Entity = (Model | Enum) & {

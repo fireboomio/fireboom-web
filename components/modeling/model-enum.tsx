@@ -1,7 +1,7 @@
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces'
-import { EnumEntitiesContext } from '@/lib/modeling-context'
+import { EnumEntitiesContext } from '@/lib/context'
 
 import ModelEditorTitle from './subs/model-editor-title'
 import ModelEnumBreadcrumb from './subs/model-enum-breadcrumb'
