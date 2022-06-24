@@ -18,10 +18,7 @@ const fetcher = (url: string) =>
 
 export default function Modeling() {
   const [entities, setEntities] = useImmer([] as Entity[])
-  const { data: sources, error } = useSWR<DBSourceResp[], Error>(
-    'http://localhost:8080/tables.json',
-    fetcher
-  )
+  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/tables', fetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>

@@ -23,7 +23,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
   const { entities: _, setEntities } = useContext(ModelingContext)
 
   useEffect(() => {
-    fetcher('http://localhost:8080/schemas.json/1')
+    fetcher('/api/schemas/1')
       .then((res) => {
         setEntities(
           getSchema(res.body).list.filter((l) => ['enum', 'model'].includes(l.type)) as Entity[]
@@ -45,7 +45,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
   }))
 
   function handleChange(value: string) {
-    fetcher(`http://localhost:8080/schemas.json/${value}`)
+    fetcher(`/api/schemas/${value}`)
       .then((res) => {
         setEntities(
           getSchema(res.body).list.filter((l) => ['enum', 'model'].includes(l.type)) as Entity[]

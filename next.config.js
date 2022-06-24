@@ -7,6 +7,14 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8080/:path*',
+      },
+    ]
+  },
   webpack: (config) => {
     config.plugins.push(new WindiCSSWebpackPlugin())
     return config
