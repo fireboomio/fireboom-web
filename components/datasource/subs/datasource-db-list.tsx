@@ -33,8 +33,8 @@ export default function DatasourceDBList() {
         </div>
       </div>
       <div className="mt-3">
-        {DatasourceList.map((DatasourceItem) => (
-          <DatasourceDBItem key={DatasourceItem.id} entity={DatasourceItem} />
+        {DatasourceList.map((datasourceItem) => (
+          <DatasourceDBItem key={datasourceItem.id} datasourceItem={datasourceItem} />
         ))}
       </div>
     </>

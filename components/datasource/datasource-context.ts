@@ -1,11 +1,11 @@
 import { createContext } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { Entity } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces'
 
 interface DatasourceContextT {
-  DatasourceList: Entity[]
-  setDatasourceList: useImmer.Updater<Entity[]>
+  DatasourceList: DatasourceItem[]
+  setDatasourceList: useImmer.Updater<DatasourceItem[]>
 }
 
 export const DatasourceContext = createContext({} as DatasourceContextT)
