@@ -2,14 +2,15 @@ import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
 import { useContext } from 'react'
 
-import { EntitiesContext } from '../model-context'
+import { ModelingContext } from '@/lib/modeling-context'
+
 import ModelEntityItem from './model-entity-item'
 import styles from './model-entity-list.module.scss'
 
 const nextId = 5
 
 export default function ModelEntityList() {
-  const { entities, setEntities } = useContext(EntitiesContext)
+  const { entities, setEntities } = useContext(ModelingContext)
 
   function addModel() {
     setEntities(entities.concat({ id: nextId, name: '', type: 'model', properties: [] }))
