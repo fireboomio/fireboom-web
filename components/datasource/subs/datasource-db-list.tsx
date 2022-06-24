@@ -3,7 +3,7 @@ import { Button } from 'antd'
 import { useContext } from 'react'
 
 import { DatasourceContext } from '../datasource-context'
-import ModelEntityItem from './datasource-db-item'
+import DatasourceDBItem from './datasource-db-item'
 import styles from './datasource-db-list.module.scss'
 
 export default function DatasourceDBList() {
@@ -17,7 +17,7 @@ export default function DatasourceDBList() {
 
   return (
     <>
-      <div className="flex justify-between items-center p-4 border-[#5f62691a] border-b-1 border-t-1">
+      <div className="flex justify-between items-center p-4 border-[#5f62691a] border-b-1">
         <span className="text-sm font-medium leading-5 font-bold">数据概览</span>
         <div className="flex items-center">
           <Button
@@ -34,7 +34,7 @@ export default function DatasourceDBList() {
       </div>
       <div className="mt-3">
         {DatasourceList.map((DatasourceItem) => (
-          <ModelEntityItem key={DatasourceItem.id} entity={DatasourceItem} />
+          <DatasourceDBItem key={DatasourceItem.id} entity={DatasourceItem} />
         ))}
       </div>
     </>
