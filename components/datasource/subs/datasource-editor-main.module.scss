@@ -1,19 +1,20 @@
 .connect-btn {
-  background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
-  border-radius: 4px;
-  color: #d83860;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 95px;
   height: 24px;
   margin-left: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding:0 10px;
+  padding: 0 10px;
+  color: #d83860;
   font-size: 14px;
+  background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
+  border-radius: 4px;
+
   &:hover,
   &:focus {
+    color: rgb(233 92 127);
     background: #ebcec6;
-    color: rgb(233, 92, 127);
     border-color: #e13d5b;
   }
 }
@@ -21,13 +22,14 @@
 .save-btn {
   width: 72px;
   height: 32px;
+  color: #fafafa;
   background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 4px;
-  color: #fafafa;
+
   &:hover,
   &:focus {
-    background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
     color: #f0d7d7;
+    background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
   }
 }
@@ -35,9 +37,10 @@
 .cancel-btn {
   width: 72px;
   height: 32px;
-  border-radius: 4px;
-  border: 1px solid rgba(95, 98, 105, 0.1);
   margin-right: 16px;
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-radius: 4px;
+
   &:hover,
   &:focus {
     color: #3d3333;

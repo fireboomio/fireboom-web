@@ -2,7 +2,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
 import { useImmer } from 'use-immer'
 
-import { Entity } from '@/interfaces/modeling'
+import type { Entity } from '@/interfaces'
 
 import { DatasourceContext } from './datasource-context'
 import styles from './datasource-pannel.module.scss'
