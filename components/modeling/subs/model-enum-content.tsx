@@ -1,7 +1,8 @@
-import React from 'react'
 import { useContext } from 'react'
+
+import { EnumEntitiesContext } from '@/lib/modeling-context'
+
 import ModelEnumItem from './model-enum-item'
-import { EnumEntitiesContext } from '../model-context'
 
 export default function ModelEnumContent() {
   const { enumEntities } = useContext(EnumEntitiesContext)

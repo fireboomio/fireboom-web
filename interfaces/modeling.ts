@@ -20,10 +20,3 @@ export interface Field {
   note: string
   [key: string]: number | string | boolean
 }
-
-export interface EnumEntity {
-  id: number
-  name: string
-  note: string
-  [key: string]: number | string | boolean
-}

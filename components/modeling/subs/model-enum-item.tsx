@@ -1,13 +1,13 @@
-import type { EnumEntity } from '@/interfaces/modeling'
+import { DeleteOutlined } from '@ant-design/icons'
 import { Input, Col, Row, message, Form } from 'antd'
-import React from 'react'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
-import { DeleteOutlined } from '@ant-design/icons'
-import { EnumEntitiesContext } from '../model-context'
+
+import type { Entity } from '@/interfaces'
+import { EnumEntitiesContext } from '@/lib/modeling-context'
 
 interface Props {
-  enumEntity: EnumEntity
+  enumEntity: Entity
 }
 
 export default function ModelEnumItem({ enumEntity }: Props) {
@@ -23,7 +23,7 @@ export default function ModelEnumItem({ enumEntity }: Props) {
       message.destroy()
       void message.error('输入内容不能为空，请重新输入', 1)
     } else {
-      updateEnumEntity({ ...enumEntity, name: name, note: note })
+      updateEntity({ ...enumEntity, name: name, note: note })
       setIsEditing(false)
     }
   }
@@ -35,7 +35,7 @@ export default function ModelEnumItem({ enumEntity }: Props) {
     }
   }
 
-  function updateEnumEntity(item: EnumEntity) {
+  function updateEntity(item: Entity) {
     setEnumEntities((draft) => {
       const enumEntity = draft.find((x) => x.id === item.id)
       if (enumEntity) {
@@ -45,7 +45,7 @@ export default function ModelEnumItem({ enumEntity }: Props) {
     })
   }
 
-  function handleItemDelete(item: EnumEntity) {
+  function handleItemDelete(item: Entity) {
     setEnumEntities(enumEntities.filter((t) => t.id !== item.id))
   }
 

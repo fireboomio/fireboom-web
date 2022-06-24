@@ -4,10 +4,9 @@ import Head from 'next/head'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { ModelPannel, ModelEditor } from '@/components/modeling'
+import { ModelPannel, ModelEditor, ModelEnum } from '@/components/modeling'
 import type { Result, DBSourceResp, Entity } from '@/interfaces'
 import { ModelingContext } from '@/lib/modeling-context'
-import { ModelEnum } from '@/components/modeling'
 
 import styles from './index.module.scss'
 
@@ -17,13 +16,12 @@ const fetcher = (url: string) =>
   })
 
 export default function Modeling() {
+  const [isShowChart, _setIsShowChart] = useImmer(false)
   const [entities, setEntities] = useImmer([] as Entity[])
   const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/tables', fetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
-
-  const [isShowChart, setIsShowChart] = useImmer(false)
 
   return (
     <>

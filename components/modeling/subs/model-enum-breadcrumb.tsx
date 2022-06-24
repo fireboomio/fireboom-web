@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Breadcrumb, Button } from 'antd'
 import { useContext } from 'react'
 
-import { EnumEntitiesContext } from '../model-context'
+import { EnumEntitiesContext } from '@/lib/modeling-context'
 
 export default function ModelEnumBreadcumb() {
   const { enumEntities, setEnumEntities } = useContext(EnumEntitiesContext)
