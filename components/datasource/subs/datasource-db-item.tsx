@@ -4,18 +4,18 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces'
 
 import { DatasourceContext } from '../datasource-context'
 import styles from '../datasource-pannel.module.scss'
 
 interface Props {
-  entity: Entity
+  datasourceItem: DatasourceItem
 }
 
-export default function DatasourceDBItem({ entity }: Props) {
+export default function DatasourceDBItem({ datasourceItem }: Props) {
   const { DatasourceList, setDatasourceList } = useContext(DatasourceContext)
-  const [isEditing, setIsEditing] = useImmer(entity.isEditing)
+  const [isEditing, setIsEditing] = useImmer(datasourceItem.isEditing)
   const [isHovering, setIsHovering] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
 
@@ -30,16 +30,16 @@ export default function DatasourceDBItem({ entity }: Props) {
       message.destroy()
       void message.error('实体名不能为空，请重新输入', 1)
     } else {
-      updateEntity({ id: entity.id, name: text })
+      updateEntity({ id: datasourceItem.id, name: text,isEditing:false })
       setIsEditing(false)
     }
   }
 
-  function handleItemDelete(item: Entity) {
+  function handleItemDelete(item: DatasourceItem) {
     setDatasourceList(DatasourceList.filter((t) => t.name !== item.name))
   }
 
-  function updateEntity(item: Entity) {
+  function updateEntity(item: DatasourceItem) {
     setDatasourceList((draft) => {
       const entity = draft.find((x) => x.id === item.id)
       if (entity) {
@@ -84,7 +84,7 @@ export default function DatasourceDBItem({ entity }: Props) {
             <Popconfirm
               placement="right"
               title="确认删除该实体吗？"
-              onConfirm={() => handleItemDelete(entity)}
+              onConfirm={() => handleItemDelete(datasourceItem)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -106,7 +106,7 @@ export default function DatasourceDBItem({ entity }: Props) {
     <div
       className="flex justify-start items-center py-2.5 pl-3"
       style={isHovering ? { background: '#F8F8F9' } : {}}
-      key={entity.name}
+      key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
     >
@@ -118,7 +118,7 @@ export default function DatasourceDBItem({ entity }: Props) {
           // @ts-ignore
           onPressEnter={(e) => handleItemEdit(e.target.value as string)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
-          defaultValue={entity.name}
+          defaultValue={datasourceItem.name}
           autoFocus
           placeholder="请输入外部数据源名"
         />
@@ -129,7 +129,7 @@ export default function DatasourceDBItem({ entity }: Props) {
           }}
           className="text-sm font-normal leading-4"
         >
-          {entity.name}
+          {datasourceItem.name}
         </div>
       )}
 

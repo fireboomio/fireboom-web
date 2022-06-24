@@ -2,7 +2,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces'
 
 import { DatasourceContext } from './datasource-context'
 import styles from './datasource-pannel.module.scss'
@@ -16,7 +16,7 @@ export default function DatasourcePannel() {
     { id: 4, name: 'mongodb_ant', isEditing: false },
     { id: 5, name: 'default_db', isEditing: false },
     { id: 6, name: 'mysql_ant', isEditing: false },
-  ] as Entity[])
+  ] as DatasourceItem[])
 
   const { TabPane } = Tabs
 
