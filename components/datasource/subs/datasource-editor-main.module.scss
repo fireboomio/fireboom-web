@@ -1,0 +1,52 @@
+.connect-btn {
+  background: #eedbd6;
+  border-radius: 4px;
+  color: #d83860;
+  width: 100px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  &:hover,
+  &:focus {
+    background: #ebcec6;
+    color: rgb(233, 92, 127);
+    border-color: #e13d5b;
+  }
+}
+
+.connect-text {
+  width: 56px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  line-height: 20px;
+  margin-left: 5px;
+}
+
+.save-btn {
+  width: 72px;
+  height: 32px;
+  background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 4px;
+  color: #fafafa;
+  &:hover,
+  &:focus {
+    background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
+    color: #f0d7d7;
+    border-color: #e13d5b;
+  }
+}
+
+.cancel-btn {
+  width: 72px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid rgba(95, 98, 105, 0.1);
+  margin-right: 16px;
+  &:hover,
+  &:focus {
+    color: #3d3333;
+    border-color: skyblue;
+  }
+}

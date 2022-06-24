@@ -1,8 +1,8 @@
 import { Col, Row } from 'antd'
 import Head from 'next/head'
 
+import { DatasourcePannel, DatasourceEditor } from '@/components/datasource'
 import Layout from '@/components/layout'
-import { ModelPannel, ModelEditor } from '@/components/modeling'
 
 import styles from './index.module.scss'
 
@@ -10,15 +10,15 @@ export default function Modeling() {
   return (
     <Layout>
       <Head>
-        <title>FireBoom - 数据建模</title>
+        <title>FireBoom - 数据来源</title>
       </Head>
 
       <Row className="h-screen">
         <Col span={5} className={styles['col-left']}>
-          <ModelPannel />
+          <DatasourcePannel />
         </Col>
         <Col span={19}>
-          <ModelEditor />
+          <DatasourceEditor />
         </Col>
       </Row>
     </Layout>
