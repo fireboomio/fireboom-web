@@ -1,7 +1,7 @@
-import { SchemaResp, Entity, Field } from './modeling'
+import type { DBSourceResp, SchemaResp, Entity, Field } from './modeling'
 
 interface Result<T> {
   result: T
 }
 
-export type { Result, SchemaResp, Entity, Field }
+export type { Result, DBSourceResp, SchemaResp, Entity, Field }

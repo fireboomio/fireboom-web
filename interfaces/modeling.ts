@@ -1,12 +1,17 @@
-export interface SchemaResp {
+import type { Model, Enum } from '@mrleebo/prisma-ast'
+
+export interface DBSourceResp {
   id: number
   name: string
 }
 
-export interface Entity {
+export interface SchemaResp {
   id: number
-  name: string
-  [key: string]: string | number | boolean
+  body: string
+}
+
+export type Entity = (Model | Enum) & {
+  id: number
 }
 
 export interface Field {

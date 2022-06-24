@@ -15,8 +15,8 @@ interface Props {
 
 export default function ModelEntityItem({ entity }: Props) {
   const { entities, setEntities } = useContext(EntitiesContext)
-  const [isEditing, setIsEditing] = useImmer(entity.isEditing)
   const [isHovering, setIsHovering] = useImmer(false)
+  const [isEditing, setIsEditing] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
@@ -30,8 +30,12 @@ export default function ModelEntityItem({ entity }: Props) {
       message.destroy()
       void message.error('实体名不能为空，请重新输入', 1)
     } else {
-      updateEntity({ id: entity.id, name: text })
-      setIsEditing(false)
+      updateEntity({
+        id: 0,
+        name: text,
+        type: 'model',
+        properties: [],
+      })
     }
   }
 

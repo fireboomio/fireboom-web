@@ -6,11 +6,17 @@ import { EntitiesContext } from '../model-context'
 import ModelEntityItem from './model-entity-item'
 import styles from './model-entity-list.module.scss'
 
+const nextId = 5
+
 export default function ModelEntityList() {
   const { entities, setEntities } = useContext(EntitiesContext)
 
-  function addTable() {
-    setEntities(entities.concat({ id: entities.length + 1, name: '', isEditing: true }))
+  function addModel() {
+    setEntities(entities.concat({ id: nextId, name: '', type: 'model', properties: [] }))
+  }
+
+  function addEnum() {
+    setEntities(entities.concat({ id: nextId, name: '', type: 'enum', enumerators: [] }))
   }
 
   const menu = (
@@ -18,12 +24,12 @@ export default function ModelEntityList() {
       items={[
         {
           key: '1',
-          label: <span onClick={addTable}>模型</span>,
+          label: <span onClick={addModel}>模型</span>,
           icon: <AppleOutlined />,
         },
         {
           key: '2',
-          label: <span onClick={addTable}>枚举</span>,
+          label: <span onClick={addEnum}>枚举</span>,
           icon: <AppleOutlined />,
         },
       ]}
@@ -46,7 +52,7 @@ export default function ModelEntityList() {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem key={entity.id} entity={entity} />
+          <ModelEntityItem key={entity.name} entity={entity} />
         ))}
       </div>
     </>
