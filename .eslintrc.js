@@ -63,11 +63,7 @@ module.exports = {
     //   { singleValue: false, objectsInArrays: false, arraysInArrays: false },
     // ],
     'object-curly-newline': ['error', { consistent: true }],
-    'object-curly-spacing': [
-      'error',
-      'always',
-      { arraysInObjects: false, objectsInObjects: false },
-    ],
+    'object-curly-spacing': ['error', 'always', { arraysInObjects: true, objectsInObjects: true }],
     'comma-dangle': ['error', 'only-multiline'],
     quotes: ['error', 'single'],
     'jsx-quotes': ['error', 'prefer-double'],

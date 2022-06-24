@@ -9,8 +9,6 @@ import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
-import Layout from '@/components/layout'
-
 import 'graphiql/graphiql.css'
 import styles from './index.module.scss'
 
@@ -85,7 +83,7 @@ export default function App() {
   }
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>GraphiQL</title>
       </Head>
@@ -118,6 +116,6 @@ export default function App() {
           </GraphiQL.Toolbar>
         </GraphiQL>
       </div>
-    </Layout>
+    </>
   )
 }

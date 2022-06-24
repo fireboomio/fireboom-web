@@ -13,6 +13,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  color: #e92e5e;
+}
+
 * {
   box-sizing: border-box;
 }

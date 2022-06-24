@@ -2,13 +2,12 @@ import { Col, Row } from 'antd'
 import Head from 'next/head'
 
 import { DatasourcePannel, DatasourceEditor } from '@/components/datasource'
-import Layout from '@/components/layout'
 
 import styles from './index.module.scss'
 
 export default function Modeling() {
   return (
-    <Layout>
+    <>
       <Head>
         <title>FireBoom - 数据来源</title>
       </Head>
@@ -21,6 +20,6 @@ export default function Modeling() {
           <DatasourceEditor />
         </Col>
       </Row>
-    </Layout>
+    </>
   )
 }

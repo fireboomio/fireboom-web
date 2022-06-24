@@ -1,12 +1,12 @@
-import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
+import { AppleOutlined, GithubOutlined, MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm, message } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces/modeling'
+import type { Entity } from '@/interfaces'
+import { ModelingContext } from '@/lib/modeling-context'
 
-import { EntitiesContext } from '../model-context'
 import styles from '../model-pannel.module.scss'
 
 interface Props {
@@ -14,9 +14,9 @@ interface Props {
 }
 
 export default function ModelEntityItem({ entity }: Props) {
-  const { entities, setEntities } = useContext(EntitiesContext)
-  const [isEditing, setIsEditing] = useImmer(entity.isEditing)
+  const { entities, setEntities } = useContext(ModelingContext)
   const [isHovering, setIsHovering] = useImmer(false)
+  const [isEditing, setIsEditing] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
@@ -30,8 +30,12 @@ export default function ModelEntityItem({ entity }: Props) {
       message.destroy()
       void message.error('实体名不能为空，请重新输入', 1)
     } else {
-      updateEntity({ id: entity.id, name: text })
-      setIsEditing(false)
+      updateEntity({
+        id: 0,
+        name: text,
+        type: 'model',
+        properties: [],
+      })
     }
   }
 
@@ -111,7 +115,11 @@ export default function ModelEntityItem({ entity }: Props) {
       onMouseLeave={() => leaveItem(visible)}
     >
       <MoreOutlined className="mx-2px" />
-      <AppleOutlined className="ml-2px mr-2" />
+      {entity.type === 'model' ? (
+        <AppleOutlined className="ml-2px mr-2" />
+      ) : (
+        <GithubOutlined className="ml-2px mr-2" />
+      )}
 
       {isEditing ? (
         <Input

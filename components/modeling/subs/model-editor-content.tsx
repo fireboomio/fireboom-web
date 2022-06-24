@@ -1,4 +1,4 @@
-import type { Field } from '@/interfaces/modeling'
+import type { Field } from '@/interfaces'
 
 export default function ModelEditorContent() {
   const fields: Field[] = [
