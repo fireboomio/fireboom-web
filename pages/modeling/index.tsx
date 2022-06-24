@@ -10,7 +10,7 @@ export default function Modeling() {
   return (
     <Layout>
       <Head>
-        <title>数据建模</title>
+        <title>FireBoom - 数据建模</title>
       </Head>
 
       <Row className="h-screen">

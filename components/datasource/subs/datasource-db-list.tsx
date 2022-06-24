@@ -3,8 +3,8 @@ import { Button } from 'antd'
 import { useContext } from 'react'
 
 import { DatasourceContext } from '../datasource-context'
-import ModelEntityItem from './datasource-DB-item'
-import styles from './datasource-DB-list.module.scss'
+import ModelEntityItem from './datasource-db-item'
+import styles from './datasource-db-list.module.scss'
 
 export default function DatasourceDBList() {
   const { DatasourceList, setDatasourceList } = useContext(DatasourceContext)

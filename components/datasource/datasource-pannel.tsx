@@ -6,7 +6,7 @@ import { Entity } from '@/interfaces/modeling'
 
 import { DatasourceContext } from './datasource-context'
 import styles from './datasource-pannel.module.scss'
-import ModelEntityList from './subs/datasource-DB-list'
+import ModelEntityList from './subs/datasource-db-list'
 
 export default function DatasourcePannel() {
   const [DatasourceList, setDatasourceList] = useImmer([
