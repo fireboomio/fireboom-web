@@ -7,19 +7,22 @@ import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelEditor } from '@/components/modeling'
 import type { DBSourceResp, Block, Entity } from '@/interfaces'
-import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
+import { ModelingContext, ModelingDispatchContext, ModelingFoucsContext } from '@/lib/context'
 import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 import modelingReducer from './modeling-reducer'
 
 export default function Modeling() {
-  const [content, setContent] = useImmer({} as Entity)
   const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
+  const [foucsId, setFoucsId] = useImmer(null as number | null | undefined)
+
   const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/sources', sourceFetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
+
+  const content = blocks.find((b) => b.id === foucsId) as Entity
 
   function handleChangeSource(value: string) {
     schemaFetcher(`/api/schemas/${value}`)
@@ -29,6 +32,8 @@ export default function Modeling() {
           data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx })),
         })
       )
+      // FIXME:
+      .then(() => setFoucsId(blocks.filter((b) => ['model', 'enum'].includes(b.type)).at(0)?.id))
       .catch((err: Error) => {
         throw err
       })
@@ -36,7 +41,7 @@ export default function Modeling() {
 
   function handleClickEntity(entity: Entity) {
     console.log(entity)
-    setContent(entity)
+    setFoucsId(entity.id)
   }
 
   return (
@@ -47,18 +52,20 @@ export default function Modeling() {
 
       <ModelingContext.Provider value={blocks}>
         <ModelingDispatchContext.Provider value={dispatch}>
-          <Row className="h-screen">
-            <Col span={5} className={styles['col-left']}>
-              <ModelPannel
-                sourceOptions={sources}
-                onChangeSource={handleChangeSource}
-                onClickEntity={handleClickEntity}
-              />
-            </Col>
-            <Col span={19}>
-              <ModelEditor content={content} />
-            </Col>
-          </Row>
+          <ModelingFoucsContext.Provider value={{ foucsId, setFoucsId }}>
+            <Row className="h-screen">
+              <Col span={5} className={styles['col-left']}>
+                <ModelPannel
+                  sourceOptions={sources}
+                  onChangeSource={handleChangeSource}
+                  onClickEntity={handleClickEntity}
+                />
+              </Col>
+              <Col span={19}>
+                <ModelEditor content={content} />
+              </Col>
+            </Row>
+          </ModelingFoucsContext.Provider>
         </ModelingDispatchContext.Provider>
       </ModelingContext.Provider>
     </>

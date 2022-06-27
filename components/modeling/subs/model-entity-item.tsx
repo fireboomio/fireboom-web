@@ -32,6 +32,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
 
   function renameEntity(value: string) {
     dispatch({ type: 'changed', data: { ...entity, name: value } })
+    setIsEditing(false)
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -110,11 +111,11 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
       onMouseLeave={() => leaveItem(visible)}
       onClick={onClick}
     >
-      <MoreOutlined className="mx-2px" />
+      <MoreOutlined className="mx-0.5" />
       {entity.type === 'model' ? (
-        <AppleOutlined className="ml-2px mr-2" />
+        <AppleOutlined className="ml-0.5 mr-2" />
       ) : (
-        <GithubOutlined className="ml-2px mr-2" />
+        <GithubOutlined className="ml-0.5 mr-2" />
       )}
 
       {itemContent}

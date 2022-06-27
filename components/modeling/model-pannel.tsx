@@ -4,10 +4,11 @@ import { Select, Tooltip } from 'antd'
 import { useContext, useEffect } from 'react'
 
 import type { DBSourceResp, Entity } from '@/interfaces'
-import { ModelingDispatchContext } from '@/lib/context'
+import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
 import { schemaFetcher } from '@/lib/fetchers'
 
 import styles from './model-pannel.module.scss'
+import ModelEntityItem from './subs/model-entity-item'
 import ModelEntityList from './subs/model-entity-list'
 
 interface Props {
@@ -17,7 +18,10 @@ interface Props {
 }
 
 export default function ModelPannel({ sourceOptions, onChangeSource, onClickEntity }: Props) {
+  const blocks = useContext(ModelingContext)
   const dispatch = useContext(ModelingDispatchContext)
+
+  const entities = blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[]
 
   useEffect(() => {
     schemaFetcher(`/api/schemas/${sourceOptions[0].id}`)
@@ -71,7 +75,17 @@ export default function ModelPannel({ sourceOptions, onChangeSource, onClickEnti
         </div>
       </div>
 
-      <ModelEntityList onClickEntity={onClickEntity} />
+      <ModelEntityList>
+        <div className="mt-3">
+          {entities.map((entity) => (
+            <ModelEntityItem
+              key={entity.id}
+              entity={entity}
+              onClick={() => onClickEntity(entity)}
+            />
+          ))}
+        </div>
+      </ModelEntityList>
     </>
   )
 }

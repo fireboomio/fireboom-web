@@ -5,5 +5,5 @@ interface Props {
 }
 
 export default function ModelEditorContent({ content }: Props) {
-  return <div>{content.name}</div>
+  return <div>{JSON.stringify(content)}</div>
 }
