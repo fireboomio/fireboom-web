@@ -59,6 +59,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
             onChange={handleChange}
             defaultValue={schOpts[0].value}
             options={schOpts}
+            optionLabelProp="label"
           />
           <Tooltip title="prompt text">
             <InfoCircleOutlined className="ml-1.5 text-base hidden" style={{ color: '#F79500' }} />
