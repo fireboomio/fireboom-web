@@ -60,6 +60,7 @@ export default function ModelPannel({ sourceOptions }: Props) {
             defaultValue={schOpts[0].value}
             optionLabelProp="label"
             options={schOpts}
+            optionLabelProp="label"
           />
           
           <Tooltip title="prompt text">

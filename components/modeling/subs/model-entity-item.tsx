@@ -108,8 +108,7 @@ export default function ModelEntityItem({ entity }: Props) {
 
   return (
     <div
-      className="flex justify-start items-center py-3"
-      style={isHovering ? { background: '#F8F8F9' } : {}}
+      className="flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9]"
       key={entity.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
