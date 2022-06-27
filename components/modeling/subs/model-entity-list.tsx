@@ -17,21 +17,16 @@ export default function ModelEntityList({ onClickEntity }: Props) {
   const dispatch = useContext(ModelingDispatchContext)
 
   const entities = blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[]
+  const getNextId = () => Math.max(...blocks.map((b) => b.id)) + 1
 
   function addModel() {
-    const data = { id: 5, name: '', type: 'model', properties: [] } as Entity
-    dispatch({
-      type: 'added',
-      data: data,
-    })
+    const data = { id: getNextId(), name: '', type: 'model', properties: [] } as Entity
+    dispatch({ type: 'added', data: data })
   }
 
   function addEnum() {
-    const data = { id: 5, name: '', type: 'enum', enumerators: [] } as Entity
-    dispatch({
-      type: 'added',
-      data: data,
-    })
+    const data = { id: getNextId(), name: '', type: 'enum', enumerators: [] } as Entity
+    dispatch({ type: 'added', data: data })
   }
 
   const menu = (
@@ -67,11 +62,7 @@ export default function ModelEntityList({ onClickEntity }: Props) {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem
-            key={entity.name}
-            entity={entity}
-            onClick={() => onClickEntity(entity)}
-          />
+          <ModelEntityItem key={entity.id} entity={entity} onClick={() => onClickEntity(entity)} />
         ))}
       </div>
     </>

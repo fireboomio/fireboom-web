@@ -27,10 +27,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
   }
 
   function handleItemDelete(item: Entity) {
-    dispatch({
-      type: 'deleted',
-      data: item,
-    })
+    dispatch({ type: 'deleted', data: item })
   }
 
   function renameEntity(value: string) {
@@ -38,8 +35,8 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
-  function leaveItem(MenuVisible: boolean) {
-    if (MenuVisible == false) {
+  function leaveItem(visible: boolean) {
+    if (visible == false) {
       setIsHovering(false)
       setVisible(false)
     }
@@ -54,7 +51,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
           label: (
             <div onClick={() => setIsEditing(!isEditing)}>
               <AppleOutlined />
-              <span className="ml-1.5">编辑</span>
+              <span className="ml-1.5">重命名</span>
             </div>
           ),
         },
@@ -63,7 +60,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
           label: (
             <div>
               <AppleOutlined />
-              <span className="ml-1.5">查看</span>
+              <span className="ml-1.5">编辑</span>
             </div>
           ),
         },
@@ -108,7 +105,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
   return (
     <div
       className="flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9]"
-      key={entity.name}
+      key={entity.id}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onClick={onClick}
