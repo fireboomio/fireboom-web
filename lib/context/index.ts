@@ -1,3 +1,3 @@
-import { ModelingContext, EnumEntitiesContext } from './modeling-context'
+import { ModelingContext, ModelingDispatchContext, EnumEntitiesContext } from './modeling-context'
 
-export { ModelingContext, EnumEntitiesContext }
+export { ModelingContext, ModelingDispatchContext, EnumEntitiesContext }

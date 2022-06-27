@@ -1,31 +1,37 @@
 import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
-import { useContext, useEffect } from 'react'
-import { useImmer } from 'use-immer'
+import { useContext } from 'react'
 
 import type { Entity } from '@/interfaces'
-import { ModelingContext } from '@/lib/context'
+import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
 
 import ModelEntityItem from './model-entity-item'
 import styles from './model-entity-list.module.scss'
 
-export default function ModelEntityList() {
-  const { blocks, setBlocks } = useContext(ModelingContext)
-  const [entities, setEntities] = useImmer([] as Entity[])
+interface Props {
+  onClickEntity: (entity: Entity) => void
+}
 
-  useEffect(() => {
-    setEntities(blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blocks])
+export default function ModelEntityList({ onClickEntity }: Props) {
+  const blocks = useContext(ModelingContext)
+  const dispatch = useContext(ModelingDispatchContext)
+
+  const entities = blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[]
 
   function addModel() {
     const data = { id: 5, name: '', type: 'model', properties: [] } as Entity
-    setBlocks(blocks.concat(data))
+    dispatch({
+      type: 'added',
+      data: data,
+    })
   }
 
   function addEnum() {
     const data = { id: 5, name: '', type: 'enum', enumerators: [] } as Entity
-    setBlocks(blocks.concat(data))
+    dispatch({
+      type: 'added',
+      data: data,
+    })
   }
 
   const menu = (
@@ -61,7 +67,11 @@ export default function ModelEntityList() {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem key={entity.name} entity={entity} />
+          <ModelEntityItem
+            key={entity.name}
+            entity={entity}
+            onClick={() => onClickEntity(entity)}
+          />
         ))}
       </div>
     </>
