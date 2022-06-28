@@ -4,11 +4,11 @@ import { Button, Form, Input, Select, Radio } from 'antd'
 import styles from './datasource-editor-main.module.scss'
 
 export default function DatasourceEditorMainEdit() {
-  const onFinish = (values: any) => {
+  const onFinish = (values: object) => {
     console.log('Success:', values)
   }
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
 
