@@ -14,9 +14,15 @@ interface Props {
   sourceOptions: DBSourceResp[]
   onChangeSource: (value: string) => void
   onClickEntity: (entity: Entity) => void
+  onToggleDesigner: (entity: Entity) => void
 }
 
-export default function ModelPannel({ sourceOptions, onChangeSource, onClickEntity }: Props) {
+export default function ModelPannel({
+  sourceOptions,
+  onChangeSource,
+  onClickEntity,
+  onToggleDesigner,
+}: Props) {
   const dispatch = useContext(ModelingDispatchContext)
 
   useEffect(() => {
@@ -71,7 +77,7 @@ export default function ModelPannel({ sourceOptions, onChangeSource, onClickEnti
         </div>
       </div>
 
-      <ModelEntityList onClickEntity={onClickEntity} />
+      <ModelEntityList onClickEntity={onClickEntity} onToggleDesigner={onToggleDesigner} />
     </>
   )
 }

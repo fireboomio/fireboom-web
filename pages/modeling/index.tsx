@@ -44,8 +44,12 @@ export default function Modeling() {
   }
 
   function handleClickEntity(entity: Entity) {
-    console.log(entity)
     setCurrEntityId(entity.id)
+  }
+
+  function handleToggleDesigner(entity: Entity) {
+    setCurrEntityId(entity.id)
+    console.log(entity)
   }
 
   return (
@@ -65,6 +69,7 @@ export default function Modeling() {
                   sourceOptions={sources}
                   onChangeSource={handleChangeSource}
                   onClickEntity={handleClickEntity}
+                  onToggleDesigner={handleToggleDesigner}
                 />
               </Col>
               <Col span={19}>

@@ -12,9 +12,10 @@ import styles from '../model-pannel.module.scss'
 interface Props {
   entity: Entity
   onClick: () => void
+  onToggleDesigner: (entity: Entity) => void
 }
 
-export default function ModelEntityItem({ entity, onClick }: Props) {
+export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: Props) {
   const dispatch = useContext(ModelingDispatchContext)
   const [isHovering, setIsHovering] = useImmer(false)
   const [isEditing, setIsEditing] = useImmer(entity.name === '')
@@ -71,7 +72,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
         {
           key: '2',
           label: (
-            <div>
+            <div onClick={() => onToggleDesigner(entity)}>
               <AppleOutlined />
               <span className="ml-1.5">编辑</span>
             </div>

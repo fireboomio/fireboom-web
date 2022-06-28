@@ -10,9 +10,10 @@ import styles from './model-entity-list.module.scss'
 
 interface Props {
   onClickEntity: (entity: Entity) => void
+  onToggleDesigner: (entity: Entity) => void
 }
 
-export default function ModelEntityList({ onClickEntity }: Props) {
+export default function ModelEntityList({ onClickEntity, onToggleDesigner }: Props) {
   const blocks = useContext(ModelingContext)
   const dispatch = useContext(ModelingDispatchContext)
 
@@ -62,7 +63,12 @@ export default function ModelEntityList({ onClickEntity }: Props) {
 
       <div className="mt-3">
         {entities.map((entity) => (
-          <ModelEntityItem key={entity.id} entity={entity} onClick={() => onClickEntity(entity)} />
+          <ModelEntityItem
+            key={entity.id}
+            entity={entity}
+            onClick={() => onClickEntity(entity)}
+            onToggleDesigner={onToggleDesigner}
+          />
         ))}
       </div>
     </>
