@@ -60,7 +60,12 @@ export default function DatasourceEditorMainCheck() {
           column={1}
           size="small"
           className="w-270"
-          labelStyle={{ backgroundColor: 'white', width: '30%', borderRight:'none',borderBottom:'none' }}
+          labelStyle={{
+            backgroundColor: 'white',
+            width: '30%',
+            borderRight: 'none',
+            borderBottom: 'none',
+          }}
         >
           <Descriptions.Item label="连接名">{menus.connectName}</Descriptions.Item>
           <Descriptions.Item label="类型">{menus.SQlType}</Descriptions.Item>
