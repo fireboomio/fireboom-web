@@ -3,7 +3,7 @@ import { useImmer } from 'use-immer'
 import type { Entity } from '@/interfaces'
 import { EnumEntitiesContext } from '@/lib/context'
 
-import ModelEditorTitle from './subs/model-editor-title'
+import ModelDesignerTitle from './subs/model-designer-title'
 import ModelEnumBreadcrumb from './subs/model-enum-breadcrumb'
 import ModelEnumContent from './subs/model-enum-content'
 
@@ -17,7 +17,7 @@ export default function ModelEnum() {
   return (
     <div className="p-6">
       <EnumEntitiesContext.Provider value={{ enumEntities, setEnumEntities }}>
-        <ModelEditorTitle />
+        <ModelDesignerTitle />
         <ModelEnumBreadcrumb />
         <ModelEnumContent />
       </EnumEntitiesContext.Provider>

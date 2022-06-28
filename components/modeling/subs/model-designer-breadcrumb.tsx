@@ -1,7 +1,7 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 
-export default function ModelEditorBreadcumb() {
+export default function ModelDesignerBreadcumb() {
   const handleIconClick = () => {
     console.log('aaa')
   }

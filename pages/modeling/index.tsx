@@ -5,7 +5,8 @@ import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { ModelPannel, ModelEditor } from '@/components/modeling'
+import { ModelPannel, ModelDesigner } from '@/components/modeling'
+import ModelDesignerContent from '@/components/modeling/subs/model-designer-content'
 import type { DBSourceResp, Block, Entity } from '@/interfaces'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
@@ -16,6 +17,7 @@ import modelingReducer from './modeling-reducer'
 export default function Modeling() {
   const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
   const [currEntityId, setCurrEntityId] = useImmer(null as number | null | undefined)
+  const [showType, setShowType] = useImmer('data') // data schema
 
   // TODO: need refine
   useEffect(() => {
@@ -44,10 +46,12 @@ export default function Modeling() {
   }
 
   function handleClickEntity(entity: Entity) {
+    setShowType('data')
     setCurrEntityId(entity.id)
   }
 
   function handleToggleDesigner(entity: Entity) {
+    setShowType('schema')
     setCurrEntityId(entity.id)
     console.log(entity)
   }
@@ -73,7 +77,9 @@ export default function Modeling() {
                 />
               </Col>
               <Col span={19}>
-                <ModelEditor content={content} />
+                <ModelDesigner>
+                  <ModelDesignerContent content={content} />
+                </ModelDesigner>
               </Col>
             </Row>
           </ModelingCurrEntityContext.Provider>

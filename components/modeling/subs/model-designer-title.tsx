@@ -1,6 +1,6 @@
 import { AppleOutlined } from '@ant-design/icons'
 
-export default function ModelEditorTitle() {
+export default function ModelDesignerTitle() {
   const handleIconClick = () => {
     console.log('aaa')
   }
