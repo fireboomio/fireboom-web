@@ -37,13 +37,22 @@
 .cancel-btn {
   width: 72px;
   height: 32px;
-  margin-right: 16px;
   border: 1px solid rgb(95 98 105 / 10%);
   border-radius: 4px;
-
+  margin-right: 30px;
   &:hover,
   &:focus {
     color: #3d3333;
     border-color: skyblue;
+  }
+}
+
+.form-contain :global {
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+  .ant-form-item-with-help .ant-form-item-explain {
+    font-size: 10px;
+    min-height: 10px;
   }
 }
