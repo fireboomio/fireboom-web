@@ -1,23 +1,25 @@
 import { AppleOutlined, GithubOutlined, MoreOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Popconfirm, message } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces'
-import { ModelingContext } from '@/lib/context'
+import { ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 
 import styles from '../model-pannel.module.scss'
 
 interface Props {
   entity: Entity
+  onClick: () => void
 }
 
-export default function ModelEntityItem({ entity }: Props) {
-  const { blocks, setBlocks } = useContext(ModelingContext)
+export default function ModelEntityItem({ entity, onClick }: Props) {
+  const dispatch = useContext(ModelingDispatchContext)
   const [isHovering, setIsHovering] = useImmer(false)
   const [isEditing, setIsEditing] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
+  const { currEntityId, setCurrEntityId: _ } = useContext(ModelingCurrEntityContext)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === '1' || e.key === '2') {
@@ -25,36 +27,18 @@ export default function ModelEntityItem({ entity }: Props) {
     }
   }
 
-  function handleItemEdit(text: string) {
-    if (text.trim() == '') {
-      message.destroy()
-      void message.error('实体名不能为空，请重新输入', 1)
-    } else {
-      updateEntity({
-        id: 0,
-        name: text,
-        type: 'model',
-        properties: [],
-      })
-    }
-  }
-
   function handleItemDelete(item: Entity) {
-    setBlocks(blocks.filter((t) => t.id !== item.id))
+    dispatch({ type: 'deleted', data: item })
   }
 
-  function updateEntity(item: Entity) {
-    setBlocks((draft) => {
-      const element = draft.find((x) => x.id === item.id)
-      if (element) {
-        element.name = item.name
-      }
-    })
+  function renameEntity(value: string) {
+    dispatch({ type: 'changed', data: { ...entity, name: value } })
+    setIsEditing(false)
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
-  function leaveItem(MenuVisible: boolean) {
-    if (MenuVisible == false) {
+  function leaveItem(visible: boolean) {
+    if (visible == false) {
       setIsHovering(false)
       setVisible(false)
     }
@@ -69,7 +53,7 @@ export default function ModelEntityItem({ entity }: Props) {
           label: (
             <div onClick={() => setIsEditing(!isEditing)}>
               <AppleOutlined />
-              <span className="ml-1.5">编辑</span>
+              <span className="ml-1.5">重命名</span>
             </div>
           ),
         },
@@ -78,7 +62,7 @@ export default function ModelEntityItem({ entity }: Props) {
           label: (
             <div>
               <AppleOutlined />
-              <span className="ml-1.5">查看</span>
+              <span className="ml-1.5">编辑</span>
             </div>
           ),
         },
@@ -106,33 +90,38 @@ export default function ModelEntityItem({ entity }: Props) {
     />
   )
 
+  const itemContent = isEditing ? (
+    <Input
+      onBlur={(e) => renameEntity(e.target.value)}
+      // @ts-ignore
+      onPressEnter={(e) => renameEntity(e.target.value as string)}
+      className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
+      defaultValue={entity.name}
+      autoFocus
+      placeholder="请输入实体名"
+    />
+  ) : (
+    <div className="text-sm font-normal leading-4">{entity.name}</div>
+  )
+
   return (
     <div
-      className="flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9]"
-      key={entity.name}
+      className={`flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9] ${
+        entity.id === currEntityId ? 'bg-[#F8F8F9]' : ''
+      }`}
+      key={entity.id}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
+      onClick={onClick}
     >
-      <MoreOutlined className="mx-2px" />
+      <MoreOutlined className="mx-0.5" />
       {entity.type === 'model' ? (
-        <AppleOutlined className="ml-2px mr-2" />
+        <AppleOutlined className="ml-0.5 mr-2" />
       ) : (
-        <GithubOutlined className="ml-2px mr-2" />
+        <GithubOutlined className="ml-0.5 mr-2" />
       )}
 
-      {isEditing ? (
-        <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
-          // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value as string)}
-          className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
-          defaultValue={entity.name}
-          autoFocus
-          placeholder="请输入实体名"
-        />
-      ) : (
-        <div className="text-sm font-normal leading-4">{entity.name}</div>
-      )}
+      {itemContent}
 
       <Dropdown
         overlay={menu}

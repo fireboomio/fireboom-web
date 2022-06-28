@@ -1,14 +1,16 @@
-import { createContext } from 'react'
+import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { Block, Entity } from '@/interfaces'
+import type { Block, BlockAction, Entity } from '@/interfaces'
 
-interface ModelingContextT {
-  blocks: Block[]
-  setBlocks: useImmer.Updater<Block[]>
+interface ModelingCurrEntityContextT {
+  currEntityId: number | null | undefined
+  setCurrEntityId: useImmer.Updater<number | null | undefined>
 }
 
-export const ModelingContext = createContext({} as ModelingContextT)
+export const ModelingContext = createContext([] as Block[])
+export const ModelingDispatchContext = createContext({} as Dispatch<BlockAction>)
+export const ModelingCurrEntityContext = createContext({} as ModelingCurrEntityContextT)
 
 interface EnumEntitiesContextT {
   enumEntities: Entity[]
