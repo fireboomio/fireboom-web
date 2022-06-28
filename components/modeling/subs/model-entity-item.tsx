@@ -23,6 +23,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
   const { currEntityId, setCurrEntityId: _ } = useContext(ModelingCurrEntityContext)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
+    e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
       setVisible(false)
     }
@@ -148,6 +149,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
         }}
       >
         <MoreOutlined
+          onClick={(e) => e.stopPropagation()}
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />

@@ -5,8 +5,7 @@ import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { ModelPannel, ModelDesigner } from '@/components/modeling'
-import ModelDesignerContent from '@/components/modeling/subs/model-designer-content'
+import { ModelPannel, ModelContainer } from '@/components/modeling'
 import type { DBSourceResp, Block, Entity } from '@/interfaces'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
@@ -14,12 +13,13 @@ import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
 import styles from './index.module.scss'
 import modelingReducer from './modeling-reducer'
 
+type ShowTypeT = 'data' | 'model' | 'enum'
+
 export default function Modeling() {
   const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
-  const [currEntityId, setCurrEntityId] = useImmer(null as number | null | undefined)
-  const [showType, setShowType] = useImmer('data') // data schema
+  const [currEntityId, setCurrEntityId] = useImmer<number | null | undefined>(null)
+  const [showType, setShowType] = useImmer<ShowTypeT>('data')
 
-  // TODO: need refine
   useEffect(() => {
     setCurrEntityId(blocks.filter((b) => ['model', 'enum'].includes(b.type)).at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -29,8 +29,6 @@ export default function Modeling() {
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
-
-  const content = blocks.find((b) => b.id === currEntityId) as Entity
 
   function handleChangeSource(value: string) {
     schemaFetcher(`/api/schemas/${value}`)
@@ -51,7 +49,7 @@ export default function Modeling() {
   }
 
   function handleToggleDesigner(entity: Entity) {
-    setShowType('schema')
+    setShowType(entity.type)
     setCurrEntityId(entity.id)
     console.log(entity)
   }
@@ -77,9 +75,7 @@ export default function Modeling() {
                 />
               </Col>
               <Col span={19}>
-                <ModelDesigner>
-                  <ModelDesignerContent content={content} />
-                </ModelDesigner>
+                <ModelContainer showType={showType} currEntityId={currEntityId} />
               </Col>
             </Row>
           </ModelingCurrEntityContext.Provider>
