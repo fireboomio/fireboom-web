@@ -1,8 +1,8 @@
 import {
   ModelingContext,
   ModelingDispatchContext,
-  ModelingFoucsContext,
+  ModelingCurrEntityContext,
   EnumEntitiesContext,
 } from './modeling-context'
 
-export { ModelingContext, ModelingDispatchContext, ModelingFoucsContext, EnumEntitiesContext }
+export { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext, EnumEntitiesContext }

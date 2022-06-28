@@ -1,13 +1,13 @@
 import { getSchema } from '@mrleebo/prisma-ast'
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useReducer } from 'react'
+import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelEditor } from '@/components/modeling'
 import type { DBSourceResp, Block, Entity } from '@/interfaces'
-import { ModelingContext, ModelingDispatchContext, ModelingFoucsContext } from '@/lib/context'
+import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
 
 import styles from './index.module.scss'
@@ -15,14 +15,20 @@ import modelingReducer from './modeling-reducer'
 
 export default function Modeling() {
   const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
-  const [foucsId, setFoucsId] = useImmer(null as number | null | undefined)
+  const [currEntityId, setCurrEntityId] = useImmer(null as number | null | undefined)
+
+  // TODO: need refine
+  useEffect(() => {
+    setCurrEntityId(blocks.filter((b) => ['model', 'enum'].includes(b.type)).at(0)?.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocks])
 
   const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/sources', sourceFetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
 
-  const content = blocks.find((b) => b.id === foucsId) as Entity
+  const content = blocks.find((b) => b.id === currEntityId) as Entity
 
   function handleChangeSource(value: string) {
     schemaFetcher(`/api/schemas/${value}`)
@@ -32,8 +38,6 @@ export default function Modeling() {
           data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx })),
         })
       )
-      // FIXME:
-      .then(() => setFoucsId(blocks.filter((b) => ['model', 'enum'].includes(b.type)).at(0)?.id))
       .catch((err: Error) => {
         throw err
       })
@@ -41,7 +45,7 @@ export default function Modeling() {
 
   function handleClickEntity(entity: Entity) {
     console.log(entity)
-    setFoucsId(entity.id)
+    setCurrEntityId(entity.id)
   }
 
   return (
@@ -52,7 +56,9 @@ export default function Modeling() {
 
       <ModelingContext.Provider value={blocks}>
         <ModelingDispatchContext.Provider value={dispatch}>
-          <ModelingFoucsContext.Provider value={{ foucsId, setFoucsId }}>
+          <ModelingCurrEntityContext.Provider
+            value={{ currEntityId: currEntityId, setCurrEntityId: setCurrEntityId }}
+          >
             <Row className="h-screen">
               <Col span={5} className={styles['col-left']}>
                 <ModelPannel
@@ -65,7 +71,7 @@ export default function Modeling() {
                 <ModelEditor content={content} />
               </Col>
             </Row>
-          </ModelingFoucsContext.Provider>
+          </ModelingCurrEntityContext.Provider>
         </ModelingDispatchContext.Provider>
       </ModelingContext.Provider>
     </>

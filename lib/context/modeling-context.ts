@@ -3,14 +3,14 @@ import * as useImmer from 'use-immer'
 
 import type { Block, BlockAction, Entity } from '@/interfaces'
 
-interface ModelingFoucsContextT {
-  foucsId: number | null | undefined
-  setFoucsId: useImmer.Updater<number | null | undefined>
+interface ModelingCurrEntityContextT {
+  currEntityId: number | null | undefined
+  setCurrEntityId: useImmer.Updater<number | null | undefined>
 }
 
 export const ModelingContext = createContext([] as Block[])
 export const ModelingDispatchContext = createContext({} as Dispatch<BlockAction>)
-export const ModelingFoucsContext = createContext({} as ModelingFoucsContextT)
+export const ModelingCurrEntityContext = createContext({} as ModelingCurrEntityContextT)
 
 interface EnumEntitiesContextT {
   enumEntities: Entity[]

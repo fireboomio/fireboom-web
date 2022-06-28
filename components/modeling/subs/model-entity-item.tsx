@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces'
-import { ModelingDispatchContext } from '@/lib/context'
+import { ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 
 import styles from '../model-pannel.module.scss'
 
@@ -19,6 +19,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
   const [isHovering, setIsHovering] = useImmer(false)
   const [isEditing, setIsEditing] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
+  const { currEntityId, setCurrEntityId: _ } = useContext(ModelingCurrEntityContext)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === '1' || e.key === '2') {
@@ -105,7 +106,9 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
 
   return (
     <div
-      className="flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9]"
+      className={`flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9] ${
+        entity.id === currEntityId ? 'bg-[#F8F8F9]' : ''
+      }`}
       key={entity.id}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
