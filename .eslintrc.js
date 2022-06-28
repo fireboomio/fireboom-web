@@ -56,6 +56,7 @@ module.exports = {
     ],
     'react/self-closing-comp': 'error',
     'no-console': 'warn',
+    camelcase: ['error', { ignoreGlobals: true, ignoreDestructuring: true }],
     'array-bracket-newline': ['error', 'consistent'],
     // 'array-bracket-spacing': [
     //   'error',
