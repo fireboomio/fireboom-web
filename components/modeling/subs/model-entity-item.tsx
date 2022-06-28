@@ -17,7 +17,7 @@ interface Props {
 export default function ModelEntityItem({ entity, onClick }: Props) {
   const dispatch = useContext(ModelingDispatchContext)
   const [isHovering, setIsHovering] = useImmer(false)
-  const [isEditing, setIsEditing] = useImmer(false)
+  const [isEditing, setIsEditing] = useImmer(entity.name === '')
   const [visible, setVisible] = useImmer(false)
   const { currEntityId, setCurrEntityId: _ } = useContext(ModelingCurrEntityContext)
 
@@ -27,12 +27,23 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
     }
   }
 
+  function handlePressKey(e: React.KeyboardEvent) {
+    if (e.key === 'Escape') {
+      setIsEditing(false)
+    }
+  }
+
   function handleItemDelete(item: Entity) {
     dispatch({ type: 'deleted', data: item })
   }
 
   function renameEntity(value: string) {
-    dispatch({ type: 'changed', data: { ...entity, name: value } })
+    if (value === '') {
+      dispatch({ type: 'deleted', data: entity })
+    } else {
+      dispatch({ type: 'changed', data: { ...entity, name: value } })
+    }
+
     setIsEditing(false)
   }
 
@@ -95,6 +106,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
       onBlur={(e) => renameEntity(e.target.value)}
       // @ts-ignore
       onPressEnter={(e) => renameEntity(e.target.value as string)}
+      onKeyUp={handlePressKey}
       className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
       defaultValue={entity.name}
       autoFocus
@@ -113,6 +125,7 @@ export default function ModelEntityItem({ entity, onClick }: Props) {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onClick={onClick}
+      onDoubleClick={() => setIsEditing(true)}
     >
       <MoreOutlined className="mx-0.5" />
       {entity.type === 'model' ? (

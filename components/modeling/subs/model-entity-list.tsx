@@ -1,16 +1,22 @@
 import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import type { Entity } from '@/interfaces'
 import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
 
+import ModelEntityItem from './model-entity-item'
 import styles from './model-entity-list.module.scss'
 
-export default function ModelEntityList({ children }: React.PropsWithChildren) {
+interface Props {
+  onClickEntity: (entity: Entity) => void
+}
+
+export default function ModelEntityList({ onClickEntity }: Props) {
   const blocks = useContext(ModelingContext)
   const dispatch = useContext(ModelingDispatchContext)
 
+  const entities = blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[]
   const getNextId = () => Math.max(...blocks.map((b) => b.id)) + 1
 
   function addModel() {
@@ -54,7 +60,11 @@ export default function ModelEntityList({ children }: React.PropsWithChildren) {
         </Dropdown>
       </div>
 
-      {children}
+      <div className="mt-3">
+        {entities.map((entity) => (
+          <ModelEntityItem key={entity.id} entity={entity} onClick={() => onClickEntity(entity)} />
+        ))}
+      </div>
     </>
   )
 }
