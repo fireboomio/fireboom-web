@@ -1,51 +1,47 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
-import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces'
 
-import { DatasourceContext } from './datasource-context'
 import styles from './datasource-pannel.module.scss'
-import ModelEntityList from './subs/datasource-db-list'
+import DatasourceList from './subs/datasource-db-list'
+interface Props {
+  onClickItem: (dsItem: DatasourceItem) => void
+  onChangeDBType: (value: string) => void
+}
 
-export default function DatasourcePannel() {
-  const [DatasourceList, setDatasourceList] = useImmer([
-    { id: 1, name: 'default_db', isEditing: false },
-    { id: 2, name: 'mysql_ant', isEditing: false },
-    { id: 3, name: 'mongodb_ant', isEditing: false },
-    { id: 4, name: 'mongodb_ant', isEditing: false },
-    { id: 5, name: 'default_db', isEditing: false },
-    { id: 6, name: 'mysql_ant', isEditing: false },
-  ] as DatasourceItem[])
-
+export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props) {
   const { TabPane } = Tabs
 
-  const onChange = (key: string) => {
-    console.log(key)
-  }
-
   return (
-    <DatasourceContext.Provider value={{ DatasourceList, setDatasourceList }}>
+    <>
       <div className={styles.pannel}>
         <div className={`${styles.title} text-base`}>
           外部数据源 <AppleOutlined />
         </div>
       </div>
 
-      <Tabs defaultActiveKey="1" onChange={onChange} centered tabBarStyle={{ marginBottom: 0 }}>
-        <TabPane tab="DB" key="1">
-          <ModelEntityList />
+      <Tabs
+        defaultActiveKey="1"
+        onChange={(key: string) => {
+          onChangeDBType(key)
+        }}
+        centered
+        tabBarStyle={{ marginBottom: 0 }}
+      >
+        <TabPane tab="DB" key="DB">
+          <DatasourceList onClickItem={onClickItem} Datasourcetype="DB" />
         </TabPane>
-        <TabPane tab="REST" key="2">
-          Content of Tab Pane 2
+        <TabPane tab="REST" key="REST">
+          <DatasourceList onClickItem={onClickItem} Datasourcetype="REST" />
         </TabPane>
-        <TabPane tab="Graphal" key="3">
-          Content of Tab Pane 3
+        <TabPane tab="Graphal" key="Graphal">
+          <DatasourceList onClickItem={onClickItem} Datasourcetype="Graphal" />
         </TabPane>
         <TabPane tab="自定义" key="4">
-          Content of Tab Pane 4
+          <DatasourceList onClickItem={onClickItem} Datasourcetype="defineByself" />
         </TabPane>
       </Tabs>
-    </DatasourceContext.Provider>
+    </>
   )
 }

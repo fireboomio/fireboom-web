@@ -1,12 +1,17 @@
 import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions } from 'antd'
 
-import styles from './datasource-editor-main.module.scss'
+import type { DatasourceItem } from '@/interfaces'
 
-export default function DatasourceEditorMainCheck() {
+import styles from './datasource-editor-main.module.scss'
+interface Props {
+  content: DatasourceItem
+}
+export default function DatasourceEditorMainCheck({ content }: Props) {
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
+
   const menus = {
     connectName: 'default_db',
     SQlType: 'MySQL',
@@ -19,7 +24,7 @@ export default function DatasourceEditorMainCheck() {
     userName: 'user',
     password: '*******',
   }
-
+  
   return (
     <>
       <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
@@ -67,7 +72,7 @@ export default function DatasourceEditorMainCheck() {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="连接名">{menus.connectName}</Descriptions.Item>
+          <Descriptions.Item label="连接名">{JSON.stringify(content)}</Descriptions.Item>
           <Descriptions.Item label="类型">{menus.SQlType}</Descriptions.Item>
           <Descriptions.Item label="类型">{menus.typeName}</Descriptions.Item>
           <Descriptions.Item label="环境变量">{menus.environmentVar}</Descriptions.Item>
