@@ -50,8 +50,8 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
   return (
     <div className="p-6">
       <div className="flex justify-start items-center mb-6">
-        <span className="text-lg flex-grow">
-          {action}/{content?.name}
+        <span className="flex-grow text-lg font-medium">
+          {action} / {content?.name}
         </span>
         <AppleOutlined className="text-base mr-3" onClick={handleIconClick} />
         <AppleOutlined className="text-base mr-3" onClick={handleIconClick} />
