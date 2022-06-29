@@ -46,21 +46,15 @@ export default function Layout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="flex items-center mx-7 my-5">
+        <div className="mx-6 my-5">
           <Link href="/">
-            <a className="flex">
-              <Image
-                width={26}
-                height={32}
-                src="https://picsum.photos/26/32"
-                alt="FireBoom"
-                preview={false}
-              />
+            <a className="flex items-center">
+              <Image width={36} height={36} src="/logo.png" alt="FireBoom" preview={false} />
 
               <span
                 className={`${
                   collapsed ? styles['logo-label-collapsed'] : styles['logo-label']
-                } ml-3 font-bold text-xl`}
+                } ml-2 font-bold text-xl`}
               >
                 FireBoom
               </span>
