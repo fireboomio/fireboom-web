@@ -1,4 +1,4 @@
-import type { DatasourceItem, DatasourceAction } from './datasource'
+import type { DatasourceItem, DatasourceAction, DatasourceResp } from './datasource'
 import type { DBSourceResp, SchemaResp, Block, Entity, Field, BlockAction } from './modeling'
 
 interface Result<T> {
@@ -15,4 +15,5 @@ export type {
   Field,
   DatasourceItem,
   DatasourceAction,
+  DatasourceResp,
 }
