@@ -15,10 +15,10 @@ export default function ModelDesigner({ properties }: Props) {
   console.log('fields', fields)
 
   return (
-    <>
+    <div>
       {fields?.map((field, idx) => (
         <ModelDesignerItem key={idx} data={field} />
       ))}
-    </>
+    </div>
   )
 }

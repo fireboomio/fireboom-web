@@ -1,5 +1,3 @@
-import styles from './model-designer.module.scss'
-
 interface Props {
   data: string
   onClick: () => void
@@ -7,7 +5,7 @@ interface Props {
 
 export default function ModelDesignerItemType({ data, onClick }: Props) {
   return (
-    <div className={`${styles['item-col']} ${styles['item-col-type']}`} onClick={onClick}>
+    <div className="h-6 w-full max-w-150px hover:bg-[#F8F8F9]" onClick={onClick}>
       {data}
     </div>
   )
