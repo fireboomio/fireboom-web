@@ -8,9 +8,10 @@ import DatasourceList from './subs/datasource-db-list'
 interface Props {
   onClickItem: (dsItem: DatasourceItem) => void
   onChangeDBType: (value: string) => void
+  onToggleDesigner: (DatasourceItem: DatasourceItem) => void
 }
 
-export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props) {
+export default function DatasourcePannel({ onClickItem, onChangeDBType, onToggleDesigner }: Props) {
   const { TabPane } = Tabs
 
   return (
@@ -30,16 +31,32 @@ export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props)
         tabBarStyle={{ marginBottom: 0 }}
       >
         <TabPane tab="DB" key="DB">
-          <DatasourceList onClickItem={onClickItem} Datasourcetype="DB" />
+          <DatasourceList
+            onClickItem={onClickItem}
+            Datasourcetype="DB"
+            onToggleDesigner={onToggleDesigner}
+          />
         </TabPane>
         <TabPane tab="REST" key="REST">
-          <DatasourceList onClickItem={onClickItem} Datasourcetype="REST" />
+          <DatasourceList
+            onClickItem={onClickItem}
+            Datasourcetype="REST"
+            onToggleDesigner={onToggleDesigner}
+          />
         </TabPane>
         <TabPane tab="Graphal" key="Graphal">
-          <DatasourceList onClickItem={onClickItem} Datasourcetype="Graphal" />
+          <DatasourceList
+            onClickItem={onClickItem}
+            Datasourcetype="Graphal"
+            onToggleDesigner={onToggleDesigner}
+          />
         </TabPane>
         <TabPane tab="自定义" key="4">
-          <DatasourceList onClickItem={onClickItem} Datasourcetype="defineByself" />
+          <DatasourceList
+            onClickItem={onClickItem}
+            Datasourcetype="defineByself"
+            onToggleDesigner={onToggleDesigner}
+          />
         </TabPane>
       </Tabs>
     </>

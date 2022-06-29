@@ -13,15 +13,17 @@ interface Props {
   datasourceItem: DatasourceItem
   onClickItem: (dsItem: DatasourceItem) => void
   Datasourcetype: string
+  onToggleDesigner: (DatasourceItem: DatasourceItem) => void
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.isEditing)
   const [isHovering, setIsHovering] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
+    e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
       setVisible(false)
     }
@@ -32,18 +34,22 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       message.destroy()
       void message.error('实体名不能为空，请重新输入', 1)
     } else {
-      updateEntity({ id: datasourceItem.id, name: text, isEditing: false, type: 'Datasourcetype' })
+      dispatch({
+        type: 'changed',
+        data: {
+          id: datasourceItem.id,
+          name: text,
+          isEditing: false,
+          type: 'Datasourcetype',
+          info: {},
+        },
+      })
       setIsEditing(false)
     }
   }
 
   function handleItemDelete(item: DatasourceItem) {
     dispatch({ type: 'deleted', data: item })
-  }
-
-  function updateEntity(item: DatasourceItem) {
-    dispatch({ type: 'changed', data: { ...item, name: item.name } })
-    setIsEditing(false)
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -61,18 +67,26 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
         {
           key: '1',
           label: (
-            <div onClick={() => setIsEditing(!isEditing)}>
+            <div
+              onClick={() => {
+                setIsEditing(!isEditing)
+              }}
+            >
               <AppleOutlined />
-              <span className="ml-1.5">编辑</span>
+              <span className="ml-1.5">重命名</span>
             </div>
           ),
         },
         {
           key: '2',
           label: (
-            <div>
+            <div
+              onClick={() => {
+                onToggleDesigner(datasourceItem)
+              }}
+            >
               <AppleOutlined />
-              <span className="ml-1.5">查看</span>
+              <span className="ml-1.5">编辑</span>
             </div>
           ),
         },
@@ -102,7 +116,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
 
   return (
     <div
-      className="flex justify-start items-center py-2.5 pl-3"
+      className="flex justify-start items-center py-2.5 pl-3 cursor-pointer"
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}

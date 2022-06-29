@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { DatasourcePannel, DatasourceEditor } from '@/components/datasource'
+import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
 import type { DatasourceResp, DatasourceItem } from '@/interfaces'
 import {
   DatasourceContext,
@@ -18,7 +18,7 @@ import styles from './index.module.scss'
 
 export default function Modeling() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceItem[])
-
+  const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,10 +52,13 @@ export default function Modeling() {
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem
 
   function handleClickItem(datasourceItem: DatasourceItem) {
-    console.log(datasourceItem)
+    setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
-
+  function handleToggleDesigner(DatasourceItem: DatasourceItem) {
+    setShowType(DatasourceItem.type)
+    setCurrDBId(DatasourceItem.id)
+  }
   return (
     <>
       <DatasourceContext.Provider value={datasourceList}>
@@ -69,10 +72,11 @@ export default function Modeling() {
                 <DatasourcePannel
                   onClickItem={handleClickItem}
                   onChangeDBType={handleChangeDStype}
+                  onToggleDesigner={handleToggleDesigner}
                 />
               </Col>
               <Col span={19}>
-                <DatasourceEditor content={content} />
+                <DatasourceContainer showType={showType} content={content} />
               </Col>
             </Row>
           </DatasourceCurrDBContext.Provider>
