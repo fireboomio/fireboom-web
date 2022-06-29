@@ -1,56 +1,64 @@
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useLayoutEffect, useReducer } from 'react'
+import { useEffect, useLayoutEffect, useReducer } from 'react'
+import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { DatasourcePannel, DatasourceEditor } from '@/components/datasource'
-import type { DatasourceItem } from '@/interfaces'
+import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
+import type { DatasourceResp, DatasourceItem } from '@/interfaces'
 import {
   DatasourceContext,
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
 } from '@/lib/context'
+import { datasourceFetcher } from '@/lib/fetchers'
 
 import datasourceReducer from './datasource-reducer'
 import styles from './index.module.scss'
 
-const datasourcelistorigin = [
-  { id: 1, name: 'default_db', isEditing: false, type: 'DB' },
-  { id: 2, name: 'mysql_ant', isEditing: false, type: 'DB' },
-  { id: 3, name: 'mongodb_ant', isEditing: false, type: 'DB' },
-  { id: 4, name: 'mongodb_ant', isEditing: false, type: 'REST' },
-  { id: 5, name: 'default_db', isEditing: false, type: 'REST' },
-  { id: 6, name: 'mysql_ant', isEditing: false, type: 'Graphal' },
-  { id: 7, name: 'mysql_ant', isEditing: false, type: 'Graphal' },
-]
 export default function Modeling() {
-  const [datasourceList, dispatch] = useReducer(
-    datasourceReducer,
-    datasourcelistorigin as DatasourceItem[]
-  )
-
-  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-
-  // TODO: need refine
+  const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceItem[])
+  const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasourceList])
 
+  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
+  const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
+    '/api/datasource',
+    datasourceFetcher
+  )
+  useEffect(() => {
+    datasource &&
+      dispatch({
+        type: 'fetched',
+        data: datasource.filter((item) => item.type == 'DB'),
+      })
+  }, [datasource])
+
+  if (error) return <div>failed to load</div>
+  if (!datasource) return <div>loading...</div>
+
+  // TODO: need refine
   function handleChangeDStype(value: string) {
-    dispatch({
-      type: 'fetched',
-      data: datasourcelistorigin.filter((item) => item.type == value),
-    })
+    datasource &&
+      dispatch({
+        type: 'fetched',
+        data: datasource.filter((item) => item.type == value),
+      })
   }
 
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem
 
   function handleClickItem(datasourceItem: DatasourceItem) {
-    console.log(datasourceItem)
+    setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
-
+  function handleToggleDesigner(DatasourceItem: DatasourceItem) {
+    setShowType(DatasourceItem.type)
+    setCurrDBId(DatasourceItem.id)
+  }
   return (
     <>
       <DatasourceContext.Provider value={datasourceList}>
@@ -64,10 +72,11 @@ export default function Modeling() {
                 <DatasourcePannel
                   onClickItem={handleClickItem}
                   onChangeDBType={handleChangeDStype}
+                  onToggleDesigner={handleToggleDesigner}
                 />
               </Col>
               <Col span={19}>
-                <DatasourceEditor content={content} />
+                <DatasourceContainer showType={showType} content={content} />
               </Col>
             </Row>
           </DatasourceCurrDBContext.Provider>

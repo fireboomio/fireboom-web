@@ -11,20 +11,11 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
-
-  const menus = {
-    connectName: 'default_db',
-    SQlType: 'MySQL',
-    typeName: '环境变量',
-    environmentVar: 'HASURA_GRAPHQL_DB_UR',
-    connectURL: 'postgresql://username:password@hostname:5432/database',
-    host: 'localhost',
-    DBName: 'eps',
-    port: 5432,
-    userName: 'user',
-    password: '*******',
+  if (!content) {
+    return <></>
   }
-  
+  const { info } = content
+
   return (
     <>
       <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
@@ -72,16 +63,16 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="连接名">{JSON.stringify(content)}</Descriptions.Item>
-          <Descriptions.Item label="类型">{menus.SQlType}</Descriptions.Item>
-          <Descriptions.Item label="类型">{menus.typeName}</Descriptions.Item>
-          <Descriptions.Item label="环境变量">{menus.environmentVar}</Descriptions.Item>
-          <Descriptions.Item label="连接URL">{menus.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="主机">{menus.host}</Descriptions.Item>
-          <Descriptions.Item label="数据库名">{menus.DBName}</Descriptions.Item>
-          <Descriptions.Item label="端口">{menus.port}</Descriptions.Item>
-          <Descriptions.Item label="用户">{menus.userName}</Descriptions.Item>
-          <Descriptions.Item label="密码">{menus.password}</Descriptions.Item>
+          <Descriptions.Item label="连接名">{info.connectName}</Descriptions.Item>
+          <Descriptions.Item label="类型">{info.SQlType}</Descriptions.Item>
+          <Descriptions.Item label="类型">{info.typeName}</Descriptions.Item>
+          <Descriptions.Item label="环境变量">{info.environmentVar}</Descriptions.Item>
+          <Descriptions.Item label="连接URL">{info.connectURL}</Descriptions.Item>
+          <Descriptions.Item label="主机">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="数据库名">{info.DBName}</Descriptions.Item>
+          <Descriptions.Item label="端口">{info.port}</Descriptions.Item>
+          <Descriptions.Item label="用户">{info.userName}</Descriptions.Item>
+          <Descriptions.Item label="密码">{info.password}</Descriptions.Item>
         </Descriptions>
       </div>
     </>

@@ -1,4 +1,4 @@
-import DatasourceEditor from './datasource-editor'
+import DatasourceContainer from './datasource-container'
 import DatasourcePannel from './datasource-pannel'
 
-export { DatasourceEditor, DatasourcePannel }
+export { DatasourceContainer, DatasourcePannel }

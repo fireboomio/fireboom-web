@@ -3,6 +3,9 @@ export interface DatasourceItem {
   name: string
   isEditing: boolean
   type: string
+  info: {
+    [key: string]: number | string | boolean
+  }
 }
 
 export type DatasourceAction = DatasourceSingleAction | DatasourceListAction
@@ -14,4 +17,13 @@ interface DatasourceSingleAction {
 interface DatasourceListAction {
   type: 'fetched'
   data: DatasourceItem[]
+}
+export interface DatasourceResp {
+  id: number
+  name: string
+  isEditing: boolean
+  type: string
+  info: {
+    [key: string]: number | string | boolean
+  }
 }

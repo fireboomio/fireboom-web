@@ -11,9 +11,10 @@ import styles from './datasource-db-list.module.scss'
 interface Props {
   onClickItem: (dsItem: DatasourceItem) => void
   Datasourcetype: string
+  onToggleDesigner: (DatasourceItem: DatasourceItem) => void
 }
 
-export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props) {
+export default function DatasourceDBList({ onClickItem, Datasourcetype, onToggleDesigner }: Props) {
   const datasourceList = useContext(DatasourceContext)
   const dispatch = useContext(DatasourceDispatchContext)
 
@@ -48,6 +49,7 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
             datasourceItem={datasourceItem}
             onClickItem={onClickItem}
             Datasourcetype={Datasourcetype}
+            onToggleDesigner={onToggleDesigner}
           />
         ))}
       </div>
