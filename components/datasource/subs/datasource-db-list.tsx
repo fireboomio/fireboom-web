@@ -2,17 +2,26 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import { DatasourceContext } from '../datasource-context'
+import type { DatasourceItem } from '@/interfaces'
+import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
+
 import DatasourceDBItem from './datasource-db-item'
 import styles from './datasource-db-list.module.scss'
 
-export default function DatasourceDBList() {
-  const { DatasourceList, setDatasourceList } = useContext(DatasourceContext)
+interface Props {
+  onClickItem: (dsItem: DatasourceItem) => void
+  Datasourcetype: string
+}
+
+export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props) {
+  const datasourceList = useContext(DatasourceContext)
+  const dispatch = useContext(DatasourceDispatchContext)
+
+  const getNextId = () => Math.max(...datasourceList.map((b) => b.id)) + 1
 
   function addTable() {
-    setDatasourceList(
-      DatasourceList.concat({ id: DatasourceList.length + 1, name: '', isEditing: true })
-    )
+    const data = { id: getNextId(), name: '', isEditing: true } as DatasourceItem
+    dispatch({ type: 'added', data: data })
   }
 
   return (
@@ -33,8 +42,13 @@ export default function DatasourceDBList() {
         </div>
       </div>
       <div className="mt-3">
-        {DatasourceList.map((datasourceItem) => (
-          <DatasourceDBItem key={datasourceItem.id} datasourceItem={datasourceItem} />
+        {datasourceList.map((datasourceItem) => (
+          <DatasourceDBItem
+            key={datasourceItem.id}
+            datasourceItem={datasourceItem}
+            onClickItem={onClickItem}
+            Datasourcetype={Datasourcetype}
+          />
         ))}
       </div>
     </>

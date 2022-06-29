@@ -5,16 +5,18 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces'
+import { DatasourceDispatchContext } from '@/lib/context'
 
-import { DatasourceContext } from '../datasource-context'
 import styles from '../datasource-pannel.module.scss'
 
 interface Props {
   datasourceItem: DatasourceItem
+  onClickItem: (dsItem: DatasourceItem) => void
+  Datasourcetype: string
 }
 
-export default function DatasourceDBItem({ datasourceItem }: Props) {
-  const { DatasourceList, setDatasourceList } = useContext(DatasourceContext)
+export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+  const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.isEditing)
   const [isHovering, setIsHovering] = useImmer(false)
   const [visible, setVisible] = useImmer(false)
@@ -30,22 +32,18 @@ export default function DatasourceDBItem({ datasourceItem }: Props) {
       message.destroy()
       void message.error('实体名不能为空，请重新输入', 1)
     } else {
-      updateEntity({ id: datasourceItem.id, name: text,isEditing:false })
+      updateEntity({ id: datasourceItem.id, name: text, isEditing: false, type: 'Datasourcetype' })
       setIsEditing(false)
     }
   }
 
   function handleItemDelete(item: DatasourceItem) {
-    setDatasourceList(DatasourceList.filter((t) => t.name !== item.name))
+    dispatch({ type: 'deleted', data: item })
   }
 
   function updateEntity(item: DatasourceItem) {
-    setDatasourceList((draft) => {
-      const entity = draft.find((x) => x.id === item.id)
-      if (entity) {
-        entity.name = item.name
-      }
-    })
+    dispatch({ type: 'changed', data: { ...item, name: item.name } })
+    setIsEditing(false)
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -109,6 +107,9 @@ export default function DatasourceDBItem({ datasourceItem }: Props) {
       key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
+      onClick={() => {
+        onClickItem(datasourceItem)
+      }}
     >
       <AppleOutlined className="ml-2px mr-2" />
 
@@ -125,7 +126,7 @@ export default function DatasourceDBItem({ datasourceItem }: Props) {
       ) : (
         <div
           onClick={() => {
-            setIsEditing(true)
+            // setIsEditing(true)
           }}
           className="text-sm font-normal leading-4"
         >
