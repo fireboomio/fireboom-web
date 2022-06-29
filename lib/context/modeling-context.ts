@@ -4,8 +4,8 @@ import * as useImmer from 'use-immer'
 import type { Block, BlockAction } from '@/interfaces'
 
 interface ModelingCurrEntityContextT {
-  currEntityId: number | null | undefined
-  setCurrEntityId: useImmer.Updater<number | null | undefined>
+  currEntityId: number | null
+  setCurrEntityId: useImmer.Updater<number | null>
 }
 
 export const ModelingContext = createContext<Block[]>([])
