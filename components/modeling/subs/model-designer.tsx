@@ -4,6 +4,6 @@ interface Props {
   content: Entity
 }
 
-export default function ModelEditorContent({ content }: Props) {
+export default function ModelDesigner({ content }: Props) {
   return <div>{JSON.stringify(content)}</div>
 }
