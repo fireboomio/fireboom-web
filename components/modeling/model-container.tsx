@@ -1,4 +1,5 @@
 import { AppleOutlined } from '@ant-design/icons'
+import type { Model } from '@mrleebo/prisma-ast'
 import { Breadcrumb } from 'antd'
 import React, { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -33,7 +34,7 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
         break
       case 'model':
         setAction('编辑')
-        setViewer(<ModelDesigner content={content} />)
+        setViewer(<ModelDesigner properties={(content as Model).properties} />)
         break
       case 'enum':
         setAction('编辑')

@@ -51,7 +51,6 @@ export default function Modeling() {
   function handleToggleDesigner(entity: Entity) {
     setShowType(entity.type)
     setCurrEntityId(entity.id)
-    console.log(entity)
   }
 
   return (
