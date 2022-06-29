@@ -46,7 +46,7 @@ export default function Layout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="mx-6 my-5">
+        <div className="flex items-center mx-6 my-5">
           <Link href="/">
             <a className="flex items-center">
               <Image width={36} height={36} src="/logo.png" alt="FireBoom" preview={false} />
