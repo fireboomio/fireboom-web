@@ -1,4 +1,4 @@
-import type { Entity } from '@/interfaces'
+import type { Entity } from '@/interfaces/modeling'
 
 interface Props {
   entity: Entity

@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceCurrDBContext } from '@/lib/context'
 
 import styles from '../datasource-pannel.module.scss'

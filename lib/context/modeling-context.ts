@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { Block, BlockAction } from '@/interfaces'
+import type { Block, BlockAction } from '@/interfaces/modeling'
 
 interface ModelingCurrEntityContextT {
   currEntityId: number | null

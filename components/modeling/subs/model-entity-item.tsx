@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces'
+import type { Entity } from '@/interfaces/modeling'
 import { ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 
 import styles from '../model-pannel.module.scss'

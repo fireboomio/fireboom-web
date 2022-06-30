@@ -2,7 +2,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces/datasource'
 
 import DatasourceEditorMainCheck from './subs/datasource-editor-main-check'
 import DatasourceEditorMainEdit from './subs/datasource-editor-main-edit'

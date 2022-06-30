@@ -1,7 +1,7 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
 
-import type { DatasourceItem } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces/datasource'
 
 import styles from './datasource-pannel.module.scss'
 import DatasourceList from './subs/datasource-db-list'

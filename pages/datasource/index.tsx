@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
-import type { DatasourceResp, DatasourceItem } from '@/interfaces'
+import type { DatasourceResp, DatasourceItem } from '@/interfaces/datasource'
 import {
   DatasourceContext,
   DatasourceDispatchContext,

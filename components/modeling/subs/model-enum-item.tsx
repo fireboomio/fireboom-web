@@ -3,7 +3,7 @@ import { Input, Col, Row, message, Form } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { Entity } from '@/interfaces'
+import type { Entity } from '@/interfaces/modeling'
 import { EnumEntitiesContext } from '@/lib/context'
 
 interface Props {

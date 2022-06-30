@@ -1,4 +1,4 @@
-import type { Block, BlockAction } from '@/interfaces'
+import type { Block, BlockAction } from '@/interfaces/modeling'
 
 export default function modelingReducer(blocks: Block[], action: BlockAction) {
   switch (action.type) {

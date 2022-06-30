@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelContainer } from '@/components/modeling'
-import type { DBSourceResp, Block, Entity } from '@/interfaces'
+import type { DBSourceResp, Block, Entity } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
 

@@ -1,4 +1,4 @@
-// import type { DatasourceItem } from '@/interfaces'
+// import type { DatasourceItem } from '@/interfaces/datasource'
 
 import DatasourceEditorHead from './subs/datasource-editor-head'
 // import DatasourceEditorMainCheck from './subs/datasource-editor-main-check'

@@ -1,7 +1,7 @@
 import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions } from 'antd'
 
-import type { DatasourceItem } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces/datasource'
 
 import styles from './datasource-editor-main.module.scss'
 interface Props {

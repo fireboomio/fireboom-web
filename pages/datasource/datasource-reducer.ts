@@ -1,6 +1,9 @@
-import type { DatasourceItem, DatasourceAction } from '@/interfaces'
+import type { DatasourceItem, DatasourceAction } from '@/interfaces/datasource'
 
-export default function modelingReducer(datasoucreList: DatasourceItem[], action: DatasourceAction) {
+export default function modelingReducer(
+  datasoucreList: DatasourceItem[],
+  action: DatasourceAction
+) {
   switch (action.type) {
     case 'fetched': {
       return action.data

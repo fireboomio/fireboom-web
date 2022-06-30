@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { DatasourceItem } from '@/interfaces'
+import type { DatasourceItem } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
 import DatasourceDBItem from './datasource-db-item'

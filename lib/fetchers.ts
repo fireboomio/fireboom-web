@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-import { DBSourceResp, Result, SchemaResp, DatasourceResp } from '@/interfaces'
+import { Result } from '@/interfaces/common'
+import { DatasourceResp } from '@/interfaces/datasource'
+import { DBSourceResp, SchemaResp } from '@/interfaces/modeling'
 
 export const sourceFetcher = (url: string) =>
   axios.get<Result<DBSourceResp[]>>(url).then((res) => {
