@@ -17,11 +17,12 @@ type ShowTypeT = 'data' | 'model' | 'enum'
 
 export default function Modeling() {
   const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
-  const [currEntityId, setCurrEntityId] = useImmer<number | null | undefined>(null)
+  const [currEntityId, setCurrEntityId] = useImmer<number | null>(null)
   const [showType, setShowType] = useImmer<ShowTypeT>('data')
 
   useEffect(() => {
-    setCurrEntityId(blocks.filter((b) => ['model', 'enum'].includes(b.type)).at(0)?.id)
+    const entities = blocks.filter((b) => ['model', 'enum'].includes(b.type)) as Entity[]
+    setCurrEntityId(entities.at(0)?.id ?? null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks])
 
@@ -51,7 +52,6 @@ export default function Modeling() {
   function handleToggleDesigner(entity: Entity) {
     setShowType(entity.type)
     setCurrEntityId(entity.id)
-    console.log(entity)
   }
 
   return (
