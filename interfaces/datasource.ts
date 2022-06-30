@@ -1,7 +1,6 @@
 export interface DatasourceItem {
   id: number
   name: string
-  isEditing: boolean
   type: string
   info: {
     [key: string]: number | string | boolean
@@ -21,7 +20,6 @@ interface DatasourceListAction {
 export interface DatasourceResp {
   id: number
   name: string
-  isEditing: boolean
   type: string
   info: {
     [key: string]: number | string | boolean
