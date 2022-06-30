@@ -3,7 +3,7 @@ import { Breadcrumb } from 'antd'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Entity, Model } from '@/interfaces/modeling'
+import { Entity, Enum, Model } from '@/interfaces/modeling'
 import { ModelingContext } from '@/lib/context'
 
 import ModelDesigner from './subs/model-designer'
@@ -40,7 +40,7 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
         break
       case 'enum':
         setAction('编辑')
-        setContent(<ModelEnumDesigner entity={entity} />)
+        setContent(<ModelEnumDesigner entity={entity as Enum} />)
         break
       default:
         setAction('浏览')
