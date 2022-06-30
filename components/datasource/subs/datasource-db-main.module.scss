@@ -4,8 +4,8 @@
   justify-content: center;
   width: 95px;
   height: 24px;
-  margin-left: 20px;
   padding: 0 10px;
+  margin-top: 42px;
   color: #d83860;
   font-size: 14px;
   background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
@@ -56,5 +56,9 @@
   .ant-form-item-with-help .ant-form-item-explain {
     min-height: 10px;
     font-size: 10px;
+  }
+}
+.db-form {
+  input {
   }
 }
