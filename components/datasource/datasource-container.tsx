@@ -25,7 +25,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
       switch (showType) {
         case 'data':
           if (content.type == 'DB') setViewer(<DatasourceEditorMainCheck content={content} />)
-          else if (content.type == 'REST') setViewer(<DatasourceRestMainCheck />)
+          else if (content.type == 'REST') setViewer(<DatasourceRestMainCheck content={content} />)
           else if (content.type == 'Graphal') setViewer(<div>Graphal查看</div>)
           else if (content.type == 'defineByself')
             setViewer(<DatasourceDeselfMainEdit content={content} />)

@@ -1,30 +1,23 @@
 import { CaretRightOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Tabs } from 'antd'
 
+import type { DatasourceItem } from '@/interfaces/datasource'
+
 import styles from './datasource-rest-main.module.scss'
 
-export default function DatasourceRestMainCheck() {
+interface Props {
+  content: DatasourceItem
+}
+
+export default function DatasourceRestMainCheck({ content }: Props) {
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
-
-  const menus = {
-    nameScope: 'thirdapi',
-    endpoint: 'https://www.qq.com/w',
-    theOAS: '文件一',
+  if (!content) {
+    return <></>
   }
-  const menus2 = {
-    JWTget: '静态',
-    secretKey: 'eps',
-    signMethod: '5432',
-    tokenPoint: 'root',
-  }
-  const menus3 = {
-    isStateCombine: '开启',
-  }
-
+  const { info } = content
   const { TabPane } = Tabs
-
   const onChange = (key: string) => {
     console.log(key)
   }
@@ -63,14 +56,32 @@ export default function DatasourceRestMainCheck() {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="命名空间">{menus.nameScope}</Descriptions.Item>
-          <Descriptions.Item label="REST端点">{menus.endpoint}</Descriptions.Item>
-          <Descriptions.Item label="指定OAS">{menus.theOAS}</Descriptions.Item>
+          <Descriptions.Item label="命名空间">{info.nameScope}</Descriptions.Item>
+          <Descriptions.Item label="REST端点">{info.endpoint}</Descriptions.Item>
+          <Descriptions.Item label="指定OAS">{info.theOAS}</Descriptions.Item>
         </Descriptions>
       </div>
 
       <Tabs defaultActiveKey="1" onChange={onChange}>
         <TabPane tab="请求头" key="1">
+          <div className="flex justify-center mb-8">
+            <Descriptions
+              bordered
+              column={1}
+              size="small"
+              className={styles['descriptions-box']}
+              labelStyle={{
+                backgroundColor: 'white',
+                width: '30%',
+                borderRight: 'none',
+                borderBottom: 'none',
+              }}
+            >
+              <Descriptions.Item label="autheration">{info.autheration}</Descriptions.Item>
+            </Descriptions>
+          </div>
+        </TabPane>
+        <TabPane tab="授权" key="2">
           <div className="flex justify-center ">
             <Descriptions
               bordered
@@ -84,15 +95,12 @@ export default function DatasourceRestMainCheck() {
                 borderBottom: 'none',
               }}
             >
-              <Descriptions.Item label="JWT获取">{menus2.JWTget}</Descriptions.Item>
-              <Descriptions.Item label="密钥">{menus2.secretKey}</Descriptions.Item>
-              <Descriptions.Item label="签名方法">{menus2.signMethod}</Descriptions.Item>
-              <Descriptions.Item label="Token端点">{menus2.tokenPoint}</Descriptions.Item>
+              <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
+              <Descriptions.Item label="密钥">{info.secretKey}</Descriptions.Item>
+              <Descriptions.Item label="签名方法">{info.signMethod}</Descriptions.Item>
+              <Descriptions.Item label="Token端点">{info.tokenPoint}</Descriptions.Item>
             </Descriptions>
           </div>
-        </TabPane>
-        <TabPane tab="授权" key="2">
-          Content of Tab Pane 2
         </TabPane>
       </Tabs>
 
@@ -113,7 +121,7 @@ export default function DatasourceRestMainCheck() {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="是否状态联合">{menus3.isStateCombine}</Descriptions.Item>
+          <Descriptions.Item label="是否状态联合">{info.isStateCombine}</Descriptions.Item>
         </Descriptions>
       </div>
     </>

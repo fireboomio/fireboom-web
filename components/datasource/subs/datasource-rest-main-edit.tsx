@@ -1,6 +1,6 @@
 import { CaretDownOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
-import { Button, Form, Input, Select, Radio, Switch } from 'antd'
+import { Button, Form, Input, Select, Radio, Switch, Tabs } from 'antd'
 
 import styles from './datasource-rest-main.module.scss'
 
@@ -12,10 +12,14 @@ export default function DatasourceEditorMainEdit() {
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
-
-  const onChange = (e: RadioChangeEvent) => {
+  const onChangeTab = (key: string) => {
+    console.log(key)
+  }
+  const onChangeRadio = (e: RadioChangeEvent) => {
     console.log('radio checked', e.target.value)
   }
+  const { TabPane } = Tabs
+  const { Option } = Select
 
   return (
     <>
@@ -57,43 +61,61 @@ export default function DatasourceEditorMainEdit() {
             </div>
           </Form.Item>
           <div className="ml-40 mt-10 mb-4">
-            <Button>请求头</Button>
-            <Button type="primary" danger icon={<QuestionCircleOutlined />}>
-              授权
-            </Button>
+            <Tabs defaultActiveKey="1" onChange={onChangeTab}>
+              <TabPane tab="请求头" key="1">
+                <Input.Group compact>
+                  <Input style={{ width: '20%' }} defaultValue="" />
+                  <Select defaultValue="值" style={{ width: '30%' }}>
+                    <Option value="Option1-1">值</Option>
+                    <Option value="Option1-2">转发自客户端</Option>
+                    <Option value="Option1-3">环境变量</Option>
+                  </Select>
+                  <Select defaultValue="" style={{ width: '50%' }}>
+                    <Option value="Option2-1"> </Option>
+                    <Option value="Option2-2"> </Option>
+                  </Select>
+                </Input.Group>
+              </TabPane>
+              <TabPane tab="授权" key="2">
+                <Form.Item label="JWT获取">
+                  <Radio.Group onChange={onChangeRadio}>
+                    <Radio value={1} checked>
+                      静态
+                    </Radio>
+                    <Radio value={2}>动态</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item label="密钥" required>
+                  <Input.Group compact>
+                    <Form.Item noStyle rules={[{ required: true }]}>
+                      <Select style={{ width: '20%' }} placeholder="值">
+                        1
+                      </Select>
+                    </Form.Item>
+                    <Form.Item noStyle rules={[{ required: true }]}>
+                      <Input style={{ width: '80%' }} placeholder="请输入..." />
+                    </Form.Item>
+                  </Input.Group>
+                </Form.Item>
+                <Form.Item label="签名方法">
+                  <Radio value={1} checked>
+                    HS256
+                  </Radio>
+                </Form.Item>
+                <Form.Item
+                  label="Token端点:"
+                  colon={false}
+                  required
+                  style={{ marginBottom: '39px' }}
+                >
+                  <div className="flex items-center" style={{ marginBottom: '11px' }}>
+                    <QuestionCircleOutlined className={styles['form-icon']} />
+                    <Input className="ml-3" placeholder="请输入获取token的端点" />
+                  </div>
+                </Form.Item>
+              </TabPane>
+            </Tabs>
           </div>
-
-          <Form.Item label="JWT获取">
-            <Radio.Group onChange={onChange}>
-              <Radio value={1}>静态</Radio>
-              <Radio value={2}>动态</Radio>
-            </Radio.Group>
-          </Form.Item>
-
-          <Form.Item label="密钥" required>
-            <Input.Group compact>
-              <Form.Item noStyle rules={[{ required: true }]}>
-                <Select style={{ width: '20%' }} placeholder="值">
-                  1
-                </Select>
-              </Form.Item>
-              <Form.Item noStyle rules={[{ required: true }]}>
-                <Input style={{ width: '80%' }} placeholder="请输入..." />
-              </Form.Item>
-            </Input.Group>
-          </Form.Item>
-          <Form.Item label="签名方法">
-            <Radio value={1} checked>
-              HS256
-            </Radio>
-          </Form.Item>
-          <Form.Item label="Token端点:" colon={false} required style={{ marginBottom: '39px' }}>
-            <div className="flex items-center" style={{ marginBottom: '11px' }}>
-              <QuestionCircleOutlined className={styles['form-icon']} />
-              <Input className="ml-3" placeholder="请输入获取token的端点" />
-            </div>
-          </Form.Item>
-
           <div className={`${styles['more-info']} ml-40`}>
             <CaretDownOutlined className={styles['more-icon']} />
             <span className="mb-2.5 mt-4">更多</span>
