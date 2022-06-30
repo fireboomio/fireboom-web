@@ -18,24 +18,24 @@ const menus = [
   { title: '设置', icon: <AppleOutlined />, link: '/setting', position: 'bottom' },
 ]
 
+const topMenuItems = menus
+  .filter((m) => m.position === 'top')
+  .map((m) => ({
+    key: m.link,
+    icon: m.icon,
+    label: <Link href={m.link}>{m.title}</Link>,
+  }))
+
+const bottomMenuItems = menus
+  .filter((m) => m.position === 'bottom')
+  .map((m) => ({
+    key: m.link,
+    icon: m.icon,
+    label: <Link href={m.link}>{m.title}</Link>,
+  }))
+
 export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
-
-  const topMenuItems = menus
-    .filter((m) => m.position === 'top')
-    .map((m) => ({
-      key: m.link,
-      icon: m.icon,
-      label: <Link href={m.link}>{m.title}</Link>,
-    }))
-
-  const bottomMenuItems = menus
-    .filter((m) => m.position === 'bottom')
-    .map((m) => ({
-      key: m.link,
-      icon: m.icon,
-      label: <Link href={m.link}>{m.title}</Link>,
-    }))
 
   return (
     <ALayout>
