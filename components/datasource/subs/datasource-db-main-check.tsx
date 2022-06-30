@@ -3,7 +3,7 @@ import { Button, Switch, Descriptions } from 'antd'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
 
-import styles from './datasource-editor-main.module.scss'
+import styles from './datasource-db-main.module.scss'
 interface Props {
   content: DatasourceItem
 }

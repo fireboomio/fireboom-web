@@ -5,8 +5,8 @@ import { useContext } from 'react'
 import type { DatasourceItem } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
-import DatasourceDBItem from './datasource-db-item'
-import styles from './datasource-db-list.module.scss'
+import DatasourceDBItem from './datasource-item'
+import styles from './datasource-list.module.scss'
 
 interface Props {
   onClickItem: (dsItem: DatasourceItem) => void

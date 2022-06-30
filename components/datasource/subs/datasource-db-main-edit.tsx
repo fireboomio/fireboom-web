@@ -2,7 +2,7 @@ import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Radio } from 'antd'
 import { useImmer } from 'use-immer'
 
-import styles from './datasource-editor-main.module.scss'
+import styles from './datasource-db-main.module.scss'
 interface FromValues {
   [key: string]: number | string | boolean
 }

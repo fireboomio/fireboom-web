@@ -4,7 +4,7 @@ import { Tabs } from 'antd'
 import type { DatasourceItem } from '@/interfaces/datasource'
 
 import styles from './datasource-pannel.module.scss'
-import DatasourceList from './subs/datasource-db-list'
+import DatasourceList from './subs/datasource-list'
 interface Props {
   onClickItem: (dsItem: DatasourceItem) => void
   onChangeDBType: (value: string) => void
