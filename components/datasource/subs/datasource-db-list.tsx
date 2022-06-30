@@ -21,7 +21,7 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype, onToggle
   const getNextId = () => Math.max(...datasourceList.map((b) => b.id)) + 1
 
   function addTable() {
-    const data = { id: getNextId(), name: '', isEditing: true } as DatasourceItem
+    const data = { id: getNextId(), name: '', info: {}, type: Datasourcetype } as DatasourceItem
     dispatch({ type: 'added', data: data })
   }
 

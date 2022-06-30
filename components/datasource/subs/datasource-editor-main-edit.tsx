@@ -1,15 +1,29 @@
 import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Radio } from 'antd'
+import { useImmer } from 'use-immer'
 
 import styles from './datasource-editor-main.module.scss'
-
+interface FromValues {
+  [key: string]: number | string | boolean
+}
 export default function DatasourceEditorMainEdit() {
+  const [disabled, setDisabled] = useImmer(true)
   const onFinish = (values: object) => {
     console.log('Success:', values)
   }
 
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
+  }
+
+  const onValuesChange = (changedValues: object, allValues: FromValues) => {
+    for (const key in allValues) {
+      if ((allValues[key] as string) == undefined || allValues[key] == '') {
+        setDisabled(true)
+        return
+      }
+    }
+    setDisabled(false)
   }
 
   return (
@@ -27,6 +41,7 @@ export default function DatasourceEditorMainEdit() {
           wrapperCol={{ span: 11 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+          onValuesChange={onValuesChange}
           autoComplete="off"
           validateTrigger="onBlur"
         >
@@ -62,6 +77,7 @@ export default function DatasourceEditorMainEdit() {
             label="环境变量"
             name="environmentVar"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -75,6 +91,7 @@ export default function DatasourceEditorMainEdit() {
             label="连接URL"
             name="connectURL"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -88,6 +105,7 @@ export default function DatasourceEditorMainEdit() {
             label="主机"
             name="host"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -101,6 +119,7 @@ export default function DatasourceEditorMainEdit() {
             label="数据库名"
             name="DBName"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -114,6 +133,7 @@ export default function DatasourceEditorMainEdit() {
             label="端口"
             name="port"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -127,6 +147,7 @@ export default function DatasourceEditorMainEdit() {
             label="用户"
             name="userName"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -140,6 +161,7 @@ export default function DatasourceEditorMainEdit() {
             label="密码"
             name="password"
             rules={[
+              { required: true, message: '连接名不能为空' },
               {
                 pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
                 message: '只允许包含字母',
@@ -149,7 +171,7 @@ export default function DatasourceEditorMainEdit() {
             <Input.Password placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 10, span: 16 }} style={{ marginTop: '25px' }}>
+          <Form.Item wrapperCol={{ offset: 10, span: 5 }} style={{ marginTop: '25px' }}>
             <Button className={styles['connect-btn']}>
               <RightSquareOutlined />
               <span className={styles['connect-text']}>测试链接</span>{' '}
@@ -157,11 +179,11 @@ export default function DatasourceEditorMainEdit() {
           </Form.Item>
 
           <Form.Item
-            wrapperCol={{ offset: 9, span: 16 }}
-            style={{ display: 'flex', width: '100%', position: 'absolute', bottom: '20px' }}
+            wrapperCol={{ offset: 9, span: 5 }}
+            style={{ display: 'flex', width: '100%', position: 'absolute', bottom: '42px' }}
           >
             <Button className={styles['cancel-btn']}>取消</Button>{' '}
-            <Button className={styles['save-btn']} htmlType="submit">
+            <Button disabled={disabled} className={styles['save-btn']} htmlType="submit">
               保存
             </Button>
           </Form.Item>

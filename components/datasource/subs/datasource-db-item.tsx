@@ -1,11 +1,11 @@
 import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Popconfirm, message } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces'
-import { DatasourceDispatchContext } from '@/lib/context'
+import { DatasourceDispatchContext, DatasourceCurrDBContext } from '@/lib/context'
 
 import styles from '../datasource-pannel.module.scss'
 
@@ -18,10 +18,10 @@ interface Props {
 
 export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
-  const [isEditing, setIsEditing] = useImmer(datasourceItem.isEditing)
-  const [isHovering, setIsHovering] = useImmer(false)
+  const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
-
+  const { currDBId } = useContext(DatasourceCurrDBContext)
+  const [isHovering, setIsHovering] = useImmer(false)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
@@ -29,23 +29,13 @@ export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onC
     }
   }
 
-  function handleItemEdit(text: string) {
-    if (text.trim() == '') {
-      message.destroy()
-      void message.error('实体名不能为空，请重新输入', 1)
+  function handleItemEdit(value: string) {
+    if (value === '') {
+      dispatch({ type: 'deleted', data: datasourceItem })
     } else {
-      dispatch({
-        type: 'changed',
-        data: {
-          id: datasourceItem.id,
-          name: text,
-          isEditing: false,
-          type: 'Datasourcetype',
-          info: {},
-        },
-      })
-      setIsEditing(false)
+      dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
     }
+    setIsEditing(false)
   }
 
   function handleItemDelete(item: DatasourceItem) {
@@ -116,7 +106,8 @@ export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onC
 
   return (
     <div
-      className="flex justify-start items-center py-2.5 pl-3 cursor-pointer"
+      className={`flex justify-start items-center py-2.5 pl-3 cursor-pointer"
+      ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}
