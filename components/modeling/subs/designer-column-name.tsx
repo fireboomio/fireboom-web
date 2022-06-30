@@ -5,7 +5,7 @@ interface Props {
   data: string
 }
 
-export default function ModelDesignerItemName({ data }: Props) {
+export default function ModelDesignerColumnName({ data }: Props) {
   const [isEditing, setIsEditing] = useImmer(false)
 
   function commit() {

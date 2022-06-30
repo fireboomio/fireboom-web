@@ -1,20 +1,28 @@
-import type { Field } from '@mrleebo/prisma-ast'
+import type { Enumerator, Field } from '@mrleebo/prisma-ast'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Model } from '@/interfaces/modeling'
+import { Entity } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
 
-import ModelDesignerItem from './model-designer-item'
+import ModelDesignerEnumItem from './model-designer-enum-item'
+import ModelDesignerModelItem from './model-designer-model-item'
 
 interface Props {
-  entity: Model
+  entity: Entity
+  showType: 'model' | 'enum'
 }
 
-export default function ModelDesigner({ entity }: Props) {
-  const [fields, _setFields] = useImmer<Field[]>(
-    entity.properties.filter((p) => p.type === 'field') as Field[]
-  )
+function filterFields(entity: Entity): Field[] | Enumerator[] | undefined {
+  if ('properties' in entity) {
+    return entity.properties.filter((p) => p.type === 'field') as Field[]
+  } else if ('enumerators' in entity) {
+    return entity.enumerators.filter((e) => e.type === 'enumerator') as Enumerator[]
+  }
+}
+
+export default function ModelDesigner({ entity, showType }: Props) {
+  const [fields, _setFields] = useImmer(filterFields(entity))
   const dispatch = useContext(ModelingDispatchContext)
 
   // TODO:
@@ -25,9 +33,16 @@ export default function ModelDesigner({ entity }: Props) {
 
   return (
     <div>
-      {fields?.map((field, idx) => (
-        <ModelDesignerItem key={idx} data={field} />
-      ))}
+      {fields?.map((field, idx) => {
+        switch (showType) {
+          case 'model':
+            return <ModelDesignerModelItem key={idx} data={field as Field} />
+          case 'enum':
+            return <ModelDesignerEnumItem key={idx} data={field as Enumerator} />
+          default:
+            break
+        }
+      })}
     </div>
   )
 }
