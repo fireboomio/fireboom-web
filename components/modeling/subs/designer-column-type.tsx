@@ -57,21 +57,32 @@ function PopoverContent({ onClick }: PropoverProps) {
 
 export default function ModelDesignerColumnType({ data }: Props) {
   const [value, setValue] = useImmer(data)
+  const [visible, setVisible] = useImmer(false)
 
   function handleSelect(value: string) {
     setValue(value)
+    setVisible(false)
+  }
+
+  function handleVisibleChange(visible: boolean) {
+    console.log(visible)
   }
 
   return (
-    <div className="h-6 w-full max-w-150px hover:bg-[#F8F8F9] cursor-pointer">
-      <Popover
-        placement="right"
-        content={PopoverContent({ onClick: handleSelect })}
-        title="字段类型"
-        trigger="click"
+    <Popover
+      placement="right"
+      content={PopoverContent({ onClick: handleSelect })}
+      title="字段类型"
+      trigger="click"
+      visible={visible}
+      onVisibleChange={handleVisibleChange}
+    >
+      <div
+        className="h-6 w-full max-w-150px hover:bg-[#F8F8F9] cursor-pointer"
+        onClick={() => setVisible(!visible)}
       >
         {value}
-      </Popover>
-    </div>
+      </div>
+    </Popover>
   )
 }

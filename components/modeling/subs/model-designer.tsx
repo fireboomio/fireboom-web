@@ -22,12 +22,15 @@ function filterFields(entity: Entity): Field[] | Enumerator[] | undefined {
 }
 
 export default function ModelDesigner({ entity, showType }: Props) {
-  const [fields, _setFields] = useImmer(filterFields(entity))
-  const dispatch = useContext(ModelingDispatchContext)
+  const [fields, setFields] = useImmer<Field[] | Enumerator[] | undefined>(undefined)
+  // const dispatch = useContext(ModelingDispatchContext)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setFields(filterFields(entity)), [entity])
 
   // TODO:
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => dispatch({ type: 'changed', data: entity }), [entity])
+  // useEffect(() => dispatch({ type: 'changed', data: entity }), [entity])
 
   console.log('fields', fields)
 
