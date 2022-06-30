@@ -2,7 +2,7 @@ import type { Field } from '@mrleebo/prisma-ast'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Model } from '@/interfaces'
+import { Model } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
 
 import ModelDesignerItem from './model-designer-item'
@@ -18,6 +18,7 @@ export default function ModelDesigner({ entity }: Props) {
   const dispatch = useContext(ModelingDispatchContext)
 
   // TODO:
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => dispatch({ type: 'changed', data: entity }), [entity])
 
   console.log('fields', fields)

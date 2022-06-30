@@ -3,7 +3,7 @@ import { Breadcrumb } from 'antd'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Entity, Model } from '@/interfaces'
+import { Entity, Model } from '@/interfaces/modeling'
 import { ModelingContext } from '@/lib/context'
 
 import ModelDesigner from './subs/model-designer'

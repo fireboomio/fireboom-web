@@ -2,7 +2,7 @@ import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
 import { useContext } from 'react'
 
-import type { Entity } from '@/interfaces'
+import type { Entity } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
 
 import ModelEntityItem from './model-entity-item'

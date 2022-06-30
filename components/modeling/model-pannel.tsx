@@ -3,7 +3,7 @@ import { getSchema } from '@mrleebo/prisma-ast'
 import { Select, Tooltip } from 'antd'
 import { useContext, useEffect } from 'react'
 
-import type { DBSourceResp, Entity } from '@/interfaces'
+import type { DBSourceResp, Entity } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
 import { schemaFetcher } from '@/lib/fetchers'
 

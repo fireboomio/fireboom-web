@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { DatasourceItem, DatasourceAction } from '@/interfaces'
+import type { DatasourceItem, DatasourceAction } from '@/interfaces/datasource'
 
 interface DatasourceCurrDBContextT {
   currDBId: number | null | undefined
