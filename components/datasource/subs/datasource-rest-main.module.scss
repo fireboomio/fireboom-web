@@ -1,7 +1,14 @@
 .connect-btn {
-    width: 62px;
-    height: 32px;
-    background-image: linear-gradient(to right, #FF9378 0%, #E13D5B 100%);
+        width: 62px;
+        height: 32px;
+        background: linear-gradient(56deg, #FF9378 0%, #E13D5B 100%);
+        border-radius: 2px;
+        &:hover,
+        &:focus {
+         color: rgb(233 92 127);
+         background: linear-gradient(56deg, #FF9378 0%, #E13D5B 100%);
+         border-color: #e13d5b;
+        }
     span {
         width: 33px;
         height: 20px;
@@ -12,16 +19,16 @@
 .switch-btn {
     width: 60px;
     height: 24px;
-    background: #8ABE2A;
     border-radius: 12px;
     margin-right: 7px;
+    background-color:#8ABE2A;
 }
 .switch-btn2 {
     width: 32px;
     height: 16px;
-    background: #8ABE2A;
     border-radius: 12px;
     margin-left: 12px;
+    background-color:#8ABE2A;
 }
 .descriptions-box {
     width: 1390px;

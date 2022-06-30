@@ -20,7 +20,7 @@ export default function DatasourceRestMainCheck() {
     tokenPoint: 'root',
   }
   const menus3 = {
-    isStateCombine: '是否状态联合',
+    isStateCombine: '开启',
   }
 
   const { TabPane } = Tabs
