@@ -4,8 +4,8 @@ import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
 
-import DatasourceEditorMainCheck from './subs/datasource-editor-main-check'
-import DatasourceEditorMainEdit from './subs/datasource-editor-main-edit'
+import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
+import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
 interface Props {
