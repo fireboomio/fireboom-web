@@ -39,6 +39,9 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
+          <Button className={styles['design-btn']}>
+            <span>设计</span>
+          </Button>
           <Button className={styles['edit-btn']}>
             <span>编辑</span>
           </Button>
@@ -71,7 +74,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
           <Descriptions.Item
             label={
               <div>
-                <span className={styles['label-style']}>Rest 端点</span>
+                <span className={styles['label-style']}>Graphql 端点</span>
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
@@ -82,7 +85,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
           <Descriptions.Item
             label={
               <div>
-                <span className={styles['label-style']}>指定OAS</span>
+                <span className={styles['label-style']}>指定Schema</span>
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
@@ -130,9 +133,9 @@ export default function DatasourceRestMainCheck({ content }: Props) {
               className={styles['descriptions-box']}
               labelStyle={{
                 backgroundColor: 'white',
+                width: '30%',
                 borderRight: 'none',
                 borderBottom: 'none',
-                width: '30%',
               }}
             >
               <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
@@ -166,13 +169,46 @@ export default function DatasourceRestMainCheck({ content }: Props) {
               <Descriptions.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>是否状态联合</span>
+                    <span className={styles['label-style']}>是否内部</span>
                     <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 className="justify-start"
               >
-                {info.isStateCombine}
+                {info.isInside}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <div>
+                    <span className={styles['label-style']}>自定义Float标量</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                className="justify-start"
+              >
+                {info.isFloat}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <div>
+                    <span className={styles['label-style']}>自定义INT标量</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                className="justify-start"
+              >
+                {info.isInt}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <div>
+                    <span className={styles['label-style']}>排除重命名根字段</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                className="justify-start"
+              >
+                {info.isRename}
               </Descriptions.Item>
             </Descriptions>
           </div>

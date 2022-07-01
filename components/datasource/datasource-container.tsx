@@ -7,12 +7,15 @@ import type { DatasourceItem } from '@/interfaces/datasource'
 import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
 import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
 import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
+import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
+
 interface Props {
   content: DatasourceItem
   showType: string
 }
+
 export default function DatasourceEditor({ content, showType }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
 
@@ -37,7 +40,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
           setViewer(<DatasourceRestMainEdit />)
           break
         case 'Graphal':
-          setViewer(<div>Graphal编辑</div>)
+          setViewer(<DatasourceGraphalMainEdit />)
           break
         case 'defineByself':
           setViewer(<DatasourceDeselfMainEdit content={content} />)

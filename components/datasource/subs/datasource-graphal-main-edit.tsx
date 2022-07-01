@@ -1,6 +1,6 @@
-import { CaretRightOutlined, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
-import { Button, Form, Input, Select, Radio, Switch, Tabs, Upload, Collapse } from 'antd'
+import { Button, Form, Input, Select, Radio, Switch, Tabs, Collapse, Upload, Checkbox } from 'antd'
 
 import styles from './datasource-common-main.module.scss'
 
@@ -48,13 +48,13 @@ export default function DatasourceEditorMainEdit() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
-          labelAlign="left"
           className="ml-3"
+          labelAlign="left"
         >
           <Form.Item
             label={
-              <div>
-                <span>命名空间:</span>
+              <div className="">
+                <span className={styles['label-style']}>命名空间:</span>
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
@@ -67,7 +67,7 @@ export default function DatasourceEditorMainEdit() {
           <Form.Item
             label={
               <div>
-                <span>Rest 端点:</span>
+                <span className={styles['label-style']}>Graphql 端点:</span>
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
@@ -78,15 +78,28 @@ export default function DatasourceEditorMainEdit() {
             <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item
+            name="agreement"
+            valuePropName="checked"
+            style={{ marginBottom: '20px' }}
+            rules={[
+              {
+                validator: (_, value) =>
+                  value ? Promise.resolve() : Promise.reject(new Error('')),
+              },
+            ]}
+          >
+            <Checkbox>通过发送指令,自动内省Schema</Checkbox>
+          </Form.Item>
+          <Form.Item
             label={
               <div>
-                <span>指定OAS:</span>
+                <span className={styles['label-style']}>指定Schema:</span>
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
             colon={false}
             required
-            style={{ marginBottom: '49px' }}
+            style={{ marginBottom: '48px' }}
           >
             <Upload name="logo" action="/upload.do" listType="picture">
               <Button icon={<PlusOutlined />} className="w-140">
@@ -153,9 +166,7 @@ export default function DatasourceEditorMainEdit() {
                 </Input.Group>
               </Form.Item>
               <Form.Item label="签名方法">
-                <Radio value={1} checked>
-                  HS256
-                </Radio>
+                <Radio value={1}>HS256</Radio>
               </Form.Item>
             </Form>
           </TabPane>
@@ -170,7 +181,7 @@ export default function DatasourceEditorMainEdit() {
             <Form
               name="basic"
               labelCol={{ span: 3 }}
-              wrapperCol={{ span: 11 }}
+              wrapperCol={{ span: 8 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
@@ -180,7 +191,7 @@ export default function DatasourceEditorMainEdit() {
               <Form.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>是否状态联合:</span>
+                    <span className={styles['label-style']}>是否内部:</span>
                     <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
@@ -189,6 +200,45 @@ export default function DatasourceEditorMainEdit() {
                 rules={[{ required: true }]}
               >
                 <Switch defaultChecked className={styles['switch-edit-btn']} size="small" />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <div className="">
+                    <span className={styles['label-style']}>自定义Float标量:</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                colon={false}
+                style={{ marginBottom: '20px' }}
+              >
+                <Input placeholder="请输入..." />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <div>
+                    <span className={styles['label-style']}>自定义INT标量:</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                colon={false}
+                required
+                style={{ marginBottom: '20px' }}
+              >
+                <Input placeholder="请输入..." />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <div>
+                    <span className={styles['label-style']}>排除重命名根字段：</span>
+                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                colon={false}
+                required
+                style={{ marginBottom: '20px' }}
+              >
+                <Input placeholder="请输入..." />
               </Form.Item>
             </Form>
           </Panel>
