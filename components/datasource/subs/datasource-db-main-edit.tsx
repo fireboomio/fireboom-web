@@ -1,5 +1,5 @@
 import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Select, Radio, Col, Row } from 'antd'
+import { Button, Form, Input, Select, Radio } from 'antd'
 import { useImmer } from 'use-immer'
 
 import styles from './datasource-db-main.module.scss'
@@ -20,7 +20,7 @@ export default function DatasourceEditorMainEdit() {
         },
       ]}
     >
-      <Input placeholder="请输入..." />
+      <Input placeholder="请输入..."  />
     </Form.Item>
   )
   const onFinish = (values: object) => {
@@ -32,6 +32,7 @@ export default function DatasourceEditorMainEdit() {
   }
 
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
+    console.log(allValues)
     for (const key in allValues) {
       if ((allValues[key] as string) == undefined || allValues[key] == '') {
         setDisabled(true)
@@ -41,6 +42,7 @@ export default function DatasourceEditorMainEdit() {
     setDisabled(false)
   }
   const typeChange = (value: string) => {
+    setDisabled(true)
     switch (value) {
       case 'env':
         setViewerForm(
@@ -55,7 +57,7 @@ export default function DatasourceEditorMainEdit() {
               },
             ]}
           >
-            <Input placeholder="请输入..." />
+            <Input placeholder="请输入..."  />
           </Form.Item>
         )
         break
@@ -72,81 +74,69 @@ export default function DatasourceEditorMainEdit() {
               },
             ]}
           >
-            <Input placeholder="请输入..." />
+            <Input placeholder="请输入..."  />
           </Form.Item>
         )
         break
       case 'param':
         setViewerForm(
           <>
-            <Form.Item wrapperCol={{ span: 18 }}>
-              <Row gutter={110}>
-                <Col span={12}>
-                  <Form.Item
-                    label="主机:"
-                    name="host"
-                    rules={[
-                      { required: true, message: '连接名不能为空' },
-                      {
-                        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                        message: '只允许包含字母',
-                      },
-                    ]}
-                  >
-                    <Input placeholder="请输入..." />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="数据库名:"
-                    name="DBName"
-                    rules={[
-                      { required: true, message: '连接名不能为空' },
-                      {
-                        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                        message: '只允许包含字母',
-                      },
-                    ]}
-                  >
-                    <Input placeholder="请输入..." />
-                  </Form.Item>
-                </Col>
-              </Row>
+            <Form.Item
+              label="主机:"
+              name="host"
+              rules={[
+                { required: true, message: '连接名不能为空' },
+                {
+                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
+                  message: '只允许包含字母',
+                },
+              ]}
+            >
+              <Input placeholder="请输入..."  />
             </Form.Item>
-            <Form.Item wrapperCol={{ span: 18 }}>
-              <Row gutter={110}>
-                <Col span={12}>
-                  <Form.Item
-                    label="端口:"
-                    name="port"
-                    rules={[
-                      { required: true, message: '连接名不能为空' },
-                      {
-                        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                        message: '只允许包含字母',
-                      },
-                    ]}
-                  >
-                    <Input placeholder="请输入..." />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="用户:"
-                    name="userName"
-                    rules={[
-                      { required: true, message: '用户名不能为空' },
-                      {
-                        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                        message: '只允许包含字母',
-                      },
-                    ]}
-                  >
-                    <Input placeholder="请输入..." />
-                  </Form.Item>
-                </Col>
-              </Row>
+
+            <Form.Item
+              label="数据库名:"
+              name="DBName"
+              rules={[
+                { required: true, message: '连接名不能为空' },
+                {
+                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
+                  message: '只允许包含字母',
+                },
+              ]}
+            >
+              <Input placeholder="请输入..."  />
             </Form.Item>
+
+            <Form.Item
+              label="端口:"
+              name="port"
+              rules={[
+                { required: true, message: '连接名不能为空' },
+                {
+                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
+                  message: '只允许包含字母',
+                },
+              ]}
+            >
+              <Input placeholder="请输入..."  />
+            </Form.Item>
+
+            <Form.Item
+              label="用户:"
+              name="userName"
+              rules={[
+                { required: true, message: '用户名不能为空' },
+                {
+                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
+                  message: '只允许包含字母',
+                },
+              ]}
+            >
+              <Input placeholder="请输入..." />
+            </Form.Item>
+
             <Form.Item
               label="密码:"
               name="password"
@@ -179,10 +169,9 @@ export default function DatasourceEditorMainEdit() {
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
-          layout="vertical"
+          style={{ width: '70%' }}
           name="basic"
-          labelCol={{ span: 2 }}
-          wrapperCol={{ span: 8 }}
+          wrapperCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
@@ -200,38 +189,34 @@ export default function DatasourceEditorMainEdit() {
                 message: '只允许包含字母',
               },
             ]}
-            style={{ marginBottom: '24px' }}
           >
-            <Input placeholder="请输入..." />
+            <Input placeholder="请输入..."  />
           </Form.Item>
 
-          <Form.Item label="类型:" style={{ marginBottom: '24px' }}>
-            <Select placeholder="请输入...">
+          <Form.Item label="类型:">
+            <Select placeholder="请输入..." >
               <Select.Option value="demo">Demo</Select.Option>
             </Select>
           </Form.Item>
 
-          <Form.Item style={{ marginBottom: '24px' }}>
-            <span className="mr-2">类型 :</span>
+          <Form.Item label="类型:" wrapperCol={{ span: 15 }}>
             <Radio.Group
               defaultValue="env"
               onChange={(e) => {
                 typeChange(e.target.value as string)
               }}
             >
-              <Radio value="env" className="mr-9">
+              <Radio value="env" className="mr-15 ">
                 环境变量
               </Radio>
-              <Radio value="url" className="mr-9">
+              <Radio value="url" className="mr-15">
                 连接URL
               </Radio>
               <Radio value="param"> 连接参数 </Radio>
             </Radio.Group>
           </Form.Item>
-
           {viewerForm}
-
-          <Form.Item>
+          <Form.Item >
             <Button className={styles['connect-btn']}>
               <RightSquareOutlined />
               <span className={styles['connect-text']}>测试链接</span>{' '}
@@ -245,7 +230,7 @@ export default function DatasourceEditorMainEdit() {
               width: '100%',
               position: 'absolute',
               top: '70px',
-              right: '-40rem',
+              right: '-67rem',
             }}
           >
             <Button className={styles['cancel-btn']}>取消</Button>{' '}
