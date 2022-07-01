@@ -50,7 +50,7 @@ function DatasourceDefineItem({ info }: PropsInfo) {
   )
 }
 
-export default function DatasourceEditorMainEdit({ content }: Props) {
+export default function DatasourceDeselfMainEdit({ content }: Props) {
   const { info } = content
 
   return (

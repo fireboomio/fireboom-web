@@ -1,4 +1,4 @@
-import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
+import { AppleOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions } from 'antd'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
@@ -7,7 +7,7 @@ import styles from './datasource-db-main.module.scss'
 interface Props {
   content: DatasourceItem
 }
-export default function DatasourceEditorMainCheck({ content }: Props) {
+export default function DatasourceDBMainCheck({ content }: Props) {
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
@@ -18,7 +18,7 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
 
   return (
     <>
-      <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
+      <div className="pb-17px flex items-center justify-between border-gray border-b ">
         <div>
           <AppleOutlined />
           <span className="ml-2">
@@ -26,21 +26,6 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
           </span>
         </div>
         <div className="flex justify-center items-center">
-          <Button className={styles['connect-check-btn']}>
-            <span>去环境建模</span>
-          </Button>
-          <Button className={styles['connect-check-btn']}>
-            <span>
-              <RightSquareOutlined className="mr-1" />
-              测试链接
-            </span>
-          </Button>
-          <Button className={styles['connect-check-btn']}>
-            <span>
-              <RightSquareOutlined className="mr-2" />
-              编辑
-            </span>
-          </Button>
           <Switch
             defaultChecked
             checkedChildren="开启"
@@ -48,14 +33,26 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
             onChange={connectSwitchOnChange}
             className="ml-6 w-15 bg-green-500"
           />
+          <Button className={`${styles['connect-check-btn-common']} w-20 ml-12`}>
+            <span>测试链接</span>
+          </Button>
+          <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+            <span>设计</span>
+          </Button>
+          <Button className={`${styles['connect-check-btn']}  ml-4`}>
+            <span>编辑</span>
+          </Button>
         </div>
       </div>
-      <div className="flex justify-center">
+      <div className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}>
+        <span className="mr-2 w-14 h-5">更多设置</span> <RightOutlined />
+      </div>
+
+      <div className="mt-8">
         <Descriptions
           bordered
           column={1}
           size="small"
-          className="w-270"
           labelStyle={{
             backgroundColor: 'white',
             width: '30%',

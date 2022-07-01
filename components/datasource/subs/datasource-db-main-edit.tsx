@@ -29,7 +29,7 @@ const initForm = (
   </Form.Item>
 )
 
-export default function DatasourceEditorMainEdit({ content }: Props) {
+export default function DatasourceDBMainEdit({ content }: Props) {
   const [disabled, setDisabled] = useImmer(true)
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   const onFinish = (values: object) => {

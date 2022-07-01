@@ -9,7 +9,6 @@ import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
 import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
-
 interface Props {
   content: DatasourceItem
   showType: string
@@ -52,7 +51,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
   }, [showType, content])
 
   return (
-    <div className="pl-4 pr-10 mt-6">
+    <div className="pl-6 pr-10 mt-6">
       <div className="flex justify-start items-center mb-6 ">
         <span className="text-base flex-grow font-bold">
           外部数据源 / {content && content.type}
