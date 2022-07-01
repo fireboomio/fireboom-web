@@ -1,5 +1,6 @@
 import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Select, Radio } from 'antd'
+import { Button, Form, Input, Select, Radio, notification } from 'antd'
+import type { NotificationPlacement } from 'antd/lib/notification'
 import { useImmer } from 'use-immer'
 
 import styles from './datasource-db-main.module.scss'
@@ -20,7 +21,7 @@ export default function DatasourceEditorMainEdit() {
         },
       ]}
     >
-      <Input placeholder="请输入..."  />
+      <Input placeholder="请输入..." />
     </Form.Item>
   )
   const onFinish = (values: object) => {
@@ -41,6 +42,15 @@ export default function DatasourceEditorMainEdit() {
     }
     setDisabled(false)
   }
+
+  const openNotification = (placement: NotificationPlacement) => {
+    notification.warning({
+      message: `Notification ${placement}`,
+      description: '链接失败',
+      placement,
+    })
+  }
+
   const typeChange = (value: string) => {
     setDisabled(true)
     switch (value) {
@@ -57,7 +67,7 @@ export default function DatasourceEditorMainEdit() {
               },
             ]}
           >
-            <Input placeholder="请输入..."  />
+            <Input placeholder="请输入..." />
           </Form.Item>
         )
         break
@@ -74,7 +84,7 @@ export default function DatasourceEditorMainEdit() {
               },
             ]}
           >
-            <Input placeholder="请输入..."  />
+            <Input placeholder="请输入..." />
           </Form.Item>
         )
         break
@@ -92,7 +102,7 @@ export default function DatasourceEditorMainEdit() {
                 },
               ]}
             >
-              <Input placeholder="请输入..."  />
+              <Input placeholder="请输入..." />
             </Form.Item>
 
             <Form.Item
@@ -106,7 +116,7 @@ export default function DatasourceEditorMainEdit() {
                 },
               ]}
             >
-              <Input placeholder="请输入..."  />
+              <Input placeholder="请输入..." />
             </Form.Item>
 
             <Form.Item
@@ -120,7 +130,7 @@ export default function DatasourceEditorMainEdit() {
                 },
               ]}
             >
-              <Input placeholder="请输入..."  />
+              <Input placeholder="请输入..." />
             </Form.Item>
 
             <Form.Item
@@ -190,11 +200,11 @@ export default function DatasourceEditorMainEdit() {
               },
             ]}
           >
-            <Input placeholder="请输入..."  />
+            <Input placeholder="请输入..." />
           </Form.Item>
 
           <Form.Item label="类型:">
-            <Select placeholder="请输入..." >
+            <Select placeholder="请输入...">
               <Select.Option value="demo">Demo</Select.Option>
             </Select>
           </Form.Item>
@@ -216,10 +226,13 @@ export default function DatasourceEditorMainEdit() {
             </Radio.Group>
           </Form.Item>
           {viewerForm}
-          <Form.Item >
-            <Button className={styles['connect-btn']}>
+          <Form.Item>
+            <Button
+              className={styles['connect-edit-btn']}
+              onClick={() => openNotification('bottomLeft')}
+            >
               <RightSquareOutlined />
-              <span className={styles['connect-text']}>测试链接</span>{' '}
+              <span>测试链接</span>{' '}
             </Button>
           </Form.Item>
 
@@ -230,7 +243,7 @@ export default function DatasourceEditorMainEdit() {
               width: '100%',
               position: 'absolute',
               top: '70px',
-              right: '-67rem',
+              right: '-68rem',
             }}
           >
             <Button className={styles['cancel-btn']}>取消</Button>{' '}

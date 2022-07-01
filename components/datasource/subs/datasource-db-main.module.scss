@@ -1,12 +1,32 @@
-.connect-btn {
+.connect-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95px;
+  height: 24px;
+  margin-top: 5px;
+  padding: 0 10px;
+  margin-left: 88px;
+  color: #d83860;
+  font-size: 14px;
+  background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: #ebcec6;
+    border-color: #e13d5b;
+  }
+}
+.connect-check-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 95px;
   height: 24px;
   padding: 0 10px;
-  margin-top: 42px;
-  margin-left: 150px;
+  margin-left: 40px;
   color: #d83860;
   font-size: 14px;
   background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
@@ -64,13 +84,14 @@
   .ant-form-item-label {
     width: 80px;
     text-align: left;
+    margin-left: 8px;
   }
 
   .ant-form-item {
     margin-bottom: 20px;
   }
-  
+
   .ant-form-item-control {
-    margin-left: 80px;
+    margin-left: 60px;
   }
 }
