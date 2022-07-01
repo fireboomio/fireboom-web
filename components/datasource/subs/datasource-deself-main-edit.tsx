@@ -13,7 +13,7 @@ interface PropsInfo {
     [key: string]: number | string | boolean
   }
 }
-export function DatasourceDefineItem({ info }: PropsInfo) {
+function DatasourceDefineItem({ info }: PropsInfo) {
   const [isEditing, setIsEditing] = useImmer(false)
 
   function handleItemEdit(value: string) {
