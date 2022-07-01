@@ -26,16 +26,16 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
           </span>
         </div>
         <div className="flex justify-center items-center">
-          <Button className={styles['connect-btn']}>
+          <Button className={styles['connect-check-btn']}>
             <span>去环境建模</span>
           </Button>
-          <Button className={styles['connect-btn']}>
+          <Button className={styles['connect-check-btn']}>
             <span>
               <RightSquareOutlined className="mr-1" />
               测试链接
             </span>
           </Button>
-          <Button className={styles['connect-btn']}>
+          <Button className={styles['connect-check-btn']}>
             <span>
               <RightSquareOutlined className="mr-2" />
               编辑
