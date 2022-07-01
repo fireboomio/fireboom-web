@@ -4,8 +4,8 @@ import { useImmer } from 'use-immer'
 
 import { Entity } from '@/interfaces/modeling'
 
-import ModelDesignerEnumItem from './model-designer-enum-item'
-import ModelDesignerModelItem from './model-designer-model-item'
+import ModelDesignerEnum from './model-designer-enum'
+import ModelDesignerModel from './model-designer-model'
 
 interface Props {
   entity: Entity
@@ -34,17 +34,9 @@ export default function ModelDesigner({ entity, showType }: Props) {
   console.log('fields', fields)
 
   return (
-    <div>
-      {fields?.map((field, idx) => {
-        switch (showType) {
-          case 'model':
-            return <ModelDesignerModelItem key={idx} idx={idx} data={field as Field} />
-          case 'enum':
-            return <ModelDesignerEnumItem key={idx} data={field as Enumerator} />
-          default:
-            break
-        }
-      })}
-    </div>
+    <>
+      {showType === 'model' && <ModelDesignerModel fields={fields as Field[]} />}
+      {showType === 'enum' && <ModelDesignerEnum fields={fields as Enumerator[]} />}
+    </>
   )
 }

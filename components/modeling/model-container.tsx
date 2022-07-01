@@ -1,7 +1,6 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
-import React, { useContext, useEffect, useMemo } from 'react'
-import { useImmer } from 'use-immer'
+import { useContext, useMemo } from 'react'
 
 import { Entity } from '@/interfaces/modeling'
 import { ModelingContext } from '@/lib/context'
@@ -9,13 +8,11 @@ import { ModelingContext } from '@/lib/context'
 import ModelDesigner from './subs/model-designer'
 
 interface Props {
-  showType: string
+  showType: 'data' | 'model' | 'enum'
   currEntityId: number | null
 }
 
 export default function ModelContainer({ showType, currEntityId }: Props) {
-  const [action, setAction] = useImmer('浏览')
-  const [content, setContent] = useImmer<React.ReactNode>('')
   const blocks = useContext(ModelingContext)
 
   const entity = useMemo(
@@ -27,30 +24,11 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
     console.log('aaa')
   }
 
-  useEffect(() => {
-    switch (showType) {
-      case 'data':
-        setAction('浏览')
-        setContent(<h1>{entity?.name}</h1>)
-        break
-      case 'model':
-      case 'enum':
-        setAction('编辑')
-        setContent(<ModelDesigner entity={entity} showType={showType} />)
-        break
-      default:
-        setAction('浏览')
-        setContent(JSON.stringify(entity))
-        break
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showType, currEntityId])
-
   return (
     <div className="p-6">
       <div className="flex justify-start items-center mb-6">
         <span className="flex-grow text-lg font-medium">
-          {action} / {entity?.name}
+          {showType === 'data' ? '浏览' : '编辑'} / {entity?.name}
         </span>
         <AppleOutlined className="text-base mr-3" onClick={handleIconClick} />
         <AppleOutlined className="text-base mr-3" onClick={handleIconClick} />
@@ -68,7 +46,13 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
         <AppleOutlined className="text-base" onClick={handleIconClick} />
       </div>
 
-      {content}
+      {['model', 'enum'].includes(showType) ? (
+        <ModelDesigner entity={entity} showType={showType as 'model' | 'enum'} />
+      ) : showType === 'data' ? (
+        <h1>{entity?.name}</h1>
+      ) : (
+        ''
+      )}
     </div>
   )
 }
