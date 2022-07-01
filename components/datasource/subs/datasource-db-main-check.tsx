@@ -22,7 +22,7 @@ export default function DatasourceEditorMainCheck({ content }: Props) {
         <div>
           <AppleOutlined />
           <span className="ml-2">
-            default_db <span className="text-xs text-gray-500/80">main</span>
+            {content.name} <span className="text-xs text-gray-500/80">main</span>
           </span>
         </div>
         <div className="flex justify-center items-center">
