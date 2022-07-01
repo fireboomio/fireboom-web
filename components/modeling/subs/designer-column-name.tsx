@@ -3,9 +3,10 @@ import { useImmer } from 'use-immer'
 
 interface Props {
   data: string
+  className?: string
 }
 
-export default function ModelDesignerColumnName({ data }: Props) {
+export default function ModelDesignerColumnName({ data, className }: Props) {
   const [isEditing, setIsEditing] = useImmer(false)
 
   function commit() {
@@ -20,7 +21,7 @@ export default function ModelDesignerColumnName({ data }: Props) {
 
   return isEditing ? (
     <Input
-      className="h-7 max-w-150px mr-3"
+      className={`h-7 max-w-150px mr-3 ${className ?? ''}`}
       autoFocus
       size="small"
       defaultValue={data}
@@ -30,7 +31,7 @@ export default function ModelDesignerColumnName({ data }: Props) {
     />
   ) : (
     <div
-      className="w-full max-w-150px ml-0 mr-3 pl-7px hover:bg-[#F8F8F9]"
+      className={`w-full max-w-150px ml-0 mr-3 pl-7px hover:bg-[#F8F8F9] ${className ?? ''}`}
       onClick={() => setIsEditing(!isEditing)}
     >
       {data}

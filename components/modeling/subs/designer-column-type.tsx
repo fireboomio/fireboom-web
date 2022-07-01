@@ -4,6 +4,7 @@ import { useImmer } from 'use-immer'
 
 interface Props {
   data: string
+  idx?: number
 }
 
 const BASE_TYPES = [
@@ -58,31 +59,43 @@ function PopoverContent({ onClick }: PropoverProps) {
 export default function ModelDesignerColumnType({ data }: Props) {
   const [value, setValue] = useImmer(data)
   const [visible, setVisible] = useImmer(false)
+  const [isHovering, setIsHovering] = useImmer(false)
 
   function handleSelect(value: string) {
     setValue(value)
     setVisible(false)
+    setIsHovering(false)
   }
 
-  function handleVisibleChange(visible: boolean) {
-    console.log(visible)
+  function handleClick(visible: boolean) {
+    setVisible(visible)
+    setIsHovering(visible)
   }
 
   return (
-    <Popover
-      placement="right"
-      content={PopoverContent({ onClick: handleSelect })}
-      title="字段类型"
-      trigger="click"
-      visible={visible}
-      onVisibleChange={handleVisibleChange}
-    >
+    <>
       <div
+        // tabIndex={idx}
         className="h-6 w-full max-w-150px hover:bg-[#F8F8F9] cursor-pointer"
-        onClick={() => setVisible(!visible)}
+        style={isHovering ? { backgroundColor: '#F8F8F9' } : {}}
+        onClick={() => handleClick(!visible)}
+        onMouseLeave={() => setIsHovering(visible)}
+        // onBlur={() => {
+        //   setIsHovering(false)
+        //   setVisible(false)
+        // }}
       >
-        {value}
+        <span style={BASE_TYPES.includes(value) ? { color: '#1BB659' } : { color: '#99109B' }}>
+          {value}
+        </span>
       </div>
-    </Popover>
+
+      <Popover
+        placement="right"
+        content={PopoverContent({ onClick: handleSelect })}
+        title="字段类型"
+        visible={visible}
+      />
+    </>
   )
 }

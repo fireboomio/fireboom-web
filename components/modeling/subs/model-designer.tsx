@@ -1,9 +1,8 @@
 import type { Enumerator, Field } from '@mrleebo/prisma-ast'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import { Entity } from '@/interfaces/modeling'
-import { ModelingDispatchContext } from '@/lib/context'
 
 import ModelDesignerEnumItem from './model-designer-enum-item'
 import ModelDesignerModelItem from './model-designer-model-item'
@@ -39,7 +38,7 @@ export default function ModelDesigner({ entity, showType }: Props) {
       {fields?.map((field, idx) => {
         switch (showType) {
           case 'model':
-            return <ModelDesignerModelItem key={idx} data={field as Field} />
+            return <ModelDesignerModelItem key={idx} idx={idx} data={field as Field} />
           case 'enum':
             return <ModelDesignerEnumItem key={idx} data={field as Enumerator} />
           default:
