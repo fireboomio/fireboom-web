@@ -2,10 +2,11 @@ import { AppleOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 import { useContext, useMemo } from 'react'
 
-import { Entity } from '@/interfaces/modeling'
+import { Entity, Enum, Model } from '@/interfaces/modeling'
 import { ModelingContext } from '@/lib/context'
 
-import ModelDesigner from './subs/model-designer'
+import ModelDesignerEnum from './subs/model-designer-enum'
+import ModelDesignerModel from './subs/model-designer-model'
 
 interface Props {
   showType: 'data' | 'model' | 'enum'
@@ -23,6 +24,8 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
   const handleIconClick = () => {
     console.log('aaa')
   }
+
+  console.log(showType, entity)
 
   return (
     <div className="p-6">
@@ -46,8 +49,10 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
         <AppleOutlined className="text-base" onClick={handleIconClick} />
       </div>
 
-      {['model', 'enum'].includes(showType) ? (
-        <ModelDesigner entity={entity} showType={showType as 'model' | 'enum'} />
+      {showType === 'model' ? (
+        <ModelDesignerModel model={entity as Model} />
+      ) : showType === 'enum' ? (
+        <ModelDesignerEnum enumEntity={entity as Enum} />
       ) : showType === 'data' ? (
         <h1>{entity?.name}</h1>
       ) : (
