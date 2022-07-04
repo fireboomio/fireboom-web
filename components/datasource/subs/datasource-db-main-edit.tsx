@@ -178,8 +178,9 @@ export default function DatasourceDBMainEdit({ content }: Props) {
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
-          style={{ width: '70%' }}
+          style={{ width: '90%' }}
           name="basic"
+          labelCol={{ span: 3 }}
           wrapperCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -187,6 +188,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
           autoComplete="off"
           validateTrigger="onBlur"
           className={styles['db-form']}
+          labelAlign="left"
         >
           <Form.Item
             label="连接名:"
@@ -208,7 +210,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
             </Select>
           </Form.Item>
 
-          <Form.Item label="类型:" wrapperCol={{ span: 15 }}>
+          <Form.Item label="类型:">
             <Radio.Group
               defaultValue="env"
               onChange={(e) => {
@@ -236,7 +238,6 @@ export default function DatasourceDBMainEdit({ content }: Props) {
           </Form.Item>
 
           <Form.Item
-            wrapperCol={{ offset: 9, span: 5 }}
             style={{
               display: 'flex',
               width: '100%',

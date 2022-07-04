@@ -1,0 +1,46 @@
+.title {
+  font-size: 18px;
+  margin-top: 24px;
+  margin-left: 16px;
+  margin-bottom: 32px;
+  width: 36px;
+  height: 25px;
+  color: #000000;
+  line-height: 25px;
+}
+
+.select {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.manage {
+  border-top: 1px solid rgb(92 87 87);
+}
+
+.option-icon {
+  margin-right: 10px;
+}
+
+.actions > :hover {
+  opacity: 0.6;
+}
+
+.select-contain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.delete-label :global {
+  .ant-popover-content .ant-popover-arrow {
+    display: none;
+  }
+}
