@@ -87,7 +87,17 @@ export default function ModelDesignerModel({ model }: Props) {
             </span>
           </div>
 
-          <div className="h-6 w-full hover:bg-[#F8F8F9]">{JSON.stringify(field.attributes)}</div>
+          <div className="h-6 w-full flex">
+            {field.attributes?.map((attr, idx) => (
+              <div key={idx} className="mr-3 cursor-pointer hover:bg-[#F8F8F9]">
+                {attr.name === 'id' && <>@id()</>}
+                {attr.name === 'default' && <>@default()</>}
+                {attr.name === 'unique' && <>@unique()</>}
+                {attr.name === 'index' && <>@index()</>}
+                {attr.name === 'relation' && <>@relation()</>}
+              </div>
+            ))}
+          </div>
         </div>
       ))}
 
