@@ -1,6 +1,7 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { PropsWithChildren, useState } from 'react'
 
 import styles from './layout.module.scss'
@@ -36,6 +37,7 @@ const bottomMenuItems = menus
 
 export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
+  const { pathname } = useRouter()
 
   return (
     <ALayout>
@@ -63,7 +65,12 @@ export default function Layout({ children }: PropsWithChildren) {
         </div>
         <Divider className={styles['sider-divider']} />
 
-        <Menu className="mt-10 bg-[#FBFBFB]" mode="inline" items={topMenuItems} />
+        <Menu
+          selectedKeys={[pathname]}
+          className="mt-10 bg-[#FBFBFB]"
+          mode="inline"
+          items={topMenuItems}
+        />
 
         <div className="absolute w-full bottom-12">
           <Menu className="bg-[#FBFBFB]" mode="inline" items={bottomMenuItems} />
