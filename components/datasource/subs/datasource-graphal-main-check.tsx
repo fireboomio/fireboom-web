@@ -1,5 +1,11 @@
-import { CaretRightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import {
+  CaretRightOutlined,
+  QuestionCircleOutlined,
+  EyeFilled,
+  EyeInvisibleFilled,
+} from '@ant-design/icons'
 import { Button, Switch, Descriptions, Tabs, Collapse } from 'antd'
+import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
 
@@ -10,6 +16,7 @@ interface Props {
 }
 
 export default function DatasourceRestMainCheck({ content }: Props) {
+  const [isEyeShow, setIsEyeShow] = useImmer(false)
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
@@ -23,6 +30,9 @@ export default function DatasourceRestMainCheck({ content }: Props) {
     console.log(key)
   }
 
+  const changeEyeState = () => {
+    setIsEyeShow(!isEyeShow)
+  }
   return (
     <>
       <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
@@ -139,7 +149,19 @@ export default function DatasourceRestMainCheck({ content }: Props) {
               }}
             >
               <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
-              <Descriptions.Item label="密钥">{info.secretKey}</Descriptions.Item>
+              <Descriptions.Item label="密钥">
+                {isEyeShow ? (
+                  <div>
+                    <span className="mr-5">123456</span>
+                    <EyeFilled onClick={changeEyeState} />
+                  </div>
+                ) : (
+                  <div>
+                    <span className="mr-5">********</span>
+                    <EyeInvisibleFilled onClick={changeEyeState} />
+                  </div>
+                )}
+              </Descriptions.Item>
               <Descriptions.Item label="签名方法">{info.signMethod}</Descriptions.Item>
               <Descriptions.Item label="Token端点">{info.tokenPoint}</Descriptions.Item>
             </Descriptions>
