@@ -2,6 +2,7 @@ import {
   DatasourceContext,
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
+  DatasourceToggleContext,
 } from './datasource-context'
 import {
   ModelingContext,
@@ -16,4 +17,5 @@ export {
   DatasourceContext,
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
+  DatasourceToggleContext,
 }

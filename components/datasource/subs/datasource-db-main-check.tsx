@@ -1,13 +1,17 @@
 import { AppleOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions } from 'antd'
+import { useContext } from 'react'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-db-main.module.scss'
 interface Props {
   content: DatasourceItem
 }
 export default function DatasourceDBMainCheck({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
@@ -44,7 +48,12 @@ export default function DatasourceDBMainCheck({ content }: Props) {
           </Button>
         </div>
       </div>
-      <div className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}>
+      <div
+        className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}
+        onClick={() => {
+          handleToggleDesigner('Setting', content.id)
+        }}
+      >
         <span className="mr-2 w-14 h-5">更多设置</span> <RightOutlined />
       </div>
 
@@ -54,6 +63,7 @@ export default function DatasourceDBMainCheck({ content }: Props) {
           column={1}
           size="small"
           labelStyle={{
+            color: '#5F6269',
             backgroundColor: 'white',
             width: '30%',
             borderRight: 'none',

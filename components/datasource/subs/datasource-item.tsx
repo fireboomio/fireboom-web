@@ -5,7 +5,11 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
-import { DatasourceDispatchContext, DatasourceCurrDBContext } from '@/lib/context'
+import {
+  DatasourceDispatchContext,
+  DatasourceCurrDBContext,
+  DatasourceToggleContext,
+} from '@/lib/context'
 
 import styles from '../datasource-pannel.module.scss'
 
@@ -13,13 +17,13 @@ interface Props {
   datasourceItem: DatasourceItem
   onClickItem: (dsItem: DatasourceItem) => void
   Datasourcetype: string
-  onToggleDesigner: (DatasourceItem: DatasourceItem) => void
 }
 
-export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onClickItem }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { currDBId } = useContext(DatasourceCurrDBContext)
   const [isHovering, setIsHovering] = useImmer(false)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
@@ -72,7 +76,7 @@ export default function DatasourceDBItem({ datasourceItem, onToggleDesigner, onC
           label: (
             <div
               onClick={() => {
-                onToggleDesigner(datasourceItem)
+                handleToggleDesigner(datasourceItem.type, datasourceItem.id)
               }}
             >
               <AppleOutlined />

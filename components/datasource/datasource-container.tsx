@@ -6,11 +6,12 @@ import type { DatasourceItem } from '@/interfaces/datasource'
 
 import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
 import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
+import DatasourceDBMainSetting from './subs/datasource-db-main-setting'
 import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
+import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
 import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
-
 interface Props {
   content: DatasourceItem
   showType: string
@@ -29,7 +30,8 @@ export default function DatasourceEditor({ content, showType }: Props) {
         case 'data':
           if (content.type == 'DB') setViewer(<DatasourceEditorMainCheck content={content} />)
           else if (content.type == 'REST') setViewer(<DatasourceRestMainCheck content={content} />)
-          else if (content.type == 'Graphal') setViewer(<div>Graphal查看</div>)
+          else if (content.type == 'Graphal')
+            setViewer(<DatasourceGraphalMainCheck content={content} />)
           else if (content.type == 'defineByself')
             setViewer(<DatasourceDeselfMainEdit content={content} />)
           break
@@ -44,6 +46,9 @@ export default function DatasourceEditor({ content, showType }: Props) {
           break
         case 'defineByself':
           setViewer(<DatasourceDeselfMainEdit content={content} />)
+          break
+        case 'Setting':
+          setViewer(<DatasourceDBMainSetting />)
           break
         default:
           setViewer(JSON.stringify(content))

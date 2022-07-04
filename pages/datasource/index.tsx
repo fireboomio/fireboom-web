@@ -10,6 +10,7 @@ import {
   DatasourceContext,
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
+  DatasourceToggleContext,
 } from '@/lib/context'
 import { datasourceFetcher } from '@/lib/fetchers'
 
@@ -55,30 +56,31 @@ export default function Modeling() {
     setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
-  function handleToggleDesigner(DatasourceItem: DatasourceItem) {
-    setShowType(DatasourceItem.type)
-    setCurrDBId(DatasourceItem.id)
+  function handleToggleDesigner(type: string, id: number) {
+    setShowType(type)
+    setCurrDBId(id)
   }
   return (
     <>
       <DatasourceContext.Provider value={datasourceList}>
         <DatasourceDispatchContext.Provider value={dispatch}>
           <DatasourceCurrDBContext.Provider value={{ currDBId, setCurrDBId }}>
-            <Head>
-              <title>FireBoom - 数据来源</title>
-            </Head>
-            <Row className="h-screen">
-              <Col span={5} className={styles['col-left']}>
-                <DatasourcePannel
-                  onClickItem={handleClickItem}
-                  onChangeDBType={handleChangeDStype}
-                  onToggleDesigner={handleToggleDesigner}
-                />
-              </Col>
-              <Col span={19}>
-                <DatasourceContainer showType={showType} content={content} />
-              </Col>
-            </Row>
+            <DatasourceToggleContext.Provider value={{ handleToggleDesigner }}>
+              <Head>
+                <title>FireBoom - 数据来源</title>
+              </Head>
+              <Row className="h-screen">
+                <Col span={5} className={styles['col-left']}>
+                  <DatasourcePannel
+                    onClickItem={handleClickItem}
+                    onChangeDBType={handleChangeDStype}
+                  />
+                </Col>
+                <Col span={19}>
+                  <DatasourceContainer showType={showType} content={content} />
+                </Col>
+              </Row>
+            </DatasourceToggleContext.Provider>
           </DatasourceCurrDBContext.Provider>
         </DatasourceDispatchContext.Provider>
       </DatasourceContext.Provider>
