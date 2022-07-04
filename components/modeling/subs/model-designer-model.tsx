@@ -1,4 +1,4 @@
-import type { Field } from '@mrleebo/prisma-ast'
+import type { Attribute, Field, Func } from '@mrleebo/prisma-ast'
 import { Input, Modal } from 'antd'
 import { useEffect, useCallback } from 'react'
 import { useImmer } from 'use-immer'
@@ -41,6 +41,29 @@ function TypeModalContent({ onClick }: PropoverProps) {
   )
 }
 
+function AttrDefault({ attr }: { attr: Attribute }) {
+  if (attr.args && attr.args.length) {
+    return (
+      <>
+        {attr.args.map((arg, idx) => {
+          let value = ''
+          if (typeof arg.value === 'string') value = arg.value
+          else if (
+            Object.prototype.hasOwnProperty.call(arg.value, 'type') &&
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            arg.value.type! === 'function'
+          )
+            value = `${(arg.value as Func).name}()`
+
+          return <div key={idx}>{`@${attr.name}(${value})`}</div>
+        })}
+      </>
+    )
+  }
+  return <>@{attr.name}()</>
+}
+
 export default function ModelDesignerModel({ model }: Props) {
   const [typePopVisible, setTypePopVisible] = useImmer(false)
   const [activeCell, setActiveCell] = useImmer({ col: '', idx: -1 })
@@ -51,7 +74,7 @@ export default function ModelDesignerModel({ model }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setFields(model.properties.filter((p) => p.type === 'field') as Field[]), [model])
 
-  function handleTypeSelect(value: string) {
+  function handleTypeSelect(_value: string) {
     // TODO: 更新 cell 类型
     setTypePopVisible(false)
   }
@@ -91,7 +114,7 @@ export default function ModelDesignerModel({ model }: Props) {
             {field.attributes?.map((attr, idx) => (
               <div key={idx} className="mr-3 cursor-pointer hover:bg-[#F8F8F9]">
                 {attr.name === 'id' && <>@id()</>}
-                {attr.name === 'default' && <>@default()</>}
+                {attr.name === 'default' && <AttrDefault attr={attr} />}
                 {attr.name === 'unique' && <>@unique()</>}
                 {attr.name === 'index' && <>@index()</>}
                 {attr.name === 'relation' && <>@relation()</>}
