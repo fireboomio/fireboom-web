@@ -3,27 +3,35 @@ import { Button, Form, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useImmer } from 'use-immer'
 
+import type { DatasourceItem } from '@/interfaces/datasource'
+
 import styles from './datasource-db-main.module.scss'
 interface FromValues {
   [key: string]: number | string | boolean
 }
-export default function DatasourceEditorMainEdit() {
+interface Props {
+  content: DatasourceItem
+}
+
+const initForm = (
+  <Form.Item
+    label="环境变量"
+    name="environmentVar"
+    rules={[
+      { required: true, message: '连接名不能为空' },
+      {
+        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
+        message: '只允许包含字母',
+      },
+    ]}
+  >
+    <Input placeholder="请输入..." />
+  </Form.Item>
+)
+
+export default function DatasourceDBMainEdit({ content }: Props) {
   const [disabled, setDisabled] = useImmer(true)
-  const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(
-    <Form.Item
-      label="环境变量"
-      name="environmentVar"
-      rules={[
-        { required: true, message: '连接名不能为空' },
-        {
-          pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-          message: '只允许包含字母',
-        },
-      ]}
-    >
-      <Input placeholder="请输入..." />
-    </Form.Item>
-  )
+  const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   const onFinish = (values: object) => {
     console.log('Success:', values)
   }
@@ -55,21 +63,7 @@ export default function DatasourceEditorMainEdit() {
     setDisabled(true)
     switch (value) {
       case 'env':
-        setViewerForm(
-          <Form.Item
-            label="环境变量"
-            name="environmentVar"
-            rules={[
-              { required: true, message: '连接名不能为空' },
-              {
-                pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                message: '只允许包含字母',
-              },
-            ]}
-          >
-            <Input placeholder="请输入..." />
-          </Form.Item>
-        )
+        setViewerForm(initForm)
         break
       case 'url':
         setViewerForm(
@@ -173,7 +167,7 @@ export default function DatasourceEditorMainEdit() {
     <>
       <div className="border-gray border-b pb-5">
         <AppleOutlined />
-        <span className="ml-2">default_db</span>
+        <span className="ml-2">{content.name}</span>
         <span className="ml-2 text-xs text-gray-500/80">main</span>
       </div>
 

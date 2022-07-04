@@ -20,24 +20,44 @@
   }
 }
 .connect-check-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 95px;
-  height: 24px;
-  padding: 0 10px;
-  margin-left: 40px;
-  color: #d83860;
+  padding: 0;
+  width: 64px;
+  height: 28px;
   font-size: 14px;
-  background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
-  border-radius: 4px;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
 
   &:hover,
   &:focus {
     color: rgb(233 92 127);
-    background: #ebcec6;
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
   }
+  span {
+    line-height: 18px;
+    color: #fff;
+    font-size: 14px;
+  }
+}
+
+.connect-check-btn-common {
+  height: 28px;
+  padding: 0;
+  background: #ffffff;
+  border-radius: 2px;
+  span {
+    line-height: 18px;
+    font-size: 14px;
+  }
+}
+
+.db-check-setting {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #e92e5e;
+  line-height: 20px;
+  margin-right: 8px;
 }
 
 .save-btn {

@@ -51,7 +51,7 @@ export default function DatasourcePannel({ onClickItem, onChangeDBType, onToggle
             onToggleDesigner={onToggleDesigner}
           />
         </TabPane>
-        <TabPane tab="自定义" key="4">
+        <TabPane tab="自定义" key="defineByself">
           <DatasourceList
             onClickItem={onClickItem}
             Datasourcetype="defineByself"
