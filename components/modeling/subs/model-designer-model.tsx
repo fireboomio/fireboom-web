@@ -42,54 +42,64 @@ function TypeModalContent({ onClick }: PropoverProps) {
 }
 
 function AttrDefault({ attr }: { attr: Attribute }) {
-  if (attr.args && attr.args.length) {
-    return (
-      <>
-        {attr.args.map((arg, idx) => {
-          let value = ''
-          if (typeof arg.value === 'string') value = arg.value
-          else if (
-            Object.prototype.hasOwnProperty.call(arg.value, 'type') &&
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            arg.value.type! === 'function'
-          )
-            value = `${(arg.value as Func).name}()`
+  if (!attr.args || attr.args.length === 0) return <>@{attr.name}()</>
 
-          return <div key={idx}>{`@${attr.name}(${value})`}</div>
-        })}
-      </>
-    )
-  }
-  return <>@{attr.name}()</>
+  return (
+    <>
+      {attr.args.map((arg, idx) => {
+        let value = <></>
+        if (typeof arg.value === 'string')
+          value = <span className="text-[#ECA160]">{arg.value}</span>
+        else if (
+          Object.prototype.hasOwnProperty.call(arg.value, 'type') &&
+          // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          arg.value.type! === 'function'
+        )
+          value = <span className="text-[#ECA160]">{(arg.value as Func).name}()</span>
+
+        return (
+          <div key={idx} className="text-[#1B25C9]">
+            @{attr.name}({value})
+          </div>
+        )
+      })}
+    </>
+  )
 }
 
 function AttrRelation({ attr }: { attr: Attribute }) {
-  if (attr.args && attr.args.length) {
-    // @ts-ignore
-    const fieldsObj = attr.args.find((a) => a.value.key === 'fields')
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const fields = (fieldsObj.value.value.args as string[]).join(', ')
-    // @ts-ignore
-    const refObj = attr.args.find((a) => a.value.key === 'references')
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const refs = (refObj.value.value.args as string[]).join(', ')
-    return <>{`@relation(fields: [${fields}], references: [${refs}])`}</>
-  }
-  return <>@{attr.name}()</>
+  if (!attr.args || attr.args.length === 0) return <>@{attr.name}()</>
+
+  // @ts-ignore
+  const fieldsObj = attr.args.find((a) => a.value.key === 'fields')
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const fields = (fieldsObj.value.value.args as string[]).join(', ')
+  // @ts-ignore
+  const refObj = attr.args.find((a) => a.value.key === 'references')
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const refs = (refObj.value.value.args as string[]).join(', ')
+  return (
+    <div className="text-[#1B25C9]">
+      @relation(fields: [<span className="text-[#ECA160]">{fields}</span>], references: [
+      <span className="text-[#ECA160]">{refs}</span>])
+    </div>
+  )
 }
 
 export default function ModelDesignerModel({ model }: Props) {
+  const properties = model.properties ?? []
+
   const [typePopVisible, setTypePopVisible] = useImmer(false)
   const [activeCell, setActiveCell] = useImmer({ col: '', idx: -1 })
   const [fields, setFields] = useImmer<Field[]>(
-    model.properties.filter((p) => p.type === 'field') as Field[]
+    properties.filter((p) => p.type === 'field') as Field[]
   )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setFields(model.properties.filter((p) => p.type === 'field') as Field[]), [model])
+  useEffect(() => setFields(properties.filter((p) => p.type === 'field') as Field[]), [model])
 
   function handleTypeSelect(_value: string) {
     // TODO: 更新 cell 类型
@@ -130,10 +140,9 @@ export default function ModelDesignerModel({ model }: Props) {
           <div className="h-6 w-full flex">
             {field.attributes?.map((attr, idx) => (
               <div key={idx} className="mr-3 cursor-pointer hover:bg-[#F8F8F9]">
-                {attr.name === 'id' && <>@id()</>}
+                {attr.name === 'id' && <div className="text-[#1B25C9]">@id()</div>}
                 {attr.name === 'default' && <AttrDefault attr={attr} />}
-                {attr.name === 'unique' && <>@unique()</>}
-                {attr.name === 'index' && <>@index()</>}
+                {attr.name === 'unique' && <div className="text-[#1B25C9]">@unique()</div>}
                 {attr.name === 'relation' && <AttrRelation attr={attr} />}
               </div>
             ))}
