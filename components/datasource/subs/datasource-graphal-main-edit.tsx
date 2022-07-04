@@ -4,7 +4,7 @@ import { Button, Form, Input, Select, Radio, Switch, Tabs, Collapse, Upload, Che
 
 import styles from './datasource-common-main.module.scss'
 
-export default function DatasourceEditorMainEdit() {
+export default function DatasourceGraphalMainEdit() {
   const onFinish = (values: object) => {
     console.log('Success:', values)
   }
@@ -230,7 +230,7 @@ export default function DatasourceEditorMainEdit() {
               <Form.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>排除重命名根字段：</span>
+                    <span className={styles['label-style']}>排除重命名根字段:</span>
                     <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }

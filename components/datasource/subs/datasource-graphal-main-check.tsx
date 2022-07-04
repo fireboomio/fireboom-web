@@ -15,7 +15,7 @@ interface Props {
   content: DatasourceItem
 }
 
-export default function DatasourceRestMainCheck({ content }: Props) {
+export default function DatasourceGraphalMainCheck({ content }: Props) {
   const [isEyeShow, setIsEyeShow] = useImmer(false)
   const connectSwitchOnChange = () => {
     console.log('switch change')
