@@ -1,4 +1,4 @@
-import { RightSquareOutlined, AppleOutlined } from '@ant-design/icons'
+import { RightSquareOutlined, AppleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useImmer } from 'use-immer'
@@ -52,9 +52,14 @@ export default function DatasourceDBMainEdit({ content }: Props) {
   }
 
   const openNotification = (placement: NotificationPlacement) => {
-    notification.warning({
-      message: `Notification ${placement}`,
-      description: '链接失败',
+    notification.open({
+      message: <CloseCircleOutlined />,
+      description: (
+        <div>
+          <h1>链接失败</h1>
+          描述性语句描述性语句描述性语句
+        </div>
+      ),
       placement,
     })
   }

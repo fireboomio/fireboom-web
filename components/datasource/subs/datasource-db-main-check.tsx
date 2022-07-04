@@ -54,6 +54,7 @@ export default function DatasourceDBMainCheck({ content }: Props) {
           column={1}
           size="small"
           labelStyle={{
+            color: '#5F6269',
             backgroundColor: 'white',
             width: '30%',
             borderRight: 'none',
