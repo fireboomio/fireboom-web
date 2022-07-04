@@ -64,6 +64,23 @@ function AttrDefault({ attr }: { attr: Attribute }) {
   return <>@{attr.name}()</>
 }
 
+function AttrRelation({ attr }: { attr: Attribute }) {
+  if (attr.args && attr.args.length) {
+    // @ts-ignore
+    const fieldsObj = attr.args.find((a) => a.value.key === 'fields')
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const fields = (fieldsObj.value.value.args as string[]).join(', ')
+    // @ts-ignore
+    const refObj = attr.args.find((a) => a.value.key === 'references')
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const refs = (refObj.value.value.args as string[]).join(', ')
+    return <>{`@relation(fields: [${fields}], references: [${refs}])`}</>
+  }
+  return <>@{attr.name}()</>
+}
+
 export default function ModelDesignerModel({ model }: Props) {
   const [typePopVisible, setTypePopVisible] = useImmer(false)
   const [activeCell, setActiveCell] = useImmer({ col: '', idx: -1 })
@@ -117,7 +134,7 @@ export default function ModelDesignerModel({ model }: Props) {
                 {attr.name === 'default' && <AttrDefault attr={attr} />}
                 {attr.name === 'unique' && <>@unique()</>}
                 {attr.name === 'index' && <>@index()</>}
-                {attr.name === 'relation' && <>@relation()</>}
+                {attr.name === 'relation' && <AttrRelation attr={attr} />}
               </div>
             ))}
           </div>
