@@ -43,7 +43,6 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
   }
 
   function renameEntity(value: string) {
-    console.log('bbb', entity)
     if (value === '') {
       dispatch({ type: 'deleted', data: entity })
     } else {
