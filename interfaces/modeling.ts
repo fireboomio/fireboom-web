@@ -30,10 +30,3 @@ export type Entity = Model | Enum
 export type Block = BlockT & Id
 export type Model = ModelT & Id
 export type Enum = EnumT & Id
-
-export interface Field {
-  property: string
-  value: string
-  note: string
-  [key: string]: number | string | boolean
-}

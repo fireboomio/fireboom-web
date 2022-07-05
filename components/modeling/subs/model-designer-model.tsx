@@ -1,4 +1,7 @@
-import type { Field } from '@mrleebo/prisma-ast'
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import type { Attribute, Field, Func, ModelAttribute } from '@mrleebo/prisma-ast'
 import { Input, Modal } from 'antd'
 import { useEffect, useCallback } from 'react'
 import { useImmer } from 'use-immer'
@@ -41,17 +44,115 @@ function TypeModalContent({ onClick }: PropoverProps) {
   )
 }
 
+function AttrDefault({ attr }: { attr: Attribute }) {
+  if (!attr.args || attr.args.length === 0) return <>@{attr.name}()</>
+
+  return (
+    <>
+      {attr.args.map((arg, idx) => {
+        let value = <></>
+        if (typeof arg.value === 'string')
+          value = <span className="text-[#ECA160]">{arg.value}</span>
+        else if (
+          Object.prototype.hasOwnProperty.call(arg.value, 'type') &&
+          // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          arg.value.type! === 'function'
+        )
+          value = <span className="text-[#ECA160]">{(arg.value as Func).name}()</span>
+
+        return (
+          <div key={idx} className="text-[#1B25C9]">
+            @{attr.name}({value})
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
+function AttrRelation({ attr }: { attr: Attribute }) {
+  if (!attr.args || attr.args.length === 0) return <>@{attr.name}()</>
+
+  // @ts-ignore
+  const fieldsObj = attr.args.find((a) => a.value.key === 'fields')
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const fields = (fieldsObj.value.value.args as string[]).join(', ')
+  // @ts-ignore
+  const refObj = attr.args.find((a) => a.value.key === 'references')
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const refs = (refObj.value.value.args as string[]).join(', ')
+  return (
+    <div className="text-[#1B25C9]">
+      @relation(fields: [<span className="text-[#ECA160]">{fields}</span>], references: [
+      <span className="text-[#ECA160]">{refs}</span>])
+    </div>
+  )
+}
+
+function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
+  return (
+    <>
+      {attributes?.map((attr, idx) => {
+        const args = attr.args.map((arg) => {
+          // @ts-ignore
+          switch (arg.value.key) {
+            case 'fields':
+              // @ts-ignore
+              return { k: 'fields', v: arg.value.value.args }
+            case 'name':
+              // @ts-ignore
+              return { k: 'name', v: arg.value.value }
+            default:
+              return
+          }
+        })
+
+        const argv = args.map((arg, idx) => {
+          if (idx !== 0)
+            return (
+              <span key={idx}>
+                {/* @ts-ignore */}
+                <span>, {arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+              </span>
+            )
+          else
+            return (
+              <span key={idx}>
+                {/* @ts-ignore */}
+                <span>{arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+              </span>
+            )
+        })
+
+        return (
+          <div key={idx} className="flex my-1.5 text-sm font-normal leading-7">
+            @{attr.name}({argv})
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
 export default function ModelDesignerModel({ model }: Props) {
+  const properties = model.properties ?? []
+
   const [typePopVisible, setTypePopVisible] = useImmer(false)
   const [activeCell, setActiveCell] = useImmer({ col: '', idx: -1 })
   const [fields, setFields] = useImmer<Field[]>(
-    model.properties.filter((p) => p.type === 'field') as Field[]
+    properties.filter((p) => p.type === 'field') as Field[]
+  )
+  const [attributes, _setAttributes] = useImmer<ModelAttribute[]>(
+    properties.filter((p) => p.type === 'attribute') as ModelAttribute[]
   )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setFields(model.properties.filter((p) => p.type === 'field') as Field[]), [model])
+  useEffect(() => setFields(properties.filter((p) => p.type === 'field') as Field[]), [model])
 
-  function handleTypeSelect(value: string) {
+  function handleTypeSelect(_value: string) {
     // TODO: 更新 cell 类型
     setTypePopVisible(false)
   }
@@ -90,16 +191,17 @@ export default function ModelDesignerModel({ model }: Props) {
           <div className="h-6 w-full flex">
             {field.attributes?.map((attr, idx) => (
               <div key={idx} className="mr-3 cursor-pointer hover:bg-[#F8F8F9]">
-                {attr.name === 'id' && <>@id()</>}
-                {attr.name === 'default' && <>@default()</>}
-                {attr.name === 'unique' && <>@unique()</>}
-                {attr.name === 'index' && <>@index()</>}
-                {attr.name === 'relation' && <>@relation()</>}
+                {attr.name === 'id' && <div className="text-[#1B25C9]">@id()</div>}
+                {attr.name === 'default' && <AttrDefault attr={attr} />}
+                {attr.name === 'unique' && <div className="text-[#1B25C9]">@unique()</div>}
+                {attr.name === 'relation' && <AttrRelation attr={attr} />}
               </div>
             ))}
           </div>
         </div>
       ))}
+
+      <TableAttr attributes={attributes} />
 
       <Modal
         className="max-w-264px"
