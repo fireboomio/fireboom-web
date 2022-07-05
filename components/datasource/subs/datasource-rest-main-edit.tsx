@@ -1,10 +1,18 @@
 import { CaretRightOutlined, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import { Button, Form, Input, Select, Radio, Switch, Tabs, Upload, Collapse } from 'antd'
+import { useImmer } from 'use-immer'
+
+import type { DatasourceItem } from '@/interfaces/datasource'
 
 import styles from './datasource-common-main.module.scss'
 
-export default function DatasourceEditorMainEdit() {
+interface Props {
+  content: DatasourceItem
+}
+export default function DatasourceEditorMainEdit({ content }: Props) {
+  const [value, setValue] = useImmer(1)
+  const [isRadioShow, setIsRadioShow] = useImmer(true)
   const onFinish = (values: object) => {
     console.log('Success:', values)
   }
@@ -17,16 +25,21 @@ export default function DatasourceEditorMainEdit() {
   }
   const onChangeRadio = (e: RadioChangeEvent) => {
     console.log('radio checked', e.target.value)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setValue(e.target.value)
+    setIsRadioShow(!isRadioShow)
   }
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
+
   return (
     <>
       <div className="flex items-center justify-between border-gray border-b">
         <div>
           <span className="ml-2">
-            userinfo <span className="text-xs text-gray-500/80">GET</span>
+            {content.name} <span className="text-xs text-gray-500/80">GET</span>
           </span>
         </div>
         <div className="flex justify-center items-center mb-2">
@@ -59,20 +72,6 @@ export default function DatasourceEditorMainEdit() {
               </div>
             }
             colon={false}
-            style={{ marginBottom: '20px' }}
-          >
-            <Input placeholder="请输入..." />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <div>
-                <span>Rest 端点:</span>
-                <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
-              </div>
-            }
-            colon={false}
-            required
             style={{ marginBottom: '20px' }}
           >
             <Input placeholder="请输入..." />
@@ -133,30 +132,48 @@ export default function DatasourceEditorMainEdit() {
               labelAlign="left"
             >
               <Form.Item label="JWT获取">
-                <Radio.Group onChange={onChangeRadio}>
+                <Radio.Group onChange={onChangeRadio} value={value}>
                   <Radio value={1} defaultChecked={true} className="mr-20">
                     静态
                   </Radio>
                   <Radio value={2}>动态</Radio>
                 </Radio.Group>
               </Form.Item>
-              <Form.Item label="密钥" required>
-                <Input.Group compact>
-                  <Form.Item noStyle rules={[{ required: true }]}>
-                    <Select style={{ width: '20%' }} placeholder="值">
-                      1
-                    </Select>
+              {isRadioShow ? (
+                <div>
+                  <Form.Item label="密钥" required>
+                    <Input.Group compact>
+                      <Form.Item noStyle rules={[{ required: true }]}>
+                        <Select style={{ width: '20%' }} placeholder="值">
+                          1
+                        </Select>
+                      </Form.Item>
+                      <Form.Item noStyle rules={[{ required: true }]}>
+                        <Input style={{ width: '80%' }} placeholder="请输入..." />
+                      </Form.Item>
+                    </Input.Group>
                   </Form.Item>
-                  <Form.Item noStyle rules={[{ required: true }]}>
-                    <Input style={{ width: '80%' }} placeholder="请输入..." />
+                  <Form.Item label="签名方法">
+                    <Radio value={1} checked>
+                      HS256
+                    </Radio>
                   </Form.Item>
-                </Input.Group>
-              </Form.Item>
-              <Form.Item label="签名方法">
-                <Radio value={1} checked>
-                  HS256
-                </Radio>
-              </Form.Item>
+                </div>
+              ) : (
+                <Form.Item
+                  label={
+                    <div>
+                      <span>Token 端点:</span>
+                      <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    </div>
+                  }
+                  colon={false}
+                  required
+                  style={{ marginBottom: '20px' }}
+                >
+                  <Input placeholder="请输入..." />
+                </Form.Item>
+              )}
             </Form>
           </TabPane>
         </Tabs>

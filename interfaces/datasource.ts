@@ -3,7 +3,7 @@ export interface DatasourceItem {
   name: string
   type: string
   info: {
-    [key: string]: number | string | boolean
+    [key: string]: number | string | boolean | unknown
   }
 }
 

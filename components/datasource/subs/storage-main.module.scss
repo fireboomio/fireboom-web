@@ -1,0 +1,33 @@
+
+.casader-select :global {
+    box-shadow: none; 
+      .ant-cascader-menu-item {
+        background-color: white;
+        &:hover,
+        &:focus {
+          background-color: #F8F8F9;
+        }
+      }
+      .anticon-right {
+        visibility: hidden;
+      }
+      .ant-cascader-menu {
+        border-right: none;
+        width: 400px;    
+      
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,5 @@
 import { QuestionCircleOutlined, CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
-import type { RadioChangeEvent } from 'antd'
-import { Button, Form, Input, Select, Radio, Switch, Tabs, Collapse, Upload, Checkbox } from 'antd'
+import { Button, Form, Input, Select, Switch, Collapse, Upload, Checkbox } from 'antd'
 
 import styles from './datasource-common-main.module.scss'
 
@@ -12,13 +11,7 @@ export default function DatasourceGraphalMainEdit() {
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
-  const onChangeTab = (key: string) => {
-    console.log(key)
-  }
-  const onChangeRadio = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value)
-  }
-  const { TabPane } = Tabs
+
   const { Option } = Select
   const { Panel } = Collapse
   return (
@@ -108,69 +101,22 @@ export default function DatasourceGraphalMainEdit() {
             </Upload>
           </Form.Item>
         </Form>
-        <Tabs defaultActiveKey="1" onChange={onChangeTab} className="ml-3">
-          <TabPane tab="请求头" key="1">
-            <Form className="flex mb-3">
-              <Form.Item className="w-50 mr-2 ">
-                <Input />
-              </Form.Item>
-              <Form.Item className="w-40">
-                <Select allowClear>
-                  <Option defaultValue="way">值</Option>
-                  <Option value="head">转发自客户端</Option>
-                  <Option value="code">环境变量</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item className="w-200">
-                <Input placeholder="请输入..." />
-              </Form.Item>
-            </Form>
-          </TabPane>
-          <TabPane
-            tab={
-              <div>
-                <span>授权</span>
-                <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
-              </div>
-            }
-            key="2"
-          >
-            <Form
-              name="basic"
-              labelCol={{ span: 3 }}
-              wrapperCol={{ span: 8 }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-              validateTrigger="onBlur"
-              labelAlign="left"
-            >
-              <Form.Item label="JWT获取">
-                <Radio.Group onChange={onChangeRadio}>
-                  <Radio value={1} defaultChecked={true} className="mr-20">
-                    静态
-                  </Radio>
-                  <Radio value={2}>动态</Radio>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item label="密钥" required>
-                <Input.Group compact>
-                  <Form.Item noStyle rules={[{ required: true }]}>
-                    <Select style={{ width: '20%' }} placeholder="值">
-                      1
-                    </Select>
-                  </Form.Item>
-                  <Form.Item noStyle rules={[{ required: true }]}>
-                    <Input style={{ width: '80%' }} placeholder="请输入..." />
-                  </Form.Item>
-                </Input.Group>
-              </Form.Item>
-              <Form.Item label="签名方法">
-                <Radio value={1}>HS256</Radio>
-              </Form.Item>
-            </Form>
-          </TabPane>
-        </Tabs>
+        <h2 className="ml-3 mb-3">请求头</h2>
+        <Form className="flex mb-3">
+          <Form.Item className="w-50 mr-2 ">
+            <Input />
+          </Form.Item>
+          <Form.Item className="w-40">
+            <Select allowClear>
+              <Option defaultValue="way">值</Option>
+              <Option value="head">转发自客户端</Option>
+              <Option value="code">环境变量</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item className="w-200">
+            <Input placeholder="请输入..." />
+          </Form.Item>
+        </Form>
         <Collapse
           bordered={false}
           defaultActiveKey={['1']}
