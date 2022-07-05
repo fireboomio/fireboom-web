@@ -8,7 +8,6 @@ import { FSContext, FSDispatchContext } from '@/lib/context'
 import styles from './filestorage-common-main.module.scss'
 import FilesItem from './filestorage-item'
 
-
 interface Props {
   onClickItem: (dsItem: FileStorageItem) => void
   handleToggleDesigner: (fileStorageItem: FileStorageItem) => void
@@ -37,7 +36,6 @@ export default function FileStorageList({ onClickItem, handleToggleDesigner }: P
             size="small"
             onClick={addTable}
           />
-          <span className="text-base font-medium leading-5 text-red-500 ml-1 ">新建</span>
         </div>
       </div>
       <div className="mt-3">

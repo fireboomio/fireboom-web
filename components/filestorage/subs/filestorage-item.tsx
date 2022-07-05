@@ -20,7 +20,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
   const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
   const [visible, setVisible] = useImmer(false)
   const { currFSId } = useContext(FSCurrFileContext)
-  const [isHovering, setIsHovering] = useImmer(false)
+  const [isHovering, setIsHovering] = useImmer(fsItem.id === currFSId)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
@@ -75,7 +75,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
               }}
             >
               <AppleOutlined />
-              <span className="ml-1.5">编辑</span>
+              <span className="ml-1.5">配置</span>
             </div>
           ),
         },
@@ -102,7 +102,6 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
       ]}
     />
   )
-
   return (
     <div
       className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer"

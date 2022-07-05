@@ -1,5 +1,5 @@
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
-import { Button, Switch, Descriptions } from 'antd'
+import { Button, Switch, Descriptions, Divider } from 'antd'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageItem } from '@/interfaces/filestorage'
@@ -24,11 +24,9 @@ export default function FileStorageMainCheck({ content }: Props) {
 
   return (
     <>
-      <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
+      <div className="pb-2 flex items-center justify-between border-gray border-b">
         <div>
-          <span className="ml-2">
-            userinfo <span className="text-xs text-gray-500/80">GET</span>
-          </span>
+          <span className="text-base leading-5 font-bold">设置</span>
         </div>
         <div className="flex justify-center items-center">
           <Switch
@@ -38,6 +36,7 @@ export default function FileStorageMainCheck({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
+          <Divider type="vertical" />
           <Button className={styles['center-btn']}>
             <span>取消</span>
           </Button>

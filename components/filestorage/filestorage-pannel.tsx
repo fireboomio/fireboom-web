@@ -11,8 +11,8 @@ interface Props {
 export default function FileStoragePannel({ onClickItem, handleToggleDesigner }: Props) {
   return (
     <>
-      <div className="border-gray border-b">
-        <div className={`${styles.title} text-lg font-bold`}>存储</div>
+      <div className="border-gray border-b ">
+        <div className={`${styles.title} text-lg font-bold mt-6 ml-4 mb-8`}>存储</div>
       </div>
 
       <FileStorageList onClickItem={onClickItem} handleToggleDesigner={handleToggleDesigner} />
