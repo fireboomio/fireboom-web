@@ -21,7 +21,7 @@ export default function ModelDesignerColumnName({ data, className }: Props) {
 
   return isEditing ? (
     <Input
-      className={`h-7 max-w-150px mr-3 ${className ?? ''}`}
+      className={`h-7 max-w-150px mr-3 pl-2px ${className ?? ''}`}
       autoFocus
       size="small"
       defaultValue={data}
@@ -31,7 +31,7 @@ export default function ModelDesignerColumnName({ data, className }: Props) {
     />
   ) : (
     <div
-      className={`w-full max-w-150px ml-0 mr-3 pl-7px hover:bg-[#F8F8F9] ${className ?? ''}`}
+      className={`w-full max-w-150px ml-0 mr-3 hover:bg-[#F8F8F9] ${className ?? ''}`}
       onClick={() => setIsEditing(!isEditing)}
     >
       {data}

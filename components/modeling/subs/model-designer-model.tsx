@@ -1,4 +1,7 @@
-import type { Attribute, Field, Func } from '@mrleebo/prisma-ast'
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import type { Attribute, Field, Func, ModelAttribute } from '@mrleebo/prisma-ast'
 import { Input, Modal } from 'antd'
 import { useEffect, useCallback } from 'react'
 import { useImmer } from 'use-immer'
@@ -97,6 +100,9 @@ export default function ModelDesignerModel({ model }: Props) {
   const [fields, setFields] = useImmer<Field[]>(
     properties.filter((p) => p.type === 'field') as Field[]
   )
+  const [attributes, _setAttributes] = useImmer<ModelAttribute[]>(
+    properties.filter((p) => p.type === 'attribute') as ModelAttribute[]
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setFields(properties.filter((p) => p.type === 'field') as Field[]), [model])
@@ -149,6 +155,45 @@ export default function ModelDesignerModel({ model }: Props) {
           </div>
         </div>
       ))}
+
+      {attributes?.map((attr, idx) => {
+        const args = attr.args.map((arg) => {
+          // @ts-ignore
+          switch (arg.value.key) {
+            case 'fields':
+              // @ts-ignore
+              return { k: 'fields', v: arg.value.value.args }
+            case 'name':
+              // @ts-ignore
+              return { k: 'name', v: arg.value.value }
+            default:
+              return
+          }
+        })
+
+        const argv = args.map((arg, idx) => {
+          if (idx !== 0)
+            return (
+              <span key={idx}>
+                {/* @ts-ignore */}
+                <span>, {arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+              </span>
+            )
+          else
+            return (
+              <span key={idx}>
+                {/* @ts-ignore */}
+                <span>{arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+              </span>
+            )
+        })
+
+        return (
+          <div key={idx} className="flex my-1.5 text-sm font-normal leading-7">
+            @{attr.name}({argv})
+          </div>
+        )
+      })}
 
       <Modal
         className="max-w-264px"
