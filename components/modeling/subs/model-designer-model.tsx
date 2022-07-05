@@ -101,7 +101,7 @@ function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
           switch (arg.value.key) {
             case 'fields':
               // @ts-ignore
-              return { k: 'fields', v: arg.value.value.args }
+              return { k: 'fields', v: arg.value.value.args.join(', ') }
             case 'name':
               // @ts-ignore
               return { k: 'name', v: arg.value.value }
@@ -115,14 +115,22 @@ function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
             return (
               <span key={idx}>
                 {/* @ts-ignore */}
-                <span>, {arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+                ,&nbsp;{arg.k}: {arg.k !== 'name' ? '[' : ''}
+                {/* @ts-ignore */}
+                <span className="text-[#ECA160]">{arg.v}</span>
+                {/* @ts-ignore */}
+                {arg.k !== 'name' ? ']' : ''}
               </span>
             )
           else
             return (
               <span key={idx}>
                 {/* @ts-ignore */}
-                <span>{arg.k}</span>: <span className="text-[#ECA160]">{arg.v}</span>
+                {arg.k}: {arg.k !== 'name' ? '[' : ''}
+                {/* @ts-ignore */}
+                <span className="text-[#ECA160]">{arg.v}</span>
+                {/* @ts-ignore */}
+                {arg.k !== 'name' ? ']' : ''}
               </span>
             )
         })
