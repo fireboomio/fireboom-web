@@ -17,7 +17,7 @@ import { datasourceFetcher } from '@/lib/fetchers'
 import datasourceReducer from './datasource-reducer'
 import styles from './index.module.scss'
 
-export default function Modeling() {
+export default function Datasource() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceItem[])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
@@ -48,6 +48,7 @@ export default function Modeling() {
         type: 'fetched',
         data: datasource.filter((item) => item.type == value),
       })
+      setShowType('data')
   }
 
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem

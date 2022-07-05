@@ -9,7 +9,7 @@ import {
   ModelingDispatchContext,
   ModelingCurrEntityContext,
 } from './modeling-context'
-
+import { FSContext, FSDispatchContext, FSCurrFileContext } from './storage-context'
 export {
   ModelingContext,
   ModelingDispatchContext,
@@ -18,4 +18,7 @@ export {
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
   DatasourceToggleContext,
+  FSContext,
+  FSDispatchContext,
+  FSCurrFileContext,
 }

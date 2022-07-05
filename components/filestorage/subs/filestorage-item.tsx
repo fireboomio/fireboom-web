@@ -4,28 +4,23 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
-import {
-  DatasourceDispatchContext,
-  DatasourceCurrDBContext,
-  DatasourceToggleContext,
-} from '@/lib/context'
+import type { FileStorageItem } from '@/interfaces/filestorage'
+import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 
-import styles from '../datasource-pannel.module.scss'
+import styles from '../filestorage-pannel.module.scss'
 
 interface Props {
-  datasourceItem: DatasourceItem
-  onClickItem: (dsItem: DatasourceItem) => void
-  Datasourcetype: string
+  fsItem: FileStorageItem
+  onClickItem: (fsItem: FileStorageItem) => void
+  handleToggleDesigner: (fileStorageItem: FileStorageItem) => void
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
-  const dispatch = useContext(DatasourceDispatchContext)
-  const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
+export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
+  const dispatch = useContext(FSDispatchContext)
+  const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
   const [visible, setVisible] = useImmer(false)
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const { currDBId } = useContext(DatasourceCurrDBContext)
-  const [isHovering, setIsHovering] = useImmer(false)
+  const { currFSId } = useContext(FSCurrFileContext)
+  const [isHovering, setIsHovering] = useImmer(fsItem.id === currFSId)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
@@ -35,14 +30,14 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
 
   function handleItemEdit(value: string) {
     if (value === '') {
-      dispatch({ type: 'deleted', data: datasourceItem })
+      dispatch({ type: 'deleted', data: fsItem })
     } else {
-      dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+      dispatch({ type: 'changed', data: { ...fsItem, name: value } })
     }
     setIsEditing(false)
   }
 
-  function handleItemDelete(item: DatasourceItem) {
+  function handleItemDelete(item: FileStorageItem) {
     dispatch({ type: 'deleted', data: item })
   }
 
@@ -76,11 +71,11 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner(datasourceItem.type, datasourceItem.id)
+                handleToggleDesigner(fsItem)
               }}
             >
               <AppleOutlined />
-              <span className="ml-1.5">编辑</span>
+              <span className="ml-1.5">配置</span>
             </div>
           ),
         },
@@ -89,8 +84,8 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           label: (
             <Popconfirm
               placement="right"
-              title="确认删除该实体吗？"
-              onConfirm={() => handleItemDelete(datasourceItem)}
+              title="确认删除该文件吗？"
+              onConfirm={() => handleItemDelete(fsItem)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -107,32 +102,25 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       ]}
     />
   )
-
   return (
     <div
-      className={`flex justify-start items-center py-2.5 pl-3 cursor-pointer"
-      ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
+      className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer"
+      ${fsItem.id === currFSId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
-      key={datasourceItem.name}
+      key={fsItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
-      onDoubleClick={() => setIsEditing(true)}
       onClick={() => {
-        onClickItem(datasourceItem)
+        onClickItem(fsItem)
       }}
     >
-      <AppleOutlined className="ml-2px mr-2" />
-
       {isEditing ? (
         <Input
           onBlur={(e) => handleItemEdit(e.target.value)}
           // @ts-ignore
           onPressEnter={(e) => handleItemEdit(e.target.value as string)}
-          onKeyUp={(e: React.KeyboardEvent) => {
-            e.key == 'Escape' && setIsEditing(false)
-          }}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
-          defaultValue={datasourceItem.name}
+          defaultValue={fsItem.name}
           autoFocus
           placeholder="请输入外部数据源名"
         />
@@ -143,7 +131,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           }}
           className="text-sm font-normal leading-4"
         >
-          {datasourceItem.name}
+          {fsItem.name}
         </div>
       )}
 
