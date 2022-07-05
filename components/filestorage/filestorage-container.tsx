@@ -3,6 +3,9 @@ import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageItem } from '@/interfaces/filestorage'
+
+import FileStorageMainCheck from './subs/filestorage-main-check'
+
 interface Props {
   content: FileStorageItem
   showType: string
@@ -19,7 +22,7 @@ export default function FileStorageContainer({ content, showType }: Props) {
     if (content) {
       switch (showType) {
         case 'data':
-          setViewer(<div>展示</div>)
+          setViewer(<FileStorageMainCheck content={content}/>)
           break
         case 'edit':
           setViewer(<div>编辑设置</div>)

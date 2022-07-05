@@ -5,8 +5,9 @@ import { useContext } from 'react'
 import type { FileStorageItem } from '@/interfaces/filestorage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
+import styles from './filestorage-common-main.module.scss'
 import FilesItem from './filestorage-item'
-import styles from './filestorage-list.module.scss'
+
 
 interface Props {
   onClickItem: (dsItem: FileStorageItem) => void

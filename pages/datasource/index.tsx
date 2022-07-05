@@ -48,6 +48,7 @@ export default function Datasource() {
         type: 'fetched',
         data: datasource.filter((item) => item.type == value),
       })
+      setShowType('data')
   }
 
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem

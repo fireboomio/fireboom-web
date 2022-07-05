@@ -116,6 +116,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
+      onDoubleClick={() => setIsEditing(true)}
       onClick={() => {
         onClickItem(datasourceItem)
       }}
@@ -127,6 +128,9 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           onBlur={(e) => handleItemEdit(e.target.value)}
           // @ts-ignore
           onPressEnter={(e) => handleItemEdit(e.target.value as string)}
+          onKeyUp={(e: React.KeyboardEvent) => {
+            e.key == 'Escape' && setIsEditing(false)
+          }}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={datasourceItem.name}
           autoFocus

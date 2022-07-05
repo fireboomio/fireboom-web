@@ -1,0 +1,73 @@
+.save-btn {
+  width: 62px;
+  height: 32px;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+
+  span {
+    width: 33px;
+    height: 20px;
+    color: #fff;
+    font-size: 14px;
+  }
+}
+
+.center-btn {
+  width: 62px;
+  height: 32px;
+  margin-right: 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.switch-check-btn {
+  width: 60px;
+  height: 24px;
+  margin-right: 49px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+.SSL-open-btn {
+  padding: 0;
+  margin-right: 80px;
+  width: 48px;
+  height: 22px;
+  line-height: 22px;
+  background: rgba(138, 190, 42, 0.09);
+  border-radius: 4px;
+  border: 1px solid #8abe2a;
+  font-size: 12px;
+  font-weight: 400;
+  color: #8abe2a;
+}
+
+.SSL-close-btn {
+  padding: 0;
+  width: 48px;
+  height: 22px;
+  line-height: 22px;
+  background: #f8f8f9;
+  border-radius: 4px;
+  border: 1px solid rgba(175, 176, 180, 0.5);
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(175, 176, 180, 0.8);
+}
+
+.add-btn {
+  color: #fff;
+  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+  &:hover,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+}
