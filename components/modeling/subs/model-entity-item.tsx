@@ -32,6 +32,9 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
   function handlePressKey(e: React.KeyboardEvent) {
     if (e.key === 'Escape') {
       setIsEditing(false)
+      if (entity.name === '') {
+        dispatch({ type: 'deleted', data: entity })
+      }
     }
   }
 
@@ -40,6 +43,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
   }
 
   function renameEntity(value: string) {
+    console.log('bbb', entity)
     if (value === '') {
       dispatch({ type: 'deleted', data: entity })
     } else {
