@@ -101,6 +101,7 @@ function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
           switch (arg.value.key) {
             case 'fields':
               // @ts-ignore
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
               return { k: 'fields', v: arg.value.value.args.join(', ') }
             case 'name':
               // @ts-ignore
