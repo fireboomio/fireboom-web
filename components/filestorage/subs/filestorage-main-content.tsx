@@ -122,7 +122,9 @@ export default function StorageMainCheck({ content }: Props) {
           ) : (
             <Input
               status="error"
-              prefix={<SearchOutlined onClick={changeSerachState} />}
+              prefix={
+                <SearchOutlined onClick={changeSerachState} className={styles['form-item-icon']} />
+              }
               className="mr-4"
             />
           )}
