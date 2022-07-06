@@ -158,6 +158,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
         }}
       >
         <MoreOutlined
+          onClick={(e) => e.stopPropagation()}
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
