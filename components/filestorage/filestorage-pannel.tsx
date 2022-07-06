@@ -5,7 +5,7 @@ import FileStorageList from './subs/filestorage-list'
 
 interface Props {
   onClickItem: (fsItem: FileStorageItem) => void
-  handleToggleDesigner: (fileStorageItem: FileStorageItem) => void
+  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
 export default function FileStoragePannel({ onClickItem, handleToggleDesigner }: Props) {

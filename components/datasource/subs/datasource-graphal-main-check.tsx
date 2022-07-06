@@ -1,11 +1,5 @@
-import {
-  CaretRightOutlined,
-  QuestionCircleOutlined,
-  EyeFilled,
-  EyeInvisibleFilled,
-} from '@ant-design/icons'
-import { Button, Switch, Descriptions, Tabs, Collapse } from 'antd'
-import { useImmer } from 'use-immer'
+import { CaretRightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { Button, Switch, Descriptions, Collapse } from 'antd'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
 
@@ -16,7 +10,6 @@ interface Props {
 }
 
 export default function DatasourceGraphalMainCheck({ content }: Props) {
-  const [isEyeShow, setIsEyeShow] = useImmer(false)
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
@@ -24,15 +17,8 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
     return <></>
   }
   const { info } = content
-  const { TabPane } = Tabs
-  const { Panel } = Collapse
-  const onChange = (key: string) => {
-    console.log(key)
-  }
 
-  const changeEyeState = () => {
-    setIsEyeShow(!isEyeShow)
-  }
+  const { Panel } = Collapse
   return (
     <>
       <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
@@ -105,69 +91,25 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
           </Descriptions.Item>
         </Descriptions>
       </div>
-
-      <Tabs defaultActiveKey="1" onChange={onChange}>
-        <TabPane tab="请求头" key="1">
-          <div className="flex justify-center mb-8">
-            <Descriptions
-              bordered
-              column={3}
-              size="small"
-              className={styles['descriptions-box']}
-              labelStyle={{
-                backgroundColor: 'white',
-                borderRight: 'none',
-                borderBottom: 'none',
-              }}
-            >
-              <Descriptions.Item>{info.head}</Descriptions.Item>
-              <Descriptions.Item>{info.way}</Descriptions.Item>
-              <Descriptions.Item>{info.code}</Descriptions.Item>
-            </Descriptions>
-          </div>
-        </TabPane>
-        <TabPane
-          tab={
-            <div>
-              <span className={styles['label-style']}>授权</span>
-              <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
-            </div>
-          }
-          key="2"
+      <h2 className="ml-3 mb-3">请求头</h2>
+      <div className="flex justify-center mb-8">
+        <Descriptions
+          bordered
+          column={3}
+          size="small"
+          className={styles['descriptions-box']}
+          labelStyle={{
+            backgroundColor: 'white',
+            borderRight: 'none',
+            borderBottom: 'none',
+          }}
         >
-          <div className="flex justify-center ">
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-              className={styles['descriptions-box']}
-              labelStyle={{
-                backgroundColor: 'white',
-                width: '30%',
-                borderRight: 'none',
-                borderBottom: 'none',
-              }}
-            >
-              <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
-              <Descriptions.Item label="密钥">
-                {isEyeShow ? (
-                  <div>
-                    <span className="mr-5">123456</span>
-                    <EyeFilled onClick={changeEyeState} />
-                  </div>
-                ) : (
-                  <div>
-                    <span className="mr-5">********</span>
-                    <EyeInvisibleFilled onClick={changeEyeState} />
-                  </div>
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item label="签名方法">{info.signMethod}</Descriptions.Item>
-              <Descriptions.Item label="Token端点">{info.tokenPoint}</Descriptions.Item>
-            </Descriptions>
-          </div>
-        </TabPane>
-      </Tabs>
+          <Descriptions.Item>{info.head}</Descriptions.Item>
+          <Descriptions.Item>{info.way}</Descriptions.Item>
+          <Descriptions.Item>{info.code}</Descriptions.Item>
+        </Descriptions>
+      </div>
+
       <Collapse
         bordered={false}
         defaultActiveKey={['1']}

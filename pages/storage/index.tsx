@@ -21,7 +21,7 @@ export default function FileStorage() {
   }, [fileList])
 
   const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<FileStorageItem[], Error>('/api/datasource', fileStorageFetcher)
+  const { data, error } = useSWR<FileStorageItem[], Error>('/api/filestorage', fileStorageFetcher)
   useEffect(() => {
     data &&
       dispatch({
@@ -42,9 +42,9 @@ export default function FileStorage() {
     setCurrFSId(fileStorageItem.id)
   }
 
-  function handleToggleDesigner(fileStorageItem: FileStorageItem) {
-    setShowType('edit')
-    setCurrFSId(fileStorageItem.id)
+  function handleToggleDesigner(value: 'setEdit' | 'setCheck', id: number) {
+    setShowType(value)
+    setCurrFSId(id)
   }
 
   return (

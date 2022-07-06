@@ -12,6 +12,7 @@ import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
 import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
+
 interface Props {
   content: DatasourceItem
   showType: string
@@ -39,7 +40,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
           setViewer(<DatasourceEditorMainEdit content={content} />)
           break
         case 'REST':
-          setViewer(<DatasourceRestMainEdit />)
+          setViewer(<DatasourceRestMainEdit content={content} />)
           break
         case 'Graphal':
           setViewer(<DatasourceGraphalMainEdit />)
