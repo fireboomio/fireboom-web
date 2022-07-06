@@ -69,5 +69,8 @@ module.exports = {
     'comma-dangle': ['error', 'only-multiline'],
     quotes: ['error', 'single'],
     'jsx-quotes': ['error', 'prefer-double'],
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-unsafe-member-access': 0,
+    '"react/prop-types"': 'ignore',
   },
 }

@@ -1,0 +1,19 @@
+.active {
+  position: relative;
+  color: #e92e5e;
+  &::after {
+    position: absolute;
+    left: 0;
+    bottom: -12px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(311deg, #e98c75 0%, #e13d5b 100%);
+    border-radius: 3px;
+    content: '';
+  }
+}
+
+.divider {
+  margin: 12px 0 0 0;
+  border-top: 1px solid rgba(95, 98, 105, 0.1);
+}

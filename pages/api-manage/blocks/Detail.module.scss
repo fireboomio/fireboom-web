@@ -1,0 +1,18 @@
+.label {
+  flex-shrink: 0;
+  width: 78px;
+}
+
+.caption {
+  display: inline-block;
+  padding: 10px 16px 0;
+  color: rgb(0 0 0 / 85%);
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-bottom: 1px solid #fff;
+}
+
+.content {
+  margin-top: -1px;
+  padding: 20px 16px;
+  border: 1px solid rgb(95 98 105 / 10%);
+}
