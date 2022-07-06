@@ -2,7 +2,7 @@ export interface FileStorageItem {
   id: number
   name: string
   info: {
-    [key: string]: number | string | boolean
+    [key: string]: number | string | boolean | []
   }
 }
 

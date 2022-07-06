@@ -12,8 +12,6 @@ import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
 import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
-import StorageMainCheck from './subs/storage-main-check'
-import StorageMainSet from './subs/storage-main-set'
 
 interface Props {
   content: DatasourceItem
@@ -37,7 +35,6 @@ export default function DatasourceEditor({ content, showType }: Props) {
             setViewer(<DatasourceGraphalMainCheck content={content} />)
           else if (content.type == 'defineByself')
             setViewer(<DatasourceDeselfMainEdit content={content} />)
-          else if (content.type == 'storage') setViewer(<StorageMainCheck content={content} />)
           break
         case 'DB':
           setViewer(<DatasourceEditorMainEdit content={content} />)
@@ -53,9 +50,6 @@ export default function DatasourceEditor({ content, showType }: Props) {
           break
         case 'Setting':
           setViewer(<DatasourceDBMainSetting />)
-          break
-        case 'storage':
-          setViewer(<StorageMainSet content={content} />)
           break
         default:
           setViewer(JSON.stringify(content))

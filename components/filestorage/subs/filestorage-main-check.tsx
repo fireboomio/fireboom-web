@@ -21,7 +21,7 @@ export default function FileStorageMainCheck({ content }: Props) {
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-
+  console.log(info)
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">

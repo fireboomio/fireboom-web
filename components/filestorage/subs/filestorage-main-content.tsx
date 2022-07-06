@@ -17,15 +17,16 @@ import {
   Cascader,
   Drawer,
   Collapse,
+  Input,
 } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { FileStorageItem } from '@/interfaces/filestorage'
 
-import styles from './storage-main.module.scss'
+import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: FileStorageItem
 }
 
 interface Option {
@@ -43,6 +44,7 @@ export default function StorageMainCheck({ content }: Props) {
   const onClose = () => {
     setVisible(false)
   }
+
   const {
     info: { dropdownMenu },
   } = content
@@ -62,9 +64,7 @@ export default function StorageMainCheck({ content }: Props) {
           label: (
             <div>
               <AppstoreOutlined className="mr-2" />
-              <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                视图
-              </a>
+              <span>视图</span>
             </div>
           ),
         },
@@ -73,9 +73,7 @@ export default function StorageMainCheck({ content }: Props) {
           label: (
             <div>
               <BarsOutlined className="mr-2" />
-              <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                列表
-              </a>
+              <span>列表</span>
             </div>
           ),
         },
@@ -87,27 +85,15 @@ export default function StorageMainCheck({ content }: Props) {
       items={[
         {
           key: '1',
-          label: (
-            <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-              按名字
-            </a>
-          ),
+          label: <div>按名字</div>,
         },
         {
           key: '2',
-          label: (
-            <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-              按创建时间
-            </a>
-          ),
+          label: <div>按创建时间</div>,
         },
         {
           key: '3',
-          label: (
-            <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-              按修改时间
-            </a>
-          ),
+          label: <div>按修改时间</div>,
         },
       ]}
     />
@@ -134,9 +120,11 @@ export default function StorageMainCheck({ content }: Props) {
               />
             </Tooltip>
           ) : (
-            <Button className="mr-4" icon={<SearchOutlined />} onClick={changeSerachState}>
-              Search
-            </Button>
+            <Input
+              status="error"
+              prefix={<SearchOutlined onClick={changeSerachState} />}
+              className="mr-4"
+            />
           )}
           <Divider type="vertical" className="mr-5 h-5" />
           <Button icon={<SyncOutlined />} className="mr-2">
@@ -162,7 +150,6 @@ export default function StorageMainCheck({ content }: Props) {
         </div>
       </div>
       <div>
-        {/* {text} */}
         <Cascader
           options={options}
           onChange={onChange}
@@ -180,14 +167,25 @@ export default function StorageMainCheck({ content }: Props) {
           <a href="#" />
         </Cascader>
       </div>
+
       <Drawer
-        title="Basic Drawer"
+        title="avatar2.jpg"
         placement="right"
         onClose={onClose}
         visible={visible}
         mask={false}
+        width={315}
+        maskClosable={false}
+
+        // closable={false}
       >
-        <Collapse defaultActiveKey={['1']} onChange={onChange}>
+        <Collapse
+          defaultActiveKey={['1', '2']}
+          bordered={false}
+          expandIconPosition="end"
+          ghost={true}
+          className={styles['collapse-style']}
+        >
           <Panel header="基本信息" key="1">
             <p>类型：image/jpg</p>
             <p>大小：127.6kb</p>
@@ -195,9 +193,15 @@ export default function StorageMainCheck({ content }: Props) {
             <p>修改于：2022-05-07 12:23</p>
           </Panel>
           <Panel header="预览" key="2">
-            <p>
-              <img src="" alt="" />
-            </p>
+            <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
+              <img
+                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F511%2F101611154647%2F111016154647-10-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659607424&t=dec35f08ae686e97c066c2fed2e9fa7c"
+                alt=""
+              />
+              <Button>下载</Button>
+              <Button>复制URL</Button>
+              <Button>删除</Button>
+            </div>
           </Panel>
         </Collapse>
       </Drawer>

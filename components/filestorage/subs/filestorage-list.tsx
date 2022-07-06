@@ -10,7 +10,7 @@ import FilesItem from './filestorage-item'
 
 interface Props {
   onClickItem: (dsItem: FileStorageItem) => void
-  handleToggleDesigner: (fileStorageItem: FileStorageItem) => void
+  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
 export default function FileStorageList({ onClickItem, handleToggleDesigner }: Props) {

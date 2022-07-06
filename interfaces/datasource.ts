@@ -3,14 +3,14 @@ export interface DatasourceItem {
   name: string
   type: string
   info: {
-    [key: string]: number | string | boolean | unknown
+    [key: string]: number | string | boolean
   }
 }
 
 export type DatasourceAction = DatasourceSingleAction | DatasourceListAction
 
 interface DatasourceSingleAction {
-  type: 'selected' | 'added' | 'deleted' | 'changed'
+  type: 'selected' | 'added' | 'deleted' | 'changed' 
   data: DatasourceItem
 }
 interface DatasourceListAction {

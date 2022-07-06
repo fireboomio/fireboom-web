@@ -41,9 +41,6 @@ export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props)
         <TabPane tab="自定义" key="defineByself">
           <DatasourceList onClickItem={onClickItem} Datasourcetype="defineByself" />
         </TabPane>
-        <TabPane tab="存储" key="storage">
-          <DatasourceList onClickItem={onClickItem} Datasourcetype="storage" />
-        </TabPane>
       </Tabs>
     </>
   )

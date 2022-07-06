@@ -1,12 +1,13 @@
-import { Button, Form, Input, Switch } from 'antd'
+import { Button, Form, Input, Switch, Divider } from 'antd'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { FileStorageItem } from '@/interfaces/filestorage'
 
-import styles from './storage-main.module.scss'
+import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: FileStorageItem
 }
+
 export default function StorageMainSet({ content }: Props) {
   const connectSwitchOnChange = () => {
     console.log('switch change')
@@ -18,14 +19,16 @@ export default function StorageMainSet({ content }: Props) {
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
-  const { info } = content
+  if (!content) {
+    return <></>
+  }
   return (
     <>
-      <div className="flex items-center justify-between border-gray border-b">
+      <div className="pb-2 flex items-center justify-between border-gray border-b">
         <div>
-          <span className="ml-2">{info.leftHeadName}</span>
+          <span className="text-base leading-5 font-bold">设置</span>
         </div>
-        <div className="flex justify-center items-center mb-2">
+        <div className="flex justify-center items-center">
           <Switch
             defaultChecked
             checkedChildren="开启"
@@ -33,10 +36,11 @@ export default function StorageMainSet({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
-          <Button className={styles['design-btn']}>
+          <Divider type="vertical" />
+          <Button className={styles['center-btn']}>
             <span>取消</span>
           </Button>
-          <Button className={styles['edit-btn']}>
+          <Button className={styles['save-btn']}>
             <span>保存</span>
           </Button>
         </div>
@@ -46,7 +50,7 @@ export default function StorageMainSet({ content }: Props) {
         <Form
           name="basic"
           labelCol={{ span: 3 }}
-          wrapperCol={{ span: 8 }}
+          wrapperCol={{ span: 11 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -54,29 +58,29 @@ export default function StorageMainSet({ content }: Props) {
           labelAlign="left"
           className="ml-3"
         >
-          <Form.Item label="名称" style={{ marginBottom: '20px' }}>
+          <Form.Item label="名称">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="服务地址" style={{ marginBottom: '20px' }}>
+          <Form.Item label="服务地址">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" style={{ marginBottom: '20px' }} required>
+          <Form.Item label="App ID" required>
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App Secret" style={{ marginBottom: '20px' }} required>
+          <Form.Item label="App Secret" required>
             <Input.Password placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="区域" style={{ marginBottom: '20px' }}>
+          <Form.Item label="区域">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="bucketName" style={{ marginBottom: '49px' }}>
+          <Form.Item label="bucketName">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="开启SSL" style={{ marginBottom: '20px' }} rules={[{ required: true }]}>
-            <Switch defaultChecked className={styles['switch-edit-btn']} size="small" />
+          <Form.Item label="开启SSL" style={{ marginTop: '29px' }} rules={[{ required: true }]}>
+            <Switch defaultChecked className={styles['switch-set-btn']} size="small" />
           </Form.Item>
         </Form>
       </div>

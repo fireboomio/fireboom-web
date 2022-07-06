@@ -12,7 +12,7 @@ import styles from '../filestorage-pannel.module.scss'
 interface Props {
   fsItem: FileStorageItem
   onClickItem: (fsItem: FileStorageItem) => void
-  handleToggleDesigner: (fileStorageItem: FileStorageItem) => void
+  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
 export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
@@ -23,7 +23,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
   const [isHovering, setIsHovering] = useImmer(fsItem.id === currFSId)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
-    if (e.key === '1' || e.key === '2') {
+    if (e.key === '1' || e.key === '2' || e.key === '3') {
       setVisible(false)
     }
   }
@@ -71,7 +71,20 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner(fsItem)
+                handleToggleDesigner('setCheck', fsItem.id)
+              }}
+            >
+              <AppleOutlined />
+              <span className="ml-1.5">查看</span>
+            </div>
+          ),
+        },
+        {
+          key: '3',
+          label: (
+            <div
+              onClick={() => {
+                handleToggleDesigner('setEdit', fsItem.id)
               }}
             >
               <AppleOutlined />
@@ -80,7 +93,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
           ),
         },
         {
-          key: '3',
+          key: '4',
           label: (
             <Popconfirm
               placement="right"
