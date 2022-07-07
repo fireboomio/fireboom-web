@@ -119,7 +119,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [selectedKey, setSelectedKey] = useState<string | number>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
-  const [activeKey, setActiveKey] = useState<string>('3')
+  const [activeKey, setActiveKey] = useState<string>('0')
 
   const handlePressEnter = useCallback(() => {
     curEditingNode!.title = inputValue

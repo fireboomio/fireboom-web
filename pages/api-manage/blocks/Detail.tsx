@@ -1,7 +1,8 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
 import RcTab from 'pages/components/rc-tab'
-import type { FC } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { parse } from 'graphql'
 import styles from './Detail.module.scss'
 
 type DetailProps = {
@@ -19,7 +20,118 @@ const tabs = [
   },
 ]
 
+const gqlSchemaStr = `
+  type weather_Summary {
+    title: String
+    description: String
+    icon: String
+    _join: Query!
+  }
+
+  type weather_Weather {
+    summary: weather_Summary
+    temperature: weather_Temperature
+    wind: weather_Wind
+    clouds: weather_Clouds
+    timestamp: Int
+    _join: Query!
+  }
+
+  type weather_City {
+    id: ID
+    name: String
+    country: String
+    coord: weather_Coordinates
+    weather: weather_Weather
+    _join: Query!
+  }
+
+  type Query {
+    weather_getCityByName(name: String!, country: String, config: weather_ConfigInput): weather_City
+  }
+`
+
+const gqlQueryStr = `
+  {
+    getCityByName: weather_getCityByName(name: "Berlin") {
+      id
+      name
+      weather {
+        summary {
+          title
+          description
+        }
+      }
+    }
+  }
+`
+
+const columns = [
+  {
+    title: '字段名称',
+    dataIndex: 'fieldName',
+  },
+  {
+    title: '字段类型',
+    dataIndex: 'fieldType',
+  },
+  {
+    title: '是否必须',
+    dataIndex: 'required',
+  },
+]
+
 const Detail: FC<DetailProps> = () => {
+  const gqlSchemaDef = parse(gqlSchemaStr).definitions
+  const gqlQueryDef = parse(gqlQueryStr).definitions
+  const [dataSource, setDataSource] = useState([])
+
+  const getSubFields = useCallback((parentField, selections, subFieldType) => {
+    parentField.children = selections.map((i) => {
+      const fieldName = i.name.value
+      const fieldDef = gqlSchemaDef.find((i) => i.name.value === subFieldType)
+      const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
+      const fieldType = curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
+      const obj = {
+        fieldName,
+        fieldType,
+        required: '否',
+      }
+      if (i.selectionSet) {
+        getSubFields(obj, i.selectionSet.selections, curFieldType)
+      }
+      return obj
+    })
+  }, [])
+
+  useEffect(() => {
+    const queryName = gqlQueryDef[0].selectionSet.selections[0].name.value
+
+    const topLevelQueryFiedls = gqlQueryDef[0].selectionSet.selections[0].selectionSet.selections
+    const temp = topLevelQueryFiedls.map((i) => {
+      const fieldName = i.name.value
+      const rootType = gqlSchemaDef
+        .find((i) => i.name.value === 'Query')
+        .fields.find((i) => i.name.value === queryName).type.name.value
+      const fieldDef = gqlSchemaDef.find((i) => i.name.value === rootType)
+      const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
+      const fieldType = curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
+
+      const obj = {
+        fieldName,
+        fieldType,
+        required: '否',
+      }
+      if (i.selectionSet) {
+        getSubFields(obj, i.selectionSet.selections, curFieldType)
+      }
+      return obj
+    })
+    setDataSource(temp)
+    console.log(gqlSchemaDef, 'schema')
+    console.log(gqlQueryDef, 'query')
+  }, [])
+
   return (
     <>
       <div className="flex items-center">
@@ -63,7 +175,13 @@ const Detail: FC<DetailProps> = () => {
               <span>HTTP 状态码：201</span>
               <span className="ml-82px">内容格式：JSON</span>
             </div>
-            <Table className="mt-6"></Table>
+            <Table
+              className="mt-6"
+              columns={columns}
+              dataSource={dataSource}
+              rowKey="fieldName"
+              pagination={false}
+            ></Table>
           </div>
         </div>
       </div>
