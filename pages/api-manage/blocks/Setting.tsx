@@ -1,5 +1,6 @@
 import type { FC } from 'react'
-import { Form, Input, Switch } from 'antd'
+import { Divider, Form, Input, Switch } from 'antd'
+import { AppleOutlined } from '@ant-design/icons'
 
 type SettingProps = {
   //
@@ -16,13 +17,29 @@ const Setting: FC<SettingProps> = () => {
       requiredMark={false}
       labelAlign="left"
     >
+      <Divider orientation="left" orientationMargin={0}>
+        <div className="text-[#AFB0B4] text-14px space-x-1">
+          <AppleOutlined></AppleOutlined>
+          <span>授权</span>
+        </div>
+      </Divider>
       <Form.Item
         label="需要授权"
         name="username"
         rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Switch />
+        <span className="ml-26px text-[#00000040] text-12px inline-flex items-center ">
+          <AppleOutlined></AppleOutlined>
+          <span className="ml-1">开启后，登录后才能访问</span>
+        </span>
       </Form.Item>
+      <Divider orientation="left" orientationMargin={0} className="mt-42px">
+        <div className="text-[#AFB0B4] text-14px space-x-1">
+          <AppleOutlined></AppleOutlined>
+          <span>缓存</span>
+        </div>
+      </Divider>
       <Form.Item
         label="开启缓存"
         name="password"
@@ -35,15 +52,21 @@ const Setting: FC<SettingProps> = () => {
         name="password"
         rules={[{ required: true, message: 'Please input your password!' }]}
       >
-        <Input />
+        <Input suffix="秒" />
       </Form.Item>
       <Form.Item
         label="重校验时长"
         name="password"
         rules={[{ required: true, message: 'Please input your password!' }]}
       >
-        <Input />
+        <Input suffix="秒" />
       </Form.Item>
+      <Divider orientation="left" orientationMargin={0} className="mt-42px">
+        <div className="text-[#AFB0B4] text-14px space-x-1">
+          <AppleOutlined></AppleOutlined>
+          <span>实时</span>
+        </div>
+      </Divider>
       <Form.Item
         label="开启实时"
         name="password"
@@ -56,7 +79,7 @@ const Setting: FC<SettingProps> = () => {
         name="password"
         rules={[{ required: true, message: 'Please input your password!' }]}
       >
-        <Input />
+        <Input suffix="秒" />
       </Form.Item>
     </Form>
   )
