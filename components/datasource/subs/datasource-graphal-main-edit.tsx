@@ -1,9 +1,15 @@
 import { QuestionCircleOutlined, CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch, Collapse, Upload, Checkbox } from 'antd'
 
+import type { DatasourceItem } from '@/interfaces/datasource'
+
 import styles from './datasource-common-main.module.scss'
 
-export default function DatasourceGraphalMainEdit() {
+interface Props {
+  content: DatasourceItem
+}
+
+export default function DatasourceGraphalMainEdit({ content }: Props) {
   const onFinish = (values: object) => {
     console.log('Success:', values)
   }
@@ -19,7 +25,7 @@ export default function DatasourceGraphalMainEdit() {
       <div className="flex items-center justify-between border-gray border-b">
         <div>
           <span className="ml-2">
-            userinfo <span className="text-xs text-gray-500/80">GET</span>
+            {content.name} <span className="text-xs text-gray-500/80">GET</span>
           </span>
         </div>
         <div className="flex justify-center items-center mb-2">
@@ -36,7 +42,7 @@ export default function DatasourceGraphalMainEdit() {
         <Form
           name="basic"
           labelCol={{ span: 3 }}
-          wrapperCol={{ span: 8 }}
+          wrapperCol={{ span: 11 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -95,7 +101,7 @@ export default function DatasourceGraphalMainEdit() {
             style={{ marginBottom: '48px' }}
           >
             <Upload name="logo" action="/upload.do" listType="picture">
-              <Button icon={<PlusOutlined />} className="w-140">
+              <Button icon={<PlusOutlined />} className="w-147">
                 添加文件
               </Button>
             </Upload>
@@ -127,7 +133,7 @@ export default function DatasourceGraphalMainEdit() {
             <Form
               name="basic"
               labelCol={{ span: 3 }}
-              wrapperCol={{ span: 8 }}
+              wrapperCol={{ span: 11 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"

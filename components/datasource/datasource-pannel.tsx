@@ -41,6 +41,9 @@ export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props)
         <TabPane tab="自定义" key="defineByself">
           <DatasourceList onClickItem={onClickItem} Datasourcetype="defineByself" />
         </TabPane>
+        <TabPane tab="身份验证" key="authentication">
+          <DatasourceList onClickItem={onClickItem} Datasourcetype="authentication" />
+        </TabPane>
       </Tabs>
     </>
   )

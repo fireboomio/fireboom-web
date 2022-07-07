@@ -4,6 +4,9 @@ import { useImmer } from 'use-immer'
 
 import type { DatasourceItem } from '@/interfaces/datasource'
 
+import AuthenticationMainCheck from './subs/authentication-main-check'
+import AuthenticationMainEdit from './subs/authentication-main-edit'
+// import AuthenticationMainSetting from './subs/authentication-main-setting'
 import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
 import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
 import DatasourceDBMainSetting from './subs/datasource-db-main-setting'
@@ -12,7 +15,6 @@ import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
 import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
-
 interface Props {
   content: DatasourceItem
   showType: string
@@ -35,6 +37,8 @@ export default function DatasourceEditor({ content, showType }: Props) {
             setViewer(<DatasourceGraphalMainCheck content={content} />)
           else if (content.type == 'defineByself')
             setViewer(<DatasourceDeselfMainEdit content={content} />)
+          else if (content.type == 'authentication')
+            setViewer(<AuthenticationMainCheck content={content} />)
           break
         case 'DB':
           setViewer(<DatasourceEditorMainEdit content={content} />)
@@ -43,13 +47,17 @@ export default function DatasourceEditor({ content, showType }: Props) {
           setViewer(<DatasourceRestMainEdit content={content} />)
           break
         case 'Graphal':
-          setViewer(<DatasourceGraphalMainEdit />)
+          setViewer(<DatasourceGraphalMainEdit content={content} />)
           break
         case 'defineByself':
           setViewer(<DatasourceDeselfMainEdit content={content} />)
           break
+        case 'authentication':
+          setViewer(<AuthenticationMainEdit content={content} />)
+          break
         case 'Setting':
           setViewer(<DatasourceDBMainSetting />)
+          // setViewer(<AuthenticationMainSetting />)
           break
         default:
           setViewer(JSON.stringify(content))
