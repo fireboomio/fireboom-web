@@ -2,8 +2,8 @@ import {
   SearchOutlined,
   BarsOutlined,
   SyncOutlined,
-  // FolderOutlined,
-  // PictureOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons'
 import {
@@ -37,6 +37,7 @@ interface Option {
 export default function StorageMainCheck({ content }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
+  const [isArrowUP, setIsArrowUP] = useImmer(false)
   const onChange = () => {
     setVisible(true)
   }
@@ -85,7 +86,14 @@ export default function StorageMainCheck({ content }: Props) {
       items={[
         {
           key: '1',
-          label: <div>按名字</div>,
+          label: (
+            <div onClick={()=>{setIsArrowUP(!isArrowUP)}}>
+              按名字
+              <span className="ml-2 text-red-500">
+                {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+              </span>
+            </div>
+          ),
         },
         {
           key: '2',
@@ -103,11 +111,15 @@ export default function StorageMainCheck({ content }: Props) {
     <>
       <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
         <Breadcrumb>
-          <Breadcrumb.Item>Img</Breadcrumb.Item>
           <Breadcrumb.Item>
-            <a href="">first</a>
+            <span className="text-red-500/80">Img</span>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>second level</Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <span className="text-red-500/80">first</span>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <span className="text-gray-500/80">second level</span>
+          </Breadcrumb.Item>
         </Breadcrumb>
         <div className="flex justify-center items-center">
           {isSerach ? (
