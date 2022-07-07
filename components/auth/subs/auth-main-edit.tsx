@@ -12,7 +12,7 @@ import styles from './auth-common-main.module.scss'
 interface Props {
   content: AuthProvItem
 }
-export default function FileStorageMainCheck({ content }: Props) {
+export default function AuthMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(AuthToggleContext)
 
   const [value, setValue] = useImmer(1)
@@ -45,7 +45,7 @@ export default function FileStorageMainCheck({ content }: Props) {
   return (
     <>
       <div className="pb-3 flex items-center justify-between border-gray border-b">
-      <div className="h-7">
+        <div className="h-7">
           <span className="ml-2 font-bold">
             系统默认 <span className="text-xs text-gray-500/80">main</span>
           </span>
@@ -66,9 +66,11 @@ export default function FileStorageMainCheck({ content }: Props) {
           handleToggleDesigner('setting', content.id)
         }}
       >
-        <span className=" w-19 h-5 float-right">前往管理 <RightOutlined/></span>
+        <span className=" w-19 h-5 float-right">
+          前往管理 <RightOutlined />
+        </span>
       </div>
-      <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
+      <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
           name="basic"
           labelCol={{ span: 3 }}

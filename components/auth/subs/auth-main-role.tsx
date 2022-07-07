@@ -38,7 +38,7 @@ const data: DataType[] = [
   },
 ]
 
-export default function AuthMainCheck() {
+export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer(data)
@@ -102,8 +102,13 @@ export default function AuthMainCheck() {
     <>
       <div className="flex justify-between items-center mb-4">
         <span className="text-base text-gray">角色管理</span>
-        <Button className="px-4 py-0 " onClick={() => {setModal1Visible(true)}}>
-          <span className="text-base text-gray">添加</span>
+        <Button
+          className="px-4 py-0 h-7.5"
+          onClick={() => {
+            setModal1Visible(true)
+          }}
+        >
+          <span className="text-sm text-gray">添加</span>
         </Button>
       </div>
       <Modal

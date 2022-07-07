@@ -20,7 +20,7 @@ const onChange = (key: string) => {
   console.log(key)
 }
 
-export default function AuthenticationMainCheck({ content }: Props) {
+export default function AuthenticationMainIdentity({ content }: Props) {
   if (!content) {
     return <></>
   }

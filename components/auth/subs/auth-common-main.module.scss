@@ -88,33 +88,23 @@
   border-radius: 12px;
 }
 
-// filestorage-main-content 样式
-.casader-select :global {
-  box-shadow: none;
-  .ant-cascader-menu-item {
-    background-color: white;
-    &:hover,
-    &:focus {
-      background-color: #f8f8f9;
-    }
+.form-delete-icon {
+  position: relative;
+  top: 4px;
+  margin: 0 8px;
+  color: #ff9378;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    color: #777;
   }
-  .anticon-right {
-    visibility: hidden;
-  }
-  .ant-cascader-menu {
-    border-right: none;
-    width: 232px;
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
-.panel-style {
-  img {
-    margin-bottom: 9px;
-  }
-  Button {
-    width: 257px;
-    margin-top: 12px;
-  }
-}
+
 .form-item-icon {
   width: 14px;
   height: 14px;
@@ -137,12 +127,13 @@
 
 .form-contain :global {
   .ant-form-item {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
+}
 
-  .ant-form-item-with-help .ant-form-item-explain {
-    min-height: 10px;
-    font-size: 10px;
+.edit-form-contain :global{
+  .ant-form-item {
+    margin-bottom: 20px;
   }
 }
 
@@ -163,9 +154,9 @@
   line-height: 17px;
 }
 // 角色配置
-.authBtn  {
+.authBtn {
   Button {
-    padding:0 auto;
+    padding: 0 auto;
     color: #e92e5e;
   }
 }
