@@ -1,0 +1,13 @@
+.col-left {
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    border: 1px solid;
+    border-image: linear-gradient(180deg, rgb(176 165 166 / 0%), rgb(227 227 227 / 100%), rgb(120 108 109 / 20%)) 1 1;
+    opacity: 0.5;
+    content: '';
+  }
+}

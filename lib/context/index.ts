@@ -1,4 +1,10 @@
 import {
+  AuthContext,
+  AuthDispatchContext,
+  AuthCurrContext,
+  AuthToggleContext,
+} from './auth-context'
+import {
   DatasourceContext,
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
@@ -21,4 +27,8 @@ export {
   FSContext,
   FSDispatchContext,
   FSCurrFileContext,
+  AuthContext,
+  AuthDispatchContext,
+  AuthCurrContext,
+  AuthToggleContext,
 }

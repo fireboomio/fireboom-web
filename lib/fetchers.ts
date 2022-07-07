@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+import { AuthProvItem } from '@/interfaces/auth'
 import { Result } from '@/interfaces/common'
 import { DatasourceResp } from '@/interfaces/datasource'
 import { FileStorageItem } from '@/interfaces/filestorage'
@@ -22,5 +23,10 @@ export const datasourceFetcher = (url: string, params?: Record<string, string>) 
 
 export const fileStorageFetcher = (url: string, params?: Record<string, string>) =>
   axios.get<Result<FileStorageItem[]>>(url, { params: params }).then((res) => {
+    return res.data.result
+  })
+
+export const authFetcher = (url: string, params?: Record<string, string>) =>
+  axios.get<Result<AuthProvItem[]>>(url, { params: params }).then((res) => {
     return res.data.result
   })
