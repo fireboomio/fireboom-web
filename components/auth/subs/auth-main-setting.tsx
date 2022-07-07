@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Form, Input, Button } from 'antd'
 
-import styles from './authentication-main.module.scss'
+import styles from './auth-common-main.module.scss'
 
 export default function AuthenticationMainSetting() {
   const onFinish = (values: any) => {

@@ -42,9 +42,9 @@ export default function Authentication() {
     setCurrAuthProvItemId(authProvItem.id)
   }
 
-  function handleToggleDesigner(pagetype: 'edit' | 'setting' | 'identity' | 'role', id: number) {
+  function handleToggleDesigner(pagetype: 'edit' | 'setting' | 'identity' | 'role', id?: number) {
     setShowType(pagetype)
-    setCurrAuthProvItemId(id)
+    id && setCurrAuthProvItemId(id)
   }
 
   return (
@@ -58,9 +58,7 @@ export default function Authentication() {
               </Head>
               <Row className="h-screen">
                 <Col span={5} className={styles['col-left']}>
-                  <AuthPannel
-                    onClickItem={handleClickItem}
-                  />
+                  <AuthPannel onClickItem={handleClickItem} />
                 </Col>
                 <Col span={19}>
                   <AuthContainer showType={showType} content={content} />

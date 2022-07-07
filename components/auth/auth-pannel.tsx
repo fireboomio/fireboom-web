@@ -22,12 +22,22 @@ export default function AuthPannel({ onClickItem }: Props) {
 
       <AuthList onClickItem={onClickItem} />
       <div className="absolute inset-x-18 bottom-20">
-        <Button className={`${styles['identify-button']}`} onClick={()=>{handleToggleDesigner()}}>
+        <Button
+          className={`${styles['identify-button']}`}
+          onClick={() => {
+            handleToggleDesigner('identity')
+          }}
+        >
           <div className="mr-28 -mt-5">身份鉴权</div>
           <div className={`${styles['identify-info']}`}>身份鉴权一些描述</div>
           <div className={`${styles['identify-img']}`}> </div>
         </Button>
-        <Button className={`${styles['role-button']} p-0 `} onClick={()=>{handleToggleDesigner()}}>
+        <Button
+          className={`${styles['role-button']} p-0 `}
+          onClick={() => {
+            handleToggleDesigner('role')
+          }}
+        >
           <div className="mr-28 -mt-5">角色配置</div>
           <div className="text-gray-500/50 text-sm w-5 ml-4">角色配置一些描述</div>
           <div className={`${styles['role-img']}`}> </div>

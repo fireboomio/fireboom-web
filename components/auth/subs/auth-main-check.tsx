@@ -1,19 +1,15 @@
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
-import { Button, Switch, Descriptions, Divider } from 'antd'
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { Descriptions } from 'antd'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvItem } from '@/interfaces/auth'
 
-import styles from './auth-common-main.module.scss'
-// import styles from './datasource-db-main.module.scss'
 interface Props {
   content: AuthProvItem
 }
-export default function AuthMainCheck({ content }: Props) {
+export default function AuthenticationMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
+
   if (!content) {
     return <></>
   }
@@ -21,31 +17,16 @@ export default function AuthMainCheck({ content }: Props) {
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-  console.log(info)
+
   return (
     <>
-      <div className="pb-2 flex items-center justify-between border-gray border-b">
-        <div>
-          <span className="text-base leading-5 font-bold">设置</span>
-        </div>
-        <div className="flex justify-center items-center">
-          <Switch
-            defaultChecked
-            checkedChildren="开启"
-            unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
-            className={styles['switch-check-btn']}
-          />
-          <Divider type="vertical" />
-          <Button className={styles['center-btn']}>
-            <span>取消</span>
-          </Button>
-          <Button className={styles['save-btn']}>
-            <span>保存</span>
-          </Button>
+      <div className="pb-3 flex items-center justify-between border-gray border-b">
+        <div className="h-7">
+          <span className="ml-2 text-sm font-bold">
+            系统默认 <span className="text-xs text-gray-500/80">main</span>
+          </span>
         </div>
       </div>
-
       <div className="mt-8">
         <Descriptions
           bordered
@@ -59,10 +40,9 @@ export default function AuthMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="名称">{info.connectName}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{info.SQlType}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{info.typeName} </Descriptions.Item>
-          <Descriptions.Item label="APP Secret">
+          <Descriptions.Item label="供应商ID">{info.connectName}</Descriptions.Item>
+          <Descriptions.Item label="App ID">{info.SQlType}</Descriptions.Item>
+          <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
@@ -77,14 +57,13 @@ export default function AuthMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="区域">{info.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="bucketName">{info.host}</Descriptions.Item>
-          <Descriptions.Item label="开启SSL">
-            <div>
-              <Button className={styles['SSL-open-btn']}>开启</Button>
-              <Button className={styles['SSL-close-btn']}>关闭</Button>
-            </div>
-          </Descriptions.Item>
+          <Descriptions.Item label="Issuer">{info.environmentVar}</Descriptions.Item>
+          <Descriptions.Item label="服务发现地址">{info.connectURL}</Descriptions.Item>
+          <Descriptions.Item label="JWKS">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="jwksURL">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="jwksJSON">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="用户端点">{info.port}</Descriptions.Item>
+          <Descriptions.Item label="是否开启">{info.userName}</Descriptions.Item>
         </Descriptions>
       </div>
     </>
