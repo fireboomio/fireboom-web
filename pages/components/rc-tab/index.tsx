@@ -16,7 +16,7 @@ type RcTabProps = {
 }
 
 const RcTab: FC<RcTabProps> = (props) => {
-  const [activeKey, setActiveKey] = useState(props.tabs[0].key)
+  const [activeKey, setActiveKey] = useState(props.activeKey ?? props.tabs[0].key)
   const handleClick = useCallback((key: string) => {
     setActiveKey(key)
     props.onTabClick?.(key)

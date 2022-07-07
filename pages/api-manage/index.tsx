@@ -6,27 +6,15 @@ import {
   FolderOutlined,
   MoreOutlined,
 } from '@ant-design/icons'
-import {
-  Tooltip,
-  Divider,
-  Tree,
-  Dropdown,
-  Menu,
-  message,
-  Input,
-  Popconfirm,
-  MenuProps,
-  Badge,
-  Select,
-  Table,
-  Card,
-} from 'antd'
+import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import { FC, useCallback, useState } from 'react'
 import RcTab from 'pages/components/rc-tab'
 import Detail from './blocks/Detail'
 import Mock from './blocks/Mock'
+import Hook from './blocks/Hook'
+import Setting from './blocks/Setting'
 
 import styles from './index.module.scss'
 
@@ -131,7 +119,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [selectedKey, setSelectedKey] = useState<string | number>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
-  const [activeKey, setActiveKey] = useState<string>('1')
+  const [activeKey, setActiveKey] = useState<string>('3')
 
   const handlePressEnter = useCallback(() => {
     curEditingNode!.title = inputValue
@@ -326,6 +314,10 @@ const ApiManage: FC<ApiManageProps> = () => {
         return <Detail></Detail>
       case '1':
         return <Mock></Mock>
+      case '2':
+        return <Hook></Hook>
+      case '3':
+        return <Setting></Setting>
     }
   }, [activeKey])
 
@@ -390,7 +382,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           </div>
         </div>
         <div className="mt-7">
-          <RcTab tabs={tabs} onTabClick={setActiveKey} />
+          <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
           {getTabContent()}
         </div>
       </div>

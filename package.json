@@ -36,6 +36,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "monaco-editor": "^0.33.0",
     "sass": "^1.52.3",
     "stylelint": "^14.9.1",
     "stylelint-config-rational-order": "^0.1.2",

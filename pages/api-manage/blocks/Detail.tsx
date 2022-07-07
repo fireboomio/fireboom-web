@@ -22,7 +22,7 @@ const tabs = [
 const Detail: FC<DetailProps> = () => {
   return (
     <>
-      <div className="flex mt-7 items-center">
+      <div className="flex items-center">
         <div className={`flex items-center space-x-1 ${styles.label}`}>
           <span className="text-12px  text-[#5F6269] leading-17px">注册接口</span>
           <AppleOutlined />

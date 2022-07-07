@@ -1,5 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Switch } from 'antd'
+import Editor from '@monaco-editor/react'
+import styles from './Mock.module.scss'
 import type { FC } from 'react'
 
 type MockProps = {
@@ -8,7 +10,7 @@ type MockProps = {
 
 const Mock: FC<MockProps> = () => {
   return (
-    <div className="mt-4">
+    <div>
       <div className="flex justify-between items-center">
         <div className="text-[#00000040] flex items-center">
           <ExclamationCircleOutlined />
@@ -16,6 +18,12 @@ const Mock: FC<MockProps> = () => {
         </div>
         <Switch defaultChecked />
       </div>
+      <Editor
+        height="90vh"
+        defaultLanguage="typescript"
+        defaultValue="// some comment"
+        className={`mt-4 ${styles.monaco}`}
+      />
     </div>
   )
 }
