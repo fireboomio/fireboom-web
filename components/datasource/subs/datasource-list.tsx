@@ -8,7 +8,6 @@ import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 import styles from './datasource-common-main.module.scss'
 import DatasourceDBItem from './datasource-item'
 
-
 interface Props {
   onClickItem: (dsItem: DatasourceItem) => void
   Datasourcetype: string

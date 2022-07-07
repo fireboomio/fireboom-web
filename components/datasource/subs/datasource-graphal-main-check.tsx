@@ -114,7 +114,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
         bordered={false}
         defaultActiveKey={['1']}
         expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-        className="site-collapse-custom-collapse bg-light-50"
+        className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
       >
         <Panel header="更多" key="1" className="site-collapse-custom-panel">
           <div className="flex justify-center mb-8">

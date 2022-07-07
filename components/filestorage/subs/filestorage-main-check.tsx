@@ -37,12 +37,12 @@ export default function FileStorageMainCheck({ content }: Props) {
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
-          <Button className={styles['center-btn']}>
-            <span>取消</span>
-          </Button>
-          <Button className={styles['save-btn']}>
-            <span>保存</span>
-          </Button>
+            <Button className={styles['center-btn']}>
+              <span>取消</span>
+            </Button>
+            <Button className={styles['save-btn']}>
+              <span>保存</span>
+            </Button>
         </div>
       </div>
 

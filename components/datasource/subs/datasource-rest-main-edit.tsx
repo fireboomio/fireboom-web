@@ -56,7 +56,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
         <Form
           name="basic"
           labelCol={{ span: 3 }}
-          wrapperCol={{ span: 8 }}
+          wrapperCol={{ span: 11 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -88,7 +88,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
             style={{ marginBottom: '49px' }}
           >
             <Upload name="logo" action="/upload.do" listType="picture">
-              <Button icon={<PlusOutlined />} className="w-140">
+              <Button icon={<PlusOutlined />} className="w-147">
                 添加文件
               </Button>
             </Upload>
@@ -124,7 +124,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
             <Form
               name="basic"
               labelCol={{ span: 3 }}
-              wrapperCol={{ span: 8 }}
+              wrapperCol={{ span: 11 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
