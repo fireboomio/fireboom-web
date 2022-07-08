@@ -19,6 +19,7 @@ import {
   Collapse,
   Input,
 } from 'antd'
+import Image from 'next/image'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageItem } from '@/interfaces/filestorage'
@@ -87,7 +88,11 @@ export default function StorageMainCheck({ content }: Props) {
         {
           key: '1',
           label: (
-            <div onClick={()=>{setIsArrowUP(!isArrowUP)}}>
+            <div
+              onClick={() => {
+                setIsArrowUP(!isArrowUP)
+              }}
+            >
               按名字
               <span className="ml-2 text-red-500">
                 {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -208,7 +213,7 @@ export default function StorageMainCheck({ content }: Props) {
           </Panel>
           <Panel header="预览" key="2">
             <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
-              <img
+              <Image
                 src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F511%2F101611154647%2F111016154647-10-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659607424&t=dec35f08ae686e97c066c2fed2e9fa7c"
                 alt=""
               />

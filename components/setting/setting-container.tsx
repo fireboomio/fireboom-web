@@ -2,7 +2,6 @@ import { AppleOutlined, CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import SettingCros from './subs/setting-cors'
 interface Props {
   showType: string
 }
@@ -31,7 +30,7 @@ export default function SettingContainer({ showType }: Props) {
         break
       case 'cors':
         setTitle('跨域')
-        setViewer(<SettingCros />)
+        setViewer(<div>跨域</div>)
         break
       case 'API Token':
         setTitle('API Token')
