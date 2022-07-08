@@ -5,3 +5,32 @@
   color: #000000;
   line-height: 16px;
 }
+
+.form-contain :global {
+  .ant-form-item-label{
+    padding: 0;
+  }
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  Input {
+    width: 90%;
+  }
+}
+
+.form-delete-icon {
+  position: relative;
+  top: 4px;
+  margin: 0 8px;
+  color: #ff9378;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    color: #777;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
