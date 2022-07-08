@@ -2,15 +2,16 @@ import { AppleOutlined, CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-interface Props {
-  showType: string
-}
 import SettingMainAppearance from './subs/setting-main-appearance'
 import SettingMainCrossdomain from './subs/setting-main-crossdomain'
 import SettingMainEnvironmentVariable from './subs/setting-main-environment-variable'
 import SettingMainSecurity from './subs/setting-main-security'
 import SettingMainSystem from './subs/setting-main-system'
 import SettingMainVersion from './subs/setting-main-version'
+
+interface Props {
+  showType: string
+}
 
 export default function SettingContainer({ showType }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
