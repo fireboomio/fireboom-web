@@ -375,6 +375,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           </div>
           <Divider className="my-4" />
           <Tree
+            style={{ overflow: 'auto', height: 'calc(100vh - 174px)' }}
             titleRender={titleRender}
             icon={iconRender}
             draggable
@@ -404,7 +405,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           </div>
           <div className="mt-7">
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-            {getTabContent()}
+            <div className="overflow-auto h-[calc(100vh_-_98px)]">{getTabContent()}</div>
           </div>
         </div>
       </div>

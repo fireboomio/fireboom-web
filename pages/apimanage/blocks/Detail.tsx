@@ -179,7 +179,7 @@ const Detail: FC<DetailProps> = () => {
         <RcTab tabs={tabs} />
         <Table className="mt-6" />
       </div>
-      <div className="mt-42px">
+      <div className="my-10.5">
         <div className="text-[#5F6269] leading-22px text-16px">返回响应</div>
         <div className="mt-3">
           <span className={styles.caption}>成功（201）</span>
