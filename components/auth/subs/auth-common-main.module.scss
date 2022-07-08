@@ -1,0 +1,214 @@
+.save-btn {
+  width: 62px;
+  height: 28px;
+  padding: 0;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+
+  span {
+    width: 33px;
+    height: 20px;
+    color: #fff;
+    font-size: 14px;
+  }
+}
+
+.center-btn {
+  padding: 0;
+  width: 62px;
+  height: 28px;
+  margin-left: 24px;
+  margin-right: 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.switch-check-btn {
+  width: 60px;
+  height: 24px;
+  margin-right: 24px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+.SSL-open-btn {
+  padding: 0;
+  margin-right: 80px;
+  width: 48px;
+  height: 22px;
+  line-height: 22px;
+  background: rgba(138, 190, 42, 0.09);
+  border-radius: 4px;
+  border: 1px solid #8abe2a;
+  font-size: 12px;
+  font-weight: 400;
+  color: #8abe2a;
+}
+
+.SSL-close-btn {
+  padding: 0;
+  width: 48px;
+  height: 22px;
+  line-height: 22px;
+  background: #f8f8f9;
+  border-radius: 4px;
+  border: 1px solid rgba(175, 176, 180, 0.5);
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(175, 176, 180, 0.8);
+  &:hover,
+  &:focus {
+    color: #e13d5b;
+    border-color: #e13d5b;
+  }
+}
+
+.add-btn {
+  color: #fff;
+  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+  &:hover,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+}
+.switch-set-btn {
+  width: 32px;
+  height: 16px;
+  margin-left: 12px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+.form-delete-icon {
+  position: relative;
+  top: 4px;
+  margin: 0 8px;
+  color: #ff9378;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    color: #777;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.form-item-icon {
+  width: 14px;
+  height: 14px;
+  color: #5f6269;
+}
+
+.role-container-table :global {
+  .ant-table-cell {
+    height: 10px;
+    padding: 10px;
+    padding-left: 43px;
+  }
+  .ant-table-cell::before {
+    display: none;
+  }
+}
+.role-table {
+  background-color: #fafafa;
+}
+
+.form-contain :global {
+  .ant-form-item {
+    margin-bottom: 10px;
+  }
+}
+
+.edit-form-contain :global{
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+}
+
+.db-check-setting {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #e92e5e;
+  line-height: 20px;
+}
+
+.authHead {
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.25);
+  line-height: 17px;
+}
+// 角色配置
+.authBtn {
+  Button {
+    padding: 0 auto;
+    color: #e92e5e;
+  }
+}
+.switch-edit-btn {
+  width: 32px;
+  height: 16px;
+  margin-left: 12px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+// auth更多设置style
+
+.setWord {
+  span {
+    width: 112px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #5f6269;
+    line-height: 20px;
+    margin-right: 61px;
+  }
+}
+
+.authSetFrom :global {
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+  .ant-form-item-control-input {
+    width: 420px;
+    height: 32px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .anticon-plus {
+    width: 13px;
+    height: 13px;
+    color: rgba(175, 176, 180, 0.8);
+  }
+  span {
+    width: 48px;
+    height: 17px;
+    font-size: 12px;
+    color: #afb0b4;
+    line-height: 17px;
+  }
+  .label-style {
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #5f6269;
+    line-height: 20px;
+  }
+}

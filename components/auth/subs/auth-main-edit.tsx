@@ -4,16 +4,16 @@ import type { RadioChangeEvent } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
-import { DatasourceToggleContext } from '@/lib/context'
+import type { AuthProvItem } from '@/interfaces/auth'
+import { AuthToggleContext } from '@/lib/context'
 
-import styles from './authentication-main.module.scss'
+import styles from './auth-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: AuthProvItem
 }
-export default function FileStorageMainCheck({ content }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+export default function AuthMainCheck({ content }: Props) {
+  const { handleToggleDesigner } = useContext(AuthToggleContext)
 
   const [value, setValue] = useImmer(1)
   const [open, setOpen] = useImmer(1)
@@ -44,10 +44,10 @@ export default function FileStorageMainCheck({ content }: Props) {
   }
   return (
     <>
-      <div className="pb-2 flex items-center justify-between border-gray border-b">
-        <div>
-          <span className="ml-2">
-            {content.name} <span className="text-xs text-gray-500/80">main</span>
+      <div className="pb-3 flex items-center justify-between border-gray border-b">
+        <div className="h-7">
+          <span className="ml-2 font-bold">
+            系统默认 <span className="text-xs text-gray-500/80">main</span>
           </span>
         </div>
         <div className="flex justify-center items-center">
@@ -61,14 +61,16 @@ export default function FileStorageMainCheck({ content }: Props) {
         </div>
       </div>
       <div
-        className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}
+        className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}
         onClick={() => {
-          handleToggleDesigner('Setting', content.id)
+          handleToggleDesigner('setting', content.id)
         }}
       >
-        <span className="mr-2 w-14 h-5">更多设置</span> <RightOutlined />
+        <span className=" w-19 h-5 float-right">
+          前往管理 <RightOutlined />
+        </span>
       </div>
-      <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
+      <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
           name="basic"
           labelCol={{ span: 3 }}

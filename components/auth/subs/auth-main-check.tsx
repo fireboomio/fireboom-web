@@ -1,19 +1,11 @@
-import {
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  InfoCircleOutlined,
-  PlayCircleOutlined,
-  PlusCircleOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons'
-import { Descriptions, Button, Switch } from 'antd'
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { Descriptions } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { AuthProvItem } from '@/interfaces/auth'
 
-import styles from './authentication-main.module.scss'
 interface Props {
-  content: DatasourceItem
+  content: AuthProvItem
 }
 export default function AuthenticationMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
@@ -25,42 +17,14 @@ export default function AuthenticationMainCheck({ content }: Props) {
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
+
   return (
     <>
-      <div className="pb-17px flex items-center justify-between border-gray border-b ">
-        <div>
-          <span className="ml-2">
-            {content.name} <span className="text-xs text-gray-500/80">main</span>
+      <div className="pb-3 flex items-center justify-between border-gray border-b">
+        <div className="h-7">
+          <span className="ml-2 text-sm font-bold">
+            系统默认 <span className="text-xs text-gray-500/80">main</span>
           </span>
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <div className={styles.authHead}>
-          <InfoCircleOutlined />
-          <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
-        </div>
-        <div className={`${styles.authBtn} flex mr-2`}>
-          <Button type="text" icon={<PlayCircleOutlined />}>
-            测试
-          </Button>
-          <Button type="text" icon={<PlusCircleOutlined />}>
-            添加
-          </Button>
-          <Button type="text" icon={<UnorderedListOutlined />}>
-            管理
-          </Button>
-          <Button type="text" icon={<PlayCircleOutlined />}>
-            选择
-          </Button>
-          <Switch
-            defaultChecked
-            className={styles['switch-edit-btn']}
-            size="small"
-            onChange={connectSwitchOnChange}
-          />
         </div>
       </div>
       <div className="mt-8">
