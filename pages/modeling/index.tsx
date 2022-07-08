@@ -26,13 +26,13 @@ export default function Modeling() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks])
 
-  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/sources', sourceFetcher)
+  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/v1/sources', sourceFetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
 
   function handleChangeSource(value: string) {
-    schemaFetcher(`/api/schemas/${value}`)
+    schemaFetcher(`/api/v1/schemas/${value}`)
       .then((res) =>
         dispatch({
           type: 'fetched',

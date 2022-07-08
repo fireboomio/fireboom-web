@@ -21,7 +21,10 @@ export default function FileStorage() {
   }, [fileList])
 
   const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<FileStorageItem[], Error>('/api/filestorage', fileStorageFetcher)
+  const { data, error } = useSWR<FileStorageItem[], Error>(
+    '/api/v1/filestorage',
+    fileStorageFetcher
+  )
   useEffect(() => {
     data &&
       dispatch({

@@ -26,7 +26,7 @@ export default function ModelPannel({
   const dispatch = useContext(ModelingDispatchContext)
 
   useEffect(() => {
-    schemaFetcher(`/api/schemas/${sourceOptions[0].id}`)
+    schemaFetcher(`/api/v1/schemas/${sourceOptions[0].id}`)
       .then((res) =>
         dispatch({
           type: 'fetched',

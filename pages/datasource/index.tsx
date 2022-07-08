@@ -27,7 +27,7 @@ export default function Datasource() {
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
   const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
-    '/api/datasource',
+    '/api/v1/datasource',
     datasourceFetcher
   )
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Datasource() {
         type: 'fetched',
         data: datasource.filter((item) => item.type == value),
       })
-      setShowType('data')
+    setShowType('data')
   }
 
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem
