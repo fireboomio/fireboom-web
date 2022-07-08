@@ -138,7 +138,7 @@ function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
 
         return (
           <div key={idx} className="flex my-1.5 text-sm font-normal leading-7">
-            @{attr.name}({argv})
+            @@{attr.name}({argv})
           </div>
         )
       })}
