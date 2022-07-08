@@ -14,7 +14,7 @@ export default function SettingMainVersion() {
             className={styles['descriptions-box']}
             labelStyle={{
               backgroundColor: 'white',
-              width: '30%',
+              width: '15%',
               borderRight: 'none',
               borderBottom: 'none',
             }}

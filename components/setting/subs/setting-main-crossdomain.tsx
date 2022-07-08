@@ -21,7 +21,7 @@ const formItemLayoutWithOutLabel = {
 }
 
 export default function AuthenticationMainSetting() {
-  const onFinish = (values: any) => {
+  const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
 

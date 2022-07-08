@@ -6,18 +6,12 @@ import type { DatasourceItem } from '@/interfaces/datasource'
 
 import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
 import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
-// import DatasourceDBMainSetting from './subs/datasource-db-main-setting'
+import DatasourceDBMainSetting from './subs/datasource-db-main-setting'
 import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
 import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
 import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
 import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
 import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
-// import SettingMainAppearance from './subs/setting-main-appearance'
-// import SettingMainCrossdomain from './subs/setting-main-crossdomain'
-import SettingMainEnvironmentVariable from './subs/setting-main-environment-variable'
-// import SettingMainSecurity from './subs/setting-main-security'
-// import SettingMainSystem from './subs/setting-main-system'
-// import SettingMainVersion from './subs/setting-main-version'
 
 interface Props {
   content: DatasourceItem
