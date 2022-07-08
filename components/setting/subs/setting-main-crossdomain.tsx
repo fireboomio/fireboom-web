@@ -1,7 +1,7 @@
 import { PlusOutlined, MinusCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch } from 'antd'
 
-import styles from './setting-common.module.scss'
+import styles from './setting-main.module.scss'
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
@@ -10,7 +10,7 @@ const formItemLayoutWithOutLabel = {
   },
 }
 
-export default function AuthenticationMainSetting() {
+export default function SettingCrossdomain() {
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
@@ -82,10 +82,10 @@ export default function AuthenticationMainSetting() {
             </Select>
           </Form.Item>
           <Form.Item name="allowHeader" label="允许头">
-            <Input placeholder="请输入..."/>
+            <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item name="exceptHeader" label="排除头">
-            <Input placeholder="请输入..."/>
+            <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item name="corsTime" label="跨域时间">
             <span>
