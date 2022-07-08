@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: PingFangSC-Regular, "PingFang SC";
+  font-family: PingFangSC-Regular, 'PingFang SC';
 }
 
 a {
@@ -17,4 +17,13 @@ a:hover {
 
 * {
   box-sizing: border-box;
+}
+
+.ant-tooltip-inner {
+  color: #000;
+  background-color: #fff;
+}
+
+.ant-tooltip-arrow-content {
+  --antd-arrow-background-color: #fff;
 }

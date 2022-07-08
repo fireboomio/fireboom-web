@@ -1,0 +1,33 @@
+.api-manage :global {
+  .ant-tree-treenode {
+    width: 100%;
+    padding-left: 16px;
+  }
+
+  .ant-tree-node-content-wrapper {
+    display: flex;
+    flex: 1;
+  }
+
+  .ant-tree-title {
+    flex: 1;
+  }
+
+  .ant-input {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.divider {
+  width: 2px;
+  border: 1px solid;
+  border-image: linear-gradient(
+    180deg,
+    rgb(176 165 166 / 0%),
+    rgb(227 227 227 / 100%),
+    rgb(120 108 109 / 20%)
+  )
+    1 1;
+  opacity: 0.5;
+}
