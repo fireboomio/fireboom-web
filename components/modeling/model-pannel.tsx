@@ -3,9 +3,9 @@ import { getSchema } from '@mrleebo/prisma-ast'
 import { Select, Tooltip } from 'antd'
 import { useContext, useEffect } from 'react'
 
-import type { DBSourceResp, Entity } from '@/interfaces/modeling'
+import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
-import { schemaFetcher } from '@/lib/fetchers'
+import { getFetcher } from '@/lib/fetchers'
 
 import styles from './model-pannel.module.scss'
 import ModelEntityList from './subs/model-entity-list'
@@ -26,7 +26,7 @@ export default function ModelPannel({
   const dispatch = useContext(ModelingDispatchContext)
 
   useEffect(() => {
-    schemaFetcher(`/api/v1/schemas/${sourceOptions[0].id}`)
+    getFetcher<SchemaResp>(`/api/v1/schemas/${sourceOptions[0].id}`)
       .then((res) =>
         dispatch({
           type: 'fetched',

@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import { AuthPannel, AuthContainer } from '@/components/auth'
 import type { AuthProvItem } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
-import { authFetcher } from '@/lib/fetchers'
+import { getFetcher } from '@/lib/fetchers'
 
 import authReducer from './auth-reducer'
 import styles from './index.module.scss'
@@ -21,7 +21,7 @@ export default function Authentication() {
   }, [authProvList])
 
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<AuthProvItem[], Error>('/api/v1/datasource', authFetcher)
+  const { data, error } = useSWR<AuthProvItem[], Error>('/api/v1/datasource', getFetcher<AuthProvItem[]>)
   useEffect(() => {
     data &&
       dispatch({

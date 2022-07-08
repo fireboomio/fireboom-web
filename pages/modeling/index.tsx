@@ -6,9 +6,9 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelContainer } from '@/components/modeling'
-import type { DBSourceResp, Block, Entity } from '@/interfaces/modeling'
+import type { DBSourceResp, Block, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
-import { schemaFetcher, sourceFetcher } from '@/lib/fetchers'
+import { getFetcher } from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 import modelingReducer from './modeling-reducer'
@@ -26,13 +26,13 @@ export default function Modeling() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks])
 
-  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/v1/sources', sourceFetcher)
+  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/api/v1/sources', getFetcher<DBSourceResp[]>)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
 
   function handleChangeSource(value: string) {
-    schemaFetcher(`/api/v1/schemas/${value}`)
+    getFetcher<SchemaResp>(`/api/v1/schemas/${value}`)
       .then((res) =>
         dispatch({
           type: 'fetched',
