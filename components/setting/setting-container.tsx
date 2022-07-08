@@ -2,6 +2,13 @@ import { AppleOutlined, CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import SettingMainAppearance from './subs/setting-main-appearance'
+import SettingMainCrossdomain from './subs/setting-main-crossdomain'
+import SettingMainEnvironmentVariable from './subs/setting-main-environment-variable'
+import SettingMainSecurity from './subs/setting-main-security'
+import SettingMainSystem from './subs/setting-main-system'
+import SettingMainVersion from './subs/setting-main-version'
+
 interface Props {
   showType: string
 }
@@ -18,19 +25,19 @@ export default function SettingContainer({ showType }: Props) {
     switch (showType) {
       case 'colorTheme':
         setTitle('外观')
-        setViewer(<div>主题外观</div>)
+        setViewer(<SettingMainAppearance />)
         break
       case 'system':
         setTitle('系统')
-        setViewer(<div>系统</div>)
+        setViewer(<SettingMainSystem />)
         break
       case 'secure':
         setTitle('安全')
-        setViewer(<div>安全</div>)
+        setViewer(<SettingMainSecurity />)
         break
       case 'cors':
         setTitle('跨域')
-        setViewer(<div>跨域</div>)
+        setViewer(<SettingMainCrossdomain />)
         break
       case 'API Token':
         setTitle('API Token')
@@ -38,11 +45,11 @@ export default function SettingContainer({ showType }: Props) {
         break
       case 'path':
         setTitle('环境变量')
-        setViewer(<div>环境变量</div>)
+        setViewer(<SettingMainEnvironmentVariable />)
         break
       case 'version':
         setTitle('版本')
-        setViewer(<div>版本</div>)
+        setViewer(<SettingMainVersion />)
         break
       default:
         setViewer(<div>error</div>)
