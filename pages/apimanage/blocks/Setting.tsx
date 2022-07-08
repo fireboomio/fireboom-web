@@ -1,6 +1,6 @@
-import type { FC } from 'react'
-import { Divider, Form, Input, Switch } from 'antd'
 import { AppleOutlined } from '@ant-design/icons'
+import { Divider, Form, Input, Switch } from 'antd'
+import type { FC } from 'react'
 
 type SettingProps = {
   //
@@ -19,7 +19,7 @@ const Setting: FC<SettingProps> = () => {
     >
       <Divider orientation="left" orientationMargin={0}>
         <div className="text-[#AFB0B4] text-14px space-x-1">
-          <AppleOutlined></AppleOutlined>
+          <AppleOutlined />
           <span>授权</span>
         </div>
       </Divider>
@@ -30,13 +30,13 @@ const Setting: FC<SettingProps> = () => {
       >
         <Switch />
         <span className="ml-26px text-[#00000040] text-12px inline-flex items-center ">
-          <AppleOutlined></AppleOutlined>
+          <AppleOutlined />
           <span className="ml-1">开启后，登录后才能访问</span>
         </span>
       </Form.Item>
       <Divider orientation="left" orientationMargin={0} className="mt-42px">
         <div className="text-[#AFB0B4] text-14px space-x-1">
-          <AppleOutlined></AppleOutlined>
+          <AppleOutlined />
           <span>缓存</span>
         </div>
       </Divider>
@@ -63,7 +63,7 @@ const Setting: FC<SettingProps> = () => {
       </Form.Item>
       <Divider orientation="left" orientationMargin={0} className="mt-42px">
         <div className="text-[#AFB0B4] text-14px space-x-1">
-          <AppleOutlined></AppleOutlined>
+          <AppleOutlined />
           <span>实时</span>
         </div>
       </Divider>

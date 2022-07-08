@@ -1,8 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable react/prop-types */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
-import RcTab from 'pages/components/rc-tab'
-import { FC, useCallback, useEffect, useState } from 'react'
 import { parse } from 'graphql'
+import { FC, useCallback, useEffect, useState } from 'react'
+
+import RcTab from 'pages/components/rc-tab'
+
 import styles from './Detail.module.scss'
 
 type DetailProps = {
@@ -102,6 +113,7 @@ const Detail: FC<DetailProps> = () => {
       }
       return obj
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -130,6 +142,7 @@ const Detail: FC<DetailProps> = () => {
     setDataSource(temp)
     console.log(gqlSchemaDef, 'schema')
     console.log(gqlQueryDef, 'query')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -158,13 +171,13 @@ const Detail: FC<DetailProps> = () => {
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
         <div className="flex-1 flex items-center">
-          <Select className="w-160px"></Select>
-          <Select className="flex-1" allowClear></Select>
+          <Select className="w-160px" />
+          <Select className="flex-1" allowClear />
         </div>
       </div>
       <div className="mt-42px">
         <RcTab tabs={tabs} />
-        <Table className="mt-6"></Table>
+        <Table className="mt-6" />
       </div>
       <div className="mt-42px">
         <div className="text-[#5F6269] leading-22px text-16px">返回响应</div>
@@ -181,7 +194,7 @@ const Detail: FC<DetailProps> = () => {
               dataSource={dataSource}
               rowKey="fieldName"
               pagination={false}
-            ></Table>
+            />
           </div>
         </div>
       </div>

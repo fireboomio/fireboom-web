@@ -1,3 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable react/prop-types */
+
 import {
   AppleOutlined,
   DownOutlined,
@@ -10,12 +18,13 @@ import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } fr
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import { FC, useCallback, useState } from 'react'
-import RcTab from 'pages/components/rc-tab'
-import Detail from './blocks/Detail'
-import Mock from './blocks/Mock'
-import Hook from './blocks/Hook'
-import Setting from './blocks/Setting'
 
+import RcTab from 'pages/components/rc-tab'
+
+import Detail from './blocks/Detail'
+import Hook from './blocks/Hook'
+import Mock from './blocks/Mock'
+import Setting from './blocks/Setting'
 import styles from './index.module.scss'
 
 type ApiManageProps = {
@@ -114,7 +123,7 @@ const tabs = [
   },
 ]
 const ApiManage: FC<ApiManageProps> = () => {
-  const [isAdding, setIsAdding] = useState(false)
+  const [isAdding, _setIsAdding] = useState(false)
   const [treeData, setTreeData] = useState<DataNode[]>(inititalTreeData)
   const [selectedKey, setSelectedKey] = useState<string | number>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
@@ -122,9 +131,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('0')
 
   const handlePressEnter = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     curEditingNode!.title = inputValue
     setCurEditingNode(null)
     setTreeData([...treeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue])
 
   const handleInputChange = useCallback(
@@ -165,6 +176,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       parent,
       child,
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddNode = useCallback(() => {
@@ -218,12 +230,14 @@ const ApiManage: FC<ApiManageProps> = () => {
       parent.children.splice(index, 1)
     }
     setTreeData([...treeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
     if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
       setSelectedKey(selectedKeys[0])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleMenuClick = (arg: any, treeNodeKey: any) => {
@@ -277,7 +291,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             autoFocus
             onClick={handleInputClick}
             onBlur={handleInputBlur}
-          ></Input>
+          />
         ) : (
           <>
             <span>{nodeData.title}</span>
@@ -311,13 +325,13 @@ const ApiManage: FC<ApiManageProps> = () => {
   const getTabContent = useCallback(() => {
     switch (activeKey) {
       case '0':
-        return <Detail></Detail>
+        return <Detail />
       case '1':
-        return <Mock></Mock>
+        return <Mock />
       case '2':
-        return <Hook></Hook>
+        return <Hook />
       case '3':
-        return <Setting></Setting>
+        return <Setting />
     }
   }, [activeKey])
 
@@ -367,7 +381,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           onSelect={handleSelectTreeNode}
         />
       </div>
-      <div className={styles.divider}></div>
+      <div className={styles.divider} />
       <div className="px-6 pt-6 flex-1">
         <div className="flex justify-between items-center">
           <div className="flex leading-25px space-x-2">

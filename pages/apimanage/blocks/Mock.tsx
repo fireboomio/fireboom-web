@@ -1,8 +1,9 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Switch } from 'antd'
 import Editor from '@monaco-editor/react'
-import styles from './Mock.module.scss'
+import { Switch } from 'antd'
 import type { FC } from 'react'
+
+import styles from './Mock.module.scss'
 
 type MockProps = {
   //
