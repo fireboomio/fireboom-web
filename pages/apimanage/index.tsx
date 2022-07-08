@@ -17,6 +17,7 @@ import {
 import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
+import Head from 'next/head'
 import { FC, useCallback, useState } from 'react'
 
 import RcTab from 'pages/components/rc-tab'
@@ -336,71 +337,78 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [activeKey])
 
   return (
-    <div className={`flex ${styles['api-manage']} h-full`}>
-      <div className="w-280px flex-shrink-0  pt-6">
-        <div className="px-4">
-          <div className="flex justify-between text-18px leading-25px">
-            <span className="font-bold">API管理</span>
-            <AppleOutlined />
+    <>
+      <Head>
+        <title>API 管理</title>
+      </Head>
+
+      <div className={`flex ${styles['api-manage']} h-full`}>
+        <div className="w-280px flex-shrink-0  pt-6">
+          <div className="px-4">
+            <div className="flex justify-between text-18px leading-25px">
+              <span className="font-bold">API 管理</span>
+              <AppleOutlined />
+            </div>
+            <div className="flex justify-between mt-7">
+              <Tooltip placement="top" title="设置">
+                <AppleOutlined />
+              </Tooltip>
+              <Tooltip placement="top" title="导出">
+                <AppleOutlined />
+              </Tooltip>
+              <Tooltip placement="top" title="表单设计器">
+                <AppleOutlined />
+              </Tooltip>
+              <Tooltip placement="top" title="下载SDK">
+                <AppleOutlined />
+              </Tooltip>
+            </div>
           </div>
-          <div className="flex justify-between mt-7">
-            <Tooltip placement="top" title="设置">
+          <Divider className="my-4" />
+          <div className="flex justify-between px-4">
+            <span className="leading-20px font-bold">概览</span>
+            <div className="space-x-4">
+              <AppleOutlined onClick={handleAddNode} />
               <AppleOutlined />
-            </Tooltip>
-            <Tooltip placement="top" title="导出">
               <AppleOutlined />
-            </Tooltip>
-            <Tooltip placement="top" title="表单设计器">
+            </div>
+          </div>
+          <Divider className="my-4" />
+          <Tree
+            titleRender={titleRender}
+            icon={iconRender}
+            draggable
+            showIcon
+            defaultExpandAll
+            defaultSelectedKeys={['0-0-0']}
+            switcherIcon={<DownOutlined />}
+            treeData={treeData}
+            selectedKeys={[selectedKey]}
+            onSelect={handleSelectTreeNode}
+          />
+        </div>
+        <div className={styles.divider} />
+
+        <div className="px-6 pt-6 flex-1">
+          <div className="flex justify-between items-center">
+            <div className="flex leading-25px space-x-2">
+              <span className="font-bold text-18px">API 管理</span>
               <AppleOutlined />
-            </Tooltip>
-            <Tooltip placement="top" title="下载SDK">
+              <span className="text-16px font-bold">userinfo</span>
+            </div>
+            <div className="space-x-4">
               <AppleOutlined />
-            </Tooltip>
+              <AppleOutlined />
+              <AppleOutlined />
+            </div>
+          </div>
+          <div className="mt-7">
+            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
+            {getTabContent()}
           </div>
         </div>
-        <Divider className="my-4" />
-        <div className="flex justify-between px-4">
-          <span className="leading-20px font-bold">概览</span>
-          <div className="space-x-4">
-            <AppleOutlined onClick={handleAddNode} />
-            <AppleOutlined />
-            <AppleOutlined />
-          </div>
-        </div>
-        <Divider className="my-4" />
-        <Tree
-          titleRender={titleRender}
-          icon={iconRender}
-          draggable
-          showIcon
-          defaultExpandAll
-          defaultSelectedKeys={['0-0-0']}
-          switcherIcon={<DownOutlined />}
-          treeData={treeData}
-          selectedKeys={[selectedKey]}
-          onSelect={handleSelectTreeNode}
-        />
       </div>
-      <div className={styles.divider} />
-      <div className="px-6 pt-6 flex-1">
-        <div className="flex justify-between items-center">
-          <div className="flex leading-25px space-x-2">
-            <span className="font-bold text-18px">API管理</span>
-            <AppleOutlined />
-            <span className="text-16px font-bold">userinfo</span>
-          </div>
-          <div className="space-x-4">
-            <AppleOutlined />
-            <AppleOutlined />
-            <AppleOutlined />
-          </div>
-        </div>
-        <div className="mt-7">
-          <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-          {getTabContent()}
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
 
