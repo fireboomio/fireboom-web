@@ -3,16 +3,6 @@ import { Form, Input, Switch, Button } from 'antd'
 
 import styles from './setting-main.module.scss'
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 3 },
-    sm: { span: 3 },
-  },
-  wrapperCol: {
-    xs: { span: 20 },
-    sm: { span: 16 },
-  },
-}
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
@@ -30,81 +20,85 @@ export default function SettingMainSecurity() {
   }
   return (
     <>
-      <div>
-        <div className="flex">
-          <span className="mr-10">GraphQL端点：</span>
-          <Switch
-            defaultChecked
-            className={styles['switch-edit-btn']}
-            size="small"
-            onChange={connectSwitchOnChange}
-          />
-          <span className={styles.setTitle}>
-            <InfoCircleOutlined />
-            https://loacalhost:999
-          </span>
-        </div>
-        <div>
-          <span className={`${styles['set-word']} mt-4`}>允许域名 ：</span>
-          <div className={`${styles['form-contain']}`}>
-            <Form
-              layout="vertical"
-              className="ml-50 -mt-5"
-              name="dynamic_form_item"
-              {...formItemLayoutWithOutLabel}
-              onFinish={onFinish}
-              labelAlign="left"
+      <div className={`${styles['security-form-contain']}`}>
+        <Form
+          name="dynamic_form_item"
+          onFinish={onFinish}
+          labelAlign="left"
+          labelCol={{
+            xs: { span: 3 },
+            sm: { span: 3 },
+          }}
+          wrapperCol={{
+            xs: { span: 10 },
+            sm: { span: 9 },
+          }}
+        >
+          <Form.Item label="GraphQL端点：">
+            <Form.Item
+              valuePropName="checked"
+              name="username"
+              noStyle
+              rules={[{ required: true, message: 'Username is required' }]}
             >
-              <Form.List name="names">
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => (
-                      <Form.Item
-                        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                        label={'域名' + (index + 1).toString() + ':'}
-                        required={false}
-                        key={index}
-                      >
-                        <Form.Item
-                          {...field}
-                          validateTrigger={['onChange', 'onBlur']}
-                          rules={[
-                            {
-                              required: true,
-                              whitespace: true,
-                              message: '请输入域名或删除这个域名框',
-                            },
-                          ]}
-                          noStyle
-                        >
-                          <Input placeholder="请输入域名" style={{ width: '60%' }} />
-                        </Form.Item>
-                        {fields.length > 1 ? (
-                          <MinusCircleOutlined
-                            className={`${styles['form-delete-icon']}`}
-                            onClick={() => remove(field.name)}
-                          />
-                        ) : null}
+              <Switch
+                defaultChecked
+                className={styles['switch-edit-btn']}
+                size="small"
+                onChange={connectSwitchOnChange}
+              />
+            </Form.Item>
+            <span className={styles.setTitle}>
+              <InfoCircleOutlined className="mr-1" />
+              <span>https://loacalhost:999</span>
+            </span>
+          </Form.Item>
+          <Form.Item
+            name="corsName"
+            label="允许域名"
+            wrapperCol={{
+              xs: { span: 20 },
+              sm: { span: 20 },
+            }}
+          >
+            <Form.List name="names" initialValue={[{}]}>
+              {(fields, { add, remove }, { errors }) => (
+                <>
+                  {fields.map((field, index) => (
+                    <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
+                      <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                        <div className="">
+                          <div>{'域名' + (index + 1).toString() + ':'}</div>
+                          <Input placeholder="请输入域名..." style={{ width: '60%' }} />
+                          {fields.length > 1 ? (
+                            <MinusCircleOutlined
+                              className={`${styles['form-delete-icon']}`}
+                              onClick={() => remove(field.name)}
+                            />
+                          ) : null}
+                        </div>
                       </Form.Item>
-                    ))}
-                    <Form.Item wrapperCol={{ span: 20 }}>
-                      <Button
-                        type="dashed"
-                        style={{ width: '48%' }}
-                        onClick={() => add()}
-                        icon={<PlusOutlined />}
-                        className="text-gray-500/60 mt-4"
-                      >
-                        新增域名
-                      </Button>
-                      <Form.ErrorList errors={errors} />
                     </Form.Item>
-                  </>
-                )}
-              </Form.List>
-            </Form>
-          </div>
-        </div>
+                  ))}
+                  <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
+                    <Button
+                      type="dashed"
+                      style={{ width: '48%' }}
+                      onClick={() => {
+                        add()
+                      }}
+                      icon={<PlusOutlined />}
+                      className="text-gray-500/60"
+                    >
+                      新增域名
+                    </Button>
+                    <Form.ErrorList errors={errors} />
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
+        </Form>
       </div>
     </>
   )

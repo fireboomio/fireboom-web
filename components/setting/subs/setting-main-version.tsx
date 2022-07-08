@@ -1,4 +1,4 @@
-import { Descriptions, Divider, Button } from 'antd'
+import { Descriptions, Divider } from 'antd'
 
 import styles from './setting-main.module.scss'
 
@@ -20,10 +20,7 @@ export default function SettingMainVersion() {
             }}
           >
             <Descriptions.Item label="版本">
-              V1.2.0
-              <Button type="text" className={styles['check-info']}>
-                查看更新日志
-              </Button>
+              V1.2.0 <span className={styles['check-info']}>查看更新日志</span>
             </Descriptions.Item>
             <Descriptions.Item label="prisma版本">V1.2.0</Descriptions.Item>
             <Descriptions.Item label="版权">V1.2.0</Descriptions.Item>

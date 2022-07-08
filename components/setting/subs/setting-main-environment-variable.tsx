@@ -8,28 +8,28 @@ import styles from './setting-main.module.scss'
 interface DataType {
   key: number
   name: string
-  developmentenv?: string
-  productionenv?: string
+  devEnv?: string
+  proEnv?: string
 }
 
 const data: DataType[] = [
   {
     key: 1,
     name: 'DB_HOST',
-    developmentenv: '1232314',
-    productionenv: '******',
+    devEnv: '1232314',
+    proEnv: '******',
   },
   {
     key: 2,
     name: 'DB_HOST2',
-    developmentenv: '1232314',
-    productionenv: '******',
+    devEnv: '1232314',
+    proEnv: '******',
   },
   {
     key: 3,
     name: 'DB_HOST3',
-    developmentenv: '1232314',
-    productionenv: '******',
+    devEnv: '1232314',
+    proEnv: '******',
   },
 ]
 
@@ -42,8 +42,8 @@ export default function SettingMainEnvironmentVariable() {
   const onFinish = (values: DataType) => {
     setVariableData(
       variableData.concat({
+        ...values,
         key: variableData.length + 1,
-        name: values.name,
       })
     )
     console.log('Success:', values)
@@ -85,13 +85,14 @@ export default function SettingMainEnvironmentVariable() {
     },
     {
       title: '开发环境',
-      dataIndex: 'developmentenv',
-      key: 'development-env',
+      dataIndex: 'devEnv',
+      key: 'devEnv',
     },
     {
       title: '生产环境',
-      key: 'productionenv',
-      render: (_, { developmentenv }) => <span>{developmentenv}</span>,
+      key: 'proEnv',
+      dataIndex: 'proEnv',
+      render: (_, { devEnv }) => <span>{devEnv}</span>,
     },
 
     {
@@ -154,40 +155,35 @@ export default function SettingMainEnvironmentVariable() {
                     form.submit()
                   }}
                 >
-                  <span>保存</span>
+                  <div>保存</div>
                 </Button>
               }
               cancelText="取消"
               okType="text"
             >
-              <div className={`${styles.authSetFrom} mr-2`}>
-                <Form
-                  className="ml-15"
-                  labelCol={{ span: 4 }}
-                  wrapperCol={{ span: 15 }}
-                  initialValues={{ remember: true }}
-                  onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}
-                  autoComplete="off"
-                  labelAlign="left"
-                  colon={false}
-                >
-                  <Form.Item label={<span className={styles['label-style']}>名称:</span>}>
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item label={<span className={styles['label-style']}>开发环境:</span>}>
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label={<span className={styles['label-style']}>生产环境:</span>}>
-                    <Input />
-                  </Form.Item>
-                </Form>
-              </div>
+              <Form
+                form={form}
+                className="ml-15"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 15 }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                labelAlign="left"
+              >
+                <Form.Item label="名称" name="name">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="开发环境" name="devEnv">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="生产环境" name="proEnv">
+                  <Input />
+                </Form.Item>
+              </Form>
             </Modal>
           </div>
         </div>
-        <Table columns={columns} dataSource={data} pagination={false} className="mb-3 " />
+        <Table columns={columns} dataSource={variableData} pagination={false} className="mb-3 " />
         <div className="border-gray border-b">
           <div>
             <span>系统变量</span>

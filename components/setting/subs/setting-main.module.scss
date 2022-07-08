@@ -3,7 +3,7 @@
   .ant-image {
     width: 100px;
     height: 70px;
-    margin: 41px 36px 8px 0;
+    margin: 24px 36px 10px 0;
     border-radius: 2px;
   }
 }
@@ -27,20 +27,28 @@
 }
 // setting-main-version
 .descriptions-box :global {
+  .ant-descriptions-item {
+    height: 45px;
+  }
   width: 1650px;
   border-radius: 4px;
   .descriptions-small .ant-descriptions-row > td {
     padding-bottom: 20px;
   }
 }
+
 .check-info {
-  width: 72px;
-  height: 17px;
   font-size: 12px;
   color: #e92e5e;
-  line-height: 17px;
+  margin-left: 24px;
 }
+
 // setting-main-environment-variable
+.modal-save-btn {
+  background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 4px;
+}
+
 .variable-btn {
   width: 88px;
   height: 28px;
@@ -104,13 +112,6 @@
     color: #afb0b4;
     line-height: 17px;
   }
-  .label-style {
-    height: 20px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #5f6269;
-    line-height: 20px;
-  }
 }
 .ant-modal-title {
   width: 96px;
@@ -128,11 +129,13 @@
   border-radius: 12px;
 }
 .edit-btn {
+  padding: 0;
   width: 62px;
   height: 32px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
-  margin-left: 178px;
+  margin-left: 215px;
+  margin-top: 10px;
 
   &:hover,
   &:focus {
@@ -146,6 +149,49 @@
     height: 20px;
     color: #fff;
     font-size: 14px;
-    margin-right: 16px;
+  }
+}
+
+.item-label {
+  height: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #000000;
+  line-height: 16px;
+}
+
+.form-contain :global {
+  .ant-form-item-label {
+    padding: 0;
+  }
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  Input {
+    width: 90%;
+  }
+}
+
+.security-form-contain :global {
+  .ant-form-item {
+    margin-bottom: 10px;
+    padding-top: 5px;
+  }
+}
+
+.form-delete-icon {
+  position: relative;
+  top: 4px;
+  margin: 0 8px;
+  color: #ff9378;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    color: #777;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
