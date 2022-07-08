@@ -109,7 +109,7 @@ export default function SettingMainEnvironmentVariable() {
             <span className="ml-2">环境变量</span>
           </div>
           <div className="flex justify-center items-center mb-2">
-            <Button className={styles['edit-btn']} onClick={showModal}>
+            <Button className={`${styles['edit-btn']}`} onClick={showModal}>
               <span>新建变量</span>
             </Button>
             <Modal
