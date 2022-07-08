@@ -1,7 +1,7 @@
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button } from 'antd'
 
-import styles from './auth-common-main.module.scss'
+import styles from './setting-common.module.scss'
 
 const formItemLayout = {
   labelCol: {
@@ -21,7 +21,7 @@ const formItemLayoutWithOutLabel = {
 }
 
 export default function AuthenticationMainSetting() {
-  const onFinish = (values: unknown) => {
+  const onFinish = (values: any) => {
     console.log('Success:', values)
   }
 

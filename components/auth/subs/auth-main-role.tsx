@@ -53,7 +53,7 @@ export default function AuthMainRole() {
     console.log('Success:', values)
   }
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
 
