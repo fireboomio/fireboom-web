@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
 import type { FileStorageItem } from '@/interfaces/filestorage'
 import { FSContext, FSDispatchContext, FSCurrFileContext } from '@/lib/context'
-import { fileStorageFetcher } from '@/lib/fetchers'
+import { getFetcher } from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 import storageReducer from './storage-reducer'
@@ -23,7 +23,7 @@ export default function FileStorage() {
   const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
   const { data, error } = useSWR<FileStorageItem[], Error>(
     '/api/v1/filestorage',
-    fileStorageFetcher
+    getFetcher<FileStorageItem[]>
   )
   useEffect(() => {
     data &&

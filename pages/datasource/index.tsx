@@ -12,7 +12,7 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
-import { datasourceFetcher } from '@/lib/fetchers'
+import { getFetcher } from '@/lib/fetchers'
 
 import datasourceReducer from './datasource-reducer'
 import styles from './index.module.scss'
@@ -28,7 +28,7 @@ export default function Datasource() {
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
   const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
     '/api/v1/datasource',
-    datasourceFetcher
+    getFetcher<DatasourceResp[]>
   )
   useEffect(() => {
     datasource &&
