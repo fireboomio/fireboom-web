@@ -17,6 +17,7 @@ import {
 import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
+import axios from 'axios'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState } from 'react'
 
@@ -62,9 +63,28 @@ function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null
   return data.map((x, idx) => ({
     key: `${lv}-${idx}`,
     title: x.title.split('/')[x.title.split('/').length - 1].replace(/(_off)?\.graphql$/, ''),
+    path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
     children: convertToTree(x.children, `${lv}-${idx}`),
     originTitle: x.title,
   }))
+}
+
+function findNode(key: string, data: DataNode[] | undefined): DataNode | undefined {
+  let rv
+
+  const inner = (key: string, nodes: DataNode[] | undefined) => {
+    if (!nodes) return undefined
+    nodes.find((x) => {
+      if (x.key === key) {
+        rv = x
+      } else {
+        inner(key, x.children)
+      }
+    })
+  }
+
+  inner(key, data)
+  return rv
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
@@ -175,20 +195,11 @@ const ApiManage: FC<ApiManageProps> = () => {
     // setIsAdding(true)
   }, [isAdding, selectedKey, treeData])
 
-  const handleDelete = useCallback(
-    (treeNodeKey: any) => {
-      const { parent } = getTreeNode(treeNodeKey)
-      if (!parent) {
-        const index = treeData.findIndex((i) => i.key === treeNodeKey)
-        treeData.splice(index, 1)
-      } else {
-        const index = parent.children.findIndex((i: any) => i.key === treeNodeKey)
-        parent.children.splice(index, 1)
-      }
-      setTreeData([...treeData])
-    },
-    [treeData]
-  )
+  const handleDelete = (treeNodeKey: any) => {
+    const node = findNode(treeNodeKey, treeData)
+    // @ts-ignore
+    void axios.delete(`/api/v1/operateApi/${node.path as string}`)
+  }
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
     if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
