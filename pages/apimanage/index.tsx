@@ -57,16 +57,14 @@ const tabs = [
   },
 ]
 
-function convertToTree(data: operationResp[] | null): DirTree[] | null {
+function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null {
   if (!data) return null
-  return data.map((x) => {
-    return {
-      key: x.title,
-      title: x.title.split('/')[x.title.split('/').length - 1].replace('_off.graphql', ''),
-      children: convertToTree(x.children),
-      originTitle: x.title,
-    }
-  })
+  return data.map((x, idx) => ({
+    key: `${lv}-${idx}`,
+    title: x.title.split('/')[x.title.split('/').length - 1].replace(/(_off)?\.graphql$/, ''),
+    children: convertToTree(x.children, `${lv}-${idx}`),
+    originTitle: x.title,
+  }))
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
@@ -106,33 +104,35 @@ const ApiManage: FC<ApiManageProps> = () => {
     setCurEditingNode(null)
   }, [])
 
-  const getTreeNode = useCallback((treeNodeKey: any) => {
-    let parent: any
-    let child: any
-    const getNode = (key: string | number, nodes: DataNode[]) => {
-      for (let index = 0; index < nodes.length; index++) {
-        if (child) {
-          break
-        }
-        if (nodes[index].key === key) {
-          child = nodes[index]
-          break
-        } else {
-          const children = nodes[index].children
-          if (children) {
-            parent = nodes[index]
-            getNode(treeNodeKey, children)
+  const getTreeNode = useCallback(
+    (treeNodeKey: any) => {
+      let parent: any
+      let child: any
+      const getNode = (key: string | number, nodes: DataNode[]) => {
+        for (let index = 0; index < nodes.length; index++) {
+          if (child) {
+            break
+          }
+          if (nodes[index].key === key) {
+            child = nodes[index]
+            break
+          } else {
+            const children = nodes[index].children
+            if (children) {
+              parent = nodes[index]
+              getNode(treeNodeKey, children)
+            }
           }
         }
       }
-    }
-    getNode(treeNodeKey, treeData)
-    return {
-      parent,
-      child,
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+      getNode(treeNodeKey, treeData)
+      return {
+        parent,
+        child,
+      }
+    },
+    [treeData]
+  )
 
   const handleAddNode = useCallback(() => {
     if (isAdding) {
@@ -175,18 +175,20 @@ const ApiManage: FC<ApiManageProps> = () => {
     // setIsAdding(true)
   }, [isAdding, selectedKey, treeData])
 
-  const handleDelete = useCallback((treeNodeKey: any) => {
-    const { parent } = getTreeNode(treeNodeKey)
-    if (!parent) {
-      const index = treeData.findIndex((i) => i.key === treeNodeKey)
-      treeData.splice(index, 1)
-    } else {
-      const index = parent.children.findIndex((i: any) => i.key === treeNodeKey)
-      parent.children.splice(index, 1)
-    }
-    setTreeData([...treeData])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const handleDelete = useCallback(
+    (treeNodeKey: any) => {
+      const { parent } = getTreeNode(treeNodeKey)
+      if (!parent) {
+        const index = treeData.findIndex((i) => i.key === treeNodeKey)
+        treeData.splice(index, 1)
+      } else {
+        const index = parent.children.findIndex((i: any) => i.key === treeNodeKey)
+        parent.children.splice(index, 1)
+      }
+      setTreeData([...treeData])
+    },
+    [treeData]
+  )
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
     if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
