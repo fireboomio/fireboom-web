@@ -62,7 +62,7 @@ function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null
   if (!data) return null
   return data.map((x, idx) => ({
     key: `${lv}-${idx}`,
-    title: x.title.split('/')[x.title.split('/').length - 1].replace(/(_off)?\.graphql$/, ''),
+    title: x.title.split('/')[x.title.split('/').length - 1].replace(/\.graphql(\.off)?$/, ''),
     path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
     children: convertToTree(x.children, `${lv}-${idx}`),
     originTitle: x.title,
@@ -77,8 +77,9 @@ function findNode(key: string, data: DataNode[] | undefined): DataNode | undefin
     nodes.find((x) => {
       if (x.key === key) {
         rv = x
+        return x
       } else {
-        inner(key, x.children)
+        return inner(key, x.children)
       }
     })
   }
@@ -94,6 +95,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
     getFetcher<operationResp[]>('/api/v1/operateApi')
@@ -101,7 +103,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       .catch((err: Error) => {
         throw err
       })
-  }, [])
+  }, [refreshFlag])
 
   const handlePressEnter = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -198,7 +200,9 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleDelete = (treeNodeKey: any) => {
     const node = findNode(treeNodeKey, treeData)
     // @ts-ignore
-    void axios.delete(`/api/v1/operateApi/${node.path as string}`)
+    void axios.delete(`/api/v1/operateApi/${node.path as string}`).finally(() => {
+      setRefreshFlag(!refreshFlag)
+    })
   }
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
