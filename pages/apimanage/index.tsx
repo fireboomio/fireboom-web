@@ -18,8 +18,10 @@ import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } fr
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 
+import type { DirTree, operationResp } from '@/interfaces/apimanage'
+import { getFetcher } from '@/lib/fetchers'
 import RcTab from 'pages/components/rc-tab'
 
 import Detail from './blocks/Detail'
@@ -31,75 +33,6 @@ import styles from './index.module.scss'
 type ApiManageProps = {
   //
 }
-
-const inititalTreeData: DataNode[] = [
-  {
-    title: 'userinfo',
-    key: '0-0',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-0-0',
-        children: [
-          {
-            title: 'leaf',
-            key: '0-0-0-0',
-          },
-          {
-            title: 'leaf',
-            key: '0-0-1-0',
-          },
-        ],
-      },
-      {
-        title: 'leaf',
-        key: '0-0-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-1',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-1-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-1-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-2',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-2-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-2-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-3',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-3-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-3-1',
-      },
-    ],
-  },
-]
 
 const tabs = [
   {
@@ -123,13 +56,34 @@ const tabs = [
     key: '4',
   },
 ]
+
+function convertToTree(data: operationResp[] | null): DirTree[] | null {
+  if (!data) return null
+  return data.map((x) => {
+    return {
+      key: x.title,
+      title: x.title.split('/')[x.title.split('/').length - 1].replace('_off.graphql', ''),
+      children: convertToTree(x.children),
+      originTitle: x.title,
+    }
+  })
+}
+
 const ApiManage: FC<ApiManageProps> = () => {
   const [isAdding, _setIsAdding] = useState(false)
-  const [treeData, setTreeData] = useState<DataNode[]>(inititalTreeData)
+  const [treeData, setTreeData] = useState<DataNode[]>(null!)
   const [selectedKey, setSelectedKey] = useState<string | number>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
+
+  useEffect(() => {
+    getFetcher<operationResp[]>('/api/v1/operateApi')
+      .then((res) => setTreeData(convertToTree(res) as DataNode[]))
+      .catch((err: Error) => {
+        throw err
+      })
+  }, [])
 
   const handlePressEnter = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -241,6 +195,19 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const getTabContent = useCallback(() => {
+    switch (activeKey) {
+      case '0':
+        return <Detail />
+      case '1':
+        return <Mock />
+      case '2':
+        return <Hook />
+      case '3':
+        return <Setting />
+    }
+  }, [activeKey])
+
   const handleMenuClick = (arg: any, treeNodeKey: any) => {
     arg.domEvent.stopPropagation()
     if (arg.key === '0') {
@@ -322,19 +289,6 @@ const ApiManage: FC<ApiManageProps> = () => {
       return <FileOutlined />
     }
   }
-
-  const getTabContent = useCallback(() => {
-    switch (activeKey) {
-      case '0':
-        return <Detail />
-      case '1':
-        return <Mock />
-      case '2':
-        return <Hook />
-      case '3':
-        return <Setting />
-    }
-  }, [activeKey])
 
   return (
     <>
