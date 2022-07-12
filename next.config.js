@@ -19,7 +19,7 @@ const nextConfig = {
       },
       {
         source: '/api/v1/operateApi/:path*',
-        destination: 'http://192.168.166.199:9123/api/v1/operateApi/:path*',
+        destination: 'http:///120.26.62.151:9123/api/v1/operateApi/:path*',
       },
       {
         source: '/api/v1/:path*',

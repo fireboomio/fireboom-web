@@ -6,3 +6,9 @@ export interface operationResp {
   originTitle?: string
   path?: string
 }
+
+export interface TableSource {
+  fieldName: string
+  fieldType: string
+  children?: TableSource[]
+}

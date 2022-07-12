@@ -9,9 +9,10 @@
 
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
-import { parse } from 'graphql'
+import { parse, buildSchema, DefinitionNode } from 'graphql'
 import { FC, useCallback, useEffect, useState } from 'react'
 
+import { TableSource } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import RcTab from 'pages/components/rc-tab'
 
@@ -44,13 +45,20 @@ const columns = [
 ]
 
 const Detail: FC<DetailProps> = ({ path }) => {
-  const [gqlQueryDef, setGqlQueryDef] = useState()
-  const [gqlSchemaDef, setGqlSchemaDef] = useState()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [gqlQueryDef, setGqlQueryDef] = useState<DefinitionNode[]>(undefined!)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [gqlSchemaDef, setGqlSchemaDef] = useState<DefinitionNode[]>(undefined!)
   const [dataSource, setDataSource] = useState([])
 
   useEffect(() => {
-    getFetcher('/api/v1/gql-schema')
-      .then((res) => parse(res).definitions)
+    getFetcher<string>('/api/v1/gql-schema')
+      .then((res) => {
+        const ast = buildSchema(res, { noLocation: true })
+        console.log('ast', ast)
+        return res
+      })
+      .then((res) => parse(res, { noLocation: true }).definitions)
       .then((def) => setGqlSchemaDef(def))
       .catch((err: Error) => {
         throw err
@@ -61,61 +69,93 @@ const Detail: FC<DetailProps> = ({ path }) => {
     if (!path) return
     // getFetcher(`/api/v1/operateApi/${path}`)
     getFetcher('/api/v1/gql-query-str')
-      .then((res) => parse(res).definitions)
+      .then((res) => parse(res, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def))
       .catch((err: Error) => {
         throw err
       })
   }, [path])
 
-  const getSubFields = useCallback(
-    (parentField, selections, subFieldType) => {
-      parentField.children = selections.map((i) => {
-        const fieldName = i.name.value
-        const fieldDef = gqlSchemaDef.find((i) => i.name.value === subFieldType)
-        const curFieldType =
-          'bbb' || fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
-        const fieldType =
-          curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
-        const obj = {
-          fieldName,
-          fieldType,
+  const parseType = useCallback(
+    (selection, parent): string => {
+      const fieldName = selection.name.value
+      const parentFieldName = parent?.name?.value
+      // const allQuery = gqlSchemaDef.find((i) => i.name.value === 'Query')
+
+      let rv = ''
+      if (!parent) {
+        console.log('^^^^^^^^ parse root', selection)
+        const rootQuery = gqlSchemaDef
+          .filter((i) => i.kind === 'ObjectTypeDefinition')
+          .find((i) => i.name.value === 'Query')
+          .fields.find((i) => i.name.value === fieldName)
+        console.log(rootQuery, 'rootQuery')
+
+        switch (rootQuery.type.kind) {
+          case 'NamedType':
+            rv = 'Object'
+            break
+          case 'ListType':
+            rv = 'List'
+            break
+          default:
+            break
         }
-        if (i.selectionSet) {
-          getSubFields(obj, i.selectionSet.selections, curFieldType)
-        }
-        return obj
-      })
+      } else {
+        console.log(parentFieldName, fieldName)
+        console.log('^^^^^^^^ parse type', selection)
+        console.log('^^^^^^^^ parent type', parent)
+
+        const parentQueryName = gqlSchemaDef
+          .filter((i) => i.kind === 'ObjectTypeDefinition')
+          .find((i) => i.name.value === 'Query')
+          .fields.find((i) => i.name.value === parentFieldName).type.name.value
+        console.log(parentQueryName, 'parentQueryName')
+        const bbb = gqlSchemaDef
+          .filter((i) => i.kind === 'ObjectTypeDefinition')
+          .find((i) => i.name.value === parentQueryName)
+          .fields.find((i) => i.name.value === fieldName)
+        console.log(bbb, 'bbb')
+        rv = bbb.type.type.name?.value ?? 'bbb'
+      }
+
+      console.log('$$$$$$$$ parseType end')
+      return rv
     },
     [gqlSchemaDef]
   )
+
+  const parseSubs = useCallback((selection, nodes: string[]): TableSource[] => {
+    const selectionSet = selection.selectionSet
+    if (!selectionSet) return undefined
+    const rv = selectionSet.selections.map((subSelection) => {
+      const subNodes = nodes.concat(subSelection.name.value)
+      return {
+        key: subNodes.join('-'),
+        fieldName: subSelection.name.value,
+        // fieldType: parseType(subSelection, selection),
+        children: parseSubs(subSelection, subNodes),
+      }
+    })
+    return rv as TableSource[]
+  }, [])
 
   useEffect(() => {
     if (!gqlQueryDef || !gqlSchemaDef) return
     console.log(gqlSchemaDef, 'schema')
     console.log(gqlQueryDef, 'query')
-    const queryName = gqlQueryDef[0].selectionSet.selections[0].name.value
-    const topLevelQueryFiedls = gqlQueryDef[0].selectionSet.selections[0].selectionSet.selections
-    const temp = topLevelQueryFiedls.map((i) => {
-      const fieldName = i.name.value
-      const rootType = gqlSchemaDef
-        .find((i) => i.name.value === 'Query')
-        .fields.find((i) => i.name.value === queryName).type.name.value
-      const fieldDef = gqlSchemaDef.find((i) => i.name.value === rootType)
-      const curFieldType =
-        'bbb' || fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
-      const fieldType = curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
-
-      const obj = {
-        fieldName,
-        fieldType,
+    const rv: TableSource[] = gqlQueryDef[0].selectionSet.selections.map((selection) => {
+      const nodes = [selection.name.value]
+      return {
+        key: nodes.join('-'),
+        fieldName: selection.name.value,
+        // fieldType: parseType(selection, null),
+        children: parseSubs(selection, nodes),
       }
-      if (i.selectionSet) {
-        getSubFields(obj, i.selectionSet.selections, curFieldType)
-      }
-      return obj
     })
-    setDataSource(temp)
+
+    console.log('rv', rv)
+    setDataSource(rv)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
@@ -162,13 +202,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
               <span>HTTP 状态码：201</span>
               <span className="ml-82px">内容格式：JSON</span>
             </div>
-            <Table
-              className="mt-6"
-              columns={columns}
-              dataSource={dataSource}
-              rowKey="fieldName"
-              pagination={false}
-            />
+            <Table className="mt-6" columns={columns} dataSource={dataSource} pagination={false} />
           </div>
         </div>
       </div>
