@@ -1,10 +1,11 @@
 import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
+import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
@@ -14,9 +15,9 @@ import {
 import styles from '../datasource-pannel.module.scss'
 
 interface Props {
-  datasourceItem: DatasourceItem
-  onClickItem: (dsItem: DatasourceItem) => void
-  Datasourcetype: string
+  datasourceItem: DatasourceResp
+  onClickItem: (dsItem: DatasourceResp) => void
+  Datasourcetype: number
 }
 
 export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
@@ -33,17 +34,26 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     }
   }
 
-  function handleItemEdit(value: string) {
+  async function handleItemEdit(value: string) {
     if (value === '') {
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
-      dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+      if (datasourceItem.id) {
+        await axios.put('/api/v1/dataSource', { ...datasourceItem, name: value })
+        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+      } else {
+        await axios.post('/api/v1/dataSource', { ...datasourceItem, name: value })
+        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+      }
     }
     setIsEditing(false)
   }
 
-  function handleItemDelete(item: DatasourceItem) {
-    dispatch({ type: 'deleted', data: item })
+  async function handleItemDelete(item: DatasourceResp) {
+    const result = await axios.delete(`/api/v1/dataSource/${item.id}`)
+    if (result.data.code == 200) {
+      dispatch({ type: 'deleted', data: item })
+    }
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -76,7 +86,24 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner(datasourceItem.type, datasourceItem.id)
+                let type = 'DB'
+                switch (datasourceItem.source_type) {
+                  case 1:
+                    type = 'DB'
+                    break
+                  case 2:
+                    type = 'REST'
+                    break
+                  case 3:
+                    type = 'Graphal'
+                    break
+                  case 4:
+                    type = 'defineByself'
+                    break
+                  default:
+                    break
+                }
+                handleToggleDesigner(type, datasourceItem.id)
               }}
             >
               <AppleOutlined />
@@ -90,7 +117,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
             <Popconfirm
               placement="right"
               title="确认删除该实体吗？"
-              onConfirm={() => handleItemDelete(datasourceItem)}
+              onConfirm={() => void handleItemDelete(datasourceItem)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -125,9 +152,9 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
 
       {isEditing ? (
         <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
+          onBlur={(e) => void handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value as string)}
+          onPressEnter={(e) => void handleItemEdit(e.target.value as string)}
           onKeyUp={(e: React.KeyboardEvent) => {
             e.key == 'Escape' && setIsEditing(false)
           }}

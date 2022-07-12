@@ -6,6 +6,8 @@ import {
 } from '@ant-design/icons'
 import { Descriptions, Divider, Radio, Switch, Button } from 'antd'
 import type { RadioChangeEvent } from 'antd'
+import axios from 'axios'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import styles from './setting-main.module.scss'
@@ -19,6 +21,10 @@ export default function SettingMainVersion() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     setValue(e.target.value)
   }
+
+  useEffect(() => {
+   void axios.get('/api/v1/setting/systemConfig')
+  }, [])
 
   return (
     <>

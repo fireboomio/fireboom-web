@@ -7,12 +7,12 @@ import {
 import { Button, Switch, Descriptions, Tabs, Collapse } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 export default function DatasourceRestMainCheck({ content }: Props) {
@@ -23,7 +23,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const { config } = content
   const { TabPane } = Tabs
   const { Panel } = Collapse
   const onChange = (key: string) => {
@@ -75,7 +75,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.nameScope}
+            {config.nameScope}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -86,7 +86,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.endpoint}
+            {config.endpoint}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -97,7 +97,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.theOAS}
+            {config.theOAS}
           </Descriptions.Item>
         </Descriptions>
       </div>
@@ -116,9 +116,9 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 borderBottom: 'none',
               }}
             >
-              <Descriptions.Item>{info.head}</Descriptions.Item>
-              <Descriptions.Item>{info.way}</Descriptions.Item>
-              <Descriptions.Item>{info.code}</Descriptions.Item>
+              <Descriptions.Item>{config.head}</Descriptions.Item>
+              <Descriptions.Item>{config.way}</Descriptions.Item>
+              <Descriptions.Item>{config.code}</Descriptions.Item>
             </Descriptions>
           </div>
         </TabPane>
@@ -144,7 +144,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 width: '30%',
               }}
             >
-              <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
+              <Descriptions.Item label="JWT获取">{config.JWTget}</Descriptions.Item>
               <Descriptions.Item label="密钥">
                 {isEyeShow ? (
                   <div>
@@ -158,8 +158,8 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                   </div>
                 )}
               </Descriptions.Item>
-              <Descriptions.Item label="签名方法">{info.signMethod}</Descriptions.Item>
-              <Descriptions.Item label="Token端点">{info.tokenPoint}</Descriptions.Item>
+              <Descriptions.Item label="签名方法">{config.signMethod}</Descriptions.Item>
+              <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
             </Descriptions>
           </div>
         </TabPane>
@@ -193,7 +193,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isStateCombine}
+                {config.isStateCombine}
               </Descriptions.Item>
             </Descriptions>
           </div>

@@ -7,6 +7,7 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  // trailingSlash: true,
   async rewrites() {
     return [
       {
@@ -20,6 +21,16 @@ const nextConfig = {
       {
         source: '/api/v1/operateApi/:path*',
         destination: 'http:///120.26.62.151:9123/api/v1/operateApi/:path*',
+        source: '/api/v1/setting/:path*',
+        destination: 'http://192.168.166.199:9123/api/v1/setting/:path*',
+      },
+      {
+        source: '/api/v1/dataSource',
+        destination: 'http://192.168.166.199:9123/api/v1/dataSource',
+      },
+      {
+        source: '/api/v1/dataSource/:path*',
+        destination: 'http://192.168.166.199:9123/api/v1/dataSource/:path*',
       },
       {
         source: '/api/v1/:path*',

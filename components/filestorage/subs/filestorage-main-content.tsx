@@ -114,7 +114,7 @@ export default function StorageMainCheck({ content }: Props) {
   const { Panel } = Collapse
   return (
     <>
-      <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
+      <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
         <Breadcrumb>
           <Breadcrumb.Item>
             <span className="text-red-500/80">Img</span>

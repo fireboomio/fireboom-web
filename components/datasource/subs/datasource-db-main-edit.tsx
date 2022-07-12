@@ -1,16 +1,17 @@
 import { RightSquareOutlined, AppleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
+import axios from 'axios'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 import styles from './datasource-db-main.module.scss'
 interface FromValues {
   [key: string]: number | string | boolean
 }
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 const initForm = (
@@ -31,9 +32,12 @@ const initForm = (
 
 export default function DatasourceDBMainEdit({ content }: Props) {
   const [disabled, setDisabled] = useImmer(true)
+  const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   const onFinish = (values: object) => {
     console.log('Success:', values)
+    console.log(JSON.stringify(values))
+    void axios.put('/api/v1/dataSource', { ...content, config:JSON.stringify(values) })
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -170,14 +174,29 @@ export default function DatasourceDBMainEdit({ content }: Props) {
 
   return (
     <>
-      <div className="border-gray border-b pb-5">
-        <AppleOutlined />
-        <span className="ml-2">{content.name}</span>
-        <span className="ml-2 text-xs text-gray-500/80">main</span>
+      <div className="pb-8px flex items-center justify-between border-gray border-b ">
+        <div>
+          <AppleOutlined />
+          <span className="ml-2">{content.name}</span>
+          <span className="ml-2 text-xs text-gray-500/80">main</span>
+        </div>
+        <div className="flex justify-center items-center">
+          <Button className={styles['cancel-btn']}>取消</Button>
+          <Button
+            disabled={disabled}
+            className={styles['save-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
+            保存
+          </Button>
+        </div>
       </div>
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
+          form={form}
           style={{ width: '90%' }}
           name="basic"
           labelCol={{ span: 3 }}
@@ -192,7 +211,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
         >
           <Form.Item
             label="连接名:"
-            name="connnectName"
+            name="connectName"
             rules={[
               { required: true, message: '连接名不能为空' },
               {
@@ -204,13 +223,13 @@ export default function DatasourceDBMainEdit({ content }: Props) {
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="类型:">
+          <Form.Item label="类型:" name="SQlType">
             <Select placeholder="请输入...">
               <Select.Option value="demo">Demo</Select.Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label="类型:">
+          <Form.Item label="类型:" name="typeName">
             <Radio.Group
               defaultValue="env"
               onChange={(e) => {
@@ -233,22 +252,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
               onClick={() => openNotification('bottomLeft')}
             >
               <RightSquareOutlined />
-              <span>测试链接</span>{' '}
-            </Button>
-          </Form.Item>
-
-          <Form.Item
-            style={{
-              display: 'flex',
-              width: '100%',
-              position: 'absolute',
-              top: '70px',
-              right: '-68rem',
-            }}
-          >
-            <Button className={styles['cancel-btn']}>取消</Button>{' '}
-            <Button disabled={disabled} className={styles['save-btn']} htmlType="submit">
-              保存
+              <span>测试链接</span>
             </Button>
           </Form.Item>
         </Form>

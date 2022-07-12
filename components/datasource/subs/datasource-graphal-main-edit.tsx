@@ -1,12 +1,12 @@
 import { QuestionCircleOutlined, CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch, Collapse, Upload, Checkbox } from 'antd'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 export default function DatasourceGraphalMainEdit({ content }: Props) {
