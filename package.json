@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "lint": "pnpm lint:ts && pnpm lint:css",
-    "lint:ts": "next lint",
+    "lint": "pnpm lint:next && pnpm lint:css",
+    "lint:ts": "eslint --config .eslintrc.js --rule 'no-console: 0' './**/*.ts[x]'",
+    "lint:next": "next lint",
     "lint:css": "stylelint '**/*.scss' '**/*.css'"
   },
   "dependencies": {
