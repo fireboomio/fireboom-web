@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
-import type { DatasourceResp, DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceContext,
   DatasourceDispatchContext,
@@ -17,8 +17,9 @@ import { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from './datasource-reducer'
 import styles from './index.module.scss'
 
+
 export default function Datasource() {
-  const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceItem[])
+  const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceResp[])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
@@ -27,14 +28,14 @@ export default function Datasource() {
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
   const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
-    '/api/v1/datasource',
+    '/api/v1/dataSource',
     getFetcher<DatasourceResp[]>
   )
   useEffect(() => {
     datasource &&
       dispatch({
         type: 'fetched',
-        data: datasource.filter((item) => item.type == 'DB'),
+        data: datasource.filter((item) => item.source_type == 1),
       })
   }, [datasource])
 
@@ -42,25 +43,27 @@ export default function Datasource() {
   if (!datasource) return <div>loading...</div>
 
   // TODO: need refine
-  function handleChangeDStype(value: string) {
+  function handleChangeDStype(value: number) {
     datasource &&
       dispatch({
         type: 'fetched',
-        data: datasource.filter((item) => item.type == value),
+        data: datasource.filter((item) => item.source_type == value),
       })
     setShowType('data')
   }
 
-  const content = datasourceList.find((b) => b.id === currDBId) as DatasourceItem
+  const content = datasourceList.find((b) => b.id === currDBId) as DatasourceResp
 
-  function handleClickItem(datasourceItem: DatasourceItem) {
+  function handleClickItem(datasourceItem: DatasourceResp) {
     setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
+
   function handleToggleDesigner(type: string, id: number) {
     setShowType(type)
     setCurrDBId(id)
   }
+
   return (
     <>
       <DatasourceContext.Provider value={datasourceList}>

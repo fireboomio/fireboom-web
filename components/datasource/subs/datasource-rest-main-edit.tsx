@@ -3,12 +3,12 @@ import type { RadioChangeEvent } from 'antd'
 import { Button, Form, Input, Select, Radio, Switch, Tabs, Upload, Collapse } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 export default function DatasourceEditorMainEdit({ content }: Props) {
   const [value, setValue] = useImmer(1)
