@@ -18,7 +18,7 @@ import RcTab from 'pages/components/rc-tab'
 import styles from './Detail.module.scss'
 
 type DetailProps = {
-  //
+  path: string
 }
 
 const tabs = [
@@ -41,20 +41,16 @@ const columns = [
     title: '字段类型',
     dataIndex: 'fieldType',
   },
-  {
-    title: '是否必须',
-    dataIndex: 'required',
-  },
 ]
 
-const Detail: FC<DetailProps> = () => {
+const Detail: FC<DetailProps> = ({ path }) => {
   const [gqlQueryDef, setGqlQueryDef] = useState()
   const [gqlSchemaDef, setGqlSchemaDef] = useState()
   const [dataSource, setDataSource] = useState([])
 
   useEffect(() => {
     getFetcher('/api/v1/gql-schema')
-      .then((res) => parse(res.body).definitions)
+      .then((res) => parse(res).definitions)
       .then((def) => setGqlSchemaDef(def))
       .catch((err: Error) => {
         throw err
@@ -62,26 +58,28 @@ const Detail: FC<DetailProps> = () => {
   }, [])
 
   useEffect(() => {
+    if (!path) return
+    // getFetcher(`/api/v1/operateApi/${path}`)
     getFetcher('/api/v1/gql-query-str')
-      .then((res) => parse(res.body).definitions)
+      .then((res) => parse(res).definitions)
       .then((def) => setGqlQueryDef(def))
       .catch((err: Error) => {
         throw err
       })
-  }, [])
+  }, [path])
 
   const getSubFields = useCallback(
     (parentField, selections, subFieldType) => {
       parentField.children = selections.map((i) => {
         const fieldName = i.name.value
         const fieldDef = gqlSchemaDef.find((i) => i.name.value === subFieldType)
-        const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
+        const curFieldType =
+          'bbb' || fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
         const fieldType =
           curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
         const obj = {
           fieldName,
           fieldType,
-          required: '否',
         }
         if (i.selectionSet) {
           getSubFields(obj, i.selectionSet.selections, curFieldType)
@@ -93,9 +91,10 @@ const Detail: FC<DetailProps> = () => {
   )
 
   useEffect(() => {
-    if (!gqlQueryDef) return
+    if (!gqlQueryDef || !gqlSchemaDef) return
+    console.log(gqlSchemaDef, 'schema')
+    console.log(gqlQueryDef, 'query')
     const queryName = gqlQueryDef[0].selectionSet.selections[0].name.value
-
     const topLevelQueryFiedls = gqlQueryDef[0].selectionSet.selections[0].selectionSet.selections
     const temp = topLevelQueryFiedls.map((i) => {
       const fieldName = i.name.value
@@ -103,13 +102,13 @@ const Detail: FC<DetailProps> = () => {
         .find((i) => i.name.value === 'Query')
         .fields.find((i) => i.name.value === queryName).type.name.value
       const fieldDef = gqlSchemaDef.find((i) => i.name.value === rootType)
-      const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
+      const curFieldType =
+        'bbb' || fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
       const fieldType = curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
 
       const obj = {
         fieldName,
         fieldType,
-        required: '否',
       }
       if (i.selectionSet) {
         getSubFields(obj, i.selectionSet.selections, curFieldType)
@@ -117,8 +116,6 @@ const Detail: FC<DetailProps> = () => {
       return obj
     })
     setDataSource(temp)
-    console.log(gqlSchemaDef, 'schema')
-    console.log(gqlQueryDef, 'query')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 

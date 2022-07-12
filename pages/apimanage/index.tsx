@@ -91,7 +91,7 @@ function findNode(key: string, data: DataNode[] | undefined): DataNode | undefin
 const ApiManage: FC<ApiManageProps> = () => {
   const [isAdding, _setIsAdding] = useState(false)
   const [treeData, setTreeData] = useState<DataNode[]>(null!)
-  const [selectedKey, setSelectedKey] = useState<string | number>('')
+  const [selectedKey, setSelectedKey] = useState<string>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
@@ -207,7 +207,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
     if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
-      setSelectedKey(selectedKeys[0])
+      setSelectedKey(selectedKeys[0] as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -366,7 +366,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
             <div className="overflow-auto h-[calc(100vh_-_98px)]">
               {activeKey === '0' ? (
-                <Detail />
+                <Detail path={(findNode(selectedKey, treeData) as DirTree)?.path ?? ''} />
               ) : activeKey === '1' ? (
                 <Mock />
               ) : activeKey === '2' ? (
