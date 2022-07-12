@@ -12,6 +12,7 @@ import { Badge, Select, Table } from 'antd'
 import { parse } from 'graphql'
 import { FC, useCallback, useEffect, useState } from 'react'
 
+import { getFetcher } from '@/lib/fetchers'
 import RcTab from 'pages/components/rc-tab'
 
 import styles from './Detail.module.scss'
@@ -31,52 +32,6 @@ const tabs = [
   },
 ]
 
-const gqlSchemaStr = `
-  type weather_Summary {
-    title: String
-    description: String
-    icon: String
-    _join: Query!
-  }
-
-  type weather_Weather {
-    summary: weather_Summary
-    temperature: weather_Temperature
-    wind: weather_Wind
-    clouds: weather_Clouds
-    timestamp: Int
-    _join: Query!
-  }
-
-  type weather_City {
-    id: ID
-    name: String
-    country: String
-    coord: weather_Coordinates
-    weather: weather_Weather
-    _join: Query!
-  }
-
-  type Query {
-    weather_getCityByName(name: String!, country: String, config: weather_ConfigInput): weather_City
-  }
-`
-
-const gqlQueryStr = `
-  {
-    getCityByName: weather_getCityByName(name: "Berlin") {
-      id
-      name
-      weather {
-        summary {
-          title
-          description
-        }
-      }
-    }
-  }
-`
-
 const columns = [
   {
     title: '字段名称',
@@ -93,30 +48,52 @@ const columns = [
 ]
 
 const Detail: FC<DetailProps> = () => {
-  const gqlSchemaDef = parse(gqlSchemaStr).definitions
-  const gqlQueryDef = parse(gqlQueryStr).definitions
+  const [gqlQueryDef, setGqlQueryDef] = useState()
+  const [gqlSchemaDef, setGqlSchemaDef] = useState()
   const [dataSource, setDataSource] = useState([])
 
-  const getSubFields = useCallback((parentField, selections, subFieldType) => {
-    parentField.children = selections.map((i) => {
-      const fieldName = i.name.value
-      const fieldDef = gqlSchemaDef.find((i) => i.name.value === subFieldType)
-      const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
-      const fieldType = curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
-      const obj = {
-        fieldName,
-        fieldType,
-        required: '否',
-      }
-      if (i.selectionSet) {
-        getSubFields(obj, i.selectionSet.selections, curFieldType)
-      }
-      return obj
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    getFetcher('/api/v1/gql-schema')
+      .then((res) => parse(res.body).definitions)
+      .then((def) => setGqlSchemaDef(def))
+      .catch((err: Error) => {
+        throw err
+      })
   }, [])
 
   useEffect(() => {
+    getFetcher('/api/v1/gql-query-str')
+      .then((res) => parse(res.body).definitions)
+      .then((def) => setGqlQueryDef(def))
+      .catch((err: Error) => {
+        throw err
+      })
+  }, [])
+
+  const getSubFields = useCallback(
+    (parentField, selections, subFieldType) => {
+      parentField.children = selections.map((i) => {
+        const fieldName = i.name.value
+        const fieldDef = gqlSchemaDef.find((i) => i.name.value === subFieldType)
+        const curFieldType = fieldDef.fields.find((i) => i.name.value === fieldName).type.name.value
+        const fieldType =
+          curFieldType === 'String' || curFieldType === 'ID' ? curFieldType : 'object'
+        const obj = {
+          fieldName,
+          fieldType,
+          required: '否',
+        }
+        if (i.selectionSet) {
+          getSubFields(obj, i.selectionSet.selections, curFieldType)
+        }
+        return obj
+      })
+    },
+    [gqlSchemaDef]
+  )
+
+  useEffect(() => {
+    if (!gqlQueryDef) return
     const queryName = gqlQueryDef[0].selectionSet.selections[0].name.value
 
     const topLevelQueryFiedls = gqlQueryDef[0].selectionSet.selections[0].selectionSet.selections
@@ -143,7 +120,7 @@ const Detail: FC<DetailProps> = () => {
     console.log(gqlSchemaDef, 'schema')
     console.log(gqlQueryDef, 'query')
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [gqlQueryDef, gqlSchemaDef])
 
   return (
     <>
