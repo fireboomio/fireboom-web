@@ -1,6 +1,8 @@
-export type operationResp = DirOrFile[]
+export type DirTree = operationResp & { key: number | string }
 
-export interface DirOrFile {
+export interface operationResp {
   title: string
-  children?: DirOrFile[]
+  children: operationResp[] | null
+  originTitle?: string
+  path?: string
 }

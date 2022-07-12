@@ -69,6 +69,5 @@ module.exports = {
     'comma-dangle': ['error', 'only-multiline'],
     quotes: ['error', 'single'],
     'jsx-quotes': ['error', 'prefer-double'],
-    'react-hooks/exhaustive-deps': 'off',
   },
 }

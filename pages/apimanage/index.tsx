@@ -17,9 +17,12 @@ import {
 import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
+import axios from 'axios'
 import Head from 'next/head'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 
+import type { DirTree, operationResp } from '@/interfaces/apimanage'
+import { getFetcher } from '@/lib/fetchers'
 import RcTab from 'pages/components/rc-tab'
 
 import Detail from './blocks/Detail'
@@ -31,75 +34,6 @@ import styles from './index.module.scss'
 type ApiManageProps = {
   //
 }
-
-const inititalTreeData: DataNode[] = [
-  {
-    title: 'userinfo',
-    key: '0-0',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-0-0',
-        children: [
-          {
-            title: 'leaf',
-            key: '0-0-0-0',
-          },
-          {
-            title: 'leaf',
-            key: '0-0-1-0',
-          },
-        ],
-      },
-      {
-        title: 'leaf',
-        key: '0-0-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-1',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-1-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-1-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-2',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-2-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-2-1',
-      },
-    ],
-  },
-  {
-    title: 'userinfo',
-    key: '0-3',
-    children: [
-      {
-        title: 'leaf',
-        key: '0-3-0',
-      },
-      {
-        title: 'leaf',
-        key: '0-3-1',
-      },
-    ],
-  },
-]
 
 const tabs = [
   {
@@ -123,13 +57,53 @@ const tabs = [
     key: '4',
   },
 ]
+
+function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null {
+  if (!data) return null
+  return data.map((x, idx) => ({
+    key: `${lv}-${idx}`,
+    title: x.title.split('/')[x.title.split('/').length - 1].replace(/\.graphql(\.off)?$/, ''),
+    path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
+    children: convertToTree(x.children, `${lv}-${idx}`),
+    originTitle: x.title,
+  }))
+}
+
+function findNode(key: string, data: DataNode[] | undefined): DataNode | undefined {
+  let rv
+
+  const inner = (key: string, nodes: DataNode[] | undefined) => {
+    if (!nodes) return undefined
+    nodes.find((x) => {
+      if (x.key === key) {
+        rv = x
+        return x
+      } else {
+        return inner(key, x.children)
+      }
+    })
+  }
+
+  inner(key, data)
+  return rv
+}
+
 const ApiManage: FC<ApiManageProps> = () => {
   const [isAdding, _setIsAdding] = useState(false)
-  const [treeData, setTreeData] = useState<DataNode[]>(inititalTreeData)
-  const [selectedKey, setSelectedKey] = useState<string | number>('')
+  const [treeData, setTreeData] = useState<DataNode[]>(null!)
+  const [selectedKey, setSelectedKey] = useState<string>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
+
+  useEffect(() => {
+    getFetcher<operationResp[]>('/api/v1/operateApi')
+      .then((res) => setTreeData(convertToTree(res) as DataNode[]))
+      .catch((err: Error) => {
+        throw err
+      })
+  }, [refreshFlag])
 
   const handlePressEnter = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -152,33 +126,35 @@ const ApiManage: FC<ApiManageProps> = () => {
     setCurEditingNode(null)
   }, [])
 
-  const getTreeNode = useCallback((treeNodeKey: any) => {
-    let parent: any
-    let child: any
-    const getNode = (key: string | number, nodes: DataNode[]) => {
-      for (let index = 0; index < nodes.length; index++) {
-        if (child) {
-          break
-        }
-        if (nodes[index].key === key) {
-          child = nodes[index]
-          break
-        } else {
-          const children = nodes[index].children
-          if (children) {
-            parent = nodes[index]
-            getNode(treeNodeKey, children)
+  const getTreeNode = useCallback(
+    (treeNodeKey: any) => {
+      let parent: any
+      let child: any
+      const getNode = (key: string | number, nodes: DataNode[]) => {
+        for (let index = 0; index < nodes.length; index++) {
+          if (child) {
+            break
+          }
+          if (nodes[index].key === key) {
+            child = nodes[index]
+            break
+          } else {
+            const children = nodes[index].children
+            if (children) {
+              parent = nodes[index]
+              getNode(treeNodeKey, children)
+            }
           }
         }
       }
-    }
-    getNode(treeNodeKey, treeData)
-    return {
-      parent,
-      child,
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+      getNode(treeNodeKey, treeData)
+      return {
+        parent,
+        child,
+      }
+    },
+    [treeData]
+  )
 
   const handleAddNode = useCallback(() => {
     if (isAdding) {
@@ -221,22 +197,17 @@ const ApiManage: FC<ApiManageProps> = () => {
     // setIsAdding(true)
   }, [isAdding, selectedKey, treeData])
 
-  const handleDelete = useCallback((treeNodeKey: any) => {
-    const { parent } = getTreeNode(treeNodeKey)
-    if (!parent) {
-      const index = treeData.findIndex((i) => i.key === treeNodeKey)
-      treeData.splice(index, 1)
-    } else {
-      const index = parent.children.findIndex((i: any) => i.key === treeNodeKey)
-      parent.children.splice(index, 1)
-    }
-    setTreeData([...treeData])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const handleDelete = (treeNodeKey: any) => {
+    const node = findNode(treeNodeKey, treeData)
+    // @ts-ignore
+    void axios.delete(`/api/v1/operateApi/${node.path as string}`).finally(() => {
+      setRefreshFlag(!refreshFlag)
+    })
+  }
 
   const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
     if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
-      setSelectedKey(selectedKeys[0])
+      setSelectedKey(selectedKeys[0] as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -323,19 +294,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     }
   }
 
-  const getTabContent = useCallback(() => {
-    switch (activeKey) {
-      case '0':
-        return <Detail />
-      case '1':
-        return <Mock />
-      case '2':
-        return <Hook />
-      case '3':
-        return <Setting />
-    }
-  }, [activeKey])
-
   return (
     <>
       <Head>
@@ -403,9 +361,20 @@ const ApiManage: FC<ApiManageProps> = () => {
               <AppleOutlined />
             </div>
           </div>
+
           <div className="mt-7">
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-            <div className="overflow-auto h-[calc(100vh_-_98px)]">{getTabContent()}</div>
+            <div className="overflow-auto h-[calc(100vh_-_98px)]">
+              {activeKey === '0' ? (
+                <Detail path={(findNode(selectedKey, treeData) as DirTree)?.path ?? ''} />
+              ) : activeKey === '1' ? (
+                <Mock />
+              ) : activeKey === '2' ? (
+                <Hook />
+              ) : (
+                <Setting />
+              )}
+            </div>
           </div>
         </div>
       </div>

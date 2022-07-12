@@ -1,5 +1,6 @@
 import { Divider } from 'antd'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+
 import styles from './index.module.scss'
 
 type TabItem = {
@@ -17,10 +18,13 @@ type RcTabProps = {
 
 const RcTab: FC<RcTabProps> = (props) => {
   const [activeKey, setActiveKey] = useState(props.activeKey ?? props.tabs[0].key)
-  const handleClick = useCallback((key: string) => {
-    setActiveKey(key)
-    props.onTabClick?.(key)
-  }, [])
+  const handleClick = useCallback(
+    (key: string) => {
+      setActiveKey(key)
+      props.onTabClick?.(key)
+    },
+    [props]
+  )
 
   const isActive = useCallback(
     (key: string) => {
@@ -46,7 +50,7 @@ const RcTab: FC<RcTabProps> = (props) => {
           ))}
         </div>
       </div>
-      <Divider className={styles.divider}></Divider>
+      <Divider className={styles.divider} />
     </div>
   )
 }
