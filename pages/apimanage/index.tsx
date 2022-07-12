@@ -212,19 +212,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getTabContent = useCallback(() => {
-    switch (activeKey) {
-      case '0':
-        return <Detail />
-      case '1':
-        return <Mock />
-      case '2':
-        return <Hook />
-      case '3':
-        return <Setting />
-    }
-  }, [activeKey])
-
   const handleMenuClick = (arg: any, treeNodeKey: any) => {
     arg.domEvent.stopPropagation()
     if (arg.key === '0') {
@@ -374,9 +361,20 @@ const ApiManage: FC<ApiManageProps> = () => {
               <AppleOutlined />
             </div>
           </div>
+
           <div className="mt-7">
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-            <div className="overflow-auto h-[calc(100vh_-_98px)]">{getTabContent()}</div>
+            <div className="overflow-auto h-[calc(100vh_-_98px)]">
+              {activeKey === '0' ? (
+                <Detail />
+              ) : activeKey === '1' ? (
+                <Mock />
+              ) : activeKey === '2' ? (
+                <Hook />
+              ) : (
+                <Setting />
+              )}
+            </div>
           </div>
         </div>
       </div>
