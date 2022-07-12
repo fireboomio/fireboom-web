@@ -2,10 +2,10 @@ import { AppleOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-des
 import { Descriptions, Input, Switch } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 interface PropsInfo {
@@ -51,7 +51,7 @@ function DatasourceDefineItem({ info }: PropsInfo) {
 }
 
 export default function DatasourceDeselfMainEdit({ content }: Props) {
-  const { info } = content
+  const { config } = content
 
   return (
     <>
@@ -73,10 +73,10 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
           }}
         >
           <Descriptions.Item label="连接名">
-            <DatasourceDefineItem info={info} />
+            <DatasourceDefineItem info={config} />
           </Descriptions.Item>
           <Descriptions.Item label="类型">
-            <DatasourceDefineItem info={info} />
+            <DatasourceDefineItem info={config} />
           </Descriptions.Item>
         </Descriptions>
       </div>

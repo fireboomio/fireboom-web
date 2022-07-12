@@ -6,7 +6,7 @@
   height: 24px;
   margin-top: 5px;
   padding: 0 10px;
-  margin-left: 88px;
+  margin-left: 146px;
   color: #d83860;
   font-size: 14px;
   background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
@@ -97,5 +97,11 @@
   .ant-form-item-with-help .ant-form-item-explain {
     min-height: 10px;
     font-size: 10px;
+  }
+}
+
+.des-contain :global {
+  .ant-descriptions-row {
+    height: 40px;
   }
 }

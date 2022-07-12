@@ -1,7 +1,7 @@
-import type { DatasourceItem, DatasourceAction } from '@/interfaces/datasource'
+import type { DatasourceResp, DatasourceAction} from '@/interfaces/datasource'
 
 export default function modelingReducer(
-  datasoucreList: DatasourceItem[],
+  datasoucreList: DatasourceResp[],
   action: DatasourceAction
 ) {
   switch (action.type) {

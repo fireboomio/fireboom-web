@@ -1,12 +1,12 @@
 import { CaretRightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Collapse } from 'antd'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 export default function DatasourceGraphalMainCheck({ content }: Props) {
@@ -16,7 +16,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const { config } = content
 
   const { Panel } = Collapse
   return (
@@ -65,7 +65,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.nameScope}
+            {config.nameScope}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -76,7 +76,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.endpoint}
+            {config.endpoint}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -87,7 +87,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.theOAS}
+            {config.theOAS}
           </Descriptions.Item>
         </Descriptions>
       </div>
@@ -104,9 +104,9 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item>{info.head}</Descriptions.Item>
-          <Descriptions.Item>{info.way}</Descriptions.Item>
-          <Descriptions.Item>{info.code}</Descriptions.Item>
+          <Descriptions.Item>{config.head}</Descriptions.Item>
+          <Descriptions.Item>{config.way}</Descriptions.Item>
+          <Descriptions.Item>{config.code}</Descriptions.Item>
         </Descriptions>
       </div>
 
@@ -139,7 +139,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isInside}
+                {config.isInside}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -150,7 +150,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isFloat}
+                {config.isFloat}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -161,7 +161,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isInt}
+                {config.isInt}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -172,7 +172,7 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isRename}
+                {config.isRename}
               </Descriptions.Item>
             </Descriptions>
           </div>

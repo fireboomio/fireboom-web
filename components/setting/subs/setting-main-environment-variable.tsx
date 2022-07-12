@@ -1,6 +1,8 @@
 import { EyeFilled, EyeInvisibleFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Button, Descriptions, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
+import axios from 'axios'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import styles from './setting-main.module.scss'
@@ -38,6 +40,10 @@ export default function SettingMainEnvironmentVariable() {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
   const [variableData, setVariableData] = useImmer(data)
+
+  useEffect(() => {
+    void axios.get('/api/v1/setting/environmentConfig')
+  }, [])
 
   const onFinish = (values: DataType) => {
     setVariableData(

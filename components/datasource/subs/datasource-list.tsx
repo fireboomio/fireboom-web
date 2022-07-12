@@ -2,32 +2,35 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp, DatasourceRequst } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 import DatasourceDBItem from './datasource-item'
 
 interface Props {
-  onClickItem: (dsItem: DatasourceItem) => void
-  Datasourcetype: string
+  onClickItem: (dsItem: DatasourceResp) => void
+  Datasourcetype: number
 }
 
 export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props) {
   const datasourceList = useContext(DatasourceContext)
   const dispatch = useContext(DatasourceDispatchContext)
 
-  const getNextId = () => Math.max(...datasourceList.map((b) => b.id)) + 1
-
   function addTable() {
-    const data = { id: getNextId(), name: '', info: {}, type: Datasourcetype } as DatasourceItem
+    const data = {
+      name: '',
+      config: '2',
+      // eslint-disable-next-line camelcase
+      source_type: Datasourcetype,
+      switch: 0,
+    } as DatasourceRequst
     dispatch({ type: 'added', data: data })
   }
-
   return (
     <>
-      <div className="flex justify-between items-center p-4 border-[#5f62691a] border-b-1">
-        <span className="text-sm font-medium leading-5 font-bold">数据概览</span>
+      <div className="flex justify-between items-center p-15px border-[#5f62691a] border-b-1">
+        <span className={`${styles['list-title']}`}>概览</span>
         <div className="flex items-center">
           <Button
             className={styles['add-btn']}
@@ -36,9 +39,6 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
             size="small"
             onClick={addTable}
           />
-          <span className="text-sm font-medium leading-5 text-red-500 ml-2 tracking-wide ">
-            新建DB
-          </span>
         </div>
       </div>
       <div className="mt-3">
