@@ -3,7 +3,7 @@
 
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
-import { parse, buildSchema, DefinitionNode, OperationDefinitionNode } from 'graphql'
+import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
 import { getFetcher } from '@/lib/fetchers'
@@ -71,11 +71,11 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
   useEffect(() => {
     getFetcher<string>('/api/v1/gql-schema')
-      .then((res) => {
-        const ast = buildSchema(res, { noLocation: true })
-        console.log('ast', ast)
-        return res
-      })
+      // .then((res) => {
+      //   const ast = buildSchema(res, { noLocation: true })
+      //   console.log('ast', ast)
+      //   return res
+      // })
       .then((res) => parse(res, { noLocation: true }).definitions)
       .then((def) => setGqlSchemaDef(def))
       .catch((err: Error) => {
@@ -95,8 +95,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
   }, [path])
 
   useEffect(() => {
-    console.log(gqlSchemaDef, 'schema')
-    console.log(gqlQueryDef, 'query')
+    // console.log(gqlSchemaDef, 'schema')
+    // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
     setDataSource(parseQuery(gqlSchemaDef, gqlQueryDef[0]))
     setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
