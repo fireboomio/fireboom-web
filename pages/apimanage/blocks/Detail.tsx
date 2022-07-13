@@ -63,7 +63,7 @@ const reqColumns = [
   },
   {
     title: '必须',
-    dataIndex: 'required',
+    dataIndex: 'isRequired',
     render: (x: boolean) => <div>{x ? '是' : '否'}</div>,
   },
 ]

@@ -15,12 +15,12 @@ export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
     key: x.variable.name.value,
     name: x.variable.name.value,
     pos: 'path',
-    ...getType(x.type),
+    ...parseType(x.type),
   }))
 }
 
-export const getType = (typeDef: TypeNode) => {
-  let required = false
+export const parseType = (typeDef: TypeNode): FieldType => {
+  let isRequired = false
   let isList = false
 
   const inner = (node: TypeNode, depth = 0): string => {
@@ -31,26 +31,13 @@ export const getType = (typeDef: TypeNode) => {
         if (depth === 0 || depth === 1) isList = true
         return inner(node.type, depth++)
       case 'NonNullType':
-        if (depth === 0) required = true
+        if (depth === 0) isRequired = true
         return inner(node.type, depth++)
     }
   }
   const kind = inner(typeDef)
 
-  return {
-    kind,
-    required,
-    isList,
-  }
-}
-
-const parseType = (schema: DefinitionNode[], fieldName: string, initKind: string): FieldType => {
-  const fields = // @ts-ignore
-    schema.find((x) => (x.name as NameNode).value === initKind).fields as FieldDefinitionNode[]
-  // @ts-ignore
-  const node = fields.find((x) => x.name.value === fieldName).type
-
-  return getType(node)
+  return { kind, isRequired, isList }
 }
 
 export const parseQuery = (
@@ -63,7 +50,12 @@ export const parseQuery = (
 
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
-    const fieldType = parseType(schema, subNode.name.value, type)
+    const fields = // @ts-ignore
+      schema.find((x) => (x.name as NameNode).value === type).fields as FieldDefinitionNode[]
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const field = fields.find((x) => x.name.value === subNode.name.value)!.type
+    const fieldType = parseType(field)
+
     return {
       key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
