@@ -2,8 +2,10 @@ import {
   DefinitionNode,
   VariableDefinitionNode,
   OperationDefinitionNode,
+  FieldDefinitionNode,
   TypeNode,
   FieldNode,
+  NameNode,
 } from 'graphql'
 
 import { TableSource } from '@/interfaces/apimanage'
@@ -39,48 +41,45 @@ export const getType = (typeDef: TypeNode) => {
   }
 }
 
-const parseType = (schema: DefinitionNode[], field: FieldNode, path: string[]): string => {
-  console.log(field)
-  console.log(path)
-  return 'bbb'
-  // const fieldName = selection.name.value
-  // // const allQuery = gqlSchemaDef.find((i) => i.name.value === 'Query')
-  // let rv = ''
-  // console.log('^^^^^^^^ parse root', selection)
-  // const rootQuery = gqlSchemaDef
-  //   .filter((i) => i.kind === 'ObjectTypeDefinition')
-  //   .find((i) => i.name.value === 'Query')
-  //   .fields.find((i) => i.name.value === fieldName)
-  // console.log(rootQuery, 'rootQuery')
-  // switch (rootQuery.type.kind) {
-  //   case 'NamedType':
-  //     rv = 'Object'
-  //     break
-  //   case 'ListType':
-  //     rv = 'List'
-  //     break
-  //   default:
-  //     break
-  // }
-  // console.log('$$$$$$$$ parseType end')
-  // return rv
+const parseType = (
+  schema: DefinitionNode[],
+  field: FieldNode,
+  initKind: string | undefined
+): { kind: string; required: boolean } => {
+  let rv
+  if (!initKind) {
+    const allFields = // @ts-ignore
+      schema.find((i) => (i.name as NameNode).value === 'Query').fields as FieldDefinitionNode[]
+
+    // @ts-ignore
+    rv = getType(allFields.find((x) => x.name.value === field.name.value).type)
+  } else {
+    const fields = // @ts-ignore
+      schema.find((x) => (x.name as NameNode).value === initKind).fields as FieldDefinitionNode[]
+
+    // @ts-ignore
+    rv = getType(fields.find((x) => x.name.value === field.name.value).type)
+  }
+
+  return rv
 }
 
 export const parseQuery = (
   schema: DefinitionNode[],
   node: OperationDefinitionNode | FieldNode,
-  path: string[] = []
+  type: string | undefined = undefined,
+  lv = '0'
 ): TableSource[] | undefined => {
   if (!node.selectionSet) return undefined
 
   const subNodes = node.selectionSet.selections as FieldNode[]
-  return subNodes.map((subNode) => {
-    const newPath = path.concat(subNode.name.value)
+  return subNodes.map((subNode, idx) => {
+    const { kind, required: _ } = parseType(schema, subNode, type)
     return {
-      key: newPath.join('-'),
+      key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
-      fieldType: parseType(schema, subNode, newPath),
-      children: parseQuery(schema, subNode, newPath),
+      fieldType: kind,
+      children: parseQuery(schema, subNode, kind, `${lv}-${idx}`),
     }
   })
 }
