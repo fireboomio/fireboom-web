@@ -125,37 +125,30 @@ const Detail: FC<DetailProps> = ({ path }) => {
     [gqlSchemaDef]
   )
 
-  const parseSubs = useCallback((selection, nodes: string[]): TableSource[] => {
+  const parseQuery = useCallback((selection, nodes: string[] = []): TableSource[] => {
     const selectionSet = selection.selectionSet
     if (!selectionSet) return undefined
     const rv = selectionSet.selections.map((subSelection) => {
-      const subNodes = nodes.concat(subSelection.name.value)
+      const newNodes = nodes.concat(subSelection.name.value)
       return {
-        key: subNodes.join('-'),
+        key: newNodes.join('-'),
         fieldName: subSelection.name.value,
-        // fieldType: parseType(subSelection, selection),
-        children: parseSubs(subSelection, subNodes),
+        // fieldType: parseType(subSelection, newNodes),
+        children: parseQuery(subSelection, newNodes),
       }
     })
     return rv as TableSource[]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (!gqlQueryDef || !gqlSchemaDef) return
+    setDataSource(parseQuery(gqlQueryDef[0]))
+
+    const rv: TableSource[] = parseQuery(gqlQueryDef[0])
     console.log(gqlSchemaDef, 'schema')
     console.log(gqlQueryDef, 'query')
-    const rv: TableSource[] = gqlQueryDef[0].selectionSet.selections.map((selection) => {
-      const nodes = [selection.name.value]
-      return {
-        key: nodes.join('-'),
-        fieldName: selection.name.value,
-        // fieldType: parseType(selection, null),
-        children: parseSubs(selection, nodes),
-      }
-    })
-
     console.log('rv', rv)
-    setDataSource(rv)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
