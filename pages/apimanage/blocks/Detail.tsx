@@ -9,7 +9,7 @@
 
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
-import { parse, buildSchema, DefinitionNode } from 'graphql'
+import { parse, buildSchema, DefinitionNode, VariableDefinitionNode, TypeNode } from 'graphql'
 import { FC, useCallback, useEffect, useState } from 'react'
 
 import { TableSource } from '@/interfaces/apimanage'
@@ -44,12 +44,33 @@ const columns = [
   },
 ]
 
+const reqColumns = [
+  {
+    title: '参数名',
+    dataIndex: 'name',
+  },
+  {
+    title: '位置',
+    dataIndex: 'pos',
+  },
+  {
+    title: '类型',
+    dataIndex: 'kind',
+  },
+  {
+    title: '必须',
+    dataIndex: 'required',
+    render: (x) => <div>{x ? '是' : '否'}</div>,
+  },
+]
+
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlQueryDef, setGqlQueryDef] = useState<DefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlSchemaDef, setGqlSchemaDef] = useState<DefinitionNode[]>(undefined!)
   const [dataSource, setDataSource] = useState([])
+  const [reqDataSource, setReqDataSource] = useState([])
 
   useEffect(() => {
     getFetcher<string>('/api/v1/gql-schema')
@@ -75,6 +96,28 @@ const Detail: FC<DetailProps> = ({ path }) => {
         throw err
       })
   }, [path])
+
+  const getType = useCallback((typeDef: TypeNode) => {
+    let required = false
+
+    const inner = (node: TypeNode, depth = 0): string => {
+      switch (node.kind) {
+        case 'NamedType':
+          return node.name.value
+        case 'ListType':
+          return inner(node.type, depth++)
+        case 'NonNullType':
+          if (depth === 0) required = true
+          return inner(node.type, depth++)
+      }
+    }
+    const kind = inner(typeDef)
+
+    return {
+      kind,
+      required,
+    }
+  }, [])
 
   const parseType = useCallback(
     (selection, parent): string => {
@@ -144,6 +187,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   useEffect(() => {
     if (!gqlQueryDef || !gqlSchemaDef) return
     setDataSource(parseQuery(gqlQueryDef[0]))
+    setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
 
     const rv: TableSource[] = parseQuery(gqlQueryDef[0])
     console.log(gqlSchemaDef, 'schema')
@@ -151,6 +195,16 @@ const Detail: FC<DetailProps> = ({ path }) => {
     console.log('rv', rv)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
+
+  const parseArgs = useCallback((varDefs: VariableDefinitionNode[]) => {
+    return varDefs.map((x) => ({
+      key: x.variable.name.value,
+      name: x.variable.name.value,
+      pos: 'path',
+      ...getType(x.type),
+    }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
@@ -184,7 +238,12 @@ const Detail: FC<DetailProps> = ({ path }) => {
       </div>
       <div className="mt-42px">
         <RcTab tabs={tabs} />
-        <Table className="mt-6" />
+        <Table
+          className="mt-6"
+          columns={reqColumns}
+          dataSource={reqDataSource}
+          pagination={false}
+        />
       </div>
       <div className="my-10.5">
         <div className="text-[#5F6269] leading-22px text-16px">返回响应</div>
