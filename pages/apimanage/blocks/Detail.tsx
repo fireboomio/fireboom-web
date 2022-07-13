@@ -42,7 +42,7 @@ const columns = [
           <span className="text-[#04B582]">
             List<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
           </span>
-        ) : ['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x.kind) ? (
+        ) : x.isScalar ? (
           <span className="text-[#E66B83]">{x.kind}</span>
         ) : (
           <span className="text-[#177FFF]">

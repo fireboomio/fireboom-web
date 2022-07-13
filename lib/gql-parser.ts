@@ -3,12 +3,15 @@ import {
   VariableDefinitionNode,
   OperationDefinitionNode,
   FieldDefinitionNode,
+  ScalarTypeDefinitionNode,
   TypeNode,
   FieldNode,
   NameNode,
 } from 'graphql'
 
 import { FieldType, TableSource } from '@/interfaces/apimanage'
+
+const BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID']
 
 export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
   return varDefs.map((x) => ({
@@ -19,7 +22,7 @@ export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
   }))
 }
 
-export const parseType = (typeDef: TypeNode): FieldType => {
+export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldType => {
   let isRequired = false
   let isList = false
 
@@ -36,8 +39,9 @@ export const parseType = (typeDef: TypeNode): FieldType => {
     }
   }
   const kind = inner(typeDef)
+  const isScalar = allScalar.includes(kind)
 
-  return { kind, isRequired, isList }
+  return { kind, isScalar, isRequired, isList }
 }
 
 export const parseQuery = (
@@ -48,13 +52,18 @@ export const parseQuery = (
 ): TableSource[] | undefined => {
   if (!node.selectionSet) return undefined
 
+  const allScalar = schema
+    .filter((x) => x.kind === 'ScalarTypeDefinition')
+    .map((x) => (x as ScalarTypeDefinitionNode).name.value)
+    .concat(BASE_SCALAR)
+
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
     const fields = // @ts-ignore
       schema.find((x) => (x.name as NameNode).value === type).fields as FieldDefinitionNode[]
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const field = fields.find((x) => x.name.value === subNode.name.value)!.type
-    const fieldType = parseType(field)
+    const fieldType = parseType(field, allScalar)
 
     return {
       key: `${lv}-${idx}`,

@@ -9,6 +9,7 @@ export interface operationResp {
 
 export interface FieldType {
   kind: string
+  isScalar: boolean
   isRequired: boolean
   isList: boolean
 }
