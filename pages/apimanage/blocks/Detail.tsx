@@ -35,6 +35,9 @@ const columns = [
   {
     title: '字段类型',
     dataIndex: 'fieldType',
+    render: (x: string) => (
+      <div>{['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x) ? x : 'Object'}</div>
+    ),
   },
 ]
 
