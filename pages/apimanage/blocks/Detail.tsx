@@ -1,19 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable react/prop-types */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
 import { AppleOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
-import { parse, buildSchema, DefinitionNode, VariableDefinitionNode, TypeNode } from 'graphql'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { parse, buildSchema, DefinitionNode, OperationDefinitionNode } from 'graphql'
+import { FC, useEffect, useState } from 'react'
 
-import { TableSource } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
+import { parseArgs, parseQuery } from '@/lib/gql-parser'
 import RcTab from 'pages/components/rc-tab'
 
 import styles from './Detail.module.scss'
@@ -60,13 +54,13 @@ const reqColumns = [
   {
     title: '必须',
     dataIndex: 'required',
-    render: (x) => <div>{x ? '是' : '否'}</div>,
+    render: (x: boolean) => <div>{x ? '是' : '否'}</div>,
   },
 ]
 
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [gqlQueryDef, setGqlQueryDef] = useState<DefinitionNode[]>(undefined!)
+  const [gqlQueryDef, setGqlQueryDef] = useState<OperationDefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlSchemaDef, setGqlSchemaDef] = useState<DefinitionNode[]>(undefined!)
   const [dataSource, setDataSource] = useState([])
@@ -90,121 +84,21 @@ const Detail: FC<DetailProps> = ({ path }) => {
     if (!path) return
     // getFetcher(`/api/v1/operateApi/${path}`)
     getFetcher('/api/v1/gql-query-str')
-      .then((res) => parse(res, { noLocation: true }).definitions)
+      .then((res) => parse(res as string, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def))
       .catch((err: Error) => {
         throw err
       })
   }, [path])
 
-  const getType = useCallback((typeDef: TypeNode) => {
-    let required = false
-
-    const inner = (node: TypeNode, depth = 0): string => {
-      switch (node.kind) {
-        case 'NamedType':
-          return node.name.value
-        case 'ListType':
-          return inner(node.type, depth++)
-        case 'NonNullType':
-          if (depth === 0) required = true
-          return inner(node.type, depth++)
-      }
-    }
-    const kind = inner(typeDef)
-
-    return {
-      kind,
-      required,
-    }
-  }, [])
-
-  const parseType = useCallback(
-    (selection, parent): string => {
-      const fieldName = selection.name.value
-      const parentFieldName = parent?.name?.value
-      // const allQuery = gqlSchemaDef.find((i) => i.name.value === 'Query')
-
-      let rv = ''
-      if (!parent) {
-        console.log('^^^^^^^^ parse root', selection)
-        const rootQuery = gqlSchemaDef
-          .filter((i) => i.kind === 'ObjectTypeDefinition')
-          .find((i) => i.name.value === 'Query')
-          .fields.find((i) => i.name.value === fieldName)
-        console.log(rootQuery, 'rootQuery')
-
-        switch (rootQuery.type.kind) {
-          case 'NamedType':
-            rv = 'Object'
-            break
-          case 'ListType':
-            rv = 'List'
-            break
-          default:
-            break
-        }
-      } else {
-        console.log(parentFieldName, fieldName)
-        console.log('^^^^^^^^ parse type', selection)
-        console.log('^^^^^^^^ parent type', parent)
-
-        const parentQueryName = gqlSchemaDef
-          .filter((i) => i.kind === 'ObjectTypeDefinition')
-          .find((i) => i.name.value === 'Query')
-          .fields.find((i) => i.name.value === parentFieldName).type.name.value
-        console.log(parentQueryName, 'parentQueryName')
-        const bbb = gqlSchemaDef
-          .filter((i) => i.kind === 'ObjectTypeDefinition')
-          .find((i) => i.name.value === parentQueryName)
-          .fields.find((i) => i.name.value === fieldName)
-        console.log(bbb, 'bbb')
-        rv = bbb.type.type.name?.value ?? 'bbb'
-      }
-
-      console.log('$$$$$$$$ parseType end')
-      return rv
-    },
-    [gqlSchemaDef]
-  )
-
-  const parseQuery = useCallback((selection, nodes: string[] = []): TableSource[] => {
-    const selectionSet = selection.selectionSet
-    if (!selectionSet) return undefined
-    const rv = selectionSet.selections.map((subSelection) => {
-      const newNodes = nodes.concat(subSelection.name.value)
-      return {
-        key: newNodes.join('-'),
-        fieldName: subSelection.name.value,
-        // fieldType: parseType(subSelection, newNodes),
-        children: parseQuery(subSelection, newNodes),
-      }
-    })
-    return rv as TableSource[]
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   useEffect(() => {
-    if (!gqlQueryDef || !gqlSchemaDef) return
-    setDataSource(parseQuery(gqlQueryDef[0]))
-    setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
-
-    const rv: TableSource[] = parseQuery(gqlQueryDef[0])
     console.log(gqlSchemaDef, 'schema')
     console.log(gqlQueryDef, 'query')
-    console.log('rv', rv)
+    if (!gqlQueryDef || !gqlSchemaDef) return
+    setDataSource(parseQuery(gqlSchemaDef, gqlQueryDef[0]))
+    setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
-
-  const parseArgs = useCallback((varDefs: VariableDefinitionNode[]) => {
-    return varDefs.map((x) => ({
-      key: x.variable.name.value,
-      name: x.variable.name.value,
-      pos: 'path',
-      ...getType(x.type),
-    }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <>
