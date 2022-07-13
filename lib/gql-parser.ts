@@ -43,38 +43,28 @@ export const getType = (typeDef: TypeNode) => {
 
 const parseType = (
   schema: DefinitionNode[],
-  field: FieldNode,
-  initKind: string | undefined
+  fieldName: string,
+  initKind: string
 ): { kind: string; required: boolean } => {
-  let rv
-  if (!initKind) {
-    const allFields = // @ts-ignore
-      schema.find((i) => (i.name as NameNode).value === 'Query').fields as FieldDefinitionNode[]
+  const fields = // @ts-ignore
+    schema.find((x) => (x.name as NameNode).value === initKind).fields as FieldDefinitionNode[]
+  // @ts-ignore
+  const node = fields.find((x) => x.name.value === fieldName).type
 
-    // @ts-ignore
-    rv = getType(allFields.find((x) => x.name.value === field.name.value).type)
-  } else {
-    const fields = // @ts-ignore
-      schema.find((x) => (x.name as NameNode).value === initKind).fields as FieldDefinitionNode[]
-
-    // @ts-ignore
-    rv = getType(fields.find((x) => x.name.value === field.name.value).type)
-  }
-
-  return rv
+  return getType(node)
 }
 
 export const parseQuery = (
   schema: DefinitionNode[],
   node: OperationDefinitionNode | FieldNode,
-  type: string | undefined = undefined,
+  type = 'Query',
   lv = '0'
 ): TableSource[] | undefined => {
   if (!node.selectionSet) return undefined
 
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
-    const { kind, required: _ } = parseType(schema, subNode, type)
+    const { kind, required: _ } = parseType(schema, subNode.name.value, type)
     return {
       key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
