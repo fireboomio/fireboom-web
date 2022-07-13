@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { DatasourceResp, DatasourceRequst } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
@@ -19,12 +19,13 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
 
   function addTable() {
     const data = {
-      name: '',
+      id: 0,
+      name: 'a',
       config: '2',
       // eslint-disable-next-line camelcase
       source_type: Datasourcetype,
       switch: 0,
-    } as DatasourceRequst
+    } as DatasourceResp
     dispatch({ type: 'added', data: data })
   }
   return (
