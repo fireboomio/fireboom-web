@@ -2,9 +2,11 @@ import { RightSquareOutlined, AppleOutlined, CloseCircleOutlined } from '@ant-de
 import { Button, Form, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import axios from 'axios'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-db-main.module.scss'
 interface FromValues {
@@ -31,13 +33,15 @@ const initForm = (
 )
 
 export default function DatasourceDBMainEdit({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
-  const onFinish = (values: object) => {
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    void axios.put('/api/v1/dataSource', { ...content, config:JSON.stringify(values) })
+    await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
+    handleToggleDesigner('data', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -201,7 +205,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 12 }}
-          onFinish={onFinish}
+          onFinish={void onFinish}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
           autoComplete="off"

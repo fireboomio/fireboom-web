@@ -1,4 +1,4 @@
-import type { DatasourceResp, DatasourceAction} from '@/interfaces/datasource'
+import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
 
 export default function modelingReducer(
   datasoucreList: DatasourceResp[],

@@ -38,11 +38,13 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     if (value === '') {
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
-      if (datasourceItem.id) {
+      if (datasourceItem.id != 0) {
         await axios.put('/api/v1/dataSource', { ...datasourceItem, name: value })
         dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       } else {
-        await axios.post('/api/v1/dataSource', { ...datasourceItem, name: value })
+        const req = { ...datasourceItem, name: value }
+        Reflect.deleteProperty(req, 'id')
+        await axios.post('/api/v1/dataSource', req)
         dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       }
     }
