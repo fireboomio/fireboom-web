@@ -38,11 +38,17 @@ const columns = [
     dataIndex: 'fieldType',
     render: (x: FieldType, _) => (
       <div>
-        {x.isList
-          ? 'List'
-          : ['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x.kind)
-          ? x.kind
-          : 'Object'}
+        {x.isList ? (
+          <span className="text-[#04B582]">
+            List<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+          </span>
+        ) : ['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x.kind) ? (
+          <span className="text-[#E66B83]">{x.kind}</span>
+        ) : (
+          <span className="text-[#177FFF]">
+            Object<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+          </span>
+        )}
       </div>
     ),
   },
@@ -154,11 +160,17 @@ const Detail: FC<DetailProps> = ({ path }) => {
         <div className="mt-3">
           <span className={styles.caption}>成功（201）</span>
           <div className={`${styles.content}`}>
-            <div className="leading-20px text-[##5F6269]">
+            <div className="leading-20px text-[#5F6269]">
               <span>HTTP 状态码：201</span>
               <span className="ml-82px">内容格式：JSON</span>
             </div>
-            <Table className="mt-6" columns={columns} dataSource={dataSource} pagination={false} />
+            <Table
+              className="mt-6"
+              rowClassName="text-[#000000A6]"
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+            />
           </div>
         </div>
       </div>
