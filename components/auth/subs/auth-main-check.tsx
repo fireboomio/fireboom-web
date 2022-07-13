@@ -1,11 +1,12 @@
+/* eslint-disable camelcase */
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 
 interface Props {
-  content: AuthProvItem
+  content: AuthProvResp
 }
 export default function AuthenticationMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
@@ -13,7 +14,7 @@ export default function AuthenticationMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const { config } = content
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
@@ -40,13 +41,13 @@ export default function AuthenticationMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="供应商ID">{info.connectName}</Descriptions.Item>
-          <Descriptions.Item label="App ID">{info.SQlType}</Descriptions.Item>
+          <Descriptions.Item label="供应商ID">{content.auth_supplier}</Descriptions.Item>
+          <Descriptions.Item label="App ID">{config.SQlType}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
-                  {info.environmentVar}
+                  {config.environmentVar}
                   <EyeOutlined className="ml-6" />
                 </div>
               ) : (
@@ -57,13 +58,13 @@ export default function AuthenticationMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="Issuer">{info.environmentVar}</Descriptions.Item>
-          <Descriptions.Item label="服务发现地址">{info.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="JWKS">{info.host}</Descriptions.Item>
-          <Descriptions.Item label="jwksURL">{info.host}</Descriptions.Item>
-          <Descriptions.Item label="jwksJSON">{info.host}</Descriptions.Item>
-          <Descriptions.Item label="用户端点">{info.port}</Descriptions.Item>
-          <Descriptions.Item label="是否开启">{info.userName}</Descriptions.Item>
+          <Descriptions.Item label="Issuer">{config.environmentVar}</Descriptions.Item>
+          <Descriptions.Item label="服务发现地址">{config.connectURL}</Descriptions.Item>
+          <Descriptions.Item label="JWKS">{config.host}</Descriptions.Item>
+          <Descriptions.Item label="jwksURL">{config.host}</Descriptions.Item>
+          <Descriptions.Item label="jwksJSON">{config.host}</Descriptions.Item>
+          <Descriptions.Item label="用户端点">{config.port}</Descriptions.Item>
+          <Descriptions.Item label="是否开启">{content.switch_state}</Descriptions.Item>
         </Descriptions>
       </div>
     </>

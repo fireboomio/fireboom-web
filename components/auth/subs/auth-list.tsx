@@ -2,24 +2,28 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp, AuthProvRequest } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext } from '@/lib/context'
 
 import styles from './auth-common-main.module.scss'
 import FilesItem from './auth-item'
 
 interface Props {
-  onClickItem: (dsItem: AuthProvItem) => void
+  onClickItem: (dsItem: AuthProvResp) => void
 }
 
 export default function AuthProvList({ onClickItem }: Props) {
   const FSList = useContext(AuthContext)
   const dispatch = useContext(AuthDispatchContext)
 
-  const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
+  // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
 
   function addTable() {
-    const data = { id: getNextId(), name: '', info: {} } as AuthProvItem
+    const data = {
+      name: '',
+      config: '2',
+      switch: 0,
+    } as AuthProvRequest
     dispatch({ type: 'added', data: data })
   }
 
@@ -39,11 +43,7 @@ export default function AuthProvList({ onClickItem }: Props) {
       </div>
       <div className="mt-3">
         {FSList.map((authProvItem) => (
-          <FilesItem
-            key={authProvItem.id}
-            authProvItem={authProvItem}
-            onClickItem={onClickItem}
-          />
+          <FilesItem key={authProvItem.id} authProvItem={authProvItem} onClickItem={onClickItem} />
         ))}
       </div>
     </>

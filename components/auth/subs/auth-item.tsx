@@ -1,17 +1,18 @@
 import { AppleOutlined, MoreOutlined, GithubOutlined, BarsOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
+import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
 
 import styles from '../auth-pannel.module.scss'
 
 interface Props {
-  authProvItem: AuthProvItem
-  onClickItem: (fsItem: AuthProvItem) => void
+  authProvItem: AuthProvResp
+  onClickItem: (fsItem: AuthProvResp) => void
 }
 
 export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
@@ -28,17 +29,27 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
     }
   }
 
-  function handleItemEdit(value: string) {
+  async function handleItemEdit(value: string) {
     if (value === '') {
       dispatch({ type: 'deleted', data: authProvItem })
     } else {
-      dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
+      if (authProvItem.id) {
+        await axios.put('/api/v1/auth', { ...authProvItem, name: value })
+        dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
+      } else {
+        await axios.post('/api/v1/auth', { ...authProvItem, name: value })
+        dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
+      }
     }
     setIsEditing(false)
   }
 
-  function handleItemDelete(item: AuthProvItem) {
-    dispatch({ type: 'deleted', data: item })
+  async function handleItemDelete(item: AuthProvResp) {
+    const result = await axios.delete(`/api/v1/auth/${item.id}`)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (result.data.code == 200) {
+      dispatch({ type: 'deleted', data: item })
+    }
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -85,7 +96,7 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
             <Popconfirm
               placement="right"
               title="确认删除该文件吗？"
-              onConfirm={() => handleItemDelete(authProvItem)}
+              onConfirm={() => void handleItemDelete(authProvItem)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -121,9 +132,12 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
       <GithubOutlined className="mr-2" />
       {isEditing ? (
         <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
+          onBlur={(e) => void handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value as string)}
+          onPressEnter={(e) => void handleItemEdit(e.target.value as string)}
+          onKeyUp={(e: React.KeyboardEvent) => {
+            e.key == 'Escape' && setIsEditing(false)
+          }}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={authProvItem.name}
           autoFocus
@@ -136,7 +150,6 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
           }}
         >
           <span className="text-sm font-normal leading-4"> {authProvItem.name}</span>
-          <span className="text-xs text-gray-500/80 leading-4"> {authProvItem.name}</span>
         </div>
       )}
 

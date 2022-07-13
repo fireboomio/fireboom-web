@@ -6,12 +6,12 @@ import {
 } from '@ant-design/icons'
 import { Button, Switch, Tabs } from 'antd'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 
 import styles from './auth-common-main.module.scss'
 
 interface Props {
-  content: AuthProvItem
+  content: AuthProvResp
 }
 
 const { TabPane } = Tabs

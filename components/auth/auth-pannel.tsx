@@ -1,14 +1,14 @@
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context'
 
 import styles from './auth-pannel.module.scss'
 import AuthList from './subs/auth-list'
 
 interface Props {
-  onClickItem: (fsItem: AuthProvItem) => void
+  onClickItem: (fsItem: AuthProvResp) => void
 }
 
 export default function AuthPannel({ onClickItem }: Props) {

@@ -1,27 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useReducer } from 'react'
+import { useEffect, useLayoutEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { AuthPannel, AuthContainer } from '@/components/auth'
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
+
 
 import authReducer from './auth-reducer'
 import styles from './index.module.scss'
 
 export default function Authentication() {
-  const [authProvList, dispatch] = useReducer(authReducer, [] as AuthProvItem[])
+  const [authProvList, dispatch] = useReducer(authReducer, [] as AuthProvResp[])
   const [showType, setShowType] = useImmer('data')
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCurrAuthProvItemId(authProvList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authProvList])
 
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<AuthProvItem[], Error>('/api/v1/datasource', getFetcher<AuthProvItem[]>)
+  const { data, error } = useSWR<AuthProvResp[], Error>('/api/v1/auth', getFetcher<AuthProvResp[]>)
   useEffect(() => {
     data &&
       dispatch({
@@ -35,9 +37,9 @@ export default function Authentication() {
 
   // TODO: need refine
 
-  const content = authProvList.find((b) => b.id === currAuthProvItemId) as AuthProvItem
+  const content = authProvList.find((b) => b.id === currAuthProvItemId) as AuthProvResp
 
-  function handleClickItem(authProvItem: AuthProvItem) {
+  function handleClickItem(authProvItem: AuthProvResp) {
     setShowType('data')
     setCurrAuthProvItemId(authProvItem.id)
   }
