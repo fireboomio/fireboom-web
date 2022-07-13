@@ -7,8 +7,14 @@ export interface operationResp {
   path?: string
 }
 
+export interface FieldType {
+  kind: string
+  required: boolean
+  isList: boolean
+}
+
 export interface TableSource {
   fieldName: string
-  fieldType: string
+  fieldType: FieldType
   children?: TableSource[]
 }

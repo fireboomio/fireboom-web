@@ -8,7 +8,7 @@ import {
   NameNode,
 } from 'graphql'
 
-import { TableSource } from '@/interfaces/apimanage'
+import { FieldType, TableSource } from '@/interfaces/apimanage'
 
 export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
   return varDefs.map((x) => ({
@@ -21,12 +21,14 @@ export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
 
 export const getType = (typeDef: TypeNode) => {
   let required = false
+  let isList = false
 
   const inner = (node: TypeNode, depth = 0): string => {
     switch (node.kind) {
       case 'NamedType':
         return node.name.value
       case 'ListType':
+        if (depth === 0 || depth === 1) isList = true
         return inner(node.type, depth++)
       case 'NonNullType':
         if (depth === 0) required = true
@@ -38,14 +40,11 @@ export const getType = (typeDef: TypeNode) => {
   return {
     kind,
     required,
+    isList,
   }
 }
 
-const parseType = (
-  schema: DefinitionNode[],
-  fieldName: string,
-  initKind: string
-): { kind: string; required: boolean } => {
+const parseType = (schema: DefinitionNode[], fieldName: string, initKind: string): FieldType => {
   const fields = // @ts-ignore
     schema.find((x) => (x.name as NameNode).value === initKind).fields as FieldDefinitionNode[]
   // @ts-ignore
@@ -64,12 +63,12 @@ export const parseQuery = (
 
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
-    const { kind, required: _ } = parseType(schema, subNode.name.value, type)
+    const fieldType = parseType(schema, subNode.name.value, type)
     return {
       key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
-      fieldType: kind,
-      children: parseQuery(schema, subNode, kind, `${lv}-${idx}`),
+      fieldType: fieldType,
+      children: parseQuery(schema, subNode, fieldType.kind, `${lv}-${idx}`),
     }
   })
 }

@@ -6,6 +6,7 @@ import { Badge, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
+import { FieldType } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { parseArgs, parseQuery } from '@/lib/gql-parser'
 import RcTab from 'pages/components/rc-tab'
@@ -35,8 +36,14 @@ const columns = [
   {
     title: '字段类型',
     dataIndex: 'fieldType',
-    render: (x: string) => (
-      <div>{['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x) ? x : 'Object'}</div>
+    render: (x: FieldType, _) => (
+      <div>
+        {x.isList
+          ? 'List'
+          : ['Int', 'FLoat', 'String', 'Boolean', 'ID', 'JSON'].includes(x.kind)
+          ? x.kind
+          : 'Object'}
+      </div>
     ),
   },
 ]
