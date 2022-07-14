@@ -6,15 +6,22 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext } from '@/lib/context'
+import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
 
 import styles from './auth-common-main.module.scss'
 
 interface Props {
   content: AuthProvResp
 }
+interface Response {
+  status: number
+  data: { result: AuthProvResp[]; [key: string]: number | string | boolean | object }
+  [key: string]: number | string | boolean | object
+}
+
 export default function AuthMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(AuthToggleContext)
+  const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
   const [value, setValue] = useImmer(1)
   const [open, setOpen] = useImmer(1)
@@ -23,10 +30,16 @@ export default function AuthMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const onFinish = (values: object) => {
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    void axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
+    await axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
+    const auth: Response = await axios.get('/api/v1/auth')
+    dispatch({
+      type: 'fetched',
+      data: auth.data.result,
+    })
+    handleToggleDesigner('data', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -84,7 +97,9 @@ export default function AuthMainCheck({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            void onFinish(values as object)
+          }}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"

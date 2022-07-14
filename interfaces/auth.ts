@@ -1,19 +1,28 @@
 export interface AuthProvResp {
   id: number
   name: string
-  source_type: number
-  switch: number
-  config: {
-    [key: string]: number | string | boolean
-  }
+  auth_supplier: number
+  switch_state: number
+  config: string
 }
 
 export interface AuthProvRequest {
-  id: number
   name: string
-  source_type: number
-  switch: number
+  auth_supplier: number
+  switch_state: number
   config: string
+}
+
+export interface RoleProvResp {
+  id: number
+  code: string
+  remark: string
+  time?: string
+}
+
+export interface RoleProvRequest {
+  code: string
+  result: RoleProvResp
 }
 export type AuthAction = AuthsingleAction | AuthListAction
 

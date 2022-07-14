@@ -1,13 +1,8 @@
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button } from 'antd'
-import axios from 'axios'
-
-import type { AuthProvResp } from '@/interfaces/auth'
 
 import styles from './auth-common-main.module.scss'
-interface Props {
-  content: AuthProvResp
-}
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 3 },
@@ -25,12 +20,10 @@ const formItemLayoutWithOutLabel = {
   },
 }
 
-export default function AuthenticationMainSetting({ content }: Props) {
+export default function AuthenticationMainSetting() {
   const [form] = Form.useForm()
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
-    console.log(JSON.stringify(values))
-    void axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
   }
 
   return (

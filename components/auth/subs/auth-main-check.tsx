@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions } from 'antd'
+import { ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
@@ -8,13 +9,15 @@ import type { AuthProvResp } from '@/interfaces/auth'
 interface Props {
   content: AuthProvResp
 }
+interface Config {
+  [key: string]: ReactNode
+}
 export default function AuthenticationMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-
   if (!content) {
     return <></>
   }
-  const { config } = content
+  const config = JSON.parse(content.config) as Config
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }

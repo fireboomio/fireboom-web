@@ -1,4 +1,5 @@
 import { Button } from 'antd'
+import axios from 'axios'
 import { useContext } from 'react'
 
 import type { AuthProvResp } from '@/interfaces/auth'
@@ -36,6 +37,8 @@ export default function AuthPannel({ onClickItem }: Props) {
           className={`${styles['role-button']} p-0 `}
           onClick={() => {
             handleToggleDesigner('role')
+            const res = axios.get('/api/v1/role')
+            console.log(res)
           }}
         >
           <div className="mr-28 -mt-5">角色配置</div>

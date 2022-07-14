@@ -33,11 +33,13 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
     if (value === '') {
       dispatch({ type: 'deleted', data: authProvItem })
     } else {
-      if (authProvItem.id) {
+      if (authProvItem.id !== 0) {
         await axios.put('/api/v1/auth', { ...authProvItem, name: value })
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       } else {
-        await axios.post('/api/v1/auth', { ...authProvItem, name: value })
+        const req = { ...authItem, name: value }
+        Reflect.deleteProperty(req, 'id')
+        await axios.post('/api/v1/auth', req)
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       }
     }

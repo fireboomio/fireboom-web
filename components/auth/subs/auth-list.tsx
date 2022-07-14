@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
@@ -20,10 +21,12 @@ export default function AuthProvList({ onClickItem }: Props) {
 
   function addTable() {
     const data = {
-      name: '',
+      id: 0,
+      name: 'a',
       config: '2',
-      switch: 0,
-    } as AuthProvRequest
+      auth_supplier: 1,
+      switch_state: 1,
+    } as AuthProvResp
     dispatch({ type: 'added', data: data })
   }
 
