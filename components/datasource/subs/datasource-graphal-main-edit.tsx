@@ -1,16 +1,25 @@
 import { QuestionCircleOutlined, CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch, Collapse, Upload, Checkbox } from 'antd'
+import { useContext } from 'react'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
 }
 
 export default function DatasourceGraphalMainEdit({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+
+  const [form] = Form.useForm()
+  const { Option } = Select
+  const { Panel } = Collapse
+
   const onFinish = (values: object) => {
+    handleToggleDesigner('data', content.id)
     console.log('Success:', values)
   }
 
@@ -18,8 +27,6 @@ export default function DatasourceGraphalMainEdit({ content }: Props) {
     console.log('Failed:', errorInfo)
   }
 
-  const { Option } = Select
-  const { Panel } = Collapse
   return (
     <>
       <div className="flex items-center justify-between border-gray border-b">
@@ -32,7 +39,12 @@ export default function DatasourceGraphalMainEdit({ content }: Props) {
           <Button className={styles['design-btn']}>
             <span>取消</span>
           </Button>
-          <Button className={styles['edit-btn']}>
+          <Button
+            className={styles['edit-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
             <span>保存</span>
           </Button>
         </div>
@@ -40,6 +52,7 @@ export default function DatasourceGraphalMainEdit({ content }: Props) {
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}

@@ -5,25 +5,34 @@ import {
   EyeInvisibleFilled,
 } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Tabs, Collapse } from 'antd'
+import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceItem } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
-  content: DatasourceItem
+  content: DatasourceResp
+}
+
+interface Config {
+  [key: string]: ReactNode
 }
 
 export default function DatasourceRestMainCheck({ content }: Props) {
+  console.log(content)
   const [isEyeShow, setIsEyeShow] = useImmer(false)
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const config = JSON.parse(content.config) as Config
+
   const { TabPane } = Tabs
   const { Panel } = Collapse
   const onChange = (key: string) => {
@@ -48,7 +57,12 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
-          <Button className={styles['edit-btn']}>
+          <Button
+            className={styles['edit-btn']}
+            onClick={() => {
+              handleToggleDesigner('REST', content.id)
+            }}
+          >
             <span>编辑</span>
           </Button>
         </div>
@@ -75,7 +89,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.nameScope}
+            {config.nameScope}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -86,7 +100,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.endpoint}
+            {config.endpoint}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -97,7 +111,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             }
             className="justify-start"
           >
-            {info.theOAS}
+            {config.theOAS}
           </Descriptions.Item>
         </Descriptions>
       </div>
@@ -116,9 +130,9 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 borderBottom: 'none',
               }}
             >
-              <Descriptions.Item>{info.head}</Descriptions.Item>
-              <Descriptions.Item>{info.way}</Descriptions.Item>
-              <Descriptions.Item>{info.code}</Descriptions.Item>
+              <Descriptions.Item>{config.head}</Descriptions.Item>
+              <Descriptions.Item>{config.way}</Descriptions.Item>
+              <Descriptions.Item>{config.code}</Descriptions.Item>
             </Descriptions>
           </div>
         </TabPane>
@@ -144,7 +158,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 width: '30%',
               }}
             >
-              <Descriptions.Item label="JWT获取">{info.JWTget}</Descriptions.Item>
+              <Descriptions.Item label="JWT获取">{config.JWTget}</Descriptions.Item>
               <Descriptions.Item label="密钥">
                 {isEyeShow ? (
                   <div>
@@ -158,8 +172,8 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                   </div>
                 )}
               </Descriptions.Item>
-              <Descriptions.Item label="签名方法">{info.signMethod}</Descriptions.Item>
-              <Descriptions.Item label="Token端点">{info.tokenPoint}</Descriptions.Item>
+              <Descriptions.Item label="签名方法">{config.signMethod}</Descriptions.Item>
+              <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
             </Descriptions>
           </div>
         </TabPane>
@@ -193,7 +207,7 @@ export default function DatasourceRestMainCheck({ content }: Props) {
                 }
                 className="justify-start"
               >
-                {info.isStateCombine}
+                {config.isStateCombine}
               </Descriptions.Item>
             </Descriptions>
           </div>

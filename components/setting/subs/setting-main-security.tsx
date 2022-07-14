@@ -1,5 +1,7 @@
 import { PlusOutlined, InfoCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Switch, Button } from 'antd'
+import axios from 'axios'
+import { useEffect } from 'react'
 
 import styles from './setting-main.module.scss'
 
@@ -18,6 +20,11 @@ export default function SettingMainSecurity() {
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
+
+  useEffect(() => {
+   void axios.get('/api/v1/setting/securityConfig')
+  }, [])
+
   return (
     <>
       <div className={`${styles['security-form-contain']}`}>
