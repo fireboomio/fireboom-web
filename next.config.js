@@ -20,11 +20,7 @@ const nextConfig = {
       },
       {
         source: '/api/v1/operateApi/:path*',
-<<<<<<< HEAD
         destination: 'http:///120.26.62.151:9123/api/v1/operateApi/:path*',
-=======
-        destination: 'http://192.168.166.199:9123/api/v1/operateApi/:path*',
->>>>>>> 44128f7 (filesorage样式修改及datasource部分接口对接)
         source: '/api/v1/setting/:path*',
         destination: 'http://192.168.166.199:9123/api/v1/setting/:path*',
       },
