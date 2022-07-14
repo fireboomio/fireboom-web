@@ -2,7 +2,7 @@ import { AppleOutlined, CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvItem } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 
 import AuthMainCheck from './subs/auth-main-check'
 import AuthMainEdit from './subs/auth-main-edit'
@@ -11,7 +11,7 @@ import AuthMainRole from './subs/auth-main-role'
 import AuthMainSet from './subs/auth-main-setting'
 
 interface Props {
-  content: AuthProvItem
+  content: AuthProvResp
   showType: string
 }
 
@@ -40,7 +40,7 @@ export default function AuthContainer({ content, showType }: Props) {
           break
         case 'identity':
           setTitle('身份鉴权')
-          setViewer(<AuthMainIdentity content={content}/>)
+          setViewer(<AuthMainIdentity content={content} />)
           break
         case 'role':
           setTitle('角色配置')
@@ -68,7 +68,6 @@ export default function AuthContainer({ content, showType }: Props) {
             </span>
           </span>
         )}
-
         <AppleOutlined className="text-base" onClick={handleIconClick} />
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />

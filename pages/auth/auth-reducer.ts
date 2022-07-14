@@ -1,18 +1,18 @@
-import type { AuthProvItem, AuthAction } from '@/interfaces/auth'
+import type { AuthProvResp, AuthAction } from '@/interfaces/auth'
 
-export default function AuthProvReducer(fileList: AuthProvItem[], action: AuthAction) {
+export default function AuthReducer(authProvList: AuthProvResp[], action: AuthAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data
     }
     case 'selected': {
-      return fileList
+      return authProvList
     }
     case 'added': {
-      return [...fileList, action.data]
+      return [...authProvList, action.data]
     }
     case 'changed':
-      return fileList.map((b) => {
+      return authProvList.map((b) => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,7 +20,7 @@ export default function AuthProvReducer(fileList: AuthProvItem[], action: AuthAc
         }
       })
     case 'deleted': {
-      return fileList.filter((b) => b.id !== action.data.id)
+      return authProvList.filter((b) => b.id !== action.data.id)
     }
     default: {
       throw Error('Unknown action')

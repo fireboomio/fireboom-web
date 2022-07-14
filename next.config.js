@@ -33,6 +33,22 @@ const nextConfig = {
         destination: 'http://192.168.166.199:9123/api/v1/dataSource/:path*',
       },
       {
+        source: '/api/v1/auth',
+        destination: 'http://192.168.166.199:9123/api/v1/auth',
+      },
+      {
+        source: '/api/v1/auth/:path*',
+        destination: 'http://192.168.166.199:9123/api/v1/auth',
+      },
+      {
+        source: '/api/v1/role',
+        destination: 'http://192.168.166.199:9123/api/v1/role',
+      },
+      {
+        source: '/api/v1/role/:path*',
+        destination: 'http://192.168.166.199:9123/api/v1/role',
+      },
+      {
         source: '/api/v1/:path*',
         destination: 'http://localhost:8080/:path*',
       },

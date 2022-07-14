@@ -1,20 +1,28 @@
 import { RightOutlined } from '@ant-design/icons'
 import { Button, Divider, Form, Input, Radio } from 'antd'
 import type { RadioChangeEvent } from 'antd'
+import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvItem } from '@/interfaces/auth'
-import { AuthToggleContext } from '@/lib/context'
+import type { AuthProvResp } from '@/interfaces/auth'
+import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
 
 import styles from './auth-common-main.module.scss'
 
 interface Props {
-  content: AuthProvItem
+  content: AuthProvResp
 }
+interface Response {
+  status: number
+  data: { result: AuthProvResp[]; [key: string]: number | string | boolean | object }
+  [key: string]: number | string | boolean | object
+}
+
 export default function AuthMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(AuthToggleContext)
-
+  const dispatch = useContext(AuthDispatchContext)
+  const [form] = Form.useForm()
   const [value, setValue] = useImmer(1)
   const [open, setOpen] = useImmer(1)
   const [isRadioShow, setIsRadioShow] = useImmer(true)
@@ -22,8 +30,16 @@ export default function AuthMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const onFinish = (values: object) => {
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
+    console.log(JSON.stringify(values))
+    await axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
+    const auth: Response = await axios.get('/api/v1/auth')
+    dispatch({
+      type: 'fetched',
+      data: auth.data.result,
+    })
+    handleToggleDesigner('data', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -47,7 +63,7 @@ export default function AuthMainCheck({ content }: Props) {
       <div className="pb-3 flex items-center justify-between border-gray border-b">
         <div className="h-7">
           <span className="ml-2 font-bold">
-            系统默认 <span className="text-xs text-gray-500/80">main</span>
+            {content.name} <span className="text-xs text-gray-500/80">main</span>
           </span>
         </div>
         <div className="flex justify-center items-center">
@@ -55,7 +71,12 @@ export default function AuthMainCheck({ content }: Props) {
           <Button className={styles['center-btn']}>
             <span>取消</span>
           </Button>
-          <Button className={styles['save-btn']}>
+          <Button
+            className={styles['save-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
             <span>保存</span>
           </Button>
         </div>
@@ -72,32 +93,35 @@ export default function AuthMainCheck({ content }: Props) {
       </div>
       <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            void onFinish(values as object)
+          }}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
           labelAlign="left"
           className="ml-3"
         >
-          <Form.Item label="供应商ID">
+          <Form.Item label="供应商ID" name="auth_supplier">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" required>
+          <Form.Item label="App ID" required name="app_id">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App Secret" required>
+          <Form.Item label="App Secret" required name="app_secret">
             <Input.Password placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="Issuer" required>
+          <Form.Item label="Issuer" required name="issuer">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="服务发现地址">
+          <Form.Item label="服务发现地址" name="service_address">
             <Input disabled />
           </Form.Item>
-          <Form.Item label="JWKS">
+          <Form.Item label="JWKS" name="jwks">
             <Radio.Group onChange={onChangeRadio} value={value}>
               <Radio value={1} defaultChecked={true} className="mr-18">
                 URL
@@ -107,19 +131,19 @@ export default function AuthMainCheck({ content }: Props) {
           </Form.Item>
           {isRadioShow ? (
             <div>
-              <Form.Item label="jwksURL">
+              <Form.Item label="jwksURL" name="jwks_url">
                 <Input suffix="浏览" disabled />
               </Form.Item>
             </div>
           ) : (
-            <Form.Item label="jwksJSON">
+            <Form.Item label="jwksJSON" name="jwks_json">
               <TextArea rows={4} />
             </Form.Item>
           )}
-          <Form.Item label="用户端点">
+          <Form.Item label="用户端点" name="user_point">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="是否开启">
+          <Form.Item label="是否开启" name="switch_state">
             <Radio.Group onChange={onOpenRadio} value={open}>
               <Radio value={1} defaultChecked={true} className="mr-6.5">
                 基于Cookie

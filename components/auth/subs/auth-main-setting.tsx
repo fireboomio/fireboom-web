@@ -21,6 +21,7 @@ const formItemLayoutWithOutLabel = {
 }
 
 export default function AuthenticationMainSetting() {
+  const [form] = Form.useForm()
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
@@ -30,6 +31,7 @@ export default function AuthenticationMainSetting() {
       <span className={styles.setWord}>配置重定向URL ：</span>
       <div className={`${styles['form-contain']}`}>
         <Form
+          form={form}
           layout="vertical"
           className="ml-50 -mt-5"
           name="dynamic_form_item"
@@ -73,9 +75,12 @@ export default function AuthenticationMainSetting() {
                   <Button
                     type="dashed"
                     style={{ width: '48%' }}
-                    onClick={() => add()}
                     icon={<PlusOutlined />}
                     className="text-gray-500/60 mt-4"
+                    onClick={() => {
+                      add()
+                      form.submit()
+                    }}
                   >
                     新增域名
                   </Button>
