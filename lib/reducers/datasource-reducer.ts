@@ -1,6 +1,6 @@
 import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
 
-export default function modelingReducer(
+export default function datasourceReducer(
   datasoucreList: DatasourceResp[],
   action: DatasourceAction
 ) {
@@ -25,8 +25,7 @@ export default function modelingReducer(
     case 'deleted': {
       return datasoucreList.filter((b) => b.id !== action.data.id)
     }
-    default: {
-      throw Error('Unknown action')
-    }
+    default:
+      return datasoucreList
   }
 }

@@ -22,8 +22,7 @@ export default function AuthReducer(authProvList: AuthProvResp[], action: AuthAc
     case 'deleted': {
       return authProvList.filter((b) => b.id !== action.data.id)
     }
-    default: {
-      throw Error('Unknown action')
-    }
+    default:
+      return fileList
   }
 }

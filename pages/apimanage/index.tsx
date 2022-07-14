@@ -200,7 +200,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleDelete = (treeNodeKey: any) => {
     const node = findNode(treeNodeKey, treeData)
     // @ts-ignore
-    void axios.delete(`/api/v1/operateApi/${node.path as string}`).finally(() => {
+    axios.delete(`/api/v1/operateApi/${node.path as string}`).finally(() => {
       setRefreshFlag(!refreshFlag)
     })
   }

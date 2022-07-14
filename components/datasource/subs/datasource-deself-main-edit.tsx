@@ -27,7 +27,7 @@ function DatasourceDefineItem({ info }: PropsInfo) {
         <Input
           onBlur={(e) => handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value as string)}
+          onPressEnter={(e) => handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={info.serverName as string}
           autoFocus

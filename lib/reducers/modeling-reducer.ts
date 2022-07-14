@@ -22,8 +22,7 @@ export default function modelingReducer(blocks: Block[], action: BlockAction) {
     case 'deleted': {
       return blocks.filter((b) => b.id !== action.data.id)
     }
-    default: {
-      throw Error('Unknown action')
-    }
+    default:
+      return blocks
   }
 }

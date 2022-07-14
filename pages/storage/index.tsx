@@ -8,12 +8,12 @@ import { FileStoragePannel, FileStorageContainer } from '@/components/filestorag
 import type { FileStorageItem } from '@/interfaces/filestorage'
 import { FSContext, FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
+import storageReducer from '@/lib/reducers/storage-reducer'
 
 import styles from './index.module.scss'
-import storageReducer from './storage-reducer'
 
 export default function FileStorage() {
-  const [fileList, dispatch] = useReducer(storageReducer, [] as FileStorageItem[])
+  const [fileList, dispatch] = useReducer(storageReducer, [])
   const [showType, setShowType] = useImmer('data')
   useEffect(() => {
     setCurrFSId(fileList.at(0)?.id)

@@ -26,7 +26,7 @@ export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldTyp
   let isRequired = false
   let isList = false
 
-  const inner = (node: TypeNode, depth = 0): string => {
+  const inner = (node: TypeNode, depth = 0): string | undefined => {
     switch (node.kind) {
       case 'NamedType':
         return node.name.value
@@ -36,9 +36,11 @@ export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldTyp
       case 'NonNullType':
         if (depth === 0) isRequired = true
         return inner(node.type, depth++)
+      default:
+        break
     }
   }
-  const kind = inner(typeDef)
+  const kind = inner(typeDef) as string
   const isScalar = allScalar.includes(kind)
 
   return { kind, isScalar, isRequired, isList }

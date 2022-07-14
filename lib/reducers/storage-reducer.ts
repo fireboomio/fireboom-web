@@ -22,8 +22,7 @@ export default function filesReducer(fileList: FileStorageItem[], action: FlieAc
     case 'deleted': {
       return fileList.filter((b) => b.id !== action.data.id)
     }
-    default: {
-      throw Error('Unknown action')
-    }
+    default:
+      return fileList
   }
 }
