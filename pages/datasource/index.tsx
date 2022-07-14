@@ -60,7 +60,7 @@ export default function Datasource() {
     setCurrDBId(datasourceItem.id)
   }
 
-  function handleToggleDesigner(type: string, id: number) {
+  function handleToggleDesigner(type: string, id?: number) {
     setShowType(type)
     setCurrDBId(id)
   }
