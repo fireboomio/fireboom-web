@@ -157,7 +157,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
         <Input
           onBlur={(e) => void handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => void handleItemEdit(e.target.value as string)}
+          onPressEnter={(e) => handleItemEdit(e.target.value)}
           onKeyUp={(e: React.KeyboardEvent) => {
             e.key == 'Escape' && setIsEditing(false)
           }}

@@ -110,7 +110,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
     <Input
       onBlur={(e) => renameEntity(e.target.value)}
       // @ts-ignore
-      onPressEnter={(e) => renameEntity(e.target.value as string)}
+      onPressEnter={(e) => renameEntity(e.target.value)}
       onKeyUp={handlePressKey}
       className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
       defaultValue={entity.name}
