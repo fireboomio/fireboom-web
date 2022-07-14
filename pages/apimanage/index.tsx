@@ -21,9 +21,9 @@ import axios from 'axios'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState } from 'react'
 
+import RcTab from '@/components/rc-tab'
 import type { DirTree, operationResp } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import RcTab from 'pages/components/rc-tab'
 
 import Detail from './blocks/Detail'
 import Hook from './blocks/Hook'

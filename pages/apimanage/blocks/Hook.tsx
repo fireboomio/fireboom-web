@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react'
 import { Switch } from 'antd'
 import type { FC } from 'react'
 
-import RcTab from 'pages/components/rc-tab'
+import RcTab from '@/components/rc-tab'
 
 import styles from './Hook.module.scss'
 

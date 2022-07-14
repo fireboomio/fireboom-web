@@ -6,10 +6,10 @@ import { Badge, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
+import RcTab from '@/components/rc-tab'
 import { FieldType } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { parseArgs, parseQuery } from '@/lib/gql-parser'
-import RcTab from 'pages/components/rc-tab'
 
 import styles from './Detail.module.scss'
 
