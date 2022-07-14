@@ -12,6 +12,7 @@ import styles from './datasource-db-main.module.scss'
 interface FromValues {
   [key: string]: number | string | boolean
 }
+
 interface Props {
   content: DatasourceResp
 }
@@ -20,6 +21,7 @@ interface Response {
   data: { result: DatasourceResp[]; [key: string]: number | string | boolean | object }
   [key: string]: number | string | boolean | object
 }
+
 const initForm = (
   <Form.Item
     label="环境变量"
@@ -47,6 +49,7 @@ export default function DatasourceDBMainEdit({ content }: Props) {
     console.log('Success:', values)
     await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
     const datasource: Response = await axios.get('/api/v1/dataSource')
+    console.log(datasource)
     dispatch({
       type: 'fetched',
       data: datasource.data.result.filter((item) => item.source_type == 1),

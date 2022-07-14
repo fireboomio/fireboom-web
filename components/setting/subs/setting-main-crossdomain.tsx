@@ -1,5 +1,7 @@
 import { PlusOutlined, MinusCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch } from 'antd'
+import axios from 'axios'
+import { useEffect } from 'react'
 
 import styles from './setting-main.module.scss'
 
@@ -14,6 +16,10 @@ export default function SettingCrossdomain() {
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
+
+  useEffect(() => {
+    void axios.get('/api/v1/setting/corsConfiguration')
+  }, [])
 
   return (
     <>

@@ -1,8 +1,29 @@
 import { Descriptions, Divider } from 'antd'
+import axios from 'axios'
+import { useEffect } from 'react'
 
 import styles from './setting-main.module.scss'
 
+let versionConfig: { [key: string]: number | string | boolean | object }
+interface Response {
+  status: number
+  data: {
+    result: { [key: string]: number | string | boolean | object }
+    [key: string]: number | string | boolean | object
+  }
+  [key: string]: number | string | boolean | object
+}
+
 export default function SettingMainVersion() {
+  useEffect(() => {
+    async function getData() {
+      const result: Response = await axios.get('/api/v1/setting/versionConfig')
+      versionConfig = result.data.result
+      console.log(versionConfig)
+    }
+    void getData()
+  }, [])
+
   return (
     <>
       <div>
@@ -20,10 +41,11 @@ export default function SettingMainVersion() {
             }}
           >
             <Descriptions.Item label="版本">
-              V1.2.0 <span className={styles['check-info']}>查看更新日志</span>
+              {versionConfig.versionNum}
+              <span className={styles['check-info']}>查看更新日志</span>
             </Descriptions.Item>
-            <Descriptions.Item label="prisma版本">V1.2.0</Descriptions.Item>
-            <Descriptions.Item label="版权">V1.2.0</Descriptions.Item>
+            <Descriptions.Item label="prisma版本">{versionConfig.prismaVersion}</Descriptions.Item>
+            <Descriptions.Item label="版权">{versionConfig.copyright}</Descriptions.Item>
           </Descriptions>
         </div>
       </div>
