@@ -37,7 +37,7 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
         await axios.put('/api/v1/auth', { ...authProvItem, name: value })
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       } else {
-        const req = { ...authItem, name: value }
+        const req = { ...authProvItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await axios.post('/api/v1/auth', req)
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })

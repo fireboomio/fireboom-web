@@ -3,7 +3,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { AuthProvResp, AuthProvRequest } from '@/interfaces/auth'
+import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext } from '@/lib/context'
 
 import styles from './auth-common-main.module.scss'

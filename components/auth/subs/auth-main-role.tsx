@@ -3,14 +3,26 @@ import type { ColumnsType } from 'antd/lib/table'
 import axios from 'axios'
 import { useImmer } from 'use-immer'
 
-import type { RoleProvResp } from '@/interfaces/auth'
-
 import styles from './auth-common-main.module.scss'
 
-interface Props {
-  content: RoleProvResp[]
+interface RoleProvResp {
+  id: number
+  code: string
+  remark: string
+  time?: string
 }
 
+interface RoleProvRequest {
+  code: string
+  remark: string
+  time?: string
+}
+
+interface Response {
+  status: number
+  data: { result: RoleProvResp[]; [key: string]: number | string | boolean | object }
+  [key: string]: number | string | boolean | object
+}
 // const data: RoleProvResp[] = [
 //   {
 //     key: 1,
@@ -38,7 +50,7 @@ interface Props {
 //   },
 // ]
 
-export default function AuthMainRole({ content }: Props) {
+export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer(content)

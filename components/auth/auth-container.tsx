@@ -68,7 +68,6 @@ export default function AuthContainer({ content, showType }: Props) {
             </span>
           </span>
         )}
-
         <AppleOutlined className="text-base" onClick={handleIconClick} />
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />

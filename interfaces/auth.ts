@@ -13,22 +13,11 @@ export interface AuthProvRequest {
   config: string
 }
 
-export interface RoleProvResp {
-  id: number
-  code: string
-  remark: string
-  time?: string
-}
-
-export interface RoleProvRequest {
-  code: string
-  result: RoleProvResp
-}
 export type AuthAction = AuthsingleAction | AuthListAction
 
 interface AuthsingleAction {
   type: 'selected' | 'added' | 'deleted' | 'changed'
-  data: AuthProvResp | AuthProvRequest
+  data: AuthProvResp
 }
 
 interface AuthListAction {
