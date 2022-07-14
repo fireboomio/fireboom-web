@@ -12,6 +12,7 @@ import styles from './datasource-db-main.module.scss'
 interface FromValues {
   [key: string]: number | string | boolean
 }
+
 interface Props {
   content: DatasourceResp
 }
@@ -20,6 +21,7 @@ interface Response {
   data: { result: DatasourceResp[]; [key: string]: number | string | boolean | object }
   [key: string]: number | string | boolean | object
 }
+
 const initForm = (
   <Form.Item
     label="环境变量"
