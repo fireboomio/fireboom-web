@@ -58,6 +58,10 @@ const nextConfig = {
     config.plugins.push(new WindiCSSWebpackPlugin())
     return config
   },
+  images: {
+    loader: 'akamai',
+    path: '',
+  },
 }
 
 module.exports = nextConfig
