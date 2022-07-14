@@ -9,9 +9,9 @@ import { ModelPannel, ModelContainer } from '@/components/modeling'
 import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
+import modelingReducer from '@/lib/reducers/modeling-reducer'
 
 import styles from './index.module.scss'
-import modelingReducer from './modeling-reducer'
 
 type ShowTypeT = 'data' | 'model' | 'enum'
 

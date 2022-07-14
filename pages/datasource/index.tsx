@@ -13,8 +13,8 @@ import {
   DatasourceToggleContext,
 } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
+import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
-import datasourceReducer from './datasource-reducer'
 import styles from './index.module.scss'
 
 
