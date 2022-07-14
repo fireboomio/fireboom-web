@@ -165,6 +165,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
               <span className="ml-82px">内容格式：JSON</span>
             </div>
             <Table
+              size="middle"
               className="mt-6"
               rowClassName="text-[#000000A6]"
               columns={columns}
