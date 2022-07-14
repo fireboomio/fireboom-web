@@ -17,13 +17,12 @@ import {
 import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
-import axios from 'axios'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState } from 'react'
 
 import RcTab from '@/components/rc-tab'
 import type { DirTree, operationResp } from '@/interfaces/apimanage'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import Detail from './blocks/Detail'
 import Hook from './blocks/Hook'
@@ -200,7 +199,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleDelete = (treeNodeKey: any) => {
     const node = findNode(treeNodeKey, treeData)
     // @ts-ignore
-    axios.delete(`/api/v1/operateApi/${node.path as string}`).finally(() => {
+    requests.delete(`/operateApi/${node.path as string}`).finally(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
