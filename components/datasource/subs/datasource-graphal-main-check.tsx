@@ -1,22 +1,28 @@
 import { CaretRightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Collapse } from 'antd'
+import { ReactNode, useContext } from 'react'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
   content: DatasourceResp
 }
+interface Config {
+  [key: string]: ReactNode
+}
 
 export default function DatasourceGraphalMainCheck({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
   if (!content) {
     return <></>
   }
-  const { config } = content
+  const config = JSON.parse(content.config) as Config
 
   const { Panel } = Collapse
   return (
@@ -38,7 +44,12 @@ export default function DatasourceGraphalMainCheck({ content }: Props) {
           <Button className={styles['design-btn']}>
             <span>设计</span>
           </Button>
-          <Button className={styles['edit-btn']}>
+          <Button
+            className={styles['edit-btn']}
+            onClick={() => {
+              handleToggleDesigner('Graphal', content.id)
+            }}
+          >
             <span>编辑</span>
           </Button>
         </div>

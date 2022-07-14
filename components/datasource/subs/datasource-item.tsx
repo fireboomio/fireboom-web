@@ -53,6 +53,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
 
   async function handleItemDelete(item: DatasourceResp) {
     const result = await axios.delete(`/api/v1/dataSource/${item.id}`)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
       dispatch({ type: 'deleted', data: item })
     }

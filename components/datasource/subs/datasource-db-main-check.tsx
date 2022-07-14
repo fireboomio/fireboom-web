@@ -1,6 +1,6 @@
 import { AppleOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions } from 'antd'
-import { useContext } from 'react'
+import { ReactNode, useContext } from 'react'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context'
@@ -9,6 +9,10 @@ import styles from './datasource-db-main.module.scss'
 interface Props {
   content: DatasourceResp
 }
+interface Config {
+  [key: string]: ReactNode
+}
+
 export default function DatasourceDBMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
 
@@ -18,8 +22,8 @@ export default function DatasourceDBMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  let { config } = content
-  config = eval('(' + config + ')')
+
+  const config = JSON.parse(content.config) as Config
 
   return (
     <>
@@ -44,7 +48,12 @@ export default function DatasourceDBMainCheck({ content }: Props) {
           <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
             <span>设计</span>
           </Button>
-          <Button className={`${styles['connect-check-btn']}  ml-4`}>
+          <Button
+            className={`${styles['connect-check-btn']}  ml-4`}
+            onClick={() => {
+              handleToggleDesigner('DB', content.id)
+            }}
+          >
             <span>编辑</span>
           </Button>
         </div>

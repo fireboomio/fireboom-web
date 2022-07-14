@@ -6,7 +6,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
-import { DatasourceToggleContext } from '@/lib/context'
+import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 
 import styles from './datasource-db-main.module.scss'
 interface FromValues {
@@ -15,7 +15,11 @@ interface FromValues {
 interface Props {
   content: DatasourceResp
 }
-
+interface Response {
+  status: number
+  data: { result: DatasourceResp[]; [key: string]: number | string | boolean | object }
+  [key: string]: number | string | boolean | object
+}
 const initForm = (
   <Form.Item
     label="环境变量"
@@ -34,13 +38,19 @@ const initForm = (
 
 export default function DatasourceDBMainEdit({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
+
   const onFinish = async (values: object) => {
     console.log('Success:', values)
-    console.log(JSON.stringify(values))
     await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
+    const datasource: Response = await axios.get('/api/v1/dataSource')
+    dispatch({
+      type: 'fetched',
+      data: datasource.data.result.filter((item) => item.source_type == 1),
+    })
     handleToggleDesigner('data', content.id)
   }
 
@@ -205,13 +215,16 @@ export default function DatasourceDBMainEdit({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 12 }}
-          onFinish={void onFinish}
+          onFinish={(values) => {
+            void onFinish(values)
+          }}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
           autoComplete="off"
           validateTrigger="onBlur"
           className={styles['db-form']}
           labelAlign="left"
+          initialValues={{ typeName: 'env' }}
         >
           <Form.Item
             label="连接名:"
@@ -235,7 +248,6 @@ export default function DatasourceDBMainEdit({ content }: Props) {
 
           <Form.Item label="类型:" name="typeName">
             <Radio.Group
-              defaultValue="env"
               onChange={(e) => {
                 typeChange(e.target.value as string)
               }}

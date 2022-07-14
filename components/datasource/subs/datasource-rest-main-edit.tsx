@@ -1,20 +1,40 @@
 import { CaretRightOutlined, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import { Button, Form, Input, Select, Radio, Switch, Tabs, Upload, Collapse } from 'antd'
+import axios from 'axios'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 
 interface Props {
   content: DatasourceResp
 }
+interface Response {
+  status: number
+  data: { result: DatasourceResp[]; [key: string]: number | string | boolean | object }
+  [key: string]: number | string | boolean | object
+}
+
 export default function DatasourceEditorMainEdit({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const dispatch = useContext(DatasourceDispatchContext)
   const [value, setValue] = useImmer(1)
+  const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
-  const onFinish = (values: object) => {
+
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
+    await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
+    const datasource: Response = await axios.get('/api/v1/dataSource')
+    dispatch({
+      type: 'fetched',
+      data: datasource.data.result.filter((item) => item.source_type == 2),
+    })
+    handleToggleDesigner('data', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -46,7 +66,12 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
           <Button className={styles['design-btn']}>
             <span>取消</span>
           </Button>
-          <Button className={styles['edit-btn']}>
+          <Button
+            className={styles['edit-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
             <span>保存</span>
           </Button>
         </div>
@@ -54,10 +79,13 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            void onFinish(values as object)
+          }}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
@@ -71,6 +99,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
                 <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
               </div>
             }
+            name="nameScope"
             colon={false}
             style={{ marginBottom: '20px' }}
           >
@@ -84,6 +113,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
               </div>
             }
             colon={false}
+            name="theOAS"
             required
             style={{ marginBottom: '49px' }}
           >
@@ -125,7 +155,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={onFinish}
+              onFinish={void onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger="onBlur"
@@ -188,7 +218,7 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={onFinish}
+              onFinish={void onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger="onBlur"

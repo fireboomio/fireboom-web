@@ -5,9 +5,11 @@ import {
   EyeInvisibleFilled,
 } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Tabs, Collapse } from 'antd'
+import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context'
 
 import styles from './datasource-common-main.module.scss'
 
@@ -15,15 +17,22 @@ interface Props {
   content: DatasourceResp
 }
 
+interface Config {
+  [key: string]: ReactNode
+}
+
 export default function DatasourceRestMainCheck({ content }: Props) {
+  console.log(content)
   const [isEyeShow, setIsEyeShow] = useImmer(false)
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
   if (!content) {
     return <></>
   }
-  const { config } = content
+  const config = JSON.parse(content.config) as Config
+
   const { TabPane } = Tabs
   const { Panel } = Collapse
   const onChange = (key: string) => {
@@ -48,7 +57,12 @@ export default function DatasourceRestMainCheck({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
-          <Button className={styles['edit-btn']}>
+          <Button
+            className={styles['edit-btn']}
+            onClick={() => {
+              handleToggleDesigner('REST', content.id)
+            }}
+          >
             <span>编辑</span>
           </Button>
         </div>
