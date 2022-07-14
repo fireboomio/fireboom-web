@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { ModelPannel, ModelContainer } from '@/components/modeling'
-import type { DBSourceResp, Block, Entity, SchemaResp } from '@/interfaces/modeling'
+import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
 
@@ -16,7 +16,7 @@ import modelingReducer from './modeling-reducer'
 type ShowTypeT = 'data' | 'model' | 'enum'
 
 export default function Modeling() {
-  const [blocks, dispatch] = useReducer(modelingReducer, [] as Block[])
+  const [blocks, dispatch] = useReducer(modelingReducer, [])
   const [currEntityId, setCurrEntityId] = useImmer<number | null>(null)
   const [showType, setShowType] = useImmer<ShowTypeT>('data')
 

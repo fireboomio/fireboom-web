@@ -15,7 +15,7 @@ import authReducer from './auth-reducer'
 import styles from './index.module.scss'
 
 export default function Authentication() {
-  const [authProvList, dispatch] = useReducer(authReducer, [] as AuthProvResp[])
+  const [authProvList, dispatch] = useReducer(authReducer, [])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrAuthProvItemId(authProvList.at(0)?.id)

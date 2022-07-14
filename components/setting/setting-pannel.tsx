@@ -8,14 +8,15 @@ import FileStorageList from './subs/setting-list'
 interface Props {
   handleToggleDesigner: (settingType: SettingType) => void
 }
-const initSettingPage: SettingType =  {
+const initSettingPage: SettingType = {
   name: '外观',
   type: 'colorTheme',
 }
 export default function SettingPannel({ handleToggleDesigner }: Props) {
   useEffect(() => {
     handleToggleDesigner(initSettingPage)
-  },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>

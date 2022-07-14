@@ -19,7 +19,7 @@ import styles from './index.module.scss'
 
 
 export default function Datasource() {
-  const [datasourceList, dispatch] = useReducer(datasourceReducer, [] as DatasourceResp[])
+  const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
@@ -31,7 +31,7 @@ export default function Datasource() {
     '/api/v1/dataSource',
     getFetcher<DatasourceResp[]>
   )
-  
+
   useEffect(() => {
     datasource &&
       dispatch({

@@ -13,7 +13,7 @@ import styles from './index.module.scss'
 import storageReducer from './storage-reducer'
 
 export default function FileStorage() {
-  const [fileList, dispatch] = useReducer(storageReducer, [] as FileStorageItem[])
+  const [fileList, dispatch] = useReducer(storageReducer, [])
   const [showType, setShowType] = useImmer('data')
   useEffect(() => {
     setCurrFSId(fileList.at(0)?.id)
