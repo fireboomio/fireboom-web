@@ -9,7 +9,7 @@ interface AuthCurrContextT {
 }
 
 interface AuthToggleContext {
-  handleToggleDesigner: (type: string, id: number) => void
+  handleToggleDesigner: (type: string, id?: number) => void
 }
 
 export const AuthContext = createContext<AuthProvResp[]>([])

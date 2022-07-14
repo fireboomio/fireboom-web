@@ -1,18 +1,13 @@
 import { Button, Table, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import axios from 'axios'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import styles from './auth-common-main.module.scss'
 
 interface RoleProvResp {
   id: number
-  code: string
-  remark: string
-  time?: string
-}
-
-interface RoleProvRequest {
   code: string
   remark: string
   time?: string
@@ -53,13 +48,22 @@ interface Response {
 export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  const [roleData, setRoleData] = useImmer(content)
+  const initData: RoleProvResp[] = []
+  const [roleData, setRoleData] = useImmer(initData)
+  const fetchData = async () => {
+    const res: Response = await axios.get('/api/v1/role')
+    const { result } = res.data
+    setRoleData(result)
+  }
+  useEffect(() => {
+    fetchData
+  }, [])
   const onFinish = async (values: RoleProvResp) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    const data = await axios.put('/api/v1/role', { ...roleData, values })
-    console.log(data)
-    setRoleData(data.request as RoleProvResp[])
+    const res: Response = await axios.put('/api/v1/role', values)
+    const { result } = res.data
+    setRoleData(result)
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
@@ -67,14 +71,15 @@ export default function AuthMainRole() {
   }
   const handleAddRole = async (values: RoleProvResp) => {
     form.submit()
-    const data = await axios.post('/api/v1/role', { ...roleData, values })
-    setRoleData(data.request as RoleProvResp[])
+    const res: Response = await axios.post('/api/v1/role', values)
+    const { result } = res.data
+    setRoleData([...roleData, ...result])
   }
 
   const handleDeleteRole = async (item: RoleProvResp) => {
-    const data = await axios.delete(`/api/v1/role/${item.id}`)
-    console.log(data)
-    setRoleData(data.request as RoleProvResp[])
+    const res: Response = await axios.delete(`/api/v1/role/${item.id}`)
+    const { result } = res.data
+    setRoleData(result)
   }
   const columns: ColumnsType<RoleProvResp> = [
     {
