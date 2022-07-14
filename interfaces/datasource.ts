@@ -15,3 +15,9 @@ export interface DatasourceResp {
   switch: number
   config: string
 }
+export interface DatasourceRequst {
+  name: string
+  source_type: number
+  switch: number
+  config: string
+}
