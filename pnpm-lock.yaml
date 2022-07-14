@@ -18,7 +18,7 @@ specifiers:
   eslint-plugin-react-hooks: ^4.6.0
   graphiql: ^1.9.9
   graphiql-explorer: ^0.9.0
-  graphql-2-json-schema: ^0.9.1
+  graphql: ^16.5.0
   immer: ^9.0.15
   monaco-editor: ^0.33.0
   next: 12.1.6
@@ -42,9 +42,9 @@ dependencies:
   '@mrleebo/prisma-ast': registry.npmmirror.com/@mrleebo/prisma-ast/0.3.1
   antd: registry.npmmirror.com/antd/4.21.3_biqbaboplfbrettd7655fr4n2y
   axios: registry.npmmirror.com/axios/0.27.2
-  graphiql: registry.npmmirror.com/graphiql/1.9.9_ku7kwut4f7mrsio75metrrepa4
-  graphiql-explorer: registry.npmmirror.com/graphiql-explorer/0.9.0_wxfjnvblbhu4ianu4f2qg722fu
-  graphql-2-json-schema: registry.npmmirror.com/graphql-2-json-schema/0.9.1
+  graphiql: registry.npmmirror.com/graphiql/1.9.9_falz57r76oalvwajvux32y3kii
+  graphiql-explorer: registry.npmmirror.com/graphiql-explorer/0.9.0_phmus7xcbidy3raesi6r6zwaqe
+  graphql: registry.npmmirror.com/graphql/16.5.0
   immer: registry.npmmirror.com/immer/9.0.15
   next: registry.npmmirror.com/next/12.1.6_gavd5pnq4qbraoev5wiz2uq3l4
   react: registry.npmmirror.com/react/18.2.0
@@ -447,7 +447,7 @@ packages:
       - supports-color
     dev: true
 
-  registry.npmmirror.com/@graphiql/react/0.4.2_ku7kwut4f7mrsio75metrrepa4:
+  registry.npmmirror.com/@graphiql/react/0.4.2_falz57r76oalvwajvux32y3kii:
     resolution: {integrity: sha512-Df2BaA0HGRkzETCaUw4ZSDe///sfIAGZ6H436A08hmg7SU3yoWJboWGWGc/QD2NyBKVgVBMmzmHcgWhsYh03EA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@graphiql/react/-/react-0.4.2.tgz}
     id: registry.npmmirror.com/@graphiql/react/0.4.2
     name: '@graphiql/react'
@@ -457,13 +457,13 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.6.0_sjas3lw2ougsqoymueeao47eey
+      '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.6.0_xau5lck5xdxeprrricrh6e2w5m
       codemirror: registry.npmmirror.com/codemirror/5.65.5
-      codemirror-graphql: registry.npmmirror.com/codemirror-graphql/1.3.2_7mgurumd6eo6qdkdjrvcd4tobm
+      codemirror-graphql: registry.npmmirror.com/codemirror-graphql/1.3.2_jyy27576aet26rsvvtyxykdjdu
       copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.1
       escape-html: registry.npmmirror.com/escape-html/1.0.3
-      graphql: registry.npmmirror.com/graphql/15.8.0
-      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
+      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.5.0
       markdown-it: registry.npmmirror.com/markdown-it/12.3.2
       react: registry.npmmirror.com/react/18.2.0
       react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
@@ -474,7 +474,7 @@ packages:
       - graphql-ws
     dev: false
 
-  registry.npmmirror.com/@graphiql/toolkit/0.6.0_sjas3lw2ougsqoymueeao47eey:
+  registry.npmmirror.com/@graphiql/toolkit/0.6.0_xau5lck5xdxeprrricrh6e2w5m:
     resolution: {integrity: sha512-mbAwbt4lw2bFp9QW3NLVmh/r/ymczlcqvXk1HfvuC7Ma4h0yzrJiQauJyh1/gF5kjqevcRSquvP/YQJSvh1u6w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@graphiql/toolkit/-/toolkit-0.6.0.tgz}
     id: registry.npmmirror.com/@graphiql/toolkit/0.6.0
     name: '@graphiql/toolkit'
@@ -484,8 +484,8 @@ packages:
       graphql-ws: '>= 4.5.0'
     dependencies:
       '@n1ru4l/push-pull-async-iterable-iterator': registry.npmmirror.com/@n1ru4l/push-pull-async-iterable-iterator/3.2.0
-      graphql: registry.npmmirror.com/graphql/15.8.0
-      graphql-ws: registry.npmmirror.com/graphql-ws/5.9.0_graphql@15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
+      graphql-ws: registry.npmmirror.com/graphql-ws/5.9.0_graphql@16.5.0
       meros: registry.npmmirror.com/meros/1.2.0_@types+node@17.0.42
     transitivePeerDependencies:
       - '@types/node'
@@ -1756,7 +1756,7 @@ packages:
       is-regexp: registry.npmmirror.com/is-regexp/2.1.0
     dev: true
 
-  registry.npmmirror.com/codemirror-graphql/1.3.2_7mgurumd6eo6qdkdjrvcd4tobm:
+  registry.npmmirror.com/codemirror-graphql/1.3.2_jyy27576aet26rsvvtyxykdjdu:
     resolution: {integrity: sha512-glwFsEVlH5TvxjSKGymZ1sNy37f3Mes58CB4fXOd0zy9+JzDL08Wti1b5ycy4vFZYghMDK1/Or/zRSjMAGtC2w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/codemirror-graphql/-/codemirror-graphql-1.3.2.tgz}
     id: registry.npmmirror.com/codemirror-graphql/1.3.2
     name: codemirror-graphql
@@ -1768,8 +1768,8 @@ packages:
     dependencies:
       '@codemirror/language': registry.npmmirror.com/@codemirror/language/0.20.2
       codemirror: registry.npmmirror.com/codemirror/5.65.5
-      graphql: registry.npmmirror.com/graphql/15.8.0
-      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
+      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.5.0
     dev: false
 
   registry.npmmirror.com/codemirror/5.65.5:
@@ -3217,7 +3217,7 @@ packages:
     version: 4.2.10
     dev: true
 
-  registry.npmmirror.com/graphiql-explorer/0.9.0_wxfjnvblbhu4ianu4f2qg722fu:
+  registry.npmmirror.com/graphiql-explorer/0.9.0_phmus7xcbidy3raesi6r6zwaqe:
     resolution: {integrity: sha512-fZC/wsuatqiQDO2otchxriFO0LaWIo/ovF/CQJ1yOudmY0P7pzDiP+l9CEHUiWbizk3e99x6DQG4XG1VxA+d6A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphiql-explorer/-/graphiql-explorer-0.9.0.tgz}
     id: registry.npmmirror.com/graphiql-explorer/0.9.0
     name: graphiql-explorer
@@ -3227,12 +3227,12 @@ packages:
       react: ^15.6.0 || ^16.0.0
       react-dom: ^15.6.0 || ^16.0.0
     dependencies:
-      graphql: registry.npmmirror.com/graphql/15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
       react: registry.npmmirror.com/react/18.2.0
       react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
     dev: false
 
-  registry.npmmirror.com/graphiql/1.9.9_ku7kwut4f7mrsio75metrrepa4:
+  registry.npmmirror.com/graphiql/1.9.9_falz57r76oalvwajvux32y3kii:
     resolution: {integrity: sha512-eJ5kGpXFXw69QG/1SJrQs/mzGpDIv4XeGqohGSKQCOh7NtsAsQIxs/VMVR8Lvv9tx6YiIFUvAHp997NlyOwHbQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphiql/-/graphiql-1.9.9.tgz}
     id: registry.npmmirror.com/graphiql/1.9.9
     name: graphiql
@@ -3242,11 +3242,11 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@graphiql/react': registry.npmmirror.com/@graphiql/react/0.4.2_ku7kwut4f7mrsio75metrrepa4
-      '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.6.0_sjas3lw2ougsqoymueeao47eey
+      '@graphiql/react': registry.npmmirror.com/@graphiql/react/0.4.2_falz57r76oalvwajvux32y3kii
+      '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.6.0_xau5lck5xdxeprrricrh6e2w5m
       entities: registry.npmmirror.com/entities/2.2.0
-      graphql: registry.npmmirror.com/graphql/15.8.0
-      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
+      graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.5.0
       markdown-it: registry.npmmirror.com/markdown-it/12.3.2
       react: registry.npmmirror.com/react/18.2.0
       react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
@@ -3256,17 +3256,7 @@ packages:
       - graphql-ws
     dev: false
 
-  registry.npmmirror.com/graphql-2-json-schema/0.9.1:
-    resolution: {integrity: sha512-jO8NC+jBi3ZxEG9TPwVltkBoQuf3Fqsju3A0eLtj4E+s5jaabJn2haHeAOgePdzwJhGITTBASAYv8xEA/406UA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphql-2-json-schema/-/graphql-2-json-schema-0.9.1.tgz}
-    name: graphql-2-json-schema
-    version: 0.9.1
-    engines: {node: '>=8'}
-    dependencies:
-      json5: registry.npmmirror.com/json5/2.2.1
-      lodash: registry.npmmirror.com/lodash/4.17.21
-    dev: false
-
-  registry.npmmirror.com/graphql-language-service/5.0.6_graphql@15.8.0:
+  registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.5.0:
     resolution: {integrity: sha512-FjE23aTy45Lr5metxCv3ZgSKEZOzN7ERR+OFC1isV5mHxI0Ob8XxayLTYjQKrs8b3kOpvgTYmSmu6AyXOzYslg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphql-language-service/-/graphql-language-service-5.0.6.tgz}
     id: registry.npmmirror.com/graphql-language-service/5.0.6
     name: graphql-language-service
@@ -3275,12 +3265,12 @@ packages:
     peerDependencies:
       graphql: ^15.5.0 || ^16.0.0
     dependencies:
-      graphql: registry.npmmirror.com/graphql/15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
       nullthrows: registry.npmmirror.com/nullthrows/1.1.1
       vscode-languageserver-types: registry.npmmirror.com/vscode-languageserver-types/3.17.1
     dev: false
 
-  registry.npmmirror.com/graphql-ws/5.9.0_graphql@15.8.0:
+  registry.npmmirror.com/graphql-ws/5.9.0_graphql@16.5.0:
     resolution: {integrity: sha512-CXv0l0nI1bgChwl4Rm+BqNOAKwL/C9T2N8RfmTkhQ38YLFdUXCi2WNW4oFp8BJP+t75nCLzjHHgR04sP1oF02w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphql-ws/-/graphql-ws-5.9.0.tgz}
     id: registry.npmmirror.com/graphql-ws/5.9.0
     name: graphql-ws
@@ -3289,14 +3279,14 @@ packages:
     peerDependencies:
       graphql: '>=0.11 <=16'
     dependencies:
-      graphql: registry.npmmirror.com/graphql/15.8.0
+      graphql: registry.npmmirror.com/graphql/16.5.0
     dev: false
 
-  registry.npmmirror.com/graphql/15.8.0:
-    resolution: {integrity: sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphql/-/graphql-15.8.0.tgz}
+  registry.npmmirror.com/graphql/16.5.0:
+    resolution: {integrity: sha512-qbHgh8Ix+j/qY+a/ZcJnFQ+j8ezakqPiHwPiZhV/3PgGlgf96QMBB5/f2rkiC9sgLoy/xvT6TSiaf2nTHJh5iA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graphql/-/graphql-16.5.0.tgz}
     name: graphql
-    version: 15.8.0
-    engines: {node: '>= 10.x'}
+    version: 16.5.0
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
     dev: false
 
   registry.npmmirror.com/hard-rejection/2.1.0:
