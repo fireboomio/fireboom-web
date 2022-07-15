@@ -1,11 +1,11 @@
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useReducer } from 'react'
+import { useEffect, useLayoutEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 import { FSContext, FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
@@ -15,13 +15,13 @@ import styles from './index.module.scss'
 export default function FileStorage() {
   const [fileList, dispatch] = useReducer(storageReducer, [])
   const [showType, setShowType] = useImmer('data')
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCurrFSId(fileList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileList])
 
   const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<FileStorageItem[], Error>('/storageBucket', getFetcher)
+  const { data, error } = useSWR<FileStorageResp[], Error>('/storageBucket', getFetcher)
   useEffect(() => {
     data &&
       dispatch({
@@ -35,11 +35,11 @@ export default function FileStorage() {
 
   // TODO: need refine
 
-  const content = fileList.find((b) => b.id === currFSId) as FileStorageItem
+  const content = fileList.find((b) => b.id === currFSId) as FileStorageResp
 
-  function handleClickItem(fileStorageItem: FileStorageItem) {
+  function handleClickItem(fileStorageResp: FileStorageResp) {
     setShowType('data')
-    setCurrFSId(fileStorageItem.id)
+    setCurrFSId(fileStorageResp.id)
   }
 
   function handleToggleDesigner(value: 'setEdit' | 'setCheck', id: number) {

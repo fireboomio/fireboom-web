@@ -45,12 +45,12 @@ export default function AuthenticationMainCheck({ content }: Props) {
           }}
         >
           <Descriptions.Item label="供应商ID">{content.auth_supplier}</Descriptions.Item>
-          <Descriptions.Item label="App ID">{config.SQlType}</Descriptions.Item>
+          <Descriptions.Item label="App ID">{config.app_id}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
-                  {config.environmentVar}
+                  {config.app_secret}
                   <EyeOutlined className="ml-6" />
                 </div>
               ) : (
@@ -62,11 +62,11 @@ export default function AuthenticationMainCheck({ content }: Props) {
             </span>
           </Descriptions.Item>
           <Descriptions.Item label="Issuer">{config.environmentVar}</Descriptions.Item>
-          <Descriptions.Item label="服务发现地址">{config.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="JWKS">{config.host}</Descriptions.Item>
-          <Descriptions.Item label="jwksURL">{config.host}</Descriptions.Item>
-          <Descriptions.Item label="jwksJSON">{config.host}</Descriptions.Item>
-          <Descriptions.Item label="用户端点">{config.port}</Descriptions.Item>
+          <Descriptions.Item label="服务发现地址">{config.service_address}</Descriptions.Item>
+          <Descriptions.Item label="JWKS">{config.jwks}</Descriptions.Item>
+          <Descriptions.Item label="jwksURL">{config.jwks_url}</Descriptions.Item>
+          <Descriptions.Item label="jwksJSON">{config.jwks_json}</Descriptions.Item>
+          <Descriptions.Item label="用户端点">{config.user_point}</Descriptions.Item>
           <Descriptions.Item label="是否开启">{content.switch_state}</Descriptions.Item>
         </Descriptions>
       </div>

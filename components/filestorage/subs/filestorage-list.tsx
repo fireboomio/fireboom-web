@@ -1,15 +1,16 @@
+/* eslint-disable camelcase */
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
 import styles from './filestorage-common-main.module.scss'
 import FilesItem from './filestorage-item'
 
 interface Props {
-  onClickItem: (dsItem: FileStorageItem) => void
+  onClickItem: (fsItem: FileStorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
@@ -17,10 +18,18 @@ export default function FileStorageList({ onClickItem, handleToggleDesigner }: P
   const FSList = useContext(FSContext)
   const dispatch = useContext(FSDispatchContext)
 
-  const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
+  // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
 
   function addTable() {
-    const data = { id: getNextId(), name: '', info: {} } as FileStorageItem
+    const data = {
+      config: '2',
+      create_time: '2022',
+      id: 1,
+      is_del: 2,
+      name: '2',
+      switch: 2,
+      update_time: '2023',
+    } as FileStorageResp
     dispatch({ type: 'added', data: data })
   }
 
@@ -39,10 +48,10 @@ export default function FileStorageList({ onClickItem, handleToggleDesigner }: P
         </div>
       </div>
       <div className="mt-3">
-        {FSList.map((fileItem) => (
+        {FSList.map((fsItem) => (
           <FilesItem
-            key={fileItem.id}
-            fsItem={fileItem}
+            key={fsItem.id}
+            fsItem={fsItem}
             onClickItem={onClickItem}
             handleToggleDesigner={handleToggleDesigner}
           />

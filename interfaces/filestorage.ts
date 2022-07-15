@@ -1,19 +1,29 @@
-export interface FileStorageItem {
+export interface FileStorageResp {
+  config: string
+  create_time: string
   id: number
+  is_del: number
   name: string
-  info: {
-    [key: string]: number | string | boolean | []
-  }
+  switch: number
+  update_time: string
+}
+export interface FileStorageRequest {
+  config: string
+  create_time: string
+  is_del: number
+  name: string
+  switch: number
+  update_time: string
 }
 
 export type FlieAction = FilesingleAction | FilesListAction
 
 interface FilesingleAction {
   type: 'selected' | 'added' | 'deleted' | 'changed'
-  data: FileStorageItem
+  data: FileStorageResp
 }
 
 interface FilesListAction {
   type: 'fetched'
-  data: FileStorageItem[]
+  data: FileStorageResp[]
 }

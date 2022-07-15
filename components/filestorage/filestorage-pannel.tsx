@@ -1,10 +1,10 @@
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 
 import styles from './filestorage-pannel.module.scss'
 import FileStorageList from './subs/filestorage-list'
 
 interface Props {
-  onClickItem: (fsItem: FileStorageItem) => void
+  onClickItem: (fsItem: FileStorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 

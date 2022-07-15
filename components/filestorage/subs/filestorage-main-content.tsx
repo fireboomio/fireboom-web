@@ -22,12 +22,12 @@ import {
 import Image from 'next/image'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 
 import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
 }
 
 interface Option {

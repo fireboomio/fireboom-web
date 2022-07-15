@@ -2,12 +2,12 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Divider } from 'antd'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 
 import styles from './filestorage-common-main.module.scss'
 // import styles from './datasource-db-main.module.scss'
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
 }
 export default function FileStorageMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
@@ -17,11 +17,11 @@ export default function FileStorageMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const { config } = content
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-  console.log(info)
+  console.log(config)
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">
@@ -37,12 +37,12 @@ export default function FileStorageMainCheck({ content }: Props) {
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
-            <Button className={styles['center-btn']}>
-              <span>取消</span>
-            </Button>
-            <Button className={styles['save-btn']}>
-              <span>保存</span>
-            </Button>
+          <Button className={styles['center-btn']}>
+            <span>取消</span>
+          </Button>
+          <Button className={styles['save-btn']}>
+            <span>保存</span>
+          </Button>
         </div>
       </div>
 
@@ -59,14 +59,14 @@ export default function FileStorageMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="名称">{info.connectName}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{info.SQlType}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{info.typeName} </Descriptions.Item>
+          <Descriptions.Item label="名称">{content.name}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">{config}</Descriptions.Item>
+          <Descriptions.Item label="APP ID">{config} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
-                  {info.environmentVar}
+                  {config}
                   <EyeOutlined className="ml-6" />
                 </div>
               ) : (
@@ -77,8 +77,8 @@ export default function FileStorageMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="区域">{info.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="bucketName">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="区域">{config}</Descriptions.Item>
+          <Descriptions.Item label="bucketName">{config}</Descriptions.Item>
           <Descriptions.Item label="开启SSL">
             <div>
               <Button className={styles['SSL-open-btn']}>开启</Button>
