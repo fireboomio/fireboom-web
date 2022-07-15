@@ -70,27 +70,54 @@
   }
 }
 
-.save-btn {
-  width: 62px;
-  height: 28px;
+// .save-btn {
+//   width: 62px;
+//   height: 28px;
+//   padding: 0;
+//   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+//   border-radius: 2px;
+
+//   &:hover,
+//   &:focus {
+//     color: rgb(233 92 127);
+//     background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+//     border-color: #e13d5b;
+//   }
+
+//   span {
+//     width: 33px;
+//     height: 20px;
+//     color: #fff;
+//     font-size: 14px;
+//   }
+// }
+
+.save-env-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 72px;
+  height: 32px;
   padding: 0;
-  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
-  border-radius: 2px;
+  background: linear-gradient(40deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 4px;
+  color: #fafafa;
+  font-size: 14px;
+  font-weight: 500;
 
   &:hover,
   &:focus {
-    color: rgb(233 92 127);
-    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    background: linear-gradient(56deg, #ff9378 0%, #db5d74 100%);
     border-color: #e13d5b;
   }
 
   span {
+    letter-spacing: 4px;
     width: 33px;
-    height: 20px;
-    color: #fff;
-    font-size: 14px;
+    line-height: 20px;
   }
 }
+
 .authSetFrom :global {
   .ant-form-item {
     margin-bottom: 16px;
