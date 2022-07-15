@@ -28,7 +28,7 @@ export default function Datasource() {
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
   const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
-    '/api/v1/dataSource',
+    '/dataSource',
     getFetcher<DatasourceResp[]>
   )
 
