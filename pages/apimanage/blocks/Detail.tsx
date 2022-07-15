@@ -81,9 +81,10 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const [gqlSchemaDef, setGqlSchemaDef] = useState<DefinitionNode[]>(undefined!)
   const [dataSource, setDataSource] = useState([])
   const [reqDataSource, setReqDataSource] = useState([])
+  const [tabActiveKey, setTabActiveKey] = useState('0')
 
   useEffect(() => {
-    getFetcher<string>('/gql-schema')
+    getFetcher<string>('/operateApi/getGenerateSchema')
       // .then((res) => {
       //   const ast = buildSchema(res, { noLocation: true })
       //   console.log('ast', ast)
@@ -98,8 +99,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
   useEffect(() => {
     if (!path) return
-    // getFetcher(`/operateApi/${path}`)
-    getFetcher('/gql-query-str')
+    getFetcher(`/operateApi/${path}`)
+      // getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def))
       .catch((err: Error) => {
@@ -146,15 +147,18 @@ const Detail: FC<DetailProps> = ({ path }) => {
           <Select className="flex-1" allowClear />
         </div>
       </div>
+
       <div className="mt-42px">
-        <RcTab tabs={tabs} />
+        <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} />
         <Table
+          size="middle"
           className="mt-6"
           columns={reqColumns}
           dataSource={reqDataSource}
           pagination={false}
         />
       </div>
+
       <div className="my-10.5">
         <div className="text-[#5F6269] leading-22px text-16px">返回响应</div>
         <div className="mt-3">

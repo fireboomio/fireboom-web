@@ -1,12 +1,12 @@
 import { CaretRightOutlined, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import { Button, Form, Input, Select, Radio, Switch, Tabs, Upload, Collapse } from 'antd'
-import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from './datasource-common-main.module.scss'
 
@@ -28,8 +28,8 @@ export default function DatasourceEditorMainEdit({ content }: Props) {
 
   const onFinish = async (values: object) => {
     console.log('Success:', values)
-    await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
-    const datasource: Response = await axios.get('/api/v1/dataSource')
+    await requests.put('/dataSource', { ...content, config: JSON.stringify(values) })
+    const datasource: Response = await requests.get('/dataSource')
     dispatch({
       type: 'fetched',
       data: datasource.data.result.filter((item) => item.source_type == 2),

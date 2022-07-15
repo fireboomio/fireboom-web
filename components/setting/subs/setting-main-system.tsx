@@ -23,7 +23,7 @@ export default function SettingMainVersion() {
   }
 
   useEffect(() => {
-    void axios.get('/api/v1/setting/systemConfig')
+    void axios.get('/setting/systemConfig')
   }, [])
 
   return (

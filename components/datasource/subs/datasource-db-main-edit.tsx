@@ -45,8 +45,8 @@ export default function DatasourceDBMainEdit({ content }: Props) {
 
   const onFinish = async (values: object) => {
     console.log('Success:', values)
-    await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
-    const datasource: Response = await axios.get('/api/v1/dataSource')
+    await axios.put('/dataSource', { ...content, config: JSON.stringify(values) })
+    const datasource: Response = await axios.get('/dataSource')
     dispatch({
       type: 'fetched',
       data: datasource.data.result.filter((item) => item.source_type == 1),

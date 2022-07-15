@@ -1,7 +1,6 @@
 import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
-import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -11,6 +10,7 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from '../datasource-pannel.module.scss'
 
@@ -39,12 +39,12 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
       if (datasourceItem.id != 0) {
-        await axios.put('/api/v1/dataSource', { ...datasourceItem, name: value })
+        await requests.put('/dataSource', { ...datasourceItem, name: value })
         dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       } else {
         const req = { ...datasourceItem, name: value }
         Reflect.deleteProperty(req, 'id')
-        await axios.post('/api/v1/dataSource', req)
+        await requests.post('/dataSource', req)
         dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       }
     }
@@ -52,7 +52,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
   }
 
   async function handleItemDelete(item: DatasourceResp) {
-    const result = await axios.delete(`/api/v1/dataSource/${item.id}`)
+    const result = await requests.delete(`/dataSource/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
       dispatch({ type: 'deleted', data: item })

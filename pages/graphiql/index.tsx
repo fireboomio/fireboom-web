@@ -63,7 +63,7 @@ export default function App() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
-    return fetch('http://localhost:9991/api/main/graphql', {
+    return fetch('/api/main/graphql', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
