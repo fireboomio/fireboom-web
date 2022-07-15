@@ -22,8 +22,8 @@ requests.interceptors.response.use(
 )
 
 export const getFetcher = <T>(url: string, params?: Record<string, string>) =>
-  axios.get<Result<T>>(url, { params: params }).then((res) => {
-    return res.data.result ?? (res.data as unknown as T)
+  requests.get<unknown, T>(url, { params: params }).then((res) => {
+    return res
   })
 
 export default requests

@@ -19,6 +19,14 @@ const nextConfig = {
         destination: 'http://127.0.0.1:8081/query.gql',
       },
       {
+        source: '/api/v1/schemas/:path*',
+        destination: 'http://127.0.0.1:8080/schemas/:path*',
+      },
+      {
+        source: '/api/v1/sources/:path*',
+        destination: 'http://127.0.0.1:8080/sources/:path*',
+      },
+      {
         source: '/api/v1/:path*',
         destination: 'http://192.168.166.199:9123/:path*',
       },

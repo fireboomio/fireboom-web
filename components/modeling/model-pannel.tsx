@@ -5,7 +5,7 @@ import { useContext, useEffect } from 'react'
 
 import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
-import { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 
 import styles from './model-pannel.module.scss'
 import ModelEntityList from './subs/model-entity-list'
@@ -26,7 +26,8 @@ export default function ModelPannel({
   const dispatch = useContext(ModelingDispatchContext)
 
   useEffect(() => {
-    getFetcher<SchemaResp>(`/api/v1/schemas/${sourceOptions[0].id}`)
+    requests
+      .get<unknown, SchemaResp>(`/schemas/${sourceOptions[0].id}`)
       .then((res) =>
         dispatch({
           type: 'fetched',
