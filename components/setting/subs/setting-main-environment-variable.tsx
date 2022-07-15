@@ -8,44 +8,25 @@ import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
 
-interface DataType {
-  key: number
-  name: string
-  devEnv?: string
-  proEnv?: string
-}
 
-const data: DataType[] = [
-  {
-    key: 1,
-    name: 'DB_HOST',
-    devEnv: '1232314',
-    proEnv: '******',
-  },
-  {
-    key: 2,
-    name: 'DB_HOST2',
-    devEnv: '1232314',
-    proEnv: '******',
-  },
-  {
-    key: 3,
-    name: 'DB_HOST3',
-    devEnv: '1232314',
-    proEnv: '******',
-  },
-]
+interface DataType {
+  name: string
+  dev?: string
+  pro?: string
+}
+interface EnvironmentConfig {
+  environmentList: Array<DataType>
+  systemVariable: string
+}
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
-  const [variableData, setVariableData] = useImmer(data)
-  const [environmentConfig, setEnvironmentConfig] = useImmer({})
-  
+  const [environmentConfig, setEnvironmentConfig] = useImmer({} as EnvironmentConfig)
+
   const getData = useCallback(async () => {
-    const result = await requests.get('/setting/environmentConfig')
-    console.log(result)
+    const result = await requests.get<unknown, EnvironmentConfig>('/setting/environmentConfig')
     setEnvironmentConfig(result)
   }, [])
 
@@ -55,12 +36,11 @@ export default function SettingMainEnvironmentVariable() {
   }, [])
 
   const onFinish = (values: DataType) => {
-    setVariableData(
-      variableData.concat({
-        ...values,
-        key: variableData.length + 1,
-      })
-    )
+    setEnvironmentConfig((draft) => {
+      const newEnvList = draft.environmentList.concat(values)
+      void requests.post('/setting', { key: 'environmentList', val: newEnvList })
+      draft.environmentList.push(values)
+    })
     console.log('Success:', values)
   }
 
@@ -72,12 +52,13 @@ export default function SettingMainEnvironmentVariable() {
   //   )
   // }
 
-  const handleDeleteVariable = (key: number) => {
-    setVariableData(
-      variableData.filter((row) => {
-        return row.key !== key
-      })
-    )
+  const handleDeleteEnvVariable = (name: string) => {
+    setEnvironmentConfig((draft) => {
+      const newEnvList = draft.environmentList.filter((item) => item.name != name)
+      const result = requests.post('/setting', { key: 'environmentList', val: newEnvList })
+      console.log(result)
+      draft.environmentList = draft.environmentList.filter((item) => item.name != name)
+    })
   }
 
   const handleToggleSecret = () => {
@@ -100,20 +81,20 @@ export default function SettingMainEnvironmentVariable() {
     },
     {
       title: '开发环境',
-      dataIndex: 'devEnv',
-      key: 'devEnv',
+      dataIndex: 'dev',
+      key: 'dev',
     },
     {
       title: '生产环境',
-      key: 'proEnv',
-      dataIndex: 'proEnv',
-      render: (_, { devEnv }) => <span>{devEnv}</span>,
+      key: 'pro',
+      dataIndex: 'pro',
+      render: (_, { pro }) => <span>{pro}</span>,
     },
 
     {
       title: '操作',
       dataIndex: 'action',
-      render: (_, { key }) => (
+      render: (_, { name }) => (
         <div>
           <EditOutlined
             onClick={() => {
@@ -124,7 +105,7 @@ export default function SettingMainEnvironmentVariable() {
           />
           <DeleteOutlined
             onClick={() => {
-              handleDeleteVariable(key)
+              handleDeleteEnvVariable(name)
             }}
           />
         </div>
@@ -164,16 +145,16 @@ export default function SettingMainEnvironmentVariable() {
               onOk={() => setIsVariableVisible(false)}
               onCancel={() => setIsVariableVisible(false)}
               okText={
-                <Button
-                  className={styles['save-btn']}
+                <div
+                  className={styles['save-env-btn']}
                   onClick={() => {
                     form.submit()
                   }}
                 >
-                  <div>保存</div>
-                </Button>
+                  <span>保存</span>
+                </div>
               }
-              cancelText="取消"
+              cancelText={<span className="w-10">取消</span>}
               okType="text"
             >
               <Form
@@ -188,17 +169,23 @@ export default function SettingMainEnvironmentVariable() {
                 <Form.Item label="名称" name="name">
                   <Input />
                 </Form.Item>
-                <Form.Item label="开发环境" name="devEnv">
+                <Form.Item label="开发环境" name="dev">
                   <Input />
                 </Form.Item>
-                <Form.Item label="生产环境" name="proEnv">
+                <Form.Item label="生产环境" name="pro">
                   <Input />
                 </Form.Item>
               </Form>
             </Modal>
           </div>
         </div>
-        <Table columns={columns} dataSource={variableData} pagination={false} className="mb-3 " />
+        <Table
+          columns={columns}
+          dataSource={environmentConfig.environmentList}
+          rowKey={(record) => record.name}
+          pagination={false}
+          className="mb-3 "
+        />
         <div className="border-gray border-b">
           <div>
             <span>系统变量</span>

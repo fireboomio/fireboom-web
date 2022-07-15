@@ -33,9 +33,11 @@ const formItemLayoutWithOutLabel = {
 
 export default function SettingCrossdomain() {
   const [corsConfiguration, setCorsConfiguration] = useImmer({} as CorsConfiguration)
+
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
+  
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
     setCorsConfiguration(result)
