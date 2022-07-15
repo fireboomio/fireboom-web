@@ -9,7 +9,7 @@ const requests = axios.create({
 
 requests.interceptors.response.use(
   <T>(resp: AxiosResponse<Result<T>>) => {
-    if (resp.data.code >= 200 && resp.data.code < 300) {
+    if (resp.status >= 200 && resp.status < 300) {
       return resp.data.result ?? (resp.data as unknown as T)
     } else {
       // eslint-disable-next-line no-console

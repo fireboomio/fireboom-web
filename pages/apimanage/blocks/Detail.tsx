@@ -83,7 +83,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const [reqDataSource, setReqDataSource] = useState([])
 
   useEffect(() => {
-    getFetcher<string>('/api/v1/gql-schema')
+    getFetcher<string>('/gql-schema')
       // .then((res) => {
       //   const ast = buildSchema(res, { noLocation: true })
       //   console.log('ast', ast)
@@ -98,8 +98,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
   useEffect(() => {
     if (!path) return
-    // getFetcher(`/api/v1/operateApi/${path}`)
-    getFetcher('/api/v1/gql-query-str')
+    // getFetcher(`/operateApi/${path}`)
+    getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def))
       .catch((err: Error) => {

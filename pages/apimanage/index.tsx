@@ -97,7 +97,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
-    getFetcher<operationResp[]>('/api/v1/operateApi')
+    getFetcher<operationResp[]>('/operateApi')
       .then((res) => setTreeData(convertToTree(res) as DataNode[]))
       .catch((err: Error) => {
         throw err
