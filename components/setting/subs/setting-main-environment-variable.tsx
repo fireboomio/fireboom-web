@@ -42,7 +42,7 @@ export default function SettingMainEnvironmentVariable() {
   const [variableData, setVariableData] = useImmer(data)
 
   useEffect(() => {
-    void axios.get('/api/v1/setting/environmentConfig')
+    void axios.get('/setting/environmentConfig')
   }, [])
 
   const onFinish = (values: DataType) => {

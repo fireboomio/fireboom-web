@@ -17,7 +17,6 @@ import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 import styles from './index.module.scss'
 
-
 export default function Datasource() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
@@ -27,10 +26,7 @@ export default function Datasource() {
   }, [datasourceList])
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
-    '/api/v1/dataSource',
-    getFetcher<DatasourceResp[]>
-  )
+  const { data: datasource, error } = useSWR<DatasourceResp[], Error>('/dataSource', getFetcher)
 
   useEffect(() => {
     datasource &&

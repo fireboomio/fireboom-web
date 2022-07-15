@@ -22,7 +22,7 @@ export default function SettingMainSecurity() {
   }
 
   useEffect(() => {
-   void axios.get('/api/v1/setting/securityConfig')
+    void axios.get('/setting/securityConfig')
   }, [])
 
   return (

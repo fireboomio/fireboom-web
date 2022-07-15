@@ -22,7 +22,7 @@ export default function Authentication() {
   }, [authProvList])
 
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<AuthProvResp[], Error>('/api/v1/auth', getFetcher<AuthProvResp[]>)
+  const { data, error } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
   useEffect(() => {
     data &&
       dispatch({
