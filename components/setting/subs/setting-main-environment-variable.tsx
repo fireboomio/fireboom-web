@@ -8,7 +8,6 @@ import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
 
-
 interface DataType {
   name: string
   dev?: string

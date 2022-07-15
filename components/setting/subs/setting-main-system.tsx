@@ -4,28 +4,52 @@ import {
   PoweroffOutlined,
   EditOutlined,
 } from '@ant-design/icons'
-import { Descriptions, Divider, Radio, Switch, Button } from 'antd'
 import type { RadioChangeEvent } from 'antd'
-import axios from 'axios'
-import { useEffect } from 'react'
+import { Descriptions, Divider, Radio, Switch, Button, Input } from 'antd'
+import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
+
+import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
 
-export default function SettingMainVersion() {
-  const [value, setValue] = useImmer(1)
+//字段名少了运行时长 类型
+interface systemConfig {
+  apiPort: string
+  debugSwitch: string
+  devSwitch: string
+  forcedJumpSwitch: string
+  logLevel: string
+  middlewarePort: string
+}
 
+export default function SettingMainVersion() {
+  const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
+  const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
+  const [value, setValue] = useImmer(1)
+  const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const onChange = (e: RadioChangeEvent) => {
     console.log('radio checked', e.target.value)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     setValue(e.target.value)
   }
-
-  useEffect(() => {
-    void axios.get('/setting/systemConfig')
+  const getData = useCallback(async () => {
+    const result = await requests.get<unknown, systemConfig>('/setting/systemConfig')
+    console.log(result, '123')
+    setSystemConfig(result)
   }, [])
 
+  useEffect(() => {
+    void getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const editPort = async (key: string, value: string) => {
+    if (value == '') return
+    await requests.post('/setting', { key: key, val: value })
+    void getData()
+  }
   return (
     <>
       <div>
@@ -55,13 +79,48 @@ export default function SettingMainVersion() {
           >
             <Descriptions.Item label="运行时长">23h34m</Descriptions.Item>
             <Descriptions.Item label="API端口">
-              9921 <EditOutlined className="ml-2" />
+              {isApiPortEditing ? (
+                <Input
+                  autoFocus
+                  className="w-20 h-6 pl-1.5"
+                  type="text"
+                  onBlur={(e) => {
+                    setIsApiPortEditing(!isApiPortEditing)
+                    void editPort('apiPort', e.target.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.apiPort}</span>
+              )}
+              <EditOutlined
+                className="ml-2"
+                onClick={() => {
+                  setIsApiPortEditing(!isApiPortEditing)
+                }}
+              />
             </Descriptions.Item>
             <Descriptions.Item label="中间件端口">
-              9921 <EditOutlined className="ml-2" />
+              {isMidPortEditing ? (
+                <Input
+                  autoFocus
+                  type="text"
+                  className="w-20 h-6 pl-1.5"
+                  onBlur={(e) => {
+                    setIsMidPortEditing(!isMidPortEditing)
+                    void editPort('middlewarePort', e.target.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.middlewarePort}</span>
+              )}
+              <EditOutlined
+                className="ml-2"
+                onClick={() => {
+                  setIsMidPortEditing(!isMidPortEditing)
+                }}
+              />
             </Descriptions.Item>
             <Descriptions.Item label="类型">
-              {' '}
               <Radio.Group defaultValue="env" onChange={onChange} value={value}>
                 <Radio value={1} className="mr-15 ">
                   info
@@ -73,10 +132,18 @@ export default function SettingMainVersion() {
               </Radio.Group>
             </Descriptions.Item>
             <Descriptions.Item label="开发者模式">
-              <Switch defaultChecked className={styles['switch-edit-btn']} size="small" />
+              <Switch
+                checked={systemConfig.devSwitch == '1' ? true : false}
+                className={styles['switch-edit-btn']}
+                size="small"
+              />
             </Descriptions.Item>
             <Descriptions.Item label="强制跳转">
-              <Switch defaultChecked className={styles['switch-edit-btn']} size="small" />
+              <Switch
+                checked={systemConfig.forcedJumpSwitch == '1' ? true : false}
+                className={styles['switch-edit-btn']}
+                size="small"
+              />
             </Descriptions.Item>
           </Descriptions>
         </div>

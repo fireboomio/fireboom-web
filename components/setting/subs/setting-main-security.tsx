@@ -19,9 +19,11 @@ const formItemLayoutWithOutLabel = {
 }
 
 export default function SettingMainSecurity() {
+  const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
-  const onFinish = (values: unknown) => {
-    console.log('Success:', values)
+  const onFinish = (values: SecurConfig) => {
+    console.log('Success:', values.allowedHosts)
+    void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
   }
 
   const connectSwitchOnChange = () => {
@@ -29,7 +31,7 @@ export default function SettingMainSecurity() {
   }
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, SecurConfig>('/setting/securityConfig')
-    console.log(result,'123')
+    console.log(result)
     setSecurConfig(result)
   }, [])
 
@@ -40,11 +42,22 @@ export default function SettingMainSecurity() {
 
   return (
     <>
+      <button
+        onClick={() => {
+          form.submit()
+        }}
+      >
+        提交
+      </button>
       {securConfig.allowedHosts?.length > 1 ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
+            form={form}
             name="dynamic_form_item"
-            initialValues={{ corsLists: securConfig.allowedHosts }}
+            initialValues={{
+              allowedHosts: securConfig.allowedHosts,
+              enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint,
+            }}
             onFinish={onFinish}
             labelAlign="left"
             labelCol={{
@@ -59,7 +72,7 @@ export default function SettingMainSecurity() {
             <Form.Item label="GraphQL端点：">
               <Form.Item
                 valuePropName="checked"
-                name="GraphPort"
+                name="enableGraphQLEndpoint"
                 noStyle
                 rules={[{ required: true, message: 'Username is required' }]}
               >
@@ -82,7 +95,7 @@ export default function SettingMainSecurity() {
                 sm: { span: 20 },
               }}
             >
-              <Form.List name="corsLists">
+              <Form.List name="allowedHosts">
                 {(fields, { add, remove }, { errors }) => (
                   <>
                     {fields.map((field, index) => (
@@ -90,7 +103,11 @@ export default function SettingMainSecurity() {
                         <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
                           <div className="">
                             <div>{'域名' + (index + 1).toString() + ':'}</div>
-                            <Input placeholder="请输入域名..." style={{ width: '60%' }} />
+                            <Input
+                              placeholder="请输入域名..."
+                              style={{ width: '60%' }}
+                              value={securConfig.allowedHosts[index]}
+                            />
                             {fields.length > 1 ? (
                               <MinusCircleOutlined
                                 className={`${styles['form-delete-icon']}`}
@@ -122,7 +139,9 @@ export default function SettingMainSecurity() {
           </Form>
         </div>
       ) : (
-        <><span>ok</span></>
+        <>
+          <span>loading</span>
+        </>
       )}
     </>
   )

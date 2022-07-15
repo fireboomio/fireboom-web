@@ -26,7 +26,10 @@ export default function Datasource() {
   }, [datasourceList])
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  const { data: datasource, error } = useSWR<DatasourceResp[], Error>('/dataSource', getFetcher)
+  const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
+    '/dataSource',
+    getFetcher<DatasourceResp[]>
+  )
 
   useEffect(() => {
     datasource &&
