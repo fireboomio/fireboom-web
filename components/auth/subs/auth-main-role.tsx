@@ -5,7 +5,9 @@ import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import styles from './auth-common-main.module.scss'
-
+interface FromValues {
+  [key: string]: number | string | boolean
+}
 interface RoleProvResp {
   id: number
   code: string
@@ -47,6 +49,7 @@ interface Response {
 
 export default function AuthMainRole() {
   const [form] = Form.useForm()
+  const [disabled, setDisabled] = useImmer(true)
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const initData: RoleProvResp[] = []
   const [roleData, setRoleData] = useImmer(initData)
@@ -58,22 +61,28 @@ export default function AuthMainRole() {
   useEffect(() => {
     fetchData
   }, [])
-  const onFinish = async (values: RoleProvResp) => {
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    const res: Response = await axios.put('/api/v1/role', values)
-    const { result } = res.data
+    await axios.put('/api/v1/role', values)
+    const newdata: Response = await axios.get('/api/v1/dataSource')
+    const { result } = newdata.data
     setRoleData(result)
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
-  const handleAddRole = async (values: RoleProvResp) => {
-    form.submit()
-    const res: Response = await axios.post('/api/v1/role', values)
-    const { result } = res.data
-    setRoleData([...roleData, ...result])
+
+  const onValuesChange = (changedValues: object, allValues: FromValues) => {
+    console.log(allValues)
+    for (const key in allValues) {
+      if ((allValues[key] as string) == undefined || allValues[key] == '') {
+        setDisabled(true)
+        return
+      }
+    }
+    setDisabled(false)
   }
 
   const handleDeleteRole = async (item: RoleProvResp) => {
@@ -138,7 +147,13 @@ export default function AuthMainRole() {
         onOk={() => setModal1Visible(false)}
         onCancel={() => setModal1Visible(false)}
         okText={
-          <Button className={styles['save-btn']} onClick={() => void handleAddRole}>
+          <Button
+            disabled={disabled}
+            className={styles['save-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
             <span>保存</span>
           </Button>
         }
@@ -151,8 +166,11 @@ export default function AuthMainRole() {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
-          onFinish={() => void onFinish}
+          onFinish={(values) => {
+            void onFinish(values as object)
+          }}
           onFinishFailed={onFinishFailed}
+          onValuesChange={onValuesChange}
           autoComplete="off"
           labelAlign="left"
           className="h-30 mt-8 ml-8"
