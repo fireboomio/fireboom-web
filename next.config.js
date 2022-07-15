@@ -19,36 +19,8 @@ const nextConfig = {
         destination: 'http://127.0.0.1:8081/query.gql',
       },
       {
-        source: '/api/v1/operateApi/:path*',
-        destination: 'http:///120.26.62.151:9123/api/v1/operateApi/:path*',
-      },
-      {
-        source: '/api/v1/setting/:path*',
-        destination: 'http://192.168.166.199:9123/api/v1/setting/:path*',
-      },
-      {
-        source: '/api/v1/dataSource/:path*',
-        destination: 'http://192.168.166.199:9123/api/v1/dataSource/:path*',
-      },
-      {
-        source: '/api/v1/auth',
-        destination: 'http://192.168.166.199:9123/api/v1/auth',
-      },
-      {
-        source: '/api/v1/auth/:path*',
-        destination: 'http://192.168.166.199:9123/api/v1/auth',
-      },
-      {
-        source: '/api/v1/role',
-        destination: 'http://192.168.166.199:9123/api/v1/role',
-      },
-      {
-        source: '/api/v1/role/:path*',
-        destination: 'http://192.168.166.199:9123/api/v1/role',
-      },
-      {
         source: '/api/v1/:path*',
-        destination: 'http://localhost:8080/:path*',
+        destination: 'http://192.168.166.199:9123/:path*',
       },
     ]
   },
