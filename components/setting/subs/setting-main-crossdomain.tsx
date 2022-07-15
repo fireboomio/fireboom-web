@@ -1,9 +1,20 @@
 import { PlusOutlined, MinusCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch } from 'antd'
-import axios from 'axios'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
+import { useImmer } from 'use-immer'
+
+import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
+
+interface CorsConfiguration {
+  allowedOrigins: Array<string>
+  allowedMethods: Array<string>
+  allowedHeaders: Array<string>
+  allowCredentials: number
+  exposedHeaders: Array<string>
+  maxAge: number
+}
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
@@ -11,14 +22,28 @@ const formItemLayoutWithOutLabel = {
     sm: { span: 16 },
   },
 }
+// let corsConfiguration: CorsConfiguration = {
+//   allowedOrigins: [],
+//   allowedMethods: [],
+//   allowedHeaders: [],
+//   allowCredentials: 0,
+//   exposedHeaders: [],
+//   maxAge: 0,
+// }
 
 export default function SettingCrossdomain() {
+  const [corsConfiguration, setCorsConfiguration] = useImmer({} as CorsConfiguration)
   const onFinish = (values: unknown) => {
     console.log('Success:', values)
   }
+  const getData = useCallback(async () => {
+    const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
+    setCorsConfiguration(result)
+  }, [])
 
   useEffect(() => {
-    void axios.get('/api/v1/setting/corsConfiguration')
+    void getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -45,7 +70,7 @@ export default function SettingCrossdomain() {
               sm: { span: 20 },
             }}
           >
-            <Form.List name="names" initialValue={[{}]}>
+            <Form.List name="names" initialValue={corsConfiguration.allowedOrigins}>
               {(fields, { add, remove }, { errors }) => (
                 <>
                   {fields.map((field, index) => (
@@ -98,7 +123,7 @@ export default function SettingCrossdomain() {
               <Input /> 秒
             </span>
           </Form.Item>
-          <Form.Item label="Username">
+          <Form.Item label="允许证书">
             <Form.Item
               valuePropName="checked"
               name="username"

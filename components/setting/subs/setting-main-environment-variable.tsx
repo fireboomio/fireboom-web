@@ -1,9 +1,10 @@
 import { EyeFilled, EyeInvisibleFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Button, Descriptions, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import axios from 'axios'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
+
+import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
 
@@ -34,15 +35,23 @@ const data: DataType[] = [
     proEnv: '******',
   },
 ]
-
+//系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
   const [variableData, setVariableData] = useImmer(data)
+  const [environmentConfig, setEnvironmentConfig] = useImmer({})
+  
+  const getData = useCallback(async () => {
+    const result = await requests.get('/setting/environmentConfig')
+    console.log(result)
+    setEnvironmentConfig(result)
+  }, [])
 
   useEffect(() => {
-    void axios.get('/setting/environmentConfig')
+    void getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onFinish = (values: DataType) => {
