@@ -138,7 +138,13 @@ const Detail: FC<DetailProps> = ({ path }) => {
       </div>
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>POST</span>
-        <span className="flex-1 text-[#000000D9]">/user/reg</span>
+        <span className="flex-1 text-[#000000D9]">
+          {path
+            .split('/')
+            .slice(0, path.split('/').length)
+            .join('/')
+            .replace(/\.graphql(\.off)?$/, '')}
+        </span>
       </div>
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
