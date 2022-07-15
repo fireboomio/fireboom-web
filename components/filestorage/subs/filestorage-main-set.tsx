@@ -1,8 +1,8 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
-import axios from 'axios'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/filestorage'
+import requests from '@/lib/fetchers'
 
 import styles from './filestorage-common-main.module.scss'
 
@@ -27,8 +27,8 @@ export default function StorageMainSet({ content }: Props) {
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    await axios.put('/auth', { ...content, config: JSON.stringify(values) })
-    const auth: Response = await axios.get('/auth')
+    await requests.put('/auth', { ...content, config: JSON.stringify(values) })
+    const auth: Response = await requests.get('/auth')
     console.log(auth)
   }
 

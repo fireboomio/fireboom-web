@@ -1,12 +1,12 @@
 import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
-import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/filestorage'
 import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from '../filestorage-pannel.module.scss'
 
@@ -34,12 +34,12 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
       dispatch({ type: 'deleted', data: fsItem })
     } else {
       if (fsItem.id !== 0) {
-        await axios.put('/storageBucket ', { ...fsItem, name: value })
+        await requests.put('/storageBucket ', { ...fsItem, name: value })
         dispatch({ type: 'changed', data: { ...fsItem, name: value } })
       } else {
         const req = { ...fsItem, name: value }
         Reflect.deleteProperty(req, 'id')
-        await axios.post('/storageBucket ', req)
+        await requests.post('/storageBucket ', req)
         dispatch({ type: 'changed', data: { ...fsItem, name: value } })
       }
     }
@@ -47,7 +47,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
   }
 
   async function handleItemDelete(item: FileStorageResp) {
-    const result = await axios.delete(`/storageBucket /${item.id}`)
+    const result = await requests.delete(`/storageBucket /${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
       dispatch({ type: 'deleted', data: item })

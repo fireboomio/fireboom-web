@@ -1,12 +1,12 @@
 import { RightOutlined } from '@ant-design/icons'
 import { Button, Divider, Form, Input, Radio } from 'antd'
 import type { RadioChangeEvent } from 'antd'
-import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
 interface FromValues {
@@ -35,8 +35,8 @@ export default function AuthMainCheck({ content }: Props) {
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    await axios.put('/auth', { ...content, config: JSON.stringify(values) })
-    const auth: Response = await axios.get('/auth')
+    await requests.put('/auth', { ...content, config: JSON.stringify(values) })
+    const auth: Response = await requests.get('/auth')
     console.log(auth)
   }
 

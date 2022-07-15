@@ -15,12 +15,6 @@ import {
   ModelingDispatchContext,
   ModelingCurrEntityContext,
 } from './modeling-context'
-// import {
-//   RoleContext,
-//   RoleDispatchContext,
-//   RoleCurrContext,
-//   RoleToggleContext,
-// } from './role-context'
 import { FSContext, FSDispatchContext, FSCurrFileContext } from './storage-context'
 export {
   ModelingContext,
@@ -37,8 +31,4 @@ export {
   AuthDispatchContext,
   AuthCurrContext,
   AuthToggleContext,
-  // RoleContext,
-  // RoleDispatchContext,
-  // RoleCurrContext,
-  // RoleToggleContext,
 }

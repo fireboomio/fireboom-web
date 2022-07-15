@@ -1,12 +1,12 @@
 import { AppleOutlined, MoreOutlined, GithubOutlined, BarsOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
-import axios from 'axios'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from '../auth-pannel.module.scss'
 
@@ -34,12 +34,12 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
       dispatch({ type: 'deleted', data: authProvItem })
     } else {
       if (authProvItem.id !== 0) {
-        await axios.put('/auth', { ...authProvItem, name: value })
+        await requests.put('/auth', { ...authProvItem, name: value })
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       } else {
         const req = { ...authProvItem, name: value }
         Reflect.deleteProperty(req, 'id')
-        await axios.post('/auth', req)
+        await requests.post('/auth', req)
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       }
     }
@@ -47,7 +47,7 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
   }
 
   async function handleItemDelete(item: AuthProvResp) {
-    const result = await axios.delete(`/auth/${item.id}`)
+    const result = await requests.delete(`/auth/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
       dispatch({ type: 'deleted', data: item })
