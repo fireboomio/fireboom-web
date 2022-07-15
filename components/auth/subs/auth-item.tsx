@@ -34,12 +34,12 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
       dispatch({ type: 'deleted', data: authProvItem })
     } else {
       if (authProvItem.id !== 0) {
-        await axios.put('/api/v1/auth', { ...authProvItem, name: value })
+        await axios.put('/auth', { ...authProvItem, name: value })
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       } else {
         const req = { ...authProvItem, name: value }
         Reflect.deleteProperty(req, 'id')
-        await axios.post('/api/v1/auth', req)
+        await axios.post('/auth', req)
         dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
       }
     }
@@ -47,7 +47,7 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
   }
 
   async function handleItemDelete(item: AuthProvResp) {
-    const result = await axios.delete(`/api/v1/auth/${item.id}`)
+    const result = await axios.delete(`/auth/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
       dispatch({ type: 'deleted', data: item })

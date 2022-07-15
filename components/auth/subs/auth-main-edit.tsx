@@ -35,8 +35,8 @@ export default function AuthMainCheck({ content }: Props) {
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    await axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
-    const auth: Response = await axios.get('/api/v1/auth')
+    await axios.put('/auth', { ...content, config: JSON.stringify(values) })
+    const auth: Response = await axios.get('/auth')
     console.log(auth)
   }
 

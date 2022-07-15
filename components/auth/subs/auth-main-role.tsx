@@ -54,7 +54,7 @@ export default function AuthMainRole() {
   const initData: RoleProvResp[] = []
   const [roleData, setRoleData] = useImmer(initData)
   const fetchData = async () => {
-    const res: Response = await axios.get('/api/v1/role')
+    const res: Response = await axios.get('/role')
     const { result } = res.data
     setRoleData(result)
   }
@@ -64,8 +64,8 @@ export default function AuthMainRole() {
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    await axios.put('/api/v1/role', values)
-    const newdata: Response = await axios.get('/api/v1/dataSource')
+    await axios.put('/role', values)
+    const newdata: Response = await axios.get('/role')
     const { result } = newdata.data
     setRoleData(result)
   }
@@ -86,7 +86,7 @@ export default function AuthMainRole() {
   }
 
   const handleDeleteRole = async (item: RoleProvResp) => {
-    const res: Response = await axios.delete(`/api/v1/role/${item.id}`)
+    const res: Response = await axios.delete(`/role/${item.id}`)
     const { result } = res.data
     setRoleData(result)
   }
