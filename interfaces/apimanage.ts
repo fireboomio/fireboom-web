@@ -5,6 +5,7 @@ export interface operationResp {
   children: operationResp[] | null
   originTitle?: string
   path?: string
+  disable: boolean
 }
 
 export interface FieldType {

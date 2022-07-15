@@ -5,6 +5,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable react/prop-types */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
 import {
   AppleOutlined,
@@ -65,6 +67,7 @@ function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null
     path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
     children: convertToTree(x.children, `${lv}-${idx}`),
     originTitle: x.title,
+    disable: x.disable,
   }))
 }
 
@@ -105,10 +108,27 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [refreshFlag])
 
   const handlePressEnter = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    curEditingNode!.title = inputValue
-    setCurEditingNode(null)
-    setTreeData([...treeData])
+    if (!curEditingNode) return
+
+    const basePath = curEditingNode.path
+      .split('/')
+      .slice(0, curEditingNode.path.split('/').length - 1)
+      .join('/') as string
+    const newPath = `${basePath}/${inputValue}`
+
+    void requests
+      .put('/operateApi/rename', {
+        oldPath: curEditingNode.path,
+        newPath: newPath,
+        disable: curEditingNode.disable,
+      })
+      .then((res) => {
+        if (res) {
+          curEditingNode.title = inputValue
+          setCurEditingNode(null)
+          setTreeData([...treeData])
+        }
+      })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue])
 
