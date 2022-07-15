@@ -6,7 +6,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
+import { AuthToggleContext } from '@/lib/context'
 
 import styles from './auth-common-main.module.scss'
 interface FromValues {
@@ -23,7 +23,6 @@ interface Response {
 
 export default function AuthMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(AuthToggleContext)
-  const dispatch = useContext(AuthDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
   const [value, setValue] = useImmer(1)
@@ -38,11 +37,7 @@ export default function AuthMainCheck({ content }: Props) {
     console.log(JSON.stringify(values))
     await axios.put('/api/v1/auth', { ...content, config: JSON.stringify(values) })
     const auth: Response = await axios.get('/api/v1/auth')
-    dispatch({
-      type: 'fetched',
-      data: auth.data.result,
-    })
-    handleToggleDesigner('data', content.id)
+    console.log(auth)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -162,10 +157,10 @@ export default function AuthMainCheck({ content }: Props) {
           </Form.Item>
           <Form.Item label="是否开启" name="switch_state">
             <Radio.Group onChange={onOpenRadio} value={open}>
-              <Radio value={2 | 3} className="mr-6.5">
+              <Radio value={1} className="mr-6.5">
                 基于Cookie
               </Radio>
-              <Radio value={2 | 3}>基于Token</Radio>
+              <Radio value={2}>基于Token</Radio>
             </Radio.Group>
           </Form.Item>
         </Form>
