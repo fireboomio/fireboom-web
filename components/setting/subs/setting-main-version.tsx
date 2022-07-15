@@ -19,7 +19,7 @@ export default function SettingMainVersion() {
     async function getData() {
       const result: Response = await axios.get('/api/v1/setting/versionConfig')
       versionConfig = result.data.result
-      console.log(versionConfig)
+      console.log(versionConfig,'123')
     }
     void getData()
   }, [])
