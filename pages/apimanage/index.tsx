@@ -102,7 +102,7 @@ function findNode(key: string, data: DataNode[] | undefined): DataNode | undefin
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
-  const [isAdding, _setIsAdding] = useState(false)
+  const [addType, setAddType] = useState<'文件' | '目录' | '编辑'>(null)
   const [treeData, setTreeData] = useState<DataNode[]>(null!)
   const [selectedKey, setSelectedKey] = useState<string>('')
   const [curEditingNode, setCurEditingNode] = useState<DataNode | null>(null)
@@ -112,6 +112,10 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   useEffect(() => {
     getFetcher<operationResp[]>('/operateApi')
+      // .then((x) => {
+      //   console.log(convertToTree(x))
+      //   return x
+      // })
       .then((res) => setTreeData(convertToTree(res) as DataNode[]))
       .catch((err: Error) => {
         throw err
@@ -121,25 +125,40 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handlePressEnter = useCallback(() => {
     if (!curEditingNode) return
 
-    const basePath = curEditingNode.path
-      .split('/')
-      .slice(0, curEditingNode.path.split('/').length - 1)
-      .join('/') as string
-    const newPath = `${basePath}/${inputValue}`
+    if (!addType) {
+      const basePath = curEditingNode.path
+        .split('/')
+        .slice(0, curEditingNode.path.split('/').length - 1)
+        .join('/') as string
+      const newPath = `${basePath}/${inputValue}`
 
-    void requests
-      .put('/operateApi/rename', {
-        oldPath: curEditingNode.path,
-        newPath: newPath,
-        disable: curEditingNode.disable,
-      })
-      .then((res) => {
-        if (res) {
-          curEditingNode.title = inputValue
-          setCurEditingNode(null)
-          setTreeData([...treeData])
-        }
-      })
+      void requests
+        .put('/operateApi/rename', {
+          oldPath: curEditingNode.path,
+          newPath: newPath,
+          disable: curEditingNode.disable,
+        })
+        .then((res) => {
+          if (res) {
+            curEditingNode.title = inputValue
+            setCurEditingNode(null)
+            setTreeData([...treeData])
+          }
+        })
+    } else if (addType === '文件') {
+      curEditingNode.title = inputValue
+      const curPath = `${(curEditingNode.path as string) || '/'}${curEditingNode.title as string}`
+      void requests
+        .post('/operateApi/createFile', {
+          path: curPath,
+        })
+        .then((res) => {
+          if (res) {
+            setRefreshFlag(!refreshFlag)
+          }
+        })
+        .finally(() => setAddType(null))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue])
 
@@ -187,7 +206,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   )
 
   const handleAddNode = useCallback(() => {
-    if (isAdding) {
+    if (addType) {
       void message.warn('正在添加中')
     } else {
       let parent: any
@@ -211,10 +230,10 @@ const ApiManage: FC<ApiManageProps> = () => {
       }
       getParent(selectedKey, treeData)
       const temp = {
-        title: '我是测试的',
+        title: '',
         key: Date.now(),
       }
-      if (!child) {
+      if (!child || !parent) {
         treeData.push(temp)
       } else if (child!.children) {
         child!.children.push(temp)
@@ -224,8 +243,8 @@ const ApiManage: FC<ApiManageProps> = () => {
       setCurEditingNode(temp)
       setTreeData([...treeData])
     }
-    // setIsAdding(true)
-  }, [isAdding, selectedKey, treeData])
+    setAddType('文件')
+  }, [addType, selectedKey, treeData])
 
   const handleDelete = (treeNodeKey: any) => {
     const node = findNode(treeNodeKey, treeData)
@@ -326,6 +345,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   function connectSwitchOnChange(e) {
     const node = findNode(selectedKey, treeData)
+    if (!node) return
     void requests
       .put('/operateApi/rename', {
         oldPath: node.path,
