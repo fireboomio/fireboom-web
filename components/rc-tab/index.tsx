@@ -49,6 +49,7 @@ const RcTab: FC<RcTabProps> = (props) => {
             </div>
           ))}
         </div>
+        {props.extra}
       </div>
       <Divider className={styles.divider} />
     </div>

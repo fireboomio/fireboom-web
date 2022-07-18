@@ -16,7 +16,18 @@ import {
   FolderOutlined,
   MoreOutlined,
 } from '@ant-design/icons'
-import { Tooltip, Divider, Tree, Dropdown, Menu, message, Input, Popconfirm } from 'antd'
+import {
+  Tooltip,
+  Divider,
+  Tree,
+  Dropdown,
+  Menu,
+  message,
+  Input,
+  Popconfirm,
+  Switch,
+  Button,
+} from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
@@ -313,6 +324,34 @@ const ApiManage: FC<ApiManageProps> = () => {
     }
   }
 
+  function connectSwitchOnChange(e) {
+    const node = findNode(selectedKey, treeData)
+    void requests
+      .put('/operateApi/rename', {
+        oldPath: node.path,
+        newPath: node.path,
+        disable: !e,
+      })
+      .then((res) => {
+        if (res) {
+          setRefreshFlag(!refreshFlag)
+        }
+      })
+  }
+
+  const extra = (
+    <div className="flex items-center">
+      <Switch
+        checked={!findNode(selectedKey, treeData)?.disable}
+        checkedChildren="开启"
+        unCheckedChildren="关闭"
+        onChange={connectSwitchOnChange}
+        className="ml-6 w-15 bg-[#8ABE2A]"
+      />
+      <Button className="ml-12">编辑</Button>
+    </div>
+  )
+
   return (
     <>
       <Head>
@@ -382,7 +421,8 @@ const ApiManage: FC<ApiManageProps> = () => {
           </div>
 
           <div className="mt-7">
-            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
+            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} extra={extra} />
+
             <div className="overflow-auto h-[calc(100vh_-_98px)]">
               {activeKey === '0' ? (
                 <Detail path={(findNode(selectedKey, treeData) as DirTree)?.path ?? ''} />
