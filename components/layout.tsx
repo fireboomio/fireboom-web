@@ -1,22 +1,59 @@
-import { AppleOutlined } from '@ant-design/icons'
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useState } from 'react'
+
+import IconFont from '@/components/iconfont'
 
 import styles from './layout.module.scss'
 
 const { Sider, Content } = ALayout
 
 const menus = [
-  { title: '数据建模', icon: <AppleOutlined />, link: '/modeling', position: 'top' },
-  { title: '认证鉴权', icon: <AppleOutlined />, link: '/auth', position: 'top' },
-  { title: '文件存储', icon: <AppleOutlined />, link: '/storage', position: 'top' },
-  { title: '数据来源', icon: <AppleOutlined />, link: '/datasource', position: 'top' },
-  { title: 'API 管理', icon: <AppleOutlined />, link: '/apimanage', position: 'top' },
-  { title: 'GraphQL', icon: <AppleOutlined />, link: '/graphiql', position: 'top' },
-  { title: '个人资料', icon: <AppleOutlined />, link: '/profile', position: 'bottom' },
-  { title: '设置', icon: <AppleOutlined />, link: '/setting', position: 'bottom' },
+  {
+    title: '首页',
+    icon: <IconFont type="icon-shouye-weixuanzhong" />,
+    link: '/',
+    position: 'top',
+  },
+  {
+    title: '数据建模',
+    icon: <IconFont type="icon-shujusheji-weixuanzhong" />,
+    link: '/modeling',
+    position: 'top',
+  },
+  {
+    title: '认证鉴权',
+    icon: <IconFont type="icon-shenfenyanzheng-weixuanzhong" />,
+    link: '/auth',
+    position: 'top',
+  },
+  {
+    title: '文件存储',
+    icon: <IconFont type="icon-chucun-weixuanzhong" />,
+    link: '/storage',
+    position: 'top',
+  },
+  {
+    title: '数据来源',
+    icon: <IconFont type="icon-shujuyuan-weixuanzhong" />,
+    link: '/datasource',
+    position: 'top',
+  },
+  {
+    title: 'API 管理',
+    icon: <IconFont type="icon-API-weixuanzhong" />,
+    link: '/apimanage',
+    position: 'top',
+  },
+  {
+    title: 'GraphQL',
+    icon: <IconFont type="icon-QLweixuanzhong" />,
+    link: '/graphiql',
+    position: 'top',
+  },
+  { title: '个人资料', icon: <IconFont type="" />, link: '/profile', position: 'bottom' },
+  { title: '设置', icon: <IconFont type="icon-shezhi" />, link: '/setting', position: 'bottom' },
 ]
 
 const topMenuItems = menus
