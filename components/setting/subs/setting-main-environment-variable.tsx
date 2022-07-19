@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { EyeFilled, EyeInvisibleFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Button, Descriptions, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
@@ -31,7 +32,6 @@ export default function SettingMainEnvironmentVariable() {
 
   useEffect(() => {
     void getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onFinish = (values: DataType) => {
