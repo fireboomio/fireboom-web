@@ -22,8 +22,7 @@ export default function SettingItem({ handleToggleDesigner, settingType }: Props
           handleToggleDesigner(settingType)
         }}
       >
-        <span className="ml-2px mr-3">{settingType.icon}</span>
-
+        <div className="ml-2px mr-3 text-[16px]">{settingType.icon}</div>
         <div className={styles['item-label']}>{settingType.name}</div>
       </div>
     </>

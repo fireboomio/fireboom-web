@@ -1,13 +1,4 @@
-import {
-  FormOutlined,
-  DeploymentUnitOutlined,
-  SecurityScanOutlined,
-  GlobalOutlined,
-  ControlOutlined,
-  FundViewOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons'
-
+import IconFont from '@/components/iconfont'
 import type { SettingType } from '@/interfaces/setting'
 
 import SettingItem from './setting-item'
@@ -19,37 +10,37 @@ const settingTypeList: SettingType[] = [
   {
     name: '外观',
     type: 'colorTheme',
-    icon: <FormOutlined />,
+    icon: <IconFont type="icon-waiguan" />,
   },
   {
     name: '系统',
     type: 'system',
-    icon: <DeploymentUnitOutlined />,
+    icon: <IconFont type="icon-xitong" />,
   },
   {
     name: '安全',
     type: 'secure',
-    icon: <SecurityScanOutlined />,
+    icon: <IconFont type="icon-anquan" />,
   },
   {
     name: '跨域',
     type: 'cors',
-    icon: <GlobalOutlined />,
+    icon: <IconFont type="icon-kuayu" />,
   },
   {
     name: 'API Token',
     type: 'API Token',
-    icon: <ControlOutlined />,
+    icon: <IconFont type="icon-a-APItoken" />,
   },
   {
     name: '环境变量',
     type: 'path',
-    icon: <FundViewOutlined />,
+    icon: <IconFont type="icon-huanjingbianliang" />,
   },
   {
     name: '版本',
     type: 'version',
-    icon: <InfoCircleOutlined />,
+    icon: <IconFont type="icon-banben" />,
   },
 ]
 

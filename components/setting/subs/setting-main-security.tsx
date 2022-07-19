@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { PlusOutlined, InfoCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { Form, Input, Switch, Button } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
+// eslint-disable-next-line import/no-unassigned-import
 import styles from './setting-main.module.scss'
 
 interface SecurConfig {
@@ -93,7 +95,7 @@ export default function SettingMainSecurity() {
                 />
               </Form.Item>
               <span className={styles.setTitle}>
-                <InfoCircleOutlined className="mr-1" />
+                <IconFont type="icon-zhuyi" className="mr-1 text-[14px]" />
                 <span>https://loacalhost:999</span>
               </span>
             </Form.Item>
@@ -132,8 +134,9 @@ export default function SettingMainSecurity() {
                               }}
                             />
                             {fields.length > 1 ? (
-                              <MinusCircleOutlined
-                                className={`${styles['form-delete-icon']}`}
+                              <IconFont
+                                type="icon-guanbi"
+                                className={`${styles['form-delete-icon']} red`}
                                 onClick={() => {
                                   void requests
                                     .post('/global', {
