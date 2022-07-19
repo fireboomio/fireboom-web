@@ -123,7 +123,10 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [refreshFlag])
 
   const handlePressEnter = useCallback(() => {
-    if (!curEditingNode) return
+    if (!curEditingNode) {
+      setAddType(null)
+      return
+    }
 
     if (!addType) {
       const basePath = curEditingNode.path
@@ -146,6 +149,11 @@ const ApiManage: FC<ApiManageProps> = () => {
           }
         })
     } else if (addType === '文件') {
+      if (inputValue === '') {
+        setAddType(null)
+        setRefreshFlag(!refreshFlag)
+        return
+      }
       curEditingNode.title = inputValue
       const curPath = `${(curEditingNode.path as string) || '/'}${curEditingNode.title as string}`
       void requests
@@ -172,7 +180,13 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [])
 
   const handleInputBlur = useCallback(() => {
+    if (curEditingNode === null) {
+      setCurEditingNode(null)
+      setRefreshFlag(!refreshFlag)
+    }
+    setAddType(null)
     setCurEditingNode(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getTreeNode = useCallback(
