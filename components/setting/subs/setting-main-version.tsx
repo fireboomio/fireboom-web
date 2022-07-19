@@ -40,8 +40,14 @@ export default function SettingMainVersion() {
             }}
           >
             <Descriptions.Item label="版本">
-              {verConfig.versionNum}
-              <span className={styles['check-info']}>查看更新日志</span>
+              <div className="flex items-center">
+                {verConfig.versionNum ? (
+                  <div>{verConfig.versionNum}</div>
+                ) : (
+                  <div className="w-50px h-22px"> </div>
+                )}
+                <div className={styles['check-info']}>查看更新日志</div>
+              </div>
             </Descriptions.Item>
             <Descriptions.Item label="prisma版本">{verConfig.prismaVersion}</Descriptions.Item>
             <Descriptions.Item label="版权">{verConfig.copyright}</Descriptions.Item>

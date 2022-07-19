@@ -20,7 +20,7 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
   function addTable() {
     const data = {
       id: 0,
-      name: 'a',
+      name: '',
       config: '2',
       // eslint-disable-next-line camelcase
       source_type: Datasourcetype,

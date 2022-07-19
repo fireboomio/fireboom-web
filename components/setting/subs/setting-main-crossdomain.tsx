@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { PlusOutlined, MinusCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch } from 'antd'
 import { useCallback, useEffect } from 'react'
@@ -16,6 +17,14 @@ interface CorsConfiguration {
   maxAge: number
 }
 //允许证书传0,1
+interface CorsFormConfiguration {
+  allowedOrigins: Array<string>
+  allowedMethods: Array<string>
+  allowedHeaders: string
+  allowCredentials: number
+  exposedHeaders: string
+  maxAge: number
+}
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
@@ -35,49 +44,43 @@ const formItemLayoutWithOutLabel = {
 export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
-  const onFinish = async (values: CorsConfiguration) => {
+
+  const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
-    const result = await requests.post('/global', {
-      key: 'allowedOrigins',
-      val: values.allowedOrigins,
-    })
-    console.log(result)
   }
+
+  const postRequest = useCallback(async (key: string, value: string | Array<string> | number) => {
+    await requests.post('/global', {
+      key: key,
+      val: value,
+    })
+    void getData()
+  }, [])
 
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
-    console.log(result)
     setCorsConfig(result)
   }, [])
 
   useEffect(() => {
     void getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <>
-      <button
-        onClick={() => {
-          form.submit()
-        }}
-      >
-        提交
-      </button>
       {corsConfig.allowedOrigins ? (
         <div className={`${styles['form-contain']}`}>
           <Form
             form={form}
             initialValues={{
-              methods: 'method1',
-              corsTime: corsConfig.maxAge,
-              allowHeader: corsConfig.allowedHeaders.join(','),
-              exceptHeader: corsConfig.exposedHeaders.join(','),
-              allowCredentials: corsConfig.allowCredentials,
+              allowedMethods: corsConfig.allowedMethods[0],
+              maxAge: corsConfig.maxAge,
+              allowedHeaders: corsConfig.allowedHeaders.join(','),
+              exposedHeaders: corsConfig.exposedHeaders.join(','),
+              allowCredentials: corsConfig.allowCredentials == 1 ? true : false,
             }}
-            name="dynamic_form_item"
             onFinish={(values) => {
-              void onFinish(values as CorsConfiguration)
+              void onFinish(values as CorsFormConfiguration)
             }}
             labelAlign="left"
             labelCol={{
@@ -107,12 +110,35 @@ export default function SettingCrossdomain() {
                             <Input
                               placeholder="请输入域名..."
                               style={{ width: '60%' }}
-                              value={corsConfig.allowedOrigins[index]}
+                              defaultValue={corsConfig.allowedOrigins[index]}
+                              onBlur={() => {
+                                void postRequest(
+                                  'allowedOrigins',
+                                  form.getFieldValue('allowedOrigins') as Array<string>
+                                )
+                              }}
+                              onPressEnter={() => {
+                                void postRequest(
+                                  'allowedOrigins',
+                                  form.getFieldValue('allowedOrigins') as Array<string>
+                                )
+                              }}
                             />
                             {fields.length > 1 ? (
                               <MinusCircleOutlined
                                 className={`${styles['form-delete-icon']}`}
-                                onClick={() => remove(field.name)}
+                                onClick={() => {
+                                  void requests
+                                    .post('/global', {
+                                      key: 'allowedOrigins',
+                                      val: (
+                                        form.getFieldValue('allowedOrigins') as Array<string>
+                                      ).filter((_, i) => i != index),
+                                    })
+                                    .then(() => {
+                                      remove(index)
+                                    })
+                                }}
                               />
                             ) : null}
                           </div>
@@ -137,8 +163,16 @@ export default function SettingCrossdomain() {
                 )}
               </Form.List>
             </Form.Item>
-            <Form.Item name="methods" label="允许方法" className="-mt-3">
-              <Select style={{ width: '90%' }} placeholder="请选择...">
+            <Form.Item name="allowedMethods" label="允许方法" className="-mt-3">
+              <Select
+                style={{ width: '90%' }}
+                placeholder="请选择..."
+                onChange={(values: string) => {
+                  const newMethodsList = corsConfig.allowedMethods.filter((item) => item != values)
+                  newMethodsList.unshift(values)
+                  void postRequest('allowedMethods', newMethodsList)
+                }}
+              >
                 {corsConfig.allowedMethods.map((item) => (
                   <Select.Option key={item} value={item}>
                     {item}
@@ -146,15 +180,50 @@ export default function SettingCrossdomain() {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item name="allowHeader" label="允许头">
-              <Input placeholder="请输入..." />
+            <Form.Item name="allowedHeaders" label="允许头">
+              <Input
+                placeholder="请输入..."
+                onBlur={() => {
+                  void postRequest(
+                    'allowedHeaders',
+                    (form.getFieldValue('allowedHeaders') as string).split(',')
+                  )
+                }}
+                onPressEnter={() => {
+                  void postRequest(
+                    'allowedHeaders',
+                    (form.getFieldValue('allowedHeaders') as string).split(',')
+                  )
+                }}
+              />
             </Form.Item>
-            <Form.Item name="exceptHeader" label="排除头">
-              <Input placeholder="请输入..." />
+            <Form.Item name="exposedHeaders" label="排除头">
+              <Input
+                placeholder="请输入..."
+                onBlur={() => {
+                  void postRequest(
+                    'exposedHeaders',
+                    (form.getFieldValue('exposedHeaders') as string).split(',')
+                  )
+                }}
+                onPressEnter={() => {
+                  void postRequest(
+                    'exposedHeaders',
+                    (form.getFieldValue('exposedHeaders') as string).split(',')
+                  )
+                }}
+              />
             </Form.Item>
             <Form.Item label="跨域时间">
-              <Form.Item name="corsTime" validateTrigger={['onChange', 'onBlur']} noStyle>
-                <Input />
+              <Form.Item name="maxAge" validateTrigger={['onChange', 'onBlur']} noStyle>
+                <Input
+                  onBlur={() => {
+                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string))
+                  }}
+                  onPressEnter={() => {
+                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string))
+                  }}
+                />
               </Form.Item>
               <span className="ml-2">秒</span>
             </Form.Item>
@@ -165,7 +234,11 @@ export default function SettingCrossdomain() {
                 noStyle
                 rules={[{ required: true, message: 'Username is required' }]}
               >
-                <Switch />
+                <Switch
+                  onChange={(isChecked) => {
+                    void postRequest('allowCredentials', isChecked == false ? 0 : 1)
+                  }}
+                />
               </Form.Item>
               <span className="ml-4 text-gray-500 inline-block h-6">
                 <InfoCircleOutlined /> 是否允许证书

@@ -37,8 +37,9 @@ export default function SettingMainEnvironmentVariable() {
   const onFinish = (values: DataType) => {
     setEnvironmentConfig((draft) => {
       const newEnvList = draft.environmentList.concat(values)
-      void requests.post('/setting', { key: 'environmentList', val: newEnvList })
-      draft.environmentList.push(values)
+      void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
+        void getData()
+      })
     })
     console.log('Success:', values)
   }
@@ -54,9 +55,12 @@ export default function SettingMainEnvironmentVariable() {
   const handleDeleteEnvVariable = (name: string) => {
     setEnvironmentConfig((draft) => {
       const newEnvList = draft.environmentList.filter((item) => item.name != name)
-      const result = requests.post('/setting', { key: 'environmentList', val: newEnvList })
-      console.log(result)
-      draft.environmentList = draft.environmentList.filter((item) => item.name != name)
+      const result = requests
+        .post('/setting', { key: 'environmentList', val: newEnvList })
+        .then(() => {
+          console.log(result)
+          void getData()
+        })
     })
   }
 
@@ -206,12 +210,12 @@ export default function SettingMainEnvironmentVariable() {
               <span onClick={handleToggleSecret}>
                 {isShowSecret ? (
                   <div>
-                    1234566
+                    {environmentConfig.systemVariable}
                     <EyeFilled className="ml-6" />
                   </div>
                 ) : (
                   <div>
-                    *****************************
+                    **************
                     <EyeInvisibleFilled className="ml-6" />
                   </div>
                 )}

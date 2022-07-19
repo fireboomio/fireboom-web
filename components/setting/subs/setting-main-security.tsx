@@ -22,13 +22,21 @@ export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const onFinish = (values: SecurConfig) => {
-    console.log('Success:', values.allowedHosts)
-    void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
+    console.log('Success:', values)
+    void requests.post('/global', {
+      key: 'enableGraphQLEndpoint',
+      val: 0,
+    })
+    // void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
+  }
+  const postRequest = async (key: string, value: string | Array<string> | number) => {
+    await requests.post('/global', {
+      key: key,
+      val: value,
+    })
+    void getData()
   }
 
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, SecurConfig>('/setting/securityConfig')
     console.log(result)
@@ -49,7 +57,7 @@ export default function SettingMainSecurity() {
       >
         提交
       </button>
-      {securConfig.allowedHosts?.length > 1 ? (
+      {securConfig.allowedHosts?.length > 0 ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
             form={form}
@@ -77,10 +85,11 @@ export default function SettingMainSecurity() {
                 rules={[{ required: true, message: 'Username is required' }]}
               >
                 <Switch
-                  defaultChecked={securConfig.enableGraphQLEndpoint == 1 ? true : false}
                   className={styles['switch-edit-btn']}
                   size="small"
-                  onChange={connectSwitchOnChange}
+                  onChange={(isChecked) => {
+                    void postRequest('enableGraphQLEndpoint', isChecked == false ? 0 : 1)
+                  }}
                 />
               </Form.Item>
               <span className={styles.setTitle}>
@@ -106,12 +115,37 @@ export default function SettingMainSecurity() {
                             <Input
                               placeholder="请输入域名..."
                               style={{ width: '60%' }}
-                              value={securConfig.allowedHosts[index]}
+                              defaultValue={securConfig.allowedHosts[index]}
+                              onBlur={(e) => {
+                                if (e.target.value == '') return
+                                void postRequest(
+                                  'allowedHosts',
+                                  form.getFieldValue('allowedHosts') as Array<string>
+                                )
+                              }}
+                              onPressEnter={(e) => {
+                                if (e.target.value == '') return
+                                void postRequest(
+                                  'allowedHosts',
+                                  form.getFieldValue('allowedHosts') as Array<string>
+                                )
+                              }}
                             />
                             {fields.length > 1 ? (
                               <MinusCircleOutlined
                                 className={`${styles['form-delete-icon']}`}
-                                onClick={() => remove(field.name)}
+                                onClick={() => {
+                                  void requests
+                                    .post('/global', {
+                                      key: 'allowedHosts',
+                                      val: (
+                                        form.getFieldValue('allowedHosts') as Array<string>
+                                      ).filter((_, i) => i != index),
+                                    })
+                                    .then(() => {
+                                      remove(index)
+                                    })
+                                }}
                               />
                             ) : null}
                           </div>

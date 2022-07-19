@@ -20,7 +20,7 @@ interface Props {
   Datasourcetype: number
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasourcetype }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -40,12 +40,18 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     } else {
       if (datasourceItem.id != 0) {
         await requests.put('/dataSource', { ...datasourceItem, name: value })
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        dispatch({
+          type: 'fetched',
+          sourceType: Datasourcetype,
+        })
       } else {
         const req = { ...datasourceItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/dataSource', req)
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        dispatch({
+          type: 'fetched',
+          sourceType: Datasourcetype,
+        })
       }
     }
     setIsEditing(false)
@@ -54,9 +60,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
   async function handleItemDelete(item: DatasourceResp) {
     const result = await requests.delete(`/dataSource/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (result.data.code == 200) {
-      dispatch({ type: 'deleted', data: item })
-    }
+    dispatch({ type: 'deleted', data: item })
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
