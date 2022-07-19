@@ -20,7 +20,7 @@ interface Props {
   Datasourcetype: number
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasourcetype }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -40,25 +40,19 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
     } else {
       if (datasourceItem.id != 0) {
         await requests.put('/dataSource', { ...datasourceItem, name: value })
-        dispatch({
-          type: 'fetched',
-          sourceType: Datasourcetype,
-        })
+        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       } else {
         const req = { ...datasourceItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/dataSource', req)
-        dispatch({
-          type: 'fetched',
-          sourceType: Datasourcetype,
-        })
+        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
       }
     }
     setIsEditing(false)
   }
 
   async function handleItemDelete(item: DatasourceResp) {
-    const result = await requests.delete(`/dataSource/${item.id}`)
+    void (await requests.delete(`/dataSource/${item.id}`))
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     dispatch({ type: 'deleted', data: item })
   }
