@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import {
-  AppleOutlined,
+  CaretRightOutlined,
   DownOutlined,
   FileOutlined,
   FolderOpenOutlined,
@@ -33,6 +33,7 @@ import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState } from 'react'
 
+import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import type { DirTree, operationResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -397,20 +398,20 @@ const ApiManage: FC<ApiManageProps> = () => {
           <div className="px-4">
             <div className="flex justify-between text-18px leading-25px">
               <span className="font-bold">API 管理</span>
-              <AppleOutlined />
+              <IconFont type="icon-wenjianshezhi" style={{ 'font-size': '18px' }} />
             </div>
             <div className="flex justify-between mt-7">
               <Tooltip placement="top" title="设置">
-                <AppleOutlined />
+                <IconFont type="icon-shezhi1" style={{ 'font-size': '20px' }} />
               </Tooltip>
               <Tooltip placement="top" title="导出">
-                <AppleOutlined />
+                <IconFont type="icon-neisheng" style={{ 'font-size': '18px' }} />
               </Tooltip>
               <Tooltip placement="top" title="表单设计器">
-                <AppleOutlined />
+                <IconFont type="icon-biaodanshejiqi" style={{ 'font-size': '20px' }} />
               </Tooltip>
               <Tooltip placement="top" title="下载SDK">
-                <AppleOutlined />
+                <IconFont type="icon-xiazaiSDK" style={{ 'font-size': '20px' }} />
               </Tooltip>
             </div>
           </div>
@@ -418,9 +419,17 @@ const ApiManage: FC<ApiManageProps> = () => {
           <div className="flex justify-between px-4">
             <span className="leading-20px font-bold">概览</span>
             <div className="space-x-4">
-              <AppleOutlined onClick={handleAddNode} />
-              <AppleOutlined />
-              <AppleOutlined />
+              <IconFont
+                type="icon-wenjianjia1"
+                style={{ 'font-size': '18px' }}
+                onClick={handleAddNode}
+              />
+              <IconFont
+                type="icon-shuaxin"
+                style={{ 'font-size': '16px' }}
+                onClick={handleAddNode}
+              />
+              <IconFont type="icon-fuzhi" style={{ 'font-size': '16px' }} onClick={handleAddNode} />
             </div>
           </div>
           <Divider className="my-4" />
@@ -444,13 +453,13 @@ const ApiManage: FC<ApiManageProps> = () => {
           <div className="flex justify-between items-center">
             <div className="flex leading-25px space-x-2">
               <span className="font-bold text-18px">API 管理</span>
-              <AppleOutlined />
+              <CaretRightOutlined />
               <span className="text-16px font-bold">userinfo</span>
             </div>
             <div className="space-x-4">
-              <AppleOutlined />
-              <AppleOutlined />
-              <AppleOutlined />
+              <IconFont type="icon-lianxi" style={{ 'font-size': '18px' }} />
+              <IconFont type="icon-wenjian1" style={{ 'font-size': '18px' }} />
+              <IconFont type="icon-bangzhu" style={{ 'font-size': '18px' }} />
             </div>
           </div>
 

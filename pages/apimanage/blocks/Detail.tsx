@@ -1,11 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { AppleOutlined } from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
+import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import { FieldType } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
@@ -122,13 +123,13 @@ const Detail: FC<DetailProps> = ({ path }) => {
       <div className="flex items-center">
         <div className={`flex items-center space-x-1 ${styles.label}`}>
           <span className="text-12px  text-[#5F6269] leading-17px">注册接口</span>
-          <AppleOutlined />
+          <EditOutlined />
         </div>
         <div className="flex items-center flex-1">
           <div className="flex items-center space-x-1">
             <span className="text-[#AFB0B4]">#23234456</span>
-            <AppleOutlined />
-            <AppleOutlined />
+            <IconFont type="icon-fuzhi" className="text-[#AFB0B4]" />
+            <EditOutlined className="text-[#AFB0B4]" />
           </div>
           <div className="flex items-center space-x-1 ml-7">
             <Badge status="success" color="#1BDD8A" />
