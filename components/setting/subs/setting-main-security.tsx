@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { PlusOutlined, InfoCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Switch, Button } from 'antd'
 import { useCallback, useEffect } from 'react'
@@ -45,7 +46,6 @@ export default function SettingMainSecurity() {
 
   useEffect(() => {
     void getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

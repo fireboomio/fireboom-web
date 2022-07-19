@@ -17,10 +17,10 @@ export default function SettingMainVersion() {
   useEffect(() => {
     async function getData() {
       const result = await requests.get<unknown, VersionConfig>('/setting/versionConfig')
-      console.log(result)
       setVerConfig(result)
     }
     void getData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
