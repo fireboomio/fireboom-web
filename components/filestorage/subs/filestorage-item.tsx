@@ -40,7 +40,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
         const req = { ...fsItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/storageBucket ', req)
-        dispatch({ type: 'changed', data: { ...fsItem, name: value } })
+        dispatch({ type: 'added', data: { ...fsItem, name: value } })
       }
     }
     setIsEditing(false)

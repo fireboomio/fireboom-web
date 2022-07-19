@@ -40,7 +40,7 @@ export default function AuthProvItem({ authProvItem, onClickItem }: Props) {
         const req = { ...authProvItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/auth', req)
-        dispatch({ type: 'changed', data: { ...authProvItem, name: value } })
+        dispatch({ type: 'added', data: { ...authProvItem, name: value } })
       }
     }
     setIsEditing(false)

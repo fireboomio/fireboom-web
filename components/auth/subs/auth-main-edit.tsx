@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { RightOutlined } from '@ant-design/icons'
 import { Button, Divider, Form, Input, Radio } from 'antd'
 import type { RadioChangeEvent } from 'antd'
@@ -5,7 +6,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext } from '@/lib/context'
+import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
@@ -23,6 +24,7 @@ interface Response {
 
 export default function AuthMainCheck({ content }: Props) {
   const { handleToggleDesigner } = useContext(AuthToggleContext)
+  const dispatch = useContext(AuthDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
   const [value, setValue] = useImmer(1)
@@ -37,7 +39,12 @@ export default function AuthMainCheck({ content }: Props) {
     console.log(JSON.stringify(values))
     await requests.put('/auth', { ...content, config: JSON.stringify(values) })
     const auth: Response = await requests.get('/auth')
-    console.log(auth)
+    console.log('autu', auth)
+    dispatch({
+      type: 'fetched',
+      data: [].slice.call(auth, 0),
+    })
+    handleToggleDesigner('data', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -86,6 +93,7 @@ export default function AuthMainCheck({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
+              handleToggleDesigner('data', content.id)
             }}
           >
             <span>保存</span>
@@ -109,7 +117,7 @@ export default function AuthMainCheck({ content }: Props) {
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
           onFinish={(values) => {
-            void onFinish(values as object)
+            void onFinish(values)
           }}
           onValuesChange={onValuesChange}
           onFinishFailed={onFinishFailed}

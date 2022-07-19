@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
 import type { FileStorageResp } from '@/interfaces/filestorage'
-import { FSContext, FSDispatchContext, FSCurrFileContext } from '@/lib/context'
+import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
 import { getFetcher } from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
 
@@ -42,7 +42,7 @@ export default function FileStorage() {
     setCurrFSId(fileStorageResp.id)
   }
 
-  function handleToggleDesigner(value: 'setEdit' | 'setCheck', id: number) {
+  function handleToggleDesigner(value: 'content' | 'setEdit' | 'setCheck', id: number) {
     setShowType(value)
     setCurrFSId(id)
   }
@@ -52,20 +52,22 @@ export default function FileStorage() {
       <FSContext.Provider value={fileList}>
         <FSDispatchContext.Provider value={dispatch}>
           <FSCurrFileContext.Provider value={{ currFSId, setCurrFSId }}>
-            <Head>
-              <title>FireBoom - 文件存储</title>
-            </Head>
-            <Row className="h-screen">
-              <Col span={5} className={styles['col-left']}>
-                <FileStoragePannel
-                  onClickItem={handleClickItem}
-                  handleToggleDesigner={handleToggleDesigner}
-                />
-              </Col>
-              <Col span={19}>
-                <FileStorageContainer showType={showType} content={content} />
-              </Col>
-            </Row>
+            <FSToggleContext.Provider value={{ handleToggleDesigner }}>
+              <Head>
+                <title>FireBoom - 文件存储</title>
+              </Head>
+              <Row className="h-screen">
+                <Col span={5} className={styles['col-left']}>
+                  <FileStoragePannel
+                    onClickItem={handleClickItem}
+                    handleToggleDesigner={handleToggleDesigner}
+                  />
+                </Col>
+                <Col span={19}>
+                  <FileStorageContainer showType={showType} content={content} />
+                </Col>
+              </Row>
+            </FSToggleContext.Provider>
           </FSCurrFileContext.Provider>
         </FSDispatchContext.Provider>
       </FSContext.Provider>

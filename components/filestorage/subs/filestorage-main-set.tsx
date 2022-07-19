@@ -1,7 +1,9 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/filestorage'
+import { FSToggleContext, FSDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './filestorage-common-main.module.scss'
@@ -12,13 +14,10 @@ interface FromValues {
 interface Props {
   content: FileStorageResp
 }
-interface Response {
-  status: number
-  data: { result: FileStorageResp[]; [key: string]: number | string | boolean | object }
-  [key: string]: number | string | boolean | object
-}
 
 export default function StorageMainSet({ content }: Props) {
+  const { handleToggleDesigner } = useContext(FSToggleContext)
+  const dispatch = useContext(FSDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
   const connectSwitchOnChange = () => {
@@ -27,9 +26,14 @@ export default function StorageMainSet({ content }: Props) {
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
-    await requests.put('/auth', { ...content, config: JSON.stringify(values) })
-    const auth: Response = await requests.get('/auth')
-    console.log(auth)
+    await requests.put('/storageBucket ', values)
+    const storageBucket = await requests.get<unknown, Array<FileStorageResp>>('/storageBucket ')
+    console.log(storageBucket)
+    dispatch({
+      type: 'fetched',
+      data: storageBucket,
+    })
+    handleToggleDesigner('setCheck', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -73,6 +77,7 @@ export default function StorageMainSet({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
+              handleToggleDesigner('setCheck', content.id)
             }}
           >
             <span>保存</span>
@@ -96,29 +101,41 @@ export default function StorageMainSet({ content }: Props) {
           labelAlign="left"
           className="ml-3"
         >
-          <Form.Item label="名称">
+          <Form.Item label="名称" name="name">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="服务地址">
+          <Form.Item label="服务地址" name="service_address">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" required>
+          <Form.Item label="App ID" required name="accessKeyID">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App Secret" required>
+          <Form.Item label="App Secret" required name="secretAccessKey">
             <Input.Password placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="区域">
+          <Form.Item label="区域" name="bucketLocation">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="bucketName">
+          <Form.Item label="bucketName" name="bucketName">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="开启SSL" style={{ marginTop: '29px' }} rules={[{ required: true }]}>
-            <Switch defaultChecked className={styles['switch-set-btn']} size="small" />
+          <Form.Item
+            label="开启SSL"
+            style={{ marginTop: '29px' }}
+            rules={[{ required: true }]}
+            name="useSSL"
+          >
+            <Switch
+              defaultChecked={content.switch == 0 ? false : true}
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              onChange={connectSwitchOnChange}
+              className={styles['switch-set-btn']}
+              size="small"
+            />
           </Form.Item>
         </Form>
       </div>
