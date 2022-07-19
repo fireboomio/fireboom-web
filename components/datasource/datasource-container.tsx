@@ -4,10 +4,10 @@ import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 
-import DatasourceDBMain from './subs/datasource-db-main'
-import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
-import DatasourceGraphalMain from './subs/datasource-graphal-main'
-import DatasourceRestMain from './subs/datasource-rest-main'
+import DatasourceDBMain from './subs/datasource-main-db'
+import DatasourceDeselfMainEdit from './subs/datasource-main-deself'
+import DatasourceGraphalMain from './subs/datasource-main-graphal'
+import DatasourceRestMain from './subs/datasource-main-rest'
 
 interface Props {
   content: DatasourceResp

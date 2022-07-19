@@ -26,7 +26,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-common-main.module.scss'
+import styles from './datasource-common.module.scss'
 
 interface Props {
   content: DatasourceResp

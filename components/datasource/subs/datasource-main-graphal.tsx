@@ -16,7 +16,7 @@ import { ReactNode, useContext } from 'react'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context'
 
-import styles from './datasource-common-main.module.scss'
+import styles from './datasource-common.module.scss'
 
 interface Props {
   content: DatasourceResp
@@ -68,17 +68,19 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <Button className={styles['design-btn']}>
-                <span>设计</span>
-              </Button>
-              <Button
-                className={styles['edit-btn']}
-                onClick={() => {
-                  handleToggleDesigner('edit', content.id)
-                }}
-              >
-                <span>编辑</span>
-              </Button>
+              <div className="w-144px">
+                <Button className={styles['design-btn']}>
+                  <span>设计</span>
+                </Button>
+                <Button
+                  className={styles['edit-btn']}
+                  onClick={() => {
+                    handleToggleDesigner('edit', content.id)
+                  }}
+                >
+                  <span>编辑</span>
+                </Button>
+              </div>
             </div>
           </div>
           <div className="flex justify-center mb-8">
@@ -225,7 +227,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
             </div>
-            <div className="flex justify-center items-center mb-2">
+            <div className="flex justify-center items-center mb-2 w-144px">
               <Button className={styles['design-btn']}>
                 <span>取消</span>
               </Button>

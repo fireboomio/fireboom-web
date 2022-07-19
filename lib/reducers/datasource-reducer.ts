@@ -1,12 +1,5 @@
 import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
 
-import requests from '../fetchers'
-
-const getData = async () => {
-  const result = await requests.get<unknown, DatasourceResp[]>('/dataSource')
-  return result
-}
-
 export default function datasourceReducer(
   datasoucreList: DatasourceResp[],
   action: DatasourceAction
@@ -20,7 +13,7 @@ export default function datasourceReducer(
       // })
       // console.log(bbb, 'bbb')
       // return
-      return datasoucreList
+      return action.data
     }
     case 'selected': {
       return action.data

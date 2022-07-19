@@ -55,7 +55,7 @@ export default function Datasource() {
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceResp
 
   function handleClickItem(datasourceItem: DatasourceResp) {
-    setShowType('check')
+    setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
 

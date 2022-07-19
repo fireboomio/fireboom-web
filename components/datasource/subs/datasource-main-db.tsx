@@ -13,7 +13,7 @@ import { useImmer } from 'use-immer'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 
-import styles from './datasource-db-main.module.scss'
+import styles from './datasource-db.module.scss'
 interface Props {
   content: DatasourceResp
   type: string
