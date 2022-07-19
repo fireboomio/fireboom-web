@@ -33,12 +33,6 @@ const nextConfig = {
       {
         source: '/api/v1/:path*',
         destination: 'http://120.26.62.151:9123/api/v1/:path*',
-        // destination: 'http://192.168.166.199:9123/api/v1/:path*',
-        // destination: 'http://localhost:8080/api/v1/:path*',
-      },
-      {
-        source: '/app/:path*',
-        destination: 'http://120.26.62.151:9991/app/:path*',
       },
     ]
   },

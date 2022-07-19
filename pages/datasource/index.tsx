@@ -18,7 +18,7 @@ import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import styles from './index.module.scss'
 
 export default function Datasource() {
-  const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
+  const [datasourceList, dispatch] = useReducer(datasourceReducer,[])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
@@ -26,12 +26,15 @@ export default function Datasource() {
   }, [datasourceList])
 
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  const { data: datasource, error } = useSWR<DatasourceResp[], Error>('/dataSource', getFetcher)
+  const { data: datasource, error } = useSWR<DatasourceResp[], Error>(
+    '/dataSource',
+    getFetcher<DatasourceResp[]>
+  )
 
   useEffect(() => {
     datasource &&
       dispatch({
-        type: 'fetched',
+        type: 'selected',
         data: datasource.filter((item) => item.source_type == 1),
       })
   }, [datasource])

@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
-import styles from './datasource-common-main.module.scss'
+import styles from './datasource-common.module.scss'
 import DatasourceDBItem from './datasource-item'
 
 interface Props {
@@ -20,7 +20,7 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
   function addTable() {
     const data = {
       id: 0,
-      name: 'a',
+      name: '',
       config: '2',
       // eslint-disable-next-line camelcase
       source_type: Datasourcetype,

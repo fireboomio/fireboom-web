@@ -52,11 +52,9 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
   }
 
   async function handleItemDelete(item: DatasourceResp) {
-    const result = await requests.delete(`/dataSource/${item.id}`)
+    void (await requests.delete(`/dataSource/${item.id}`))
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (result.data.code == 200) {
-      dispatch({ type: 'deleted', data: item })
-    }
+    dispatch({ type: 'deleted', data: item })
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
