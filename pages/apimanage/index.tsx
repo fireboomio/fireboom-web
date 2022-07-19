@@ -398,20 +398,20 @@ const ApiManage: FC<ApiManageProps> = () => {
           <div className="px-4">
             <div className="flex justify-between text-18px leading-25px">
               <span className="font-bold">API 管理</span>
-              <IconFont type="icon-wenjianshezhi" style={{ 'font-size': '18px' }} />
+              <IconFont type="icon-wenjianshezhi" style={{ fontSize: '18px' }} />
             </div>
             <div className="flex justify-between mt-7">
               <Tooltip placement="top" title="设置">
-                <IconFont type="icon-shezhi1" style={{ 'font-size': '20px' }} />
+                <IconFont type="icon-shezhi1" style={{ fontSize: '20px' }} />
               </Tooltip>
               <Tooltip placement="top" title="导出">
-                <IconFont type="icon-neisheng" style={{ 'font-size': '18px' }} />
+                <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
               </Tooltip>
               <Tooltip placement="top" title="表单设计器">
-                <IconFont type="icon-biaodanshejiqi" style={{ 'font-size': '20px' }} />
+                <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
               </Tooltip>
               <Tooltip placement="top" title="下载SDK">
-                <IconFont type="icon-xiazaiSDK" style={{ 'font-size': '20px' }} />
+                <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
               </Tooltip>
             </div>
           </div>
@@ -421,15 +421,11 @@ const ApiManage: FC<ApiManageProps> = () => {
             <div className="space-x-4">
               <IconFont
                 type="icon-wenjianjia1"
-                style={{ 'font-size': '18px' }}
+                style={{ fontSize: '18px' }}
                 onClick={handleAddNode}
               />
-              <IconFont
-                type="icon-shuaxin"
-                style={{ 'font-size': '16px' }}
-                onClick={handleAddNode}
-              />
-              <IconFont type="icon-fuzhi" style={{ 'font-size': '16px' }} onClick={handleAddNode} />
+              <IconFont type="icon-shuaxin" style={{ fontSize: '16px' }} onClick={handleAddNode} />
+              <IconFont type="icon-fuzhi" style={{ fontSize: '16px' }} onClick={handleAddNode} />
             </div>
           </div>
           <Divider className="my-4" />
@@ -457,9 +453,9 @@ const ApiManage: FC<ApiManageProps> = () => {
               <span className="text-16px font-bold">userinfo</span>
             </div>
             <div className="space-x-4">
-              <IconFont type="icon-lianxi" style={{ 'font-size': '18px' }} />
-              <IconFont type="icon-wenjian1" style={{ 'font-size': '18px' }} />
-              <IconFont type="icon-bangzhu" style={{ 'font-size': '18px' }} />
+              <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
+              <IconFont type="icon-wenjian1" style={{ fontSize: '18px' }} />
+              <IconFont type="icon-bangzhu" style={{ fontSize: '18px' }} />
             </div>
           </div>
 
