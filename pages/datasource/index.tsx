@@ -19,7 +19,7 @@ import styles from './index.module.scss'
 
 
 export default function Datasource() {
-  const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
+  const [datasourceList, dispatch] = useReducer(datasourceReducer,[])
   const [showType, setShowType] = useImmer('data')
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
@@ -35,7 +35,7 @@ export default function Datasource() {
   useEffect(() => {
     datasource &&
       dispatch({
-        type: 'fetched',
+        type: 'selected',
         data: datasource.filter((item) => item.source_type == 1),
       })
   }, [datasource])
@@ -56,7 +56,7 @@ export default function Datasource() {
   const content = datasourceList.find((b) => b.id === currDBId) as DatasourceResp
 
   function handleClickItem(datasourceItem: DatasourceResp) {
-    setShowType('data')
+    setShowType('check')
     setCurrDBId(datasourceItem.id)
   }
 

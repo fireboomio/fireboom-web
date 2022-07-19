@@ -11,6 +11,7 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from '../datasource-pannel.module.scss'
 
@@ -20,7 +21,7 @@ interface Props {
   Datasourcetype: number
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasourcetype }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -39,24 +40,28 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
       if (datasourceItem.id != 0) {
-        await axios.put('/api/v1/dataSource', { ...datasourceItem, name: value })
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        await requests.put('/dataSource', { ...datasourceItem, name: value })
+        dispatch({
+          type: 'fetched',
+          sourceType: Datasourcetype,
+        })
       } else {
         const req = { ...datasourceItem, name: value }
         Reflect.deleteProperty(req, 'id')
-        await axios.post('/api/v1/dataSource', req)
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        await requests.post('/dataSource', req)
+        dispatch({
+          type: 'fetched',
+          sourceType: Datasourcetype,
+        })
       }
     }
     setIsEditing(false)
   }
 
-  async function handleItemDelete(item: DatasourceResp) {
-    const result = await axios.delete(`/api/v1/dataSource/${item.id}`)
+  function handleItemDelete(item: DatasourceResp) {
+    void axios.delete(`/api/v1/dataSource/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (result.data.code == 200) {
-      dispatch({ type: 'deleted', data: item })
-    }
+    dispatch({ type: 'deleted', data: item })
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态

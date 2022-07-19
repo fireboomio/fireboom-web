@@ -4,14 +4,10 @@ import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 
-import DatasourceEditorMainCheck from './subs/datasource-db-main-check'
-import DatasourceEditorMainEdit from './subs/datasource-db-main-edit'
-import DatasourceDBMainSetting from './subs/datasource-db-main-setting'
+import DatasourceDBMain from './subs/datasource-db-main'
 import DatasourceDeselfMainEdit from './subs/datasource-deself-main-edit'
-import DatasourceGraphalMainCheck from './subs/datasource-graphal-main-check'
-import DatasourceGraphalMainEdit from './subs/datasource-graphal-main-edit'
-import DatasourceRestMainCheck from './subs/datasource-rest-main-check'
-import DatasourceRestMainEdit from './subs/datasource-rest-main-edit'
+import DatasourceGraphalMain from './subs/datasource-graphal-main'
+import DatasourceRestMain from './subs/datasource-rest-main'
 
 interface Props {
   content: DatasourceResp
@@ -24,50 +20,28 @@ export default function DatasourceEditor({ content, showType }: Props) {
   const handleIconClick = () => {
     console.log('aaa')
   }
-
   useEffect(() => {
-    if (content) {
-      switch (showType) {
-        case 'data':
-          if (content.source_type == 1) {
-            setTitile('DB')
-            setViewer(<DatasourceEditorMainCheck content={content} />)
-          } else if (content.source_type == 2) {
-            setTitile('REST')
-            setViewer(<DatasourceRestMainCheck content={content} />)
-          } else if (content.source_type == 3) {
-            setTitile('Graphal')
-            setViewer(<DatasourceGraphalMainCheck content={content} />)
-          } else if (content.source_type == 4) {
-            setTitile('defineByself')
-            setViewer(<DatasourceDeselfMainEdit content={content} />)
-          }
-          break
-        case 'DB':
+    if (content)
+      if (showType == 'Setting') {
+        setTitile('设置')
+        setViewer(<DatasourceDBMain content={content} type={showType} />)
+      } else {
+        if (content.source_type == 1) {
           setTitile('DB')
-          setViewer(<DatasourceEditorMainEdit content={content} />)
-          break
-        case 'REST':
+          console.log('123')
+          setViewer(<DatasourceDBMain content={content} type={showType} />)
+        } else if (content.source_type == 2) {
           setTitile('REST')
-          setViewer(<DatasourceRestMainEdit content={content} />)
-          break
-        case 'Graphal':
+          setViewer(<DatasourceRestMain content={content} type={showType} />)
+        } else if (content.source_type == 3) {
           setTitile('Graphal')
-          setViewer(<DatasourceGraphalMainEdit content={content} />)
-          break
-        case 'defineByself':
-          setTitile('自定义')
+          setViewer(<DatasourceGraphalMain content={content} type={showType} />)
+        } else if (content.source_type == 4) {
+          setTitile('defineByself')
           setViewer(<DatasourceDeselfMainEdit content={content} />)
-          break
-        case 'Setting':
-          setTitile('设置')
-          setViewer(<DatasourceDBMainSetting />)
-          break
-        default:
-          setViewer(JSON.stringify(content))
-          break
+        }
       }
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showType, content])
 

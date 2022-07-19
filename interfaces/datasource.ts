@@ -1,11 +1,11 @@
 export type DatasourceAction = DatasourceSingleAction | DatasourceListAction
 
 interface DatasourceSingleAction {
-  type: 'selected' | 'added' | 'deleted' | 'changed'
+  type: 'added' | 'deleted' | 'changed'
   data: DatasourceResp
 }
 interface DatasourceListAction {
-  type: 'fetched'
+  type: 'selected' | 'fetched'
   data: DatasourceResp[]
 }
 export interface DatasourceResp {

@@ -1,22 +1,27 @@
 import { AppleOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { Descriptions, Input, Switch } from 'antd'
+import { ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
+import requests from '@/lib/fetchers'
 
 interface Props {
   content: DatasourceResp
 }
-
-interface PropsInfo {
-  info: {
-    [key: string]: number | string | boolean
-  }
+interface Config {
+  [key: string]: ReactNode
 }
-function DatasourceDefineItem({ info }: PropsInfo) {
+interface PropsInfo {
+  info: Config
+  name: string
+  editDefineSelf: (key: string, value: string) => void
+}
+function DatasourceDefineItem({ info, name, editDefineSelf }: PropsInfo) {
   const [isEditing, setIsEditing] = useImmer(false)
 
-  function handleItemEdit(value: string) {
+  function handleItemEdit(key: string, value: string) {
+    editDefineSelf(key, value)
     setIsEditing(false)
     console.log(value)
   }
@@ -25,7 +30,7 @@ function DatasourceDefineItem({ info }: PropsInfo) {
     <div>
       {isEditing ? (
         <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
+          onBlur={(e) => handleItemEdit(name, e.target.value)}
           // @ts-ignore
           onPressEnter={(e) => handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
@@ -35,7 +40,7 @@ function DatasourceDefineItem({ info }: PropsInfo) {
         />
       ) : (
         <>
-          {info.serverName}
+          {info[name]}
           <span
             onClick={() => {
               setIsEditing(true)
@@ -51,8 +56,12 @@ function DatasourceDefineItem({ info }: PropsInfo) {
 }
 
 export default function DatasourceDeselfMainEdit({ content }: Props) {
-  const { config } = content
-
+  const config = JSON.parse(content.config) as Config
+  const editDefineSelf = (key: string, value: string) => {
+    config[key] = value
+    console.log(config, '123')
+    void requests.put('/dataSource', { ...content, config: JSON.stringify({ ...config }) })
+  }
   return (
     <>
       <div className="border-gray border-b pb-5">
@@ -73,10 +82,14 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
           }}
         >
           <Descriptions.Item label="连接名">
-            <DatasourceDefineItem info={config} />
+            <DatasourceDefineItem
+              info={config}
+              name="connectName"
+              editDefineSelf={editDefineSelf}
+            />
           </Descriptions.Item>
           <Descriptions.Item label="类型">
-            <DatasourceDefineItem info={config} />
+            <DatasourceDefineItem info={config} name="type" editDefineSelf={editDefineSelf} />
           </Descriptions.Item>
         </Descriptions>
       </div>
