@@ -1,5 +1,6 @@
 const path = require('path')
 const WindiCSSWebpackPlugin = require('windicss-webpack-plugin')
+const withAntdLess = require('next-plugin-antd-less')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -44,6 +45,7 @@ const nextConfig = {
     loader: 'akamai',
     path: '',
   },
+  modifyVars: { '@primary-color': '#E92E5E' },
 }
 
-module.exports = nextConfig
+module.exports = withAntdLess(nextConfig)

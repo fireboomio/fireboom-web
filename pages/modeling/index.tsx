@@ -26,13 +26,15 @@ export default function Modeling() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks])
 
-  const { data: sources, error } = useSWR<DBSourceResp[], Error>('/sources', getFetcher<DBSourceResp[]>)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: sources, error } = useSWR('/sources', getFetcher)
 
   if (error) return <div>failed to load</div>
   if (!sources) return <div>loading...</div>
 
   function handleChangeSource(value: string) {
-    requests.get<unknown, SchemaResp>(`/schemas/${value}`)
+    requests
+      .get<unknown, SchemaResp>(`/schemas/${value}`)
       .then((res) =>
         dispatch({
           type: 'fetched',
@@ -68,7 +70,7 @@ export default function Modeling() {
             <Row className="h-screen">
               <Col span={5} className={styles['col-left']}>
                 <ModelPannel
-                  sourceOptions={sources}
+                  sourceOptions={sources as DBSourceResp[]}
                   onChangeSource={handleChangeSource}
                   onClickEntity={handleClickEntity}
                   onToggleDesigner={handleToggleDesigner}
