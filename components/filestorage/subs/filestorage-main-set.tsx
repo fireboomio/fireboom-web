@@ -1,6 +1,5 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
 import { useContext } from 'react'
-import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/filestorage'
 import { FSToggleContext, FSDispatchContext } from '@/lib/context'
@@ -8,9 +7,6 @@ import requests from '@/lib/fetchers'
 
 import styles from './filestorage-common-main.module.scss'
 
-interface FromValues {
-  [key: string]: number | string | boolean
-}
 interface Props {
   content: FileStorageResp
 }
@@ -18,11 +14,7 @@ interface Props {
 export default function StorageMainSet({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
   const dispatch = useContext(FSDispatchContext)
-  const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
@@ -40,17 +32,6 @@ export default function StorageMainSet({ content }: Props) {
     console.log('Failed:', errorInfo)
   }
 
-  const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    console.log(allValues)
-    for (const key in allValues) {
-      if ((allValues[key] as string) == undefined || allValues[key] == '') {
-        setDisabled(true)
-        return
-      }
-    }
-    setDisabled(false)
-  }
-
   if (!content) {
     return <></>
   }
@@ -62,10 +43,8 @@ export default function StorageMainSet({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked={content.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
@@ -73,7 +52,6 @@ export default function StorageMainSet({ content }: Props) {
             <span>取消</span>
           </Button>
           <Button
-            disabled={disabled}
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
@@ -94,7 +72,6 @@ export default function StorageMainSet({ content }: Props) {
           onFinish={(values) => {
             void onFinish(values as object)
           }}
-          onValuesChange={onValuesChange}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"

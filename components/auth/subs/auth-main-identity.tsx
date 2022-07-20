@@ -16,38 +16,16 @@ interface Authentication {
   postAuthenticationSwitch: boolean
   mutatingPostAuthenticationSwitch: boolean
 }
-const { TabPane } = Tabs
 
+interface Respones {
+  authentication: Authentication
+}
+
+const { TabPane } = Tabs
 export default function AuthenticationMainIdentity() {
   const [authentication, setAuthentication] = useImmer({} as Authentication)
-  const getStatus = useCallback(async () => {
-    const res = await requests.get<unknown, Authentication>('/auth/hooksSwitch')
-    setAuthentication(res)
-    console.log(res)
-  }, [])
 
-  useEffect(() => {
-    void getStatus()
-  }, [])
-
-  // const onChange = (key: string) => {
-  //   // 调用hooksSwitch接口，默认调用postAuthenticationSwitch
-  //   //await getStatus()
-  //   if (key == '1') {
-  //     postAuthenticationSwitch = authentication['postAuthenticationSwitch']
-  //   } else {
-  //     mutatingPostAuthenticationSwitch = authentication['mutatingPostAuthenticationSwitch']
-  //   }
-  // }
-  // console.log(authentication[postAuthenticationSwitch])
-  // console.log(authentication[mutatingPostAuthenticationSwitch])
-  // void requests.post('/global', {
-  //   key:
-  //     'authentication[postAuthenticationSwitch]' |
-  //     'authentication[mutatingPostAuthenticationSwitch]',
-  //   val: 0,
-  // })
-  const postRequest = async (key: string, value: string | Array<string> | number) => {
+  const postRequest = async (key: string, value: boolean | Authentication) => {
     await requests.post('/global', {
       key: key,
       val: value,
@@ -55,14 +33,18 @@ export default function AuthenticationMainIdentity() {
     void getStatus()
   }
 
+  const getStatus = useCallback(async () => {
+    const data = await requests.get<unknown, Respones>('/auth/hooksSwitch')
+    console.log(data, 'data')
+    setAuthentication(data.authentication)
+  }, [])
+
+  useEffect(() => {
+    void getStatus()
+  }, [])
   return (
     <>
-      <Tabs
-        defaultActiveKey="1"
-        // onChange={(key) => {
-        // //  void onChange(key)
-        // }}
-      >
+      <Tabs defaultActiveKey="1">
         <TabPane tab="postAuthentication" key="1">
           <div className="flex justify-between items-center">
             <div className={styles.authHead}>
@@ -87,7 +69,13 @@ export default function AuthenticationMainIdentity() {
                 className={styles['switch-edit-btn']}
                 size="small"
                 onChange={(isChecked) => {
-                  void postRequest('postAuthenticationSwitch', isChecked == false ? 0 : 1)
+                  console.log(isChecked)
+                  void postRequest('authentication', {
+                    postAuthenticationSwitch: isChecked,
+                    mutatingPostAuthenticationSwitch:
+                      authentication.mutatingPostAuthenticationSwitch,
+                  })
+                  // console.log('postAuthenticationSwitch', authentication)
                 }}
               />
             </div>
@@ -117,7 +105,10 @@ export default function AuthenticationMainIdentity() {
                 className={styles['switch-edit-btn']}
                 size="small"
                 onChange={(isChecked) => {
-                  void postRequest('mutatingPostAuthenticationSwitch', isChecked == false ? 0 : 1)
+                  void postRequest('authentication', {
+                    postAuthenticationSwitch: authentication.postAuthenticationSwitch,
+                    mutatingPostAuthenticationSwitch: isChecked,
+                  })
                 }}
               />
             </div>
