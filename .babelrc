@@ -1,4 +1,7 @@
 {
   "presets": ["next/babel"],
-  "plugins": [["import", { "libraryName": "antd", "style": true }]]
+  "plugins": [
+    ["@babel/plugin-proposal-pipeline-operator", { "proposal": "hack", "topicToken": "%" }],
+    ["import", { "libraryName": "antd", "style": true }]
+  ]
 }
