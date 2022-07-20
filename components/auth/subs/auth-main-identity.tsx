@@ -5,32 +5,64 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { Button, Switch, Tabs } from 'antd'
+import { useCallback, useEffect } from 'react'
+import { useImmer } from 'use-immer'
 
-import type { AuthProvResp } from '@/interfaces/auth'
+import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
 
-interface Props {
-  content: AuthProvResp
+interface Authentication {
+  postAuthenticationSwitch: boolean
+  mutatingPostAuthenticationSwitch: boolean
 }
-
 const { TabPane } = Tabs
 
-const onChange = (key: string) => {
-  console.log(key)
-}
+export default function AuthenticationMainIdentity() {
+  const [authentication, setAuthentication] = useImmer({} as Authentication)
+  const getStatus = useCallback(async () => {
+    const res = await requests.get<unknown, Authentication>('/auth/hooksSwitch')
+    setAuthentication(res)
+    console.log(res)
+  }, [])
 
-export default function AuthenticationMainIdentity({ content }: Props) {
-  if (!content) {
-    return <></>
+  useEffect(() => {
+    void getStatus()
+  }, [])
+
+  // const onChange = (key: string) => {
+  //   // 调用hooksSwitch接口，默认调用postAuthenticationSwitch
+  //   //await getStatus()
+  //   if (key == '1') {
+  //     postAuthenticationSwitch = authentication['postAuthenticationSwitch']
+  //   } else {
+  //     mutatingPostAuthenticationSwitch = authentication['mutatingPostAuthenticationSwitch']
+  //   }
+  // }
+  // console.log(authentication[postAuthenticationSwitch])
+  // console.log(authentication[mutatingPostAuthenticationSwitch])
+  // void requests.post('/global', {
+  //   key:
+  //     'authentication[postAuthenticationSwitch]' |
+  //     'authentication[mutatingPostAuthenticationSwitch]',
+  //   val: 0,
+  // })
+  const postRequest = async (key: string, value: string | Array<string> | number) => {
+    await requests.post('/global', {
+      key: key,
+      val: value,
+    })
+    void getStatus()
   }
 
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
   return (
     <>
-      <Tabs defaultActiveKey="1" onChange={onChange}>
+      <Tabs
+        defaultActiveKey="1"
+        // onChange={(key) => {
+        // //  void onChange(key)
+        // }}
+      >
         <TabPane tab="postAuthentication" key="1">
           <div className="flex justify-between items-center">
             <div className={styles.authHead}>
@@ -51,10 +83,12 @@ export default function AuthenticationMainIdentity({ content }: Props) {
                 选择
               </Button>
               <Switch
-                defaultChecked
+                checked={authentication.postAuthenticationSwitch}
                 className={styles['switch-edit-btn']}
                 size="small"
-                onChange={connectSwitchOnChange}
+                onChange={(isChecked) => {
+                  void postRequest('postAuthenticationSwitch', isChecked == false ? 0 : 1)
+                }}
               />
             </div>
           </div>
@@ -79,10 +113,12 @@ export default function AuthenticationMainIdentity({ content }: Props) {
                 选择
               </Button>
               <Switch
-                defaultChecked
+                checked={authentication.mutatingPostAuthenticationSwitch}
                 className={styles['switch-edit-btn']}
                 size="small"
-                onChange={connectSwitchOnChange}
+                onChange={(isChecked) => {
+                  void postRequest('mutatingPostAuthenticationSwitch', isChecked == false ? 0 : 1)
+                }}
               />
             </div>
           </div>

@@ -29,15 +29,6 @@ export default function AuthMainRole() {
     void getData()
   }, [])
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const result = await requests.get<unknown, RoleData>('/role')
-  //     setRoleData(result);
-  //   };
-
-  //   void fetchData();
-  // }, []);
-
   console.log(roleData, 'role')
   const onFinish = async (values: RoleProvResp) => {
     console.log('Success:', values)

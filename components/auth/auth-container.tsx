@@ -40,7 +40,7 @@ export default function AuthContainer({ content, showType }: Props) {
           break
         case 'identity':
           setTitle('身份鉴权')
-          setViewer(<AuthMainIdentity content={content} />)
+          setViewer(<AuthMainIdentity />)
           break
         case 'role':
           setTitle('角色配置')

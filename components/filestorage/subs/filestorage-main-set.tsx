@@ -62,7 +62,7 @@ export default function StorageMainSet({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked
+            defaultChecked={content.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
             onChange={connectSwitchOnChange}
@@ -127,15 +127,10 @@ export default function StorageMainSet({ content }: Props) {
             style={{ marginTop: '29px' }}
             rules={[{ required: true }]}
             name="useSSL"
+            valuePropName="checked"
+            initialValue={true}
           >
-            <Switch
-              defaultChecked={content.switch == 0 ? false : true}
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
-              onChange={connectSwitchOnChange}
-              className={styles['switch-set-btn']}
-              size="small"
-            />
+            <Switch className={styles['switch-set-btn']} size="small" />
           </Form.Item>
         </Form>
       </div>

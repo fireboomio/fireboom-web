@@ -212,3 +212,10 @@
     line-height: 20px;
   }
 }
+
+.security-form-contain :global {
+  .ant-form-item {
+    margin-bottom: 10px;
+    padding-top: 5px;
+  }
+}
