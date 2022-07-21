@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Table, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import axios from 'axios'
+import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
+
+import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
 
@@ -9,72 +12,37 @@ interface RoleProvResp {
   id: number
   code: string
   remark: string
-  time?: string
 }
-
-interface RoleProvRequest {
-  code: string
-  remark: string
-  time?: string
-}
-
-interface Response {
-  status: number
-  data: { result: RoleProvResp[]; [key: string]: number | string | boolean | object }
-  [key: string]: number | string | boolean | object
-}
-// const data: RoleProvResp[] = [
-//   {
-//     key: 1,
-//     name: 'John Brown',
-//     description: '普通用户',
-//     time: '2022-06-22 12:34:12',
-//   },
-//   {
-//     key: 2,
-//     name: 'Jim Green',
-//     description: '普通用户',
-//     time: '2022-06-22 12:34:12',
-//   },
-//   {
-//     key: 3,
-//     name: 'Joe Black',
-//     description: '普通用户',
-//     time: '2022-06-22 12:34:12',
-//   },
-//   {
-//     key: 4,
-//     name: 'mako',
-//     description: '普通用户',
-//     time: '2022-06-22 12:34:12',
-//   },
-// ]
 
 export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  const [roleData, setRoleData] = useImmer(content)
+  const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
+
+  const getData = useCallback(async () => {
+    const result = await requests.get<unknown, Array<RoleProvResp>>('/role')
+    setRoleData(result)
+    console.log(result, 'result')
+  }, [])
+
+  useEffect(() => {
+    void getData()
+  }, [])
+
+  console.log(roleData, 'role')
   const onFinish = async (values: RoleProvResp) => {
     console.log('Success:', values)
-    console.log(JSON.stringify(values))
-    const data = await axios.put('/api/v1/role', { ...roleData, values })
-    console.log(data)
-    setRoleData(data.request as RoleProvResp[])
+    // const newRole = roleData.concat(values)
+    await requests.post('/role', values)
+    await getData()
   }
-
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
-  const handleAddRole = async (values: RoleProvResp) => {
-    form.submit()
-    const data = await axios.post('/api/v1/role', { ...roleData, values })
-    setRoleData(data.request as RoleProvResp[])
-  }
 
-  const handleDeleteRole = async (item: RoleProvResp) => {
-    const data = await axios.delete(`/api/v1/role/${item.id}`)
-    console.log(data)
-    setRoleData(data.request as RoleProvResp[])
+  const handleDeleteRole = async (id: number) => {
+    await requests.delete(`/role/${id}`)
+    await getData()
   }
   const columns: ColumnsType<RoleProvResp> = [
     {
@@ -95,13 +63,13 @@ export default function AuthMainRole() {
     {
       title: '操作',
       key: 4,
-      render: (_, content) => (
+      render: (_, { id }) => (
         <Button
           type="text"
           className="pl-0 text-red-500"
           onClick={() => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            void handleDeleteRole(content)
+            void handleDeleteRole(id)
           }}
         >
           删除
@@ -133,7 +101,12 @@ export default function AuthMainRole() {
         onOk={() => setModal1Visible(false)}
         onCancel={() => setModal1Visible(false)}
         okText={
-          <Button className={styles['save-btn']} onClick={() => void handleAddRole}>
+          <Button
+            className={styles['save-btn']}
+            onClick={() => {
+              form.submit()
+            }}
+          >
             <span>保存</span>
           </Button>
         }
@@ -146,7 +119,11 @@ export default function AuthMainRole() {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
-          onFinish={() => void onFinish}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          onFinish={(values) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            void onFinish(values)
+          }}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           labelAlign="left"
@@ -159,19 +136,29 @@ export default function AuthMainRole() {
           >
             <Input />
           </Form.Item>
-
           <Form.Item label="角色描述" name="remark">
             <Input />
           </Form.Item>
         </Form>
       </Modal>
       <div className={styles['role-container-table']}>
-        <Table
-          columns={columns}
-          dataSource={roleData}
-          rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
-          pagination={false}
-        />
+        {roleData.length > 0 ? (
+          <Table
+            columns={columns}
+            dataSource={roleData}
+            rowKey={(record) => record.id}
+            rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
+            pagination={false}
+          />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={[]}
+            rowKey={(record) => record.id}
+            rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
+            pagination={false}
+          />
+        )}
       </div>
     </>
   )

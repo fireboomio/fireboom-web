@@ -8,7 +8,7 @@ import AuthMainCheck from './subs/auth-main-check'
 import AuthMainEdit from './subs/auth-main-edit'
 import AuthMainIdentity from './subs/auth-main-identity'
 import AuthMainRole from './subs/auth-main-role'
-import AuthMainSet from './subs/auth-main-setting'
+import AuthMainSetting from './subs/auth-main-setting'
 
 interface Props {
   content: AuthProvResp
@@ -36,11 +36,11 @@ export default function AuthContainer({ content, showType }: Props) {
           break
         case 'setting':
           setTitle('')
-          setViewer(<AuthMainSet />)
+          setViewer(<AuthMainSetting />)
           break
         case 'identity':
           setTitle('身份鉴权')
-          setViewer(<AuthMainIdentity content={content} />)
+          setViewer(<AuthMainIdentity />)
           break
         case 'role':
           setTitle('角色配置')

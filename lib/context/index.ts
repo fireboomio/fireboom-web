@@ -11,17 +11,16 @@ import {
   DatasourceToggleContext,
 } from './datasource-context'
 import {
+  FSContext,
+  FSDispatchContext,
+  FSCurrFileContext,
+  FSToggleContext,
+} from './filestorage-context'
+import {
   ModelingContext,
   ModelingDispatchContext,
   ModelingCurrEntityContext,
 } from './modeling-context'
-// import {
-//   RoleContext,
-//   RoleDispatchContext,
-//   RoleCurrContext,
-//   RoleToggleContext,
-// } from './role-context'
-import { FSContext, FSDispatchContext, FSCurrFileContext } from './storage-context'
 export {
   ModelingContext,
   ModelingDispatchContext,
@@ -33,12 +32,9 @@ export {
   FSContext,
   FSDispatchContext,
   FSCurrFileContext,
+  FSToggleContext,
   AuthContext,
   AuthDispatchContext,
   AuthCurrContext,
   AuthToggleContext,
-  // RoleContext,
-  // RoleDispatchContext,
-  // RoleCurrContext,
-  // RoleToggleContext,
 }

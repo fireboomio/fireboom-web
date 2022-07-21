@@ -5,56 +5,39 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { Button, Switch, Tabs } from 'antd'
-import { useCallback, useEffect } from 'react'
-import { useImmer } from 'use-immer'
 
-import requests from '@/lib/fetchers'
+import type { AuthProvResp } from '@/interfaces/auth'
 
 import styles from './auth-common-main.module.scss'
 
-interface Authentication {
-  postAuthenticationSwitch: boolean
-  mutatingPostAuthenticationSwitch: boolean
-}
-
-interface Respones {
-  authentication: Authentication
+interface Props {
+  content: AuthProvResp
 }
 
 const { TabPane } = Tabs
-export default function AuthenticationMainIdentity() {
-  const [authentication, setAuthentication] = useImmer({} as Authentication)
 
-  const postRequest = async (key: string, value: boolean | Authentication) => {
-    await requests.post('/global', {
-      key: key,
-      val: value,
-    })
-    void getStatus()
+const onChange = (key: string) => {
+  console.log(key)
+}
+
+export default function AuthenticationMainIdentity({ content }: Props) {
+  if (!content) {
+    return <></>
   }
 
-  const getStatus = useCallback(async () => {
-    const data = await requests.get<unknown, Respones>('/auth/hooksSwitch')
-    console.log(data, 'data')
-    setAuthentication(data.authentication)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    void getStatus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+  const connectSwitchOnChange = () => {
+    console.log('switch change')
+  }
   return (
     <>
-      <Tabs defaultActiveKey="1">
+      <Tabs defaultActiveKey="1" onChange={onChange}>
         <TabPane tab="postAuthentication" key="1">
           <div className="flex justify-between items-center">
-            <div className={styles['auth-head']}>
+            <div className={styles.authHead}>
               <InfoCircleOutlined />
               <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
             </div>
-            <div className={`${styles['auth-head']} flex items-center mr-2`}>
+            <div className={`${styles.authBtn} flex items-center mr-2`}>
               <Button type="text" icon={<PlayCircleOutlined />}>
                 测试
               </Button>
@@ -68,18 +51,10 @@ export default function AuthenticationMainIdentity() {
                 选择
               </Button>
               <Switch
-                checked={authentication.postAuthenticationSwitch}
+                defaultChecked
                 className={styles['switch-edit-btn']}
                 size="small"
-                onChange={(isChecked) => {
-                  console.log(isChecked)
-                  void postRequest('authentication', {
-                    postAuthenticationSwitch: isChecked,
-                    mutatingPostAuthenticationSwitch:
-                      authentication.mutatingPostAuthenticationSwitch,
-                  })
-                  // console.log('postAuthenticationSwitch', authentication)
-                }}
+                onChange={connectSwitchOnChange}
               />
             </div>
           </div>
@@ -90,7 +65,7 @@ export default function AuthenticationMainIdentity() {
               <InfoCircleOutlined />
               <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
             </div>
-            <div className={`${styles['auth-btn']} flex items-center mr-2`}>
+            <div className={`${styles.authBtn} flex items-center mr-2`}>
               <Button type="text" icon={<PlayCircleOutlined />}>
                 测试
               </Button>
@@ -104,15 +79,10 @@ export default function AuthenticationMainIdentity() {
                 选择
               </Button>
               <Switch
-                checked={authentication.mutatingPostAuthenticationSwitch}
+                defaultChecked
                 className={styles['switch-edit-btn']}
                 size="small"
-                onChange={(isChecked) => {
-                  void postRequest('authentication', {
-                    postAuthenticationSwitch: authentication.postAuthenticationSwitch,
-                    mutatingPostAuthenticationSwitch: isChecked,
-                  })
-                }}
+                onChange={connectSwitchOnChange}
               />
             </div>
           </div>

@@ -1,15 +1,21 @@
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Divider } from 'antd'
+import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
+import { FSToggleContext } from '@/lib/context'
 
 import styles from './filestorage-common-main.module.scss'
-// import styles from './datasource-db-main.module.scss'
+
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
+}
+interface Config {
+  [key: string]: ReactNode
 }
 export default function FileStorageMainCheck({ content }: Props) {
+  const { handleToggleDesigner } = useContext(FSToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const connectSwitchOnChange = () => {
     console.log('switch change')
@@ -17,11 +23,11 @@ export default function FileStorageMainCheck({ content }: Props) {
   if (!content) {
     return <></>
   }
-  const { info } = content
+  const config = JSON.parse(content.config) as Config
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-  console.log(info)
+  console.log(config)
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">
@@ -30,19 +36,21 @@ export default function FileStorageMainCheck({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked
+            defaultChecked={content.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
-            <Button className={styles['center-btn']}>
-              <span>取消</span>
-            </Button>
-            <Button className={styles['save-btn']}>
-              <span>保存</span>
-            </Button>
+          <Button
+            className={`${styles['save-btn']}  ml-4`}
+            onClick={() => {
+              handleToggleDesigner('setEdit', content.id)
+            }}
+          >
+            <span>编辑</span>
+          </Button>
         </div>
       </div>
 
@@ -59,14 +67,14 @@ export default function FileStorageMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="名称">{info.connectName}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{info.SQlType}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{info.typeName} </Descriptions.Item>
+          <Descriptions.Item label="名称">{content.name}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">{config.service_address}</Descriptions.Item>
+          <Descriptions.Item label="APP ID">{config.accessKeyID} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
-                  {info.environmentVar}
+                  {config.secretAccessKey}
                   <EyeOutlined className="ml-6" />
                 </div>
               ) : (
@@ -77,13 +85,14 @@ export default function FileStorageMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="区域">{info.connectURL}</Descriptions.Item>
-          <Descriptions.Item label="bucketName">{info.host}</Descriptions.Item>
+          <Descriptions.Item label="区域">{config.bucketLocation}</Descriptions.Item>
+          <Descriptions.Item label="bucketName">{config.bucketName}</Descriptions.Item>
           <Descriptions.Item label="开启SSL">
-            <div>
-              <Button className={styles['SSL-open-btn']}>开启</Button>
-              <Button className={styles['SSL-close-btn']}>关闭</Button>
-            </div>
+            {config.useSSL ? (
+              <Button className={styles['ssl-open-btn']}>开启</Button>
+            ) : (
+              <Button className={styles['ssl-close-btn']}>关闭</Button>
+            )}
           </Descriptions.Item>
         </Descriptions>
       </div>

@@ -22,12 +22,12 @@ import {
 import Image from 'next/image'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 
 import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
 }
 
 interface Option {
@@ -47,9 +47,42 @@ export default function StorageMainCheck({ content }: Props) {
     setVisible(false)
   }
 
-  const {
-    info: { dropdownMenu },
-  } = content
+  const dropdownMenu = [
+    {
+      value: '文件一',
+      label: '文件一',
+      children: [
+        {
+          value: '文件二',
+          label: '文件二',
+          children: [
+            {
+              valu: 'admin1.jpg',
+              labe: 'admin1.jpg',
+            },
+            {
+              valu: 'admin2.jpg',
+              labe: 'admin2.jpg',
+            },
+          ],
+        },
+        {
+          value: '文件三',
+          label: '文件三',
+          children: [
+            {
+              value: 'admin3.jpg',
+              label: 'admin3.jpg',
+            },
+            {
+              value: 'admin4.jpg',
+              label: 'admin4.jpg',
+            },
+          ],
+        },
+      ],
+    },
+  ]
   const options = dropdownMenu as Option[]
   if (!content) {
     return <></>

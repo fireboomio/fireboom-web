@@ -23,6 +23,6 @@ export default function AuthReducer(authProvList: AuthProvResp[], action: AuthAc
       return authProvList.filter((b) => b.id !== action.data.id)
     }
     default:
-      return fileList
+      return authProvList
   }
 }

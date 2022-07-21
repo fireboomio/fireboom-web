@@ -2,7 +2,13 @@
   height: 1px;
   margin: 20px 0;
   border: 1px solid;
-  border-image: linear-gradient(270deg, rgb(176 165 166 / 0%), rgb(188 184 184 / 63%), rgb(120 108 109 / 0%)) 1 1;
+  border-image: linear-gradient(
+      270deg,
+      rgb(176 165 166 / 0%),
+      rgb(188 184 184 / 63%),
+      rgb(120 108 109 / 0%)
+    )
+    1 1;
   opacity: 0.5;
 }
 
@@ -26,7 +32,7 @@
     }
   }
 
-  .ant-menu:not(.ant-menu-horizontal,.ant-menu-inline-collapsed) .ant-menu-item-icon {
+  .ant-menu:not(.ant-menu-horizontal, .ant-menu-inline-collapsed) .ant-menu-item-icon {
     padding-left: 6px;
   }
 

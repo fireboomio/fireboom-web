@@ -1,24 +1,37 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
+import { useContext } from 'react'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
+import { FSToggleContext, FSDispatchContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
 }
 
 export default function StorageMainSet({ content }: Props) {
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
-  const onFinish = (values: object) => {
+  const { handleToggleDesigner } = useContext(FSToggleContext)
+  const dispatch = useContext(FSDispatchContext)
+  const [form] = Form.useForm()
+  const onFinish = async (values: object) => {
     console.log('Success:', values)
+    console.log(JSON.stringify(values))
+    await requests.put('/storageBucket ', values)
+    const storageBucket = await requests.get<unknown, Array<FileStorageResp>>('/storageBucket ')
+    console.log(storageBucket)
+    dispatch({
+      type: 'fetched',
+      data: storageBucket,
+    })
+    handleToggleDesigner('setCheck', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
+
   if (!content) {
     return <></>
   }
@@ -30,17 +43,21 @@ export default function StorageMainSet({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
           <Button className={styles['center-btn']}>
             <span>取消</span>
           </Button>
-          <Button className={styles['save-btn']}>
+          <Button
+            className={styles['save-btn']}
+            onClick={() => {
+              form.submit()
+              handleToggleDesigner('setCheck', content.id)
+            }}
+          >
             <span>保存</span>
           </Button>
         </div>
@@ -48,39 +65,49 @@ export default function StorageMainSet({ content }: Props) {
 
       <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            void onFinish(values as object)
+          }}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
           labelAlign="left"
           className="ml-3"
         >
-          <Form.Item label="名称">
+          <Form.Item label="名称" name="name">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="服务地址">
+          <Form.Item label="服务地址" name="service_address">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" required>
+          <Form.Item label="App ID" required name="accessKeyID">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App Secret" required>
+          <Form.Item label="App Secret" required name="secretAccessKey">
             <Input.Password placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="区域">
+          <Form.Item label="区域" name="bucketLocation">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="bucketName">
+          <Form.Item label="bucketName" name="bucketName">
             <Input placeholder="请输入..." />
           </Form.Item>
 
-          <Form.Item label="开启SSL" style={{ marginTop: '29px' }} rules={[{ required: true }]}>
-            <Switch defaultChecked className={styles['switch-set-btn']} size="small" />
+          <Form.Item
+            label="开启SSL"
+            style={{ marginTop: '29px' }}
+            rules={[{ required: true }]}
+            name="useSSL"
+            valuePropName="checked"
+            initialValue={true}
+          >
+            <Switch className={styles['switch-set-btn']} size="small" />
           </Form.Item>
         </Form>
       </div>

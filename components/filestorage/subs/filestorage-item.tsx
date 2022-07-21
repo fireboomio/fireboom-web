@@ -4,14 +4,15 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from '../filestorage-pannel.module.scss'
 
 interface Props {
-  fsItem: FileStorageItem
-  onClickItem: (fsItem: FileStorageItem) => void
+  fsItem: FileStorageResp
+  onClickItem: (fsItem: FileStorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
@@ -28,17 +29,29 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
     }
   }
 
-  function handleItemEdit(value: string) {
+  async function handleItemEdit(value: string) {
     if (value === '') {
       dispatch({ type: 'deleted', data: fsItem })
     } else {
-      dispatch({ type: 'changed', data: { ...fsItem, name: value } })
+      if (fsItem.id !== 0) {
+        await requests.put('/storageBucket ', { ...fsItem, name: value })
+        dispatch({ type: 'changed', data: { ...fsItem, name: value } })
+      } else {
+        const req = { ...fsItem, name: value }
+        Reflect.deleteProperty(req, 'id')
+        await requests.post('/storageBucket ', req)
+        dispatch({ type: 'added', data: { ...fsItem, name: value } })
+      }
     }
     setIsEditing(false)
   }
 
-  function handleItemDelete(item: FileStorageItem) {
-    dispatch({ type: 'deleted', data: item })
+  async function handleItemDelete(item: FileStorageResp) {
+    const result = await requests.delete(`/storageBucket /${item.id}`)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (result.data.code == 200) {
+      dispatch({ type: 'deleted', data: item })
+    }
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -98,7 +111,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
             <Popconfirm
               placement="right"
               title="确认删除该文件吗？"
-              onConfirm={() => handleItemDelete(fsItem)}
+              onConfirm={() => void handleItemDelete(fsItem)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -129,9 +142,9 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
     >
       {isEditing ? (
         <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
+          onBlur={(e) => void handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value)}
+          onPressEnter={(e) => void handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={fsItem.name}
           autoFocus

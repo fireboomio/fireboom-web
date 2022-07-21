@@ -2,14 +2,14 @@ import { AppleOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageItem } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/filestorage'
 
 import FileStorageMainCheck from './subs/filestorage-main-check'
 import FileStorageMainContent from './subs/filestorage-main-content'
 import FileStorageMainSet from './subs/filestorage-main-set'
 
 interface Props {
-  content: FileStorageItem
+  content: FileStorageResp
   showType: string
 }
 

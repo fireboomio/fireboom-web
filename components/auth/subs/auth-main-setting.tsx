@@ -1,18 +1,12 @@
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Button } from 'antd'
+import { useCallback, useEffect } from 'react'
+import { useImmer } from 'use-immer'
+
+import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 3 },
-    sm: { span: 3 },
-  },
-  wrapperCol: {
-    xs: { span: 20 },
-    sm: { span: 16 },
-  },
-}
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
@@ -20,77 +14,127 @@ const formItemLayoutWithOutLabel = {
   },
 }
 
-export default function AuthenticationMainSetting() {
+export default function AuthMainSetting() {
+  const [redirectConfig, setRedirectConfig] = useImmer({} as Array<string>)
   const [form] = Form.useForm()
-  const onFinish = (values: unknown) => {
+
+  const onFinish = (values: Array<string>) => {
     console.log('Success:', values)
   }
 
+  const postRequest = useCallback(async (key: string, value: string | Array<string> | number) => {
+    await requests.post('/global', {
+      key: key,
+      val: value,
+    })
+  }, [])
+
+  const getData = useCallback(async () => {
+    const result = await requests.get<unknown, Array<string>>('/auth/redirectUrl')
+    console.log(result, '123')
+    setRedirectConfig(result)
+  }, [setRedirectConfig])
+
+  useEffect(() => {
+    void getData()
+  })
+
   return (
     <>
-      <span className={styles.setWord}>配置重定向URL ：</span>
-      <div className={`${styles['form-contain']}`}>
-        <Form
-          form={form}
-          layout="vertical"
-          className="ml-50 -mt-5"
-          name="dynamic_form_item"
-          {...formItemLayoutWithOutLabel}
-          onFinish={onFinish}
-          labelAlign="left"
-        >
-          <Form.List name="names">
-            {(fields, { add, remove }, { errors }) => (
-              <>
-                {fields.map((field, index) => (
-                  <Form.Item
-                    {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                    label={'域名' + (index + 1).toString() + ':'}
-                    required={false}
-                    key={index}
-                  >
-                    <Form.Item
-                      {...field}
-                      validateTrigger={['onChange', 'onBlur']}
-                      rules={[
-                        {
-                          required: true,
-                          whitespace: true,
-                          message: '请输入域名或删除这个域名框',
-                        },
-                      ]}
-                      noStyle
-                    >
-                      <Input placeholder="请输入域名" style={{ width: '60%' }} />
+      {redirectConfig?.length > 0 ? (
+        <div className={`${styles['form-contain']} `}>
+          <Form
+            form={form}
+            initialValues={{ redirectConfig }}
+            onFinish={(values) => {
+              void onFinish(values as Array<string>)
+            }}
+            labelAlign="left"
+            labelCol={{
+              xs: { span: 3 },
+              sm: { span: 3 },
+            }}
+            wrapperCol={{
+              xs: { span: 10 },
+              sm: { span: 9 },
+            }}
+          >
+            <Form.Item
+              label="配置重定向URL"
+              wrapperCol={{
+                xs: { span: 20 },
+                sm: { span: 20 },
+              }}
+            >
+              <Form.List name="redirectConfig">
+                {(fields, { add, remove }, { errors }) => (
+                  <>
+                    {fields.map((field, index) => (
+                      <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
+                        <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                          <div>
+                            <div>{'域名' + (index + 1).toString() + ':'}</div>
+                            <Input
+                              placeholder="请输入域名"
+                              style={{ width: '60%' }}
+                              defaultValue={redirectConfig[index]}
+                              onBlur={() => {
+                                void postRequest(
+                                  'redirectConfig',
+                                  form.getFieldValue('redirectConfig') as Array<string>
+                                )
+                              }}
+                              onPressEnter={() => {
+                                void postRequest(
+                                  'redirectConfig',
+                                  form.getFieldValue('redirectConfig') as Array<string>
+                                )
+                              }}
+                            />
+                            {fields.length > 1 ? (
+                              <MinusCircleOutlined
+                                className={`${styles['form-delete-icon']}`}
+                                onClick={() => {
+                                  void requests
+                                    .post('/global', {
+                                      key: 'redirectConfig',
+                                      val: (
+                                        form.getFieldValue('redirectConfig') as Array<string>
+                                      ).filter((_, i) => i != index),
+                                    })
+                                    .then(() => {
+                                      remove(index)
+                                    })
+                                }}
+                              />
+                            ) : null}
+                          </div>
+                        </Form.Item>
+                      </Form.Item>
+                    ))}
+                    <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
+                      <Button
+                        type="dashed"
+                        style={{ width: '48%' }}
+                        icon={<PlusOutlined />}
+                        className="text-gray-500/60"
+                        onClick={() => {
+                          add()
+                        }}
+                      >
+                        新增域名
+                      </Button>
+                      <Form.ErrorList errors={errors} />
                     </Form.Item>
-                    {fields.length > 1 ? (
-                      <MinusCircleOutlined
-                        className={`${styles['form-delete-icon']}`}
-                        onClick={() => remove(field.name)}
-                      />
-                    ) : null}
-                  </Form.Item>
-                ))}
-                <Form.Item wrapperCol={{ span: 20 }}>
-                  <Button
-                    type="dashed"
-                    style={{ width: '48%' }}
-                    icon={<PlusOutlined />}
-                    className="text-gray-500/60 mt-4"
-                    onClick={() => {
-                      add()
-                      form.submit()
-                    }}
-                  >
-                    新增域名
-                  </Button>
-                  <Form.ErrorList errors={errors} />
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-        </Form>
-      </div>
+                  </>
+                )}
+              </Form.List>
+            </Form.Item>
+          </Form>
+        </div>
+      ) : (
+        ''
+      )}
     </>
   )
 }
