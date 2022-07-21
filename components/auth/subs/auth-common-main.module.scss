@@ -11,15 +11,7 @@
     background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
   }
-
-  span {
-    width: 33px;
-    height: 20px;
-    color: #fff;
-    font-size: 14px;
-  }
 }
-
 .center-btn {
   padding: 0;
   width: 62px;
@@ -36,38 +28,6 @@
   margin-right: 24px;
   background-color: #8abe2a;
   border-radius: 12px;
-}
-
-.SSL-open-btn {
-  padding: 0;
-  margin-right: 80px;
-  width: 48px;
-  height: 22px;
-  line-height: 22px;
-  background: rgba(138, 190, 42, 0.09);
-  border-radius: 4px;
-  border: 1px solid #8abe2a;
-  font-size: 12px;
-  font-weight: 400;
-  color: #8abe2a;
-}
-
-.SSL-close-btn {
-  padding: 0;
-  width: 48px;
-  height: 22px;
-  line-height: 22px;
-  background: #f8f8f9;
-  border-radius: 4px;
-  border: 1px solid rgba(175, 176, 180, 0.5);
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(175, 176, 180, 0.8);
-  &:hover,
-  &:focus {
-    color: #e13d5b;
-    border-color: #e13d5b;
-  }
 }
 
 .add-btn {
@@ -145,16 +105,15 @@
   line-height: 20px;
 }
 
-.authHead {
+.auth-head {
   height: 17px;
   font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.25);
   line-height: 17px;
 }
 // 角色配置
-.authBtn {
+.auth-btn {
   Button {
     padding: 0 auto;
     color: #e92e5e;
@@ -167,55 +126,16 @@
   background-color: #8abe2a;
   border-radius: 12px;
 }
-
 // auth更多设置style
 
-.setWord {
-  span {
-    width: 112px;
-    height: 20px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #5f6269;
-    line-height: 20px;
-    margin-right: 61px;
+.form-contain :global {
+  .ant-form-item-label {
+    padding: 0;
   }
-}
-
-.authSetFrom :global {
   .ant-form-item {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .ant-form-item-control-input {
-    width: 420px;
-    height: 32px;
-    border-radius: 2px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  .anticon-plus {
-    width: 13px;
-    height: 13px;
-    color: rgba(175, 176, 180, 0.8);
-  }
-  span {
-    width: 48px;
-    height: 17px;
-    font-size: 12px;
-    color: #afb0b4;
-    line-height: 17px;
-  }
-  .label-style {
-    height: 20px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #5f6269;
-    line-height: 20px;
-  }
-}
-
-.security-form-contain :global {
-  .ant-form-item {
-    margin-bottom: 10px;
-    padding-top: 5px;
+  Input {
+    width: 90%;
   }
 }

@@ -37,21 +37,24 @@ export default function AuthenticationMainIdentity() {
     const data = await requests.get<unknown, Respones>('/auth/hooksSwitch')
     console.log(data, 'data')
     setAuthentication(data.authentication)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     void getStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   return (
     <>
       <Tabs defaultActiveKey="1">
         <TabPane tab="postAuthentication" key="1">
           <div className="flex justify-between items-center">
-            <div className={styles.authHead}>
+            <div className={styles['auth-head']}>
               <InfoCircleOutlined />
               <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
             </div>
-            <div className={`${styles.authBtn} flex items-center mr-2`}>
+            <div className={`${styles['auth-head']} flex items-center mr-2`}>
               <Button type="text" icon={<PlayCircleOutlined />}>
                 测试
               </Button>
@@ -87,7 +90,7 @@ export default function AuthenticationMainIdentity() {
               <InfoCircleOutlined />
               <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
             </div>
-            <div className={`${styles.authBtn} flex items-center mr-2`}>
+            <div className={`${styles['auth-btn']} flex items-center mr-2`}>
               <Button type="text" icon={<PlayCircleOutlined />}>
                 测试
               </Button>

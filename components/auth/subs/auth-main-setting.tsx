@@ -7,9 +7,6 @@ import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
 
-interface RedirectConfig {
-  names: Array<string>
-}
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
@@ -17,56 +14,41 @@ const formItemLayoutWithOutLabel = {
   },
 }
 
-export default function AuthenticationMainSetting() {
+export default function AuthMainSetting() {
+  const [redirectConfig, setRedirectConfig] = useImmer({} as Array<string>)
   const [form] = Form.useForm()
-  const [redirectConfig, setRedirectConfig] = useImmer({} as RedirectConfig)
-  const onFinish = (values: RedirectConfig) => {
+
+  const onFinish = (values: Array<string>) => {
     console.log('Success:', values)
-    void requests.post('/global', {
-      key: 'enableGraphQLEndpoint',
-      val: 0,
-    })
   }
 
-  const postRequest = async (key: string, value: string | Array<string> | number) => {
+  const postRequest = useCallback(async (key: string, value: string | Array<string> | number) => {
     await requests.post('/global', {
       key: key,
       val: value,
     })
-    void getData()
-  }
+  }, [])
 
   const getData = useCallback(async () => {
-    const result = await requests.get<unknown, RedirectConfig>('/auth/redirectUrl')
-    console.log(result)
+    const result = await requests.get<unknown, Array<string>>('/auth/redirectUrl')
+    console.log(result, '123')
     setRedirectConfig(result)
-  }, [])
+  }, [setRedirectConfig])
 
   useEffect(() => {
     void getData()
-  }, [])
+  })
 
   return (
     <>
-      <button
-        onClick={() => {
-          form.submit()
-        }}
-      >
-        提交
-      </button>
-      {redirectConfig.names?.length > 0 ? (
-        <div className={`${styles['security-form-contain']}`}>
+      {redirectConfig?.length > 0 ? (
+        <div className={`${styles['form-contain']} `}>
           <Form
             form={form}
-            initialValues={{
-              names: redirectConfig.names,
+            initialValues={{ redirectConfig }}
+            onFinish={(values) => {
+              void onFinish(values as Array<string>)
             }}
-            layout="vertical"
-            className="ml-50 -mt-5"
-            name="dynamic_form_item"
-            {...formItemLayoutWithOutLabel}
-            onFinish={onFinish}
             labelAlign="left"
             labelCol={{
               xs: { span: 3 },
@@ -84,44 +66,41 @@ export default function AuthenticationMainSetting() {
                 sm: { span: 20 },
               }}
             >
-              <Form.List name="names">
+              <Form.List name="redirectConfig">
                 {(fields, { add, remove }, { errors }) => (
                   <>
                     {fields.map((field, index) => (
                       <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
                         <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
-                          <div className="">
+                          <div>
                             <div>{'域名' + (index + 1).toString() + ':'}</div>
                             <Input
                               placeholder="请输入域名"
                               style={{ width: '60%' }}
-                              defaultValue={redirectConfig.names[index]}
-                              onBlur={(e) => {
-                                if (e.target.value == '') return
+                              defaultValue={redirectConfig[index]}
+                              onBlur={() => {
                                 void postRequest(
-                                  'allowedHosts',
-                                  form.getFieldValue('allowedHosts') as Array<string>
+                                  'redirectConfig',
+                                  form.getFieldValue('redirectConfig') as Array<string>
                                 )
                               }}
-                              onPressEnter={(e) => {
-                                if (e.target.value == '') return
+                              onPressEnter={() => {
                                 void postRequest(
-                                  'allowedHosts',
-                                  form.getFieldValue('allowedHosts') as Array<string>
+                                  'redirectConfig',
+                                  form.getFieldValue('redirectConfig') as Array<string>
                                 )
                               }}
                             />
-
                             {fields.length > 1 ? (
                               <MinusCircleOutlined
                                 className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   void requests
                                     .post('/global', {
-                                      key: 'names',
-                                      val: (form.getFieldValue('names') as Array<string>).filter(
-                                        (_, i) => i != index
-                                      ),
+                                      key: 'redirectConfig',
+                                      val: (
+                                        form.getFieldValue('redirectConfig') as Array<string>
+                                      ).filter((_, i) => i != index),
                                     })
                                     .then(() => {
                                       remove(index)
@@ -154,9 +133,7 @@ export default function AuthenticationMainSetting() {
           </Form>
         </div>
       ) : (
-        <>
-          <span>loading</span>
-        </>
+        ''
       )}
     </>
   )
