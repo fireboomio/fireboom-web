@@ -37,6 +37,7 @@ export default function Datasource() {
         data: (datasource as DatasourceResp[]).filter((item) => item.source_type == 1),
       })
     setChangeCurrId(!changeCurrId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasource])
 
   if (error) return <div>failed to load</div>
