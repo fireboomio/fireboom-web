@@ -59,7 +59,7 @@ export default function AuthenticationMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="供应商ID">{content.auth_supplier}</Descriptions.Item>
+          <Descriptions.Item label="供应商ID">{config.auth_supplier}</Descriptions.Item>
           <Descriptions.Item label="App ID">{config.app_id}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>
@@ -70,7 +70,7 @@ export default function AuthenticationMainCheck({ content }: Props) {
                 </div>
               ) : (
                 <div>
-                  *****************************
+                  ***********
                   <EyeInvisibleOutlined className="ml-6" />
                 </div>
               )}
@@ -82,7 +82,7 @@ export default function AuthenticationMainCheck({ content }: Props) {
           <Descriptions.Item label="jwksURL">{config.jwks_url}</Descriptions.Item>
           <Descriptions.Item label="jwksJSON">{config.jwks_json}</Descriptions.Item>
           <Descriptions.Item label="用户端点">{config.user_point}</Descriptions.Item>
-          <Descriptions.Item label="是否开启">{content.switch_state}</Descriptions.Item>
+          <Descriptions.Item label="是否开启">{config.switch_state}</Descriptions.Item>
         </Descriptions>
       </div>
     </>

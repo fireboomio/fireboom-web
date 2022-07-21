@@ -152,7 +152,7 @@ export default function AuthMainCheck({ content }: Props) {
           {isRadioShow ? (
             <div>
               <Form.Item label="jwksURL" name="jwks_url">
-                <Input suffix="浏览" disabled />
+                <Input suffix="浏览" />
               </Form.Item>
             </div>
           ) : (

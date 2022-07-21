@@ -45,7 +45,7 @@ export default function Authentication() {
 
   function handleToggleDesigner(
     pagetype: 'data' | 'edit' | 'setting' | 'identity' | 'role' | 'user',
-    id?: number
+    id?: number | undefined
   ) {
     setShowType(pagetype)
     id && setCurrAuthProvItemId(id)
@@ -64,7 +64,7 @@ export default function Authentication() {
                 <Col span={5} className={styles['col-left']}>
                   <AuthPannel
                     onClickItem={handleClickItem}
-                    handleToggleDesigner={handleToggleDesigner}
+                    // handleToggleDesigner={handleToggleDesigner}
                   />
                 </Col>
                 <Col span={19}>
