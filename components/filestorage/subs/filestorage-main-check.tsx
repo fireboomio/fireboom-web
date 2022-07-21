@@ -89,9 +89,9 @@ export default function FileStorageMainCheck({ content }: Props) {
           <Descriptions.Item label="bucketName">{config.bucketName}</Descriptions.Item>
           <Descriptions.Item label="开启SSL">
             {config.useSSL ? (
-              <Button className={styles['SSL-open-btn']}>开启</Button>
+              <Button className={styles['ssl-open-btn']}>开启</Button>
             ) : (
-              <Button className={styles['SSL-close-btn']}>关闭</Button>
+              <Button className={styles['ssl-close-btn']}>关闭</Button>
             )}
           </Descriptions.Item>
         </Descriptions>

@@ -12,14 +12,15 @@
     border-color: #e13d5b;
   }
 }
+
 .center-btn {
-  padding: 0;
   width: 62px;
   height: 28px;
-  margin-left: 24px;
   margin-right: 16px;
+  margin-left: 24px;
+  padding: 0;
+  border: 1px solid rgb(0 0 0 / 10%);
   border-radius: 2px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .switch-check-btn {
@@ -33,6 +34,7 @@
 .add-btn {
   color: #fff;
   background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+
   &:hover,
   &:focus {
     color: #fff;
@@ -40,6 +42,7 @@
     border-color: #e13d5b;
   }
 }
+
 .switch-set-btn {
   width: 32px;
   height: 16px;
@@ -56,9 +59,11 @@
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s;
+
   &:hover {
     color: #777;
   }
+
   &[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
@@ -77,10 +82,12 @@
     padding: 10px;
     padding-left: 43px;
   }
+
   .ant-table-cell::before {
     display: none;
   }
 }
+
 .role-table {
   background-color: #fafafa;
 }
@@ -98,27 +105,29 @@
 }
 
 .db-check-setting {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
   color: #e92e5e;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, "PingFang SC";
   line-height: 20px;
 }
 
 .auth-head {
   height: 17px;
-  font-size: 12px;
+  color: rgb(0 0 0 / 25%);
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.25);
+  font-size: 12px;
   line-height: 17px;
 }
+
 // 角色配置
 .auth-btn {
-  Button {
+  button {
     padding: 0 auto;
     color: #e92e5e;
   }
 }
+
 .switch-edit-btn {
   width: 32px;
   height: 16px;
@@ -126,16 +135,19 @@
   background-color: #8abe2a;
   border-radius: 12px;
 }
+
 // auth更多设置style
 
 .form-contain :global {
   .ant-form-item-label {
     padding: 0;
   }
+
   .ant-form-item {
     margin-bottom: 20px;
   }
-  Input {
+
+  input {
     width: 90%;
   }
 }
