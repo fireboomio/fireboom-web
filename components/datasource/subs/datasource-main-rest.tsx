@@ -13,7 +13,7 @@ import {
   Collapse,
   Table,
 } from 'antd'
-import type { UploadProps, RadioChangeEvent, UploadFile } from 'antd'
+import type { RadioChangeEvent, UploadFile, UploadProps } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
@@ -67,12 +67,23 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
+  const connectSwitchOnChange = (isChecked: boolean) => {
+    void requests
+      .put('/dataSource', {
+        ...content,
+        switch: isChecked == true ? 1 : 0,
+      })
+      .then(() => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+        })
+      })
   }
+
   if (!content) {
     return <></>
   }
+
   const config = JSON.parse(content.config) as Config
 
   const onChange = (key: string) => {
@@ -82,9 +93,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     setIsEyeShow(!isEyeShow)
   }
 
-  const onFinish = async (values: object) => {
+  const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values }
+    const newValues = { ...config, ...values, theOAS: (values.theOAS as UploadFile[])[0]?.name }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
@@ -131,7 +142,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                defaultChecked
+                checked={content.switch == 1 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -194,9 +205,10 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {(config.theOAS as Array<UploadFile>)?.map((item) => {
+                {config.theOAS}
+                {/* {(config.theOAS as Array<UploadFile>)?.map((item) => {
                   return <div key={item.name}>{item.name}</div>
-                })}
+                })} */}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -322,7 +334,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
               onFinish={(values) => {
-                void onFinish(values as object)
+                void onFinish(values as Config)
               }}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
@@ -371,11 +383,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 style={{ marginBottom: '49px' }}
                 getValueFromEvent={normFile}
               >
-                <Upload
-                  name="file"
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  listType="picture"
-                >
+                <Upload method="post" action="/api/v1/dataSource/import">
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
@@ -386,8 +394,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 <TabPane tab="请求头" key="1">
                   <Form.Item
                     wrapperCol={{
-                      xs: { span: 16 },
-                      sm: { span: 14 },
+                      xs: { span: 24 },
+                      sm: { span: 24 },
                     }}
                   >
                     <Form.List name="reqHeadAll">
@@ -414,8 +422,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                                 </Select>
                               </Form.Item>
                               <Form.Item
-                                className="w-190"
-                                wrapperCol={{ span: 12 }}
+                                className="w-126"
+                                wrapperCol={{ span: 24 }}
                                 name={[field.name, 'reqHeadInfo']}
                               >
                                 <Input placeholder="请输入..." />
@@ -430,7 +438,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                             </Space>
                           ))}
 
-                          <Form.Item wrapperCol={{ span: 24 }}>
+                          <Form.Item wrapperCol={{ span: 16 }}>
                             <Button
                               type="dashed"
                               onClick={() => {

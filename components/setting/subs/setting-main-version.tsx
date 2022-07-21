@@ -14,6 +14,7 @@ interface VersionConfig {
 
 export default function SettingMainVersion() {
   const [verConfig, setVerConfig] = useImmer({} as VersionConfig)
+  
   useEffect(() => {
     async function getData() {
       const result = await requests.get<unknown, VersionConfig>('/setting/versionConfig')

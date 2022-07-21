@@ -1,7 +1,7 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
 import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import { useContext, ReactNode, useEffect } from 'react'
+import { useContext, ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -46,15 +46,9 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
-  const [isActive, setIsActive] = useImmer(false)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   config = JSON.parse(content.config) as Config
-
-  useEffect(() => {
-    content && setIsActive(content.switch == 1 ? true : false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content])
 
   //查看页面逻辑
   if (!content) {
@@ -71,7 +65,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
         })
-        setIsActive(isChecked)
       })
     console.log('switch change')
   }
@@ -234,7 +227,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                checked={isActive}
+                checked={content.switch == 1 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}

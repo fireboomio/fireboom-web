@@ -14,8 +14,7 @@ import {
 } from 'antd'
 import type { UploadProps, UploadFile } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { ReactNode, useContext, useEffect } from 'react'
-import { useImmer } from 'use-immer'
+import { ReactNode, useContext } from 'react'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -61,19 +60,13 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
-  const [isActive, setIsActive] = useImmer(content.switch == 1 ? true : false)
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
 
-  useEffect(() => {
-    content && setIsActive(content.switch == 1 ? true : false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content])
-
-  const onFinish = async (values: object) => {
+  const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values }
+    const newValues = { ...config, ...values, schema: (values.schema as UploadFile[])[0]?.name }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
@@ -103,7 +96,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
         })
-        setIsActive(isChecked)
       })
     console.log('switch change')
   }
@@ -126,7 +118,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                checked={isActive}
+                checked={content.switch == 1 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -191,9 +183,10 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {(config.schema as Array<UploadFile>)?.map((item) => {
+                {config.schema}
+                {/* {(config.schema as Array<UploadFile>)?.map((item) => {
                   return <div key={item.name}>{item.name}</div>
-                })}
+                })} */}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -313,7 +306,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               labelCol={{ span: 5 }}
               wrapperCol={{ span: 11 }}
               onFinish={(values) => {
-                void onFinish(values as object)
+                void onFinish(values as Config)
               }}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
@@ -375,22 +368,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 style={{ marginBottom: '48px' }}
                 getValueFromEvent={normFile}
               >
-                <Upload
-                  name="file"
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  listType="picture"
-                >
+                <Upload method="post" action="/api/v1/dataSource/import">
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
                 </Upload>
               </Form.Item>
-              <h2 className="ml-3 mb-3">请求头</h2>
+              <h2 className="ml-3 mb-3">请求头:</h2>
 
               <Form.Item
                 wrapperCol={{
-                  xs: { span: 16 },
-                  sm: { span: 14 },
+                  xs: { span: 24 },
+                  sm: { span: 24 },
                 }}
               >
                 <Form.List name="reqHeadAll">
@@ -417,8 +406,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             </Select>
                           </Form.Item>
                           <Form.Item
-                            className="w-190"
-                            wrapperCol={{ span: 12 }}
+                            className="w-126"
+                            wrapperCol={{ span: 24 }}
                             name={[field.name, 'reqHeadInfo']}
                           >
                             <Input placeholder="请输入..." />
@@ -433,7 +422,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         </Space>
                       ))}
 
-                      <Form.Item wrapperCol={{ span: 24 }}>
+                      <Form.Item wrapperCol={{ span: 16 }}>
                         <Button
                           type="dashed"
                           onClick={() => {

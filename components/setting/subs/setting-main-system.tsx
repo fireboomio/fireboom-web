@@ -71,11 +71,11 @@ export default function SettingMainVersion() {
               }}
             >
               <Descriptions.Item label="运行时长">{systemConfig.logLevel}</Descriptions.Item>
-              <Descriptions.Item label="API端口">
+              <Descriptions.Item label="API端口" className="w-20">
                 {isApiPortEditing ? (
                   <Input
                     autoFocus
-                    className="w-20 h-6 pl-1.5"
+                    style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
                     type="text"
                     onBlur={(e) => {
                       setIsApiPortEditing(!isApiPortEditing)
@@ -98,7 +98,7 @@ export default function SettingMainVersion() {
                   <Input
                     autoFocus
                     type="text"
-                    className="w-20 h-6 pl-1.5"
+                    style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
                     onBlur={(e) => {
                       setIsMidPortEditing(!isMidPortEditing)
                       void editPort('middlewarePort', e.target.value)

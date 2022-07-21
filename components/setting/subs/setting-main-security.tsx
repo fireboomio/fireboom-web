@@ -37,7 +37,6 @@ export default function SettingMainSecurity() {
       key: key,
       val: value,
     })
-    void getData()
   }
 
   const getData = useCallback(async () => {
