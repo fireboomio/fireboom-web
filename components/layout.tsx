@@ -93,7 +93,7 @@ export default function Layout({ children }: PropsWithChildren) {
               <span
                 className={`${
                   collapsed ? styles['logo-label-collapsed'] : styles['logo-label']
-                } ml-2 font-bold text-xl`}
+                } ml-2 font-bold text-xl text-black`}
               >
                 FireBoom
               </span>
