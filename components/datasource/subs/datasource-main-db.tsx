@@ -1,17 +1,13 @@
-import {
-  AppleOutlined,
-  RightOutlined,
-  RightSquareOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons'
+import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
 import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import axios from 'axios'
-import { useContext, ReactNode } from 'react'
+import { useContext, ReactNode, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
+import requests from '@/lib/fetchers'
 
 import styles from './datasource-db.module.scss'
 interface Props {
@@ -30,12 +26,6 @@ interface Props {
   content: DatasourceResp
 }
 
-interface Response {
-  status: number
-  data: { result: DatasourceResp[]; [key: string]: number | string | boolean | object }
-  [key: string]: number | string | boolean | object
-}
-
 const initForm = (
   <Form.Item
     label="环境变量"
@@ -51,27 +41,48 @@ const initForm = (
     <Input placeholder="请输入..." />
   </Form.Item>
 )
-
+let config: Config
 export default function DatasourceDBMain({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(true)
+  const [isActive, setIsActive] = useImmer(false)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
+  config = JSON.parse(content.config) as Config
 
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
-  }
+  useEffect(() => {
+    content && setIsActive(content.switch == 1 ? true : false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content])
+
+  //查看页面逻辑
   if (!content) {
     return <></>
   }
+
+  const connectSwitchOnChange = (isChecked: boolean) => {
+    void requests
+      .put('/dataSource', {
+        ...content,
+        switch: isChecked == true ? 1 : 0,
+      })
+      .then(() => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
+        })
+        setIsActive(isChecked)
+      })
+    console.log('switch change')
+  }
+
+  //编辑页面逻辑
   const onFinish = async (values: object) => {
     console.log('Success:', values)
-    await axios.put('/api/v1/dataSource', { ...content, config: JSON.stringify(values) })
-    const datasource: Response = await axios.get('/api/v1/dataSource')
-    dispatch({
-      type: 'fetched',
-      data: datasource.data.result.filter((item) => item.source_type == 1),
+    const newValues = { ...config, ...values }
+    await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
     })
     handleToggleDesigner('data', content.id)
   }
@@ -93,7 +104,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   const openNotification = (placement: NotificationPlacement) => {
     notification.open({
-      message: <CloseCircleOutlined />,
+      message: <IconFont type="icon-xingzhuangjiehe" />,
       description: (
         <div>
           <h1>链接失败</h1>
@@ -207,22 +218,23 @@ export default function DatasourceDBMain({ content, type }: Props) {
         break
     }
   }
-  const config = JSON.parse(content.config) as Config
 
   return (
     <>
       {type === 'data' ? (
+        //查看页面———————————————————————————————————————————————————————————————————————————————————
+        //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className="pb-9px flex items-center justify-between border-gray border-b ">
             <div>
-              <AppleOutlined />
+              <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2 text-[14px]">
                 {content.name} <span className="text-[#AFB0B4] text-[12px]">main</span>
               </span>
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                defaultChecked={content.switch == 0 ? false : true}
+                checked={isActive}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -261,7 +273,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 paddingLeft: '24px',
                 color: '#5F6269',
                 backgroundColor: 'white',
-                width: '30%',
+                width: '25%',
                 borderRight: 'none',
                 borderBottom: 'none',
               }}
@@ -280,18 +292,27 @@ export default function DatasourceDBMain({ content, type }: Props) {
           </div>
         </div>
       ) : type === 'edit' ? (
+        //编辑页面—————————————————————————————————————————————————————————————————————————————————————
+        //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className="pb-8px flex items-center justify-between border-gray border-b ">
             <div>
-              <AppleOutlined />
+              <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">{content.name}</span>
               <span className="ml-2 text-xs text-gray-500/80">main</span>
             </div>
-            <div className="flex justify-center items-center">
-              <Button className={styles['cancel-btn']}>取消</Button>
+            <div className="flex justify-center items-centerw-160px">
+              <Button
+                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                onClick={() => {
+                  handleToggleDesigner('data', content.id)
+                }}
+              >
+                取消
+              </Button>
               <Button
                 disabled={disabled}
-                className={styles['save-btn']}
+                className={`${styles['connect-check-btn']}  ml-4`}
                 onClick={() => {
                   form.submit()
                 }}
@@ -368,6 +389,8 @@ export default function DatasourceDBMain({ content, type }: Props) {
           </div>
         </div>
       ) : (
+        //设置页面———————————————————————————————————————————————————————————————————————————————————
+        //设置页面———————————————————————————————————————————————————————————————————————————————————
         <>
           <div className="flex">
             <Descriptions

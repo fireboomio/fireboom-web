@@ -12,7 +12,7 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 import styles from './index.module.scss'
@@ -20,6 +20,7 @@ import styles from './index.module.scss'
 export default function Datasource() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer,[])
   const [showType, setShowType] = useImmer('data')
+
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,7 +35,7 @@ export default function Datasource() {
   useEffect(() => {
     datasource &&
       dispatch({
-        type: 'selected',
+        type: 'fetched',
         data: datasource.filter((item) => item.source_type == 1),
       })
   }, [datasource])
@@ -44,11 +45,12 @@ export default function Datasource() {
 
   // TODO: need refine
   function handleChangeDStype(value: number) {
-    datasource &&
-      dispatch({
+   // void requests.get<unknown,DatasourceResp[]>('/dataSource').then((res)=>{
+       dispatch({
         type: 'fetched',
         data: datasource.filter((item) => item.source_type == value),
       })
+   // })
     setShowType('data')
   }
 

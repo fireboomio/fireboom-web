@@ -136,7 +136,7 @@ export default function SettingMainSecurity() {
                             {fields.length > 1 ? (
                               <IconFont
                                 type="icon-guanbi"
-                                className={`${styles['form-delete-icon']} red`}
+                                className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   void requests
                                     .post('/global', {

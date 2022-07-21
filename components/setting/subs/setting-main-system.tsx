@@ -1,15 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  InfoCircleOutlined,
-  PauseCircleOutlined,
-  PoweroffOutlined,
-  EditOutlined,
-} from '@ant-design/icons'
+import { PauseCircleOutlined, PoweroffOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import { Descriptions, Divider, Radio, Switch, Button, Input } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
@@ -89,7 +85,8 @@ export default function SettingMainVersion() {
                 ) : (
                   <span>{systemConfig.apiPort}</span>
                 )}
-                <EditOutlined
+                <IconFont
+                  type="icon-bianji"
                   className="ml-2"
                   onClick={() => {
                     setIsApiPortEditing(!isApiPortEditing)
@@ -110,7 +107,8 @@ export default function SettingMainVersion() {
                 ) : (
                   <span>{systemConfig.middlewarePort}</span>
                 )}
-                <EditOutlined
+                <IconFont
+                  type="icon-bianji"
                   className="ml-2"
                   onClick={() => {
                     setIsMidPortEditing(!isMidPortEditing)
@@ -162,7 +160,7 @@ export default function SettingMainVersion() {
               <span>重启</span>
             </Button>
             <span className={styles.setTitle}>
-              <InfoCircleOutlined />
+              <IconFont type="icon-zhuyi" className="text-[14px]" />
               XXX已修改，请点击重启
             </span>
           </div>

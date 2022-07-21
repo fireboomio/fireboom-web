@@ -6,17 +6,10 @@ export default function datasourceReducer(
 ) {
   switch (action.type) {
     case 'fetched': {
-      // let result: DatasourceResp[]
-      // const bbb = requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      //   result = res
-      //   return result.filter((item) => item.source_type == 1)
-      // })
-      // console.log(bbb, 'bbb')
-      // return
       return action.data
     }
     case 'selected': {
-      return action.data
+      return datasoucreList
     }
     case 'added': {
       return [...datasoucreList, action.data]

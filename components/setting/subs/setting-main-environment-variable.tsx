@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { EyeFilled, EyeInvisibleFilled, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Button, Descriptions, Modal, Form, Input } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
@@ -99,14 +99,16 @@ export default function SettingMainEnvironmentVariable() {
       dataIndex: 'action',
       render: (_, { name }) => (
         <div>
-          <EditOutlined
+          <IconFont
+            type="icon-zhongmingming"
             onClick={() => {
               // handleEditVariable(key)
               console.log('Success:')
             }}
             className="mr-3"
           />
-          <DeleteOutlined
+          <IconFont
+            type="icon-shanchu"
             onClick={() => {
               handleDeleteEnvVariable(name)
             }}
@@ -211,12 +213,12 @@ export default function SettingMainEnvironmentVariable() {
                 {isShowSecret ? (
                   <div>
                     {environmentConfig.systemVariable}
-                    <EyeFilled className="ml-6" />
+                    <IconFont type="icon-xiaoyanjing-chakan" className="ml-6" />
                   </div>
                 ) : (
                   <div>
-                    **************
-                    <EyeInvisibleFilled className="ml-6" />
+                    <span>**************</span>
+                    <IconFont type="icon-xiaoyanjing-yincang" className="ml-6" />
                   </div>
                 )}
               </span>
