@@ -60,7 +60,7 @@ function DatasourceDefineItem({ info, name, editDefineSelf }: PropsInfo) {
 
 export default function DatasourceDeselfMainEdit({ content }: Props) {
   const config = JSON.parse(content.config) as Config
- // const [isActive, setIsActive] = useImmer(false)
+  // const [isActive, setIsActive] = useImmer(false)
   const dispatch = useContext(DatasourceDispatchContext)
 
   const editDefineSelf = (key: string, value: string) => {

@@ -47,13 +47,13 @@
   border: 1px solid rgb(95 98 105 / 10%);
   border-radius: 4px;
 }
+
 .collapse-box :global {
   .ant-collapse > .ant-collapse-item > .ant-collapse-header {
     padding: 0px;
   }
   .ant-collapse-content > .ant-collapse-content-box {
     padding: 0px;
-    margin-top: 12px;
   }
 }
 
@@ -65,7 +65,6 @@
 .label-style {
   width: 56px;
   height: 20px;
-  color: #5f6269;
 }
 
 .add-btn {

@@ -10,9 +10,12 @@ import {
   Upload,
   Space,
   Select,
+  Table,
 } from 'antd'
 import type { UploadProps, UploadFile } from 'antd'
-import { ReactNode, useContext } from 'react'
+import type { ColumnsType } from 'antd/es/table'
+import { ReactNode, useContext, useEffect } from 'react'
+import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -28,14 +31,45 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
+interface DataType {
+  reqHead: string
+  reqType: string
+  reqTypeInfo: string
+}
 
+const columns: ColumnsType<DataType> = [
+  {
+    title: '请求头',
+    dataIndex: 'reqHead',
+    key: 'reqHead',
+  },
+  {
+    title: '类型',
+    dataIndex: 'reqType',
+    key: 'reqType',
+    render: (reqType) => (
+      <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
+    ),
+  },
+  {
+    title: '请求头信息',
+    dataIndex: 'reqHeadInfo',
+    key: 'reqHeadInfo',
+  },
+]
 export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
+  const [isActive, setIsActive] = useImmer(content.switch == 1 ? true : false)
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
+
+  useEffect(() => {
+    content && setIsActive(content.switch == 1 ? true : false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content])
 
   const onFinish = async (values: object) => {
     console.log('Success:', values)
@@ -59,7 +93,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     return e?.fileList
   }
 
-  const connectSwitchOnChange = () => {
+  const connectSwitchOnChange = (isChecked: boolean) => {
+    void requests
+      .put('/dataSource', {
+        ...content,
+        switch: isChecked == true ? 1 : 0,
+      })
+      .then(() => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+        })
+        setIsActive(isChecked)
+      })
     console.log('switch change')
   }
 
@@ -81,7 +126,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                defaultChecked
+                checked={isActive}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -153,34 +198,13 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </Descriptions>
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
-          <div className="flex justify-center mb-8">
-            <Descriptions
-              bordered
-              column={3}
-              size="small"
-              className={styles['descriptions-box']}
-              layout="vertical"
-              labelStyle={{
-                backgroundColor: 'white',
-                borderRight: 'none',
-                borderBottom: 'none',
-              }}
-            >
-              <Descriptions.Item label="请求头" style={{ width: '30%' }}>
-                {config.reqHead}
-              </Descriptions.Item>
-              <Descriptions.Item label="请求头类型" style={{ width: '20%' }}>
-                {config.reqType == 'value'
-                  ? '值'
-                  : config.reqType == 'client'
-                  ? '转发至客户端'
-                  : '环境变量'}
-              </Descriptions.Item>
-              <Descriptions.Item label="请求头信息" style={{ width: '50%' }}>
-                {config.reqHeadInfo}
-              </Descriptions.Item>
-            </Descriptions>
-          </div>
+          <Table
+            columns={columns}
+            rowKey="reqHead"
+            dataSource={config.reqHeadAll as unknown as Array<DataType>}
+            pagination={false}
+            className="mb-10"
+          />
           <Collapse
             bordered={false}
             defaultActiveKey={['1']}
@@ -362,26 +386,70 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 </Upload>
               </Form.Item>
               <h2 className="ml-3 mb-3">请求头</h2>
-              <Space style={{ display: 'flex' }} align="baseline">
-                <Form.Item className="w-60" name="reqHead" wrapperCol={{ span: 24 }}>
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  className="w-33"
-                  name="reqType"
-                  wrapperCol={{ span: 24 }}
-                  initialValue="value"
-                >
-                  <Select allowClear>
-                    <Option value="value">值</Option>
-                    <Option value="client">转发自客户端</Option>
-                    <Option value="path">环境变量</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item className="w-235" name="reqHeadInfo" wrapperCol={{ span: 12 }}>
-                  <Input placeholder="请输入..." />
-                </Form.Item>
-              </Space>
+
+              <Form.Item
+                wrapperCol={{
+                  xs: { span: 16 },
+                  sm: { span: 14 },
+                }}
+              >
+                <Form.List name="reqHeadAll">
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => (
+                        <Space key={field.key} align="baseline">
+                          <Form.Item
+                            className="w-50"
+                            wrapperCol={{ span: 24 }}
+                            name={[field.name, 'reqHead']}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            className="w-36"
+                            wrapperCol={{ span: 24 }}
+                            name={[field.name, 'reqType']}
+                          >
+                            <Select>
+                              <Option value="value">值</Option>
+                              <Option value="client">转发自客户端</Option>
+                              <Option value="path">环境变量</Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            className="w-190"
+                            wrapperCol={{ span: 12 }}
+                            name={[field.name, 'reqHeadInfo']}
+                          >
+                            <Input placeholder="请输入..." />
+                          </Form.Item>
+                          <IconFont
+                            type="icon-guanbi"
+                            className={`${styles['form-delete-icon']}`}
+                            onClick={() => {
+                              remove(index)
+                            }}
+                          />
+                        </Space>
+                      ))}
+
+                      <Form.Item wrapperCol={{ span: 24 }}>
+                        <Button
+                          type="dashed"
+                          onClick={() => {
+                            add()
+                          }}
+                          icon={<PlusOutlined />}
+                          className="text-gray-500/60 w-1/1"
+                        >
+                          新增请求头信息
+                        </Button>
+                        <Form.ErrorList errors={errors} />
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
 
               <Collapse
                 bordered={false}

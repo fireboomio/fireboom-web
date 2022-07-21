@@ -11,8 +11,10 @@ import {
   Tabs,
   Upload,
   Collapse,
+  Table,
 } from 'antd'
 import type { UploadProps, RadioChangeEvent, UploadFile } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -31,6 +33,31 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
+interface DataType {
+  reqHead: string
+  reqType: string
+  reqTypeInfo: string
+}
+const columns: ColumnsType<DataType> = [
+  {
+    title: '请求头',
+    dataIndex: 'reqHead',
+    key: 'reqHead',
+  },
+  {
+    title: '类型',
+    dataIndex: 'reqType',
+    key: 'reqType',
+    render: (reqType) => (
+      <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
+    ),
+  },
+  {
+    title: '请求头信息',
+    dataIndex: 'reqHeadInfo',
+    key: 'reqHeadInfo',
+  },
+]
 
 export default function DatasourceRestMainCheck({ content, type }: Props) {
   const [isEyeShow, setIsEyeShow] = useImmer(false)
@@ -47,7 +74,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     return <></>
   }
   const config = JSON.parse(content.config) as Config
-  //console.log(config, 'config')
+  console.log(config, 'config')
   const onChange = (key: string) => {
     console.log(key)
   }
@@ -59,7 +86,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     console.log('Success:', values)
     const newValues = { ...config, ...values }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
-    // const datasource = await requests.get<unknown, DatasourceResp[]>('/dataSource')
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
     })
@@ -177,34 +203,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
 
           <Tabs defaultActiveKey="1" onChange={onChange}>
             <TabPane tab="请求头" key="1">
-              <div className="flex justify-center mb-8">
-                <Descriptions
-                  bordered
-                  column={3}
-                  size="small"
-                  className={styles['descriptions-box']}
-                  layout="vertical"
-                  labelStyle={{
-                    backgroundColor: 'white',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                  }}
-                >
-                  <Descriptions.Item label="请求头" style={{ width: '30%' }}>
-                    {config.reqHead}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="请求头类型" style={{ width: '20%' }}>
-                    {config.reqType == 'value'
-                      ? '值'
-                      : config.reqType == 'client'
-                      ? '转发至客户端'
-                      : '环境变量'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="请求头信息" style={{ width: '50%' }}>
-                    {config.reqHeadInfo}
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
+              <Table
+                columns={columns}
+                rowKey="reqHead"
+                dataSource={config.reqHeadAll as unknown as Array<DataType>}
+                pagination={false}
+                className="mb-10"
+              />
             </TabPane>
             <TabPane
               tab={
@@ -215,7 +220,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               }
               key="2"
             >
-              <div className="flex justify-center ">
+              <div className="flex justify-center">
                 <Descriptions
                   bordered
                   column={1}
@@ -257,7 +262,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-3">
                 <Descriptions
                   bordered
                   column={1}
@@ -389,52 +394,40 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       {(fields, { add, remove }, { errors }) => (
                         <>
                           {fields.map((field, index) => (
-                            <Form.Item required={false} key={field.key}>
+                            <Space key={field.key} align="baseline">
                               <Form.Item
-                                {...field}
-                                validateTrigger={['onChange', 'onBlur']}
-                                noStyle
+                                className="w-50"
+                                wrapperCol={{ span: 24 }}
+                                name={[field.name, 'reqHead']}
                               >
-                                <div className="">
-                                  <Space style={{ display: 'flex' }} align="baseline">
-                                    <Form.Item
-                                      className="w-50"
-                                      wrapperCol={{ span: 24 }}
-                                      name="reqHead"
-                                    >
-                                      <Input />
-                                    </Form.Item>
-                                    <Form.Item
-                                      className="w-36"
-                                      wrapperCol={{ span: 24 }}
-                                      name="reqType"
-                                    >
-                                      <Select allowClear>
-                                        <Option value="value">值</Option>
-                                        <Option value="client">转发自客户端</Option>
-                                        <Option value="path">环境变量</Option>
-                                      </Select>
-                                    </Form.Item>
-                                    <Form.Item
-                                      className="w-190"
-                                      wrapperCol={{ span: 12 }}
-                                      name="reqHeadInfo"
-                                    >
-                                      <Input placeholder="请输入..." />
-                                    </Form.Item>
-                                  </Space>
-                                  {fields.length > 1 ? (
-                                    <IconFont
-                                      type="icon-guanbi"
-                                      className={`${styles['form-delete-icon']}`}
-                                      onClick={() => {
-                                        remove(index)
-                                      }}
-                                    />
-                                  ) : null}
-                                </div>
+                                <Input />
                               </Form.Item>
-                            </Form.Item>
+                              <Form.Item
+                                className="w-36"
+                                wrapperCol={{ span: 24 }}
+                                name={[field.name, 'reqType']}
+                              >
+                                <Select>
+                                  <Option value="value">值</Option>
+                                  <Option value="client">转发自客户端</Option>
+                                  <Option value="path">环境变量</Option>
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                className="w-190"
+                                wrapperCol={{ span: 12 }}
+                                name={[field.name, 'reqHeadInfo']}
+                              >
+                                <Input placeholder="请输入..." />
+                              </Form.Item>
+                              <IconFont
+                                type="icon-guanbi"
+                                className={`${styles['form-delete-icon']}`}
+                                onClick={() => {
+                                  remove(index)
+                                }}
+                              />
+                            </Space>
                           ))}
 
                           <Form.Item wrapperCol={{ span: 24 }}>

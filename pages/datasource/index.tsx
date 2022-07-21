@@ -34,7 +34,7 @@ export default function Datasource() {
     datasource &&
       dispatch({
         type: 'fetched',
-        data: datasource.filter((item) => item.source_type == 1),
+        data: (datasource as DatasourceResp[]).filter((item) => item.source_type == 1),
       })
   }, [datasource])
 
@@ -43,12 +43,12 @@ export default function Datasource() {
 
   // TODO: need refine
   function handleChangeDStype(value: number) {
-   // void requests.get<unknown,DatasourceResp[]>('/dataSource').then((res)=>{
-       dispatch({
-        type: 'fetched',
-        data: (datasource as DatasourceResp[]).filter((item) => item.source_type == value),
-      })
-   // })
+    // void requests.get<unknown,DatasourceResp[]>('/dataSource').then((res)=>{
+    dispatch({
+      type: 'fetched',
+      data: (datasource as DatasourceResp[]).filter((item) => item.source_type == value),
+    })
+    // })
     setShowType('data')
   }
 
