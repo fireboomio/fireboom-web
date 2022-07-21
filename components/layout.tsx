@@ -52,7 +52,7 @@ const menus = [
     link: '/graphiql',
     position: 'top',
   },
-  { title: '个人资料', icon: <IconFont type="" />, link: '/profile', position: 'bottom' },
+  { title: '个人资料', icon: <IconFont type=" " />, link: '/profile', position: 'bottom' },
   { title: '设置', icon: <IconFont type="icon-shezhi" />, link: '/setting', position: 'bottom' },
 ]
 
