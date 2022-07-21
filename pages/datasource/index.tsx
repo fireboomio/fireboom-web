@@ -20,15 +20,14 @@ import styles from './index.module.scss'
 export default function Datasource() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
+  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: datasource, error } = useSWR('/dataSource', getFetcher)
 
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasourceList])
-
-  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { data: datasource, error } = useSWR('/dataSource', getFetcher)
 
   useEffect(() => {
     datasource &&
@@ -43,12 +42,13 @@ export default function Datasource() {
 
   // TODO: need refine
   function handleChangeDStype(value: number) {
-    // void requests.get<unknown,DatasourceResp[]>('/dataSource').then((res)=>{
-    dispatch({
-      type: 'fetched',
-      data: (datasource as DatasourceResp[]).filter((item) => item.source_type == value),
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+      dispatch({
+        type: 'fetched',
+        data: res.filter((item) => item.source_type == value),
+      })
+      // setCurrDBId(datasourceList.at(0)?.id)
     })
-    // })
     setShowType('data')
   }
 

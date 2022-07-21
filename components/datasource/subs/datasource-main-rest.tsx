@@ -74,7 +74,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     return <></>
   }
   const config = JSON.parse(content.config) as Config
-  console.log(config, 'config')
+
   const onChange = (key: string) => {
     console.log(key)
   }
