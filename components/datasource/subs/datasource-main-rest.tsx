@@ -1,10 +1,4 @@
-import {
-  CaretRightOutlined,
-  QuestionCircleOutlined,
-  EyeFilled,
-  EyeInvisibleFilled,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Descriptions,
   Space,
@@ -17,11 +11,14 @@ import {
   Tabs,
   Upload,
   Collapse,
+  Table,
 } from 'antd'
-import type { RadioChangeEvent } from 'antd'
+import type { RadioChangeEvent, UploadFile, UploadProps } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
@@ -36,6 +33,31 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
+interface DataType {
+  reqHead: string
+  reqType: string
+  reqTypeInfo: string
+}
+const columns: ColumnsType<DataType> = [
+  {
+    title: '请求头',
+    dataIndex: 'reqHead',
+    key: 'reqHead',
+  },
+  {
+    title: '类型',
+    dataIndex: 'reqType',
+    key: 'reqType',
+    render: (reqType) => (
+      <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
+    ),
+  },
+  {
+    title: '请求头信息',
+    dataIndex: 'reqHeadInfo',
+    key: 'reqHeadInfo',
+  },
+]
 
 export default function DatasourceRestMainCheck({ content, type }: Props) {
   const [isEyeShow, setIsEyeShow] = useImmer(false)
@@ -45,12 +67,23 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
-  const connectSwitchOnChange = () => {
-    console.log('switch change')
+  const connectSwitchOnChange = (isChecked: boolean) => {
+    void requests
+      .put('/dataSource', {
+        ...content,
+        switch: isChecked == true ? 1 : 0,
+      })
+      .then(() => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+        })
+      })
   }
+
   if (!content) {
     return <></>
   }
+
   const config = JSON.parse(content.config) as Config
 
   const onChange = (key: string) => {
@@ -60,13 +93,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     setIsEyeShow(!isEyeShow)
   }
 
-  const onFinish = async (values: object) => {
+  const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    await requests.put('/dataSource', { ...content, config: JSON.stringify(values) })
-    const datasource = await requests.get<unknown, DatasourceResp[]>('/dataSource')
-    dispatch({
-      type: 'fetched',
-      data: datasource.filter((item) => item.source_type == 2),
+    const newValues = { ...config, ...values, theOAS: (values.theOAS as UploadFile[])[0]?.name }
+    await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
     })
     handleToggleDesigner('data', content.id)
   }
@@ -74,6 +106,15 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
+
+  const normFile = (e: UploadProps) => {
+    console.log('Upload event:', e)
+    if (Array.isArray(e)) {
+      return e
+    }
+    return e?.fileList
+  }
+
   const onChangeTab = (key: string) => {
     console.log(key)
   }
@@ -91,8 +132,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   return (
     <>
       {type === 'data' ? (
+        //查看页面--------------------------------------------------------------------------
         <>
-          <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
+          <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <span className="ml-2">
                 userinfo <span className="text-xs text-gray-500/80">GET</span>
@@ -100,14 +142,17 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                defaultChecked
+                checked={content.switch == 1 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
+              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+                <span>测试</span>
+              </Button>
               <Button
-                className={styles['edit-btn']}
+                className={`${styles['edit-btn']} ml-4`}
                 onClick={() => {
                   handleToggleDesigner('edit', content.id)
                 }}
@@ -133,7 +178,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>命名空间</span>
-                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 className="justify-start"
@@ -144,7 +189,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>Rest 端点</span>
-                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 className="justify-start"
@@ -155,46 +200,39 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>指定OAS</span>
-                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 className="justify-start"
               >
                 {config.theOAS}
+                {/* {(config.theOAS as Array<UploadFile>)?.map((item) => {
+                  return <div key={item.name}>{item.name}</div>
+                })} */}
               </Descriptions.Item>
             </Descriptions>
           </div>
 
           <Tabs defaultActiveKey="1" onChange={onChange}>
             <TabPane tab="请求头" key="1">
-              <div className="flex justify-center mb-8">
-                <Descriptions
-                  bordered
-                  column={3}
-                  size="small"
-                  className={styles['descriptions-box']}
-                  labelStyle={{
-                    backgroundColor: 'white',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                  }}
-                >
-                  <Descriptions.Item>{config.head}</Descriptions.Item>
-                  <Descriptions.Item>{config.way}</Descriptions.Item>
-                  <Descriptions.Item>{config.code}</Descriptions.Item>
-                </Descriptions>
-              </div>
+              <Table
+                columns={columns}
+                rowKey="reqHead"
+                dataSource={config.reqHeadAll as unknown as Array<DataType>}
+                pagination={false}
+                className="mb-10"
+              />
             </TabPane>
             <TabPane
               tab={
                 <div>
                   <span className={styles['label-style']}>授权</span>
-                  <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                  <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                 </div>
               }
               key="2"
             >
-              <div className="flex justify-center ">
+              <div className="flex justify-center">
                 <Descriptions
                   bordered
                   column={1}
@@ -207,22 +245,22 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     width: '30%',
                   }}
                 >
-                  <Descriptions.Item label="JWT获取">{config.JWTget}</Descriptions.Item>
+                  <Descriptions.Item label="JWT获取">{config.getJWT}</Descriptions.Item>
                   <Descriptions.Item label="密钥">
                     {isEyeShow ? (
                       <div>
-                        <span className="mr-5">123456</span>
-                        <EyeFilled onClick={changeEyeState} />
+                        <span className="mr-5">{config.secretKey}</span>
+                        <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
                       </div>
                     ) : (
                       <div>
                         <span className="mr-5">********</span>
-                        <EyeInvisibleFilled onClick={changeEyeState} />
+                        <IconFont type="icon-xiaoyanjing-yincang" onClick={changeEyeState} />
                       </div>
                     )}
                   </Descriptions.Item>
-                  <Descriptions.Item label="签名方法">{config.signMethod}</Descriptions.Item>
-                  <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
+                  <Descriptions.Item label="签名方法">{config.signMethods}</Descriptions.Item>
+                  <Descriptions.Item label="Token端点">{config.tokenPort}</Descriptions.Item>
                 </Descriptions>
               </div>
             </TabPane>
@@ -230,11 +268,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           <Collapse
             bordered={false}
             defaultActiveKey={['1']}
-            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+            expandIcon={({ isActive }) => (
+              <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
+            )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-3">
                 <Descriptions
                   bordered
                   column={1}
@@ -251,12 +291,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>是否状态联合</span>
-                        <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
                     className="justify-start"
                   >
-                    {config.isStateCombine}
+                    {config.isUnite ? '是' : '否'}
                   </Descriptions.Item>
                 </Descriptions>
               </div>
@@ -264,6 +304,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           </Collapse>
         </>
       ) : (
+        //编辑页面--------------------------------------------------------------------------
         <>
           <div className="flex items-center justify-between border-gray border-b">
             <div>
@@ -271,12 +312,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
             </div>
-            <div className="flex justify-center items-center mb-2">
-              <Button className={styles['design-btn']}>
+            <div className="flex justify-center items-center mb-2 w-160px">
+              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
                 <span>取消</span>
               </Button>
               <Button
-                className={styles['edit-btn']}
+                className={`${styles['edit-btn']} ml-4`}
                 onClick={() => {
                   form.submit()
                 }}
@@ -293,7 +334,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
               onFinish={(values) => {
-                void onFinish(values as object)
+                void onFinish(values as Config)
               }}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
@@ -305,7 +346,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 label={
                   <div>
                     <span>命名空间:</span>
-                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 name="nameScope"
@@ -317,8 +358,22 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               <Form.Item
                 label={
                   <div>
+                    <span>Rest 端点:</span>
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                  </div>
+                }
+                required
+                name="endpoint"
+                colon={false}
+                style={{ marginBottom: '20px' }}
+              >
+                <Input placeholder="请输入..." />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <div>
                     <span>指定OAS:</span>
-                    <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 colon={false}
@@ -326,79 +381,127 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 required
                 valuePropName="fileList"
                 style={{ marginBottom: '49px' }}
+                getValueFromEvent={normFile}
               >
-                <Upload name="file" action="/upload.do" listType="picture">
+                <Upload method="post" action="/api/v1/dataSource/import">
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
                 </Upload>
               </Form.Item>
+
               <Tabs defaultActiveKey="1" onChange={onChangeTab} className="ml-3">
                 <TabPane tab="请求头" key="1">
-                  <Space style={{ display: 'flex' }} align="baseline">
-                    <Form.Item className="w-50" wrapperCol={{ span: 24 }} name="reqHead">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      className="w-36"
-                      wrapperCol={{ span: 24 }}
-                      name="reqType"
-                      initialValue="value"
-                    >
-                      <Select allowClear>
-                        <Option value="value">值</Option>
-                        <Option value="client">转发自客户端</Option>
-                        <Option value="path">环境变量</Option>
-                      </Select>
-                    </Form.Item>
-                    <Form.Item className="w-190" wrapperCol={{ span: 12 }} name="reqHeadInfo">
-                      <Input placeholder="请输入..." />
-                    </Form.Item>
-                  </Space>
+                  <Form.Item
+                    wrapperCol={{
+                      xs: { span: 24 },
+                      sm: { span: 24 },
+                    }}
+                  >
+                    <Form.List name="reqHeadAll">
+                      {(fields, { add, remove }, { errors }) => (
+                        <>
+                          {fields.map((field, index) => (
+                            <Space key={field.key} align="baseline">
+                              <Form.Item
+                                className="w-50"
+                                wrapperCol={{ span: 24 }}
+                                name={[field.name, 'reqHead']}
+                              >
+                                <Input />
+                              </Form.Item>
+                              <Form.Item
+                                className="w-36"
+                                wrapperCol={{ span: 24 }}
+                                name={[field.name, 'reqType']}
+                              >
+                                <Select>
+                                  <Option value="value">值</Option>
+                                  <Option value="client">转发自客户端</Option>
+                                  <Option value="path">环境变量</Option>
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                className="w-126"
+                                wrapperCol={{ span: 24 }}
+                                name={[field.name, 'reqHeadInfo']}
+                              >
+                                <Input placeholder="请输入..." />
+                              </Form.Item>
+                              <IconFont
+                                type="icon-guanbi"
+                                className={`${styles['form-delete-icon']}`}
+                                onClick={() => {
+                                  remove(index)
+                                }}
+                              />
+                            </Space>
+                          ))}
+
+                          <Form.Item wrapperCol={{ span: 16 }}>
+                            <Button
+                              type="dashed"
+                              onClick={() => {
+                                add()
+                              }}
+                              icon={<PlusOutlined />}
+                              className="text-gray-500/60 w-1/1"
+                            >
+                              新增请求头信息
+                            </Button>
+                            <Form.ErrorList errors={errors} />
+                          </Form.Item>
+                        </>
+                      )}
+                    </Form.List>
+                  </Form.Item>
                 </TabPane>
                 <TabPane
                   tab={
                     <div>
                       <span>授权</span>
-                      <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                     </div>
                   }
                   key="2"
                 >
-                  <Form.Item label="JWT获取" name="getJWT">
-                    <Radio.Group onChange={onChangeRadio} value={value} defaultValue={1}>
-                      <Radio value={1} className="mr-20">
+                  <Form.Item label="JWT获取" name="getJWT" initialValue={'静态'}>
+                    <Radio.Group onChange={onChangeRadio} value={value}>
+                      <Radio value={'静态'} className="mr-20">
                         静态
                       </Radio>
-                      <Radio value={2}>动态</Radio>
+                      <Radio value={'动态'}>动态</Radio>
                     </Radio.Group>
                   </Form.Item>
                   {isRadioShow ? (
-                    <div>
-                      <Form.Item label="密钥" required name="secretKey">
-                        <Input.Group compact>
-                          <Form.Item noStyle rules={[{ required: true }]}>
-                            <Select style={{ width: '20%' }} placeholder="值">
-                              1
-                            </Select>
-                          </Form.Item>
-                          <Form.Item noStyle rules={[{ required: true }]}>
-                            <Input style={{ width: '80%' }} placeholder="请输入..." />
-                          </Form.Item>
-                        </Input.Group>
+                    <>
+                      <Form.Item label="密钥" required>
+                        <Form.Item
+                          noStyle
+                          rules={[{ required: true }]}
+                          name="secretKeyType"
+                          initialValue="value"
+                        >
+                          <Select style={{ width: '20%' }} placeholder="值">
+                            <Option value="value">值</Option>
+                          </Select>
+                        </Form.Item>
+                        <Form.Item noStyle rules={[{ required: true }]} name="secretKey">
+                          <Input style={{ width: '80%' }} placeholder="请输入..." />
+                        </Form.Item>
                       </Form.Item>
-                      <Form.Item label="签名方法" name="signMethods">
-                        <Radio value={1} checked>
+                      <Form.Item label="签名方法" name="signMethods" initialValue={'HS256'}>
+                        <Radio value={'HS256'} checked>
                           HS256
                         </Radio>
                       </Form.Item>
-                    </div>
+                    </>
                   ) : (
                     <Form.Item
                       label={
                         <div>
                           <span>Token 端点:</span>
-                          <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                          <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                         </div>
                       }
                       colon={false}
@@ -422,7 +525,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>是否状态联合:</span>
-                        <QuestionCircleOutlined className={`${styles['form-icon']} ml-1`} />
+                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
                     name="isUnite"

@@ -1,8 +1,8 @@
-import { AppleOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 
+import IconFont from '../iconfont'
 import styles from './datasource-pannel.module.scss'
 import DatasourceList from './subs/datasource-list'
 interface Props {
@@ -17,7 +17,7 @@ export default function DatasourcePannel({ onClickItem, onChangeDBType }: Props)
     <>
       <div className={styles.pannel}>
         <div className={`${styles.title} text-base`}>
-          外部数据源 <AppleOutlined />
+          外部数据源 <IconFont type="icon-wenjianshezhi" />
         </div>
       </div>
 

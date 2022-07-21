@@ -1,11 +1,14 @@
-import { AppleOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import Editor from '@monaco-editor/react'
 import { Descriptions, Input, Switch } from 'antd'
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
+import { DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
+import styles from './datasource-common.module.scss'
 interface Props {
   content: DatasourceResp
 }
@@ -17,13 +20,13 @@ interface PropsInfo {
   name: string
   editDefineSelf: (key: string, value: string) => void
 }
+
 function DatasourceDefineItem({ info, name, editDefineSelf }: PropsInfo) {
   const [isEditing, setIsEditing] = useImmer(false)
 
   function handleItemEdit(key: string, value: string) {
     editDefineSelf(key, value)
     setIsEditing(false)
-    console.log(value)
   }
 
   return (
@@ -47,7 +50,7 @@ function DatasourceDefineItem({ info, name, editDefineSelf }: PropsInfo) {
             }}
             className="ml-3"
           >
-            <EditOutlined />
+            <IconFont type="icon-bianji" />
           </span>
         </>
       )}
@@ -57,15 +60,21 @@ function DatasourceDefineItem({ info, name, editDefineSelf }: PropsInfo) {
 
 export default function DatasourceDeselfMainEdit({ content }: Props) {
   const config = JSON.parse(content.config) as Config
+  // const [isActive, setIsActive] = useImmer(false)
+  const dispatch = useContext(DatasourceDispatchContext)
+
   const editDefineSelf = (key: string, value: string) => {
     config[key] = value
     console.log(config, '123')
     void requests.put('/dataSource', { ...content, config: JSON.stringify({ ...config }) })
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 4) })
+    })
   }
+
   return (
     <>
       <div className="border-gray border-b pb-5">
-        <AppleOutlined />
         <span className="ml-2">{content.name}</span>
         <span className="ml-2 text-xs text-gray-500/80">main</span>
       </div>
@@ -95,11 +104,18 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
       </div>
       <div className="mt-10 flex items-center justify-between">
         <span className="ml-2 text-xs text-gray-500/80">
-          <ExclamationCircleOutlined className="mr-2" />
+          <IconFont type="icon-zhuyi" className="mr-2" />
           主要用于日志等副作用操作
         </span>
         <Switch />
       </div>
+      <Editor
+        height="90vh"
+        defaultLanguage="typescript"
+        defaultValue="// some comment"
+        className={`mt-4 ${styles.monaco}`}
+      />
+      <div />
     </>
   )
 }

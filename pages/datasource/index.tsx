@@ -12,7 +12,7 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 import styles from './index.module.scss'
@@ -21,21 +21,24 @@ import styles from './index.module.scss'
 export default function Datasource() {
   const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
+  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
+  const [changeCurrId, setChangeCurrId] = useImmer(false)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data: datasource, error } = useSWR('/dataSource', getFetcher)
+
   useLayoutEffect(() => {
     setCurrDBId(datasourceList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datasourceList])
-
-  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { data: datasource, error } = useSWR('/dataSource', getFetcher)
+  }, [changeCurrId])
 
   useEffect(() => {
     datasource &&
       dispatch({
-        type: 'selected',
+        type: 'fetched',
         data: (datasource as DatasourceResp[]).filter((item) => item.source_type == 1),
       })
+    setChangeCurrId(!changeCurrId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasource])
 
   if (error) return <div>failed to load</div>
@@ -43,11 +46,13 @@ export default function Datasource() {
 
   // TODO: need refine
   function handleChangeDStype(value: number) {
-    datasource &&
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({
         type: 'fetched',
-        data: (datasource as DatasourceResp[]).filter((item) => item.source_type == value),
+        data: res.filter((item) => item.source_type == value),
       })
+      setChangeCurrId(!changeCurrId)
+    })
     setShowType('data')
   }
 
