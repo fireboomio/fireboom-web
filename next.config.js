@@ -27,10 +27,6 @@ const nextConfig = {
         source: '/api/v1/sources/:path*',
         destination: 'http://127.0.0.1:8080/sources/:path*',
       },
-      // {
-      //   source: '/api/v1/storageBucket/:path*',
-      //   destination: 'http://localhost:8080/api/v1/storageBucket/:path*',
-      // },
       {
         source: '/api/v1/:path*',
         destination: 'http://120.26.62.151:9123/api/v1/:path*',
