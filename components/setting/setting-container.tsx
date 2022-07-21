@@ -1,7 +1,8 @@
-import { AppleOutlined, CaretRightOutlined } from '@ant-design/icons'
+import { CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '../iconfont'
 import SettingMainAppearance from './subs/setting-main-appearance'
 import SettingMainCrossdomain from './subs/setting-main-crossdomain'
 import SettingMainEnvironmentVariable from './subs/setting-main-environment-variable'
@@ -68,9 +69,9 @@ export default function SettingContainer({ showType }: Props) {
             <CaretRightOutlined /> {title}
           </span>
         </span>
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
+        <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
+        <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
+        <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
       </div>
       {viewer}
     </div>

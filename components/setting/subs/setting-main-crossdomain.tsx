@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { PlusOutlined, MinusCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './setting-main.module.scss'
@@ -125,7 +126,8 @@ export default function SettingCrossdomain() {
                               }}
                             />
                             {fields.length > 1 ? (
-                              <MinusCircleOutlined
+                              <IconFont
+                                type="icon-guanbi"
                                 className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   void requests
@@ -241,7 +243,7 @@ export default function SettingCrossdomain() {
                 />
               </Form.Item>
               <span className="ml-4 text-gray-500 inline-block h-6">
-                <InfoCircleOutlined /> 是否允许证书
+                <IconFont type="icon-zhuyi" className="text-[14px]" /> 是否允许证书
               </span>
             </Form.Item>
           </Form>

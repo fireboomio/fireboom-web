@@ -1,9 +1,9 @@
-import { AppleOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 
+import IconFont from '../iconfont'
 import DatasourceDBMain from './subs/datasource-main-db'
 import DatasourceDeselfMainEdit from './subs/datasource-main-deself'
 import DatasourceGraphalMain from './subs/datasource-main-graphal'
@@ -28,7 +28,6 @@ export default function DatasourceEditor({ content, showType }: Props) {
       } else {
         if (content.source_type == 1) {
           setTitile('DB')
-          console.log('123')
           setViewer(<DatasourceDBMain content={content} type={showType} />)
         } else if (content.source_type == 2) {
           setTitile('REST')
@@ -37,7 +36,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
           setTitile('Graphal')
           setViewer(<DatasourceGraphalMain content={content} type={showType} />)
         } else if (content.source_type == 4) {
-          setTitile('defineByself')
+          setTitile('自定义')
           setViewer(<DatasourceDeselfMainEdit content={content} />)
         }
       }
@@ -51,9 +50,9 @@ export default function DatasourceEditor({ content, showType }: Props) {
         <span className="text-base flex-grow font-bold text-[18px]">
           外部数据源 / {content && title}
         </span>
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-3" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-3" onClick={handleIconClick} />
+        <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
+        <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
+        <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
       </div>
       {viewer}
     </div>

@@ -1,9 +1,9 @@
-import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -20,7 +20,7 @@ interface Props {
   Datasourcetype: number
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasourcetype }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -40,12 +40,22 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     } else {
       if (datasourceItem.id != 0) {
         await requests.put('/dataSource', { ...datasourceItem, name: value })
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({
+            type: 'fetched',
+            data: res.filter((item) => item.source_type == Datasourcetype),
+          })
+        })
       } else {
         const req = { ...datasourceItem, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/dataSource', req)
-        dispatch({ type: 'changed', data: { ...datasourceItem, name: value } })
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({
+            type: 'fetched',
+            data: res.filter((item) => item.source_type == Datasourcetype),
+          })
+        })
       }
     }
     setIsEditing(false)
@@ -77,7 +87,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
                 setIsEditing(!isEditing)
               }}
             >
-              <AppleOutlined />
+              <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
           ),
@@ -87,27 +97,10 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           label: (
             <div
               onClick={() => {
-                let type = 'DB'
-                switch (datasourceItem.source_type) {
-                  case 1:
-                    type = 'DB'
-                    break
-                  case 2:
-                    type = 'REST'
-                    break
-                  case 3:
-                    type = 'Graphal'
-                    break
-                  case 4:
-                    type = 'defineByself'
-                    break
-                  default:
-                    break
-                }
-                handleToggleDesigner(type, datasourceItem.id)
+                handleToggleDesigner('edit', datasourceItem.id)
               }}
             >
-              <AppleOutlined />
+              <IconFont type="icon-bianji" />
               <span className="ml-1.5">编辑</span>
             </div>
           ),
@@ -126,7 +119,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
               okType={'danger'}
             >
               <div>
-                <AppleOutlined />
+                <IconFont type="icon-a-shanchu2" />
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
@@ -149,8 +142,12 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
         onClickItem(datasourceItem)
       }}
     >
-      <AppleOutlined className="ml-2px mr-2" />
-
+      <IconFont
+        type="icon-tuozhuai-xuanzhong"
+        className="-ml-3 mr-1"
+        style={{ visibility: isHovering ? 'visible' : 'hidden' }}
+      />
+      <IconFont type="icon-shujuyuantubiao1" className="mr-2" />
       {isEditing ? (
         <Input
           onBlur={(e) => void handleItemEdit(e.target.value)}
@@ -185,7 +182,8 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           leaveItem(v)
         }}
       >
-        <MoreOutlined
+        <IconFont
+          type="icon-gengduo-shu-xuanzhong"
           onClick={(e) => e.stopPropagation()}
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
