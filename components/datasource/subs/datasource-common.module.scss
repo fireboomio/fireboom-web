@@ -1,7 +1,7 @@
 .edit-btn {
-  padding: 0;
   width: 64px;
   height: 28px;
+  padding: 0;
   font-size: 14px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
@@ -12,10 +12,11 @@
     background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
   }
+
   span {
-    line-height: 18px;
     color: #fff;
     font-size: 14px;
+    line-height: 18px;
   }
 }
 
@@ -23,9 +24,10 @@
   width: 62px;
   height: 32px;
   margin-right: 16px;
+  border: 1px solid rgb(0 0 0 / 10%);
   border-radius: 2px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
+
 .switch-check-btn {
   width: 60px;
   height: 24px;
@@ -50,10 +52,11 @@
 
 .collapse-box :global {
   .ant-collapse > .ant-collapse-item > .ant-collapse-header {
-    padding: 0px;
+    padding: 0;
   }
+
   .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0px;
+    padding: 0;
   }
 }
 
@@ -72,6 +75,7 @@
   color: #fff;
   background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 50%;
+
   &:hover,
   &:focus {
     color: #fff;
@@ -83,20 +87,21 @@
 .list-title {
   width: 28px;
   height: 20px;
-  font-size: 14px;
+  color: #000;
   font-weight: 500;
-  color: #000000;
+  font-size: 14px;
   line-height: 20px;
 }
 
 .connect-check-btn-common {
   height: 28px;
   padding: 0;
-  background: #ffffff;
+  background: #fff;
   border-radius: 2px;
+
   span {
-    line-height: 18px;
     font-size: 14px;
+    line-height: 18px;
   }
 }
 
