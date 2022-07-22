@@ -43,7 +43,7 @@ const columns: ColumnsType<DataType> = [
     title: '请求头',
     dataIndex: 'reqHead',
     key: 'reqHead',
-    width: '30%',
+    width: '27%',
   },
   {
     title: '类型',
@@ -52,11 +52,13 @@ const columns: ColumnsType<DataType> = [
     render: (reqType) => (
       <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
     ),
+    width: '20%',
   },
   {
     title: '请求头信息',
     dataIndex: 'reqHeadInfo',
     key: 'reqHeadInfo',
+    width: '40%',
   },
 ]
 
@@ -76,7 +78,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
         })
       })
   }
