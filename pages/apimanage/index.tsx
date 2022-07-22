@@ -206,8 +206,9 @@ const ApiManage: FC<ApiManageProps> = () => {
   )
 
   const handleAddNode = useCallback(() => {
-    if (addType) {
+    if (!addType) {
       void message.warn('正在添加中')
+      setRefreshFlag(!refreshFlag)
     } else {
       let parent: any
       let child: any
@@ -244,6 +245,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       setTreeData([...treeData])
     }
     setAddType('文件')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addType, selectedKey, treeData])
 
   const handleDelete = (treeNodeKey: any) => {
@@ -274,14 +276,8 @@ const ApiManage: FC<ApiManageProps> = () => {
       <Menu
         onClick={(menuInfo) => handleMenuClick(menuInfo, nodeData.key)}
         items={[
-          {
-            label: '重命名',
-            key: '0',
-          },
-          {
-            label: '编辑',
-            key: '1',
-          },
+          { label: '重命名', key: '0' },
+          { label: '编辑', key: '1' },
           {
             label: (
               <Popconfirm
@@ -409,7 +405,14 @@ const ApiManage: FC<ApiManageProps> = () => {
                 style={{ fontSize: '18px' }}
                 onClick={handleAddNode}
               />
-              <IconFont type="icon-shuaxin" style={{ fontSize: '16px' }} onClick={handleAddNode} />
+              <IconFont
+                type="icon-shuaxin"
+                style={{ fontSize: '16px' }}
+                onClick={() => {
+                  setRefreshFlag(!refreshFlag)
+                  void message.success('刷新完成')
+                }}
+              />
               <IconFont type="icon-fuzhi" style={{ fontSize: '16px' }} onClick={handleAddNode} />
             </div>
           </div>
@@ -421,7 +424,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             draggable
             showIcon
             defaultExpandAll
-            defaultSelectedKeys={['0-0-0']}
+            defaultSelectedKeys={['0']}
             switcherIcon={<DownOutlined />}
             treeData={treeData}
             selectedKeys={[selectedKey]}
