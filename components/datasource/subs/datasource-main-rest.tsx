@@ -43,6 +43,7 @@ const columns: ColumnsType<DataType> = [
     title: '请求头',
     dataIndex: 'reqHead',
     key: 'reqHead',
+    width: '30%',
   },
   {
     title: '类型',
@@ -266,40 +267,38 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </TabPane>
           </Tabs>
           <Collapse
+            ghost
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
               <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
             )}
-            className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
+            className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
           >
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
-              <div className="flex justify-center mb-3">
-                <Descriptions
-                  bordered
-                  column={1}
-                  size="small"
-                  className={styles['descriptions-box']}
-                  labelStyle={{
-                    backgroundColor: 'white',
-                    width: '30%',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                  }}
+              <Descriptions
+                colon={false}
+                column={1}
+                labelStyle={{
+                  backgroundColor: 'white',
+                  width: '31%',
+                  borderRight: 'none',
+                  borderBottom: 'none',
+                  paddingLeft: '16px',
+                }}
+              >
+                <Descriptions.Item
+                  label={
+                    <div>
+                      <span className={styles['label-style']}>是否状态联合:</span>
+                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    </div>
+                  }
+                  className="justify-start"
                 >
-                  <Descriptions.Item
-                    label={
-                      <div>
-                        <span className={styles['label-style']}>是否状态联合</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                      </div>
-                    }
-                    className="justify-start"
-                  >
-                    {config.isUnite ? '是' : '否'}
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
+                  {config.isUnite ? '是' : '否'}
+                </Descriptions.Item>
+              </Descriptions>
             </Panel>
           </Collapse>
         </>
@@ -414,6 +413,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                                 className="w-36"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'reqType']}
+                                initialValue="value"
                               >
                                 <Select>
                                   <Option value="value">值</Option>

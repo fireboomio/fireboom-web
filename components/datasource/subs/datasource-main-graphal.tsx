@@ -147,7 +147,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               className={styles['descriptions-box']}
               labelStyle={{
                 backgroundColor: 'white',
-                width: '30%',
+                width: '31%',
                 borderRight: 'none',
                 borderBottom: 'none',
               }}
@@ -199,6 +199,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             className="mb-10"
           />
           <Collapse
+            ghost
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
@@ -209,15 +210,14 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
               <div className="flex justify-center mb-8">
                 <Descriptions
-                  bordered
+                  colon={false}
                   column={1}
-                  size="small"
-                  className={styles['descriptions-box']}
                   labelStyle={{
                     backgroundColor: 'white',
-                    width: '30%',
+                    width: '31%',
                     borderRight: 'none',
                     borderBottom: 'none',
+                    marginLeft: '10px',
                   }}
                 >
                   <Descriptions.Item
@@ -398,6 +398,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             className="w-36"
                             wrapperCol={{ span: 24 }}
                             name={[field.name, 'reqType']}
+                            initialValue="value"
                           >
                             <Select>
                               <Option value="value">值</Option>
