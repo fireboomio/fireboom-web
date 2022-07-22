@@ -49,26 +49,11 @@ type ApiManageProps = {
 }
 
 const tabs = [
-  {
-    title: '详情',
-    key: '0',
-  },
-  {
-    title: 'Mock',
-    key: '1',
-  },
-  {
-    title: '钩子',
-    key: '2',
-  },
-  {
-    title: '设置',
-    key: '3',
-  },
-  {
-    title: '调用',
-    key: '4',
-  },
+  { title: '详情', key: '0' },
+  { title: 'Mock', key: '1' },
+  { title: '钩子', key: '2' },
+  { title: '设置', key: '3' },
+  { title: '调用', key: '4' },
 ]
 
 function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null {
