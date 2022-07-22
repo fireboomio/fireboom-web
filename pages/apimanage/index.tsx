@@ -33,15 +33,15 @@ import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState } from 'react'
 
+import Detail from '@/components/apimanage/Detail'
+import Hook from '@/components/apimanage/Hook'
+import Mock from '@/components/apimanage/Mock'
+import Setting from '@/components/apimanage/Setting'
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import type { DirTree, operationResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import Detail from './blocks/Detail'
-import Hook from './blocks/Hook'
-import Mock from './blocks/Mock'
-import Setting from './blocks/Setting'
 import styles from './index.module.scss'
 
 type ApiManageProps = {
@@ -49,26 +49,11 @@ type ApiManageProps = {
 }
 
 const tabs = [
-  {
-    title: '详情',
-    key: '0',
-  },
-  {
-    title: 'Mock',
-    key: '1',
-  },
-  {
-    title: '钩子',
-    key: '2',
-  },
-  {
-    title: '设置',
-    key: '3',
-  },
-  {
-    title: '调用',
-    key: '4',
-  },
+  { title: '详情', key: '0' },
+  { title: 'Mock', key: '1' },
+  { title: '钩子', key: '2' },
+  { title: '设置', key: '3' },
+  { title: '调用', key: '4' },
 ]
 
 function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null {
