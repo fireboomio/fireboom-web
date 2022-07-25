@@ -1,11 +1,13 @@
 import { ExclamationCircleOutlined, AppleOutlined } from '@ant-design/icons'
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { Switch } from 'antd'
 import type { FC } from 'react'
 
 import RcTab from '@/components/rc-tab'
 
 import styles from './Hook.module.scss'
+
+loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
 type HookProps = {
   //

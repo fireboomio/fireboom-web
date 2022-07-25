@@ -311,7 +311,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           />
         ) : (
           <>
-            <span>{nodeData.title}</span>
+            <span className="truncate max-w-9rem">{nodeData.title}</span>
             <div className="text-12px  space-x-4">
               <span className="text-[#AFB0B499]">GET</span>
               <span className="text-[#AFB0B4]">
@@ -421,7 +421,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             style={{ overflow: 'auto', height: 'calc(100vh - 174px)' }}
             titleRender={titleRender}
             icon={iconRender}
-            draggable
+            // draggable
             showIcon
             defaultExpandAll
             defaultSelectedKeys={['0']}
