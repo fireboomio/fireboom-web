@@ -73,7 +73,30 @@ const reqColumns = [
     dataIndex: 'isRequired',
     render: (x: boolean) => <div>{x ? '是' : '否'}</div>,
   },
+  {
+    title: 'jsonSchema',
+    dataIndex: 'jsonSchema',
+  },
 ]
+
+interface ReqDS {
+  name: string
+  pos: string
+  kind: string
+  isRequired: boolean
+  jsonSchema: string
+  directives: DirectiveT[] | undefined
+}
+
+interface DirectiveT {
+  name: string
+  args:
+    | {
+        name: string
+        value: string
+      }[]
+    | undefined
+}
 
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -118,6 +141,19 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
+  // TODO: Refine
+  const makeReqDS = (ds: ReqDS[]) => {
+    const makeSchema = (data: DirectiveT | undefined) => {
+      if (!data) return undefined
+      return `${data.args[0].name}: "${data.args[0].value}"`
+    }
+
+    return ds.map((x) => ({
+      ...x,
+      jsonSchema: makeSchema(x.directives.find((x) => x.name === 'jsonSchema')),
+    }))
+  }
+
   return (
     <>
       <div className="flex items-center">
@@ -161,7 +197,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
           size="middle"
           className="mt-6"
           columns={reqColumns}
-          dataSource={reqDataSource}
+          key="name"
+          dataSource={makeReqDS(reqDataSource)}
           pagination={false}
         />
       </div>

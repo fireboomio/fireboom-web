@@ -7,11 +7,18 @@ import {
   TypeNode,
   FieldNode,
   NameNode,
+  ConstDirectiveNode,
+  ConstArgumentNode,
+  Kind,
 } from 'graphql'
 
 import { FieldType, TableSource } from '@/interfaces/apimanage'
 
 const BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID']
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 
 export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
   return varDefs.map((x) => ({
@@ -19,7 +26,40 @@ export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
     name: x.variable.name.value,
     pos: 'path',
     ...parseType(x.type),
+    directives: parseDirective(x.directives),
   }))
+}
+
+export const parseDirective = (directives: readonly ConstDirectiveNode[] | undefined) => {
+  if (!directives) return undefined
+  return directives.map((x) => ({
+    name: x.name.value,
+    args: parseDirectiveArg(x.arguments),
+  }))
+}
+
+const parseDirectiveArg = (argNode: readonly ConstArgumentNode[] | undefined) => {
+  if (!argNode) return undefined
+  if (argNode.length === 0) return undefined
+
+  return argNode.map((x) => {
+    let val
+    switch (x.value.kind) {
+      case Kind.INT:
+      case Kind.FLOAT:
+      case Kind.STRING:
+      case Kind.ENUM:
+        val = x.value.value
+        break
+      default:
+        val = undefined
+        break
+    }
+    return {
+      name: x.name.value,
+      value: val,
+    }
+  })
 }
 
 export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldType => {
@@ -49,9 +89,13 @@ export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldTyp
 export const parseQuery = (
   schema: DefinitionNode[],
   node: OperationDefinitionNode | FieldNode,
-  type = 'Query',
+  type: string,
   lv = '0'
 ): TableSource[] | undefined => {
+  if (lv === '0') {
+    type = capitalize((node as OperationDefinitionNode).operation)
+  }
+
   if (!node.selectionSet) return undefined
 
   const allScalar = schema
