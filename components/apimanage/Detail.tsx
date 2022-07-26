@@ -11,6 +11,7 @@ import RcTab from '@/components/rc-tab'
 import { FieldType, TableSource, DirectiveT, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { parseVariables, parseQuery } from '@/lib/gql-parser'
+import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
@@ -125,7 +126,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   // TODO: Refine
   const makeReqDS = (ds: ParameterT[]) => {
     const makeSchema = (data: DirectiveT | undefined) => {
-      if (!data) return undefined
+      if (isEmpty(data)) return undefined
       return `${data.args[0].name}: "${data.args[0].value}"`
     }
 
