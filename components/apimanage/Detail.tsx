@@ -8,7 +8,7 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType } from '@/interfaces/apimanage'
+import { FieldType, TableSource } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { parseArgs, parseQuery } from '@/lib/gql-parser'
 
@@ -73,7 +73,30 @@ const reqColumns = [
     dataIndex: 'isRequired',
     render: (x: boolean) => <div>{x ? '是' : '否'}</div>,
   },
+  {
+    title: 'jsonSchema',
+    dataIndex: 'jsonSchema',
+  },
 ]
+
+interface ReqDS {
+  name: string
+  pos: string
+  kind: string
+  isRequired: boolean
+  jsonSchema: string
+  directives: DirectiveT[] | undefined
+}
+
+interface DirectiveT {
+  name: string
+  args:
+    | {
+        name: string
+        value: string
+      }[]
+    | undefined
+}
 
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -118,6 +141,25 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
+  // TODO: Refine
+  const makeReqDS = (ds: ReqDS[]) => {
+    const makeSchema = (data: DirectiveT | undefined) => {
+      if (!data) return undefined
+      return `${data.args[0].name}: "${data.args[0].value}"`
+    }
+
+    return ds.map((x) => ({
+      ...x,
+      jsonSchema: makeSchema(x.directives.find((x) => x.name === 'jsonSchema')),
+    }))
+  }
+
+  const isInternal = (data: TableSource[] | undefined) => {
+    if (!data) return false
+    if (data.length === 0) return false
+    return data[0].directiveNames.includes('internalOperation')
+  }
+
   return (
     <>
       <div className="flex items-center">
@@ -132,8 +174,17 @@ const Detail: FC<DetailProps> = ({ path }) => {
             <EditOutlined className="text-[#AFB0B4]" />
           </div>
           <div className="flex items-center space-x-1 ml-7">
-            <Badge status="success" color="#1BDD8A" />
-            <span className="text-[#000000D9] leading-20px">公开</span>
+            {isInternal(dataSource) ? (
+              <>
+                <Badge status="error" />
+                <span className="text-[#000000D9] leading-20px">非公开</span>
+              </>
+            ) : (
+              <>
+                <Badge status="success" color="#1BDD8A" />
+                <span className="text-[#000000D9] leading-20px">公开</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -161,7 +212,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
           size="middle"
           className="mt-6"
           columns={reqColumns}
-          dataSource={reqDataSource}
+          dataSource={makeReqDS(reqDataSource)}
           pagination={false}
         />
       </div>

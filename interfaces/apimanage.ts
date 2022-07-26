@@ -18,5 +18,6 @@ export interface FieldType {
 export interface TableSource {
   fieldName: string
   fieldType: FieldType
+  directiveNames: string[] | undefined
   children?: TableSource[]
 }
