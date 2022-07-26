@@ -11,10 +11,12 @@ import {
   Space,
   Select,
   Table,
+  Tag,
 } from 'antd'
-import type { UploadProps, UploadFile } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { ReactNode, useContext } from 'react'
+import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -62,6 +64,7 @@ const columns: ColumnsType<DataType> = [
 export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
+  const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
@@ -69,7 +72,22 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values, schema: (values.schema as UploadFile[])[0]?.name }
+    const newValues = { ...config }
+    for (const key in values) {
+      if (values[key] != undefined) newValues[key] = values[key]
+    }
+    if ((values.schema as UploadFile[])?.length > 0) {
+      await requests({
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'post',
+        url: '/dataSource/import',
+        data: { file: file },
+      })
+      newValues.schema = (values.schema as UploadFile[])[0]?.name
+    }
+
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
@@ -106,7 +124,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   if (!content) {
     return <></>
   }
-  console.log(config)
+
   return (
     <>
       {type === 'data' ? (
@@ -186,7 +204,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.schema}
+                <IconFont type="icon-wenjian1" /> {config.schema}
                 {/* {(config.schema as Array<UploadFile>)?.map((item) => {
                   return <div key={item.name}>{item.name}</div>
                 })} */}
@@ -232,7 +250,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     className="justify-start"
                   >
-                    {config.isInner ? '开启' : '关闭'}
+                    {config.isInner ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={
@@ -345,16 +363,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               >
                 <Input placeholder="请输入..." />
               </Form.Item>
-              <Form.Item
-                name="agreement"
-                valuePropName="checked"
-                rules={[
-                  {
-                    validator: (_, value) =>
-                      value ? Promise.resolve() : Promise.reject(new Error('')),
-                  },
-                ]}
-              >
+              <Form.Item name="agreement" valuePropName="checked">
                 <Checkbox>通过发送指令,自动内省Schema</Checkbox>
               </Form.Item>
               <Form.Item
@@ -371,7 +380,15 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 style={{ marginBottom: '48px' }}
                 getValueFromEvent={normFile}
               >
-                <Upload method="post" action="/api/v1/dataSource/import">
+                <Upload
+                  // method="post"
+                  // action="/api/v1/dataSource/import"
+                  beforeUpload={(file) => {
+                    console.log(file, 'file')
+                    setFile(file)
+                    return false
+                  }}
+                >
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
@@ -463,7 +480,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     name="isInner"
                     colon={false}
                     style={{ marginBottom: '20px' }}
-                    rules={[{ required: true }]}
                   >
                     <Switch className={styles['switch-edit-btn']} size="small" />
                   </Form.Item>
@@ -490,7 +506,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     name="defineInt"
                     colon={false}
-                    required
                     style={{ marginBottom: '20px' }}
                   >
                     <Input placeholder="请输入..." />
@@ -503,7 +518,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     colon={false}
-                    required
                     style={{ marginBottom: '20px' }}
                     name="exceptRename"
                   >

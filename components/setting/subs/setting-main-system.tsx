@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { PauseCircleOutlined, PoweroffOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
-import { Descriptions, Divider, Radio, Switch, Button, Input } from 'antd'
+import { Descriptions, Divider, Radio, Switch, Input } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -46,20 +45,11 @@ export default function SettingMainVersion() {
     <>
       {systemConfig.apiPort ? (
         <div>
-          <div className="ml-65 -mt-6">
-            <Button type="text">
-              <PoweroffOutlined />
-              <span>开启</span>
-            </Button>
-            <Button type="text">
-              <PauseCircleOutlined />
-              <span>暂停</span>
-            </Button>
-          </div>
           <Divider type="horizontal" className="mt-1" />
 
           <div className="flex justify-center ml-5 ">
             <Descriptions
+              colon={false}
               column={1}
               className={styles['descriptions-box']}
               labelStyle={{
@@ -70,8 +60,8 @@ export default function SettingMainVersion() {
                 color: 'gray',
               }}
             >
-              <Descriptions.Item label="运行时长">{systemConfig.logLevel}</Descriptions.Item>
-              <Descriptions.Item label="API端口" className="w-20">
+              <Descriptions.Item label="运行时长:">{systemConfig.logLevel}</Descriptions.Item>
+              <Descriptions.Item label="API端口:" className="w-20">
                 {isApiPortEditing ? (
                   <Input
                     autoFocus
@@ -93,7 +83,7 @@ export default function SettingMainVersion() {
                   }}
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="中间件端口">
+              <Descriptions.Item label="中间件端口:">
                 {isMidPortEditing ? (
                   <Input
                     autoFocus
@@ -115,7 +105,7 @@ export default function SettingMainVersion() {
                   }}
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="类型">
+              <Descriptions.Item label="类型:">
                 <Radio.Group defaultValue={systemConfig.logLevel} onChange={onChange}>
                   <Radio value={'1'} className="mr-15 ">
                     info
@@ -126,7 +116,7 @@ export default function SettingMainVersion() {
                   <Radio value={'3'}> error </Radio>
                 </Radio.Group>
               </Descriptions.Item>
-              <Descriptions.Item label="开发者模式">
+              <Descriptions.Item label="开发者模式:">
                 <Switch
                   onChange={(value) => {
                     void requests.post('/setting', {
@@ -139,7 +129,7 @@ export default function SettingMainVersion() {
                   size="small"
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="强制跳转">
+              <Descriptions.Item label="强制跳转:">
                 <Switch
                   defaultChecked={systemConfig.forcedJumpSwitch == '1' ? true : false}
                   className={styles['switch-edit-btn']}
@@ -152,17 +142,16 @@ export default function SettingMainVersion() {
                   }}
                 />
               </Descriptions.Item>
+              <Descriptions.Item label=" ">
+                <button className={styles['edit-btn']}>
+                  <span>重启</span>
+                </button>
+                <span className={styles.setTitle}>
+                  <IconFont type="icon-zhuyi" className="text-[14px]" />
+                  XXX已修改，请点击重启
+                </span>
+              </Descriptions.Item>
             </Descriptions>
-          </div>
-
-          <div>
-            <Button className={styles['edit-btn']}>
-              <span>重启</span>
-            </Button>
-            <span className={styles.setTitle}>
-              <IconFont type="icon-zhuyi" className="text-[14px]" />
-              XXX已修改，请点击重启
-            </span>
           </div>
         </div>
       ) : (

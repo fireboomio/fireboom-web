@@ -136,11 +136,11 @@
 }
 .edit-btn {
   padding: 0;
-  width: 62px;
-  height: 32px;
-  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  width: 72px;
+  height: 28px;
+  border: solid 1px #ebb0bb;
+  background: linear-gradient(56deg, #FF9378 0%, #E13D5B 100%);
   border-radius: 2px;
-  margin-left: 215px;
   margin-top: 10px;
 
   &:hover,

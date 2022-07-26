@@ -63,6 +63,20 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
   // const [isActive, setIsActive] = useImmer(false)
   const dispatch = useContext(DatasourceDispatchContext)
 
+  const connectSwitchOnChange = (isChecked: boolean) => {
+    void requests
+      .put('/dataSource', {
+        ...content,
+        switch: isChecked == true ? 1 : 0,
+      })
+      .then(() => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 4) })
+        })
+      })
+    console.log('switch change')
+  }
+
   const editDefineSelf = (key: string, value: string) => {
     config[key] = value
     console.log(config, '123')
@@ -107,7 +121,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
           <IconFont type="icon-zhuyi" className="mr-2" />
           主要用于日志等副作用操作
         </span>
-        <Switch />
+        <Switch checked={content.switch == 1 ? true : false} onChange={connectSwitchOnChange} />
       </div>
       <Editor
         height="90vh"

@@ -1,7 +1,8 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
+import Editor from '@monaco-editor/react'
 import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import { useContext, ReactNode } from 'react'
+import { useContext, ReactNode, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -26,30 +27,118 @@ interface Props {
   content: DatasourceResp
 }
 
+const { Option } = Select
 const initForm = (
-  <Form.Item
-    label="环境变量"
-    name="environmentVar"
-    rules={[
-      { required: true, message: '连接名不能为空' },
-      {
-        pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-        message: '只允许包含字母',
-      },
-    ]}
-  >
-    <Input placeholder="请输入..." />
+  <Form.Item label="连接URL">
+    <Input.Group compact>
+      <Form.Item
+        name={['url', 'typeName']}
+        noStyle
+        rules={[{ required: true, message: 'typeName is required' }]}
+      >
+        <Select className="w-1/4">
+          <Option value="value">值</Option>
+          <Option value="path">环境变量</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name={['url', 'connectURL']}
+        noStyle
+        rules={[
+          { required: true, message: '连接名不能为空' },
+          {
+            pattern: new RegExp('^\\w+$', 'g'),
+            message: '只允许包含字母，数字，下划线',
+          },
+        ]}
+      >
+        <Input style={{ width: '75%' }} placeholder="请输入" />
+      </Form.Item>
+    </Input.Group>
   </Form.Item>
 )
-let config: Config
+const paramForm = (
+  <>
+    <Form.Item
+      label="主机:"
+      name="host"
+      rules={[
+        { required: true, message: '主机名不能为空' },
+        {
+          pattern: new RegExp('^\\w+$', 'g'),
+          message: '只允许包含字母，数字，下划线',
+        },
+      ]}
+    >
+      <Input placeholder="请输入..." />
+    </Form.Item>
+    <Form.Item
+      label="数据库名:"
+      name="DBName"
+      rules={[
+        { required: true, message: '数据库名不能为空' },
+        {
+          pattern: new RegExp('^\\w+$', 'g'),
+          message: '只允许包含字母，数字，下划线',
+        },
+      ]}
+    >
+      <Input placeholder="请输入..." />
+    </Form.Item>
+    <Form.Item
+      label="端口:"
+      name="port"
+      rules={[
+        { required: true, message: '端口号不能为空' },
+        {
+          pattern: new RegExp('^\\w+$', 'g'),
+          message: '只允许包含字母，数字，下划线',
+        },
+      ]}
+    >
+      <Input placeholder="请输入..." />
+    </Form.Item>
+    <Form.Item
+      label="用户:"
+      name="userName"
+      rules={[
+        { required: true, message: '用户名不能为空' },
+        {
+          pattern: new RegExp('^\\w+$', 'g'),
+          message: '只允许包含字母，数字，下划线',
+        },
+      ]}
+    >
+      <Input placeholder="请输入..." />
+    </Form.Item>
+    <Form.Item
+      label="密码:"
+      name="password"
+      rules={[
+        { required: true, message: '密码不能为空' },
+        {
+          pattern: new RegExp('^\\w+$', 'g'),
+          message: '只允许包含字母，数字，下划线',
+        },
+      ]}
+    >
+      <Input.Password placeholder="请输入..." />
+    </Form.Item>
+  </>
+)
+
 export default function DatasourceDBMain({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
-  const [disabled, setDisabled] = useImmer(true)
+  const [disabled, setDisabled] = useImmer(false)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
-  config = JSON.parse(content.config) as Config
+  const config = JSON.parse(content.config) as Config
 
+  useEffect(() => {
+    setViewerForm(config.typeName == 'url' ? initForm : paramForm)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content])
   //查看页面逻辑
   if (!content) {
     return <></>
@@ -70,9 +159,13 @@ export default function DatasourceDBMain({ content, type }: Props) {
   }
 
   //编辑页面逻辑
-  const onFinish = async (values: object) => {
+  const onFinish = async (values: FromValues) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values }
+    const newValues = { ...config }
+    for (const key in values) {
+      if (values[key] != undefined) newValues[key] = values[key]
+    }
+    console.log(newValues, 'newValue')
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
@@ -111,107 +204,17 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const typeChange = (value: string) => {
     setDisabled(true)
     switch (value) {
-      case 'env':
+      case 'url':
         setViewerForm(initForm)
         break
-      case 'url':
-        setViewerForm(
-          <Form.Item
-            label="连接URL"
-            name="connectURL"
-            rules={[
-              { required: true, message: '连接名不能为空' },
-              {
-                pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                message: '只允许包含字母',
-              },
-            ]}
-          >
-            <Input placeholder="请输入..." />
-          </Form.Item>
-        )
-        break
       case 'param':
-        setViewerForm(
-          <>
-            <Form.Item
-              label="主机:"
-              name="host"
-              rules={[
-                { required: true, message: '连接名不能为空' },
-                {
-                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                  message: '只允许包含字母',
-                },
-              ]}
-            >
-              <Input placeholder="请输入..." />
-            </Form.Item>
-
-            <Form.Item
-              label="数据库名:"
-              name="DBName"
-              rules={[
-                { required: true, message: '连接名不能为空' },
-                {
-                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                  message: '只允许包含字母',
-                },
-              ]}
-            >
-              <Input placeholder="请输入..." />
-            </Form.Item>
-
-            <Form.Item
-              label="端口:"
-              name="port"
-              rules={[
-                { required: true, message: '连接名不能为空' },
-                {
-                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                  message: '只允许包含字母',
-                },
-              ]}
-            >
-              <Input placeholder="请输入..." />
-            </Form.Item>
-
-            <Form.Item
-              label="用户:"
-              name="userName"
-              rules={[
-                { required: true, message: '用户名不能为空' },
-                {
-                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                  message: '只允许包含字母',
-                },
-              ]}
-            >
-              <Input placeholder="请输入..." />
-            </Form.Item>
-
-            <Form.Item
-              label="密码:"
-              name="password"
-              rules={[
-                { required: true, message: '连接名不能为空' },
-                {
-                  pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                  message: '只允许包含字母',
-                },
-              ]}
-            >
-              <Input.Password placeholder="请输入..." />
-            </Form.Item>
-          </>
-        )
+        setViewerForm(paramForm)
         break
       default:
         setViewerForm('')
         break
     }
   }
-
   return (
     <>
       {type === 'data' ? (
@@ -231,7 +234,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
-                className="ml-6 w-15 bg-[#8ABE2A]"
+                className="ml-6 w-15"
               />
               <Button className={`${styles['connect-check-btn-common']} w-20 ml-12`}>
                 <span>测试链接</span>
@@ -274,13 +277,28 @@ export default function DatasourceDBMain({ content, type }: Props) {
               <Descriptions.Item label="连接名">{config.connectName}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.SQlType}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.typeName}</Descriptions.Item>
-              <Descriptions.Item label="环境变量">{config.environmentVar}</Descriptions.Item>
-              <Descriptions.Item label="连接URL">{config.connectURL}</Descriptions.Item>
-              <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-              <Descriptions.Item label="数据库名">{config.DBName}</Descriptions.Item>
-              <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
-              <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
-              <Descriptions.Item label="密码">{config.password}</Descriptions.Item>
+
+              {config.typeName == 'param' ? (
+                <>
+                  <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
+                  <Descriptions.Item label="数据库名">{config.DBName}</Descriptions.Item>
+                  <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
+                  <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
+                  <Descriptions.Item label="密码">{config.password}</Descriptions.Item>
+                </>
+              ) : (
+                <>
+                  <Descriptions.Item label="环境变量">
+                    {(config.url as unknown as { typeName: string; connectURL: string })?.typeName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="连接URL">
+                    {
+                      (config.url as unknown as { typeName: string; connectURL: string })
+                        ?.connectURL
+                    }
+                  </Descriptions.Item>
+                </>
+              )}
             </Descriptions>
           </div>
         </div>
@@ -331,7 +349,22 @@ export default function DatasourceDBMain({ content, type }: Props) {
               validateTrigger="onBlur"
               className={styles['db-form']}
               labelAlign="left"
-              initialValues={{ typeName: 'env' }}
+              initialValues={{
+                connectName: config.connectName,
+                SQlType: config.SQlType,
+                typeName: config.typeName,
+                host: config.host,
+                DBName: config.DBName,
+                port: config.port,
+                userName: config.userName,
+                password: config.password,
+                url: {
+                  typeName: (config.url as unknown as { typeName: string; connectURL: string })
+                    ?.typeName,
+                  connectURL: (config.url as unknown as { typeName: string; connectURL: string })
+                    ?.connectURL,
+                },
+              }}
             >
               <Form.Item
                 label="连接名:"
@@ -339,8 +372,8 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 rules={[
                   { required: true, message: '连接名不能为空' },
                   {
-                    pattern: new RegExp('[a-z]|[A-Z]+', 'g'),
-                    message: '只允许包含字母',
+                    pattern: new RegExp('^\\w+$', 'g'),
+                    message: '只允许包含数字，字母，下划线',
                   },
                 ]}
               >
@@ -359,10 +392,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                     typeChange(e.target.value as string)
                   }}
                 >
-                  <Radio value="env" className="mr-15 ">
-                    环境变量
-                  </Radio>
-                  <Radio value="url" className="mr-15">
+                  <Radio value="url" style={{ marginRight: '50px' }}>
                     连接URL
                   </Radio>
                   <Radio value="param"> 连接参数 </Radio>
@@ -390,26 +420,31 @@ export default function DatasourceDBMain({ content, type }: Props) {
               bordered
               layout="vertical"
               size="small"
-              className="w-2/5 mr-20"
+              className="w-3/7 mr-20"
               labelStyle={{
                 width: '30%',
               }}
             >
               <Descriptions.Item label="自定义类型">
-                <div className="h-100">编辑器</div>
+                <Editor
+                  height="90vh"
+                  defaultLanguage="typescript"
+                  defaultValue="// some comment"
+                  className={`mt-4 ${styles.monaco}`}
+                />
               </Descriptions.Item>
             </Descriptions>
             <Descriptions
               bordered
               layout="vertical"
               size="small"
-              className="w-3/5"
+              className="w-4/7"
               labelStyle={{
                 width: '30%',
               }}
             >
               <Descriptions.Item label="字段类型映射">
-                <div className="h-100">编辑器</div>
+                <div className="h-100">显示</div>
               </Descriptions.Item>
             </Descriptions>
           </div>

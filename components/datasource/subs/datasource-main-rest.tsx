@@ -12,9 +12,11 @@ import {
   Upload,
   Collapse,
   Table,
+  Tag,
 } from 'antd'
-import type { RadioChangeEvent, UploadFile, UploadProps } from 'antd'
+import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -67,6 +69,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [value, setValue] = useImmer(1)
+  const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
@@ -98,7 +101,21 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
 
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values, theOAS: (values.theOAS as UploadFile[])[0]?.name }
+    const newValues = { ...config }
+    for (const key in values) {
+      if (values[key] != undefined) newValues[key] = values[key]
+    }
+    if ((values.theOAS as UploadFile[])?.length > 0) {
+      await requests({
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'post',
+        url: '/dataSource/import',
+        data: { file: file },
+      })
+      newValues.theOAS = (values.theOAS as UploadFile[])[0]?.name
+    }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
@@ -208,6 +225,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
+                <IconFont type="icon-wenjian1" />
                 {config.theOAS}
                 {/* {(config.theOAS as Array<UploadFile>)?.map((item) => {
                   return <div key={item.name}>{item.name}</div>
@@ -298,7 +316,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  {config.isUnite ? '是' : '否'}
+                  {config.isUnite ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
                 </Descriptions.Item>
               </Descriptions>
             </Panel>
@@ -350,6 +368,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
+                rules={[
+                  { required: true, message: 'Please input nameSpace!' },
+                  {
+                    pattern: new RegExp('^\\w+$', 'g'),
+                    message: '只允许包含数字，字母，下划线',
+                  },
+                ]}
                 name="nameScope"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -363,7 +388,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
-                required
+                rules={[
+                  { required: true, message: 'Please input RestPort!' },
+                  {
+                    pattern: new RegExp('^\\w+$', 'g'),
+                    message: '只允许包含数字，字母，下划线',
+                  },
+                ]}
                 name="endpoint"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -379,12 +410,19 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 colon={false}
                 name="theOAS"
-                required
                 valuePropName="fileList"
                 style={{ marginBottom: '49px' }}
                 getValueFromEvent={normFile}
               >
-                <Upload method="post" action="/api/v1/dataSource/import">
+                <Upload
+                  // method="post"
+                  // action="/api/v1/dataSource/import"
+                  beforeUpload={(file) => {
+                    console.log(file, 'file')
+                    setFile(file)
+                    return false
+                  }}
+                >
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
@@ -480,15 +518,31 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       <Form.Item label="密钥" required>
                         <Form.Item
                           noStyle
-                          rules={[{ required: true }]}
                           name="secretKeyType"
                           initialValue="value"
+                          rules={[
+                            { required: true, message: 'Please input secretKeyType!' },
+                            {
+                              pattern: new RegExp('^\\w+$', 'g'),
+                              message: '只允许包含数字，字母，下划线',
+                            },
+                          ]}
                         >
                           <Select style={{ width: '20%' }} placeholder="值">
                             <Option value="value">值</Option>
                           </Select>
                         </Form.Item>
-                        <Form.Item noStyle rules={[{ required: true }]} name="secretKey">
+                        <Form.Item
+                          noStyle
+                          rules={[
+                            { required: true, message: 'Please input secretKey!' },
+                            {
+                              pattern: new RegExp('^\\w+$', 'g'),
+                              message: '只允许包含数字，字母，下划线',
+                            },
+                          ]}
+                          name="secretKey"
+                        >
                           <Input style={{ width: '80%' }} placeholder="请输入..." />
                         </Form.Item>
                       </Form.Item>
@@ -533,7 +587,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     name="isUnite"
                     colon={false}
                     style={{ marginBottom: '20px' }}
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: 'Please select union!' },
+                      {
+                        pattern: new RegExp('^\\w+$', 'g'),
+                        message: '只允许包含数字，字母，下划线',
+                      },
+                    ]}
                     valuePropName="checked"
                     initialValue={true}
                   >

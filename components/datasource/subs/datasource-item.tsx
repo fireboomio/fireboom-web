@@ -166,7 +166,9 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
           onClick={() => {
             // setIsEditing(true)
           }}
-          className="text-sm font-normal leading-4"
+          className={`text-sm font-normal leading-4 ${
+            datasourceItem.switch == 0 ? 'text-gray-500/50' : ''
+          }`}
         >
           {datasourceItem.name}
         </div>
