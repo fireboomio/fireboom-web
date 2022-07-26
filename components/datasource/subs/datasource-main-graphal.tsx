@@ -37,6 +37,12 @@ interface DataType {
   reqType: string
   reqTypeInfo: string
 }
+interface PointSchema {
+  name: string
+  uid: string
+  status: string
+  url: string
+}
 
 const columns: ColumnsType<DataType> = [
   {
@@ -69,13 +75,13 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
+  console.log(config)
 
+  //表单提交成功回调
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config }
-    for (const key in values) {
-      if (values[key] != undefined) newValues[key] = values[key]
-    }
+    const newValues = { ...values }
+
     if ((values.schema as UploadFile[])?.length > 0) {
       await requests({
         headers: {
@@ -85,7 +91,13 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         url: '/dataSource/import',
         data: { file: file },
       })
-      newValues.schema = (values.schema as UploadFile[])[0]?.name
+      const upFile = (values.schema as UploadFile[])[0]
+      newValues.schema = {
+        name: upFile?.name,
+        uid: upFile?.uid,
+        status: 'done',
+        url: '',
+      } as unknown as ReactNode
     }
 
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
@@ -95,10 +107,12 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     handleToggleDesigner('data', content.id)
   }
 
+  //表单提交失败回调
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
 
+  //文件上传过程钩子
   const normFile = (e: UploadProps) => {
     console.log('Upload event:', e)
     if (Array.isArray(e)) {
@@ -107,6 +121,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     return e?.fileList
   }
 
+  //开关切换回调 (查看页面的是否开启数据源开关)
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
       .put('/dataSource', {
@@ -119,6 +134,11 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         })
       })
     console.log('switch change')
+  }
+
+  //移除文件回调
+  const onRemoveFile = (file: UploadFile) => {
+    console.log(file, 'file')
   }
 
   if (!content) {
@@ -204,10 +224,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                <IconFont type="icon-wenjian1" /> {config.schema}
-                {/* {(config.schema as Array<UploadFile>)?.map((item) => {
-                  return <div key={item.name}>{item.name}</div>
-                })} */}
+                <IconFont type="icon-wenjian1" /> {(config.schema as unknown as PointSchema)?.name}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -334,6 +351,15 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               validateTrigger="onBlur"
               className="ml-3"
               labelAlign="left"
+              initialValues={{
+                nameSpace: config.nameSpace,
+                GraphqlPort: config.GraphqlPort,
+                isInner: config.isInner,
+                defineFloat: config.defineFloat,
+                defineInt: config.defineInt,
+                exceptRename: config.exceptRename,
+                reqHeadAll: config.reqHeadAll,
+              }}
             >
               <Form.Item
                 label={
@@ -381,8 +407,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 getValueFromEvent={normFile}
               >
                 <Upload
-                  // method="post"
-                  // action="/api/v1/dataSource/import"
+                  defaultFileList={config.schema ? [config.schema as unknown as UploadFile] : []}
+                  onRemove={onRemoveFile}
                   beforeUpload={(file) => {
                     console.log(file, 'file')
                     setFile(file)
@@ -418,7 +444,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             className="w-36"
                             wrapperCol={{ span: 24 }}
                             name={[field.name, 'reqType']}
-                            initialValue="value"
                           >
                             <Select>
                               <Option value="value">值</Option>
@@ -476,7 +501,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     valuePropName="checked"
-                    initialValue={false}
                     name="isInner"
                     colon={false}
                     style={{ marginBottom: '20px' }}

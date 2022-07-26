@@ -131,10 +131,12 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(false)
+  const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   const config = JSON.parse(content.config) as Config
 
+  //设置初始编辑部分初始化显示的表单
   useEffect(() => {
     setViewerForm(config.typeName == 'url' ? initForm : paramForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,6 +146,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     return <></>
   }
 
+  //是否开启数据源开关回调
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
       .put('/dataSource', {
@@ -159,13 +162,11 @@ export default function DatasourceDBMain({ content, type }: Props) {
   }
 
   //编辑页面逻辑
+
+  //表单提交成功回调
   const onFinish = async (values: FromValues) => {
     console.log('Success:', values)
-    const newValues = { ...config }
-    for (const key in values) {
-      if (values[key] != undefined) newValues[key] = values[key]
-    }
-    console.log(newValues, 'newValue')
+    const newValues = { ...config, ...values }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
@@ -177,6 +178,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     console.log('Failed:', errorInfo)
   }
 
+  //表单item值改变回调
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
     console.log(allValues)
     for (const key in allValues) {
@@ -188,6 +190,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     setDisabled(false)
   }
 
+  //测试连接 成功与失败提示
   const openNotification = (placement: NotificationPlacement) => {
     notification.open({
       message: <IconFont type="icon-xingzhuangjiehe" />,
@@ -201,6 +204,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     })
   }
 
+  //单选框链接URL和链接参数切换回调
   const typeChange = (value: string) => {
     setDisabled(true)
     switch (value) {
@@ -284,7 +288,31 @@ export default function DatasourceDBMain({ content, type }: Props) {
                   <Descriptions.Item label="数据库名">{config.DBName}</Descriptions.Item>
                   <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
                   <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
-                  <Descriptions.Item label="密码">{config.password}</Descriptions.Item>
+                  <Descriptions.Item label="密码">
+                    {isSecretShow ? (
+                      <span>
+                        {config.password}
+                        <IconFont
+                          className="ml-2"
+                          type="icon-xiaoyanjing-chakan"
+                          onClick={() => {
+                            setIsSecretShow(!isSecretShow)
+                          }}
+                        />
+                      </span>
+                    ) : (
+                      <span>
+                        **********
+                        <IconFont
+                          className="ml-2"
+                          type="icon-xiaoyanjing-yincang"
+                          onClick={() => {
+                            setIsSecretShow(!isSecretShow)
+                          }}
+                        />
+                      </span>
+                    )}
+                  </Descriptions.Item>
                 </>
               ) : (
                 <>
