@@ -8,10 +8,9 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType, TableSource, DirectiveT, ParameterT } from '@/interfaces/apimanage'
+import { FieldType, TableSource, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import { parseVariables, parseQuery } from '@/lib/gql-parser'
-import { isEmpty } from '@/lib/utils'
+import { parseParameters, parseReq } from '@/lib/gql-parser'
 
 import styles from './Detail.module.scss'
 
@@ -42,13 +41,13 @@ const columns = [
       <div>
         {x.isList ? (
           <span className="text-[#04B582]">
-            List<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+            List<span className="text-[#000000A6]">{`<${x.type}>`}</span>
           </span>
         ) : x.isScalar ? (
-          <span className="text-[#E66B83]">{x.kind}</span>
+          <span className="text-[#E66B83]">{x.type}</span>
         ) : (
           <span className="text-[#177FFF]">
-            Object<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+            Object<span className="text-[#000000A6]">{`<${x.type}>`}</span>
           </span>
         )}
       </div>
@@ -118,21 +117,15 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // console.log(gqlSchemaDef, 'schema')
     // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
-    setDataSource(parseQuery(gqlSchemaDef, gqlQueryDef[0]))
-    setReqDataSource(parseVariables(gqlQueryDef[0].variableDefinitions))
+    setDataSource(parseReq(gqlSchemaDef, gqlQueryDef[0]))
+    setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
-  // TODO: Refine
   const makeReqDS = (ds: ParameterT[]) => {
-    const makeSchema = (data: DirectiveT | undefined) => {
-      if (isEmpty(data)) return undefined
-      return `${data.args[0].name}: "${data.args[0].value}"`
-    }
-
     return ds.map((x) => ({
       ...x,
-      jsonSchema: makeSchema(x.directives.find((x) => x.name === 'jsonSchema')),
+      jsonSchema: x.directives.find((x) => x.name === 'jsonSchema')?.payload,
     }))
   }
 

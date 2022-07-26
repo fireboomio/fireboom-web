@@ -9,7 +9,7 @@ export interface operationResp {
 }
 
 export interface FieldType {
-  kind: string
+  type: string
   isScalar: boolean
   isRequired: boolean
   isList: boolean
@@ -27,7 +27,7 @@ export interface ParameterT {
   position: string
   type: string
   isRequired: boolean
-  directives: DirectiveT[]
+  directives?: DirectiveT[]
 }
 
 export interface DirectiveT {
@@ -38,5 +38,6 @@ export interface DirectiveT {
 
 export interface ArgumentT {
   name: string
-  value: string
+  value?: string
+  rendered: string
 }

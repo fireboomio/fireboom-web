@@ -31,13 +31,13 @@ export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldTyp
         break
     }
   }
-  const kind = inner(typeDef) as string
-  const isScalar = allScalar.includes(kind)
+  const type = inner(typeDef) as string
+  const isScalar = allScalar.includes(type)
 
-  return { kind, isScalar, isRequired, isList }
+  return { type, isScalar, isRequired, isList }
 }
 
-const parseQuery = (
+const parseReq = (
   schema: DefinitionNode[],
   node: OperationDefinitionNode | FieldNode,
   type: string,
@@ -67,9 +67,9 @@ const parseQuery = (
       fieldName: subNode.name.value,
       fieldType: fieldType,
       directiveNames: node.directives?.map((x) => x.name.value),
-      children: parseQuery(schema, subNode, fieldType.kind, `${lv}-${idx}`),
+      children: parseReq(schema, subNode, fieldType.type, `${lv}-${idx}`),
     }
   })
 }
 
-export default parseQuery
+export default parseReq
