@@ -12,9 +12,11 @@ import {
   Upload,
   Collapse,
   Table,
+  Tag,
 } from 'antd'
-import type { RadioChangeEvent, UploadFile, UploadProps } from 'antd'
+import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -33,16 +35,24 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
+interface theOAS {
+  name: string
+  uid: string
+  status: string
+  url: string
+}
 interface DataType {
   reqHead: string
   reqType: string
   reqTypeInfo: string
 }
+
 const columns: ColumnsType<DataType> = [
   {
     title: '请求头',
     dataIndex: 'reqHead',
     key: 'reqHead',
+    width: '27%',
   },
   {
     title: '类型',
@@ -51,11 +61,13 @@ const columns: ColumnsType<DataType> = [
     render: (reqType) => (
       <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
     ),
+    width: '20%',
   },
   {
     title: '请求头信息',
     dataIndex: 'reqHeadInfo',
     key: 'reqHeadInfo',
+    width: '40%',
   },
 ]
 
@@ -64,6 +76,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [value, setValue] = useImmer(1)
+  const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
@@ -75,7 +88,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
         })
       })
   }
@@ -89,13 +102,34 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onChange = (key: string) => {
     console.log(key)
   }
+
+  //密码显示与隐藏
   const changeEyeState = () => {
     setIsEyeShow(!isEyeShow)
   }
 
+  //表单上传成功回调
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
-    const newValues = { ...config, ...values, theOAS: (values.theOAS as UploadFile[])[0]?.name }
+    const newValues = { ...values }
+
+    if ((values.theOAS as UploadFile[])?.length > 0) {
+      await requests({
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'post',
+        url: '/dataSource/import',
+        data: { file: file },
+      })
+      const upFile = (values.theOAS as UploadFile[])[0]
+      newValues.theOAS = {
+        name: upFile?.name,
+        uid: upFile?.uid,
+        status: 'done',
+        url: '',
+      } as unknown as ReactNode
+    }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
       dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
@@ -103,10 +137,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     handleToggleDesigner('data', content.id)
   }
 
+  //表单上传失败回调
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
 
+  //文件上传过程钩子
   const normFile = (e: UploadProps) => {
     console.log('Upload event:', e)
     if (Array.isArray(e)) {
@@ -115,9 +151,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     return e?.fileList
   }
 
+  //请求头授权Tab切换回调
   const onChangeTab = (key: string) => {
     console.log(key)
   }
+
+  //单选框改变，表单变化回调
   const onChangeRadio = (e: RadioChangeEvent) => {
     console.log('radio checked', e.target.value)
 
@@ -125,10 +164,16 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     setValue(e.target.value)
     setIsRadioShow(!isRadioShow)
   }
+
+  //文件移除回调
+  const onRemoveFile = (file: UploadFile) => {
+    console.log(file, 'file')
+  }
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
 
+  console.log(config.theOAS, 'OAS')
   return (
     <>
       {type === 'data' ? (
@@ -205,10 +250,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.theOAS}
-                {/* {(config.theOAS as Array<UploadFile>)?.map((item) => {
-                  return <div key={item.name}>{item.name}</div>
-                })} */}
+                <IconFont type="icon-wenjian1" />
+                {(config.theOAS as unknown as theOAS)?.name}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -266,40 +309,38 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </TabPane>
           </Tabs>
           <Collapse
+            ghost
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
               <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
             )}
-            className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
+            className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
           >
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
-              <div className="flex justify-center mb-3">
-                <Descriptions
-                  bordered
-                  column={1}
-                  size="small"
-                  className={styles['descriptions-box']}
-                  labelStyle={{
-                    backgroundColor: 'white',
-                    width: '30%',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                  }}
+              <Descriptions
+                colon={false}
+                column={1}
+                labelStyle={{
+                  backgroundColor: 'white',
+                  width: '31%',
+                  borderRight: 'none',
+                  borderBottom: 'none',
+                  paddingLeft: '16px',
+                }}
+              >
+                <Descriptions.Item
+                  label={
+                    <div>
+                      <span className={styles['label-style']}>是否状态联合:</span>
+                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    </div>
+                  }
+                  className="justify-start"
                 >
-                  <Descriptions.Item
-                    label={
-                      <div>
-                        <span className={styles['label-style']}>是否状态联合</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                      </div>
-                    }
-                    className="justify-start"
-                  >
-                    {config.isUnite ? '是' : '否'}
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
+                  {config.isUnite ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
+                </Descriptions.Item>
+              </Descriptions>
             </Panel>
           </Collapse>
         </>
@@ -341,6 +382,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               validateTrigger="onBlur"
               labelAlign="left"
               className="ml-3"
+              initialValues={{
+                nameScope: config.nameScope,
+                endpoint: config.endpoint,
+                reqHeadAll: config.reqHeadAll,
+                isUnite: config.isUnite,
+              }}
             >
               <Form.Item
                 label={
@@ -349,6 +396,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
+                rules={[
+                  { required: true, message: 'Please input nameSpace!' },
+                  {
+                    pattern: new RegExp('^\\w+$', 'g'),
+                    message: '只允许包含数字，字母，下划线',
+                  },
+                ]}
                 name="nameScope"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -362,7 +416,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
-                required
+                rules={[
+                  { required: true, message: 'Please input RestPort!' },
+                  {
+                    pattern: new RegExp('^\\w+$', 'g'),
+                    message: '只允许包含数字，字母，下划线',
+                  },
+                ]}
                 name="endpoint"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -378,12 +438,19 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 colon={false}
                 name="theOAS"
-                required
                 valuePropName="fileList"
                 style={{ marginBottom: '49px' }}
                 getValueFromEvent={normFile}
               >
-                <Upload method="post" action="/api/v1/dataSource/import">
+                <Upload
+                  defaultFileList={config.theOAS ? [config.theOAS as unknown as UploadFile] : []}
+                  beforeUpload={(file) => {
+                    console.log(file, 'file')
+                    setFile(file)
+                    return false
+                  }}
+                  onRemove={onRemoveFile}
+                >
                   <Button icon={<PlusOutlined />} className="w-147">
                     添加文件
                   </Button>
@@ -478,15 +545,31 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       <Form.Item label="密钥" required>
                         <Form.Item
                           noStyle
-                          rules={[{ required: true }]}
                           name="secretKeyType"
                           initialValue="value"
+                          rules={[
+                            { required: true, message: 'Please input secretKeyType!' },
+                            {
+                              pattern: new RegExp('^\\w+$', 'g'),
+                              message: '只允许包含数字，字母，下划线',
+                            },
+                          ]}
                         >
                           <Select style={{ width: '20%' }} placeholder="值">
                             <Option value="value">值</Option>
                           </Select>
                         </Form.Item>
-                        <Form.Item noStyle rules={[{ required: true }]} name="secretKey">
+                        <Form.Item
+                          noStyle
+                          rules={[
+                            { required: true, message: 'Please input secretKey!' },
+                            {
+                              pattern: new RegExp('^\\w+$', 'g'),
+                              message: '只允许包含数字，字母，下划线',
+                            },
+                          ]}
+                          name="secretKey"
+                        >
                           <Input style={{ width: '80%' }} placeholder="请输入..." />
                         </Form.Item>
                       </Form.Item>
@@ -531,9 +614,14 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     name="isUnite"
                     colon={false}
                     style={{ marginBottom: '20px' }}
-                    rules={[{ required: true }]}
+                    rules={[
+                      { required: true, message: 'Please select union!' },
+                      {
+                        pattern: new RegExp('^\\w+$', 'g'),
+                        message: '只允许包含数字，字母，下划线',
+                      },
+                    ]}
                     valuePropName="checked"
-                    initialValue={true}
                   >
                     <Switch className={styles['switch-edit-btn']} size="small" />
                   </Form.Item>
