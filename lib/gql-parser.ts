@@ -115,6 +115,7 @@ export const parseQuery = (
       key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
       fieldType: fieldType,
+      directiveNames: node.directives?.map((x) => x.name.value),
       children: parseQuery(schema, subNode, fieldType.kind, `${lv}-${idx}`),
     }
   })
