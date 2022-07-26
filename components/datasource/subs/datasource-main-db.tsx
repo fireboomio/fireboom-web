@@ -1,6 +1,7 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
 import Editor from '@monaco-editor/react'
-import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
+import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification, Table } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, ReactNode, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -26,7 +27,87 @@ interface FromValues {
 interface Props {
   content: DatasourceResp
 }
-
+interface DataType {
+  key: string
+  table: string
+  field: string
+  resType: string
+  inputType: string
+  isOpen: boolean
+}
+const columns: ColumnsType<DataType> = [
+  {
+    title: '表',
+    dataIndex: 'table',
+    key: 'table',
+    render: () => (
+      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+        <Option value="table">table</Option>
+        <Option value="lucy">Lucy</Option>
+        <Option value="Yiminghe">yiminghe</Option>
+      </Select>
+    ),
+  },
+  {
+    title: '字段',
+    dataIndex: 'field',
+    key: 'field',
+    render: () => (
+      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+        <Option value="jack">Jack</Option>
+        <Option value="table">table</Option>
+        <Option value="Yiminghe">yiminghe</Option>
+      </Select>
+    ),
+  },
+  {
+    title: '响应类型',
+    dataIndex: 'resType',
+    key: 'resType',
+    render: () => (
+      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+        <Option value="table">table</Option>
+        <Option value="lucy">Lucy</Option>
+        <Option value="Yiminghe">yiminghe</Option>
+      </Select>
+    ),
+  },
+  {
+    title: '输入类型',
+    key: 'inputType',
+    dataIndex: 'inputType',
+    render: () => (
+      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+        <Option value="table">table</Option>
+        <Option value="lucy">Lucy</Option>
+        <Option value="Yiminghe">yiminghe</Option>
+      </Select>
+    ),
+  },
+  {
+    title: '是否开启',
+    key: 'isOpen',
+    render: () => <Switch className="w-8 h-2" />,
+  },
+]
+const data: DataType[] = [
+  {
+    key: '1',
+    table: 'John Brown',
+    field: '123',
+    resType: 'New York No. 1 ',
+    inputType: '222',
+    isOpen: true,
+  },
+  {
+    key: '2',
+    table: 'John Brown',
+    field: '123',
+    resType: 'New York No. 1 ',
+    inputType: '222',
+    isOpen: false,
+  },
+]
 const { Option } = Select
 const initForm = (
   <Form.Item label="连接URL">
@@ -448,17 +529,17 @@ export default function DatasourceDBMain({ content, type }: Props) {
               bordered
               layout="vertical"
               size="small"
-              className="w-3/7 mr-20"
+              className="w-3/8 mr-10"
               labelStyle={{
                 width: '30%',
               }}
             >
-              <Descriptions.Item label="自定义类型">
+              <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
                 <Editor
                   height="90vh"
                   defaultLanguage="typescript"
                   defaultValue="// some comment"
-                  className={`mt-4 ${styles.monaco}`}
+                  className={`${styles.monaco}`}
                 />
               </Descriptions.Item>
             </Descriptions>
@@ -466,13 +547,15 @@ export default function DatasourceDBMain({ content, type }: Props) {
               bordered
               layout="vertical"
               size="small"
-              className="w-4/7"
+              className="w-5/8"
               labelStyle={{
                 width: '30%',
               }}
             >
-              <Descriptions.Item label="字段类型映射">
-                <div className="h-100">显示</div>
+              <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
+                <div className={`${styles['db-setting-table']}`}>
+                  <Table columns={columns} dataSource={data} pagination={false} />
+                </div>
               </Descriptions.Item>
             </Descriptions>
           </div>

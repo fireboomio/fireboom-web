@@ -42,31 +42,31 @@ interface theOAS {
   url: string
 }
 interface DataType {
-  reqHead: string
-  reqType: string
-  reqTypeInfo: string
+  Kay: string
+  Kind: string
+  Val: string
 }
 
 const columns: ColumnsType<DataType> = [
   {
     title: '请求头',
-    dataIndex: 'reqHead',
-    key: 'reqHead',
+    dataIndex: 'Kay',
+    key: 'Kay',
     width: '27%',
   },
   {
     title: '类型',
-    dataIndex: 'reqType',
-    key: 'reqType',
-    render: (reqType) => (
-      <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
+    dataIndex: 'Kind',
+    key: 'Kind',
+    render: (Kind) => (
+      <span>{Kind == 'value' ? '值' : Kind == 'client' ? '转发至客户端' : '环境变量'}</span>
     ),
     width: '20%',
   },
   {
     title: '请求头信息',
-    dataIndex: 'reqHeadInfo',
-    key: 'reqHeadInfo',
+    dataIndex: 'Val',
+    key: 'Val',
     width: '40%',
   },
 ]
@@ -112,8 +112,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
     const newValues = { ...values }
+    // const m = new Map()
+    // (newValues.reqHeadAll as unknown as ).forEach(element => {
+    // });
+    // console.dir(m, 'm')
 
-    if ((values.theOAS as UploadFile[])?.length > 0) {
+    if ((values.filePath as UploadFile[])?.length > 0) {
       await requests({
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -122,8 +126,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
         url: '/dataSource/import',
         data: { file: file },
       })
-      const upFile = (values.theOAS as UploadFile[])[0]
-      newValues.theOAS = {
+      const upFile = (values.filePath as UploadFile[])[0]
+      newValues.filePath = {
         name: upFile?.name,
         uid: upFile?.uid,
         status: 'done',
@@ -173,7 +177,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { Option } = Select
   const { Panel } = Collapse
 
-  console.log(config.theOAS, 'OAS')
   return (
     <>
       {type === 'data' ? (
@@ -228,7 +231,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.nameScope}
+                {config.nameSpace}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -239,7 +242,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.endpoint}
+                {config.restPoint}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -251,17 +254,18 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 className="justify-start"
               >
                 <IconFont type="icon-wenjian1" />
-                {(config.theOAS as unknown as theOAS)?.name}
+                {(config.filePath as unknown as theOAS)?.name}
               </Descriptions.Item>
             </Descriptions>
           </div>
 
           <Tabs defaultActiveKey="1" onChange={onChange}>
+            {/* header:["k1":{kind:"1",Val:'123'},"k2":{}] */}
             <TabPane tab="请求头" key="1">
               <Table
                 columns={columns}
-                rowKey="reqHead"
-                dataSource={config.reqHeadAll as unknown as Array<DataType>}
+                rowKey="Kay"
+                dataSource={config.header as unknown as Array<DataType>}
                 pagination={false}
                 className="mb-10"
               />
@@ -288,11 +292,11 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     width: '30%',
                   }}
                 >
-                  <Descriptions.Item label="JWT获取">{config.getJWT}</Descriptions.Item>
+                  <Descriptions.Item label="JWT获取">{config.jwtType}</Descriptions.Item>
                   <Descriptions.Item label="密钥">
                     {isEyeShow ? (
                       <div>
-                        <span className="mr-5">{config.secretKey}</span>
+                        <span className="mr-5">{(config.secret as unknown as DataType)?.Val}</span>
                         <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
                       </div>
                     ) : (
@@ -302,8 +306,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       </div>
                     )}
                   </Descriptions.Item>
-                  <Descriptions.Item label="签名方法">{config.signMethods}</Descriptions.Item>
-                  <Descriptions.Item label="Token端点">{config.tokenPort}</Descriptions.Item>
+                  <Descriptions.Item label="签名方法">{config.signingMethod}</Descriptions.Item>
+                  <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
                 </Descriptions>
               </div>
             </TabPane>
@@ -338,7 +342,11 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  {config.isUnite ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
+                  {config.statusCodeUnions ? (
+                    <Tag color="green">开启</Tag>
+                  ) : (
+                    <Tag color="red">关闭</Tag>
+                  )}
                 </Descriptions.Item>
               </Descriptions>
             </Panel>
@@ -383,10 +391,11 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               labelAlign="left"
               className="ml-3"
               initialValues={{
-                nameScope: config.nameScope,
-                endpoint: config.endpoint,
-                reqHeadAll: config.reqHeadAll,
-                isUnite: config.isUnite,
+                nameSpace: config.nameSpace,
+                restPoint: config.restPoint,
+                header: config.header,
+                statusCodeUnions: config.statusCodeUnions,
+                secret: config.secret,
               }}
             >
               <Form.Item
@@ -403,7 +412,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     message: '只允许包含数字，字母，下划线',
                   },
                 ]}
-                name="nameScope"
+                name="nameSpace"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
@@ -423,7 +432,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     message: '只允许包含数字，字母，下划线',
                   },
                 ]}
-                name="endpoint"
+                name="restPoint"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
@@ -437,9 +446,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   </div>
                 }
                 colon={false}
-                name="theOAS"
+                name="filePath"
                 valuePropName="fileList"
-                style={{ marginBottom: '49px' }}
+                style={{ marginBottom: '20px' }}
                 getValueFromEvent={normFile}
               >
                 <Upload
@@ -451,7 +460,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   }}
                   onRemove={onRemoveFile}
                 >
-                  <Button icon={<PlusOutlined />} className="w-147">
+                  <Button icon={<PlusOutlined />} className="w-148.5">
                     添加文件
                   </Button>
                 </Upload>
@@ -465,7 +474,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       sm: { span: 24 },
                     }}
                   >
-                    <Form.List name="reqHeadAll">
+                    <Form.List name="header">
                       {(fields, { add, remove }, { errors }) => (
                         <>
                           {fields.map((field, index) => (
@@ -473,14 +482,14 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                               <Form.Item
                                 className="w-50"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'reqHead']}
+                                name={[field.name, 'Kay']}
                               >
                                 <Input />
                               </Form.Item>
                               <Form.Item
                                 className="w-36"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'reqType']}
+                                name={[field.name, 'Kind']}
                               >
                                 <Select>
                                   <Option value="value">值</Option>
@@ -491,7 +500,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                               <Form.Item
                                 className="w-126"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'reqHeadInfo']}
+                                name={[field.name, 'Val']}
                               >
                                 <Input placeholder="请输入..." />
                               </Form.Item>
@@ -532,7 +541,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   }
                   key="2"
                 >
-                  <Form.Item label="JWT获取" name="getJWT" initialValue={'静态'}>
+                  {/* 0静态1动态 */}
+                  <Form.Item label="JWT获取" name="jwtType" initialValue={'静态'}>
                     <Radio.Group onChange={onChangeRadio} value={value}>
                       <Radio value={'静态'} className="mr-20">
                         静态
@@ -542,38 +552,39 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   </Form.Item>
                   {isRadioShow ? (
                     <>
-                      <Form.Item label="密钥" required>
-                        <Form.Item
-                          noStyle
-                          name="secretKeyType"
-                          initialValue="value"
-                          rules={[
-                            { required: true, message: 'Please input secretKeyType!' },
-                            {
-                              pattern: new RegExp('^\\w+$', 'g'),
-                              message: '只允许包含数字，字母，下划线',
-                            },
-                          ]}
-                        >
-                          <Select style={{ width: '20%' }} placeholder="值">
-                            <Option value="value">值</Option>
-                          </Select>
-                        </Form.Item>
-                        <Form.Item
-                          noStyle
-                          rules={[
-                            { required: true, message: 'Please input secretKey!' },
-                            {
-                              pattern: new RegExp('^\\w+$', 'g'),
-                              message: '只允许包含数字，字母，下划线',
-                            },
-                          ]}
-                          name="secretKey"
-                        >
-                          <Input style={{ width: '80%' }} placeholder="请输入..." />
-                        </Form.Item>
+                      {/* type Value struct {
+   Kind int64  `json:"kind"` // 0-值 1-环境变量 2-转发值客户端
+   Val  string `json:"val"`
+} */}
+                      <Form.Item label="密钥">
+                        <Input.Group compact>
+                          <Form.Item
+                            name={['secret', 'Kind']}
+                            noStyle
+                            rules={[{ required: true, message: 'typeName is required' }]}
+                          >
+                            <Select className="w-1/5">
+                              <Option value="value">值</Option>
+                              <Option value="path">环境变量</Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            name={['secret', 'Val']}
+                            noStyle
+                            rules={[
+                              { required: true, message: '连接名不能为空' },
+                              {
+                                pattern: new RegExp('^\\w+$', 'g'),
+                                message: '只允许包含字母，数字，下划线',
+                              },
+                            ]}
+                          >
+                            <Input style={{ width: '80%' }} placeholder="请输入" />
+                          </Form.Item>
+                        </Input.Group>
                       </Form.Item>
-                      <Form.Item label="签名方法" name="signMethods" initialValue={'HS256'}>
+
+                      <Form.Item label="签名方法" name="signingMethod" initialValue={'HS256'}>
                         <Radio value={'HS256'} checked>
                           HS256
                         </Radio>
@@ -590,7 +601,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       colon={false}
                       required
                       style={{ marginBottom: '20px' }}
-                      name="tokenPort"
+                      name="tokenPoint"
                     >
                       <Input placeholder="请输入..." />
                     </Form.Item>
@@ -611,16 +622,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                         <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
-                    name="isUnite"
+                    name="statusCodeUnions"
                     colon={false}
                     style={{ marginBottom: '20px' }}
-                    rules={[
-                      { required: true, message: 'Please select union!' },
-                      {
-                        pattern: new RegExp('^\\w+$', 'g'),
-                        message: '只允许包含数字，字母，下划线',
-                      },
-                    ]}
                     valuePropName="checked"
                   >
                     <Switch className={styles['switch-edit-btn']} size="small" />

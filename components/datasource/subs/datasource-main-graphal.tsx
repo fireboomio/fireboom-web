@@ -75,7 +75,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
-  console.log(config)
 
   //表单提交成功回调
   const onFinish = async (values: Config) => {
