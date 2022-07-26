@@ -8,9 +8,9 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType, TableSource } from '@/interfaces/apimanage'
+import { FieldType, TableSource, DirectiveT, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import { parseArgs, parseQuery } from '@/lib/gql-parser'
+import { parseVariables, parseQuery } from '@/lib/gql-parser'
 
 import styles from './Detail.module.scss'
 
@@ -62,11 +62,11 @@ const reqColumns = [
   },
   {
     title: '位置',
-    dataIndex: 'pos',
+    dataIndex: 'position',
   },
   {
     title: '类型',
-    dataIndex: 'kind',
+    dataIndex: 'type',
   },
   {
     title: '必须',
@@ -78,25 +78,6 @@ const reqColumns = [
     dataIndex: 'jsonSchema',
   },
 ]
-
-interface ReqDS {
-  name: string
-  pos: string
-  kind: string
-  isRequired: boolean
-  jsonSchema: string
-  directives: DirectiveT[] | undefined
-}
-
-interface DirectiveT {
-  name: string
-  args:
-    | {
-        name: string
-        value: string
-      }[]
-    | undefined
-}
 
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -137,12 +118,12 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
     setDataSource(parseQuery(gqlSchemaDef, gqlQueryDef[0]))
-    setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
+    setReqDataSource(parseVariables(gqlQueryDef[0].variableDefinitions))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
   // TODO: Refine
-  const makeReqDS = (ds: ReqDS[]) => {
+  const makeReqDS = (ds: ParameterT[]) => {
     const makeSchema = (data: DirectiveT | undefined) => {
       if (!data) return undefined
       return `${data.args[0].name}: "${data.args[0].value}"`

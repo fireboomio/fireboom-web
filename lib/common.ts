@@ -9,3 +9,5 @@ export const PRISMA_BASE_TYPES = [
   'Json',
   'Bytes',
 ]
+
+export const GQL_BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID']

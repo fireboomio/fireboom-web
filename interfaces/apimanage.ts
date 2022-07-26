@@ -21,3 +21,22 @@ export interface TableSource {
   directiveNames: string[] | undefined
   children?: TableSource[]
 }
+
+export interface ParameterT {
+  name: string
+  position: string
+  type: string
+  isRequired: boolean
+  directives: DirectiveT[]
+}
+
+export interface DirectiveT {
+  name: string
+  args: ArgumentT[]
+  payload?: string
+}
+
+export interface ArgumentT {
+  name: string
+  value: string
+}

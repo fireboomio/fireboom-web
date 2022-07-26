@@ -14,13 +14,10 @@ import {
 
 import { FieldType, TableSource } from '@/interfaces/apimanage'
 
-const BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID']
+import { GQL_BASE_SCALAR } from './common'
+import { capitalize } from './utils'
 
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-export const parseArgs = (varDefs: VariableDefinitionNode[]) => {
+export const parseVariables = (varDefs: VariableDefinitionNode[]) => {
   return varDefs.map((x) => ({
     key: x.variable.name.value,
     name: x.variable.name.value,
@@ -101,7 +98,7 @@ export const parseQuery = (
   const allScalar = schema
     .filter((x) => x.kind === 'ScalarTypeDefinition')
     .map((x) => (x as ScalarTypeDefinitionNode).name.value)
-    .concat(BASE_SCALAR)
+    .concat(GQL_BASE_SCALAR)
 
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
