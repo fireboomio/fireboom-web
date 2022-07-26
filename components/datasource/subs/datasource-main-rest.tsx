@@ -552,10 +552,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   </Form.Item>
                   {isRadioShow ? (
                     <>
-                      {/* type Value struct {
-   Kind int64  `json:"kind"` // 0-值 1-环境变量 2-转发值客户端
-   Val  string `json:"val"`
-} */}
                       <Form.Item label="密钥">
                         <Input.Group compact>
                           <Form.Item
