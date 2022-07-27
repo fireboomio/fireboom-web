@@ -34,8 +34,8 @@ const nextConfig = {
         // destination: 'http://localhost:8080/api/v1/:path*',
       },
       {
-        source: '/api/main/graphql',
-        destination: 'http://120.26.62.151:9991/api/main/graphql',
+        source: '/app/main/graphql',
+        destination: 'http://120.26.62.151:9991/app/main/graphql',
       },
     ]
   },

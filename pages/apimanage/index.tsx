@@ -17,6 +17,7 @@ import {
   MoreOutlined,
 } from '@ant-design/icons'
 import {
+  Modal,
   Tooltip,
   Divider,
   Tree,
@@ -31,6 +32,7 @@ import {
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
+import Link from 'next/link'
 import { FC, useCallback, useEffect, useState } from 'react'
 
 import Detail from '@/components/apimanage/Detail'
@@ -95,6 +97,8 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  // const [content, setContent] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     getFetcher<operationResp[]>('/operateApi')
@@ -355,6 +359,15 @@ const ApiManage: FC<ApiManageProps> = () => {
       })
   }
 
+  // function handleClickEdit() {
+  //   const node = findNode(selectedKey, treeData)
+  //   if (!node?.path) return
+
+  //   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //   void getFetcher(`/operateApi/${node.path}`).then((res) => setContent(res))
+  //   setIsModalVisible(true)
+  // }
+
   const extra = (
     <div className="flex items-center">
       <Switch
@@ -364,7 +377,17 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={connectSwitchOnChange}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className="ml-12">编辑</Button>
+      <Button className="ml-12">
+        <Link
+          href={{
+            pathname: '/graphiql',
+            query: { ...findNode(selectedKey, treeData) },
+          }}
+          prefetch={true}
+        >
+          编辑
+        </Link>
+      </Button>
     </div>
   )
 
@@ -464,6 +487,15 @@ const ApiManage: FC<ApiManageProps> = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        title="GraphiQL"
+        visible={isModalVisible}
+        onOk={() => setIsModalVisible(false)}
+        onCancel={() => setIsModalVisible(false)}
+      >
+        {/* <GraphiQLApp /> */}
+      </Modal>
     </>
   )
 }
