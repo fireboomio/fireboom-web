@@ -143,7 +143,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   }
 
   const filterReqDS = (ds: Param[]) => {
-    const filterNames = ['jsonSchema']
+    const filterNames = ['hooksVariable', 'jsonSchema']
     return ds.filter(
       (x) =>
         x.directiveNames.length === 0 ||
@@ -154,13 +154,9 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const filterInjectDS = (ds: Param[]) => {
     const filterNames = [
       'fromClaim',
-      'hooksVariable',
       'injectCurrentDateTime',
       'injectEnvironmentVariable',
       'injectGeneratedUUID',
-      'internalOperation',
-      'export',
-      'transform',
     ]
     return ds
       .filter((x) => x.directiveNames.length !== 0)
