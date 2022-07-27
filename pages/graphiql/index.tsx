@@ -2,14 +2,18 @@
  * https://github.com/graphql/graphiql/issues/118
  */
 
+import { message } from 'antd'
 import { GraphiQL } from 'graphiql'
 // @ts-ignore
 import GraphiQLExplorer from 'graphiql-explorer'
 import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 
 import 'graphiql/graphiql.css'
+import requests, { getFetcher } from '@/lib/fetchers'
+
 import styles from './index.module.scss'
 
 const DEFAULT_QUERY = `# Welcome to GraphiQL
@@ -47,6 +51,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 export default function App() {
   const [schema, setSchema] = useState<GraphQLSchema>()
   const [query, setQuery] = useState<string | undefined>(DEFAULT_QUERY)
+  const router = useRouter()
 
   const ref = useRef<GraphiQL | null>()
 
@@ -60,6 +65,14 @@ export default function App() {
         throw err
       })
   }, [])
+
+  useEffect(() => {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { path } = { ...router.query }
+    if (!path) return
+    void getFetcher(`/operateApi/${path as string}`).then((res) => setQuery(res as string))
+  }, [router])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
@@ -80,6 +93,16 @@ export default function App() {
       .catch((err: Error) => {
         throw err
       })
+  }
+
+  function save() {
+    // @ts-ignore
+    const content = ref.current?.ref?.props.query as string
+    const path = router.query.path
+
+    void requests
+      .put('/operateApi', { path: path, content: content })
+      .then((_) => void message.success('保存成功'))
   }
 
   return (
@@ -113,6 +136,7 @@ export default function App() {
               label="History"
               title="Show History"
             />
+            <GraphiQL.Button onClick={save} label="Save" title="Save" />
           </GraphiQL.Toolbar>
         </GraphiQL>
       </div>
