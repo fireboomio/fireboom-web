@@ -16,7 +16,12 @@ type DetailProps = {
   path: string
 }
 
-type Param = ParameterT & { source?: string; directiveNames: string[]; jsonSchema?: string }
+type Param = ParameterT & {
+  source?: string
+  directiveNames: string[]
+  jsonSchema?: string
+  remark?: string
+}
 
 const tabs = [
   {
@@ -76,6 +81,10 @@ const reqColumns = [
   {
     title: 'jsonSchema',
     dataIndex: 'jsonSchema',
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
   },
 ]
 
@@ -138,12 +147,17 @@ const Detail: FC<DetailProps> = ({ path }) => {
         // @ts-ignore
         directiveNames: x.directives.map((x) => x.name),
         jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload,
+        // @ts-ignore
+        remark: x.directives
+          .filter((x) => !['jsonSchema'].includes(x.name))
+          .map((x) => makePayload(x.name, x.args))
+          .join(', '),
       }
     })
   }
 
   const filterReqDS = (ds: Param[]) => {
-    const filterNames = ['hooksVariable', 'jsonSchema']
+    const filterNames = ['internal', 'hooksVariable', 'jsonSchema']
     return ds.filter(
       (x) =>
         x.directiveNames.length === 0 ||
