@@ -33,11 +33,11 @@ export interface ParameterT {
 export interface DirectiveT {
   name: string
   args: ArgumentT[]
-  payload?: string
+  payload: string[]
 }
 
 export interface ArgumentT {
   name: string
-  value?: string
+  value?: string[]
   rendered: string
 }

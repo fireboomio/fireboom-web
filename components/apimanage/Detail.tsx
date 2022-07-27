@@ -7,7 +7,7 @@ import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import { FieldType, TableSource, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import { makePayload, parseParameters, parseGql } from '@/lib/gql-parser'
+import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
@@ -102,6 +102,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const [dataSource, setDataSource] = useState<TableSource[] | undefined>([])
   const [reqDataSource, setReqDataSource] = useState<ParameterT[]>([])
   const [tabActiveKey, setTabActiveKey] = useState('0')
+  const [rbac, setRbac] = useState<{ key: string; value: string[] | undefined }>()
 
   useEffect(() => {
     getFetcher<string>('/operateApi/getGenerateSchema')
@@ -134,6 +135,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
     if (!gqlQueryDef || !gqlSchemaDef) return
     setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
     setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
+    setRbac(parseRbac(gqlQueryDef[0].directives))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
@@ -146,7 +148,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
         source: x.directives.map((x) => makePayload(x.name, x.args)).join(', '),
         // @ts-ignore
         directiveNames: x.directives.map((x) => x.name),
-        jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload,
+        jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload?.join(', '),
         // @ts-ignore
         remark: x.directives
           .filter((x) => !['jsonSchema'].includes(x.name))
@@ -157,7 +159,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   }
 
   const filterReqDS = (ds: Param[]) => {
-    const filterNames = ['internal', 'hooksVariable', 'jsonSchema']
+    const filterNames = ['hooksVariable', 'jsonSchema']
     return ds.filter(
       (x) =>
         x.directiveNames.length === 0 ||
@@ -167,6 +169,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
   const filterInjectDS = (ds: Param[]) => {
     const filterNames = [
+      'internal',
       'fromClaim',
       'injectCurrentDateTime',
       'injectEnvironmentVariable',
@@ -224,8 +227,13 @@ const Detail: FC<DetailProps> = ({ path }) => {
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
         <div className="flex-1 flex items-center">
-          <Select className="w-160px" />
-          <Select className="flex-1" allowClear />
+          <Select className="w-160px" value={rbac?.key ?? ''} dropdownClassName="hidden" />
+          <Select
+            className="flex-1"
+            mode="multiple"
+            value={rbac?.value ?? []}
+            dropdownClassName="hidden"
+          />
         </div>
       </div>
 

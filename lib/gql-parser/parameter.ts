@@ -1,9 +1,21 @@
-import { VariableDefinitionNode, ConstDirectiveNode, ConstArgumentNode, Kind } from 'graphql'
+import {
+  VariableDefinitionNode,
+  ConstDirectiveNode,
+  ConstArgumentNode,
+  Kind,
+  DirectiveNode,
+} from 'graphql'
 
 import { ParameterT, ArgumentT } from '@/interfaces/apimanage'
 
 import { isEmpty } from '../utils'
 import { parseType } from './request'
+
+export const parseRbac = (directives: readonly DirectiveNode[] | undefined) => {
+  const dirs = parseDirective(directives as readonly ConstDirectiveNode[])
+  const dir = dirs?.find((x) => x.name === 'rbac')
+  return dir?.args.map((x) => ({ key: x.name, value: x.value })).at(0)
+}
 
 // 从 variableDefinition 字段解析参数
 export const parseParameters = (
@@ -34,7 +46,7 @@ const parseDirective = (directives: readonly ConstDirectiveNode[] | undefined) =
     return {
       name: x.name.value,
       args: args,
-      payload: args.map((x) => x.rendered).join('\n'),
+      payload: args.map((x) => x.rendered),
     }
   })
 }
@@ -52,6 +64,11 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
       case Kind.ENUM:
         val = x.value.value
         break
+      case Kind.LIST:
+        val = x.value.values.map((x) => {
+          if (x.kind === Kind.ENUM) return x.value
+        })
+        break
       default:
         break
     }
@@ -65,6 +82,13 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
       case Kind.FLOAT:
       case Kind.ENUM:
         rendered = `${x.name.value}: ${x.value.value}`
+        break
+      case Kind.LIST:
+        rendered = `${x.value.values
+          .map((x) => {
+            if (x.kind === Kind.ENUM) return x.value
+          })
+          .join(', ')}`
         break
       default:
         break
