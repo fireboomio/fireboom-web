@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import { EditOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
@@ -8,15 +5,18 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType, TableSource } from '@/interfaces/apimanage'
+import { FieldType, TableSource, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import { parseArgs, parseQuery } from '@/lib/gql-parser'
+import { makePayload, parseParameters, parseGql } from '@/lib/gql-parser'
+import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
 type DetailProps = {
   path: string
 }
+
+type Param = ParameterT & { source?: string; directiveNames: string[]; jsonSchema?: string }
 
 const tabs = [
   {
@@ -37,17 +37,17 @@ const columns = [
   {
     title: '字段类型',
     dataIndex: 'fieldType',
-    render: (x: FieldType, _) => (
+    render: (x: FieldType) => (
       <div>
         {x.isList ? (
           <span className="text-[#04B582]">
-            List<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+            List<span className="text-[#000000A6]">{`<${x.type}>`}</span>
           </span>
         ) : x.isScalar ? (
-          <span className="text-[#E66B83]">{x.kind}</span>
+          <span className="text-[#E66B83]">{x.type}</span>
         ) : (
           <span className="text-[#177FFF]">
-            Object<span className="text-[#000000A6]">{`<${x.kind}>`}</span>
+            Object<span className="text-[#000000A6]">{`<${x.type}>`}</span>
           </span>
         )}
       </div>
@@ -62,11 +62,11 @@ const reqColumns = [
   },
   {
     title: '位置',
-    dataIndex: 'pos',
+    dataIndex: 'position',
   },
   {
     title: '类型',
-    dataIndex: 'kind',
+    dataIndex: 'type',
   },
   {
     title: '必须',
@@ -79,32 +79,19 @@ const reqColumns = [
   },
 ]
 
-interface ReqDS {
-  name: string
-  pos: string
-  kind: string
-  isRequired: boolean
-  jsonSchema: string
-  directives: DirectiveT[] | undefined
-}
-
-interface DirectiveT {
-  name: string
-  args:
-    | {
-        name: string
-        value: string
-      }[]
-    | undefined
-}
+const injectColumns = [
+  { title: '参数名', dataIndex: 'name' },
+  { title: '类型', dataIndex: 'type' },
+  { title: '来源', dataIndex: 'source' },
+]
 
 const Detail: FC<DetailProps> = ({ path }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [gqlQueryDef, setGqlQueryDef] = useState<OperationDefinitionNode[]>(undefined!)
+  const [gqlQueryDef, setGqlQueryDef] = useState<readonly OperationDefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [gqlSchemaDef, setGqlSchemaDef] = useState<DefinitionNode[]>(undefined!)
-  const [dataSource, setDataSource] = useState([])
-  const [reqDataSource, setReqDataSource] = useState([])
+  const [gqlSchemaDef, setGqlSchemaDef] = useState<readonly DefinitionNode[]>(undefined!)
+  const [dataSource, setDataSource] = useState<TableSource[] | undefined>([])
+  const [reqDataSource, setReqDataSource] = useState<ParameterT[]>([])
   const [tabActiveKey, setTabActiveKey] = useState('0')
 
   useEffect(() => {
@@ -126,7 +113,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
     getFetcher(`/operateApi/${path}`)
       // getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
-      .then((def) => setGqlQueryDef(def))
+      .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
       .catch((err: Error) => {
         throw err
       })
@@ -136,28 +123,50 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // console.log(gqlSchemaDef, 'schema')
     // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
-    setDataSource(parseQuery(gqlSchemaDef, gqlQueryDef[0]))
-    setReqDataSource(parseArgs(gqlQueryDef[0].variableDefinitions))
+    setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
+    setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
-  // TODO: Refine
-  const makeReqDS = (ds: ReqDS[]) => {
-    const makeSchema = (data: DirectiveT | undefined) => {
-      if (!data) return undefined
-      return `${data.args[0].name}: "${data.args[0].value}"`
-    }
+  const makeDS = (ds: ParameterT[]): Param[] => {
+    return ds.map((x) => {
+      if (isEmpty(x.directives)) return { ...x, directiveNames: [] }
+      return {
+        ...x,
+        // @ts-ignore
+        source: x.directives.map((x) => makePayload(x.name, x.args)).join(', '),
+        // @ts-ignore
+        directiveNames: x.directives.map((x) => x.name),
+        jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload,
+      }
+    })
+  }
 
-    return ds.map((x) => ({
-      ...x,
-      jsonSchema: makeSchema(x.directives.find((x) => x.name === 'jsonSchema')),
-    }))
+  const filterReqDS = (ds: Param[]) => {
+    const filterNames = ['hooksVariable', 'jsonSchema']
+    return ds.filter(
+      (x) =>
+        x.directiveNames.length === 0 ||
+        x.directiveNames.filter((n) => filterNames.includes(n)).length !== 0
+    )
+  }
+
+  const filterInjectDS = (ds: Param[]) => {
+    const filterNames = [
+      'fromClaim',
+      'injectCurrentDateTime',
+      'injectEnvironmentVariable',
+      'injectGeneratedUUID',
+    ]
+    return ds
+      .filter((x) => x.directiveNames.length !== 0)
+      .filter((x) => x.directiveNames.filter((n) => filterNames.includes(n)).length !== 0)
   }
 
   const isInternal = (data: TableSource[] | undefined) => {
     if (!data) return false
     if (data.length === 0) return false
-    return data[0].directiveNames.includes('internalOperation')
+    return data[0].directiveNames?.includes('internalOperation')
   }
 
   return (
@@ -208,13 +217,23 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
       <div className="mt-42px">
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} />
-        <Table
-          size="middle"
-          className="mt-6"
-          columns={reqColumns}
-          dataSource={makeReqDS(reqDataSource)}
-          pagination={false}
-        />
+        {tabActiveKey === '0' ? (
+          <Table
+            size="middle"
+            className="mt-6"
+            columns={reqColumns}
+            dataSource={filterReqDS(makeDS(reqDataSource))}
+            pagination={false}
+          />
+        ) : (
+          <Table
+            size="middle"
+            className="mt-6"
+            columns={injectColumns}
+            dataSource={filterInjectDS(makeDS(reqDataSource))}
+            pagination={false}
+          />
+        )}
       </div>
 
       <div className="my-10.5">
