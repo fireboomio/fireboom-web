@@ -383,7 +383,6 @@ const ApiManage: FC<ApiManageProps> = () => {
             pathname: '/graphiql',
             query: { ...findNode(selectedKey, treeData) },
           }}
-          prefetch={true}
         >
           编辑
         </Link>
