@@ -6,7 +6,11 @@ import { isEmpty } from '../utils'
 import { parseType } from './request'
 
 // 从 variableDefinition 字段解析参数
-export const parseParameters = (varDefs: VariableDefinitionNode[]): ParameterT[] => {
+export const parseParameters = (
+  varDefs: readonly VariableDefinitionNode[] | undefined
+): ParameterT[] => {
+  if (!varDefs) return []
+
   return varDefs.map((x: VariableDefinitionNode) => {
     const { type, isRequired } = parseType(x.type)
 

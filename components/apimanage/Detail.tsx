@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import { EditOutlined } from '@ant-design/icons'
 import { Badge, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
@@ -10,7 +7,8 @@ import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import { FieldType, TableSource, ParameterT } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
-import { makePayload, parseParameters, parseReq } from '@/lib/gql-parser'
+import { makePayload, parseParameters, parseGql } from '@/lib/gql-parser'
+import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
@@ -18,7 +16,7 @@ type DetailProps = {
   path: string
 }
 
-type Param = ParameterT & { source: string[]; directiveNames: string[]; jsonSchema: string }
+type Param = ParameterT & { source?: string; directiveNames: string[]; jsonSchema?: string }
 
 const tabs = [
   {
@@ -39,7 +37,7 @@ const columns = [
   {
     title: '字段类型',
     dataIndex: 'fieldType',
-    render: (x: FieldType, _) => (
+    render: (x: FieldType) => (
       <div>
         {x.isList ? (
           <span className="text-[#04B582]">
@@ -92,8 +90,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const [gqlQueryDef, setGqlQueryDef] = useState<readonly OperationDefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlSchemaDef, setGqlSchemaDef] = useState<readonly DefinitionNode[]>(undefined!)
-  const [dataSource, setDataSource] = useState([])
-  const [reqDataSource, setReqDataSource] = useState([])
+  const [dataSource, setDataSource] = useState<TableSource[] | undefined>([])
+  const [reqDataSource, setReqDataSource] = useState<ParameterT[]>([])
   const [tabActiveKey, setTabActiveKey] = useState('0')
 
   useEffect(() => {
@@ -115,7 +113,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
     getFetcher(`/operateApi/${path}`)
       // getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
-      .then((def) => setGqlQueryDef(def))
+      .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
       .catch((err: Error) => {
         throw err
       })
@@ -125,18 +123,23 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // console.log(gqlSchemaDef, 'schema')
     // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
-    setDataSource(parseReq(gqlSchemaDef, gqlQueryDef[0]))
+    setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
     setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
   const makeDS = (ds: ParameterT[]): Param[] => {
-    return ds.map((x) => ({
-      ...x,
-      source: x.directives.map((x) => makePayload(x.name, x.args)).join(', '),
-      directiveNames: x.directives.map((x) => x.name),
-      jsonSchema: x.directives.find((x) => x.name === 'jsonSchema')?.payload,
-    }))
+    return ds.map((x) => {
+      if (isEmpty(x.directives)) return { ...x, directiveNames: [] }
+      return {
+        ...x,
+        // @ts-ignore
+        source: x.directives.map((x) => makePayload(x.name, x.args)).join(', '),
+        // @ts-ignore
+        directiveNames: x.directives.map((x) => x.name),
+        jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload,
+      }
+    })
   }
 
   const filterReqDS = (ds: Param[]) => {
@@ -159,12 +162,6 @@ const Detail: FC<DetailProps> = ({ path }) => {
       'export',
       'transform',
     ]
-    console.log(
-      'aa',
-      ds
-        .filter((x) => x.directiveNames.length !== 0)
-        .filter((x) => x.directiveNames.filter((n) => filterNames.includes(n)))
-    )
     return ds
       .filter((x) => x.directiveNames.length !== 0)
       .filter((x) => x.directiveNames.filter((n) => filterNames.includes(n)).length !== 0)
@@ -173,7 +170,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const isInternal = (data: TableSource[] | undefined) => {
     if (!data) return false
     if (data.length === 0) return false
-    return data[0].directiveNames.includes('internalOperation')
+    return data[0].directiveNames?.includes('internalOperation')
   }
 
   return (

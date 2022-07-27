@@ -37,10 +37,11 @@ export const parseType = (typeDef: TypeNode, allScalar: string[] = []): FieldTyp
   return { type, isScalar, isRequired, isList }
 }
 
-const parseReq = (
-  schema: DefinitionNode[],
+// 解析 query, muatation 等
+const parseGql = (
+  schema: readonly DefinitionNode[],
   node: OperationDefinitionNode | FieldNode,
-  type: string,
+  type = '',
   lv = '0'
 ): TableSource[] | undefined => {
   if (lv === '0') {
@@ -67,9 +68,9 @@ const parseReq = (
       fieldName: subNode.name.value,
       fieldType: fieldType,
       directiveNames: node.directives?.map((x) => x.name.value),
-      children: parseReq(schema, subNode, fieldType.type, `${lv}-${idx}`),
+      children: parseGql(schema, subNode, fieldType.type, `${lv}-${idx}`),
     }
   })
 }
 
-export default parseReq
+export default parseGql
