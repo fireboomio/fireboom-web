@@ -14,7 +14,9 @@ interface Props {
 export default function StorageEditor({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
   const dispatch = useContext(FSDispatchContext)
+
   const [form] = Form.useForm()
+
   const onFinish = async (values: object) => {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
@@ -25,7 +27,7 @@ export default function StorageEditor({ content }: Props) {
       type: 'fetched',
       data: storageBucket,
     })
-    handleToggleDesigner('setCheck', content.id)
+    handleToggleDesigner('viewer', content.id)
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -35,6 +37,7 @@ export default function StorageEditor({ content }: Props) {
   if (!content) {
     return <></>
   }
+
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">
@@ -55,7 +58,7 @@ export default function StorageEditor({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
-              handleToggleDesigner('setCheck', content.id)
+              handleToggleDesigner('viewer', content.id)
             }}
           >
             <span>保存</span>

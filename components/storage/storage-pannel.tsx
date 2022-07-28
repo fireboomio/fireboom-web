@@ -12,7 +12,7 @@ import StoragePannelItem from './subs/storage-pannel-item'
 
 interface Props {
   onClickItem: (fsItem: StorageResp) => void
-  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
+  handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
 }
 
 export default function StoragePannel({ onClickItem, handleToggleDesigner }: Props) {

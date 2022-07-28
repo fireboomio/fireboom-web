@@ -13,7 +13,7 @@ import styles from '../storage-pannel.module.scss'
 interface Props {
   fsItem: StorageResp
   onClickItem: (fsItem: StorageResp) => void
-  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
+  handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
 }
 
 export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
@@ -84,7 +84,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner('setCheck', fsItem.id)
+                handleToggleDesigner('viewer', fsItem.id)
               }}
             >
               <AppleOutlined />
@@ -97,7 +97,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner('setEdit', fsItem.id)
+                handleToggleDesigner('editor', fsItem.id)
               }}
             >
               <AppleOutlined />
@@ -128,9 +128,10 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
       ]}
     />
   )
+
   return (
     <div
-      className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer"
+      className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer hover:bg-[#F8F8F9]"
       ${fsItem.id === currFSId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={fsItem.name}

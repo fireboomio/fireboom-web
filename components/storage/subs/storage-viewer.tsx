@@ -11,12 +11,15 @@ import styles from './storage-main.module.scss'
 interface Props {
   content?: StorageResp
 }
+
 interface Config {
   [key: string]: ReactNode
 }
+
 export default function StorageViewer({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
+
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
@@ -27,7 +30,7 @@ export default function StorageViewer({ content }: Props) {
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-  console.log(config)
+
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">
@@ -46,7 +49,7 @@ export default function StorageViewer({ content }: Props) {
           <Button
             className={`${styles['save-btn']}  ml-4`}
             onClick={() => {
-              handleToggleDesigner('setEdit', content.id)
+              handleToggleDesigner('editor', content.id)
             }}
           >
             <span>编辑</span>

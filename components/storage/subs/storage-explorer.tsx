@@ -35,17 +35,11 @@ interface Option {
   label: string
   children?: Option[]
 }
+
 export default function StorageExplorer({ content }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [isArrowUP, setIsArrowUP] = useImmer(false)
-  const onChange = () => {
-    setVisible(true)
-  }
-
-  const onClose = () => {
-    setVisible(false)
-  }
 
   const dropdownMenu = [
     {
@@ -204,7 +198,7 @@ export default function StorageExplorer({ content }: Props) {
       <div>
         <Cascader
           options={options}
-          onChange={onChange}
+          onChange={() => setVisible(true)}
           open
           dropdownClassName={`${styles['casader-select']} flex mb-8`}
 
@@ -223,7 +217,7 @@ export default function StorageExplorer({ content }: Props) {
       <Drawer
         title="avatar2.jpg"
         placement="right"
-        onClose={onClose}
+        onClose={() => setVisible(false)}
         visible={visible}
         mask={false}
         width={315}

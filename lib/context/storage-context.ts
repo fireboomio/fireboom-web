@@ -3,14 +3,16 @@ import * as useImmer from 'use-immer'
 
 import type { StorageResp, StorageAction } from '@/interfaces/storage'
 
-interface storageCurrFileContextT {
+interface StorageCurrFileContextT {
   currFSId: number | null | undefined
   setCurrFSId: useImmer.Updater<number | null | undefined>
 }
+
 interface FSToggleContext {
-  handleToggleDesigner: (value: 'content' | 'setEdit' | 'setCheck', id: number) => void
+  handleToggleDesigner: (value: 'explorer' | 'editor' | 'viewer', id: number) => void
 }
+
 export const FSContext = createContext<StorageResp[]>([])
 export const FSDispatchContext = createContext({} as Dispatch<StorageAction>)
-export const FSCurrFileContext = createContext({} as storageCurrFileContextT)
+export const FSCurrFileContext = createContext({} as StorageCurrFileContextT)
 export const FSToggleContext = createContext({} as FSToggleContext)

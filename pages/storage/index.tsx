@@ -14,7 +14,7 @@ import styles from './index.module.scss'
 export default function FileStorage() {
   const [fileList, dispatch] = useReducer(storageReducer, [])
   const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
-  const [showType, setShowType] = useImmer('data')
+  const [showType, setShowType] = useImmer<'explorer' | 'viewer' | 'editor'>('explorer')
 
   useLayoutEffect(() => {
     setCurrFSId(fileList.at(0)?.id)
@@ -30,11 +30,11 @@ export default function FileStorage() {
   const content = useMemo(() => fileList.find((b) => b.id === currFSId), [currFSId, fileList])
 
   function handleClickItem(fileStorageResp: StorageResp) {
-    setShowType('data')
+    setShowType('explorer')
     setCurrFSId(fileStorageResp.id)
   }
 
-  function handleToggleDesigner(value: 'content' | 'setEdit' | 'setCheck', id: number) {
+  function handleToggleDesigner(value: 'explorer' | 'editor' | 'viewer', id: number) {
     setShowType(value)
     setCurrFSId(id)
   }
