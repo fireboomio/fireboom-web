@@ -37,11 +37,6 @@ export default function Datasource() {
       })
   }, [])
 
-  const handleChangeDStype = (value: number) => {
-    setShowType('data')
-    setCurrDBId(datasource.filter((item) => item.source_type == value).at(0)?.id)
-  }
-
   const handleClickItem = (datasourceItem: DatasourceResp) => {
     setShowType('data')
     setCurrDBId(datasourceItem.id)
@@ -70,10 +65,7 @@ export default function Datasource() {
               </Head>
               <Row className="h-screen">
                 <Col span={5} className={styles['col-left']}>
-                  <DatasourcePannel
-                    onClickItem={handleClickItem}
-                    onChangeDBType={handleChangeDStype}
-                  />
+                  <DatasourcePannel onClickItem={handleClickItem} />
                 </Col>
                 <Col span={19}>
                   <DatasourceContainer showType={showType} content={content} />

@@ -184,7 +184,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
-  console.log(config, 'config')
+
   return (
     <>
       {type === 'data' ? (
@@ -193,7 +193,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <span className="ml-2">
-                userinfo <span className="text-xs text-gray-500/80">GET</span>
+                {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
             </div>
             <div className="flex justify-center items-center">
@@ -240,17 +240,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 className="justify-start"
               >
                 {config.nameSpace}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label={
-                  <div>
-                    <span className={styles['label-style']}>Rest 端点</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
-                }
-                className="justify-start"
-              >
-                {config.restPoint}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -407,10 +396,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               className="ml-3"
               initialValues={{
                 nameSpace: config.nameSpace,
-                restPoint: config.restPoint,
                 header: config.header || [{ kind: '0' }],
                 statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret,
+                secret: config.secret || { kind: '0' },
               }}
             >
               <Form.Item
@@ -428,26 +416,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   },
                 ]}
                 name="nameSpace"
-                colon={false}
-                style={{ marginBottom: '20px' }}
-              >
-                <Input placeholder="请输入..." />
-              </Form.Item>
-              <Form.Item
-                label={
-                  <div>
-                    <span>Rest 端点:</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
-                }
-                rules={[
-                  { required: true, message: 'Please input RestPort!' },
-                  {
-                    pattern: new RegExp('^\\w+$', 'g'),
-                    message: '只允许包含数字，字母，下划线',
-                  },
-                ]}
-                name="restPoint"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
@@ -585,8 +553,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                             rules={[{ required: true, message: 'typeName is required' }]}
                           >
                             <Select className="w-1/5">
-                              <Option value="value">值</Option>
-                              <Option value="path">环境变量</Option>
+                              <Option value="0">值</Option>
+                              <Option value="1">环境变量</Option>
                             </Select>
                           </Form.Item>
                           <Form.Item

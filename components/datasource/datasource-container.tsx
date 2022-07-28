@@ -21,7 +21,6 @@ export default function DatasourceEditor({ content, showType }: Props) {
     console.log('aaa')
   }
   useEffect(() => {
-    console.log(content, 'content')
     if (content)
       if (showType == 'Setting') {
         setTitile('设置')

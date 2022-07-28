@@ -117,7 +117,7 @@ const initForm = (
         noStyle
         rules={[{ required: true, message: 'typeName is required' }]}
       >
-        <Select className="w-1/4">
+        <Select className="w-1/5">
           <Option value="0">值</Option>
           <Option value="1">环境变量</Option>
         </Select>
@@ -133,7 +133,7 @@ const initForm = (
           },
         ]}
       >
-        <Input style={{ width: '75%' }} placeholder="请输入" />
+        <Input style={{ width: '80%' }} placeholder="请输入" />
       </Form.Item>
     </Input.Group>
   </Form.Item>
@@ -301,7 +301,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
         break
     }
   }
-  console.log(config, 'config*****render')
+
   return (
     <>
       {type === 'data' ? (
@@ -496,7 +496,10 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
               <Form.Item label="类型:" name="dbType">
                 <Select placeholder="请输入...">
-                  <Select.Option value="demo">Demo</Select.Option>
+                  <Select.Option value="MySQL">MySql</Select.Option>
+                  <Select.Option value="SQLITE">SQLITE</Select.Option>
+                  <Select.Option value="PGSQL">PGSQL</Select.Option>
+                  <Select.Option value="MONGODB">MONGODB</Select.Option>
                 </Select>
               </Form.Item>
 

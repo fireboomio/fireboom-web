@@ -69,7 +69,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
-  console.log(config, 'config')
 
   useEffect(() => {
     form.resetFields()
@@ -162,7 +161,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
           <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <span className="ml-2">
-                userinfo <span className="text-xs text-gray-500/80">GET</span>
+                {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
             </div>
             <div className="flex justify-center items-center">
