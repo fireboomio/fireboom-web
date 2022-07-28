@@ -125,7 +125,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
       // getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
-      .then(() => setMethod(gqlQueryDef[0].operation === 'query' ? 'GET' : 'POST'))
+      .then(() => setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST'))
       .catch((err: Error) => {
         throw err
       })
@@ -138,7 +138,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
     if (!gqlQueryDef || !gqlSchemaDef) return
     setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
     setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
-    setRbac(parseRbac(gqlQueryDef[0].directives))
+    setRbac(parseRbac(gqlQueryDef.at(0)?.directives))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 

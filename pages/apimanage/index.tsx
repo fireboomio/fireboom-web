@@ -460,7 +460,9 @@ const ApiManage: FC<ApiManageProps> = () => {
             <div className="flex leading-25px space-x-2">
               <span className="font-bold text-18px">API 管理</span>
               <CaretRightOutlined />
-              <span className="text-16px font-bold">userinfo</span>
+              <span className="text-16px font-bold">
+                {(findNode(selectedKey, treeData) as DirTree)?.title ?? ''}
+              </span>
             </div>
             <div className="space-x-4">
               <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
