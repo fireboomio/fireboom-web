@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
-import { StoragePannel, StorageContainer } from '@/components/filestorage'
+import { StoragePannel, StorageContainer } from '@/components/storage'
 import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
