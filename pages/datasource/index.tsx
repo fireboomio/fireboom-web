@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useLayoutEffect, useReducer } from 'react'
-import useSWR from 'swr'
+import { useEffect, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
@@ -12,65 +12,56 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 import styles from './index.module.scss'
 
-
 export default function Datasource() {
-  const [datasourceList, dispatch] = useReducer(datasourceReducer, [])
+  const [datasource, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-  const [changeCurrId, setChangeCurrId] = useImmer(false)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { data: datasource, error } = useSWR('/dataSource', getFetcher)
-
-  useLayoutEffect(() => {
-    setCurrDBId(datasourceList.at(0)?.id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeCurrId])
 
   useEffect(() => {
-    datasource &&
-      dispatch({
-        type: 'fetched',
-        data: (datasource as DatasourceResp[]).filter((item) => item.source_type == 1),
+    requests
+      .get<unknown, DatasourceResp[]>('/dataSource')
+      .then((res) => {
+        dispatch({
+          type: 'fetched',
+          data: res,
+        })
+        setCurrDBId(res.filter((item) => item.source_type == 1).at(0)?.id)
       })
-    setChangeCurrId(!changeCurrId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datasource])
-
-  if (error) return <div>failed to load</div>
-  if (!datasource) return <div>loading...</div>
-
-  // TODO: need refine
-  function handleChangeDStype(value: number) {
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({
-        type: 'fetched',
-        data: res.filter((item) => item.source_type == value),
+      .catch(() => {
+        console.log('get Datasource Data Error')
       })
-      setChangeCurrId(!changeCurrId)
-    })
+  }, [])
+
+  const handleChangeDStype = (value: number) => {
     setShowType('data')
+    setCurrDBId(datasource.filter((item) => item.source_type == value).at(0)?.id)
   }
 
-  const content = datasourceList.find((b) => b.id === currDBId) as DatasourceResp
-
-  function handleClickItem(datasourceItem: DatasourceResp) {
+  const handleClickItem = (datasourceItem: DatasourceResp) => {
     setShowType('data')
     setCurrDBId(datasourceItem.id)
   }
 
-  function handleToggleDesigner(type: string, id?: number) {
+  const handleToggleDesigner = (type: string, id?: number) => {
     setShowType(type)
     setCurrDBId(id)
   }
 
+  const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
+
+  // if (error) return <div>failed to load</div>
+  if (!datasource) return <div>loading...</div>
+
+  // TODO: need refine
+
   return (
     <>
-      <DatasourceContext.Provider value={datasourceList}>
+      <DatasourceContext.Provider value={datasource}>
         <DatasourceDispatchContext.Provider value={dispatch}>
           <DatasourceCurrDBContext.Provider value={{ currDBId, setCurrDBId }}>
             <DatasourceToggleContext.Provider value={{ handleToggleDesigner }}>

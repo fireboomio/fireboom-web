@@ -17,7 +17,7 @@ import {
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { ReactNode, useContext } from 'react'
+import { ReactNode, useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -35,38 +35,31 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
-interface theOAS {
-  name: string
-  uid: string
-  status: string
-  url: string
-}
+
 interface DataType {
-  Kay: string
-  Kind: string
-  Val: string
+  key: string
+  kind: string
+  val: string
 }
 
 const columns: ColumnsType<DataType> = [
   {
     title: '请求头',
-    dataIndex: 'Kay',
-    key: 'Kay',
+    dataIndex: 'key',
+    key: 'key',
     width: '27%',
   },
   {
     title: '类型',
-    dataIndex: 'Kind',
-    key: 'Kind',
-    render: (Kind) => (
-      <span>{Kind == 'value' ? '值' : Kind == 'client' ? '转发至客户端' : '环境变量'}</span>
-    ),
+    dataIndex: 'kind',
+    key: 'kind',
+    render: (kind) => <span>{kind == '0' ? '值' : kind == '1' ? '环境变量' : '转发至客户端'}</span>,
     width: '20%',
   },
   {
     title: '请求头信息',
-    dataIndex: 'Val',
-    key: 'Val',
+    dataIndex: 'val',
+    key: 'val',
     width: '40%',
   },
 ]
@@ -76,9 +69,16 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [value, setValue] = useImmer(1)
+  const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
+
+  useEffect(() => {
+    // console.log(config, 'useEffectconfig')
+    form.resetFields()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, type])
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -88,7 +88,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
+          dispatch({ type: 'fetched', data: res })
         })
       })
   }
@@ -112,31 +112,37 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
     const newValues = { ...values }
-    // const m = new Map()
-    // (newValues.reqHeadAll as unknown as ).forEach(element => {
-    // });
-    // console.dir(m, 'm')
 
-    if ((values.filePath as UploadFile[])?.length > 0) {
-      await requests({
+    if (file.uid) {
+      if (config.filePath) {
+        await requests({
+          method: 'delete',
+          url: '/file',
+          data: { id: config.filePath },
+        })
+      }
+      newValues.filePath = (await requests({
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         method: 'post',
-        url: '/dataSource/import',
+        url: '/file/upload',
         data: { file: file },
-      })
-      const upFile = (values.filePath as UploadFile[])[0]
-      newValues.filePath = {
-        name: upFile?.name,
-        uid: upFile?.uid,
-        status: 'done',
-        url: '',
-      } as unknown as ReactNode
+      })) as unknown as string
+    } else {
+      if (deleteFlag) {
+        await requests({
+          method: 'delete',
+          url: '/file',
+          data: { id: config.filePath },
+        })
+        newValues.filePath = undefined
+      } else newValues.filePath = config.filePath
     }
+
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 2) })
+      dispatch({ type: 'fetched', data: res })
     })
     handleToggleDesigner('data', content.id)
   }
@@ -170,13 +176,15 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   }
 
   //文件移除回调
-  const onRemoveFile = (file: UploadFile) => {
-    console.log(file, 'file')
+  const onRemoveFile = () => {
+    setDeleteFlag(true)
+    setFile({} as unknown as UploadFile)
   }
+
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
-
+  console.log(config, 'config')
   return (
     <>
       {type === 'data' ? (
@@ -254,7 +262,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 className="justify-start"
               >
                 <IconFont type="icon-wenjian1" />
-                {(config.filePath as unknown as theOAS)?.name}
+                {config.filePath}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -264,7 +272,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             <TabPane tab="请求头" key="1">
               <Table
                 columns={columns}
-                rowKey="Kay"
+                rowKey="key"
                 dataSource={config.header as unknown as Array<DataType>}
                 pagination={false}
                 className="mb-10"
@@ -292,11 +300,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     width: '30%',
                   }}
                 >
-                  <Descriptions.Item label="JWT获取">{config.jwtType}</Descriptions.Item>
+                  <Descriptions.Item label="JWT获取">
+                    {config.jwtType == 1 ? '动态' : '静态'}
+                  </Descriptions.Item>
                   <Descriptions.Item label="密钥">
                     {isEyeShow ? (
                       <div>
-                        <span className="mr-5">{(config.secret as unknown as DataType)?.Val}</span>
+                        <span className="mr-5">{(config.secret as unknown as DataType)?.val}</span>
                         <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
                       </div>
                     ) : (
@@ -362,7 +372,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               </span>
             </div>
             <div className="flex justify-center items-center mb-2 w-160px">
-              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+              <Button
+                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                onClick={() => {
+                  handleToggleDesigner('data', content.id)
+                }}
+              >
                 <span>取消</span>
               </Button>
               <Button
@@ -393,7 +408,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               initialValues={{
                 nameSpace: config.nameSpace,
                 restPoint: config.restPoint,
-                header: config.header,
+                header: config.header || [{ kind: '0' }],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret,
               }}
@@ -452,7 +467,17 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                 getValueFromEvent={normFile}
               >
                 <Upload
-                  defaultFileList={config.theOAS ? [config.theOAS as unknown as UploadFile] : []}
+                  defaultFileList={
+                    (config.filePath as string)
+                      ? [
+                          {
+                            name: config.filePath as unknown as string,
+                            uid: config.filePath as unknown as string,
+                          },
+                        ]
+                      : []
+                  }
+                  maxCount={1}
                   beforeUpload={(file) => {
                     console.log(file, 'file')
                     setFile(file)
@@ -482,25 +507,25 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                               <Form.Item
                                 className="w-50"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'Kay']}
+                                name={[field.name, 'key']}
                               >
                                 <Input />
                               </Form.Item>
                               <Form.Item
                                 className="w-36"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'Kind']}
+                                name={[field.name, 'kind']}
                               >
                                 <Select>
-                                  <Option value="value">值</Option>
-                                  <Option value="client">转发自客户端</Option>
-                                  <Option value="path">环境变量</Option>
+                                  <Option value="0">值</Option>
+                                  <Option value="1">环境变量</Option>
+                                  <Option value="2">转发自客户端</Option>
                                 </Select>
                               </Form.Item>
                               <Form.Item
                                 className="w-126"
                                 wrapperCol={{ span: 24 }}
-                                name={[field.name, 'Val']}
+                                name={[field.name, 'val']}
                               >
                                 <Input placeholder="请输入..." />
                               </Form.Item>
@@ -542,12 +567,12 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   key="2"
                 >
                   {/* 0静态1动态 */}
-                  <Form.Item label="JWT获取" name="jwtType" initialValue={'静态'}>
+                  <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
                     <Radio.Group onChange={onChangeRadio} value={value}>
-                      <Radio value={'静态'} className="mr-20">
+                      <Radio value={'0'} className="mr-20">
                         静态
                       </Radio>
-                      <Radio value={'动态'}>动态</Radio>
+                      <Radio value={'1'}>动态</Radio>
                     </Radio.Group>
                   </Form.Item>
                   {isRadioShow ? (
@@ -555,7 +580,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       <Form.Item label="密钥">
                         <Input.Group compact>
                           <Form.Item
-                            name={['secret', 'Kind']}
+                            name={['secret', 'kind']}
                             noStyle
                             rules={[{ required: true, message: 'typeName is required' }]}
                           >
@@ -565,7 +590,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                             </Select>
                           </Form.Item>
                           <Form.Item
-                            name={['secret', 'Val']}
+                            name={['secret', 'val']}
                             noStyle
                             rules={[
                               { required: true, message: '连接名不能为空' },

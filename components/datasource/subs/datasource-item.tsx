@@ -43,7 +43,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({
             type: 'fetched',
-            data: res.filter((item) => item.source_type == Datasourcetype),
+            data: res,
           })
         })
       } else {
@@ -53,7 +53,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({
             type: 'fetched',
-            data: res.filter((item) => item.source_type == Datasourcetype),
+            data: res,
           })
         })
       }

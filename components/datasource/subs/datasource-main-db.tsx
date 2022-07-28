@@ -113,17 +113,17 @@ const initForm = (
   <Form.Item label="连接URL">
     <Input.Group compact>
       <Form.Item
-        name={['url', 'typeName']}
+        name={['databaseUrl', 'typeName']}
         noStyle
         rules={[{ required: true, message: 'typeName is required' }]}
       >
         <Select className="w-1/4">
-          <Option value="value">值</Option>
-          <Option value="path">环境变量</Option>
+          <Option value="0">值</Option>
+          <Option value="1">环境变量</Option>
         </Select>
       </Form.Item>
       <Form.Item
-        name={['url', 'connectURL']}
+        name={['databaseUrl', 'connectURL']}
         noStyle
         rules={[
           { required: true, message: '连接名不能为空' },
@@ -155,7 +155,7 @@ const paramForm = (
     </Form.Item>
     <Form.Item
       label="数据库名:"
-      name="DBName"
+      name="dbName"
       rules={[
         { required: true, message: '数据库名不能为空' },
         {
@@ -219,9 +219,11 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
-    setViewerForm(config.typeName == 'url' ? initForm : paramForm)
+    // console.log(config, 'useEffectconfig')
+    form.resetFields()
+    setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content])
+  }, [content, type])
   //查看页面逻辑
   if (!content) {
     return <></>
@@ -236,7 +238,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
+          dispatch({ type: 'fetched', data: res })
         })
       })
     console.log('switch change')
@@ -250,7 +252,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     const newValues = { ...config, ...values }
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 1) })
+      dispatch({ type: 'fetched', data: res })
     })
     handleToggleDesigner('data', content.id)
   }
@@ -261,9 +263,9 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   //表单item值改变回调
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    console.log(allValues)
+    console.log(allValues, 'allValues')
     for (const key in allValues) {
-      if ((allValues[key] as string) == undefined || allValues[key] == '') {
+      if ((allValues[key] as string) == undefined) {
         setDisabled(true)
         return
       }
@@ -287,12 +289,11 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   //单选框链接URL和链接参数切换回调
   const typeChange = (value: string) => {
-    setDisabled(true)
     switch (value) {
-      case 'url':
+      case '0':
         setViewerForm(initForm)
         break
-      case 'param':
+      case '1':
         setViewerForm(paramForm)
         break
       default:
@@ -300,6 +301,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
         break
     }
   }
+  console.log(config, 'config*****render')
   return (
     <>
       {type === 'data' ? (
@@ -359,14 +361,16 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 borderBottom: 'none',
               }}
             >
-              <Descriptions.Item label="连接名">{config.connectName}</Descriptions.Item>
-              <Descriptions.Item label="类型">{config.SQlType}</Descriptions.Item>
-              <Descriptions.Item label="类型">{config.typeName}</Descriptions.Item>
+              <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
+              <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
+              <Descriptions.Item label="类型">
+                {config.appendType == '0' ? '连接URL' : config.appendType == '1' ? '连接参数' : ''}
+              </Descriptions.Item>
 
-              {config.typeName == 'param' ? (
+              {config.appendType == '1' ? (
                 <>
                   <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-                  <Descriptions.Item label="数据库名">{config.DBName}</Descriptions.Item>
+                  <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
                   <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
                   <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
                   <Descriptions.Item label="密码">
@@ -398,11 +402,14 @@ export default function DatasourceDBMain({ content, type }: Props) {
               ) : (
                 <>
                   <Descriptions.Item label="环境变量">
-                    {(config.url as unknown as { typeName: string; connectURL: string })?.typeName}
+                    {
+                      (config.databaseUrl as unknown as { typeName: string; connectURL: string })
+                        ?.typeName
+                    }
                   </Descriptions.Item>
                   <Descriptions.Item label="连接URL">
                     {
-                      (config.url as unknown as { typeName: string; connectURL: string })
+                      (config.databaseUrl as unknown as { typeName: string; connectURL: string })
                         ?.connectURL
                     }
                   </Descriptions.Item>
@@ -454,30 +461,32 @@ export default function DatasourceDBMain({ content, type }: Props) {
               }}
               onFinishFailed={onFinishFailed}
               onValuesChange={onValuesChange}
-              autoComplete="off"
               validateTrigger="onBlur"
+              autoComplete="new-password"
               className={styles['db-form']}
               labelAlign="left"
               initialValues={{
-                connectName: config.connectName,
-                SQlType: config.SQlType,
-                typeName: config.typeName,
+                apiNamespace: config.apiNamespace,
+                dbType: config.dbType,
+                appendType: config.appendType || '0',
                 host: config.host,
-                DBName: config.DBName,
+                dbName: config.dbName,
                 port: config.port,
                 userName: config.userName,
                 password: config.password,
-                url: {
-                  typeName: (config.url as unknown as { typeName: string; connectURL: string })
-                    ?.typeName,
-                  connectURL: (config.url as unknown as { typeName: string; connectURL: string })
-                    ?.connectURL,
+                databaseUrl: {
+                  typeName:
+                    (config.databaseUrl as unknown as { typeName: string; connectURL: string })
+                      ?.typeName || '0',
+                  connectURL: (
+                    config.databaseUrl as unknown as { typeName: string; connectURL: string }
+                  )?.connectURL,
                 },
               }}
             >
               <Form.Item
                 label="连接名:"
-                name="connectName"
+                name="apiNamespace"
                 rules={[
                   { required: true, message: '连接名不能为空' },
                   {
@@ -486,25 +495,25 @@ export default function DatasourceDBMain({ content, type }: Props) {
                   },
                 ]}
               >
-                <Input placeholder="请输入..." />
+                <Input placeholder="请输入..." autoComplete="off" />
               </Form.Item>
 
-              <Form.Item label="类型:" name="SQlType">
+              <Form.Item label="类型:" name="dbType">
                 <Select placeholder="请输入...">
                   <Select.Option value="demo">Demo</Select.Option>
                 </Select>
               </Form.Item>
 
-              <Form.Item label="类型:" name="typeName">
+              <Form.Item label="类型:" name="appendType">
                 <Radio.Group
                   onChange={(e) => {
                     typeChange(e.target.value as string)
                   }}
                 >
-                  <Radio value="url" style={{ marginRight: '50px' }}>
+                  <Radio value="0" style={{ marginRight: '50px' }}>
                     连接URL
                   </Radio>
-                  <Radio value="param"> 连接参数 </Radio>
+                  <Radio value="1"> 连接参数 </Radio>
                 </Radio.Group>
               </Form.Item>
               {viewerForm}

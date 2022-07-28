@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props) {
-  const datasourceList = useContext(DatasourceContext)
+  const datasource = useContext(DatasourceContext)
   const dispatch = useContext(DatasourceDispatchContext)
 
   function addTable() {
@@ -43,14 +43,16 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
         </div>
       </div>
       <div className="mt-3">
-        {datasourceList.map((datasourceItem) => (
-          <DatasourceDBItem
-            key={datasourceItem.id}
-            datasourceItem={datasourceItem}
-            onClickItem={onClickItem}
-            Datasourcetype={Datasourcetype}
-          />
-        ))}
+        {datasource
+          .filter((item) => item.source_type == Datasourcetype)
+          .map((datasourceItem) => (
+            <DatasourceDBItem
+              key={datasourceItem.id}
+              datasourceItem={datasourceItem}
+              onClickItem={onClickItem}
+              Datasourcetype={Datasourcetype}
+            />
+          ))}
       </div>
     </>
   )

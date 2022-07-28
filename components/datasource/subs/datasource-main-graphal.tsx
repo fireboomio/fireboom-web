@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { ReactNode, useContext } from 'react'
+import { ReactNode, useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -37,33 +37,25 @@ interface DataType {
   reqType: string
   reqTypeInfo: string
 }
-interface PointSchema {
-  name: string
-  uid: string
-  status: string
-  url: string
-}
 
 const columns: ColumnsType<DataType> = [
   {
     title: '请求头',
-    dataIndex: 'reqHead',
-    key: 'reqHead',
+    dataIndex: 'key',
+    key: 'key',
     width: '27%',
   },
   {
     title: '类型',
-    dataIndex: 'reqType',
-    key: 'reqType',
-    render: (reqType) => (
-      <span>{reqType == 'value' ? '值' : reqType == 'client' ? '转发至客户端' : '环境变量'}</span>
-    ),
+    dataIndex: 'kind',
+    key: 'kind',
+    render: (kind) => <span>{kind == '0' ? '值' : kind == '1' ? '环境变量' : '转发至客户端'}</span>,
     width: '20%',
   },
   {
     title: '请求头信息',
-    dataIndex: 'reqHeadInfo',
-    key: 'reqHeadInfo',
+    dataIndex: 'val',
+    key: 'val',
     width: '40%',
   },
 ]
@@ -71,37 +63,52 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
+  const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
   const config = JSON.parse(content.config) as Config
+  console.log(config, 'config')
+
+  useEffect(() => {
+    form.resetFields()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, type])
 
   //表单提交成功回调
   const onFinish = async (values: Config) => {
-    console.log('Success:', values)
+    console.log('SuccessValues:', values)
     const newValues = { ...values }
-
-    if ((values.schema as UploadFile[])?.length > 0) {
-      await requests({
+    console.log('file',file)
+    if (file.uid) {
+      if (config.loadSchemaFromString) {
+        await requests({
+          method: 'delete',
+          url: '/file',
+          data: { id: config.loadSchemaFromString },
+        })
+      }
+      newValues.loadSchemaFromString = (await requests({
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         method: 'post',
-        url: '/dataSource/import',
+        url: '/file/upload',
         data: { file: file },
-      })
-      const upFile = (values.schema as UploadFile[])[0]
-      newValues.schema = {
-        name: upFile?.name,
-        uid: upFile?.uid,
-        status: 'done',
-        url: '',
-      } as unknown as ReactNode
+      })) as unknown as string
+    } else {
+      if (deleteFlag) {
+        await requests({
+          method: 'delete',
+          url: '/file',
+          data: { id: config.loadSchemaFromString },
+        })
+        newValues.loadSchemaFromString = undefined
+      } else newValues.loadSchemaFromString = config.loadSchemaFromString
     }
-
     await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+      dispatch({ type: 'fetched', data: res })
     })
     handleToggleDesigner('data', content.id)
   }
@@ -109,6 +116,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   //表单提交失败回调
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
+    console.log('123')
   }
 
   //文件上传过程钩子
@@ -129,15 +137,16 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 3) })
+          dispatch({ type: 'fetched', data: res })
         })
       })
     console.log('switch change')
   }
 
   //移除文件回调
-  const onRemoveFile = (file: UploadFile) => {
-    console.log(file, 'file')
+  const onRemoveFile = () => {
+    setDeleteFlag(true)
+    setFile({} as unknown as UploadFile)
   }
 
   if (!content) {
@@ -212,7 +221,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.GraphqlPort}
+                {config.url}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -223,15 +232,15 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                <IconFont type="icon-wenjian1" /> {(config.schema as unknown as PointSchema)?.name}
+                <IconFont type="icon-wenjian1" /> {config.loadSchemaFromString}
               </Descriptions.Item>
             </Descriptions>
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
           <Table
             columns={columns}
-            rowKey="reqHead"
-            dataSource={config.reqHeadAll as unknown as Array<DataType>}
+            rowKey="key"
+            dataSource={config.header as unknown as Array<DataType>}
             pagination={false}
             className="mb-10"
           />
@@ -266,7 +275,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     className="justify-start"
                   >
-                    {config.isInner ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
+                    {config.internal ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={
@@ -277,7 +286,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     className="justify-start"
                   >
-                    {config.defineFloat}
+                    {config.customFloatScalars}
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={
@@ -288,7 +297,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     className="justify-start"
                   >
-                    {config.defineInt}
+                    {config.customIntScalars}
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={
@@ -299,7 +308,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     className="justify-start"
                   >
-                    {config.exceptRename}
+                    {config.skipRenameRootFields}
                   </Descriptions.Item>
                 </Descriptions>
               </div>
@@ -352,12 +361,12 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               labelAlign="left"
               initialValues={{
                 nameSpace: config.nameSpace,
-                GraphqlPort: config.GraphqlPort,
-                isInner: config.isInner,
-                defineFloat: config.defineFloat,
-                defineInt: config.defineInt,
-                exceptRename: config.exceptRename,
-                reqHeadAll: config.reqHeadAll,
+                url: config.url,
+                internal: config.isInner,
+                customFloatScalars: config.defineFloat,
+                customIntScalars: config.defineInt,
+                skipRenameRootFields: config.exceptRename,
+                headers: config.headers || [{ kind: '0' }],
               }}
             >
               <Form.Item
@@ -384,7 +393,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 colon={false}
                 required
                 style={{ marginBottom: '20px' }}
-                name="GraphqlPort"
+                name="url"
               >
                 <Input placeholder="请输入..." />
               </Form.Item>
@@ -399,17 +408,26 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                   </div>
                 }
                 colon={false}
-                name="schema"
+                name="loadSchemaFromString"
                 required
                 valuePropName="fileList"
                 style={{ marginBottom: '48px' }}
                 getValueFromEvent={normFile}
               >
                 <Upload
-                  defaultFileList={config.schema ? [config.schema as unknown as UploadFile] : []}
+                  defaultFileList={
+                    (config.loadSchemaFromString as string)
+                      ? [
+                          {
+                            name: config.loadSchemaFromString as unknown as string,
+                            uid: config.loadSchemaFromString as unknown as string,
+                          },
+                        ]
+                      : []
+                  }
                   onRemove={onRemoveFile}
+                  maxCount={1}
                   beforeUpload={(file) => {
-                    console.log(file, 'file')
                     setFile(file)
                     return false
                   }}
@@ -427,7 +445,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                   sm: { span: 24 },
                 }}
               >
-                <Form.List name="reqHeadAll">
+                <Form.List name="headers">
                   {(fields, { add, remove }, { errors }) => (
                     <>
                       {fields.map((field, index) => (
@@ -435,25 +453,25 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                           <Form.Item
                             className="w-50"
                             wrapperCol={{ span: 24 }}
-                            name={[field.name, 'reqHead']}
+                            name={[field.name, 'key']}
                           >
                             <Input />
                           </Form.Item>
                           <Form.Item
                             className="w-36"
                             wrapperCol={{ span: 24 }}
-                            name={[field.name, 'reqType']}
+                            name={[field.name, 'kind']}
                           >
                             <Select>
-                              <Option value="value">值</Option>
-                              <Option value="client">转发自客户端</Option>
-                              <Option value="path">环境变量</Option>
+                              <Option value="0">值</Option>
+                              <Option value="1">环境变量</Option>
+                              <Option value="2">转发自客户端</Option>
                             </Select>
                           </Form.Item>
                           <Form.Item
                             className="w-126"
                             wrapperCol={{ span: 24 }}
-                            name={[field.name, 'reqHeadInfo']}
+                            name={[field.name, 'val']}
                           >
                             <Input placeholder="请输入..." />
                           </Form.Item>
@@ -500,7 +518,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     valuePropName="checked"
-                    name="isInner"
+                    name="internal"
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -513,7 +531,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
-                    name="defineFloat"
+                    name="customFloatScalars"
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -527,7 +545,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
-                    name="defineInt"
+                    name="customIntScalars"
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -542,7 +560,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     colon={false}
                     style={{ marginBottom: '20px' }}
-                    name="exceptRename"
+                    name="skipRenameRootFields"
                   >
                     <Input placeholder="请输入..." />
                   </Form.Item>
