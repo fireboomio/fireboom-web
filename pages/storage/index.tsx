@@ -34,9 +34,9 @@ export default function FileStorage() {
 
   const content = useMemo(() => fileList.find((b) => b.id === currId), [currId, fileList])
 
-  function handleClickItem(fileStorageResp: StorageResp) {
+  function handleClickItem(bucket: StorageResp) {
     setShowType('explorer')
-    setCurrId(fileStorageResp.id)
+    setCurrId(bucket.id)
   }
 
   function handleToggleDesigner(value: 'explorer' | 'editor' | 'viewer', id: number) {

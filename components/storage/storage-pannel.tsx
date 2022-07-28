@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
@@ -11,24 +9,24 @@ import styles from './storage-pannel.module.scss'
 import StoragePannelItem from './subs/storage-pannel-item'
 
 interface Props {
-  onClickItem: (fsItem: StorageResp) => void
+  onClickItem: (bucket: StorageResp) => void
   handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
 }
 
 export default function StoragePannel({ onClickItem, handleToggleDesigner }: Props) {
-  const FSList = useContext(StorageContext)
+  const bucketList = useContext(StorageContext)
   const dispatch = useContext(StorageDispatchContext)
 
-  function addTable() {
+  function addBucket() {
     const data = {
       config: '2',
-      create_time: '2022',
+      createTime: '2022',
       id: 1,
-      is_del: 2,
+      isDel: 2,
       name: '2',
       switch: 2,
-      update_time: '2023',
-    } as StorageResp
+      updateTime: '2023',
+    }
     dispatch({ type: 'added', data: data })
   }
 
@@ -46,13 +44,13 @@ export default function StoragePannel({ onClickItem, handleToggleDesigner }: Pro
             icon={<PlusOutlined />}
             shape="circle"
             size="small"
-            onClick={addTable}
+            onClick={addBucket}
           />
         </div>
       </div>
 
       <div className="mt-3">
-        {FSList.map((item) => (
+        {bucketList.map((item) => (
           <StoragePannelItem
             key={item.id}
             bucket={item}

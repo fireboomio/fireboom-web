@@ -1,12 +1,13 @@
 export interface StorageResp {
   config: string
-  create_time: string
+  createTime: string
   id: number
-  is_del: number
+  isDel: number
   name: string
   switch: number
-  update_time: string
+  updateTime: string
 }
+
 export interface StorageRequest {
   config: string
   create_time: string

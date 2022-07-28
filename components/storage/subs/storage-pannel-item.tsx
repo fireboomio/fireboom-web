@@ -137,9 +137,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
       key={bucket.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
-      onClick={() => {
-        onClickItem(bucket)
-      }}
+      onClick={() => onClickItem(bucket)}
     >
       {isEditing ? (
         <Input
