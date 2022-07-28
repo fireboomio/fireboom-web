@@ -1,7 +1,7 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
 import { useContext } from 'react'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/storage'
 import { FSToggleContext, FSDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 

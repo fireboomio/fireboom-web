@@ -1,6 +1,6 @@
 import { AppleOutlined } from '@ant-design/icons'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/storage'
 
 import FileStorageMainCheck from './subs/filestorage-main-check'
 import FileStorageMainContent from './subs/filestorage-main-content'

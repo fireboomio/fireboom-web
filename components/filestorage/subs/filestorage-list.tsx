@@ -3,7 +3,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
 import styles from './filestorage-common-main.module.scss'

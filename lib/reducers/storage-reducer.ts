@@ -1,4 +1,4 @@
-import type { FileStorageResp, FlieAction } from '@/interfaces/filestorage'
+import type { FileStorageResp, FlieAction } from '@/interfaces/storage'
 
 export default function filesReducer(fileList: FileStorageResp[], action: FlieAction) {
   switch (action.type) {

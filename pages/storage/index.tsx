@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'

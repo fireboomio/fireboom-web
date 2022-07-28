@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { FileStorageResp, FlieAction } from '@/interfaces/filestorage'
+import type { FileStorageResp, FlieAction } from '@/interfaces/storage'
 
 interface storageCurrFileContextT {
   currFSId: number | null | undefined

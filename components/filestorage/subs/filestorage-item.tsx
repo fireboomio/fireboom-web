@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { FileStorageResp } from '@/interfaces/storage'
 import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
