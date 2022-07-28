@@ -64,6 +64,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
+  const [isShowUpSchema, setIsShowUpSchema] = useImmer(true)
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
@@ -79,7 +80,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const onFinish = async (values: Config) => {
     console.log('SuccessValues:', values)
     const newValues = { ...values }
-    console.log('file',file)
     if (file.uid) {
       if (config.loadSchemaFromString) {
         await requests({
@@ -240,7 +240,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
           <Table
             columns={columns}
             rowKey="key"
-            dataSource={config.header as unknown as Array<DataType>}
+            dataSource={config.headers as unknown as Array<DataType>}
             pagination={false}
             className="mb-10"
           />
@@ -367,6 +367,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 customIntScalars: config.defineInt,
                 skipRenameRootFields: config.exceptRename,
                 headers: config.headers || [{ kind: '0' }],
+                agreement: isShowUpSchema,
               }}
             >
               <Form.Item
@@ -398,45 +399,56 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
               <Form.Item name="agreement" valuePropName="checked">
-                <Checkbox>通过发送指令,自动内省Schema</Checkbox>
-              </Form.Item>
-              <Form.Item
-                label={
-                  <div>
-                    <span className={styles['label-style']}>指定Schema:</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
-                }
-                colon={false}
-                name="loadSchemaFromString"
-                required
-                valuePropName="fileList"
-                style={{ marginBottom: '48px' }}
-                getValueFromEvent={normFile}
-              >
-                <Upload
-                  defaultFileList={
-                    (config.loadSchemaFromString as string)
-                      ? [
-                          {
-                            name: config.loadSchemaFromString as unknown as string,
-                            uid: config.loadSchemaFromString as unknown as string,
-                          },
-                        ]
-                      : []
-                  }
-                  onRemove={onRemoveFile}
-                  maxCount={1}
-                  beforeUpload={(file) => {
-                    setFile(file)
-                    return false
+                <Checkbox
+                  onChange={() => {
+                    setIsShowUpSchema(!isShowUpSchema)
                   }}
                 >
-                  <Button icon={<PlusOutlined />} className="w-147">
-                    添加文件
-                  </Button>
-                </Upload>
+                  通过发送指令,自动内省Schema
+                </Checkbox>
               </Form.Item>
+              {isShowUpSchema ? (
+                <Form.Item
+                  label={
+                    <div>
+                      <span className={styles['label-style']}>指定Schema:</span>
+                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    </div>
+                  }
+                  colon={false}
+                  name="loadSchemaFromString"
+                  required
+                  valuePropName="fileList"
+                  style={{ marginBottom: '48px' }}
+                  getValueFromEvent={normFile}
+                >
+                  <Upload
+                    defaultFileList={
+                      (config.loadSchemaFromString as string)
+                        ? [
+                            {
+                              name: config.loadSchemaFromString as unknown as string,
+                              uid: config.loadSchemaFromString as unknown as string,
+                            },
+                          ]
+                        : []
+                    }
+                    onRemove={onRemoveFile}
+                    maxCount={1}
+                    beforeUpload={(file) => {
+                      setFile(file)
+                      return false
+                    }}
+                  >
+                    <Button icon={<PlusOutlined />} className="w-147">
+                      添加文件
+                    </Button>
+                  </Upload>
+                </Form.Item>
+              ) : (
+                ''
+              )}
+
               <h2 className="ml-3 mb-3">请求头:</h2>
 
               <Form.Item

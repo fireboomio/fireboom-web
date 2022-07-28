@@ -113,7 +113,7 @@ const initForm = (
   <Form.Item label="连接URL">
     <Input.Group compact>
       <Form.Item
-        name={['databaseUrl', 'typeName']}
+        name={['databaseUrl', 'kind']}
         noStyle
         rules={[{ required: true, message: 'typeName is required' }]}
       >
@@ -123,7 +123,7 @@ const initForm = (
         </Select>
       </Form.Item>
       <Form.Item
-        name={['databaseUrl', 'connectURL']}
+        name={['databaseUrl', 'val']}
         noStyle
         rules={[
           { required: true, message: '连接名不能为空' },
@@ -402,16 +402,15 @@ export default function DatasourceDBMain({ content, type }: Props) {
               ) : (
                 <>
                   <Descriptions.Item label="环境变量">
-                    {
-                      (config.databaseUrl as unknown as { typeName: string; connectURL: string })
-                        ?.typeName
-                    }
+                    {(config.databaseUrl as unknown as { kind: string; val: string })?.kind == '0'
+                      ? '值'
+                      : (config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
+                        '1'
+                      ? '环境变量'
+                      : ''}
                   </Descriptions.Item>
                   <Descriptions.Item label="连接URL">
-                    {
-                      (config.databaseUrl as unknown as { typeName: string; connectURL: string })
-                        ?.connectURL
-                    }
+                    {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
                   </Descriptions.Item>
                 </>
               )}
@@ -475,12 +474,9 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 userName: config.userName,
                 password: config.password,
                 databaseUrl: {
-                  typeName:
-                    (config.databaseUrl as unknown as { typeName: string; connectURL: string })
-                      ?.typeName || '0',
-                  connectURL: (
-                    config.databaseUrl as unknown as { typeName: string; connectURL: string }
-                  )?.connectURL,
+                  kind:
+                    (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
+                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val,
                 },
               }}
             >
