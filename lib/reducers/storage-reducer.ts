@@ -1,6 +1,6 @@
-import type { FileStorageResp, FlieAction } from '@/interfaces/storage'
+import type { StorageResp, StorageAction } from '@/interfaces/storage'
 
-export default function filesReducer(fileList: FileStorageResp[], action: FlieAction) {
+export default function filesReducer(fileList: StorageResp[], action: StorageAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data

@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { StoragePannel, StorageContainer } from '@/components/storage'
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
@@ -23,13 +23,13 @@ export default function FileStorage() {
 
   useEffect(() => {
     void requests
-      .get<unknown, FileStorageResp[]>('/storageBucket')
+      .get<unknown, StorageResp[]>('/storageBucket')
       .then((data) => dispatch({ type: 'fetched', data }))
   }, [])
 
   const content = useMemo(() => fileList.find((b) => b.id === currFSId), [currFSId, fileList])
 
-  function handleClickItem(fileStorageResp: FileStorageResp) {
+  function handleClickItem(fileStorageResp: StorageResp) {
     setShowType('data')
     setCurrFSId(fileStorageResp.id)
   }

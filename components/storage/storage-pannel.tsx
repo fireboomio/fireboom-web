@@ -4,14 +4,14 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
 import styles from './storage-pannel.module.scss'
 import StoragePannelItem from './subs/storage-pannel-item'
 
 interface Props {
-  onClickItem: (fsItem: FileStorageResp) => void
+  onClickItem: (fsItem: StorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
@@ -28,7 +28,7 @@ export default function StoragePannel({ onClickItem, handleToggleDesigner }: Pro
       name: '2',
       switch: 2,
       update_time: '2023',
-    } as FileStorageResp
+    } as StorageResp
     dispatch({ type: 'added', data: data })
   }
 

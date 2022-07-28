@@ -1,14 +1,14 @@
 import { Button, Form, Input, Switch, Divider } from 'antd'
 import { useContext } from 'react'
 
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 import { FSToggleContext, FSDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './storage-main.module.scss'
 
 interface Props {
-  content: FileStorageResp
+  content: StorageResp
 }
 
 export default function StorageEditor({ content }: Props) {
@@ -19,7 +19,7 @@ export default function StorageEditor({ content }: Props) {
     console.log('Success:', values)
     console.log(JSON.stringify(values))
     await requests.put('/storageBucket ', values)
-    const storageBucket = await requests.get<unknown, Array<FileStorageResp>>('/storageBucket ')
+    const storageBucket = await requests.get<unknown, Array<StorageResp>>('/storageBucket ')
     console.log(storageBucket)
     dispatch({
       type: 'fetched',

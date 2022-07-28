@@ -3,13 +3,13 @@ import { Button, Switch, Descriptions, Divider } from 'antd'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 import { FSToggleContext } from '@/lib/context'
 
 import styles from './storage-main.module.scss'
 
 interface Props {
-  content?: FileStorageResp
+  content?: StorageResp
 }
 interface Config {
   [key: string]: ReactNode

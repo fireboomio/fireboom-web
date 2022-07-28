@@ -11,16 +11,11 @@ import {
   DatasourceToggleContext,
 } from './datasource-context'
 import {
-  FSContext,
-  FSDispatchContext,
-  FSCurrFileContext,
-  FSToggleContext,
-} from './filestorage-context'
-import {
   ModelingContext,
   ModelingDispatchContext,
   ModelingCurrEntityContext,
 } from './modeling-context'
+import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from './storage-context'
 export {
   ModelingContext,
   ModelingDispatchContext,

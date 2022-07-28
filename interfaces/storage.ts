@@ -1,4 +1,4 @@
-export interface FileStorageResp {
+export interface StorageResp {
   config: string
   create_time: string
   id: number
@@ -7,7 +7,7 @@ export interface FileStorageResp {
   switch: number
   update_time: string
 }
-export interface FileStorageRequest {
+export interface StorageRequest {
   config: string
   create_time: string
   is_del: number
@@ -16,14 +16,14 @@ export interface FileStorageRequest {
   update_time: string
 }
 
-export type FlieAction = FilesingleAction | FilesListAction
+export type StorageAction = StorageSingleAction | StorageListAction
 
-interface FilesingleAction {
+interface StorageSingleAction {
   type: 'selected' | 'added' | 'deleted' | 'changed'
-  data: FileStorageResp
+  data: StorageResp
 }
 
-interface FilesListAction {
+interface StorageListAction {
   type: 'fetched'
-  data: FileStorageResp[]
+  data: StorageResp[]
 }

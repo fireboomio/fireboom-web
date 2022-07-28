@@ -1,13 +1,13 @@
 import { AppleOutlined } from '@ant-design/icons'
 
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 
 import StorageEditor from './subs/storage-editor'
 import StorageExplorer from './subs/storage-explorer'
 import StorageViewer from './subs/storage-viewer'
 
 interface Props {
-  content?: FileStorageResp
+  content?: StorageResp
   showType: string
 }
 
@@ -31,7 +31,7 @@ export default function StorageContainer({ content, showType }: Props) {
       ) : showType === 'setCheck' ? (
         <StorageViewer content={content} />
       ) : showType === 'setEdit' ? (
-        <StorageEditor content={content as FileStorageResp} />
+        <StorageEditor content={content as StorageResp} />
       ) : (
         ''
       )}

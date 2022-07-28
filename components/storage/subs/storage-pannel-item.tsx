@@ -4,15 +4,15 @@ import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/storage'
+import type { StorageResp } from '@/interfaces/storage'
 import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from '../storage-pannel.module.scss'
 
 interface Props {
-  fsItem: FileStorageResp
-  onClickItem: (fsItem: FileStorageResp) => void
+  fsItem: StorageResp
+  onClickItem: (fsItem: StorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
@@ -46,7 +46,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
     setIsEditing(false)
   }
 
-  async function handleItemDelete(item: FileStorageResp) {
+  async function handleItemDelete(item: StorageResp) {
     const result = await requests.delete(`/storageBucket /${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (result.data.code == 200) {
