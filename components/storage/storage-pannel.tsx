@@ -5,7 +5,7 @@ import { Button } from 'antd'
 import { useContext } from 'react'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { FSContext, FSDispatchContext } from '@/lib/context'
+import { StorageContext, StorageDispatchContext } from '@/lib/context'
 
 import styles from './storage-pannel.module.scss'
 import StoragePannelItem from './subs/storage-pannel-item'
@@ -16,8 +16,8 @@ interface Props {
 }
 
 export default function StoragePannel({ onClickItem, handleToggleDesigner }: Props) {
-  const FSList = useContext(FSContext)
-  const dispatch = useContext(FSDispatchContext)
+  const FSList = useContext(StorageContext)
+  const dispatch = useContext(StorageDispatchContext)
 
   function addTable() {
     const data = {

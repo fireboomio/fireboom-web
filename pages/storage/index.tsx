@@ -5,7 +5,12 @@ import { useImmer } from 'use-immer'
 
 import { StoragePannel, StorageContainer } from '@/components/storage'
 import type { StorageResp } from '@/interfaces/storage'
-import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
+import {
+  StorageContext,
+  StorageDispatchContext,
+  StorageCurrFileContext,
+  FSToggleContext,
+} from '@/lib/context'
 import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
 
@@ -13,11 +18,11 @@ import styles from './index.module.scss'
 
 export default function FileStorage() {
   const [fileList, dispatch] = useReducer(storageReducer, [])
-  const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
+  const [currId, setCurrId] = useImmer(null as number | null | undefined)
   const [showType, setShowType] = useImmer<'explorer' | 'viewer' | 'editor'>('explorer')
 
   useLayoutEffect(() => {
-    setCurrFSId(fileList.at(0)?.id)
+    setCurrId(fileList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileList])
 
@@ -27,22 +32,22 @@ export default function FileStorage() {
       .then((data) => dispatch({ type: 'fetched', data }))
   }, [])
 
-  const content = useMemo(() => fileList.find((b) => b.id === currFSId), [currFSId, fileList])
+  const content = useMemo(() => fileList.find((b) => b.id === currId), [currId, fileList])
 
   function handleClickItem(fileStorageResp: StorageResp) {
     setShowType('explorer')
-    setCurrFSId(fileStorageResp.id)
+    setCurrId(fileStorageResp.id)
   }
 
   function handleToggleDesigner(value: 'explorer' | 'editor' | 'viewer', id: number) {
     setShowType(value)
-    setCurrFSId(id)
+    setCurrId(id)
   }
 
   return (
-    <FSContext.Provider value={fileList}>
-      <FSDispatchContext.Provider value={dispatch}>
-        <FSCurrFileContext.Provider value={{ currFSId, setCurrFSId }}>
+    <StorageContext.Provider value={fileList}>
+      <StorageDispatchContext.Provider value={dispatch}>
+        <StorageCurrFileContext.Provider value={{ currId, setCurrId }}>
           <FSToggleContext.Provider value={{ handleToggleDesigner }}>
             <Head>
               <title>FireBoom - 文件存储</title>
@@ -60,8 +65,8 @@ export default function FileStorage() {
               </Col>
             </Row>
           </FSToggleContext.Provider>
-        </FSCurrFileContext.Provider>
-      </FSDispatchContext.Provider>
-    </FSContext.Provider>
+        </StorageCurrFileContext.Provider>
+      </StorageDispatchContext.Provider>
+    </StorageContext.Provider>
   )
 }

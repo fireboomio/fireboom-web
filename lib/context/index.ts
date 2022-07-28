@@ -15,7 +15,12 @@ import {
   ModelingDispatchContext,
   ModelingCurrEntityContext,
 } from './modeling-context'
-import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from './storage-context'
+import {
+  StorageContext,
+  StorageDispatchContext,
+  StorageCurrFileContext,
+  FSToggleContext,
+} from './storage-context'
 export {
   ModelingContext,
   ModelingDispatchContext,
@@ -24,9 +29,9 @@ export {
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
   DatasourceToggleContext,
-  FSContext,
-  FSDispatchContext,
-  FSCurrFileContext,
+  StorageContext,
+  StorageDispatchContext,
+  StorageCurrFileContext,
   FSToggleContext,
   AuthContext,
   AuthDispatchContext,

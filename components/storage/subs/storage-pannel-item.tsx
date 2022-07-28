@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
+import { StorageDispatchContext, StorageCurrFileContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from '../storage-pannel.module.scss'
@@ -17,11 +17,11 @@ interface Props {
 }
 
 export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
-  const dispatch = useContext(FSDispatchContext)
+  const dispatch = useContext(StorageDispatchContext)
   const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
   const [visible, setVisible] = useImmer(false)
-  const { currFSId } = useContext(FSCurrFileContext)
-  const [isHovering, setIsHovering] = useImmer(fsItem.id === currFSId)
+  const { currId } = useContext(StorageCurrFileContext)
+  const [isHovering, setIsHovering] = useImmer(fsItem.id === currId)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2' || e.key === '3') {
@@ -132,7 +132,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
   return (
     <div
       className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer hover:bg-[#F8F8F9]"
-      ${fsItem.id === currFSId ? 'bg-[#F8F8F9]' : ''}`}
+      ${fsItem.id === currId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={fsItem.name}
       onMouseEnter={() => setIsHovering(true)}

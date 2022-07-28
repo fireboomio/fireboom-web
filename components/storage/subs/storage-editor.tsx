@@ -2,7 +2,7 @@ import { Button, Form, Input, Switch, Divider } from 'antd'
 import { useContext } from 'react'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { FSToggleContext, FSDispatchContext } from '@/lib/context'
+import { FSToggleContext, StorageDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './storage-main.module.scss'
@@ -13,7 +13,7 @@ interface Props {
 
 export default function StorageEditor({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
-  const dispatch = useContext(FSDispatchContext)
+  const dispatch = useContext(StorageDispatchContext)
 
   const [form] = Form.useForm()
 
