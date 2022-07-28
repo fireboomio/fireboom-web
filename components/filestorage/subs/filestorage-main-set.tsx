@@ -5,7 +5,7 @@ import type { FileStorageResp } from '@/interfaces/storage'
 import { FSToggleContext, FSDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './filestorage-common-main.module.scss'
+import styles from './storage-main.module.scss'
 
 interface Props {
   content: FileStorageResp

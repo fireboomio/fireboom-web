@@ -24,7 +24,7 @@ import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/storage'
 
-import styles from './filestorage-common-main.module.scss'
+import styles from './storage-main.module.scss'
 
 interface Props {
   content?: FileStorageResp
