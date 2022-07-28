@@ -11,17 +11,17 @@ import requests from '@/lib/fetchers'
 import styles from '../storage-pannel.module.scss'
 
 interface Props {
-  fsItem: StorageResp
-  onClickItem: (fsItem: StorageResp) => void
+  bucket: StorageResp
+  onClickItem: (bucket: StorageResp) => void
   handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
 }
 
-export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
+export default function StoragePannelItem({ bucket, onClickItem, handleToggleDesigner }: Props) {
   const dispatch = useContext(StorageDispatchContext)
-  const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
+  const [isEditing, setIsEditing] = useImmer(bucket.name == '')
   const [visible, setVisible] = useImmer(false)
   const { currId } = useContext(StorageCurrFileContext)
-  const [isHovering, setIsHovering] = useImmer(fsItem.id === currId)
+  const [isHovering, setIsHovering] = useImmer(bucket.id === currId)
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2' || e.key === '3') {
@@ -31,16 +31,16 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
 
   async function handleItemEdit(value: string) {
     if (value === '') {
-      dispatch({ type: 'deleted', data: fsItem })
+      dispatch({ type: 'deleted', data: bucket })
     } else {
-      if (fsItem.id !== 0) {
-        await requests.put('/storageBucket ', { ...fsItem, name: value })
-        dispatch({ type: 'changed', data: { ...fsItem, name: value } })
+      if (bucket.id !== 0) {
+        await requests.put('/storageBucket ', { ...bucket, name: value })
+        dispatch({ type: 'changed', data: { ...bucket, name: value } })
       } else {
-        const req = { ...fsItem, name: value }
+        const req = { ...bucket, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/storageBucket ', req)
-        dispatch({ type: 'added', data: { ...fsItem, name: value } })
+        dispatch({ type: 'added', data: { ...bucket, name: value } })
       }
     }
     setIsEditing(false)
@@ -84,7 +84,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner('viewer', fsItem.id)
+                handleToggleDesigner('viewer', bucket.id)
               }}
             >
               <AppleOutlined />
@@ -97,7 +97,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           label: (
             <div
               onClick={() => {
-                handleToggleDesigner('editor', fsItem.id)
+                handleToggleDesigner('editor', bucket.id)
               }}
             >
               <AppleOutlined />
@@ -111,7 +111,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
             <Popconfirm
               placement="right"
               title="确认删除该文件吗？"
-              onConfirm={() => void handleItemDelete(fsItem)}
+              onConfirm={() => void handleItemDelete(bucket)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -132,13 +132,13 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
   return (
     <div
       className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer hover:bg-[#F8F8F9]"
-      ${fsItem.id === currId ? 'bg-[#F8F8F9]' : ''}`}
+      ${bucket.id === currId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
-      key={fsItem.name}
+      key={bucket.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onClick={() => {
-        onClickItem(fsItem)
+        onClickItem(bucket)
       }}
     >
       {isEditing ? (
@@ -147,7 +147,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           // @ts-ignore
           onPressEnter={(e) => void handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
-          defaultValue={fsItem.name}
+          defaultValue={bucket.name}
           autoFocus
           placeholder="请输入外部数据源名"
         />
@@ -158,7 +158,7 @@ export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDes
           }}
           className="text-sm font-normal leading-4"
         >
-          {fsItem.name}
+          {bucket.name}
         </div>
       )}
 

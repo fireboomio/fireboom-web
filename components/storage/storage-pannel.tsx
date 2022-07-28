@@ -52,10 +52,10 @@ export default function StoragePannel({ onClickItem, handleToggleDesigner }: Pro
       </div>
 
       <div className="mt-3">
-        {FSList.map((fsItem) => (
+        {FSList.map((item) => (
           <StoragePannelItem
-            key={fsItem.id}
-            fsItem={fsItem}
+            key={item.id}
+            bucket={item}
             onClickItem={onClickItem}
             handleToggleDesigner={handleToggleDesigner}
           />
