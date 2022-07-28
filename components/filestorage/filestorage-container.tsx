@@ -9,7 +9,7 @@ import FileStorageMainContent from './subs/filestorage-main-content'
 import FileStorageMainSet from './subs/filestorage-main-set'
 
 interface Props {
-  content: FileStorageResp
+  content: FileStorageResp | undefined
   showType: string
 }
 
