@@ -2,18 +2,12 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import type { StorageResp } from '@/interfaces/storage'
 import { StorageContext, StorageDispatchContext } from '@/lib/context'
 
 import styles from './storage-pannel.module.scss'
 import StoragePannelItem from './subs/storage-pannel-item'
 
-interface Props {
-  onClickItem: (bucket: StorageResp) => void
-  handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
-}
-
-export default function StoragePannel({ onClickItem, handleToggleDesigner }: Props) {
+export default function StoragePannel() {
   const bucketList = useContext(StorageContext)
   const dispatch = useContext(StorageDispatchContext)
 
@@ -51,12 +45,7 @@ export default function StoragePannel({ onClickItem, handleToggleDesigner }: Pro
 
       <div className="mt-3">
         {bucketList.map((item) => (
-          <StoragePannelItem
-            key={item.id}
-            bucket={item}
-            onClickItem={onClickItem}
-            handleToggleDesigner={handleToggleDesigner}
-          />
+          <StoragePannelItem key={item.id} bucket={item} />
         ))}
       </div>
     </>

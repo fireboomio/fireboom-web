@@ -9,7 +9,7 @@ import {
   StorageContext,
   StorageDispatchContext,
   StorageCurrFileContext,
-  FSToggleContext,
+  StorageSwitchContext,
 } from '@/lib/context'
 import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
@@ -34,37 +34,29 @@ export default function FileStorage() {
 
   const content = useMemo(() => fileList.find((b) => b.id === currId), [currId, fileList])
 
-  function handleClickItem(bucket: StorageResp) {
-    setShowType('explorer')
-    setCurrId(bucket.id)
-  }
-
-  function handleToggleDesigner(value: 'explorer' | 'editor' | 'viewer', id: number) {
-    setShowType(value)
+  function handleSwitch(id: number, value: 'explorer' | 'editor' | 'viewer') {
     setCurrId(id)
+    setShowType(value)
   }
 
   return (
     <StorageContext.Provider value={fileList}>
       <StorageDispatchContext.Provider value={dispatch}>
         <StorageCurrFileContext.Provider value={{ currId, setCurrId }}>
-          <FSToggleContext.Provider value={{ handleToggleDesigner }}>
+          <StorageSwitchContext.Provider value={{ handleSwitch }}>
             <Head>
               <title>FireBoom - 文件存储</title>
             </Head>
 
             <Row className="h-screen">
               <Col span={5} className={styles['col-left']}>
-                <StoragePannel
-                  onClickItem={handleClickItem}
-                  handleToggleDesigner={handleToggleDesigner}
-                />
+                <StoragePannel />
               </Col>
               <Col span={19}>
                 <StorageContainer showType={showType} content={content} />
               </Col>
             </Row>
-          </FSToggleContext.Provider>
+          </StorageSwitchContext.Provider>
         </StorageCurrFileContext.Provider>
       </StorageDispatchContext.Provider>
     </StorageContext.Provider>

@@ -2,7 +2,7 @@ import { Button, Form, Input, Switch, Divider } from 'antd'
 import { useContext } from 'react'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { FSToggleContext, StorageDispatchContext } from '@/lib/context'
+import { StorageSwitchContext, StorageDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './storage-main.module.scss'
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function StorageEditor({ content }: Props) {
-  const { handleToggleDesigner } = useContext(FSToggleContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
   const dispatch = useContext(StorageDispatchContext)
 
   const [form] = Form.useForm()
@@ -27,7 +27,7 @@ export default function StorageEditor({ content }: Props) {
       type: 'fetched',
       data: storageBucket,
     })
-    handleToggleDesigner('viewer', content.id)
+    handleSwitch(content.id, 'viewer')
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -58,7 +58,7 @@ export default function StorageEditor({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
-              handleToggleDesigner('viewer', content.id)
+              handleSwitch(content.id, 'viewer')
             }}
           >
             <span>保存</span>
@@ -72,9 +72,7 @@ export default function StorageEditor({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={(values) => {
-            void onFinish(values as object)
-          }}
+          onFinish={(values) => void onFinish(values as object)}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"

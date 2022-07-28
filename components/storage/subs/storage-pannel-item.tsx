@@ -6,22 +6,21 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
-import { StorageDispatchContext, StorageCurrFileContext } from '@/lib/context'
+import { StorageDispatchContext, StorageCurrFileContext, StorageSwitchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from '../storage-pannel.module.scss'
 
 interface Props {
   bucket: StorageResp
-  onClickItem: (bucket: StorageResp) => void
-  handleToggleDesigner: (value: 'editor' | 'viewer', id: number) => void
 }
 
-export default function StoragePannelItem({ bucket, onClickItem, handleToggleDesigner }: Props) {
+export default function StoragePannelItem({ bucket }: Props) {
   const dispatch = useContext(StorageDispatchContext)
   const [isEditing, setIsEditing] = useImmer(bucket.name == '')
   const [visible, setVisible] = useImmer(false)
   const { currId } = useContext(StorageCurrFileContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
   const [isHovering, setIsHovering] = useImmer(bucket.id === currId)
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
@@ -80,7 +79,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
         {
           key: '1',
           label: (
-            <div onClick={() => handleToggleDesigner('viewer', bucket.id)}>
+            <div onClick={() => handleSwitch(bucket.id, 'viewer')}>
               <IconFont type="icon-chakan" />
               <span className="ml-1.5">查看</span>
             </div>
@@ -89,7 +88,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
         {
           key: '2',
           label: (
-            <div onClick={() => handleToggleDesigner('editor', bucket.id)}>
+            <div onClick={() => handleSwitch(bucket.id, 'editor')}>
               <IconFont type="icon-bianji-da" />
               <span className="ml-1.5">配置</span>
             </div>
@@ -127,7 +126,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
       key={bucket.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
-      onClick={() => onClickItem(bucket)}
+      onClick={() => handleSwitch(bucket.id, 'explorer')}
     >
       {isEditing ? (
         <Input

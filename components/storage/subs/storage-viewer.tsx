@@ -4,7 +4,7 @@ import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { FSToggleContext } from '@/lib/context'
+import { StorageSwitchContext } from '@/lib/context'
 
 import styles from './storage-main.module.scss'
 
@@ -17,7 +17,7 @@ interface Config {
 }
 
 export default function StorageViewer({ content }: Props) {
-  const { handleToggleDesigner } = useContext(FSToggleContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
   const connectSwitchOnChange = () => {
@@ -48,9 +48,7 @@ export default function StorageViewer({ content }: Props) {
           <Divider type="vertical" />
           <Button
             className={`${styles['save-btn']}  ml-4`}
-            onClick={() => {
-              handleToggleDesigner('editor', content.id)
-            }}
+            onClick={() => handleSwitch(content.id, 'editor')}
           >
             <span>编辑</span>
           </Button>

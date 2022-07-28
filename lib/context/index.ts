@@ -19,8 +19,9 @@ import {
   StorageContext,
   StorageDispatchContext,
   StorageCurrFileContext,
-  FSToggleContext,
+  StorageSwitchContext,
 } from './storage-context'
+
 export {
   ModelingContext,
   ModelingDispatchContext,
@@ -32,7 +33,7 @@ export {
   StorageContext,
   StorageDispatchContext,
   StorageCurrFileContext,
-  FSToggleContext,
+  StorageSwitchContext,
   AuthContext,
   AuthDispatchContext,
   AuthCurrContext,

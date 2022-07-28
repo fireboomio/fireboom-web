@@ -1,5 +1,6 @@
-import { AppleOutlined } from '@ant-design/icons'
+import { CaretRightOutlined } from '@ant-design/icons'
 
+import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
 
 import StorageEditor from './subs/storage-editor'
@@ -12,19 +13,19 @@ interface Props {
 }
 
 export default function StorageContainer({ content, showType }: Props) {
-  const handleIconClick = () => {
-    console.log('aaa')
-  }
-
   return (
     <div className="pl-6 pr-10 mt-6">
       <div className="flex justify-start items-center mb-5 ">
         <span className="text-lg flex-grow font-bold">
-          存储{showType == 'editor' ? '' : ' / 存储配置'}
+          <span className="font-bold text-18px">存储</span>
+          <CaretRightOutlined />
+          {showType === 'editor' ? '存储配置' : ''}
         </span>
-        <AppleOutlined className="text-base" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
-        <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
+        <div className="space-x-4">
+          <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
+          <IconFont type="icon-wenjian1" style={{ fontSize: '18px' }} />
+          <IconFont type="icon-bangzhu" style={{ fontSize: '18px' }} />
+        </div>
       </div>
       {showType === 'explorer' ? (
         <StorageExplorer content={content} />

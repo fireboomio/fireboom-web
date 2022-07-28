@@ -8,11 +8,11 @@ interface StorageCurrFileContextT {
   setCurrId: useImmer.Updater<number | null | undefined>
 }
 
-interface FSToggleContext {
-  handleToggleDesigner: (value: 'explorer' | 'editor' | 'viewer', id: number) => void
+interface StorageSwitchContextT {
+  handleSwitch: (id: number, value: 'explorer' | 'editor' | 'viewer') => void
 }
 
 export const StorageContext = createContext<StorageResp[]>([])
 export const StorageDispatchContext = createContext({} as Dispatch<StorageAction>)
 export const StorageCurrFileContext = createContext({} as StorageCurrFileContextT)
-export const FSToggleContext = createContext({} as FSToggleContext)
+export const StorageSwitchContext = createContext({} as StorageSwitchContextT)
