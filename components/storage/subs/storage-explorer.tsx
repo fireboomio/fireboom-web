@@ -35,7 +35,7 @@ interface Option {
   label: string
   children?: Option[]
 }
-export default function StorageMainCheck({ content }: Props) {
+export default function StorageExplorer({ content }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [isArrowUP, setIsArrowUP] = useImmer(false)

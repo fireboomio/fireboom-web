@@ -8,7 +8,7 @@ import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
 import styles from './storage-pannel.module.scss'
-import StorageItem from './subs/storage-item'
+import StoragePannelItem from './subs/storage-pannel-item'
 
 interface Props {
   onClickItem: (fsItem: FileStorageResp) => void
@@ -53,7 +53,7 @@ export default function StoragePannel({ onClickItem, handleToggleDesigner }: Pro
 
       <div className="mt-3">
         {FSList.map((fsItem) => (
-          <StorageItem
+          <StoragePannelItem
             key={fsItem.id}
             fsItem={fsItem}
             onClickItem={onClickItem}

@@ -11,7 +11,7 @@ interface Props {
   content: FileStorageResp
 }
 
-export default function StorageMainSet({ content }: Props) {
+export default function StorageEditor({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
   const dispatch = useContext(FSDispatchContext)
   const [form] = Form.useForm()

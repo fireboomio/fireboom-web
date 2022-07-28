@@ -14,7 +14,7 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
-export default function FileStorageMainCheck({ content }: Props) {
+export default function StorageViewer({ content }: Props) {
   const { handleToggleDesigner } = useContext(FSToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const connectSwitchOnChange = () => {

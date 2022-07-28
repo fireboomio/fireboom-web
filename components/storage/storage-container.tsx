@@ -2,9 +2,9 @@ import { AppleOutlined } from '@ant-design/icons'
 
 import type { FileStorageResp } from '@/interfaces/storage'
 
-import FileStorageMainCheck from './subs/filestorage-main-check'
-import FileStorageMainContent from './subs/filestorage-main-content'
-import FileStorageMainSet from './subs/filestorage-main-set'
+import StorageEditor from './subs/storage-editor'
+import StorageExplorer from './subs/storage-explorer'
+import StorageViewer from './subs/storage-viewer'
 
 interface Props {
   content?: FileStorageResp
@@ -27,11 +27,11 @@ export default function StorageContainer({ content, showType }: Props) {
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
       </div>
       {showType === 'data' ? (
-        <FileStorageMainContent content={content} />
+        <StorageExplorer content={content} />
       ) : showType === 'setCheck' ? (
-        <FileStorageMainCheck content={content} />
+        <StorageViewer content={content} />
       ) : showType === 'setEdit' ? (
-        <FileStorageMainSet content={content as FileStorageResp} />
+        <StorageEditor content={content as FileStorageResp} />
       ) : (
         ''
       )}

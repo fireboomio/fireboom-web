@@ -16,7 +16,7 @@ interface Props {
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
-export default function StorageItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
+export default function StoragePannelItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
   const dispatch = useContext(FSDispatchContext)
   const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
   const [visible, setVisible] = useImmer(false)
