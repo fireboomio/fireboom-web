@@ -129,6 +129,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
       .catch((err: Error) => {
         throw err
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path])
 
   useEffect(() => {

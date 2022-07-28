@@ -1,4 +1,9 @@
-import { ExclamationCircleOutlined, AppleOutlined } from '@ant-design/icons'
+import {
+  ExclamationCircleOutlined,
+  CaretRightOutlined,
+  MenuOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
 import { Switch } from 'antd'
 import type { FC } from 'react'
@@ -14,22 +19,10 @@ type HookProps = {
 }
 
 const tabs = [
-  {
-    title: 'preResolve',
-    key: '0',
-  },
-  {
-    title: 'postResolve',
-    key: '1',
-  },
-  {
-    title: 'customResolve',
-    key: '2',
-  },
-  {
-    title: 'mutatingPostResolve',
-    key: '3',
-  },
+  { key: '0', title: 'preResolve' },
+  { key: '1', title: 'postResolve' },
+  { key: '2', title: 'customResolve' },
+  { key: '3', title: 'mutatingPostResolve' },
 ]
 
 const Hook: FC<HookProps> = () => {
@@ -44,19 +37,18 @@ const Hook: FC<HookProps> = () => {
           </div>
           <div className="space-x-4 flex items-center">
             <div className="text-[#E92E5E]">
-              <AppleOutlined />
+              <CaretRightOutlined />
               <span className="leading-20px ml-1">测试</span>
             </div>
             <div className="text-[#E92E5E]">
-              <AppleOutlined />
+              <PlusCircleOutlined />
               <span className="leading-20px ml-1">添加</span>
             </div>
             <div className="text-[#E92E5E]">
-              <AppleOutlined />
+              <MenuOutlined />
               <span className="leading-20px ml-1">管理</span>
             </div>
             <div className="text-[#E92E5E]">
-              <AppleOutlined />
               <span className="leading-20px ml-1">选择</span>
             </div>
             <Switch defaultChecked />
