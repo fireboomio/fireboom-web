@@ -103,6 +103,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
   const [reqDataSource, setReqDataSource] = useState<ParameterT[]>([])
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [rbac, setRbac] = useState<{ key: string; value: string[] | undefined }>()
+  const [method, setMethod] = useState<'POST' | 'GET'>()
 
   useEffect(() => {
     getFetcher<string>('/operateApi/getGenerateSchema')
@@ -124,6 +125,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
       // getFetcher('/gql-query-str')
       .then((res) => parse(res as string, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
+      .then(() => setMethod(gqlQueryDef[0].operation === 'query' ? 'GET' : 'POST'))
       .catch((err: Error) => {
         throw err
       })
@@ -215,7 +217,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
         </div>
       </div>
       <div className="mt-4 flex items-center">
-        <span className={`text-[#5F6269] ${styles.label}`}>POST</span>
+        <span className={`text-[#5F6269] ${styles.label}`}>{method}</span>
         <span className="flex-1 text-[#000000D9]">
           {path
             .split('/')
