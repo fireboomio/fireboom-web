@@ -49,3 +49,12 @@
     display: none;
   }
 }
+
+.datasource-collapse :global {
+  .ant-collapse-content-box {
+    padding: 0 5px !important;
+  }
+  .ant-collapse-header {
+    padding: 3px 12px;
+  }
+}

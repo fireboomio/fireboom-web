@@ -109,6 +109,11 @@
 .monaco {
   height: 452px;
   padding: 16px 0;
-  border: 1px solid rgb(95 98 105 / 10%);
-  border-radius: 4px;
+}
+
+.db-setting-table :global {
+  .ant-table-cell {
+    background-color: white;
+    padding: 8px 8px;
+  }
 }

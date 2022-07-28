@@ -1,21 +1,18 @@
 import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
 
-export default function datasourceReducer(
-  datasoucreList: DatasourceResp[],
-  action: DatasourceAction
-) {
+export default function datasourceReducer(datasource: DatasourceResp[], action: DatasourceAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data
     }
     case 'selected': {
-      return datasoucreList
+      return datasource
     }
     case 'added': {
-      return [...datasoucreList, action.data]
+      return [...datasource, action.data]
     }
     case 'changed':
-      return datasoucreList.map((b) => {
+      return datasource.map((b) => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -23,9 +20,9 @@ export default function datasourceReducer(
         }
       })
     case 'deleted': {
-      return datasoucreList.filter((b) => b.id !== action.data.id)
+      return datasource.filter((b) => b.id !== action.data.id)
     }
     default:
-      return datasoucreList
+      return datasource
   }
 }

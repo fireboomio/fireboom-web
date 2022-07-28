@@ -71,7 +71,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 4) })
+          dispatch({ type: 'fetched', data: res })
         })
       })
     console.log('switch change')
@@ -82,7 +82,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
     console.log(config, '123')
     void requests.put('/dataSource', { ...content, config: JSON.stringify({ ...config }) })
     void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res.filter((item) => item.source_type == 4) })
+      dispatch({ type: 'fetched', data: res })
     })
   }
 

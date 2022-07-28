@@ -20,7 +20,7 @@ interface Props {
   Datasourcetype: number
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasourcetype }: Props) {
+export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -43,7 +43,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({
             type: 'fetched',
-            data: res.filter((item) => item.source_type == Datasourcetype),
+            data: res,
           })
         })
       } else {
@@ -53,7 +53,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
           dispatch({
             type: 'fetched',
-            data: res.filter((item) => item.source_type == Datasourcetype),
+            data: res,
           })
         })
       }
@@ -131,7 +131,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
 
   return (
     <div
-      className={`flex justify-start items-center py-2.5 pl-3 cursor-pointer"
+      className={`flex justify-start items-center py-2.5 pl-5 cursor-pointer"
       ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
@@ -156,7 +156,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem, Datasour
           onKeyUp={(e: React.KeyboardEvent) => {
             e.key == 'Escape' && setIsEditing(false)
           }}
-          className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
+          className="text-sm font-normal leading-4 h-5 w-5/7 pl-0.5"
           defaultValue={datasourceItem.name}
           autoFocus
           placeholder="请输入外部数据源名"
