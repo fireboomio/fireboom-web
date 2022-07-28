@@ -1,9 +1,10 @@
-import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
+import { MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageDispatchContext, StorageCurrFileContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
@@ -22,6 +23,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
   const [visible, setVisible] = useImmer(false)
   const { currId } = useContext(StorageCurrFileContext)
   const [isHovering, setIsHovering] = useImmer(bucket.id === currId)
+
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2' || e.key === '3') {
@@ -67,46 +69,34 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
       onClick={handleMenuClick}
       items={[
         {
+          key: '0',
+          label: (
+            <div onClick={() => setIsEditing(!isEditing)}>
+              <IconFont type="icon-zhongmingming" />
+              <span className="ml-1.5">重命名</span>
+            </div>
+          ),
+        },
+        {
           key: '1',
           label: (
-            <div
-              onClick={() => {
-                setIsEditing(!isEditing)
-              }}
-            >
-              <AppleOutlined />
-              <span className="ml-1.5">重命名</span>
+            <div onClick={() => handleToggleDesigner('viewer', bucket.id)}>
+              <IconFont type="icon-chakan" />
+              <span className="ml-1.5">查看</span>
             </div>
           ),
         },
         {
           key: '2',
           label: (
-            <div
-              onClick={() => {
-                handleToggleDesigner('viewer', bucket.id)
-              }}
-            >
-              <AppleOutlined />
-              <span className="ml-1.5">查看</span>
-            </div>
-          ),
-        },
-        {
-          key: '3',
-          label: (
-            <div
-              onClick={() => {
-                handleToggleDesigner('editor', bucket.id)
-              }}
-            >
-              <AppleOutlined />
+            <div onClick={() => handleToggleDesigner('editor', bucket.id)}>
+              <IconFont type="icon-bianji-da" />
               <span className="ml-1.5">配置</span>
             </div>
           ),
         },
         {
-          key: '4',
+          key: '3',
           label: (
             <Popconfirm
               placement="right"
@@ -119,7 +109,7 @@ export default function StoragePannelItem({ bucket, onClickItem, handleToggleDes
               okType={'danger'}
             >
               <div>
-                <AppleOutlined />
+                <IconFont type="icon-shanchu" />
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>

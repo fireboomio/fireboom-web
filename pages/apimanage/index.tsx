@@ -280,9 +280,26 @@ const ApiManage: FC<ApiManageProps> = () => {
       <Menu
         onClick={(menuInfo) => handleMenuClick(menuInfo, nodeData.key)}
         items={[
-          { label: '重命名', key: '0' },
-          { label: '编辑', key: '1' },
           {
+            key: '0',
+            label: (
+              <>
+                <IconFont type="icon-zhongmingming" />
+                <span className="ml-1.5">重命名</span>
+              </>
+            ),
+          },
+          {
+            key: '1',
+            label: (
+              <>
+                <IconFont type="icon-chakan" />
+                <span className="ml-1.5">编辑</span>
+              </>
+            ),
+          },
+          {
+            key: '2',
             label: (
               <Popconfirm
                 title="确定删除吗?"
@@ -292,11 +309,11 @@ const ApiManage: FC<ApiManageProps> = () => {
                 placement="right"
               >
                 <a href="#" onClick={(e) => e.stopPropagation()}>
-                  删除
+                  <IconFont type="icon-shanchu" />
+                  <span className="ml-1.5">删除</span>
                 </a>
               </Popconfirm>
             ),
-            key: '2',
           },
         ]}
       />
