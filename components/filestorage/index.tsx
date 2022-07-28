@@ -1,4 +1,4 @@
-import FileStorageContainer from './filestorage-container'
-import FileStoragePannel from './filestorage-pannel'
+import StorageContainer from './storage-container'
+import StoragePannel from './storage-pannel'
 
-export { FileStorageContainer, FileStoragePannel }
+export { StorageContainer, StoragePannel }

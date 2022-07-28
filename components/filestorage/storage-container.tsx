@@ -11,7 +11,7 @@ interface Props {
   showType: string
 }
 
-export default function FileStorageContainer({ content, showType }: Props) {
+export default function StorageContainer({ content, showType }: Props) {
   const handleIconClick = () => {
     console.log('aaa')
   }

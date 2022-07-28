@@ -8,7 +8,7 @@ import type { FileStorageResp } from '@/interfaces/storage'
 import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from '../filestorage-pannel.module.scss'
+import styles from '../storage-pannel.module.scss'
 
 interface Props {
   fsItem: FileStorageResp

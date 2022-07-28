@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
-import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
+import { StoragePannel, StorageContainer } from '@/components/filestorage'
 import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
@@ -50,13 +50,13 @@ export default function FileStorage() {
 
             <Row className="h-screen">
               <Col span={5} className={styles['col-left']}>
-                <FileStoragePannel
+                <StoragePannel
                   onClickItem={handleClickItem}
                   handleToggleDesigner={handleToggleDesigner}
                 />
               </Col>
               <Col span={19}>
-                <FileStorageContainer showType={showType} content={content} />
+                <StorageContainer showType={showType} content={content} />
               </Col>
             </Row>
           </FSToggleContext.Provider>

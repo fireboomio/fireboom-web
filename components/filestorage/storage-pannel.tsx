@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
@@ -6,19 +7,17 @@ import { useContext } from 'react'
 import type { FileStorageResp } from '@/interfaces/storage'
 import { FSContext, FSDispatchContext } from '@/lib/context'
 
-import styles from './filestorage-common-main.module.scss'
-import FilesItem from './filestorage-item'
+import styles from './storage-pannel.module.scss'
+import FilesItem from './subs/filestorage-item'
 
 interface Props {
   onClickItem: (fsItem: FileStorageResp) => void
   handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
 }
 
-export default function FileStorageList({ onClickItem, handleToggleDesigner }: Props) {
+export default function StoragePannel({ onClickItem, handleToggleDesigner }: Props) {
   const FSList = useContext(FSContext)
   const dispatch = useContext(FSDispatchContext)
-
-  // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
 
   function addTable() {
     const data = {
@@ -35,6 +34,10 @@ export default function FileStorageList({ onClickItem, handleToggleDesigner }: P
 
   return (
     <>
+      <div className="border-gray border-b ">
+        <div className={`${styles.title} text-lg font-bold mt-6 ml-4 mb-8`}>存储</div>
+      </div>
+
       <div className="flex justify-between items-center p-4 border-[#5f62691a] border-b-1">
         <span className="text-base  leading-5 font-bold">概览</span>
         <div className="flex items-center">
@@ -47,6 +50,7 @@ export default function FileStorageList({ onClickItem, handleToggleDesigner }: P
           />
         </div>
       </div>
+
       <div className="mt-3">
         {FSList.map((fsItem) => (
           <FilesItem
