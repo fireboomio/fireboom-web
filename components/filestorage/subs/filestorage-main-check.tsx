@@ -9,7 +9,7 @@ import { FSToggleContext } from '@/lib/context'
 import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: FileStorageResp
+  content?: FileStorageResp
 }
 interface Config {
   [key: string]: ReactNode

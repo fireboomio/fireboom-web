@@ -27,7 +27,7 @@ import type { FileStorageResp } from '@/interfaces/filestorage'
 import styles from './filestorage-common-main.module.scss'
 
 interface Props {
-  content: FileStorageResp
+  content?: FileStorageResp
 }
 
 interface Option {

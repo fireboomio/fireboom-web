@@ -1,6 +1,4 @@
 import { AppleOutlined } from '@ant-design/icons'
-import React, { useEffect } from 'react'
-import { useImmer } from 'use-immer'
 
 import type { FileStorageResp } from '@/interfaces/filestorage'
 
@@ -9,37 +7,14 @@ import FileStorageMainContent from './subs/filestorage-main-content'
 import FileStorageMainSet from './subs/filestorage-main-set'
 
 interface Props {
-  content: FileStorageResp | undefined
+  content?: FileStorageResp
   showType: string
 }
 
 export default function FileStorageContainer({ content, showType }: Props) {
-  const [viewer, setViewer] = useImmer<React.ReactNode>('')
-
   const handleIconClick = () => {
     console.log('aaa')
   }
-
-  useEffect(() => {
-    if (content) {
-      console.log(showType)
-      switch (showType) {
-        case 'data':
-          setViewer(<FileStorageMainContent content={content} />)
-          break
-        case 'setCheck':
-          setViewer(<FileStorageMainCheck content={content} />)
-          break
-        case 'setEdit':
-          setViewer(<FileStorageMainSet content={content} />)
-          break
-        default:
-          setViewer(JSON.stringify(content))
-          break
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showType, content])
 
   return (
     <div className="pl-6 pr-10 mt-6">
@@ -51,7 +26,15 @@ export default function FileStorageContainer({ content, showType }: Props) {
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
         <AppleOutlined className="text-base ml-4" onClick={handleIconClick} />
       </div>
-      {viewer}
+      {showType === 'data' ? (
+        <FileStorageMainContent content={content} />
+      ) : showType === 'setCheck' ? (
+        <FileStorageMainCheck content={content} />
+      ) : showType === 'setEdit' ? (
+        <FileStorageMainSet content={content as FileStorageResp} />
+      ) : (
+        ''
+      )}
     </div>
   )
 }
