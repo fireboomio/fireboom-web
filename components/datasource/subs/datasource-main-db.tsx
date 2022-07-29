@@ -219,7 +219,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
-    // console.log(config, 'useEffectconfig')
     form.resetFields()
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -250,11 +249,26 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     console.log('Success:', values)
     const newValues = { ...config, ...values }
-    await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res })
-    })
-    handleToggleDesigner('data', content.id)
+    if (content.name == '') {
+      const req = { ...content, config: JSON.stringify(newValues), name: values.apiNamespace }
+      Reflect.deleteProperty(req, 'id')
+      const result = await requests.post<unknown, number>('/dataSource', req)
+      content.id = result
+    } else {
+      await requests.put('/dataSource', {
+        ...content,
+        config: JSON.stringify(newValues),
+        name: values.apiNamespace,
+      })
+    }
+    void requests
+      .get<unknown, DatasourceResp[]>('/dataSource')
+      .then((res) => {
+        dispatch({ type: 'fetched', data: res })
+      })
+      .then(() => {
+        handleToggleDesigner('data', content.id)
+      })
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -304,6 +318,8 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   return (
     <>
+      {/* { (() => { your code })() }  useFormWarning的解决方案 
+      在return外定义setPage函数，当切换编辑页面时，在函数中使用useForm 返回相应的html代码*/}
       {type === 'data' ? (
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         //查看页面———————————————————————————————————————————————————————————————————————————————————
@@ -422,20 +438,28 @@ export default function DatasourceDBMain({ content, type }: Props) {
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className="pb-8px flex items-center justify-between border-gray border-b ">
-            <div>
-              <IconFont type="icon-shujuyuantubiao1" />
-              <span className="ml-2">{content.name}</span>
-              <span className="ml-2 text-xs text-gray-500/80">main</span>
-            </div>
+            {content.name == '' ? (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-3">创建数据源</span>
+              </div>
+            ) : (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-2">{content.name}</span>
+                <span className="ml-2 text-xs text-gray-500/80">main</span>
+              </div>
+            )}
             <div className="flex justify-center items-centerw-160px">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id)
+                  handleToggleDesigner('data', content.id, content.source_type)
                 }}
               >
                 取消
               </Button>
+
               <Button
                 disabled={disabled}
                 className={`${styles['connect-check-btn']}  ml-4`}
@@ -443,7 +467,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                   form.submit()
                 }}
               >
-                保存
+                {content.name == '' ? '创建' : '保存'}
               </Button>
             </div>
           </div>
@@ -481,7 +505,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               }}
             >
               <Form.Item
-                label="连接名:"
+                label="名称:"
                 name="apiNamespace"
                 rules={[
                   { required: true, message: '连接名不能为空' },
@@ -491,7 +515,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                   },
                 ]}
               >
-                <Input placeholder="请输入..." autoComplete="off" />
+                <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>
 
               <Form.Item label="类型:" name="dbType">

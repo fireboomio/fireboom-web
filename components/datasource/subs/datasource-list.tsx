@@ -18,14 +18,17 @@ export default function DatasourceDBList({ onClickItem, Datasourcetype }: Props)
       <div>
         {datasource
           .filter((item) => item.source_type == Datasourcetype)
-          .map((datasourceItem) => (
-            <DatasourceDBItem
-              key={datasourceItem.id}
-              datasourceItem={datasourceItem}
-              onClickItem={onClickItem}
-              Datasourcetype={Datasourcetype}
-            />
-          ))}
+          .map((datasourceItem) => {
+            if (datasourceItem.name != '')
+              return (
+                <DatasourceDBItem
+                  key={datasourceItem.id}
+                  datasourceItem={datasourceItem}
+                  onClickItem={onClickItem}
+                  Datasourcetype={Datasourcetype}
+                />
+              )
+          })}
       </div>
     </>
   )

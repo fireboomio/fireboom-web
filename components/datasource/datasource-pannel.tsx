@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
-import { DatasourceDispatchContext } from '@/lib/context'
+import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
 import IconFont from '../iconfont'
 import styles from './datasource-pannel.module.scss'
@@ -16,11 +16,11 @@ const { Panel } = Collapse
 
 export default function DatasourcePannel({ onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
+  const datasource = useContext(DatasourceContext)
   const [activeKey, setActiveKey] = useImmer([] as Array<string>)
-
   function addTable(datasourceType: number) {
     const data = {
-      id: 0,
+      id: -(datasource.length + 1),
       name: '',
       config: '2',
       // eslint-disable-next-line camelcase
@@ -28,6 +28,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       switch: 0,
     } as DatasourceResp
     dispatch({ type: 'added', data: data })
+    onClickItem(data)
   }
 
   const genExtra = (datasourceType: number) => (

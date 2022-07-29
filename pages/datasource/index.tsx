@@ -38,13 +38,20 @@ export default function Datasource() {
   }, [])
 
   const handleClickItem = (datasourceItem: DatasourceResp) => {
-    setShowType('data')
+    if (datasourceItem.name == '') {
+      setShowType('edit')
+    } else {
+      setShowType('data')
+    }
     setCurrDBId(datasourceItem.id)
   }
 
-  const handleToggleDesigner = (type: string, id?: number) => {
+  const handleToggleDesigner = (type: string, id?: number, sourceType?: number) => {
     setShowType(type)
-    setCurrDBId(id)
+    //新增的item点击取消逻辑 // 0 会显示一个空页面
+    if (id && id < 0) {
+      setCurrDBId(datasource.filter((item) => item.source_type == sourceType).at(0)?.id || 0)
+    } else setCurrDBId(id)
   }
 
   const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
