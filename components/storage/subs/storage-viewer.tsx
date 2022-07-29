@@ -1,6 +1,6 @@
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Divider } from 'antd'
-import { ReactNode, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
@@ -12,22 +12,14 @@ interface Props {
   content: StorageResp
 }
 
-interface Config {
-  [key: string]: ReactNode
-}
-
 export default function StorageViewer({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
-  const config = useMemo(() => JSON.parse(content.config) as Config, [content.config])
+  const config = useMemo(() => content.config, [content.config])
 
-  const connectSwitchOnChange = () => {
+  const handleToggleBucket = () => {
     console.log('switch change')
-  }
-
-  const handleToggleSecret = () => {
-    setIsShowSecret(!isShowSecret)
   }
 
   return (
@@ -41,7 +33,7 @@ export default function StorageViewer({ content }: Props) {
             defaultChecked={content.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
+            onChange={handleToggleBucket}
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
@@ -71,16 +63,22 @@ export default function StorageViewer({ content }: Props) {
           <Descriptions.Item label="服务地址">{config.service_address}</Descriptions.Item>
           <Descriptions.Item label="APP ID">{config.accessKeyID} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
-            <span onClick={handleToggleSecret}>
+            <span>
               {isShowSecret ? (
                 <div>
                   {config.secretAccessKey}
-                  <EyeOutlined className="ml-6" />
+                  <EyeOutlined
+                    className="ml-6 cursor-pointer"
+                    onClick={() => setIsShowSecret(!isShowSecret)}
+                  />
                 </div>
               ) : (
                 <div>
-                  *****************************
-                  <EyeInvisibleOutlined className="ml-6" />
+                  {config.secretAccessKey.replaceAll(/./g, '*')}
+                  <EyeInvisibleOutlined
+                    className="ml-6 cursor-pointer"
+                    onClick={() => setIsShowSecret(!isShowSecret)}
+                  />
                 </div>
               )}
             </span>

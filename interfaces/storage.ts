@@ -1,5 +1,5 @@
 export interface StorageResp {
-  config: string
+  config: Record<string, string>
   createTime: string
   id: number
   isDel: number
