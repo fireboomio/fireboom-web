@@ -79,7 +79,7 @@ export default function StoragePannelItem({ bucket }: Props) {
         {
           key: '1',
           label: (
-            <div onClick={() => handleSwitch(bucket.id, 'viewer')}>
+            <div onClick={() => handleSwitch(bucket.id, 'detail')}>
               <IconFont type="icon-chakan" />
               <span className="ml-1.5">查看</span>
             </div>
@@ -88,7 +88,7 @@ export default function StoragePannelItem({ bucket }: Props) {
         {
           key: '2',
           label: (
-            <div onClick={() => handleSwitch(bucket.id, 'editor')}>
+            <div onClick={() => handleSwitch(bucket.id, 'form')}>
               <IconFont type="icon-bianji-da" />
               <span className="ml-1.5">配置</span>
             </div>

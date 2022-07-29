@@ -13,7 +13,7 @@ export default function StoragePannel() {
 
   function addBucket() {
     const data = {
-      config: '2',
+      config: {},
       createTime: '2022',
       id: 1,
       isDel: 2,

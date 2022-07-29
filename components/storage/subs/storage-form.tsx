@@ -11,7 +11,7 @@ interface Props {
   content: StorageResp
 }
 
-export default function StorageEditor({ content }: Props) {
+export default function StorageForm({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const dispatch = useContext(StorageDispatchContext)
 
@@ -27,7 +27,7 @@ export default function StorageEditor({ content }: Props) {
       type: 'fetched',
       data: storageBucket,
     })
-    handleSwitch(content.id, 'viewer')
+    handleSwitch(content.id, 'detail')
   }
 
   const onFinishFailed = (errorInfo: object) => {
@@ -54,7 +54,7 @@ export default function StorageEditor({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
-              handleSwitch(content.id, 'viewer')
+              handleSwitch(content.id, 'detail')
             }}
           >
             <span>保存</span>

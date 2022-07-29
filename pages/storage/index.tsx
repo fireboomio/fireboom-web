@@ -19,7 +19,7 @@ import styles from './index.module.scss'
 export default function FileStorage() {
   const [bucketList, dispatch] = useReducer(storageReducer, [])
   const [currId, setCurrId] = useImmer<number | undefined>(undefined)
-  const [showType, setShowType] = useImmer<'explorer' | 'viewer' | 'editor'>('explorer')
+  const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('explorer')
 
   useLayoutEffect(() => {
     setCurrId(bucketList.at(0)?.id)
@@ -34,7 +34,7 @@ export default function FileStorage() {
 
   const content = useMemo(() => bucketList.find((b) => b.id === currId), [currId, bucketList])
 
-  function handleSwitch(id: number, value: 'explorer' | 'editor' | 'viewer') {
+  function handleSwitch(id: number, value: 'explorer' | 'form' | 'detail') {
     setCurrId(id)
     setShowType(value)
   }

@@ -12,7 +12,7 @@ interface Props {
   content: StorageResp
 }
 
-export default function StorageViewer({ content }: Props) {
+export default function StorageDetail({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
@@ -39,7 +39,7 @@ export default function StorageViewer({ content }: Props) {
           <Divider type="vertical" />
           <Button
             className={`${styles['save-btn']}  ml-4`}
-            onClick={() => handleSwitch(content.id, 'editor')}
+            onClick={() => handleSwitch(content.id, 'form')}
           >
             <span>编辑</span>
           </Button>

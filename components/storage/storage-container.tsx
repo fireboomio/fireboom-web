@@ -3,9 +3,9 @@ import { CaretRightOutlined } from '@ant-design/icons'
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
 
-import StorageEditor from './subs/storage-editor'
+import StorageDetail from './subs/storage-detail'
 import StorageExplorer from './subs/storage-explorer'
-import StorageViewer from './subs/storage-viewer'
+import StorageForm from './subs/storage-form'
 
 interface Props {
   content: StorageResp
@@ -18,7 +18,7 @@ export default function StorageContainer({ content, showType }: Props) {
       <div className="flex justify-start items-center mb-5 ">
         <span className="text-lg flex-grow font-bold">
           <span className="font-bold text-18px">存储</span>
-          {showType === 'editor' ? (
+          {showType === 'form' ? (
             <>
               <CaretRightOutlined />
               存储配置
@@ -35,10 +35,10 @@ export default function StorageContainer({ content, showType }: Props) {
       </div>
       {showType === 'explorer' ? (
         <StorageExplorer content={content} />
-      ) : showType === 'viewer' ? (
-        <StorageViewer content={content} />
-      ) : showType === 'editor' ? (
-        <StorageEditor content={content} />
+      ) : showType === 'detail' ? (
+        <StorageDetail content={content} />
+      ) : showType === 'form' ? (
+        <StorageForm content={content} />
       ) : (
         ''
       )}
