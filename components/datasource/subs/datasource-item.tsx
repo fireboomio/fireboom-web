@@ -20,6 +20,10 @@ interface Props {
   Datasourcetype: number
 }
 
+interface Config {
+  [key: string]: string
+}
+
 export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
@@ -27,6 +31,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { currDBId } = useContext(DatasourceCurrDBContext)
   const [isHovering, setIsHovering] = useImmer(false)
+  const config = JSON.parse(datasourceItem.config) as Config
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
@@ -38,25 +43,13 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     if (value === '') {
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
-      if (datasourceItem.id != 0) {
-        await requests.put('/dataSource', { ...datasourceItem, name: value })
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({
-            type: 'fetched',
-            data: res,
-          })
+      await requests.put('/dataSource', { ...datasourceItem, name: value })
+      void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+        dispatch({
+          type: 'fetched',
+          data: res,
         })
-      } else {
-        const req = { ...datasourceItem, name: value }
-        Reflect.deleteProperty(req, 'id')
-        await requests.post('/dataSource', req)
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-          dispatch({
-            type: 'fetched',
-            data: res,
-          })
-        })
-      }
+      })
     }
     setIsEditing(false)
   }
@@ -128,10 +121,9 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
       ]}
     />
   )
-
   return (
     <div
-      className={`flex justify-start items-center py-2.5 pl-5 cursor-pointer"
+      className={`flex justify-between items-center py-2.5 pl-5 
       ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
@@ -142,55 +134,70 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
         onClickItem(datasourceItem)
       }}
     >
-      <IconFont
-        type="icon-tuozhuai-xuanzhong"
-        className="-ml-3 mr-1"
-        style={{ visibility: isHovering ? 'visible' : 'hidden' }}
-      />
-      <IconFont type="icon-shujuyuantubiao1" className="mr-2" />
-      {isEditing ? (
-        <Input
-          onBlur={(e) => void handleItemEdit(e.target.value)}
-          // @ts-ignore
-          onPressEnter={(e) => void handleItemEdit(e.target.value)}
-          onKeyUp={(e: React.KeyboardEvent) => {
-            e.key == 'Escape' && setIsEditing(false)
-          }}
-          className="text-sm font-normal leading-4 h-5 w-5/7 pl-0.5"
-          defaultValue={datasourceItem.name}
-          autoFocus
-          placeholder="请输入外部数据源名"
-        />
-      ) : (
-        <div
-          onClick={() => {
-            // setIsEditing(true)
-          }}
-          className={`text-sm font-normal leading-4 ${
-            datasourceItem.switch == 0 ? 'text-gray-500/50' : ''
-          }`}
-        >
-          {datasourceItem.name}
-        </div>
-      )}
-
-      <Dropdown
-        overlay={menu}
-        trigger={['click']}
-        placement="bottomRight"
-        visible={visible}
-        onVisibleChange={(v) => {
-          setVisible(v)
-          leaveItem(v)
-        }}
-      >
+      <div className="flex items-center cursor-pointer">
         <IconFont
-          type="icon-gengduo-shu-xuanzhong"
-          onClick={(e) => e.stopPropagation()}
-          className="m-auto mr-0 pr-2"
+          type="icon-tuozhuai-xuanzhong"
+          className="-ml-3 mr-1"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
-      </Dropdown>
+        <IconFont
+          type={
+            config.dbType == 'SQLITE'
+              ? 'icon-shujuyuantubiao2'
+              : config.dbType == 'PGSQL'
+              ? 'icon-shujuyuantubiao3'
+              : config.dbType == 'MONGODB'
+              ? 'icon-shujuyuantubiao4'
+              : 'icon-shujuyuantubiao1'
+          }
+          className="mr-2"
+        />
+        {isEditing ? (
+          <Input
+            onBlur={(e) => void handleItemEdit(e.target.value)}
+            // @ts-ignore
+            onPressEnter={(e) => void handleItemEdit(e.target.value)}
+            onKeyUp={(e: React.KeyboardEvent) => {
+              e.key == 'Escape' && setIsEditing(false)
+            }}
+            className="text-sm font-normal leading-4 h-5 w-5/7 pl-0.5"
+            defaultValue={datasourceItem.name}
+            autoFocus
+            placeholder="请输入外部数据源名"
+          />
+        ) : (
+          <div
+            onClick={() => {
+              // setIsEditing(true)
+            }}
+            className={`text-sm font-normal leading-4 ${
+              datasourceItem.switch == 0 ? 'text-[#AFB0B4]' : 'text-[#000000]'
+            }`}
+          >
+            {datasourceItem.name}
+          </div>
+        )}
+      </div>
+      <div>
+        <span className="text-[#AFB0B4] text-[14px] mr-3">{config.dbName || 'null'}</span>
+        <Dropdown
+          overlay={menu}
+          trigger={['click']}
+          placement="bottomRight"
+          visible={visible}
+          onVisibleChange={(v) => {
+            setVisible(v)
+            leaveItem(v)
+          }}
+        >
+          <IconFont
+            type="icon-gengduo-shu-xuanzhong"
+            onClick={(e) => e.stopPropagation()}
+            className="m-auto mr-0 pr-2"
+            style={{ visibility: isHovering ? 'visible' : 'hidden' }}
+          />
+        </Dropdown>
+      </div>
     </div>
   )
 }

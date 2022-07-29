@@ -105,11 +105,25 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         newValues.loadSchemaFromString = undefined
       } else newValues.loadSchemaFromString = config.loadSchemaFromString
     }
-    await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res })
-    })
-    handleToggleDesigner('data', content.id)
+    if (content.name == '') {
+      const req = { ...content, config: JSON.stringify(newValues), name: values.nameSpace }
+      Reflect.deleteProperty(req, 'id')
+      const result = await requests.post<unknown, number>('/dataSource', req)
+      content.id = result
+    } else
+      await requests.put('/dataSource', {
+        ...content,
+        config: JSON.stringify(newValues),
+        name: values.nameSpace,
+      })
+    void requests
+      .get<unknown, DatasourceResp[]>('/dataSource')
+      .then((res) => {
+        dispatch({ type: 'fetched', data: res })
+      })
+      .then(() => {
+        handleToggleDesigner('data', content.id)
+      })
   }
 
   //表单提交失败回调
@@ -158,8 +172,9 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         //查看页面--------------------------------------------------------------------------
         //查看页面--------------------------------------------------------------------------
         <>
-          <div className="pb-17px flex items-center justify-between border-gray border-b mb-8">
+          <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
+              <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
@@ -203,7 +218,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               <Descriptions.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>命名空间</span>
+                    <span className={styles['label-style']}>名称</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
@@ -318,17 +333,25 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         //编辑页面--------------------------------------------------------------------------
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="flex items-center justify-between border-gray border-b">
-            <div>
-              <span className="ml-2">
-                {content.name} <span className="text-xs text-gray-500/80">GET</span>
-              </span>
-            </div>
-            <div className="flex justify-center items-center mb-2 w-160px">
+          <div className="pb-9px flex items-center justify-between border-gray border-b">
+            {content.name == '' ? (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-2">创建数据源</span>
+              </div>
+            ) : (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-2">
+                  {content.name} <span className="text-xs text-gray-500/80">GET</span>
+                </span>
+              </div>
+            )}
+            <div className="flex justify-center items-center w-160px">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id)
+                  handleToggleDesigner('data', content.id,content.source_type)
                 }}
               >
                 <span>取消</span>
@@ -339,7 +362,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                   form.submit()
                 }}
               >
-                <span>保存</span>
+                {content.name == '' ? '创建' : '保存'}
               </Button>
             </div>
           </div>

@@ -8,7 +8,7 @@ interface DatasourceCurrDBContextT {
   setCurrDBId: useImmer.Updater<number | null | undefined>
 }
 interface DatasourceToggleContext {
-  handleToggleDesigner: (type: string, id: number) => void
+  handleToggleDesigner: (type: string, id?: number, sourceType?: number) => void
 }
 export const DatasourceContext = createContext([] as DatasourceResp[])
 export const DatasourceDispatchContext = createContext({} as Dispatch<DatasourceAction>)

@@ -75,7 +75,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
   useEffect(() => {
-    // console.log(config, 'useEffectconfig')
     form.resetFields()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
@@ -112,7 +111,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
     const newValues = { ...values }
-
     if (file.uid) {
       if (config.filePath) {
         await requests({
@@ -139,12 +137,26 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
         newValues.filePath = undefined
       } else newValues.filePath = config.filePath
     }
+    if (content.name == '') {
+      const req = { ...content, config: JSON.stringify(newValues), name: values.nameSpace }
+      Reflect.deleteProperty(req, 'id')
+      const result = await requests.post<unknown, number>('/dataSource', req)
+      content.id = result
+    } else
+      await requests.put('/dataSource', {
+        ...content,
+        config: JSON.stringify(newValues),
+        name: values.nameSpace,
+      })
 
-    await requests.put('/dataSource', { ...content, config: JSON.stringify(newValues) })
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
-      dispatch({ type: 'fetched', data: res })
-    })
-    handleToggleDesigner('data', content.id)
+    void requests
+      .get<unknown, DatasourceResp[]>('/dataSource')
+      .then((res) => {
+        dispatch({ type: 'fetched', data: res })
+      })
+      .then(() => {
+        handleToggleDesigner('data', content.id)
+      })
   }
 
   //表单上传失败回调
@@ -192,6 +204,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
         <>
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
+              <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
@@ -354,17 +367,26 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="flex items-center justify-between border-gray border-b">
-            <div>
-              <span className="ml-2">
-                {content.name} <span className="text-xs text-gray-500/80">GET</span>
-              </span>
-            </div>
-            <div className="flex justify-center items-center mb-2 w-160px">
+          <div className="pb-9px flex items-center justify-between border-gray border-b">
+            {content.name == '' ? (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-2">创建数据源</span>
+              </div>
+            ) : (
+              <div>
+                <IconFont type="icon-shujuyuantubiao1" />
+                <span className="ml-2">
+                  {content.name} <span className="text-xs text-gray-500/80">GET</span>
+                </span>
+              </div>
+            )}
+
+            <div className="flex justify-center items-center w-160px">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id)
+                  handleToggleDesigner('data', content.id, content.source_type)
                 }}
               >
                 <span>取消</span>
@@ -375,7 +397,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   form.submit()
                 }}
               >
-                <span>保存</span>
+                {content.name == '' ? '创建' : '保存'}
               </Button>
             </div>
           </div>
@@ -404,7 +426,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               <Form.Item
                 label={
                   <div>
-                    <span>命名空间:</span>
+                    <span>名称:</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
