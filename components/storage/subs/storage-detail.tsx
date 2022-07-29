@@ -16,6 +16,7 @@ export default function StorageDetail({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
+  console.log(content)
   const config = useMemo(() => content.config, [content.config])
 
   const handleToggleBucket = () => {
@@ -60,7 +61,7 @@ export default function StorageDetail({ content }: Props) {
           }}
         >
           <Descriptions.Item label="名称">{content.name}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{config.service_address}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">{config.endpoint}</Descriptions.Item>
           <Descriptions.Item label="APP ID">{config.accessKeyID} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span>

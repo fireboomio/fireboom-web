@@ -1,11 +1,21 @@
 export interface StorageResp {
-  config: Record<string, string>
+  config: StorageConfig
   createTime: string
   id: number
   isDel: number
   name: string
   switch: number
   updateTime: string
+}
+
+export interface StorageConfig {
+  accessKeyID: string
+  secretAccessKey: string
+  bucketLocation: string
+  bucketName: string
+  endpoint: string
+  name: string
+  useSSL: boolean
 }
 
 export type StorageAction = StorageSingleAction | StorageListAction
