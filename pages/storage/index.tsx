@@ -17,14 +17,14 @@ import storageReducer from '@/lib/reducers/storage-reducer'
 import styles from './index.module.scss'
 
 export default function FileStorage() {
-  const [fileList, dispatch] = useReducer(storageReducer, [])
-  const [currId, setCurrId] = useImmer(null as number | null | undefined)
+  const [bucketList, dispatch] = useReducer(storageReducer, [])
+  const [currId, setCurrId] = useImmer<number | undefined>(undefined)
   const [showType, setShowType] = useImmer<'explorer' | 'viewer' | 'editor'>('explorer')
 
   useLayoutEffect(() => {
-    setCurrId(fileList.at(0)?.id)
+    setCurrId(bucketList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileList])
+  }, [bucketList])
 
   useEffect(() => {
     void requests
@@ -32,7 +32,7 @@ export default function FileStorage() {
       .then((data) => dispatch({ type: 'fetched', data }))
   }, [])
 
-  const content = useMemo(() => fileList.find((b) => b.id === currId), [currId, fileList])
+  const content = useMemo(() => bucketList.find((b) => b.id === currId), [currId, bucketList])
 
   function handleSwitch(id: number, value: 'explorer' | 'editor' | 'viewer') {
     setCurrId(id)
@@ -40,7 +40,7 @@ export default function FileStorage() {
   }
 
   return (
-    <StorageContext.Provider value={fileList}>
+    <StorageContext.Provider value={bucketList}>
       <StorageDispatchContext.Provider value={dispatch}>
         <StorageCurrFileContext.Provider value={{ currId, setCurrId }}>
           <StorageSwitchContext.Provider value={{ handleSwitch }}>
@@ -53,7 +53,7 @@ export default function FileStorage() {
                 <StoragePannel />
               </Col>
               <Col span={19}>
-                <StorageContainer showType={showType} content={content} />
+                <StorageContainer showType={showType} content={content as StorageResp} />
               </Col>
             </Row>
           </StorageSwitchContext.Provider>

@@ -1,18 +1,18 @@
 import type { StorageResp, StorageAction } from '@/interfaces/storage'
 
-export default function filesReducer(fileList: StorageResp[], action: StorageAction) {
+export default function storageReducer(bucketList: StorageResp[], action: StorageAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data
     }
     case 'selected': {
-      return fileList
+      return bucketList
     }
     case 'added': {
-      return [...fileList, action.data]
+      return [...bucketList, action.data]
     }
     case 'changed':
-      return fileList.map((b) => {
+      return bucketList.map((b) => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,9 +20,9 @@ export default function filesReducer(fileList: StorageResp[], action: StorageAct
         }
       })
     case 'deleted': {
-      return fileList.filter((b) => b.id !== action.data.id)
+      return bucketList.filter((b) => b.id !== action.data.id)
     }
     default:
-      return fileList
+      return bucketList
   }
 }

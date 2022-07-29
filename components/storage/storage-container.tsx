@@ -8,7 +8,7 @@ import StorageExplorer from './subs/storage-explorer'
 import StorageViewer from './subs/storage-viewer'
 
 interface Props {
-  content?: StorageResp
+  content: StorageResp
   showType: string
 }
 
@@ -18,8 +18,14 @@ export default function StorageContainer({ content, showType }: Props) {
       <div className="flex justify-start items-center mb-5 ">
         <span className="text-lg flex-grow font-bold">
           <span className="font-bold text-18px">存储</span>
-          <CaretRightOutlined />
-          {showType === 'editor' ? '存储配置' : ''}
+          {showType === 'editor' ? (
+            <>
+              <CaretRightOutlined />
+              存储配置
+            </>
+          ) : (
+            <></>
+          )}
         </span>
         <div className="space-x-4">
           <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
@@ -32,7 +38,7 @@ export default function StorageContainer({ content, showType }: Props) {
       ) : showType === 'viewer' ? (
         <StorageViewer content={content} />
       ) : showType === 'editor' ? (
-        <StorageEditor content={content as StorageResp} />
+        <StorageEditor content={content} />
       ) : (
         ''
       )}

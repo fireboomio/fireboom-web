@@ -27,7 +27,7 @@ import type { StorageResp } from '@/interfaces/storage'
 import styles from './storage-main.module.scss'
 
 interface Props {
-  content?: StorageResp
+  content: StorageResp
 }
 
 interface Option {
@@ -78,6 +78,7 @@ export default function StorageExplorer({ content }: Props) {
     },
   ]
   const options = dropdownMenu as Option[]
+
   if (!content) {
     return <></>
   }

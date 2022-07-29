@@ -8,15 +8,6 @@ export interface StorageResp {
   updateTime: string
 }
 
-export interface StorageRequest {
-  config: string
-  create_time: string
-  is_del: number
-  name: string
-  switch: number
-  update_time: string
-}
-
 export type StorageAction = StorageSingleAction | StorageListAction
 
 interface StorageSingleAction {

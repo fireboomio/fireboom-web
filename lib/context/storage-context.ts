@@ -4,8 +4,8 @@ import * as useImmer from 'use-immer'
 import type { StorageResp, StorageAction } from '@/interfaces/storage'
 
 interface StorageCurrFileContextT {
-  currId: number | null | undefined
-  setCurrId: useImmer.Updater<number | null | undefined>
+  currId?: number
+  setCurrId: useImmer.Updater<number | undefined>
 }
 
 interface StorageSwitchContextT {

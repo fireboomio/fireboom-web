@@ -34,10 +34,6 @@ export default function StorageEditor({ content }: Props) {
     console.log('Failed:', errorInfo)
   }
 
-  if (!content) {
-    return <></>
-  }
-
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">

@@ -1,6 +1,6 @@
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Divider } from 'antd'
-import { ReactNode, useContext } from 'react'
+import { ReactNode, useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
@@ -9,7 +9,7 @@ import { StorageSwitchContext } from '@/lib/context'
 import styles from './storage-main.module.scss'
 
 interface Props {
-  content?: StorageResp
+  content: StorageResp
 }
 
 interface Config {
@@ -20,13 +20,12 @@ export default function StorageViewer({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
+  const config = useMemo(() => JSON.parse(content.config) as Config, [content.config])
+
   const connectSwitchOnChange = () => {
     console.log('switch change')
   }
-  if (!content) {
-    return <></>
-  }
-  const config = JSON.parse(content.config) as Config
+
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
