@@ -9,7 +9,7 @@ interface StorageCurrFileContextT {
 }
 
 interface StorageSwitchContextT {
-  handleSwitch: (id: number, value: 'explorer' | 'form' | 'detail') => void
+  handleSwitch: (value: 'explorer' | 'form' | 'detail', id: number | undefined) => void
 }
 
 export const StorageContext = createContext<StorageResp[]>([])

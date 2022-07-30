@@ -3,7 +3,7 @@ import type { StorageResp, StorageAction } from '@/interfaces/storage'
 export default function storageReducer(bucketList: StorageResp[], action: StorageAction) {
   switch (action.type) {
     case 'fetched': {
-      return action.data
+      return action.data ?? []
     }
     case 'selected': {
       return bucketList

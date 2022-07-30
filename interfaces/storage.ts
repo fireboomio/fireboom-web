@@ -1,20 +1,24 @@
-export interface StorageResp {
-  config: StorageConfig
-  createTime: string
+export type StorageResp = StorageT & {
   id: number
-  isDel: number
-  name: string
-  switch: number
+  createTime: string
   updateTime: string
 }
 
+export interface StorageT {
+  id?: number
+  name: string
+  config: StorageConfig
+  isDel: number
+  switch: number
+}
+
 export interface StorageConfig {
+  name: string
   accessKeyID: string
   secretAccessKey: string
   bucketLocation: string
   bucketName: string
   endpoint: string
-  name: string
   useSSL: boolean
 }
 

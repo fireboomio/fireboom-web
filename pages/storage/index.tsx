@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
+import { useEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { StoragePannel, StorageContainer } from '@/components/storage'
@@ -21,8 +21,8 @@ export default function FileStorage() {
   const [currId, setCurrId] = useImmer<number | undefined>(undefined)
   const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('explorer')
 
-  useLayoutEffect(() => {
-    setCurrId(bucketList.at(0)?.id)
+  useEffect(() => {
+    if (!currId) setCurrId(bucketList.at(0)?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketList])
 
@@ -34,7 +34,7 @@ export default function FileStorage() {
 
   const content = useMemo(() => bucketList.find((b) => b.id === currId), [currId, bucketList])
 
-  function handleSwitch(id: number, value: 'explorer' | 'form' | 'detail') {
+  function handleSwitch(value: 'explorer' | 'form' | 'detail', id: number | undefined) {
     setCurrId(id)
     setShowType(value)
   }
@@ -53,7 +53,7 @@ export default function FileStorage() {
                 <StoragePannel />
               </Col>
               <Col span={19}>
-                <StorageContainer showType={showType} content={content as StorageResp} />
+                <StorageContainer showType={showType} content={content} />
               </Col>
             </Row>
           </StorageSwitchContext.Provider>

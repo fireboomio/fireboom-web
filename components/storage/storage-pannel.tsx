@@ -2,26 +2,17 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import { StorageContext, StorageDispatchContext } from '@/lib/context'
+import { StorageContext, StorageSwitchContext } from '@/lib/context'
 
 import styles from './storage-pannel.module.scss'
 import StoragePannelItem from './subs/storage-pannel-item'
 
 export default function StoragePannel() {
   const bucketList = useContext(StorageContext)
-  const dispatch = useContext(StorageDispatchContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
 
   function addBucket() {
-    const data = {
-      config: {},
-      createTime: '2022',
-      id: 1,
-      isDel: 2,
-      name: '2',
-      switch: 2,
-      updateTime: '2023',
-    }
-    dispatch({ type: 'added', data: data })
+    handleSwitch('form', undefined)
   }
 
   return (

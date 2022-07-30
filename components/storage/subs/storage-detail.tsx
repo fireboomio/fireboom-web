@@ -9,15 +9,14 @@ import { StorageSwitchContext } from '@/lib/context'
 import styles from './storage-main.module.scss'
 
 interface Props {
-  content: StorageResp
+  content?: StorageResp
 }
 
 export default function StorageDetail({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
-  console.log(content)
-  const config = useMemo(() => content.config, [content.config])
+  const config = useMemo(() => content?.config, [content?.config])
 
   const handleToggleBucket = () => {
     console.log('switch change')
@@ -31,7 +30,7 @@ export default function StorageDetail({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked={content.switch == 0 ? false : true}
+            defaultChecked={content?.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
             onChange={handleToggleBucket}
@@ -40,7 +39,7 @@ export default function StorageDetail({ content }: Props) {
           <Divider type="vertical" />
           <Button
             className={`${styles['save-btn']}  ml-4`}
-            onClick={() => handleSwitch(content.id, 'form')}
+            onClick={() => handleSwitch('form', content?.id)}
           >
             <span>编辑</span>
           </Button>
@@ -60,14 +59,14 @@ export default function StorageDetail({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="名称">{content.name}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{config.endpoint}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{config.accessKeyID} </Descriptions.Item>
+          <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">{config?.endpoint}</Descriptions.Item>
+          <Descriptions.Item label="APP ID">{config?.accessKeyID} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span>
               {isShowSecret ? (
                 <div>
-                  {config.secretAccessKey}
+                  {config?.secretAccessKey}
                   <EyeOutlined
                     className="ml-6 cursor-pointer"
                     onClick={() => setIsShowSecret(!isShowSecret)}
@@ -75,7 +74,7 @@ export default function StorageDetail({ content }: Props) {
                 </div>
               ) : (
                 <div>
-                  {config.secretAccessKey.replaceAll(/./g, '*')}
+                  {config?.secretAccessKey.replaceAll(/./g, '*')}
                   <EyeInvisibleOutlined
                     className="ml-6 cursor-pointer"
                     onClick={() => setIsShowSecret(!isShowSecret)}
@@ -84,10 +83,10 @@ export default function StorageDetail({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="区域">{config.bucketLocation}</Descriptions.Item>
-          <Descriptions.Item label="bucketName">{config.bucketName}</Descriptions.Item>
+          <Descriptions.Item label="区域">{config?.bucketLocation}</Descriptions.Item>
+          <Descriptions.Item label="bucketName">{config?.bucketName}</Descriptions.Item>
           <Descriptions.Item label="开启SSL">
-            {config.useSSL ? (
+            {config?.useSSL ? (
               <Button className={styles['ssl-open-btn']}>开启</Button>
             ) : (
               <Button className={styles['ssl-close-btn']}>关闭</Button>

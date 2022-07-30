@@ -33,7 +33,7 @@ export default function StorageForm({ content }: Props) {
       type: 'fetched',
       data: storageBucket,
     })
-    handleSwitch(resp.id, 'detail')
+    handleSwitch('detail', resp.id)
   }
 
   const onFinishFailed = (_errorInfo: object) => {
@@ -47,15 +47,13 @@ export default function StorageForm({ content }: Props) {
           <span className="text-base leading-5 font-bold">设置</span>
         </div>
         <div className="flex justify-center items-center">
-          <Button className={styles['center-btn']}>
+          <Button
+            className={styles['center-btn']}
+            onClick={() => handleSwitch('detail', content?.id)}
+          >
             <span>取消</span>
           </Button>
-          <Button
-            className={styles['save-btn']}
-            onClick={() => {
-              form.submit()
-            }}
-          >
+          <Button className={styles['save-btn']} onClick={() => form.submit()}>
             <span>保存</span>
           </Button>
         </div>
@@ -75,7 +73,7 @@ export default function StorageForm({ content }: Props) {
           className="ml-3"
           initialValues={{ ...config }}
         >
-          <Form.Item label="名称" name="name">
+          <Form.Item label="名称" rules={[{ required: true }]} name="name">
             <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item label="服务地址" name="endpoint">
@@ -96,7 +94,6 @@ export default function StorageForm({ content }: Props) {
           <Form.Item
             label="开启SSL"
             style={{ marginTop: '29px' }}
-            rules={[{ required: true }]}
             name="useSSL"
             valuePropName="checked"
           >

@@ -8,7 +8,7 @@ import StorageExplorer from './subs/storage-explorer'
 import StorageForm from './subs/storage-form'
 
 interface Props {
-  content: StorageResp
+  content?: StorageResp
   showType: string
 }
 
@@ -34,7 +34,7 @@ export default function StorageContainer({ content, showType }: Props) {
         </div>
       </div>
       {showType === 'explorer' ? (
-        <StorageExplorer content={content} />
+        <StorageExplorer content={content as StorageResp} />
       ) : showType === 'detail' ? (
         <StorageDetail content={content} />
       ) : showType === 'form' ? (

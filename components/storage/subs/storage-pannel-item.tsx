@@ -48,9 +48,9 @@ export default function StoragePannelItem({ bucket }: Props) {
   }
 
   async function handleItemDelete(item: StorageResp) {
-    const result = await requests.delete(`/storageBucket /${item.id}`)
+    const result = await requests.delete(`/storageBucket/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (result.data.code == 200) {
+    if (result.status == 200) {
       dispatch({ type: 'deleted', data: item })
     }
   }
@@ -79,7 +79,7 @@ export default function StoragePannelItem({ bucket }: Props) {
         {
           key: '1',
           label: (
-            <div onClick={() => handleSwitch(bucket.id, 'detail')}>
+            <div onClick={() => handleSwitch('detail', bucket.id)}>
               <IconFont type="icon-chakan" />
               <span className="ml-1.5">查看</span>
             </div>
@@ -88,7 +88,7 @@ export default function StoragePannelItem({ bucket }: Props) {
         {
           key: '2',
           label: (
-            <div onClick={() => handleSwitch(bucket.id, 'form')}>
+            <div onClick={() => handleSwitch('form', bucket.id)}>
               <IconFont type="icon-bianji-da" />
               <span className="ml-1.5">配置</span>
             </div>
@@ -126,7 +126,7 @@ export default function StoragePannelItem({ bucket }: Props) {
       key={bucket.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
-      onClick={() => handleSwitch(bucket.id, 'explorer')}
+      onClick={() => handleSwitch('explorer', bucket.id)}
     >
       {isEditing ? (
         <Input
