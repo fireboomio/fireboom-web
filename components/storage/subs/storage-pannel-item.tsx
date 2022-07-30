@@ -1,27 +1,28 @@
-import { AppleOutlined, MoreOutlined } from '@ant-design/icons'
+import { MoreOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
-import { FSDispatchContext, FSCurrFileContext } from '@/lib/context'
+import IconFont from '@/components/iconfont'
+import type { StorageResp } from '@/interfaces/storage'
+import { StorageDispatchContext, StorageCurrFileContext, StorageSwitchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from '../filestorage-pannel.module.scss'
+import styles from '../storage-pannel.module.scss'
 
 interface Props {
-  fsItem: FileStorageResp
-  onClickItem: (fsItem: FileStorageResp) => void
-  handleToggleDesigner: (value: 'setEdit' | 'setCheck', id: number) => void
+  bucket: StorageResp
 }
 
-export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }: Props) {
-  const dispatch = useContext(FSDispatchContext)
-  const [isEditing, setIsEditing] = useImmer(fsItem.name == '')
+export default function StoragePannelItem({ bucket }: Props) {
+  const dispatch = useContext(StorageDispatchContext)
+  const [isEditing, setIsEditing] = useImmer(bucket.name == '')
   const [visible, setVisible] = useImmer(false)
-  const { currFSId } = useContext(FSCurrFileContext)
-  const [isHovering, setIsHovering] = useImmer(fsItem.id === currFSId)
+  const { currId } = useContext(StorageCurrFileContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
+  const [isHovering, setIsHovering] = useImmer(bucket.id === currId)
+
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2' || e.key === '3') {
@@ -31,25 +32,25 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
 
   async function handleItemEdit(value: string) {
     if (value === '') {
-      dispatch({ type: 'deleted', data: fsItem })
+      dispatch({ type: 'deleted', data: bucket })
     } else {
-      if (fsItem.id !== 0) {
-        await requests.put('/storageBucket ', { ...fsItem, name: value })
-        dispatch({ type: 'changed', data: { ...fsItem, name: value } })
+      if (bucket.id !== 0) {
+        await requests.put('/storageBucket ', { ...bucket, name: value })
+        dispatch({ type: 'changed', data: { ...bucket, name: value } })
       } else {
-        const req = { ...fsItem, name: value }
+        const req = { ...bucket, name: value }
         Reflect.deleteProperty(req, 'id')
         await requests.post('/storageBucket ', req)
-        dispatch({ type: 'added', data: { ...fsItem, name: value } })
+        dispatch({ type: 'added', data: { ...bucket, name: value } })
       }
     }
     setIsEditing(false)
   }
 
-  async function handleItemDelete(item: FileStorageResp) {
-    const result = await requests.delete(`/storageBucket /${item.id}`)
+  async function handleItemDelete(item: StorageResp) {
+    const result = await requests.delete(`/storageBucket/${item.id}`)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (result.data.code == 200) {
+    if (result.status == 200) {
       dispatch({ type: 'deleted', data: item })
     }
   }
@@ -67,51 +68,39 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
       onClick={handleMenuClick}
       items={[
         {
+          key: '0',
+          label: (
+            <div onClick={() => setIsEditing(!isEditing)}>
+              <IconFont type="icon-zhongmingming" />
+              <span className="ml-1.5">重命名</span>
+            </div>
+          ),
+        },
+        {
           key: '1',
           label: (
-            <div
-              onClick={() => {
-                setIsEditing(!isEditing)
-              }}
-            >
-              <AppleOutlined />
-              <span className="ml-1.5">重命名</span>
+            <div onClick={() => handleSwitch('detail', bucket.id)}>
+              <IconFont type="icon-chakan" />
+              <span className="ml-1.5">查看</span>
             </div>
           ),
         },
         {
           key: '2',
           label: (
-            <div
-              onClick={() => {
-                handleToggleDesigner('setCheck', fsItem.id)
-              }}
-            >
-              <AppleOutlined />
-              <span className="ml-1.5">查看</span>
+            <div onClick={() => handleSwitch('form', bucket.id)}>
+              <IconFont type="icon-bianji-da" />
+              <span className="ml-1.5">配置</span>
             </div>
           ),
         },
         {
           key: '3',
           label: (
-            <div
-              onClick={() => {
-                handleToggleDesigner('setEdit', fsItem.id)
-              }}
-            >
-              <AppleOutlined />
-              <span className="ml-1.5">配置</span>
-            </div>
-          ),
-        },
-        {
-          key: '4',
-          label: (
             <Popconfirm
               placement="right"
               title="确认删除该文件吗？"
-              onConfirm={() => void handleItemDelete(fsItem)}
+              onConfirm={() => void handleItemDelete(bucket)}
               okText="删除"
               cancelText="取消"
               onCancel={() => setVisible(false)}
@@ -119,7 +108,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
               okType={'danger'}
             >
               <div>
-                <AppleOutlined />
+                <IconFont type="icon-shanchu" />
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
@@ -128,17 +117,16 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
       ]}
     />
   )
+
   return (
     <div
-      className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer"
-      ${fsItem.id === currFSId ? 'bg-[#F8F8F9]' : ''}`}
+      className={`flex justify-start items-center py-2.5 pl-4 cursor-pointer hover:bg-[#F8F8F9]"
+      ${bucket.id === currId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
-      key={fsItem.name}
+      key={bucket.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
-      onClick={() => {
-        onClickItem(fsItem)
-      }}
+      onClick={() => handleSwitch('explorer', bucket.id)}
     >
       {isEditing ? (
         <Input
@@ -146,7 +134,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
           // @ts-ignore
           onPressEnter={(e) => void handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
-          defaultValue={fsItem.name}
+          defaultValue={bucket.name}
           autoFocus
           placeholder="请输入外部数据源名"
         />
@@ -157,7 +145,7 @@ export default function FilesItem({ fsItem, onClickItem, handleToggleDesigner }:
           }}
           className="text-sm font-normal leading-4"
         >
-          {fsItem.name}
+          {bucket.name}
         </div>
       )}
 

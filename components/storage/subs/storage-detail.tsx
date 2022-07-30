@@ -1,33 +1,27 @@
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { Button, Switch, Descriptions, Divider } from 'antd'
-import { ReactNode, useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
-import { FSToggleContext } from '@/lib/context'
+import type { StorageResp } from '@/interfaces/storage'
+import { StorageSwitchContext } from '@/lib/context'
 
-import styles from './filestorage-common-main.module.scss'
+import styles from './storage-main.module.scss'
 
 interface Props {
-  content: FileStorageResp
+  content?: StorageResp
 }
-interface Config {
-  [key: string]: ReactNode
-}
-export default function FileStorageMainCheck({ content }: Props) {
-  const { handleToggleDesigner } = useContext(FSToggleContext)
+
+export default function StorageDetail({ content }: Props) {
+  const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-  const connectSwitchOnChange = () => {
+
+  const config = useMemo(() => content?.config, [content?.config])
+
+  const handleToggleBucket = () => {
     console.log('switch change')
   }
-  if (!content) {
-    return <></>
-  }
-  const config = JSON.parse(content.config) as Config
-  const handleToggleSecret = () => {
-    setIsShowSecret(!isShowSecret)
-  }
-  console.log(config)
+
   return (
     <>
       <div className="pb-2 flex items-center justify-between border-gray border-b">
@@ -36,18 +30,16 @@ export default function FileStorageMainCheck({ content }: Props) {
         </div>
         <div className="flex justify-center items-center">
           <Switch
-            defaultChecked={content.switch == 0 ? false : true}
+            defaultChecked={content?.switch == 0 ? false : true}
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
+            onChange={handleToggleBucket}
             className={styles['switch-check-btn']}
           />
           <Divider type="vertical" />
           <Button
             className={`${styles['save-btn']}  ml-4`}
-            onClick={() => {
-              handleToggleDesigner('setEdit', content.id)
-            }}
+            onClick={() => handleSwitch('form', content?.id)}
           >
             <span>编辑</span>
           </Button>
@@ -67,28 +59,34 @@ export default function FileStorageMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="名称">{content.name}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{config.service_address}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{config.accessKeyID} </Descriptions.Item>
+          <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">{config?.endpoint}</Descriptions.Item>
+          <Descriptions.Item label="APP ID">{config?.accessKeyID} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
-            <span onClick={handleToggleSecret}>
+            <span>
               {isShowSecret ? (
                 <div>
-                  {config.secretAccessKey}
-                  <EyeOutlined className="ml-6" />
+                  {config?.secretAccessKey}
+                  <EyeOutlined
+                    className="ml-6 cursor-pointer"
+                    onClick={() => setIsShowSecret(!isShowSecret)}
+                  />
                 </div>
               ) : (
                 <div>
-                  *****************************
-                  <EyeInvisibleOutlined className="ml-6" />
+                  {config?.secretAccessKey.replaceAll(/./g, '*')}
+                  <EyeInvisibleOutlined
+                    className="ml-6 cursor-pointer"
+                    onClick={() => setIsShowSecret(!isShowSecret)}
+                  />
                 </div>
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="区域">{config.bucketLocation}</Descriptions.Item>
-          <Descriptions.Item label="bucketName">{config.bucketName}</Descriptions.Item>
+          <Descriptions.Item label="区域">{config?.bucketLocation}</Descriptions.Item>
+          <Descriptions.Item label="bucketName">{config?.bucketName}</Descriptions.Item>
           <Descriptions.Item label="开启SSL">
-            {config.useSSL ? (
+            {config?.useSSL ? (
               <Button className={styles['ssl-open-btn']}>开启</Button>
             ) : (
               <Button className={styles['ssl-close-btn']}>关闭</Button>

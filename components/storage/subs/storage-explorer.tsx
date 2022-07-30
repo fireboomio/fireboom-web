@@ -22,12 +22,12 @@ import {
 import Image from 'next/image'
 import { useImmer } from 'use-immer'
 
-import type { FileStorageResp } from '@/interfaces/filestorage'
+import type { StorageResp } from '@/interfaces/storage'
 
-import styles from './filestorage-common-main.module.scss'
+import styles from './storage-main.module.scss'
 
 interface Props {
-  content: FileStorageResp
+  content: StorageResp
 }
 
 interface Option {
@@ -35,17 +35,11 @@ interface Option {
   label: string
   children?: Option[]
 }
-export default function StorageMainCheck({ content }: Props) {
+
+export default function StorageExplorer({ content }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [isArrowUP, setIsArrowUP] = useImmer(false)
-  const onChange = () => {
-    setVisible(true)
-  }
-
-  const onClose = () => {
-    setVisible(false)
-  }
 
   const dropdownMenu = [
     {
@@ -84,6 +78,7 @@ export default function StorageMainCheck({ content }: Props) {
     },
   ]
   const options = dropdownMenu as Option[]
+
   if (!content) {
     return <></>
   }
@@ -204,7 +199,7 @@ export default function StorageMainCheck({ content }: Props) {
       <div>
         <Cascader
           options={options}
-          onChange={onChange}
+          onChange={() => setVisible(true)}
           open
           dropdownClassName={`${styles['casader-select']} flex mb-8`}
 
@@ -223,7 +218,7 @@ export default function StorageMainCheck({ content }: Props) {
       <Drawer
         title="avatar2.jpg"
         placement="right"
-        onClose={onClose}
+        onClose={() => setVisible(false)}
         visible={visible}
         mask={false}
         width={315}

@@ -1,76 +1,64 @@
 import { Col, Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useLayoutEffect, useReducer } from 'react'
-import useSWR from 'swr'
+import { useEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
-import { FileStoragePannel, FileStorageContainer } from '@/components/filestorage'
-import type { FileStorageResp } from '@/interfaces/filestorage'
-import { FSContext, FSDispatchContext, FSCurrFileContext, FSToggleContext } from '@/lib/context'
-import { getFetcher } from '@/lib/fetchers'
+import { StoragePannel, StorageContainer } from '@/components/storage'
+import type { StorageResp } from '@/interfaces/storage'
+import {
+  StorageContext,
+  StorageDispatchContext,
+  StorageCurrFileContext,
+  StorageSwitchContext,
+} from '@/lib/context'
+import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
 
 import styles from './index.module.scss'
 
 export default function FileStorage() {
-  const [fileList, dispatch] = useReducer(storageReducer, [])
-  const [showType, setShowType] = useImmer('data')
-  useLayoutEffect(() => {
-    setCurrFSId(fileList.at(0)?.id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileList])
+  const [bucketList, dispatch] = useReducer(storageReducer, [])
+  const [currId, setCurrId] = useImmer<number | undefined>(undefined)
+  const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('explorer')
 
-  const [currFSId, setCurrFSId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<FileStorageResp[], Error>('/storageBucket', getFetcher)
   useEffect(() => {
-    data &&
-      dispatch({
-        type: 'fetched',
-        data,
-      })
-  }, [data])
+    if (!currId) setCurrId(bucketList.at(0)?.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bucketList])
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  useEffect(() => {
+    void requests
+      .get<unknown, StorageResp[]>('/storageBucket')
+      .then((data) => dispatch({ type: 'fetched', data }))
+  }, [])
 
-  // TODO: need refine
+  const content = useMemo(() => bucketList.find((b) => b.id === currId), [currId, bucketList])
 
-  const content = fileList.find((b) => b.id === currFSId) as FileStorageResp
-
-  function handleClickItem(fileStorageResp: FileStorageResp) {
-    setShowType('data')
-    setCurrFSId(fileStorageResp.id)
-  }
-
-  function handleToggleDesigner(value: 'content' | 'setEdit' | 'setCheck', id: number) {
+  function handleSwitch(value: 'explorer' | 'form' | 'detail', id: number | undefined) {
+    setCurrId(id)
     setShowType(value)
-    setCurrFSId(id)
   }
 
   return (
-    <>
-      <FSContext.Provider value={fileList}>
-        <FSDispatchContext.Provider value={dispatch}>
-          <FSCurrFileContext.Provider value={{ currFSId, setCurrFSId }}>
-            <FSToggleContext.Provider value={{ handleToggleDesigner }}>
-              <Head>
-                <title>FireBoom - 文件存储</title>
-              </Head>
-              <Row className="h-screen">
-                <Col span={5} className={styles['col-left']}>
-                  <FileStoragePannel
-                    onClickItem={handleClickItem}
-                    handleToggleDesigner={handleToggleDesigner}
-                  />
-                </Col>
-                <Col span={19}>
-                  <FileStorageContainer showType={showType} content={content} />
-                </Col>
-              </Row>
-            </FSToggleContext.Provider>
-          </FSCurrFileContext.Provider>
-        </FSDispatchContext.Provider>
-      </FSContext.Provider>
-    </>
+    <StorageContext.Provider value={bucketList}>
+      <StorageDispatchContext.Provider value={dispatch}>
+        <StorageCurrFileContext.Provider value={{ currId, setCurrId }}>
+          <StorageSwitchContext.Provider value={{ handleSwitch }}>
+            <Head>
+              <title>FireBoom - 文件存储</title>
+            </Head>
+
+            <Row className="h-screen">
+              <Col span={5} className={styles['col-left']}>
+                <StoragePannel />
+              </Col>
+              <Col span={19}>
+                <StorageContainer showType={showType} content={content} />
+              </Col>
+            </Row>
+          </StorageSwitchContext.Provider>
+        </StorageCurrFileContext.Provider>
+      </StorageDispatchContext.Provider>
+    </StorageContext.Provider>
   )
 }
