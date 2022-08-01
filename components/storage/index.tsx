@@ -1,4 +1,4 @@
-import StorageContainer from './storage-container'
-import StoragePannel from './storage-pannel'
+import StorageContainer from './Container'
+import StoragePannel from './Pannel'
 
 export { StorageContainer, StoragePannel }

@@ -3,9 +3,9 @@ import { CaretRightOutlined } from '@ant-design/icons'
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
 
-import StorageDetail from './subs/storage-detail'
-import StorageExplorer from './subs/storage-explorer'
-import StorageForm from './subs/storage-form'
+import StorageDetail from './subs/Detail'
+import StorageExplorer from './subs/Explorer'
+import StorageForm from './subs/Form'
 
 interface Props {
   content?: StorageResp

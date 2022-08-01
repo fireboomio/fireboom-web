@@ -4,8 +4,8 @@ import { useContext } from 'react'
 
 import { StorageContext, StorageSwitchContext } from '@/lib/context'
 
-import styles from './storage-pannel.module.scss'
-import StoragePannelItem from './subs/storage-pannel-item'
+import styles from './Pannel.module.scss'
+import StoragePannelItem from './subs/PannelItem'
 
 export default function StoragePannel() {
   const bucketList = useContext(StorageContext)

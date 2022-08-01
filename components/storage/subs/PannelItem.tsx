@@ -9,7 +9,7 @@ import type { StorageResp } from '@/interfaces/storage'
 import { StorageDispatchContext, StorageCurrFileContext, StorageSwitchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from '../storage-pannel.module.scss'
+import styles from '../Pannel.module.scss'
 
 interface Props {
   bucket: StorageResp

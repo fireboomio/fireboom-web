@@ -24,7 +24,7 @@ import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
 
-import styles from './storage-main.module.scss'
+import styles from './subs.module.scss'
 
 interface Props {
   content: StorageResp

@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context'
 
-import styles from './storage-main.module.scss'
+import styles from './subs.module.scss'
 
 interface Props {
   content?: StorageResp
