@@ -4,7 +4,7 @@ import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
 
-import styles from './setting-main.module.scss'
+import styles from './subs.module.scss'
 
 interface VersionConfig {
   versionNum: string
@@ -14,14 +14,14 @@ interface VersionConfig {
 
 export default function SettingMainVersion() {
   const [verConfig, setVerConfig] = useImmer({} as VersionConfig)
-  
+
   useEffect(() => {
     async function getData() {
       const result = await requests.get<unknown, VersionConfig>('/setting/versionConfig')
       setVerConfig(result)
     }
     void getData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

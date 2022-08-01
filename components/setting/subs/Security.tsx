@@ -8,7 +8,7 @@ import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 // eslint-disable-next-line import/no-unassigned-import
-import styles from './setting-main.module.scss'
+import styles from './subs.module.scss'
 
 interface SecurConfig {
   enableGraphQLEndpoint: number

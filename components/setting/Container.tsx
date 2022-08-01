@@ -3,12 +3,12 @@ import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '../iconfont'
-import SettingMainAppearance from './subs/setting-main-appearance'
-import SettingMainCrossdomain from './subs/setting-main-crossdomain'
-import SettingMainEnvironmentVariable from './subs/setting-main-environment-variable'
-import SettingMainSecurity from './subs/setting-main-security'
-import SettingMainSystem from './subs/setting-main-system'
-import SettingMainVersion from './subs/setting-main-version'
+import SettingMainAppearance from './subs/Appearance'
+import SettingMainCrossdomain from './subs/Crossdomain'
+import SettingMainEnvironmentVariable from './subs/EnvironmentVariable'
+import SettingMainSecurity from './subs/Security'
+import SettingMainSystem from './subs/System'
+import SettingMainVersion from './subs/Version'
 
 interface Props {
   showType: string
