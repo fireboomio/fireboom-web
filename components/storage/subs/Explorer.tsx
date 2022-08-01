@@ -53,12 +53,32 @@ export default function StorageExplorer({ content }: Props) {
           label: '文件二',
           children: [
             {
-              valu: 'admin1.jpg',
-              labe: 'admin1.jpg',
+              value: '文件A',
+              label: '文件A',
+              children: [
+                {
+                  value: '文件B',
+                  label: '文件B',
+                  children: [
+                    {
+                      value: '12ab.jpg',
+                      label: '12ab.jpg',
+                    },
+                  ],
+                },
+                {
+                  value: '12a.jpg',
+                  label: '12a.jpg',
+                },
+              ],
             },
             {
-              valu: 'admin2.jpg',
-              labe: 'admin2.jpg',
+              value: '12-1.jpg',
+              label: '12-1.jpg',
+            },
+            {
+              value: '12-2.jpg',
+              label: '12-2.jpg',
             },
           ],
         },
@@ -243,7 +263,9 @@ export default function StorageExplorer({ content }: Props) {
           <Panel header="预览" key="2">
             <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
               <Image
-                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F511%2F101611154647%2F111016154647-10-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659607424&t=dec35f08ae686e97c066c2fed2e9fa7c"
+                width={200}
+                height={200}
+                src="https://source.unsplash.com/random/200x200"
                 alt=""
               />
               <Button>下载</Button>
