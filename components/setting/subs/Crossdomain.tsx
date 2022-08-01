@@ -61,7 +61,6 @@ export default function SettingCrossdomain() {
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
     setCorsConfig(result)
-    console.log(result)
   }, [])
 
   useEffect(() => {

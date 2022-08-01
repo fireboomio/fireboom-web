@@ -22,7 +22,6 @@ export default function SettingContainer({ showType }: Props) {
   }
 
   useEffect(() => {
-    console.log(showType)
     switch (showType) {
       case 'colorTheme':
         setTitle('外观')

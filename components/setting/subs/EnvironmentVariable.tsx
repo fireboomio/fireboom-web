@@ -41,7 +41,6 @@ export default function SettingMainEnvironmentVariable() {
         void getData()
       })
     })
-    console.log('Success:', values)
   }
 
   // const handleEditVariable = (key: number) => {
@@ -55,12 +54,9 @@ export default function SettingMainEnvironmentVariable() {
   const handleDeleteEnvVariable = (name: string) => {
     setEnvironmentConfig((draft) => {
       const newEnvList = draft.environmentList.filter((item) => item.name != name)
-      const result = requests
-        .post('/setting', { key: 'environmentList', val: newEnvList })
-        .then(() => {
-          console.log(result)
-          void getData()
-        })
+      void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
+        void getData()
+      })
     })
   }
 

@@ -11,6 +11,7 @@ interface Props {
 
 export default function SettingItem({ handleToggleDesigner, settingType }: Props) {
   const [isHovering, setIsHovering] = useImmer(false)
+
   return (
     <div
       className="flex justify-start items-center py-2.5 pl-3 cursor-pointer"

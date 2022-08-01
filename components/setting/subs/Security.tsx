@@ -41,7 +41,6 @@ export default function SettingMainSecurity() {
 
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, SecurConfig>('/setting/securityConfig')
-    console.log(result)
     setSecurConfig(result)
   }, [])
 
@@ -95,7 +94,7 @@ export default function SettingMainSecurity() {
               </Form.Item>
               <span className={styles.setTitle}>
                 <IconFont type="icon-zhuyi" className="mr-1 text-[14px]" />
-                <span>https://loacalhost:999</span>
+                <span>https://loacalhost:9999</span>
               </span>
             </Form.Item>
             <Form.Item
