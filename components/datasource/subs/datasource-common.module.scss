@@ -93,6 +93,11 @@
     line-height: 18px;
   }
 }
+.table-contain :global{
+  .ant-table-cell{
+    padding: 10px 20px;
+  }
+}
 
 //自定义页面
 .monaco {

@@ -44,23 +44,27 @@ interface DataType {
 
 const columns: ColumnsType<DataType> = [
   {
-    title: '请求头',
     dataIndex: 'key',
     key: 'key',
-    width: '27%',
+    width: '30%',
+    render: (_, { key }) => <span className="pl-1">{key}</span>,
   },
   {
-    title: '类型',
-    dataIndex: 'kind',
-    key: 'kind',
-    render: (kind) => <span>{kind == '0' ? '值' : kind == '1' ? '环境变量' : '转发至客户端'}</span>,
-    width: '20%',
-  },
-  {
-    title: '请求头信息',
     dataIndex: 'val',
     key: 'val',
-    width: '40%',
+    width: '70%',
+    render: (_, { kind, val }) => (
+      <div className="flex items-center">
+        {kind == '0' ? (
+          <IconFont type="icon-zhi" className="text-[24px]" />
+        ) : kind == '1' ? (
+          <IconFont type="icon-shifoubixu2" className="text-[24px]" />
+        ) : (
+          <IconFont type="icon-biangeng1" className="text-[24px]" />
+        )}
+        <span className="ml-2">{val}</span>
+      </div>
+    ),
   },
 ]
 
@@ -111,7 +115,9 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const onFinish = async (values: Config) => {
     console.log('Success:', values)
     const newValues = { ...values }
+    //如果进行上传文件操作
     if (file.uid) {
+      //如果该rest有已经上传文件 先删除后post
       if (config.filePath) {
         await requests({
           method: 'delete',
@@ -128,6 +134,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
         data: { file: file },
       })) as unknown as string
     } else {
+      //如果未进行上传文件操作，如果进行删除文件将config中的filePath置空
       if (deleteFlag) {
         await requests({
           method: 'delete',
@@ -135,7 +142,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           data: { id: config.filePath },
         })
         newValues.filePath = undefined
-      } else newValues.filePath = config.filePath
+      } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
     }
     if (content.name == '') {
       const req = { ...content, config: JSON.stringify(newValues), name: values.nameSpace }
@@ -238,7 +245,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               className={styles['descriptions-box']}
               labelStyle={{
                 backgroundColor: 'white',
-                width: '30%',
+                width: '30.5%',
                 borderRight: 'none',
                 borderBottom: 'none',
               }}
@@ -270,15 +277,18 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           </div>
 
           <Tabs defaultActiveKey="1" onChange={onChange}>
-            {/* header:["k1":{kind:"1",Val:'123'},"k2":{}] */}
             <TabPane tab="请求头" key="1">
-              <Table
-                columns={columns}
-                rowKey="key"
-                dataSource={config.header as unknown as Array<DataType>}
-                pagination={false}
-                className="mb-10"
-              />
+              <div className={`${styles['table-contain']}`}>
+                <Table
+                  bordered
+                  showHeader={false}
+                  columns={columns}
+                  rowKey="key"
+                  dataSource={config.header as unknown as Array<DataType>}
+                  pagination={false}
+                  className="mb-10"
+                />
+              </div>
             </TabPane>
             <TabPane
               tab={

@@ -140,18 +140,27 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
           className="-ml-3 mr-1"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
-        <IconFont
-          type={
-            config.dbType == 'SQLITE'
-              ? 'icon-shujuyuantubiao2'
-              : config.dbType == 'PGSQL'
-              ? 'icon-shujuyuantubiao3'
-              : config.dbType == 'MONGODB'
-              ? 'icon-shujuyuantubiao4'
-              : 'icon-shujuyuantubiao1'
-          }
-          className="mr-2"
-        />
+        {datasourceItem.source_type == 1 ? (
+          <IconFont
+            type={
+              config.dbType == 'SQLITE'
+                ? 'icon-shujuyuantubiao2'
+                : config.dbType == 'PGSQL'
+                ? 'icon-shujuyuantubiao3'
+                : config.dbType == 'MONGODB'
+                ? 'icon-shujuyuantubiao4'
+                : 'icon-shujuyuantubiao1'
+            }
+            className="mr-2"
+          />
+        ) : datasourceItem.source_type == 2 ? (
+          <IconFont type="icon-wenjian1" className="mr-2 text-[16px]" />
+        ) : datasourceItem.source_type == 3 ? (
+          <IconFont type="icon-QLweixuanzhong1" className="mr-2 text-[16px]" />
+        ) : (
+          <IconFont type="icon-wenjian" className="mr-2 text-[16px]" />
+        )}
+
         {isEditing ? (
           <Input
             onBlur={(e) => void handleItemEdit(e.target.value)}

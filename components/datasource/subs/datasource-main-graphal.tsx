@@ -33,30 +33,34 @@ interface Config {
   [key: string]: ReactNode
 }
 interface DataType {
-  reqHead: string
-  reqType: string
-  reqTypeInfo: string
+  key: string
+  kind: string
+  val: string
 }
 
 const columns: ColumnsType<DataType> = [
   {
-    title: '请求头',
     dataIndex: 'key',
     key: 'key',
-    width: '27%',
+    width: '30%',
+    render: (_, { key }) => <span className="pl-1">{key}</span>,
   },
   {
-    title: '类型',
-    dataIndex: 'kind',
-    key: 'kind',
-    render: (kind) => <span>{kind == '0' ? '值' : kind == '1' ? '环境变量' : '转发至客户端'}</span>,
-    width: '20%',
-  },
-  {
-    title: '请求头信息',
     dataIndex: 'val',
     key: 'val',
-    width: '40%',
+    width: '70%',
+    render: (_, { kind, val }) => (
+      <div className="flex items-center">
+        {kind == '0' ? (
+          <IconFont type="icon-zhi" className="text-[24px]" />
+        ) : kind == '1' ? (
+          <IconFont type="icon-shifoubixu2" className="text-[24px]" />
+        ) : (
+          <IconFont type="icon-biangeng1" className="text-[24px]" />
+        )}
+        <span className="ml-2">{val}</span>
+      </div>
+    ),
   },
 ]
 export default function DatasourceGraphalMainCheck({ content, type }: Props) {
@@ -210,7 +214,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               className={styles['descriptions-box']}
               labelStyle={{
                 backgroundColor: 'white',
-                width: '31%',
+                width: '30.5%',
                 borderRight: 'none',
                 borderBottom: 'none',
               }}
@@ -251,13 +255,17 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </Descriptions>
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
-          <Table
-            columns={columns}
-            rowKey="key"
-            dataSource={config.headers as unknown as Array<DataType>}
-            pagination={false}
-            className="mb-10"
-          />
+          <div className={`${styles['table-contain']}`}>
+            <Table
+              bordered
+              showHeader={false}
+              columns={columns}
+              rowKey="key"
+              dataSource={config.headers as unknown as Array<DataType>}
+              pagination={false}
+              className="mb-10"
+            />
+          </div>
           <Collapse
             ghost
             bordered={false}
@@ -347,11 +355,11 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 </span>
               </div>
             )}
-            <div className="flex justify-center items-center w-160px">
+            <div className="flex justify-center items-center w-40">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id,content.source_type)
+                  handleToggleDesigner('data', content.id, content.source_type)
                 }}
               >
                 <span>取消</span>
@@ -420,6 +428,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               >
                 <Input placeholder="请输入..." />
               </Form.Item>
+
               <Form.Item name="agreement" valuePropName="checked">
                 <Checkbox
                   onChange={() => {
@@ -462,7 +471,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       return false
                     }}
                   >
-                    <Button icon={<PlusOutlined />} className="w-147">
+                    <Button icon={<PlusOutlined />} className="w-148">
                       添加文件
                     </Button>
                   </Upload>
@@ -473,40 +482,23 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
               <h2 className="ml-3 mb-3">请求头:</h2>
 
-              <Form.Item
-                wrapperCol={{
-                  xs: { span: 24 },
-                  sm: { span: 24 },
-                }}
-              >
+              <Form.Item wrapperCol={{ span: 16 }}>
                 <Form.List name="headers">
                   {(fields, { add, remove }, { errors }) => (
                     <>
                       {fields.map((field, index) => (
                         <Space key={field.key} align="baseline">
-                          <Form.Item
-                            className="w-50"
-                            wrapperCol={{ span: 24 }}
-                            name={[field.name, 'key']}
-                          >
+                          <Form.Item className="w-50" name={[field.name, 'key']}>
                             <Input />
                           </Form.Item>
-                          <Form.Item
-                            className="w-36"
-                            wrapperCol={{ span: 24 }}
-                            name={[field.name, 'kind']}
-                          >
+                          <Form.Item className="w-36" name={[field.name, 'kind']}>
                             <Select>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                               <Option value="2">转发自客户端</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item
-                            className="w-126"
-                            wrapperCol={{ span: 24 }}
-                            name={[field.name, 'val']}
-                          >
+                          <Form.Item className="w-126" name={[field.name, 'val']}>
                             <Input placeholder="请输入..." />
                           </Form.Item>
                           <IconFont
@@ -519,7 +511,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         </Space>
                       ))}
 
-                      <Form.Item wrapperCol={{ span: 16 }}>
+                      <Form.Item wrapperCol={{ span: 24 }}>
                         <Button
                           type="dashed"
                           onClick={() => {
