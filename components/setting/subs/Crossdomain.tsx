@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './setting-main.module.scss'
+import styles from './subs.module.scss'
 
 interface CorsConfiguration {
   allowedOrigins: Array<string>
@@ -61,7 +61,6 @@ export default function SettingCrossdomain() {
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
     setCorsConfig(result)
-    console.log(result)
   }, [])
 
   useEffect(() => {

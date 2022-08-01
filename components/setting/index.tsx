@@ -1,4 +1,4 @@
-import SettingContainer from './setting-container'
-import SettingPannel from './setting-pannel'
+import SettingContainer from './Container'
+import SettingPannel from './Pannel'
 
 export { SettingContainer, SettingPannel }
