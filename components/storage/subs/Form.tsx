@@ -5,7 +5,7 @@ import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext, StorageDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './storage-main.module.scss'
+import styles from './subs.module.scss'
 
 interface Props {
   content?: StorageResp
