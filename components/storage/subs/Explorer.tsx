@@ -36,6 +36,8 @@ interface Option {
   children?: Option[]
 }
 
+const { Panel } = Collapse
+
 export default function StorageExplorer({ content }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
@@ -77,6 +79,7 @@ export default function StorageExplorer({ content }: Props) {
       ],
     },
   ]
+
   const options = dropdownMenu as Option[]
 
   if (!content) {
@@ -86,11 +89,12 @@ export default function StorageExplorer({ content }: Props) {
   const changeSerachState = () => {
     setIsSerach(!isSerach)
   }
+
   const listMenu = (
     <Menu
       items={[
         {
-          key: '1',
+          key: '0',
           label: (
             <div>
               <AppstoreOutlined className="mr-2" />
@@ -99,7 +103,7 @@ export default function StorageExplorer({ content }: Props) {
           ),
         },
         {
-          key: '2',
+          key: '1',
           label: (
             <div>
               <BarsOutlined className="mr-2" />
@@ -110,18 +114,15 @@ export default function StorageExplorer({ content }: Props) {
       ]}
     />
   )
+
   const orderMenu = (
     <Menu
       items={[
         {
-          key: '1',
+          key: '0',
           label: (
-            <div
-              onClick={() => {
-                setIsArrowUP(!isArrowUP)
-              }}
-            >
-              按名字
+            <div onClick={() => setIsArrowUP(!isArrowUP)}>
+              按名称
               <span className="ml-2 text-red-500">
                 {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
               </span>
@@ -129,17 +130,17 @@ export default function StorageExplorer({ content }: Props) {
           ),
         },
         {
-          key: '2',
+          key: '1',
           label: <div>按创建时间</div>,
         },
         {
-          key: '3',
+          key: '2',
           label: <div>按修改时间</div>,
         },
       ]}
     />
   )
-  const { Panel } = Collapse
+
   return (
     <>
       <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
