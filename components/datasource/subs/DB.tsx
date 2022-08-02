@@ -11,7 +11,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-db.module.scss'
+import styles from './DB.module.scss'
 interface Props {
   content: DatasourceResp
   type: string
@@ -233,7 +233,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 1 : 0,
+        switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
@@ -331,15 +331,16 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 {content.name} <span className="text-[#AFB0B4] text-[12px]">main</span>
               </span>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex  items-center">
               <Switch
-                checked={content.switch == 1 ? true : false}
+                checked={content.switch == 0 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
-                className="ml-6 w-15"
+                className="mr-10 w-15"
+                style={{ marginRight: '30px' }}
               />
-              <Button className={`${styles['connect-check-btn-common']} w-20 ml-12`}>
+              <Button className={`${styles['connect-check-btn-common']} w-20`}>
                 <span>测试链接</span>
               </Button>
               <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
@@ -450,9 +451,10 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 <span className="ml-2 text-xs text-gray-500/80">main</span>
               </div>
             )}
-            <div className="flex justify-center items-centerw-160px">
+
+            <div className="flex  items-center justify-end w-36">
               <Button
-                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                className={`${styles['connect-check-btn-common']} w-16 mr-4`}
                 onClick={() => {
                   handleToggleDesigner('data', content.id, content.source_type)
                 }}
@@ -462,7 +464,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
               <Button
                 disabled={disabled}
-                className={`${styles['connect-check-btn']}  ml-4`}
+                className={`${styles['connect-check-btn']}`}
                 onClick={() => {
                   form.submit()
                 }}
@@ -486,7 +488,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
               onValuesChange={onValuesChange}
               validateTrigger="onBlur"
               autoComplete="new-password"
-              className={styles['db-form']}
               labelAlign="left"
               initialValues={{
                 apiNamespace: config.apiNamespace,

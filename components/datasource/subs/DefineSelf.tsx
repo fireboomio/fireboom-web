@@ -8,7 +8,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-common.module.scss'
+import styles from './DefineSelf.module.scss'
 interface Props {
   content: DatasourceResp
 }
@@ -65,7 +65,7 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
   )
 }
 
-export default function DatasourceDeselfMainEdit({ content }: Props) {
+export default function DatasourceDeselfMain({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const config = JSON.parse(content.config) as Config
   const dispatch = useContext(DatasourceDispatchContext)
@@ -74,7 +74,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 1 : 0,
+        switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
@@ -123,7 +123,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
         </div>
         <div>
           <Switch
-            checked={content.switch == 1 ? true : false}
+            checked={content.switch == 0 ? true : false}
             onChange={connectSwitchOnChange}
             checkedChildren="开启"
             unCheckedChildren="关闭"

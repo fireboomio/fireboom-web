@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { ReactNode, useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -23,19 +23,22 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-common.module.scss'
+import styles from './Graphal.module.scss'
 
 interface Props {
   content: DatasourceResp
   type: string
 }
 interface Config {
-  [key: string]: ReactNode
+  [key: string]: string | undefined | number
 }
 interface DataType {
   key: string
   kind: string
   val: string
+}
+interface FromValues {
+  [key: string]: string | undefined | number | Array<DataType>
 }
 
 const columns: ColumnsType<DataType> = [
@@ -80,14 +83,17 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   }, [content, type])
 
   //表单提交成功回调
-  const onFinish = async (values: Config) => {
+  const onFinish = async (values: FromValues) => {
     console.log('SuccessValues:', values)
+    values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
+    //如果进行上传文件操作
     if (file.uid) {
+      //如果存在已经上传文件 先删除先前文件
       if (config.loadSchemaFromString) {
         await requests({
-          method: 'delete',
-          url: '/file',
+          method: 'post',
+          url: '/dataSource/removeFile',
           data: { id: config.loadSchemaFromString },
         })
       }
@@ -96,21 +102,23 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
           'Content-Type': 'multipart/form-data',
         },
         method: 'post',
-        url: '/file/upload',
+        url: '/dataSource/import',
         data: { file: file },
       })) as unknown as string
     } else {
+      //如果未进行上传文件操作逻辑，删除文件发送请求并将config中的filePath置空
       if (deleteFlag) {
         await requests({
-          method: 'delete',
-          url: '/file',
+          method: 'post',
+          url: '/dataSource/removeFile',
           data: { id: config.loadSchemaFromString },
         })
         newValues.loadSchemaFromString = undefined
-      } else newValues.loadSchemaFromString = config.loadSchemaFromString
+      } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
     }
+    //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     if (content.name == '') {
-      const req = { ...content, config: JSON.stringify(newValues), name: values.nameSpace }
+      const req = { ...content, config: JSON.stringify(newValues), name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
@@ -118,7 +126,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
       await requests.put('/dataSource', {
         ...content,
         config: JSON.stringify(newValues),
-        name: values.nameSpace,
+        name: values.apiNameSpace,
       })
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
@@ -150,7 +158,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 1 : 0,
+        switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
@@ -162,6 +170,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   //移除文件回调
   const onRemoveFile = () => {
+    console.log('删除文件')
     setDeleteFlag(true)
     setFile({} as unknown as UploadFile)
   }
@@ -185,7 +194,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                checked={content.switch == 1 ? true : false}
+                checked={content.switch == 0 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -228,7 +237,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.nameSpace}
+                {config.apiNameSpace}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -261,7 +270,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               showHeader={false}
               columns={columns}
               rowKey="key"
-              dataSource={config.headers as unknown as Array<DataType>}
+              dataSource={(config.headers as unknown as Array<DataType>) || []}
               pagination={false}
               className="mb-10"
             />
@@ -375,7 +384,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             </div>
           </div>
 
-          <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
+          <div className="py-6 rounded-xl mb-4">
             <Form
               form={form}
               name="basic"
@@ -390,7 +399,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               className="ml-3"
               labelAlign="left"
               initialValues={{
-                nameSpace: config.nameSpace,
+                apiNameSpace: config.apiNameSpace,
                 url: config.url,
                 internal: config.isInner,
                 customFloatScalars: config.defineFloat,
@@ -402,14 +411,14 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             >
               <Form.Item
                 label={
-                  <div className="">
+                  <div>
                     <span className={styles['label-style']}>命名空间:</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 colon={false}
                 style={{ marginBottom: '20px' }}
-                name="nameSpace"
+                name="apiNameSpace"
               >
                 <Input placeholder="请输入..." />
               </Form.Item>
@@ -466,8 +475,14 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     }
                     onRemove={onRemoveFile}
                     maxCount={1}
-                    beforeUpload={(file) => {
-                      setFile(file)
+                    beforeUpload={(file: UploadFile) => {
+                      console.log(file, 'file')
+                      const req = new RegExp('.json|.yaml', 'g')
+                      if (req.test(file.name)) {
+                        setFile(file)
+                      } else {
+                        file.status = 'error'
+                      }
                       return false
                     }}
                   >
@@ -503,7 +518,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                           </Form.Item>
                           <IconFont
                             type="icon-guanbi"
-                            className={`${styles['form-delete-icon']}`}
                             onClick={() => {
                               remove(index)
                             }}

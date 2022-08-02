@@ -1,4 +1,4 @@
-import DatasourceContainer from './datasource-container'
-import DatasourcePannel from './datasource-pannel'
+import DatasourceContainer from './Container'
+import DatasourcePannel from './Pannel'
 
 export { DatasourceContainer, DatasourcePannel }

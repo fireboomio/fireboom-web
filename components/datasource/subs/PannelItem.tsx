@@ -12,7 +12,7 @@ import {
 } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from '../datasource-pannel.module.scss'
+import styles from './PannelItem.module.scss'
 
 interface Props {
   datasourceItem: DatasourceResp
@@ -24,7 +24,7 @@ interface Config {
   [key: string]: string
 }
 
-export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props) {
+export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)
@@ -32,6 +32,7 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
   const { currDBId } = useContext(DatasourceCurrDBContext)
   const [isHovering, setIsHovering] = useImmer(false)
   const config = JSON.parse(datasourceItem.config) as Config
+
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
@@ -39,11 +40,17 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
     }
   }
 
+  //重命名input框onblur或enter回调
   async function handleItemEdit(value: string) {
+    console.log(datasourceItem)
     if (value === '') {
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
-      await requests.put('/dataSource', { ...datasourceItem, name: value })
+      await requests.put('/dataSource', {
+        ...datasourceItem,
+        name: value,
+        config: JSON.stringify({ ...config, apiNameSpace: value }),
+      })
       void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
         dispatch({
           type: 'fetched',
@@ -151,14 +158,13 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
                 ? 'icon-shujuyuantubiao4'
                 : 'icon-shujuyuantubiao1'
             }
-            className="mr-2"
           />
         ) : datasourceItem.source_type == 2 ? (
-          <IconFont type="icon-wenjian1" className="mr-2 text-[16px]" />
+          <IconFont type="icon-wenjian1" className="text-[16px]" />
         ) : datasourceItem.source_type == 3 ? (
-          <IconFont type="icon-QLweixuanzhong1" className="mr-2 text-[16px]" />
+          <IconFont type="icon-QLweixuanzhong1" className="text-[16px]" />
         ) : (
-          <IconFont type="icon-wenjian" className="mr-2 text-[16px]" />
+          <IconFont type="icon-wenjian" className="text-[16px]" />
         )}
 
         {isEditing ? (
@@ -169,19 +175,16 @@ export default function DatasourceDBItem({ datasourceItem, onClickItem }: Props)
             onKeyUp={(e: React.KeyboardEvent) => {
               e.key == 'Escape' && setIsEditing(false)
             }}
-            className="text-sm font-normal leading-4 h-5 w-5/7 pl-0.5"
+            className="text-sm font-normal leading-4 h-5 w-5/7"
             defaultValue={datasourceItem.name}
             autoFocus
             placeholder="请输入外部数据源名"
           />
         ) : (
           <div
-            onClick={() => {
-              // setIsEditing(true)
-            }}
-            className={`text-sm font-normal leading-4 ${
-              datasourceItem.switch == 0 ? 'text-[#AFB0B4]' : 'text-[#000000]'
-            }`}
+            className={`text-sm font-normal ml-2 leading-4 ${
+              datasourceItem.switch == 0 ? 'text-[#000000]' : 'text-[#AFB0B4]'
+            } ${datasourceItem.id === currDBId ? 'font-650' : ''}`}
           >
             {datasourceItem.name}
           </div>
