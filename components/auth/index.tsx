@@ -1,4 +1,4 @@
-import AuthContainer from './auth-container'
-import AuthPannel from './auth-pannel'
+import AuthContainer from './Container'
+import AuthPannel from './Pannel'
 
 export { AuthContainer, AuthPannel }

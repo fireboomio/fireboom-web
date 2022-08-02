@@ -13,7 +13,7 @@ import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
 
-import styles from './auth-common-main.module.scss'
+import styles from './subs.module.scss'
 
 interface RoleProvResp {
   id: number

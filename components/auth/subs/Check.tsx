@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context'
 
-import styles from './auth-common-main.module.scss'
+import styles from './subs.module.scss'
 interface Props {
   content: AuthProvResp
 }

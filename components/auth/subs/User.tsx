@@ -3,7 +3,7 @@ import type { ColumnsType } from 'antd/es/table'
 import type { TableRowSelection } from 'antd/es/table/interface'
 import { useState } from 'react'
 
-import styles from './auth-common-main.module.scss'
+import styles from './subs.module.scss'
 
 interface DataType {
   id: number

@@ -1,7 +1,7 @@
 .save-btn .ant-btn {
-  padding: 0;
   width: 64px;
   height: 28px;
+  padding: 0;
   font-size: 14px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
@@ -12,10 +12,11 @@
     background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
   }
+
   span {
-    line-height: 18px;
     color: #fff;
     font-size: 14px;
+    line-height: 18px;
   }
 }
 
@@ -157,6 +158,7 @@
     width: 90%;
   }
 }
+
 .monaco {
   height: 300px;
   padding: 0;

@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 
 import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
 
-import styles from './auth-pannel.module.scss'
-import AuthList from './subs/auth-list'
+import styles from './Pannel.module.scss'
+import AuthList from './subs/List'
 
 interface Props {
   onClickItem: (authItem: AuthProvResp) => void

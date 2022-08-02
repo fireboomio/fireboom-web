@@ -2,7 +2,7 @@ import { useImmer } from 'use-immer'
 
 import type { AuthListType } from '@/interfaces/auth'
 
-import styles from '../auth-pannel.module.scss'
+import styles from '../Pannel.module.scss'
 
 interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void

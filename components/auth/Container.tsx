@@ -5,11 +5,11 @@ import { useImmer } from 'use-immer'
 import type { AuthProvResp } from '@/interfaces/auth'
 
 import IconFont from '../iconfont'
-import AuthMainCheck from './subs/auth-main-check'
-import AuthMainEdit from './subs/auth-main-edit'
+import AuthMainCheck from './subs/Check'
+import AuthMainEdit from './subs/Edit'
 // import AuthMainIdentity from './subs/auth-main-identity'
-import AuthMainRole from './subs/auth-main-role'
-import AuthMainUser from './subs/auth-main-user'
+import AuthMainRole from './subs/Role'
+import AuthMainUser from './subs/User'
 
 interface Props {
   content: AuthProvResp

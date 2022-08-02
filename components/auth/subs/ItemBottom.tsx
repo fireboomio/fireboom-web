@@ -9,7 +9,7 @@ import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from '../auth-pannel.module.scss'
+import styles from '../Pannel.module.scss'
 
 interface Props {
   authItem: AuthProvResp

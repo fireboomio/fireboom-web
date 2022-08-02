@@ -7,8 +7,8 @@ import { useImmer } from 'use-immer'
 import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext } from '@/lib/context'
 
-import AuthItem from './auth-item'
-import AuthItemTop from './auth-item-top'
+import AuthItem from './ItemBottom'
+import AuthItemTop from './ItemTop'
 
 interface Props {
   onClickItem: (authItem: AuthProvResp) => void
