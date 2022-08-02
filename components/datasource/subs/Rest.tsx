@@ -17,7 +17,7 @@ import {
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { ReactNode, useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -25,7 +25,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-common.module.scss'
+import styles from './Rest.module.scss'
 
 interface Props {
   content: DatasourceResp
@@ -33,7 +33,11 @@ interface Props {
 }
 
 interface Config {
-  [key: string]: ReactNode
+  [key: string]: string | undefined | number
+}
+
+interface FromValues {
+  [key: string]: string | undefined | number | Array<DataType>
 }
 
 interface DataType {
@@ -44,27 +48,29 @@ interface DataType {
 
 const columns: ColumnsType<DataType> = [
   {
-    title: '请求头',
     dataIndex: 'key',
-    key: 'key',
-    width: '27%',
+    width: '30%',
+    render: (_, { key }) => <span className="pl-1">{key}</span>,
   },
   {
-    title: '类型',
-    dataIndex: 'kind',
-    key: 'kind',
-    render: (kind) => <span>{kind == '0' ? '值' : kind == '1' ? '环境变量' : '转发至客户端'}</span>,
-    width: '20%',
-  },
-  {
-    title: '请求头信息',
     dataIndex: 'val',
-    key: 'val',
-    width: '40%',
+    width: '70%',
+    render: (_, { kind, val }) => (
+      <div className="flex items-center">
+        {kind == '0' ? (
+          <IconFont type="icon-zhi" className="text-[24px]" />
+        ) : kind == '1' ? (
+          <IconFont type="icon-shifoubixu2" className="text-[24px]" />
+        ) : (
+          <IconFont type="icon-biangeng1" className="text-[24px]" />
+        )}
+        <span className="ml-2">{val}</span>
+      </div>
+    ),
   },
 ]
 
-export default function DatasourceRestMainCheck({ content, type }: Props) {
+export default function DatasourceRestMain({ content, type }: Props) {
   const [isEyeShow, setIsEyeShow] = useImmer(false)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -83,7 +89,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 1 : 0,
+        switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
@@ -108,14 +114,18 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   }
 
   //表单上传成功回调
-  const onFinish = async (values: Config) => {
+  const onFinish = async (values: FromValues) => {
     console.log('Success:', values)
+    values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
+    console.log(newValues, 'newValues')
+    //如果进行上传文件操作
     if (file.uid) {
+      //如果存在已经上传文件 先删除先前文件
       if (config.filePath) {
         await requests({
-          method: 'delete',
-          url: '/file',
+          method: 'post',
+          url: '/dataSource/removeFile',
           data: { id: config.filePath },
         })
       }
@@ -124,21 +134,24 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           'Content-Type': 'multipart/form-data',
         },
         method: 'post',
-        url: '/file/upload',
+        url: '/dataSource/import',
         data: { file: file },
       })) as unknown as string
     } else {
+      //如果未进行上传文件操作逻辑，删除文件发送请求并将config中的filePath置空
       if (deleteFlag) {
         await requests({
-          method: 'delete',
-          url: '/file',
+          method: 'post',
+          url: '/dataSource/removeFile',
           data: { id: config.filePath },
         })
         newValues.filePath = undefined
-      } else newValues.filePath = config.filePath
+      } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
     }
+
+    //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
     if (content.name == '') {
-      const req = { ...content, config: JSON.stringify(newValues), name: values.nameSpace }
+      const req = { ...content, config: JSON.stringify(newValues), name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
@@ -146,7 +159,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
       await requests.put('/dataSource', {
         ...content,
         config: JSON.stringify(newValues),
-        name: values.nameSpace,
+        name: values.apiNameSpace,
       })
 
     void requests
@@ -196,7 +209,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
-
   return (
     <>
       {type === 'data' ? (
@@ -211,7 +223,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </div>
             <div className="flex justify-center items-center">
               <Switch
-                checked={content.switch == 1 ? true : false}
+                checked={content.switch == 0 ? true : false}
                 checkedChildren="开启"
                 unCheckedChildren="关闭"
                 onChange={connectSwitchOnChange}
@@ -238,7 +250,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               className={styles['descriptions-box']}
               labelStyle={{
                 backgroundColor: 'white',
-                width: '30%',
+                width: '30.5%',
                 borderRight: 'none',
                 borderBottom: 'none',
               }}
@@ -246,13 +258,13 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               <Descriptions.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>命名空间</span>
+                    <span className={styles['label-style']}>名称</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 className="justify-start"
               >
-                {config.nameSpace}
+                {config.apiNameSpace}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -270,15 +282,18 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
           </div>
 
           <Tabs defaultActiveKey="1" onChange={onChange}>
-            {/* header:["k1":{kind:"1",Val:'123'},"k2":{}] */}
             <TabPane tab="请求头" key="1">
-              <Table
-                columns={columns}
-                rowKey="key"
-                dataSource={config.header as unknown as Array<DataType>}
-                pagination={false}
-                className="mb-10"
-              />
+              <div className={`${styles['table-contain']}`}>
+                <Table
+                  bordered
+                  showHeader={false}
+                  columns={columns}
+                  rowKey="key"
+                  dataSource={(config.headers as unknown as Array<DataType>) || []}
+                  pagination={false}
+                  className="mb-10"
+                />
+              </div>
             </TabPane>
             <TabPane
               tab={
@@ -289,7 +304,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               }
               key="2"
             >
-              <div className="flex justify-center">
+              <div className="flex justify-center mb-11">
                 <Descriptions
                   bordered
                   column={1}
@@ -300,6 +315,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     borderRight: 'none',
                     borderBottom: 'none',
                     width: '30%',
+                    padding: '10px',
+                    paddingLeft: '20px',
                   }}
                 >
                   <Descriptions.Item label="JWT获取">
@@ -402,7 +419,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
             </div>
           </div>
 
-          <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
+          <div className="py-6 rounded-xl mb-4">
             <Form
               form={form}
               name="basic"
@@ -417,8 +434,8 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
               labelAlign="left"
               className="ml-3"
               initialValues={{
-                nameSpace: config.nameSpace,
-                header: config.header || [{ kind: '0' }],
+                apiNameSpace: config.apiNameSpace,
+                headers: config.headers || [{ kind: '0' }],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
               }}
@@ -437,7 +454,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                     message: '只允许包含数字，字母，下划线',
                   },
                 ]}
-                name="nameSpace"
+                name="apiNameSpace"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
@@ -468,9 +485,14 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       : []
                   }
                   maxCount={1}
-                  beforeUpload={(file) => {
+                  beforeUpload={(file: UploadFile) => {
                     console.log(file, 'file')
-                    setFile(file)
+                    const req = new RegExp('.json|.yaml', 'g')
+                    if (req.test(file.name)) {
+                      setFile(file)
+                    } else {
+                      file.status = 'error'
+                    }
                     return false
                   }}
                   onRemove={onRemoveFile}
@@ -489,7 +511,7 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       sm: { span: 24 },
                     }}
                   >
-                    <Form.List name="header">
+                    <Form.List name="headers">
                       {(fields, { add, remove }, { errors }) => (
                         <>
                           {fields.map((field, index) => (
@@ -521,7 +543,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                               </Form.Item>
                               <IconFont
                                 type="icon-guanbi"
-                                className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   remove(index)
                                 }}
@@ -556,7 +577,6 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                   }
                   key="2"
                 >
-                  {/* 0静态1动态 */}
                   <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
                     <Radio.Group onChange={onChangeRadio} value={value}>
                       <Radio value={'0'} className="mr-20">
@@ -602,20 +622,52 @@ export default function DatasourceRestMainCheck({ content, type }: Props) {
                       </Form.Item>
                     </>
                   ) : (
-                    <Form.Item
-                      label={
-                        <div>
-                          <span>Token 端点:</span>
-                          <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                        </div>
-                      }
-                      colon={false}
-                      required
-                      style={{ marginBottom: '20px' }}
-                      name="tokenPoint"
-                    >
-                      <Input placeholder="请输入..." />
-                    </Form.Item>
+                    <>
+                      <Form.Item label="密钥">
+                        <Input.Group compact>
+                          <Form.Item
+                            name={['secret', 'kind']}
+                            noStyle
+                            rules={[{ required: true, message: 'typeName is required' }]}
+                          >
+                            <Select className="w-1/5">
+                              <Option value="0">值</Option>
+                              <Option value="1">环境变量</Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            name={['secret', 'val']}
+                            noStyle
+                            rules={[
+                              { required: true, message: '连接名不能为空' },
+                              {
+                                pattern: new RegExp('^\\w+$', 'g'),
+                                message: '只允许包含字母，数字，下划线',
+                              },
+                            ]}
+                          >
+                            <Input style={{ width: '80%' }} placeholder="请输入" />
+                          </Form.Item>
+                        </Input.Group>
+                      </Form.Item>
+                      <Form.Item
+                        label={
+                          <div>
+                            <span>Token 端点:</span>
+                            <IconFont
+                              type="icon-wenhao"
+                              className={`${styles['form-icon']} ml-1`}
+                            />
+                          </div>
+                        }
+                        colon={false}
+                        required
+                        style={{ marginBottom: '20px' }}
+                        name="tokenPoint"
+                      >
+                        <Input placeholder="请输入..." />
+                      </Form.Item>
+                    </>
                   )}
                 </TabPane>
               </Tabs>

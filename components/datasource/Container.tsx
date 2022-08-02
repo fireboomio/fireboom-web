@@ -4,10 +4,10 @@ import { useImmer } from 'use-immer'
 import type { DatasourceResp } from '@/interfaces/datasource'
 
 import IconFont from '../iconfont'
-import DatasourceDBMain from './subs/datasource-main-db'
-import DatasourceDeselfMainEdit from './subs/datasource-main-deself'
-import DatasourceGraphalMain from './subs/datasource-main-graphal'
-import DatasourceRestMain from './subs/datasource-main-rest'
+import DatasourceDBMain from './subs/DB'
+import DatasourceDeselfMainEdit from './subs/DefineSelf'
+import DatasourceGraphalMain from './subs/Graphal'
+import DatasourceRestMain from './subs/Rest'
 
 interface Props {
   content: DatasourceResp
@@ -20,6 +20,7 @@ export default function DatasourceEditor({ content, showType }: Props) {
   const handleIconClick = () => {
     console.log('aaa')
   }
+
   useEffect(() => {
     if (content)
       if (showType == 'Setting') {

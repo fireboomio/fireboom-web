@@ -20,14 +20,6 @@
   }
 }
 
-.design-btn {
-  width: 62px;
-  height: 32px;
-  margin-right: 16px;
-  border: 1px solid rgb(0 0 0 / 10%);
-  border-radius: 2px;
-}
-
 .switch-check-btn {
   width: 60px;
   height: 24px;
@@ -46,6 +38,9 @@
   width: 1650px;
   border: 1px solid rgb(95 98 105 / 10%);
   border-radius: 4px;
+  .ant-descriptions-item-label{
+    background-color: red;
+  }
 }
 
 .collapse-box :global {
@@ -68,20 +63,6 @@
   height: 20px;
 }
 
-.add-btn {
-  padding: 0;
-  color: #fff;
-  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
-  border-radius: 50%;
-
-  &:hover,
-  &:focus {
-    color: #fff;
-    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
-    border-color: #e13d5b;
-  }
-}
-
 .connect-check-btn-common {
   height: 28px;
   padding: 0;
@@ -94,10 +75,10 @@
   }
 }
 
-//自定义页面
-.monaco {
-  height: 452px;
-  padding: 16px 0;
-  border: 1px solid rgb(95 98 105 / 10%);
-  border-radius: 4px;
+.table-contain :global {
+  .ant-table-cell {
+    padding: 10px 18px;
+  }
 }
+
+

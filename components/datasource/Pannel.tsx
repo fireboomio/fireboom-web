@@ -7,12 +7,41 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
 import IconFont from '../iconfont'
-import styles from './datasource-pannel.module.scss'
-import DatasourceList from './subs/datasource-list'
+import styles from './Pannel.module.scss'
+import DatasourceItem from './subs/PannelItem'
+
 interface Props {
   onClickItem: (dsItem: DatasourceResp) => void
 }
+interface ListProps {
+  onClickItem: (dsItem: DatasourceResp) => void
+  Datasourcetype: number
+}
 const { Panel } = Collapse
+
+function DatasourceList({ onClickItem, Datasourcetype }: ListProps) {
+  const datasource = useContext(DatasourceContext)
+
+  return (
+    <>
+      <div>
+        {datasource
+          .filter((item) => item.source_type == Datasourcetype)
+          .map((datasourceItem) => {
+            if (datasourceItem.name != '')
+              return (
+                <DatasourceItem
+                  key={datasourceItem.id}
+                  datasourceItem={datasourceItem}
+                  onClickItem={onClickItem}
+                  Datasourcetype={Datasourcetype}
+                />
+              )
+          })}
+      </div>
+    </>
+  )
+}
 
 export default function DatasourcePannel({ onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)

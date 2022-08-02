@@ -8,7 +8,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './datasource-common.module.scss'
+import styles from './DefineSelf.module.scss'
 interface Props {
   content: DatasourceResp
 }
@@ -23,10 +23,13 @@ interface PropsInfo {
 
 function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
   const [isEditing, setIsEditing] = useImmer(content.name == '')
+  const config = JSON.parse(content.config) as Config
+
   useEffect(() => {
     setIsEditing(content.name == '')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content])
-  const config = JSON.parse(content.config) as Config
+
   function handleItemEdit(value: string) {
     editDefineSelf(value)
     setIsEditing(false)
@@ -62,17 +65,16 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
   )
 }
 
-export default function DatasourceDeselfMainEdit({ content }: Props) {
+export default function DatasourceDeselfMain({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const config = JSON.parse(content.config) as Config
-  // const [isActive, setIsActive] = useImmer(false)
   const dispatch = useContext(DatasourceDispatchContext)
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 1 : 0,
+        switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
@@ -87,15 +89,15 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
       return
     }
     if (content.name == '') {
-      void requests
-        .post<unknown, number>('/dataSource', {
-          ...content,
-          config: JSON.stringify({ apiNamespace: value, serverName: value, schema: '' }),
-          name: value,
-        })
-        .then((res) => {
-          content.id = res
-        })
+      const req = {
+        ...content,
+        config: JSON.stringify({ apiNamespace: value, serverName: value, schema: '' }),
+        name: value,
+      }
+      Reflect.deleteProperty(req, 'id')
+      void requests.post<unknown, number>('/dataSource', req).then((res) => {
+        content.id = res
+      })
     } else
       void requests.put('/dataSource', {
         ...content,
@@ -121,7 +123,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
         </div>
         <div>
           <Switch
-            checked={content.switch == 1 ? true : false}
+            checked={content.switch == 0 ? true : false}
             onChange={connectSwitchOnChange}
             checkedChildren="开启"
             unCheckedChildren="关闭"
@@ -169,6 +171,7 @@ export default function DatasourceDeselfMainEdit({ content }: Props) {
         defaultLanguage="typescript"
         defaultValue="// some comment"
         className={`mt-4 ${styles.monaco}`}
+        value="//comment"
       />
       <div />
     </>
