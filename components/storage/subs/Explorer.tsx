@@ -5,6 +5,7 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   AppstoreOutlined,
+  FileImageOutlined,
 } from '@ant-design/icons'
 import {
   Breadcrumb,
@@ -23,6 +24,7 @@ import Image from 'next/image'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
@@ -35,7 +37,7 @@ interface Props {
 
 type Option = Partial<FileT> & {
   value: string
-  label: string
+  label: React.ReactNode
   children?: Option[]
   loading?: boolean
   isLeaf?: boolean
@@ -60,13 +62,22 @@ export default function StorageExplorer({ bucketId }: Props) {
       .then((res) =>
         res
           .map((x) => ({
+            label: (
+              <>
+                <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
+                <span className="ml-2">{x.name}</span>
+              </>
+            ),
             value: x.name,
-            label: x.name,
             isLeaf: !x.isDir,
             ...x,
           }))
           .filter((x) => x.name !== '')
       )
+      .then((x) => {
+        console.log(x, 'bbb')
+        return [...x]
+      })
       .then((res) => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketId])
@@ -152,8 +163,13 @@ export default function StorageExplorer({ bucketId }: Props) {
 
     const fileOpts = files
       .map((x) => ({
+        label: (
+          <>
+            <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
+            <span className="ml-2">{x.name}</span>
+          </>
+        ),
         value: x.name,
-        label: x.name,
         isLeaf: !x.isDir,
         ...x,
       }))
@@ -261,11 +277,11 @@ export default function StorageExplorer({ bucketId }: Props) {
                 <div
                   className={`${styles['panel-style']} flex-col justify-center items-center flex`}
                 >
-                  <Image width={200} height={200} src={target?.url ?? ''} alt={target?.label} />
+                  <Image width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
                 </div>
               </>
             ) : (
-              <Image width={200} height={200} src={'/logo.png'} alt={target?.label} />
+              <Image width={200} height={200} src={'/logo.png'} alt={target?.value} />
             )}
           </Panel>
           <div className="flex flex-col">
