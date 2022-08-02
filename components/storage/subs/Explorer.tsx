@@ -50,6 +50,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
+  const [breads, setBreads] = useImmer<string[]>(['/'])
 
   useEffect(() => {
     if (!bucketId) return
@@ -130,6 +131,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   )
 
   const onChange = (value: string[], selectedOptions: Option[]) => {
+    setBreads((value.at(-1) ?? '').split('/'))
     setVisible(false)
     const targetOption = selectedOptions[selectedOptions.length - 1]
     if (targetOption.isLeaf) {
@@ -170,16 +172,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   return (
     <>
       <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <span className="text-red-500/80">Img</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <span className="text-red-500/80">first</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <span className="text-gray-500/80">second level</span>
-          </Breadcrumb.Item>
+        <Breadcrumb separator=">">
+          {breads.map((x, idx) => (
+            <Breadcrumb.Item key={idx}>
+              <span className="text-red-500/80">{x}</span>
+            </Breadcrumb.Item>
+          ))}
         </Breadcrumb>
         <div className="flex justify-center items-center">
           {isSerach ? (
