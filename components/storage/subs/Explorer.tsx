@@ -27,7 +27,7 @@ import { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
-import styles from './subs.module.scss'
+import styles from './Explorer.module.scss'
 
 interface Props {
   bucketId?: number
@@ -163,7 +163,8 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   const isImage = (mime: string | undefined) => {
-    return !mime
+    if (!mime) return undefined
+    return mime.indexOf('image/') === 0
   }
 
   return (
@@ -234,6 +235,7 @@ export default function StorageExplorer({ bucketId }: Props) {
       </Cascader>
 
       <Drawer
+        className="max-w-315px"
         title={target?.label}
         placement="right"
         onClose={() => setVisible(false)}
@@ -256,13 +258,17 @@ export default function StorageExplorer({ bucketId }: Props) {
             <p>修改于：{target?.updateTime ?? ''}</p>
           </Panel>
           <Panel header="预览" key="2">
-            <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
-              {isImage(target?.mime) ? (
-                <Image width={200} height={200} src={target?.url ?? ''} alt={target?.label} />
-              ) : (
-                <></>
-              )}
-            </div>
+            {isImage(target?.mime) ? (
+              <>
+                <div
+                  className={`${styles['panel-style']} flex-col justify-center items-center flex`}
+                >
+                  <Image width={200} height={200} src={target?.url ?? ''} alt={target?.label} />
+                </div>
+              </>
+            ) : (
+              <Image width={200} height={200} src={'/logo.png'} alt={target?.label} />
+            )}
           </Panel>
           <div className="flex flex-col">
             <Button className="m-1.5">下载</Button>

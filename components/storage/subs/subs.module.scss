@@ -83,28 +83,6 @@
   }
 }
 
-// filestorage-main-content 样式
-.casader-select :global {
-  box-shadow: none;
-
-  .ant-cascader-menu-item {
-    background-color: white;
-
-    &:hover,
-    &:focus {
-      background-color: #f8f8f9;
-    }
-  }
-
-  .anticon-right {
-    visibility: hidden;
-  }
-
-  .ant-cascader-menu {
-    width: 232px;
-  }
-}
-
 .panel-style {
   img {
     margin-bottom: 9px;
