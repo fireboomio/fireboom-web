@@ -166,11 +166,6 @@ export default function StorageExplorer({ bucketId }: Props) {
     return !mime
   }
 
-  const makeUrl = (target: Option | undefined) => {
-    if (!target) return ''
-    return 'https://source.unsplash.com/random/200x200'
-  }
-
   return (
     <>
       <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
@@ -263,16 +258,17 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Panel header="预览" key="2">
             <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
               {isImage(target?.mime) ? (
-                <Image width={200} height={200} src={makeUrl(target)} alt={target?.label} />
+                <Image width={200} height={200} src={target?.url ?? ''} alt={target?.label} />
               ) : (
                 <></>
               )}
-
-              <Button>下载</Button>
-              <Button>复制URL</Button>
-              <Button>删除</Button>
             </div>
           </Panel>
+          <div className="flex flex-col">
+            <Button className="m-1.5">下载</Button>
+            <Button className="m-1.5">复制URL</Button>
+            <Button className="m-1.5">删除</Button>
+          </div>
         </Collapse>
       </Drawer>
     </>

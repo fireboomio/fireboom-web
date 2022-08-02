@@ -29,6 +29,7 @@ export interface FileT {
   createTime: string
   updateTime: string
   isDir: boolean
+  url: string
 }
 
 export type StorageAction = StorageSingleAction | StorageListAction
