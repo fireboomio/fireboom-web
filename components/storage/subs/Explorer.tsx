@@ -20,77 +20,65 @@ import {
   Input,
 } from 'antd'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { StorageResp } from '@/interfaces/storage'
+import { FileT } from '@/interfaces/storage'
+import requests from '@/lib/fetchers'
+import { formatBytes } from '@/lib/utils'
 
 import styles from './subs.module.scss'
 
 interface Props {
-  content: StorageResp
+  bucketId?: number
 }
 
-interface Option {
+type Option = Partial<FileT> & {
   value: string
   label: string
   children?: Option[]
+  loading?: boolean
+  isLeaf?: boolean
 }
 
-export default function StorageExplorer({ content }: Props) {
+const { Panel } = Collapse
+
+export default function StorageExplorer({ bucketId }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [isArrowUP, setIsArrowUP] = useImmer(false)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [options, setOptions] = useImmer<Option[]>(null!)
+  const [target, setTarget] = useImmer<Option | undefined>(undefined)
 
-  const dropdownMenu = [
-    {
-      value: '文件一',
-      label: '文件一',
-      children: [
-        {
-          value: '文件二',
-          label: '文件二',
-          children: [
-            {
-              valu: 'admin1.jpg',
-              labe: 'admin1.jpg',
-            },
-            {
-              valu: 'admin2.jpg',
-              labe: 'admin2.jpg',
-            },
-          ],
-        },
-        {
-          value: '文件三',
-          label: '文件三',
-          children: [
-            {
-              value: 'admin3.jpg',
-              label: 'admin3.jpg',
-            },
-            {
-              value: 'admin4.jpg',
-              label: 'admin4.jpg',
-            },
-          ],
-        },
-      ],
-    },
-  ]
-  const options = dropdownMenu as Option[]
+  useEffect(() => {
+    if (!bucketId) return
 
-  if (!content) {
-    return <></>
-  }
+    void requests
+      .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
+      .then((res) =>
+        res
+          .map((x) => ({
+            value: x.name,
+            label: x.name,
+            isLeaf: !x.isDir,
+            ...x,
+          }))
+          .filter((x) => x.name !== '')
+      )
+      .then((res) => setOptions(res))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bucketId])
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
   }
+
   const listMenu = (
     <Menu
       items={[
         {
-          key: '1',
+          key: '0',
           label: (
             <div>
               <AppstoreOutlined className="mr-2" />
@@ -99,7 +87,7 @@ export default function StorageExplorer({ content }: Props) {
           ),
         },
         {
-          key: '2',
+          key: '1',
           label: (
             <div>
               <BarsOutlined className="mr-2" />
@@ -110,23 +98,24 @@ export default function StorageExplorer({ content }: Props) {
       ]}
     />
   )
+
   const orderMenu = (
     <Menu
       items={[
         {
-          key: '1',
+          key: '0',
           label: (
-            <div
-              onClick={() => {
-                setIsArrowUP(!isArrowUP)
-              }}
-            >
-              按名字
+            <div onClick={() => setIsArrowUP(!isArrowUP)}>
+              按名称
               <span className="ml-2 text-red-500">
                 {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
               </span>
             </div>
           ),
+        },
+        {
+          key: '1',
+          label: <div>按文件大小</div>,
         },
         {
           key: '2',
@@ -139,7 +128,44 @@ export default function StorageExplorer({ content }: Props) {
       ]}
     />
   )
-  const { Panel } = Collapse
+
+  const onChange = (value: string[], selectedOptions: Option[]) => {
+    setVisible(false)
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    if (targetOption.isLeaf) {
+      setTarget({ ...targetOption })
+      setVisible(true)
+    }
+  }
+
+  const loadData = async (selectedOptions: Option[]) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    targetOption.loading = true
+
+    if (targetOption.isLeaf) return
+
+    const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` },
+    })
+
+    const fileOpts = files
+      .map((x) => ({
+        value: x.name,
+        label: x.name,
+        isLeaf: !x.isDir,
+        ...x,
+      }))
+      .filter((x) => x.value !== targetOption.value)
+
+    targetOption.children = fileOpts
+    targetOption.loading = false
+    setOptions([...options])
+  }
+
+  const isImage = (mime: string | undefined) => {
+    return !mime
+  }
+
   return (
     <>
       <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
@@ -191,40 +217,30 @@ export default function StorageExplorer({ content }: Props) {
           <Upload>
             <Button className="mr-2">上传</Button>
           </Upload>
-          <Upload>
-            <Button>文件夹</Button>
-          </Upload>
         </div>
       </div>
-      <div>
-        <Cascader
-          options={options}
-          onChange={() => setVisible(true)}
-          open
-          dropdownClassName={`${styles['casader-select']} flex mb-8`}
 
-          // expandIcon={<FolderOutlined />}
-          // dropdownRender={(dropdownMenu) => (
-          //   <div>
-          //     <FolderOutlined />
-          //     <PictureOutlined />
-          //   </div>
-          // )}
-        >
-          <a href="#" />
-        </Cascader>
-      </div>
+      <Cascader
+        open
+        options={options}
+        // @ts-ignore
+        loadData={(x) => void loadData(x)}
+        // @ts-ignore
+        onChange={onChange}
+        changeOnSelect
+        dropdownClassName={`${styles['casader-select']} flex mb-8`}
+      >
+        <div />
+      </Cascader>
 
       <Drawer
-        title="avatar2.jpg"
+        title={target?.label}
         placement="right"
         onClose={() => setVisible(false)}
         visible={visible}
         mask={false}
         width={315}
-        maskClosable={false}
-
-        // closable={false}
+        maskClosable={true}
       >
         <Collapse
           defaultActiveKey={['1', '2']}
@@ -234,22 +250,25 @@ export default function StorageExplorer({ content }: Props) {
           className={styles['collapse-style']}
         >
           <Panel header="基本信息" key="1">
-            <p>类型：image/jpg</p>
-            <p>大小：127.6kb</p>
-            <p>创建于：2022-05-07 12:23</p>
-            <p>修改于：2022-05-07 12:23</p>
+            <p>类型：{target?.mime ?? '未知'}</p>
+            <p>大小：{formatBytes(target?.size)}</p>
+            <p>创建于：{target?.createTime ?? ''}</p>
+            <p>修改于：{target?.updateTime ?? ''}</p>
           </Panel>
           <Panel header="预览" key="2">
             <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
-              <Image
-                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F511%2F101611154647%2F111016154647-10-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1659607424&t=dec35f08ae686e97c066c2fed2e9fa7c"
-                alt=""
-              />
-              <Button>下载</Button>
-              <Button>复制URL</Button>
-              <Button>删除</Button>
+              {isImage(target?.mime) ? (
+                <Image width={200} height={200} src={target?.url ?? ''} alt={target?.label} />
+              ) : (
+                <></>
+              )}
             </div>
           </Panel>
+          <div className="flex flex-col">
+            <Button className="m-1.5">下载</Button>
+            <Button className="m-1.5">复制URL</Button>
+            <Button className="m-1.5">删除</Button>
+          </div>
         </Collapse>
       </Drawer>
     </>

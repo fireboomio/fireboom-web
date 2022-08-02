@@ -34,7 +34,7 @@ export default function StorageContainer({ content, showType }: Props) {
         </div>
       </div>
       {showType === 'explorer' ? (
-        <StorageExplorer content={content as StorageResp} />
+        <StorageExplorer bucketId={content?.id} />
       ) : showType === 'detail' ? (
         <StorageDetail content={content} />
       ) : showType === 'form' ? (

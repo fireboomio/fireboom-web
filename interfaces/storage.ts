@@ -22,6 +22,16 @@ export interface StorageConfig {
   useSSL: boolean
 }
 
+export interface FileT {
+  name: string
+  size: number
+  mime: string
+  createTime: string
+  updateTime: string
+  isDir: boolean
+  url: string
+}
+
 export type StorageAction = StorageSingleAction | StorageListAction
 
 interface StorageSingleAction {

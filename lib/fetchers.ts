@@ -1,11 +1,15 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import applyCaseMiddleware from 'axios-case-converter'
 
 import { Result } from '@/interfaces/common'
 
-const requests = axios.create({
-  baseURL: '/api/v1',
-  timeout: 3000,
-})
+const requests = applyCaseMiddleware(
+  axios.create({
+    baseURL: '/api/v1',
+    timeout: 3000,
+  }),
+  { caseMiddleware: { requestInterceptor: (x) => x } }
+)
 
 requests.interceptors.response.use(
   <T>(resp: AxiosResponse<Result<T>>) => {
