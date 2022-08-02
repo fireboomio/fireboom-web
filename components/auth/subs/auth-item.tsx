@@ -166,7 +166,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
         )}
       </div>
       <div>
-        <span className="text-[#AFB0B4] text-[14px] mr-3">{authItem.auth_supplier || 'null'}</span>
+        <span className="text-[#AFB0B4] text-[14px] mr-3">{authItem.authSupplier || 'null'}</span>
         <Dropdown
           overlay={menu}
           trigger={['click']}

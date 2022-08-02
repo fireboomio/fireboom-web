@@ -57,8 +57,8 @@ export default function AuthList({ onClickItem, handleTopToggleDesigner }: Props
     const data = {
       id: -(authList.length + 1),
       name: '',
-      auth_supplier: 'openid',
-      switch_state: [],
+      authSupplier: 'openid',
+      switchState: [],
       config: '2',
     } as unknown as AuthProvResp
     dispatch({ type: 'added', data: data })
