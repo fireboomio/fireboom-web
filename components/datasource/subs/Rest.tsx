@@ -122,7 +122,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
     console.log(newValues, 'newValues')
-    let index = (config.filePath as string)?.lastIndexOf('/')
+    const index = (config.filePath as string)?.lastIndexOf('/')
     const fileId = (config.filePath as string)?.substring(index + 1) //文件id
     console.log(fileId, 'fileId')
     //如果进行上传文件操作

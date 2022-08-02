@@ -34,21 +34,16 @@ import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
 import Link from 'next/link'
 import { FC, useCallback, useEffect, useState, useReducer } from 'react'
+import { useImmer } from 'use-immer'
 
 import Detail from '@/components/apimanage/Detail'
 import Hook from '@/components/apimanage/Hook'
 import Mock from '@/components/apimanage/Mock'
 import Setting from '@/components/apimanage/Setting'
+import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import type { DirTree, operationResp } from '@/interfaces/apimanage'
-import requests, { getFetcher } from '@/lib/fetchers'
-
-import styles from './index.module.scss'
-
-import { useImmer } from 'use-immer'
-
-import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceContext,
@@ -56,8 +51,10 @@ import {
   DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context'
-
+import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
+
+import styles from './index.module.scss'
 
 type ApiManageProps = {
   //
@@ -132,6 +129,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       .catch(() => {
         console.log('get Datasource Data Error')
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleClickItem = (datasourceItem: DatasourceResp) => {
@@ -156,7 +154,6 @@ const ApiManage: FC<ApiManageProps> = () => {
   const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
 
   // if (error) return <div>failed to load</div>
-  if (!datasource) return <div>loading...</div>
 
   // TODO: need refine
   //datasource

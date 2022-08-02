@@ -6,7 +6,6 @@ import { useImmer } from 'use-immer'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
 
-import IconFont from '../iconfont'
 import styles from './Pannel.module.scss'
 import DatasourceItem from './subs/PannelItem'
 
