@@ -20,91 +20,54 @@ import {
   Input,
 } from 'antd'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { StorageResp } from '@/interfaces/storage'
+import { FileT } from '@/interfaces/storage'
+import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
 interface Props {
-  content: StorageResp
+  bucketId?: number
 }
 
-interface Option {
+type Option = Partial<FileT> & {
   value: string
   label: string
   children?: Option[]
+  loading?: boolean
+  isLeaf?: boolean
 }
 
 const { Panel } = Collapse
 
-export default function StorageExplorer({ content }: Props) {
+export default function StorageExplorer({ bucketId }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [isArrowUP, setIsArrowUP] = useImmer(false)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [options, setOptions] = useImmer<Option[]>(null!)
+  const [target, setTarget] = useImmer<Option | undefined>(undefined)
 
-  const dropdownMenu = [
-    {
-      value: '文件一',
-      label: '文件一',
-      children: [
-        {
-          value: '文件二',
-          label: '文件二',
-          children: [
-            {
-              value: '文件A',
-              label: '文件A',
-              children: [
-                {
-                  value: '文件B',
-                  label: '文件B',
-                  children: [
-                    {
-                      value: '12ab.jpg',
-                      label: '12ab.jpg',
-                    },
-                  ],
-                },
-                {
-                  value: '12a.jpg',
-                  label: '12a.jpg',
-                },
-              ],
-            },
-            {
-              value: '12-1.jpg',
-              label: '12-1.jpg',
-            },
-            {
-              value: '12-2.jpg',
-              label: '12-2.jpg',
-            },
-          ],
-        },
-        {
-          value: '文件三',
-          label: '文件三',
-          children: [
-            {
-              value: 'admin3.jpg',
-              label: 'admin3.jpg',
-            },
-            {
-              value: 'admin4.jpg',
-              label: 'admin4.jpg',
-            },
-          ],
-        },
-      ],
-    },
-  ]
+  useEffect(() => {
+    if (!bucketId) return
 
-  const options = dropdownMenu as Option[]
-
-  if (!content) {
-    return <></>
-  }
+    void requests
+      .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
+      .then((res) =>
+        res
+          .map((x) => ({
+            value: x.name,
+            label: x.name,
+            isLeaf: !x.isDir,
+            ...x,
+          }))
+          .filter((x) => x.name !== '')
+      )
+      .then((res) => setOptions(res))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bucketId])
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
@@ -151,15 +114,61 @@ export default function StorageExplorer({ content }: Props) {
         },
         {
           key: '1',
-          label: <div>按创建时间</div>,
+          label: <div>按文件大小</div>,
         },
         {
           key: '2',
+          label: <div>按创建时间</div>,
+        },
+        {
+          key: '3',
           label: <div>按修改时间</div>,
         },
       ]}
     />
   )
+
+  const onChange = (value: string[], selectedOptions: Option[]) => {
+    setVisible(false)
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    if (targetOption.isLeaf) {
+      setTarget({ ...targetOption })
+      setVisible(true)
+    }
+  }
+
+  const loadData = async (selectedOptions: Option[]) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    targetOption.loading = true
+
+    if (targetOption.isLeaf) return
+
+    const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` },
+    })
+
+    const fileOpts = files
+      .map((x) => ({
+        value: x.name,
+        label: x.name,
+        isLeaf: !x.isDir,
+        ...x,
+      }))
+      .filter((x) => x.value !== targetOption.value)
+
+    targetOption.children = fileOpts
+    targetOption.loading = false
+    setOptions([...options])
+  }
+
+  const isImage = (mime: string | undefined) => {
+    return !mime
+  }
+
+  const makeUrl = (target: Option | undefined) => {
+    if (!target) return ''
+    return 'https://source.unsplash.com/random/200x200'
+  }
 
   return (
     <>
@@ -212,29 +221,21 @@ export default function StorageExplorer({ content }: Props) {
           <Upload>
             <Button className="mr-2">上传</Button>
           </Upload>
-          <Upload>
-            <Button>文件夹</Button>
-          </Upload>
         </div>
       </div>
-      <div>
-        <Cascader
-          options={options}
-          onChange={() => setVisible(true)}
-          open
-          dropdownClassName={`${styles['casader-select']} flex mb-8`}
 
-          // expandIcon={<FolderOutlined />}
-          // dropdownRender={(dropdownMenu) => (
-          //   <div>
-          //     <FolderOutlined />
-          //     <PictureOutlined />
-          //   </div>
-          // )}
-        >
-          <a href="#" />
-        </Cascader>
-      </div>
+      <Cascader
+        open
+        options={options}
+        // @ts-ignore
+        loadData={(x) => void loadData(x)}
+        // @ts-ignore
+        onChange={onChange}
+        changeOnSelect
+        dropdownClassName={`${styles['casader-select']} flex mb-8`}
+      >
+        <div />
+      </Cascader>
 
       <Drawer
         title="avatar2.jpg"
@@ -244,8 +245,6 @@ export default function StorageExplorer({ content }: Props) {
         mask={false}
         width={315}
         maskClosable={false}
-
-        // closable={false}
       >
         <Collapse
           defaultActiveKey={['1', '2']}
@@ -255,19 +254,19 @@ export default function StorageExplorer({ content }: Props) {
           className={styles['collapse-style']}
         >
           <Panel header="基本信息" key="1">
-            <p>类型：image/jpg</p>
-            <p>大小：127.6kb</p>
-            <p>创建于：2022-05-07 12:23</p>
-            <p>修改于：2022-05-07 12:23</p>
+            <p>类型：{target?.mime ?? ''}</p>
+            <p>大小：{target?.size ?? ''}</p>
+            <p>创建于：{target?.createTime ?? ''}</p>
+            <p>修改于：{target?.updateTime ?? ''}</p>
           </Panel>
           <Panel header="预览" key="2">
             <div className={`${styles['panel-style']} flex-col justify-center items-center flex`}>
-              <Image
-                width={200}
-                height={200}
-                src="https://source.unsplash.com/random/200x200"
-                alt=""
-              />
+              {isImage(target?.mime) ? (
+                <Image width={200} height={200} src={makeUrl(target)} alt={target?.label} />
+              ) : (
+                <></>
+              )}
+
               <Button>下载</Button>
               <Button>复制URL</Button>
               <Button>删除</Button>
