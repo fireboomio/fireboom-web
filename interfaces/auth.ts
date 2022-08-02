@@ -1,15 +1,8 @@
 export interface AuthProvResp {
   id: number
   name: string
-  auth_supplier: string
-  switch_state: Array<string>
-  config: string
-}
-
-export interface AuthProvRequest {
-  name: string
-  auth_supplier: string
-  switch_state: Array<string>
+  authSupplier: string
+  switchState: Array<string>
   config: string
 }
 

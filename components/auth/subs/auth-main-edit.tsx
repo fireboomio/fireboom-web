@@ -47,7 +47,7 @@ export default function AuthMainEdit({ content }: Props) {
   const onFinish = async (values: FromValues) => {
     console.log(values, 'values')
     const newValues = { ...config, ...values }
-    const newContent = { ...content, switch_state: values.switch_state, name: values.id }
+    const newContent = { ...content, switchState: values.switchState, name: values.id }
     console.log(newValues, 'newValue', newContent, 'newContent')
     if (content.name == '') {
       const req = { ...newContent, config: JSON.stringify(newValues) }
@@ -103,7 +103,7 @@ export default function AuthMainEdit({ content }: Props) {
         issuer: config.issuer,
         jwks: config.jwks,
         jwksJSON: config.jwksJSON,
-        switch_state: content.switch_state,
+        switchState: content.switchState,
       }
     : {
         id: '',
@@ -112,7 +112,7 @@ export default function AuthMainEdit({ content }: Props) {
         issuer: '',
         jwks: '0',
         jwksJSON: '',
-        switch_state: '',
+        switchState: '',
       }
 
   return (
@@ -128,7 +128,7 @@ export default function AuthMainEdit({ content }: Props) {
           <div className="h-7">
             <span className="ml-2 font-bold">
               {content.name}
-              <span className="text-xs text-gray-500/80">{content.auth_supplier}</span>
+              <span className="text-xs text-gray-500/80">{content.authSupplier}</span>
             </span>
           </div>
         )}
@@ -256,7 +256,7 @@ export default function AuthMainEdit({ content }: Props) {
           <Form.Item label="用户端点">
             <Input disabled value={`${inputValue as string}/.well-known/openid-`} />
           </Form.Item>
-          <Form.Item label="是否开启" name="switch_state">
+          <Form.Item label="是否开启" name="switchState">
             <Checkbox.Group options={options} onChange={onChangeCheckbox} />
           </Form.Item>
         </Form>

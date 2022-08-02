@@ -31,13 +31,13 @@ export default function AuthMainCheck({ content }: Props) {
   }
 
   const switchState =
-    content.switch_state?.length == 0
+    content.switchState?.length == 0
       ? '不开启'
-      : content.switch_state?.length == 2
+      : content.switchState?.length == 2
       ? '基于Token和Cookie'
-      : content.switch_state[0] == 'tokenBased'
+      : content.switchState[0] == 'tokenBased'
       ? '基于Token'
-      : content.switch_state[0] == 'cookieBased'
+      : content.switchState[0] == 'cookieBased'
       ? '基于Cookie'
       : ''
 
@@ -46,7 +46,7 @@ export default function AuthMainCheck({ content }: Props) {
       <div className="pb-3 flex items-center justify-between border-gray border-b">
         <div className="h-7">
           <span className="ml-2 text-sm font-bold">
-            {content.name} <span className="text-xs text-gray-500/80">{content.auth_supplier}</span>
+            {content.name} <span className="text-xs text-gray-500/80">{content.authSupplier}</span>
           </span>
         </div>
         <Button

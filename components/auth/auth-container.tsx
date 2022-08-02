@@ -25,7 +25,6 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
   }
 
   useEffect(() => {
-    console.log(showTopType)
     switch (showTopType) {
       case 'userManage':
         setTitle('用户管理')
@@ -75,6 +74,7 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
           break
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBottomType, content])
   return (
     <div className="pl-6 pr-10 mt-6">
