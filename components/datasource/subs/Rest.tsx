@@ -1,4 +1,4 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Descriptions,
   Space,
@@ -13,11 +13,13 @@ import {
   Collapse,
   Table,
   Tag,
+  Modal,
 } from 'antd'
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
+import { RedocStandalone } from 'redoc'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -71,13 +73,14 @@ const columns: ColumnsType<DataType> = [
 ]
 
 export default function DatasourceRestMain({ content, type }: Props) {
-  const [isEyeShow, setIsEyeShow] = useImmer(false)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
+  const [form] = Form.useForm()
+  const [isEyeShow, setIsEyeShow] = useImmer(false)
+  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
-  const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
   useEffect(() => {
@@ -119,6 +122,9 @@ export default function DatasourceRestMain({ content, type }: Props) {
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
     console.log(newValues, 'newValues')
+    let index = (config.filePath as string)?.lastIndexOf('/')
+    const fileId = (config.filePath as string)?.substring(index + 1) //文件id
+    console.log(fileId, 'fileId')
     //如果进行上传文件操作
     if (file.uid) {
       //如果存在已经上传文件 先删除先前文件
@@ -126,7 +132,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.filePath },
+          data: { id: fileId },
         })
       }
       newValues.filePath = (await requests({
@@ -143,7 +149,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.filePath },
+          data: { id: fileId },
         })
         newValues.filePath = undefined
       } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
@@ -213,7 +219,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
     <>
       {type === 'data' ? (
         //查看页面--------------------------------------------------------------------------
-        <>
+        <div className="pr-9">
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
@@ -229,7 +235,12 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+              <Button
+                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                onClick={() => {
+                  setTestVisible(true)
+                }}
+              >
                 <span>测试</span>
               </Button>
               <Button
@@ -380,10 +391,32 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Descriptions>
             </Panel>
           </Collapse>
-        </>
+          {/* 测试功能 */}
+          <Modal
+            centered
+            visible={testVisible}
+            onCancel={() => setTestVisible(false)}
+            destroyOnClose={true}
+            width={'80%'}
+            bodyStyle={{ height: '885px', overflow: 'auto' }}
+            footer={null}
+            closeIcon={<CloseOutlined className="mr-6" />}
+          >
+            <div className={styles['redoc-container']}>
+              <RedocStandalone
+                specUrl="http://petstore.swagger.io/v2/swagger.json"
+                options={{
+                  nativeScrollbars: true,
+                  theme: { colors: { primary: { main: '#dd5522' } } },
+                  disableSearch: false,
+                }}
+              />
+            </div>
+          </Modal>
+        </div>
       ) : (
         //编辑页面--------------------------------------------------------------------------
-        <>
+        <div>
           <div className="pb-9px flex items-center justify-between border-gray border-b">
             {content.name == '' ? (
               <div>
@@ -403,7 +436,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id, content.source_type)
+                  handleToggleDesigner('data', content.id, content.sourceType)
                 }}
               >
                 <span>取消</span>
@@ -497,7 +530,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                   }}
                   onRemove={onRemoveFile}
                 >
-                  <Button icon={<PlusOutlined />} className="w-148.5">
+                  <Button icon={<PlusOutlined />} className="w-159.5">
                     添加文件
                   </Button>
                 </Upload>
@@ -517,14 +550,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
                           {fields.map((field, index) => (
                             <Space key={field.key} align="baseline">
                               <Form.Item
-                                className="w-50"
+                                className="w-52.5"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'key']}
                               >
                                 <Input />
                               </Form.Item>
                               <Form.Item
-                                className="w-36"
+                                className="w-40"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'kind']}
                               >
@@ -535,7 +568,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                 </Select>
                               </Form.Item>
                               <Form.Item
-                                className="w-126"
+                                className="w-135"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'val']}
                               >
@@ -554,7 +587,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                             <Button
                               type="dashed"
                               onClick={() => {
-                                add()
+                                add({ kind: '0' })
                               }}
                               icon={<PlusOutlined />}
                               className="text-gray-500/60 w-1/1"
@@ -696,7 +729,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Collapse>
             </Form>
           </div>
-        </>
+        </div>
       )}
     </>
   )

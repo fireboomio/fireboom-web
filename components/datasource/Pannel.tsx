@@ -26,7 +26,7 @@ function DatasourceList({ onClickItem, Datasourcetype }: ListProps) {
     <>
       <div>
         {datasource
-          .filter((item) => item.source_type == Datasourcetype)
+          .filter((item) => item.sourceType == Datasourcetype)
           .map((datasourceItem) => {
             if (datasourceItem.name != '')
               return (
@@ -53,7 +53,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       name: '',
       config: '2',
       // eslint-disable-next-line camelcase
-      source_type: datasourceType,
+      sourceType: datasourceType,
       switch: 0,
     } as DatasourceResp
     dispatch({ type: 'added', data: data })
@@ -72,36 +72,58 @@ export default function DatasourcePannel({ onClickItem }: Props) {
 
   return (
     <>
-      <div className={styles.pannel}>
+      {/* <div className={styles.pannel}>
         <div className={`${styles.title} text-base`}>
           外部数据源 <IconFont type="icon-wenjianshezhi" />
         </div>
-      </div>
+      </div> */}
 
       <div className={styles['datasource-collapse']}>
         <Collapse ghost bordered>
           <Panel header="外部数据源" key={1}>
-            <Collapse
-              activeKey={activeKey}
-              ghost
-              bordered
-              onChange={(keys) => {
-                setActiveKey(keys as string[])
-              }}
-            >
-              <Panel header="DB" key={'1'} extra={genExtra(1)}>
-                <DatasourceList onClickItem={onClickItem} Datasourcetype={1} />
-              </Panel>
-              <Panel header="REST" key={'2'} extra={genExtra(2)}>
-                <DatasourceList onClickItem={onClickItem} Datasourcetype={2} />
-              </Panel>
-              <Panel header="Graphal" key={'3'} extra={genExtra(3)}>
-                <DatasourceList onClickItem={onClickItem} Datasourcetype={3} />
-              </Panel>
-              <Panel header="自定义" key={'4'} extra={genExtra(4)}>
-                <DatasourceList onClickItem={onClickItem} Datasourcetype={4} />
-              </Panel>
-            </Collapse>
+            <div className="h-66" style={{ overflow: 'auto' }}>
+              <Collapse
+                activeKey={activeKey}
+                ghost
+                bordered
+                onChange={(keys) => {
+                  setActiveKey(keys as string[])
+                }}
+              >
+                <Panel
+                  header="DB"
+                  key={'1'}
+                  extra={genExtra(1)}
+                  className={styles['datasource-border']}
+                >
+                  <DatasourceList onClickItem={onClickItem} Datasourcetype={1} />
+                </Panel>
+                <Panel
+                  header="REST"
+                  key={'2'}
+                  extra={genExtra(2)}
+                  className={styles['datasource-border']}
+                >
+                  <DatasourceList onClickItem={onClickItem} Datasourcetype={2} />
+                </Panel>
+                <Panel
+                  header="Graphal"
+                  key={'3'}
+                  extra={genExtra(3)}
+                  className={styles['datasource-border']}
+                >
+                  <DatasourceList onClickItem={onClickItem} Datasourcetype={3} />
+                </Panel>
+                <Panel
+                  header="自定义"
+                  key={'4'}
+                  extra={genExtra(4)}
+                  className={styles['datasource-border']}
+                >
+                  <DatasourceList onClickItem={onClickItem} Datasourcetype={4} />
+                </Panel>
+              </Collapse>
+            </div>
           </Panel>
         </Collapse>
       </div>

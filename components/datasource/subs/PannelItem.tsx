@@ -147,7 +147,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
           className="-ml-3 mr-1"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
-        {datasourceItem.source_type == 1 ? (
+        {datasourceItem.sourceType == 1 ? (
           <IconFont
             type={
               config.dbType == 'SQLITE'
@@ -159,9 +159,9 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
                 : 'icon-shujuyuantubiao1'
             }
           />
-        ) : datasourceItem.source_type == 2 ? (
+        ) : datasourceItem.sourceType == 2 ? (
           <IconFont type="icon-wenjian1" className="text-[16px]" />
-        ) : datasourceItem.source_type == 3 ? (
+        ) : datasourceItem.sourceType == 3 ? (
           <IconFont type="icon-QLweixuanzhong1" className="text-[16px]" />
         ) : (
           <IconFont type="icon-wenjian" className="text-[16px]" />
@@ -191,7 +191,12 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
         )}
       </div>
       <div>
-        <span className="text-[#AFB0B4] text-[14px] mr-3">{config.dbName || 'null'}</span>
+        <span className="text-[#AFB0B4] text-[14px] mr-3">
+          {config.dbName ||
+            (config.databaseUrl as unknown as { kind: string; val: string })?.val.substring(
+              (config.databaseUrl as unknown as { kind: string; val: string })?.val.length - 3
+            )}
+        </span>
         <Dropdown
           overlay={menu}
           trigger={['click']}

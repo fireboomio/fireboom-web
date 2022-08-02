@@ -27,16 +27,16 @@ export default function DatasourceEditor({ content, showType }: Props) {
         setTitile('设置')
         setViewer(<DatasourceDBMain content={content} type={showType} />)
       } else {
-        if (content.source_type == 1) {
+        if (content.sourceType == 1) {
           setTitile('DB')
           setViewer(<DatasourceDBMain content={content} type={showType} />)
-        } else if (content.source_type == 2) {
+        } else if (content.sourceType == 2) {
           setTitile('REST')
           setViewer(<DatasourceRestMain content={content} type={showType} />)
-        } else if (content.source_type == 3) {
+        } else if (content.sourceType == 3) {
           setTitile('Graphal')
           setViewer(<DatasourceGraphalMain content={content} type={showType} />)
-        } else if (content.source_type == 4) {
+        } else if (content.sourceType == 4) {
           setTitile('自定义')
           setViewer(<DatasourceDeselfMainEdit content={content} />)
         }
@@ -46,8 +46,12 @@ export default function DatasourceEditor({ content, showType }: Props) {
   }, [showType, content])
 
   return (
-    <div className="pl-6 pr-10 mt-24px">
-      <div className="flex justify-start items-center  mb-24px">
+    <div className="pl-6 mt-6 mr-6">
+      <div
+        className={`flex justify-start items-center  mb-24px ${
+          showType == 'data' && content.sourceType != 1 && content.sourceType != 4 ? 'pr-9' : ''
+        }`}
+      >
         <span className="text-base flex-grow font-bold text-[18px]">
           外部数据源 / {content && title}
         </span>
