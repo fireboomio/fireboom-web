@@ -1,15 +1,15 @@
 export interface AuthProvResp {
   id: number
   name: string
-  auth_supplier: number
-  switch_state: number
+  auth_supplier: string
+  switch_state: Array<string>
   config: string
 }
 
 export interface AuthProvRequest {
   name: string
-  auth_supplier: number
-  switch_state: number
+  auth_supplier: string
+  switch_state: Array<string>
   config: string
 }
 
@@ -23,4 +23,9 @@ interface AuthsingleAction {
 interface AuthListAction {
   type: 'fetched'
   data: AuthProvResp[]
+}
+
+export interface AuthListType {
+  name: string
+  type: 'userManage' | 'roleManage' | 'action' | 'login' | 'connect' | 'webhooks'
 }
