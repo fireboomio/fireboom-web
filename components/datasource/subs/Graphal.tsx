@@ -529,7 +529,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         <Button
                           type="dashed"
                           onClick={() => {
-                            add()
+                            add({ kind: '0' })
                           }}
                           icon={<PlusOutlined />}
                           className="text-gray-500/60 w-1/1"

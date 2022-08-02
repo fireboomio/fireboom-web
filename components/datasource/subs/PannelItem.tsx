@@ -191,7 +191,12 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
         )}
       </div>
       <div>
-        <span className="text-[#AFB0B4] text-[14px] mr-3">{config.dbName || 'null'}</span>
+        <span className="text-[#AFB0B4] text-[14px] mr-3">
+          {config.dbName ||
+            (config.databaseUrl as unknown as { kind: string; val: string })?.val.substring(
+              (config.databaseUrl as unknown as { kind: string; val: string })?.val.length - 3
+            )}
+        </span>
         <Dropdown
           overlay={menu}
           trigger={['click']}

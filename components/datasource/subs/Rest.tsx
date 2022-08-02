@@ -1,4 +1,4 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Descriptions,
   Space,
@@ -13,11 +13,13 @@ import {
   Collapse,
   Table,
   Tag,
+  Modal,
 } from 'antd'
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
+import { RedocStandalone } from 'redoc'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -71,13 +73,14 @@ const columns: ColumnsType<DataType> = [
 ]
 
 export default function DatasourceRestMain({ content, type }: Props) {
-  const [isEyeShow, setIsEyeShow] = useImmer(false)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
+  const [form] = Form.useForm()
+  const [isEyeShow, setIsEyeShow] = useImmer(false)
+  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
-  const [form] = Form.useForm()
   const [isRadioShow, setIsRadioShow] = useImmer(true)
 
   useEffect(() => {
@@ -229,7 +232,12 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+              <Button
+                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                onClick={() => {
+                  setTestVisible(true)
+                }}
+              >
                 <span>测试</span>
               </Button>
               <Button
@@ -380,6 +388,28 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Descriptions>
             </Panel>
           </Collapse>
+          {/* 测试功能 */}
+          <Modal
+            centered
+            visible={testVisible}
+            onCancel={() => setTestVisible(false)}
+            destroyOnClose={true}
+            width={'80%'}
+            bodyStyle={{ height: '885px', overflow: 'auto' }}
+            footer={null}
+            closeIcon={<CloseOutlined className="mr-6" />}
+          >
+            <div className={styles['redoc-container']}>
+              <RedocStandalone
+                specUrl="http://petstore.swagger.io/v2/swagger.json"
+                options={{
+                  nativeScrollbars: true,
+                  theme: { colors: { primary: { main: '#dd5522' } } },
+                  disableSearch: false,
+                }}
+              />
+            </div>
+          </Modal>
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
@@ -554,7 +584,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                             <Button
                               type="dashed"
                               onClick={() => {
-                                add()
+                                add({ kind: '0' })
                               }}
                               icon={<PlusOutlined />}
                               className="text-gray-500/60 w-1/1"
