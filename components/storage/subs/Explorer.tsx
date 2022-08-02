@@ -25,6 +25,7 @@ import { useImmer } from 'use-immer'
 
 import { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
+import { formatBytes } from '@/lib/utils'
 
 import styles from './subs.module.scss'
 
@@ -238,13 +239,13 @@ export default function StorageExplorer({ bucketId }: Props) {
       </Cascader>
 
       <Drawer
-        title="avatar2.jpg"
+        title={target?.label}
         placement="right"
         onClose={() => setVisible(false)}
         visible={visible}
         mask={false}
         width={315}
-        maskClosable={false}
+        maskClosable={true}
       >
         <Collapse
           defaultActiveKey={['1', '2']}
@@ -254,8 +255,8 @@ export default function StorageExplorer({ bucketId }: Props) {
           className={styles['collapse-style']}
         >
           <Panel header="基本信息" key="1">
-            <p>类型：{target?.mime ?? ''}</p>
-            <p>大小：{target?.size ?? ''}</p>
+            <p>类型：{target?.mime ?? '未知'}</p>
+            <p>大小：{formatBytes(target?.size)}</p>
             <p>创建于：{target?.createTime ?? ''}</p>
             <p>修改于：{target?.updateTime ?? ''}</p>
           </Panel>

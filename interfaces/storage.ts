@@ -24,7 +24,7 @@ export interface StorageConfig {
 
 export interface FileT {
   name: string
-  size: string
+  size: number
   mime: string
   createTime: string
   updateTime: string
