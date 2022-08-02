@@ -433,7 +433,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
                 onClick={() => {
-                  handleToggleDesigner('data', content.id, content.source_type)
+                  handleToggleDesigner('data', content.id, content.sourceType)
                 }}
               >
                 <span>取消</span>

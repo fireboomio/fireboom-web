@@ -4046,8 +4046,11 @@ packages:
     dev: true
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 4da0414 (字段驼峰)
   registry.npmmirror.com/header-case/2.0.4:
     resolution: {integrity: sha512-H/vuk5TEEVZwrR0lp2zed9OCo1uAILMlx0JEMgC26rzyJJ3N1v6XkwHHXJQdR2doSjcGPM6OKPYoJgf0plJ11Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/header-case/-/header-case-2.0.4.tgz}
     name: header-case
@@ -4055,14 +4058,14 @@ packages:
     dependencies:
       capital-case: registry.npmmirror.com/capital-case/1.0.4
       tslib: registry.npmmirror.com/tslib/2.4.0
-=======
+    dev: false
+
   registry.npmmirror.com/hoist-non-react-statics/3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz}
     name: hoist-non-react-statics
     version: 3.3.2
     dependencies:
       react-is: registry.npmmirror.com/react-is/16.13.1
->>>>>>> 503f807 (redocly集成)
     dev: false
 
 >>>>>>> 3a19261 (redocly集成)
@@ -5552,8 +5555,11 @@ packages:
       - babel-plugin-macros
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 4da0414 (字段驼峰)
   registry.npmmirror.com/no-case/3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/no-case/-/no-case-3.0.4.tgz}
     name: no-case
@@ -5561,7 +5567,8 @@ packages:
     dependencies:
       lower-case: registry.npmmirror.com/lower-case/2.0.2
       tslib: registry.npmmirror.com/tslib/2.4.0
-=======
+    dev: false
+
   registry.npmmirror.com/node-fetch-h2/2.3.0:
     resolution: {integrity: sha512-ofRW94Ab0T4AOh5Fk8t0h8OBWrmjb0SSB20xh1H8YnPV9EJ+f5AMoYSUQ2zgJ4Iq2HAK0I2l5/Nequ8YzFS3Hg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/node-fetch-h2/-/node-fetch-h2-2.3.0.tgz}
     name: node-fetch-h2
@@ -5591,7 +5598,6 @@ packages:
     version: 0.2.0
     dependencies:
       es6-promise: registry.npmmirror.com/es6-promise/3.3.1
->>>>>>> 503f807 (redocly集成)
     dev: false
 
 >>>>>>> 3a19261 (redocly集成)
@@ -7669,8 +7675,18 @@ packages:
     dev: true
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+  registry.npmmirror.com/slugify/1.4.7:
+    resolution: {integrity: sha512-tf+h5W1IrjNm/9rKKj0JU2MDMruiopx0jjVA5zCdBtcGjfp0+c5rHw/zADLC3IeKlGHtVbHtpfzvYA0OYT+HKg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/slugify/-/slugify-1.4.7.tgz}
+    name: slugify
+    version: 1.4.7
+    engines: {node: '>=8.0.0'}
+    dev: false
+
+>>>>>>> 4da0414 (字段驼峰)
   registry.npmmirror.com/snake-case/3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/snake-case/-/snake-case-3.0.4.tgz}
     name: snake-case
@@ -7678,13 +7694,6 @@ packages:
     dependencies:
       dot-case: registry.npmmirror.com/dot-case/3.0.4
       tslib: registry.npmmirror.com/tslib/2.4.0
-=======
-  registry.npmmirror.com/slugify/1.4.7:
-    resolution: {integrity: sha512-tf+h5W1IrjNm/9rKKj0JU2MDMruiopx0jjVA5zCdBtcGjfp0+c5rHw/zADLC3IeKlGHtVbHtpfzvYA0OYT+HKg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/slugify/-/slugify-1.4.7.tgz}
-    name: slugify
-    version: 1.4.7
-    engines: {node: '>=8.0.0'}
->>>>>>> 503f807 (redocly集成)
     dev: false
 
 >>>>>>> 3a19261 (redocly集成)

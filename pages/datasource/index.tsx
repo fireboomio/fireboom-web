@@ -30,7 +30,7 @@ export default function Datasource() {
           type: 'fetched',
           data: res,
         })
-        setCurrDBId(res.filter((item) => item.source_type == 1).at(0)?.id)
+        setCurrDBId(res.filter((item) => item.sourceType == 1).at(0)?.id)
       })
       .catch(() => {
         console.log('get Datasource Data Error')
@@ -50,7 +50,7 @@ export default function Datasource() {
     setShowType(type)
     //新增的item点击取消逻辑 // 0 会显示一个空页面
     if (id && id < 0) {
-      setCurrDBId(datasource.filter((item) => item.source_type == sourceType).at(0)?.id || 0)
+      setCurrDBId(datasource.filter((item) => item.sourceType == sourceType).at(0)?.id || 0)
     } else setCurrDBId(id)
   }
 

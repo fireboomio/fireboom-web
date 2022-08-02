@@ -26,7 +26,7 @@ function DatasourceList({ onClickItem, Datasourcetype }: ListProps) {
     <>
       <div>
         {datasource
-          .filter((item) => item.source_type == Datasourcetype)
+          .filter((item) => item.sourceType == Datasourcetype)
           .map((datasourceItem) => {
             if (datasourceItem.name != '')
               return (
@@ -53,7 +53,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       name: '',
       config: '2',
       // eslint-disable-next-line camelcase
-      source_type: datasourceType,
+      sourceType: datasourceType,
       switch: 0,
     } as DatasourceResp
     dispatch({ type: 'added', data: data })
