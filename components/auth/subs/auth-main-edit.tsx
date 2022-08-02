@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { RightOutlined } from '@ant-design/icons'
-import { Button, Divider, Form, Input, Radio } from 'antd'
-import type { RadioChangeEvent } from 'antd'
-import { useContext } from 'react'
+import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
+import type { CheckboxValueType } from 'antd/es/checkbox/Group'
+import { useContext, ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
@@ -10,51 +10,84 @@ import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './auth-common-main.module.scss'
-interface FromValues {
-  [key: string]: number | string | boolean
-}
+
 interface Props {
   content: AuthProvResp
 }
-interface Response {
-  status: number
-  data: { result: AuthProvResp[]; [key: string]: number | string | boolean | object }
-  [key: string]: number | string | boolean | object
+
+interface Config {
+  [key: string]: ReactNode
 }
 
-export default function AuthMainCheck({ content }: Props) {
-  const { handleToggleDesigner } = useContext(AuthToggleContext)
+interface FromValues {
+  [key: string]: number | string | readonly string[] | undefined
+}
+const { TextArea } = Input
+
+const options = [
+  { label: '基于Cookie', value: 'cookieBased' },
+  { label: '基于Token', value: 'tokenBased' },
+]
+
+export default function AuthMainEdit({ content }: Props) {
+  const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
-  const [disabled, setDisabled] = useImmer(true)
   const [form] = Form.useForm()
-  const [value, setValue] = useImmer(1)
-  const [open, setOpen] = useImmer(0)
-  const [isRadioShow, setIsRadioShow] = useImmer(true)
-  const { TextArea } = Input
+  const [value, setValue] = useImmer('0')
+  const [isRadioShow, setIsRadioShow] = useImmer(false)
+  const [disabled, setDisabled] = useImmer(false)
+  const [inputValue, setInputValue] = useImmer(
+    '' as string | number | readonly string[] | undefined
+  )
+  const config = JSON.parse(content.config) as Config
+
   if (!content) {
     return <></>
   }
-  const onFinish = async (values: object) => {
-    console.log('Success:', values)
-    console.log(JSON.stringify(values))
-    await requests.put('/auth', { ...content, config: JSON.stringify(values) })
-    const auth: Response = await requests.get('/auth')
-    console.log('autu', auth)
-    dispatch({
-      type: 'fetched',
-      data: [].slice.call(auth, 0),
-    })
-    handleToggleDesigner('data', content.id)
+  const onFinish = async (values: FromValues) => {
+    console.log(values, 'values')
+    const newValues = { ...config, ...values }
+    const newContent = { ...content, switch_state: values.switch_state, name: values.id }
+    console.log(newValues, 'newValue', newContent, 'newContent')
+    if (content.name == '') {
+      const req = { ...newContent, config: JSON.stringify(newValues) }
+      Reflect.deleteProperty(req, 'id')
+      const result = await requests.post<unknown, number>('/auth', req)
+      content.id = result
+    } else {
+      await requests.put('/auth', {
+        ...newContent,
+        config: JSON.stringify(newValues),
+      })
+    }
+    void requests
+      .get<unknown, AuthProvResp[]>('/auth')
+      .then((res) => {
+        dispatch({ type: 'fetched', data: res })
+      })
+      .then(() => {
+        handleBottomToggleDesigner('data', content.id)
+      })
   }
 
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
   }
 
+  const typeChange = (value: string) => {
+    setValue(value)
+    setIsRadioShow(value == '1')
+  }
+
+  const onChangeCheckbox = (checkedValues: CheckboxValueType[]) => {
+    console.log('checked = ', checkedValues)
+  }
+
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    console.log(allValues)
+    console.log(allValues, 'allValues')
+    setInputValue(allValues.issuer)
     for (const key in allValues) {
-      if ((allValues[key] as string) == undefined || allValues[key] == '') {
+      if ((allValues[key] as string) == undefined) {
         setDisabled(true)
         return
       }
@@ -62,30 +95,51 @@ export default function AuthMainCheck({ content }: Props) {
     setDisabled(false)
   }
 
-  const onChangeRadio = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value)
+  const initialValues = content.name
+    ? {
+        id: config.id,
+        clientId: config.clientId,
+        clientSecret: config.clientSecret,
+        issuer: config.issuer,
+        jwks: config.jwks,
+        jwksJSON: config.jwksJSON,
+        switch_state: content.switch_state,
+      }
+    : {
+        id: '',
+        clientId: '',
+        clientSecret: '',
+        issuer: '',
+        jwks: '0',
+        jwksJSON: '',
+        switch_state: '',
+      }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    setValue(e.target.value)
-    setIsRadioShow(!isRadioShow)
-  }
-  const onOpenRadio = () => {
-    if (content.switch_state) {
-      setOpen(content.switch_state)
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  }
   return (
     <>
       <div className="pb-3 flex items-center justify-between border-gray border-b">
-        <div className="h-7">
-          <span className="ml-2 font-bold">
-            {content.name} <span className="text-xs text-gray-500/80">main</span>
-          </span>
-        </div>
+        {content.name == '' ? (
+          <div className="h-7">
+            <span className="ml-2 font-bold">
+              系统默认 <span className="text-xs text-gray-500/80">openid</span>
+            </span>
+          </div>
+        ) : (
+          <div className="h-7">
+            <span className="ml-2 font-bold">
+              {content.name}
+              <span className="text-xs text-gray-500/80">{content.auth_supplier}</span>
+            </span>
+          </div>
+        )}
         <div className="flex justify-center items-center">
           <Divider type="vertical" />
-          <Button className={styles['center-btn']}>
+          <Button
+            className={styles['center-btn']}
+            onClick={() => {
+              handleBottomToggleDesigner('data', content.id)
+            }}
+          >
             <span>取消</span>
           </Button>
           <Button
@@ -93,19 +147,13 @@ export default function AuthMainCheck({ content }: Props) {
             className={styles['save-btn']}
             onClick={() => {
               form.submit()
-              handleToggleDesigner('data', content.id)
             }}
           >
-            <span>保存</span>
+            {content.name == '' ? '创建' : '保存'}
           </Button>
         </div>
       </div>
-      <div
-        className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}
-        onClick={() => {
-          handleToggleDesigner('setting', content.id)
-        }}
-      >
+      <div className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}>
         <span className=" w-19 h-5 float-right">
           前往管理 <RightOutlined />
         </span>
@@ -113,63 +161,103 @@ export default function AuthMainCheck({ content }: Props) {
       <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
           form={form}
+          style={{ width: '90%' }}
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
           onFinish={(values) => {
             void onFinish(values)
           }}
-          onValuesChange={onValuesChange}
           onFinishFailed={onFinishFailed}
-          autoComplete="off"
+          onValuesChange={onValuesChange}
+          autoComplete="new-password"
           validateTrigger="onBlur"
           labelAlign="left"
           className="ml-3"
+          initialValues={initialValues}
         >
-          <Form.Item label="供应商ID" name="auth_supplier">
+          <Form.Item
+            label="供应商ID"
+            name="id"
+            rules={[
+              { required: true, message: '供应商ID不能为空' },
+              {
+                pattern: new RegExp('^\\w+$', 'g'),
+                message: '只允许包含字母，数字，下划线',
+              },
+            ]}
+          >
+            <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
+          </Form.Item>
+          <Form.Item
+            label="App ID"
+            name="clientId"
+            rules={[
+              { required: true, message: 'App ID不能为空' },
+              {
+                pattern: new RegExp('^\\w+$', 'g'),
+                message: '只允许包含字母，数字，下划线',
+              },
+            ]}
+          >
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" required name="app_id">
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item label="App Secret" required name="app_secret">
+          <Form.Item
+            label="App Secret"
+            name="clientSecret"
+            rules={[
+              { required: true, message: 'App Secret不能为空' },
+              {
+                pattern: new RegExp('^\\w+$', 'g'),
+                message: '只允许包含字母，数字，下划线',
+              },
+            ]}
+          >
             <Input.Password placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="Issuer" required name="issuer">
-            <Input placeholder="请输入..." />
+          <Form.Item
+            label="Issuer"
+            name="issuer"
+            rules={[
+              { required: true, message: 'Issuer不能为空' },
+              {
+                pattern: new RegExp('^\\w+$', 'g'),
+                message: '只允许包含字母，数字，下划线',
+              },
+            ]}
+          >
+            <Input placeholder="请输入..." value={inputValue} />
           </Form.Item>
-          <Form.Item label="服务发现地址" name="service_address">
-            <Input />
+          <Form.Item label="服务发现地址">
+            <Input value={`${inputValue as string}/.well-known/openid`} disabled />
           </Form.Item>
           <Form.Item label="JWKS" name="jwks">
-            <Radio.Group onChange={onChangeRadio} value={value}>
-              <Radio value={1} defaultChecked={true} className="mr-18">
+            <Radio.Group
+              onChange={(e) => {
+                typeChange(e.target.value as string)
+              }}
+              value={value}
+            >
+              <Radio value={0} className="mr-18">
                 URL
               </Radio>
-              <Radio value={2}>JSON</Radio>
+              <Radio value={1}>JSON</Radio>
             </Radio.Group>
           </Form.Item>
           {isRadioShow ? (
-            <div>
-              <Form.Item label="jwksURL" name="jwks_url">
-                <Input suffix="浏览" />
-              </Form.Item>
-            </div>
-          ) : (
-            <Form.Item label="jwksJSON" name="jwks_json">
+            <Form.Item label="jwksJSON" name="jwksJSON">
               <TextArea rows={4} />
             </Form.Item>
+          ) : (
+            <Form.Item label="jwksURL">
+              <Input disabled value={`${inputValue as string}/.well-known/openid-`} suffix="浏览" />
+            </Form.Item>
           )}
-          <Form.Item label="用户端点" name="user_point">
-            <Input placeholder="请输入..." />
+          <Form.Item label="用户端点">
+            <Input disabled value={`${inputValue as string}/.well-known/openid-`} />
           </Form.Item>
           <Form.Item label="是否开启" name="switch_state">
-            <Radio.Group onChange={onOpenRadio} value={open}>
-              <Radio value={1} className="mr-6.5">
-                基于Cookie
-              </Radio>
-              <Radio value={2}>基于Token</Radio>
-            </Radio.Group>
+            <Checkbox.Group options={options} onChange={onChangeCheckbox} />
           </Form.Item>
         </Form>
       </div>

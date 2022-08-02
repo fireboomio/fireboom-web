@@ -10,100 +10,6 @@
   width: 100%;
 }
 
-.identify-img {
-  position: absolute;
-  right: 5px;
-  bottom: -10px;
-  width: 40px;
-  height: 35px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px 0 #fef3f4;
-}
-
-.identify-info {
-  width: 128px;
-  height: 20px;
-  margin-top: 5px;
-  margin-left: 13px;
-  color: #fff;
-  font-size: 12px;
-  background: linear-gradient(
-    285deg,
-    rgb(255 249 248 / 0%) 0%,
-    rgb(255 136 104 / 52%) 52%,
-    #e13d5b 100%
-  );
-  border-radius: 17px;
-}
-
-.identify-button {
-  position: relative;
-  width: 208px;
-  height: 86px;
-  margin-bottom: 54px;
-  padding: 0;
-  color: rgb(0 0 0 / 85%);
-  font-weight: bold;
-  font-size: 15px;
-  background: linear-gradient(203deg, rgb(253 239 240 / 0%) 0%, #fbdadd 100%, #fbdadd 100%);
-  border: 2px solid;
-  border-radius: 6px;
-  border-image: linear-gradient(
-    359deg,
-    rgb(255 255 255 / 100%),
-    rgb(252 254 255 / 89%),
-    rgb(230 245 254 / 0%)
-  );
-  box-shadow: 0 6px 7px 0 #f8e4e4;
-
-  &:hover,
-  &:focus {
-    color: rgb(0 0 0 / 85%);
-    background: linear-gradient(45deg, #ffcedb 0%, #ffeee3 100%);
-    border: 2px solid;
-    border-radius: 6px;
-    border-image: linear-gradient(
-      359deg,
-      rgb(255 255 255 / 100%),
-      rgb(252 254 255 / 89%),
-      rgb(230 245 254 / 0%)
-    )
-      2 2;
-    box-shadow: 0 6px 7px 0 #f8e4e4;
-  }
-}
-
-.role-button {
-  width: 208px;
-  height: 86px;
-  color: rgb(0 0 0 / 85%);
-  font-weight: bold;
-  font-size: 15px;
-  background: #f8f8f9;
-  border-radius: 6px;
-
-  &:hover,
-  &:focus {
-    color: rgb(0 0 0 / 85%);
-    background: #f8f8f9;
-    border: 1px solid;
-    border-radius: 6px;
-    border-image: linear-gradient(177deg, rgb(255 147 120 / 100%), rgb(225 61 91 / 100%)) 1 1;
-  }
-}
-
-.role-img {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  width: 40px;
-  height: 35px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px 0 #fef3f4;
-}
-
 .actions {
   display: flex;
   justify-content: space-between;
@@ -131,7 +37,7 @@
 
 /* stylelint-disable-next-line no-descending-specificity */
 .delete-label :global {
-  .ant-popover-content .ant-popover-arrow {
+  .ant-divider-horizontal {
     display: none;
   }
 }

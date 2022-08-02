@@ -1,7 +1,8 @@
-.save-btn {
-  width: 62px;
-  height: 28px;
+.save-btn .ant-btn {
   padding: 0;
+  width: 64px;
+  height: 28px;
+  font-size: 14px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
 
@@ -10,6 +11,11 @@
     color: rgb(233 92 127);
     background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
     border-color: #e13d5b;
+  }
+  span {
+    line-height: 18px;
+    color: #fff;
+    font-size: 14px;
   }
 }
 
@@ -108,7 +114,7 @@
   color: #e92e5e;
   font-weight: 400;
   font-size: 14px;
-  font-family: PingFangSC-Regular, "PingFang SC";
+  font-family: PingFangSC-Regular, 'PingFang SC';
   line-height: 20px;
 }
 
@@ -150,4 +156,10 @@
   input {
     width: 90%;
   }
+}
+.monaco {
+  height: 300px;
+  padding: 0;
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-radius: 4px;
 }
