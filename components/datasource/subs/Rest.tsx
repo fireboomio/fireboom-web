@@ -122,6 +122,9 @@ export default function DatasourceRestMain({ content, type }: Props) {
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
     console.log(newValues, 'newValues')
+    let index = (config.filePath as string)?.lastIndexOf('/')
+    const fileId = (config.filePath as string)?.substring(index + 1) //文件id
+    console.log(fileId, 'fileId')
     //如果进行上传文件操作
     if (file.uid) {
       //如果存在已经上传文件 先删除先前文件
@@ -129,7 +132,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.filePath },
+          data: { id: fileId },
         })
       }
       newValues.filePath = (await requests({
@@ -146,7 +149,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.filePath },
+          data: { id: fileId },
         })
         newValues.filePath = undefined
       } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
@@ -216,7 +219,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
     <>
       {type === 'data' ? (
         //查看页面--------------------------------------------------------------------------
-        <>
+        <div className="pr-9">
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
@@ -410,10 +413,10 @@ export default function DatasourceRestMain({ content, type }: Props) {
               />
             </div>
           </Modal>
-        </>
+        </div>
       ) : (
         //编辑页面--------------------------------------------------------------------------
-        <>
+        <div>
           <div className="pb-9px flex items-center justify-between border-gray border-b">
             {content.name == '' ? (
               <div>
@@ -527,7 +530,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                   }}
                   onRemove={onRemoveFile}
                 >
-                  <Button icon={<PlusOutlined />} className="w-148.5">
+                  <Button icon={<PlusOutlined />} className="w-159.5">
                     添加文件
                   </Button>
                 </Upload>
@@ -547,14 +550,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
                           {fields.map((field, index) => (
                             <Space key={field.key} align="baseline">
                               <Form.Item
-                                className="w-50"
+                                className="w-52.5"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'key']}
                               >
                                 <Input />
                               </Form.Item>
                               <Form.Item
-                                className="w-36"
+                                className="w-40"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'kind']}
                               >
@@ -565,7 +568,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                 </Select>
                               </Form.Item>
                               <Form.Item
-                                className="w-126"
+                                className="w-135"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'val']}
                               >
@@ -726,7 +729,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Collapse>
             </Form>
           </div>
-        </>
+        </div>
       )}
     </>
   )

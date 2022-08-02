@@ -46,8 +46,12 @@ export default function DatasourceEditor({ content, showType }: Props) {
   }, [showType, content])
 
   return (
-    <div className="pl-6 pr-10 mt-24px">
-      <div className="flex justify-start items-center  mb-24px">
+    <div className="pl-6 mt-6 mr-6">
+      <div
+        className={`flex justify-start items-center  mb-24px ${
+          showType == 'data' && content.sourceType != 1 && content.sourceType != 4 ? 'pr-9' : ''
+        }`}
+      >
         <span className="text-base flex-grow font-bold text-[18px]">
           外部数据源 / {content && title}
         </span>

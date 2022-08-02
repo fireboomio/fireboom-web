@@ -87,6 +87,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     console.log('SuccessValues:', values)
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
+    let index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
+    const fileId = (config.loadSchemaFromString as string)?.substring(index + 1) //文件id
     //如果进行上传文件操作
     if (file.uid) {
       //如果存在已经上传文件 先删除先前文件
@@ -94,7 +96,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.loadSchemaFromString },
+          data: { id: config.fileId },
         })
       }
       newValues.loadSchemaFromString = (await requests({
@@ -111,7 +113,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.loadSchemaFromString },
+          data: { id: config.fileId },
         })
         newValues.loadSchemaFromString = undefined
       } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
@@ -184,7 +186,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
       {type === 'data' ? (
         //查看页面--------------------------------------------------------------------------
         //查看页面--------------------------------------------------------------------------
-        <>
+        <div className="pr-9">
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
@@ -345,7 +347,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               </div>
             </Panel>
           </Collapse>
-        </>
+        </div>
       ) : (
         //编辑页面--------------------------------------------------------------------------
         //编辑页面--------------------------------------------------------------------------
@@ -388,7 +390,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             <Form
               form={form}
               name="basic"
-              labelCol={{ span: 5 }}
+              labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
               onFinish={(values) => {
                 void onFinish(values as Config)
@@ -486,7 +488,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       return false
                     }}
                   >
-                    <Button icon={<PlusOutlined />} className="w-148">
+                    <Button icon={<PlusOutlined />} className="w-159.5">
                       添加文件
                     </Button>
                   </Upload>
@@ -497,23 +499,23 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
               <h2 className="ml-3 mb-3">请求头:</h2>
 
-              <Form.Item wrapperCol={{ span: 16 }}>
+              <Form.Item wrapperCol={{ span: 24 }}>
                 <Form.List name="headers">
                   {(fields, { add, remove }, { errors }) => (
                     <>
                       {fields.map((field, index) => (
                         <Space key={field.key} align="baseline">
-                          <Form.Item className="w-50" name={[field.name, 'key']}>
+                          <Form.Item className="w-52.5" name={[field.name, 'key']}>
                             <Input />
                           </Form.Item>
-                          <Form.Item className="w-36" name={[field.name, 'kind']}>
+                          <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                               <Option value="2">转发自客户端</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item className="w-126" name={[field.name, 'val']}>
+                          <Form.Item className="w-135" name={[field.name, 'val']}>
                             <Input placeholder="请输入..." />
                           </Form.Item>
                           <IconFont
@@ -525,7 +527,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                         </Space>
                       ))}
 
-                      <Form.Item wrapperCol={{ span: 24 }}>
+                      <Form.Item wrapperCol={{ span: 16 }}>
                         <Button
                           type="dashed"
                           onClick={() => {
