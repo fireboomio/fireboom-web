@@ -87,7 +87,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     console.log('SuccessValues:', values)
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
-    let index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
+    const index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
     const fileId = (config.loadSchemaFromString as string)?.substring(index + 1) //文件id
     //如果进行上传文件操作
     if (file.uid) {
@@ -96,7 +96,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.fileId },
+          data: { id: fileId },
         })
       }
       newValues.loadSchemaFromString = (await requests({
@@ -113,7 +113,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: config.fileId },
+          data: { id: fileId },
         })
         newValues.loadSchemaFromString = undefined
       } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
