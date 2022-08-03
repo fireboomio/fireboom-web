@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import type { RadioChangeEvent } from 'antd'
 import { Descriptions, Divider, Radio, Switch, Input } from 'antd'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -8,6 +10,7 @@ import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
+dayjs.extend(duration)
 
 interface systemConfig {
   apiPort: string
@@ -16,14 +19,22 @@ interface systemConfig {
   forcedJumpSwitch: string
   logLevel: string
   middlewarePort: string
+  envType: string
 }
-
+interface Runtime {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
 export default function SettingMainVersion() {
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
-  const onChange = (e: RadioChangeEvent) => {
-    void requests.post('/setting', { key: 'logLevel', val: e.target.value as string })
+  const [systemTime, setSystemTime] = useImmer('')
+
+  const onChange = (e: RadioChangeEvent, key: string) => {
+    void requests.post('/setting', { key: key, val: e.target.value as string })
     void getData()
   }
 
@@ -33,8 +44,19 @@ export default function SettingMainVersion() {
   }, [])
 
   useEffect(() => {
+    void requests.get<unknown, string>('/setting/getTime').then((res) => {
+      setSystemTime(calTime(res))
+    })
     void getData()
   }, [])
+
+  const calTime = (initTime: string) => {
+    // console.log(dayjs.duration(24, 'hours').humanize())
+    const time = dayjs.duration(dayjs().diff(dayjs(initTime), 'seconds'), 'seconds') as unknown as {
+      $d: Runtime
+    }
+    return `${time.$d.days}天 ${time.$d.hours}时 ${time.$d.minutes}分 ${time.$d.seconds}秒`
+  }
 
   const editPort = async (key: string, value: string) => {
     if (value == '') return
@@ -60,7 +82,7 @@ export default function SettingMainVersion() {
                 color: 'gray',
               }}
             >
-              <Descriptions.Item label="运行时长:">{systemConfig.logLevel}</Descriptions.Item>
+              <Descriptions.Item label="运行时长:">{systemTime}</Descriptions.Item>
               <Descriptions.Item label="API端口:" className="w-20">
                 {isApiPortEditing ? (
                   <Input
@@ -105,18 +127,20 @@ export default function SettingMainVersion() {
                   }}
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="类型:">
-                <Radio.Group defaultValue={systemConfig.logLevel} onChange={onChange}>
-                  <Radio value={'1'} className="mr-15 ">
-                    info
+              <Descriptions.Item label="开发环境">
+                <Radio.Group
+                  defaultValue={systemConfig.envType}
+                  onChange={(e) => {
+                    onChange(e, 'envType')
+                  }}
+                >
+                  <Radio value={'0'} className="mr-15">
+                    开发环境
                   </Radio>
-                  <Radio value={'2'} className="mr-15">
-                    debug
-                  </Radio>
-                  <Radio value={'3'}> error </Radio>
+                  <Radio value={'1'}>生产环境</Radio>
                 </Radio.Group>
               </Descriptions.Item>
-              <Descriptions.Item label="开发者模式:">
+              <Descriptions.Item label="调试:">
                 <Switch
                   onChange={(value) => {
                     void requests.post('/setting', {
@@ -129,6 +153,23 @@ export default function SettingMainVersion() {
                   size="small"
                 />
               </Descriptions.Item>
+              <Descriptions.Item label="日志水平:">
+                <Radio.Group
+                  defaultValue={systemConfig.logLevel}
+                  onChange={(e) => {
+                    onChange(e, 'logLevel')
+                  }}
+                >
+                  <Radio value={'1'} className="mr-15 ">
+                    info
+                  </Radio>
+                  <Radio value={'2'} className="mr-15">
+                    debug
+                  </Radio>
+                  <Radio value={'3'}> error </Radio>
+                </Radio.Group>
+              </Descriptions.Item>
+
               <Descriptions.Item label="强制跳转:">
                 <Switch
                   defaultChecked={systemConfig.forcedJumpSwitch == '1' ? true : false}

@@ -17,7 +17,6 @@ import styles from './PannelItem.module.scss'
 interface Props {
   datasourceItem: DatasourceResp
   onClickItem: (dsItem: DatasourceResp) => void
-  Datasourcetype: number
 }
 
 interface Config {

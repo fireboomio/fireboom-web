@@ -67,15 +67,20 @@ const columns: ColumnsType<DataType> = [
   },
 ]
 export default function DatasourceGraphalMainCheck({ content, type }: Props) {
+  const config = JSON.parse(content.config) as Config
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
-  const [isShowUpSchema, setIsShowUpSchema] = useImmer(true)
+  const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
-  const config = JSON.parse(content.config) as Config
+
+  useEffect(() => {
+    setIsShowUpSchema(config.loadSchemaFromString !== undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type])
 
   useEffect(() => {
     form.resetFields()
@@ -108,7 +113,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         data: { file: file },
       })) as unknown as string
     } else {
-      //如果未进行上传文件操作逻辑，删除文件发送请求并将config中的filePath置空
+      //如果删除文件则将config中的filePath置空
       if (deleteFlag) {
         await requests({
           method: 'post',
@@ -186,7 +191,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
       {type === 'data' ? (
         //查看页面--------------------------------------------------------------------------
         //查看页面--------------------------------------------------------------------------
-        <div className="pr-9">
+        <>
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
@@ -217,6 +222,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               </div>
             </div>
           </div>
+
           <div className="flex justify-center mb-8">
             <Descriptions
               bordered
@@ -241,6 +247,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               >
                 {config.apiNameSpace}
               </Descriptions.Item>
+
               <Descriptions.Item
                 label={
                   <div>
@@ -252,17 +259,22 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               >
                 {config.url}
               </Descriptions.Item>
-              <Descriptions.Item
-                label={
-                  <div>
-                    <span className={styles['label-style']}>指定Schema</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
-                }
-                className="justify-start"
-              >
-                <IconFont type="icon-wenjian1" /> {config.loadSchemaFromString}
-              </Descriptions.Item>
+
+              {config?.loadSchemaFromString ? (
+                <Descriptions.Item
+                  label={
+                    <div>
+                      <span className={styles['label-style']}>指定Schema</span>
+                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    </div>
+                  }
+                  className="justify-start"
+                >
+                  <IconFont type="icon-wenjian1" /> {config.loadSchemaFromString}
+                </Descriptions.Item>
+              ) : (
+                ''
+              )}
             </Descriptions>
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
@@ -347,7 +359,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               </div>
             </Panel>
           </Collapse>
-        </div>
+        </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
         //编辑页面--------------------------------------------------------------------------
@@ -408,7 +420,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 customIntScalars: config.defineInt,
                 skipRenameRootFields: config.exceptRename,
                 headers: config.headers || [{ kind: '0' }],
-                agreement: isShowUpSchema,
+                agreement: config.loadSchemaFromString !== undefined ? true : false,
               }}
             >
               <Form.Item
