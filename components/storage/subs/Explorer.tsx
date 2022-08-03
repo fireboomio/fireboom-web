@@ -74,10 +74,6 @@ export default function StorageExplorer({ bucketId }: Props) {
           }))
           .filter((x) => x.name !== '')
       )
-      .then((x) => {
-        console.log(x, 'bbb')
-        return [...x]
-      })
       .then((res) => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketId])
