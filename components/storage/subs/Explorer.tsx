@@ -245,7 +245,7 @@ export default function StorageExplorer({ bucketId }: Props) {
       </Cascader>
 
       <Drawer
-        title={target?.label}
+        title={target?.name}
         placement="right"
         onClose={() => setVisible(false)}
         visible={visible}
