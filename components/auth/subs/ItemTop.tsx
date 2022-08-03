@@ -22,7 +22,7 @@ export default function AuthItemTop({ handleTopToggleDesigner, authType }: Props
           handleTopToggleDesigner(authType)
         }}
       >
-        <div className={styles['item-label']}>{authType.name}</div>
+        <div className={`${styles['item-label']} font-bold ml-5`}>{authType.name}</div>
       </div>
     </>
   )
