@@ -121,10 +121,9 @@ export default function DatasourceRestMain({ content, type }: Props) {
     console.log('Success:', values)
     values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
     const newValues = { ...values }
-    console.log(newValues, 'newValues')
     const index = (config.filePath as string)?.lastIndexOf('/')
-    const fileId = (config.filePath as string)?.substring(index + 1) //文件id
-    console.log(fileId, 'fileId')
+    const fileId = (config.filePath as string)?.substring(index + 1) //获取文件id
+
     //如果进行上传文件操作
     if (file.uid) {
       //如果存在已经上传文件 先删除先前文件
@@ -144,7 +143,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         data: { file: file },
       })) as unknown as string
     } else {
-      //如果未进行上传文件操作逻辑，删除文件发送请求并将config中的filePath置空
+      //如果删除文件则将config中的filePath置空
       if (deleteFlag) {
         await requests({
           method: 'post',
@@ -219,7 +218,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
     <>
       {type === 'data' ? (
         //查看页面--------------------------------------------------------------------------
-        <div className="pr-9">
+        <>
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
@@ -253,6 +252,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Button>
             </div>
           </div>
+
           <div className="flex justify-center mb-8">
             <Descriptions
               bordered
@@ -413,7 +413,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               />
             </div>
           </Modal>
-        </div>
+        </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <div>

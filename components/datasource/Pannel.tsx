@@ -14,18 +14,18 @@ interface Props {
 }
 interface ListProps {
   onClickItem: (dsItem: DatasourceResp) => void
-  Datasourcetype: number
+  datasourceType: number
 }
 const { Panel } = Collapse
 
-function DatasourceList({ onClickItem, Datasourcetype }: ListProps) {
+function DatasourceList({ onClickItem, datasourceType }: ListProps) {
   const datasource = useContext(DatasourceContext)
 
   return (
     <>
       <div>
         {datasource
-          .filter((item) => item.sourceType == Datasourcetype)
+          .filter((item) => item.sourceType == datasourceType)
           .map((datasourceItem) => {
             if (datasourceItem.name != '')
               return (
@@ -33,7 +33,6 @@ function DatasourceList({ onClickItem, Datasourcetype }: ListProps) {
                   key={datasourceItem.id}
                   datasourceItem={datasourceItem}
                   onClickItem={onClickItem}
-                  Datasourcetype={Datasourcetype}
                 />
               )
           })}
@@ -46,6 +45,8 @@ export default function DatasourcePannel({ onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const datasource = useContext(DatasourceContext)
   const [activeKey, setActiveKey] = useImmer([] as Array<string>)
+  const [hoveringKey, setHoveringKey] = useImmer(0)
+
   function addTable(datasourceType: number) {
     const data = {
       id: -(datasource.length + 1),
@@ -59,28 +60,39 @@ export default function DatasourcePannel({ onClickItem }: Props) {
     onClickItem(data)
   }
 
-  const genExtra = (datasourceType: number) => (
-    <PlusOutlined
-      onClick={(event) => {
-        event.stopPropagation()
-        setActiveKey(activeKey.concat(datasourceType.toString()))
-        addTable(datasourceType)
-      }}
-    />
-  )
+  function setHeader(label: string, datasourceType: number) {
+    return (
+      <div
+        className="w-full flex justify-between items-center py-2 pr-1 "
+        onMouseEnter={() => {
+          setHoveringKey(datasourceType)
+        }}
+        onMouseLeave={() => {
+          setHoveringKey(0)
+        }}
+      >
+        <span>{label}</span>
+        {hoveringKey == datasourceType ? (
+          <PlusOutlined
+            onClick={(event) => {
+              event.stopPropagation()
+              setActiveKey(activeKey.concat(datasourceType.toString()))
+              addTable(datasourceType)
+            }}
+          />
+        ) : (
+          ''
+        )}
+      </div>
+    )
+  }
 
   return (
     <>
-      {/* <div className={styles.pannel}>
-        <div className={`${styles.title} text-base`}>
-          外部数据源 <IconFont type="icon-wenjianshezhi" />
-        </div>
-      </div> */}
-
       <div className={styles['datasource-collapse']}>
         <Collapse ghost bordered>
-          <Panel header="外部数据源" key={1}>
-            <div className="h-66" style={{ overflow: 'auto' }}>
+          <Panel header={<div className="w-52 flex justify-between py-2">外部数据源</div>} key={1}>
+            <div className="h-50" style={{ overflow: 'auto' }}>
               <Collapse
                 activeKey={activeKey}
                 ghost
@@ -90,36 +102,32 @@ export default function DatasourcePannel({ onClickItem }: Props) {
                 }}
               >
                 <Panel
-                  header="DB"
+                  header={setHeader('DB', 1)}
                   key={'1'}
-                  extra={genExtra(1)}
                   className={styles['datasource-border']}
                 >
-                  <DatasourceList onClickItem={onClickItem} Datasourcetype={1} />
+                  <DatasourceList onClickItem={onClickItem} datasourceType={1} />
                 </Panel>
                 <Panel
-                  header="REST"
+                  header={setHeader('REST', 2)}
                   key={'2'}
-                  extra={genExtra(2)}
                   className={styles['datasource-border']}
                 >
-                  <DatasourceList onClickItem={onClickItem} Datasourcetype={2} />
+                  <DatasourceList onClickItem={onClickItem} datasourceType={2} />
                 </Panel>
                 <Panel
-                  header="Graphal"
+                  header={setHeader('GraphQL', 3)}
                   key={'3'}
-                  extra={genExtra(3)}
                   className={styles['datasource-border']}
                 >
-                  <DatasourceList onClickItem={onClickItem} Datasourcetype={3} />
+                  <DatasourceList onClickItem={onClickItem} datasourceType={3} />
                 </Panel>
                 <Panel
-                  header="自定义"
+                  header={setHeader('自定义', 4)}
                   key={'4'}
-                  extra={genExtra(4)}
                   className={styles['datasource-border']}
                 >
-                  <DatasourceList onClickItem={onClickItem} Datasourcetype={4} />
+                  <DatasourceList onClickItem={onClickItem} datasourceType={4} />
                 </Panel>
               </Collapse>
             </div>

@@ -125,13 +125,7 @@ const initForm = (
       <Form.Item
         name={['databaseUrl', 'val']}
         noStyle
-        rules={[
-          { required: true, message: '连接名不能为空' },
-          {
-            pattern: new RegExp('^\\w+$', 'g'),
-            message: '只允许包含字母，数字，下划线',
-          },
-        ]}
+        rules={[{ required: true, message: '连接名不能为空' }]}
       >
         <Input style={{ width: '80%' }} placeholder="请输入" />
       </Form.Item>
@@ -140,17 +134,7 @@ const initForm = (
 )
 const paramForm = (
   <>
-    <Form.Item
-      label="主机:"
-      name="host"
-      rules={[
-        { required: true, message: '主机名不能为空' },
-        {
-          pattern: new RegExp('^\\w+$', 'g'),
-          message: '只允许包含字母，数字，下划线',
-        },
-      ]}
-    >
+    <Form.Item label="主机:" name="host" rules={[{ required: true, message: '主机名不能为空' }]}>
       <Input placeholder="请输入..." />
     </Form.Item>
     <Form.Item
@@ -166,17 +150,7 @@ const paramForm = (
     >
       <Input placeholder="请输入..." />
     </Form.Item>
-    <Form.Item
-      label="端口:"
-      name="port"
-      rules={[
-        { required: true, message: '端口号不能为空' },
-        {
-          pattern: new RegExp('^\\w+$', 'g'),
-          message: '只允许包含字母，数字，下划线',
-        },
-      ]}
-    >
+    <Form.Item label="端口:" name="port" rules={[{ required: true, message: '端口号不能为空' }]}>
       <Input placeholder="请输入..." />
     </Form.Item>
     <Form.Item
@@ -508,13 +482,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               <Form.Item
                 label="名称:"
                 name="apiNamespace"
-                rules={[
-                  { required: true, message: '连接名不能为空' },
-                  {
-                    pattern: new RegExp('^\\w+$', 'g'),
-                    message: '只允许包含数字，字母，下划线',
-                  },
-                ]}
+                rules={[{ required: true, message: '连接名不能为空' }]}
               >
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>

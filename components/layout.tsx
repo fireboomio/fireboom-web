@@ -35,6 +35,12 @@ const menus = [
     position: 'top',
   },
   {
+    title: '数据来源',
+    icon: <IconFont type="icon-chucun-weixuanzhong" />,
+    link: '/datasource',
+    position: 'top',
+  },
+  {
     title: 'API 管理',
     icon: <IconFont type="icon-API-weixuanzhong" />,
     link: '/apimanage',

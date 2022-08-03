@@ -110,7 +110,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   // const [content, setContent] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
 
-  //datasource
+  //datasource逻辑-----
   const [showDatasource, setShowDatasource] = useImmer(false)
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
@@ -129,7 +129,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       .catch(() => {
         console.log('get Datasource Data Error')
       })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleClickItem = (datasourceItem: DatasourceResp) => {
@@ -152,11 +152,8 @@ const ApiManage: FC<ApiManageProps> = () => {
   }
 
   const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
+  //-----datasource逻辑
 
-  // if (error) return <div>failed to load</div>
-
-  // TODO: need refine
-  //datasource
 
   useEffect(() => {
     getFetcher<operationResp[]>('/operateApi')
@@ -522,7 +519,11 @@ const ApiManage: FC<ApiManageProps> = () => {
                   </div>
                   <Divider className="my-4" />
                   <Tree
-                    style={{ overflow: 'auto', height: 'calc(100vh - 350px)',marginBottom:'10px' }}
+                    style={{
+                      overflow: 'auto',
+                      height: 'calc(100vh - 350px)',
+                      marginBottom: '10px',
+                    }}
                     titleRender={titleRender}
                     icon={iconRender}
                     // draggable
@@ -534,18 +535,19 @@ const ApiManage: FC<ApiManageProps> = () => {
                     selectedKeys={[selectedKey]}
                     onSelect={handleSelectTreeNode}
                   />
-                  {/* datasource更改 */}
-                  <div className="mt-3 absolute w-70 h-80 bottom-0 " style={{ overflow: 'auto' }}>
+                  {/*--- datasource更改 */}
+                  <div className="fixed w-70 bottom-0 bg-white" style={{ overflow: 'auto' }}>
                     <DatasourcePannel onClickItem={handleClickItem} />
                   </div>
-                  {/* datasource更改 */}
+                  {/* datasource更改 ---*/}
                 </div>
 
                 <div className={styles.divider} />
-                {/* datasource更改 */}
+                {/*--- datasource更改 */}
                 {showDatasource ? (
                   <div className={`w-6/7 ${styles['datasource-container']}`}>
                     <DatasourceContainer showType={showType} content={content} />
+                    {/* datasource更改 ---*/}
                   </div>
                 ) : (
                   <div className="px-6 pt-6 flex-1">
