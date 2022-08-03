@@ -68,7 +68,6 @@ export default function AuthList({ onClickItem, handleTopToggleDesigner }: Props
   const genExtra = () => (
     <PlusOutlined
       onClick={(event) => {
-        // If you don't want click extra trigger collapse, you can prevent this:
         event.stopPropagation()
         setActiveKey(activeKey.concat('1'))
         console.log(activeKey, 'activeKey')
@@ -79,10 +78,12 @@ export default function AuthList({ onClickItem, handleTopToggleDesigner }: Props
 
   return (
     <>
-      <div className="flex justify-between items-center p-4 border-[#5f62691a] border-b-1">
-        <span className="text-base  leading-5 font-bold">概览</span>
-      </div>
-      <h2 className="ml-2 mt-3 text-[#AFB0B4] text-12px">通用</h2>
+      <AuthItemTop
+        handleTopToggleDesigner={handleTopToggleDesigner}
+        authType={{ name: '概览', type: 'outline' }}
+      />
+
+      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">通用</h2>
       {firstTypeList.map((authType) => (
         <AuthItemTop
           key={authType.type}
@@ -90,7 +91,7 @@ export default function AuthList({ onClickItem, handleTopToggleDesigner }: Props
           authType={authType}
         />
       ))}
-      <h2 className="ml-2 mt-3 text-[#AFB0B4] text-12px">设置</h2>
+      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">设置</h2>
       {secondTypeList.map((authType) => (
         <AuthItemTop
           key={authType.type}

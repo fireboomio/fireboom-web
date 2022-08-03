@@ -26,6 +26,10 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
 
   useEffect(() => {
     switch (showTopType) {
+      case 'outline':
+        setTitle('概览')
+        setViewer(<div>概览</div>)
+        break
       case 'userManage':
         setTitle('用户管理')
         setViewer(<AuthMainUser />)
