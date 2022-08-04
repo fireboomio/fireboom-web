@@ -5,7 +5,7 @@ import {
   PlusCircleOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useCallback, useEffect } from 'react'
@@ -14,6 +14,8 @@ import { useImmer } from 'use-immer'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
+
+loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
 interface RoleProvResp {
   id: number

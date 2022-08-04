@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { RightOutlined } from '@ant-design/icons'
+import Editor, { loader } from '@monaco-editor/react'
 import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
 import type { CheckboxValueType } from 'antd/es/checkbox/Group'
 import { useContext, ReactNode } from 'react'
@@ -10,6 +11,8 @@ import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
+
+loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
 interface Props {
   content: AuthProvResp
@@ -22,7 +25,6 @@ interface Config {
 interface FromValues {
   [key: string]: number | string | readonly string[] | undefined
 }
-const { TextArea } = Input
 
 const options = [
   { label: '基于Cookie', value: 'cookieBased' },
@@ -33,13 +35,13 @@ export default function AuthMainEdit({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
-  const [value, setValue] = useImmer('0')
-  const [isRadioShow, setIsRadioShow] = useImmer(false)
+  const config = JSON.parse(content.config) as Config
+  const [value, setValue] = useImmer('')
+  const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
   const [disabled, setDisabled] = useImmer(false)
   const [inputValue, setInputValue] = useImmer(
     '' as string | number | readonly string[] | undefined
   )
-  const config = JSON.parse(content.config) as Config
 
   if (!content) {
     return <></>
@@ -246,7 +248,12 @@ export default function AuthMainEdit({ content }: Props) {
           </Form.Item>
           {isRadioShow ? (
             <Form.Item label="jwksJSON" name="jwksJSON">
-              <TextArea rows={4} />
+              <Editor
+                height="20vh"
+                defaultLanguage="typescript"
+                defaultValue="// some comment"
+                className={styles['monaco-edit']}
+              />
             </Form.Item>
           ) : (
             <Form.Item label="jwksURL">

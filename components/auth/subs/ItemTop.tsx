@@ -2,8 +2,6 @@ import { useImmer } from 'use-immer'
 
 import type { AuthListType } from '@/interfaces/auth'
 
-import styles from '../Pannel.module.scss'
-
 interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void
   authType: AuthListType
@@ -22,7 +20,7 @@ export default function AuthItemTop({ handleTopToggleDesigner, authType }: Props
           handleTopToggleDesigner(authType)
         }}
       >
-        <div className={styles['item-label']}>{authType.name}</div>
+        <div className="ml-8 w-14 h-4 text-[#000000] leading-loose">{authType.name}</div>
       </div>
     </>
   )

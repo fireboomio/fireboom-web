@@ -1,4 +1,4 @@
-.save-btn .ant-btn {
+.save-btn {
   width: 64px;
   height: 28px;
   padding: 0;
@@ -164,4 +164,22 @@
   padding: 0;
   border: 1px solid rgb(95 98 105 / 10%);
   border-radius: 4px;
+}
+.monaco-edit {
+  height: 150px;
+  padding: 0;
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-radius: 4px;
+}
+// user-style
+.connect-check-btn-common {
+  height: 28px;
+  padding: 0;
+  background: #fff;
+  border-radius: 2px;
+
+  span {
+    font-size: 14px;
+    line-height: 18px;
+  }
 }
