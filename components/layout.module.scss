@@ -3,11 +3,11 @@
   margin: 20px 0;
   border: 1px solid;
   border-image: linear-gradient(
-      270deg,
-      rgb(176 165 166 / 0%),
-      rgb(188 184 184 / 63%),
-      rgb(120 108 109 / 0%)
-    )
+    270deg,
+    rgb(176 165 166 / 0%),
+    rgb(188 184 184 / 63%),
+    rgb(120 108 109 / 0%)
+  )
     1 1;
   opacity: 0.5;
 }
@@ -69,6 +69,14 @@
     &::after {
       opacity: 0;
     }
+
+    .ant-image img {
+      padding-left: 0;
+    }
+  }
+
+  .ant-menu .ant-menu-item-selected {
+    padding-left: 20px !important;
   }
 
   .ant-layout-sider-trigger {

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>身份验证-选中</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#B0B4BF" offset="0%"></stop>
+            <stop stop-color="#787D8B" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="26" height="26" rx="6"></rect>
+        <filter x="-26.9%" y="-19.2%" width="153.8%" height="153.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.593658482   0 0 0 0 0.621895856   0 0 0 0 0.687783062  0 0 0 0.340854458 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="100%" y1="0%" x2="0%" y2="0%" id="linearGradient-4">
+            <stop stop-color="#B0A5A6" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#94888A" offset="50.3107779%"></stop>
+            <stop stop-color="#786C6D" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="3.061617e-15%" id="linearGradient-5">
+            <stop stop-color="#FFAC94" offset="0%"></stop>
+            <stop stop-color="#EE646D" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="3.061617e-15%" id="linearGradient-6">
+            <stop stop-color="#FFAC94" offset="0%"></stop>
+            <stop stop-color="#EE646D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="切图" transform="translate(-77.000000, -114.000000)">
+            <g id="编组" transform="translate(81.000000, 116.000000)">
+                <g id="Rectangle" fill-rule="nonzero">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <rect stroke="url(#linearGradient-1)" stroke-width="0.5" stroke-linejoin="square" fill="#FFFFFF" fill-rule="evenodd" x="0.25" y="0.25" width="25.5" height="25.5" rx="6"></rect>
+                </g>
+                <line x1="3.2" y1="25.65" x2="22.45" y2="25.65" id="Path-2" stroke="url(#linearGradient-4)" stroke-width="0.5" fill-rule="nonzero"></line>
+                <g id="身份" transform="translate(3.000000, 3.000000)">
+                    <rect id="Rectangle" fill-opacity="0" fill="#D8D8D8" fill-rule="nonzero" x="0" y="0" width="20" height="20"></rect>
+                    <path d="M7.51809233,11.6666667 L12.4818577,11.6666667 C14.4080948,11.6666667 16.0375227,13.0910526 16.2950283,15 L16.5917479,17.1996501 C16.6655791,17.7469776 16.2817345,18.2505263 15.734407,18.3243575 C15.6900967,18.3303346 15.6454354,18.3333333 15.6007238,18.3333333 L4.39922626,18.3333333 C3.84694151,18.3333333 3.39922626,17.8856181 3.39922626,17.3333333 C3.39922626,17.2886217 3.40222495,17.2439604 3.40820214,17.1996501 L3.70492174,15 C3.96242729,13.0910526 5.59185524,11.6666667 7.51809233,11.6666667 Z" id="Rectangle-Copy-12" fill="url(#linearGradient-5)"></path>
+                    <circle id="椭圆形" fill="url(#linearGradient-6)" cx="10" cy="6.66666667" r="4.16666667"></circle>
+                    <path d="M12.5740777,14.5216341 L14.3305018,14.5216341 C14.5253115,14.5216341 14.6917903,14.6619777 14.7247391,14.8539808 L14.8812764,15.7661733 C14.8999584,15.875039 14.8268501,15.9784367 14.7179845,15.9971186 C14.7068109,15.9990361 14.6954946,16 14.6841578,16 L12.1694988,16 C12.0590418,16 11.9694988,15.9104569 11.9694988,15.8 C11.9694988,15.7850964 11.9711647,15.7702394 11.9744654,15.7557059 L12.1840109,14.8330459 C12.2253777,14.6509016 12.3872951,14.5216341 12.5740777,14.5216341 Z" id="Rectangle" fill="#FFFFFF" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

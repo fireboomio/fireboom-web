@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>首页-选中</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#B0B4BF" offset="0%"></stop>
+            <stop stop-color="#787D8B" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="26" height="26" rx="6"></rect>
+        <filter x="-26.9%" y="-19.2%" width="153.8%" height="153.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.593658482   0 0 0 0 0.621895856   0 0 0 0 0.687783062  0 0 0 0.340854458 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="100%" y1="0%" x2="0%" y2="0%" id="linearGradient-4">
+            <stop stop-color="#B0A5A6" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#94888A" offset="50.3107779%"></stop>
+            <stop stop-color="#786C6D" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="3.061617e-15%" id="linearGradient-5">
+            <stop stop-color="#FFAC94" offset="0%"></stop>
+            <stop stop-color="#EE646D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="切图" transform="translate(-77.000000, -20.000000)">
+            <g id="编组" transform="translate(81.000000, 22.000000)">
+                <g id="Rectangle" fill-rule="nonzero">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <rect stroke="url(#linearGradient-1)" stroke-width="0.5" stroke-linejoin="square" fill="#FFFFFF" fill-rule="evenodd" x="0.25" y="0.25" width="25.5" height="25.5" rx="6"></rect>
+                </g>
+                <line x1="3.2" y1="25.65" x2="22.45" y2="25.65" id="Path-2" stroke="url(#linearGradient-4)" stroke-width="0.5" fill-rule="nonzero"></line>
+                <g id="首页" transform="translate(3.000000, 3.000000)">
+                    <rect id="Rectangle" fill-opacity="0" fill="#D8D8D8" fill-rule="nonzero" x="0" y="0" width="20" height="20"></rect>
+                    <g id="编组" transform="translate(1.000000, 2.000000)">
+                        <path d="M2.95503011,8.25991589 L8.58031738,3.76599063 C8.90843593,3.50386352 9.37422816,3.50351123 9.70274284,3.76514171 L15.3465652,8.25990548 C15.5609758,8.43066298 15.6858846,8.68982203 15.6858846,8.9639206 L15.6858846,16.1 C15.6858846,16.5970563 15.2829408,17 14.7858846,17 L3.51677499,17 C3.01971872,17 2.61677499,16.5970563 2.61677499,16.1 L2.61677499,8.96308208 C2.61677499,8.68946095 2.74125108,8.43069952 2.95503011,8.25991589 Z" id="Rectangle" fill="url(#linearGradient-5)"></path>
+                        <path d="M0.140992766,7.22441809 L9.04441962,0.0918140759 C9.1111329,0.0383695483 9.20623311,0.0392165579 9.27198388,0.093840876 L17.8610378,7.22944116 C17.9375036,7.29296733 17.9479933,7.40645327 17.8844671,7.48291911 C17.8843266,7.48308832 17.8841857,7.48325727 17.8840445,7.48342597 L17.2590917,8.23008897 C17.1954534,8.306121 17.0823118,8.31637267 17.0060437,8.25301746 L9.25538403,1.81462044 C9.18962827,1.75999778 9.09452435,1.75915765 9.02781388,1.81261014 L0.977549345,8.26297254 C0.90016444,8.32497804 0.787206016,8.31271769 0.724926425,8.2355532 L0.113462895,7.47794915 C0.051026767,7.40059071 0.0631236891,7.28726483 0.140482127,7.2248287 C0.14065209,7.22469152 0.140822304,7.22455465 0.140992766,7.22441809 Z" id="路径" fill="#E92E5E"></path>
+                        <path d="M8.55621935,12.5197174 L9.72647153,12.5197174 C10.2235278,12.5197174 10.6264715,12.9226611 10.6264715,13.4197174 L10.6264715,16.9585207 L10.6264715,16.9585207 L7.65621935,16.9585207 L7.65621935,13.4197174 C7.65621935,12.9226611 8.05916307,12.5197174 8.55621935,12.5197174 Z" id="Rectangle" fill="#FFFFFF" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
