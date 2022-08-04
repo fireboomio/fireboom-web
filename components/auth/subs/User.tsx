@@ -9,6 +9,7 @@ import {
   Switch,
   Tabs,
   Popconfirm,
+  Badge,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableRowSelection } from 'antd/es/table/interface'
@@ -61,7 +62,7 @@ export default function AuthMainUser() {
   const [userData, setUserData] = useImmer(data)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
-  const onFinish = async (values: UserProvResp) => {
+  const onFinish = (values: UserProvResp) => {
     console.log('Success:', values)
     setUserData(
       userData.concat({
@@ -80,26 +81,36 @@ export default function AuthMainUser() {
     {
       title: '用户',
       dataIndex: 'name',
+      key: 'name',
     },
     {
       title: '手机号',
       dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
     },
     {
       title: '邮箱',
       dataIndex: 'email',
+      key: 'email',
     },
     {
       title: '状态',
-      dataIndex: 'status',
+      key: 'status',
+      render: () => (
+        <span>
+          <Badge status="success" />
+          正常
+        </span>
+      ),
     },
     {
       title: '最后登入时间',
       dataIndex: 'lastLoginTime',
+      key: 'lastLoginTime',
     },
     {
       title: '操作',
-      dataIndex: 'action',
+      key: 'action',
       render: (_, { key }) =>
         userData.length >= 1 ? (
           <div>
@@ -188,15 +199,13 @@ export default function AuthMainUser() {
           <span className={styles['auth-head']}>当前用户池的所有用户，在这里你可以对用户</span>
         </div>
         <Divider style={{ margin: 10 }} />
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <Search
-              placeholder="搜索用户名、邮箱或手机号"
-              onSearch={onSearch}
-              style={{ width: 250 }}
-            />
-          </div>
-          <div className="flex items-center mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <Search
+            placeholder="搜索用户名、邮箱或手机号"
+            onSearch={onSearch}
+            style={{ width: 228, height: 32 }}
+          />
+          <div className="flex items-center mb-2">
             <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
               <span className="text-sm text-gray">导出全部</span>
             </Button>
@@ -212,6 +221,8 @@ export default function AuthMainUser() {
               <span className="text-sm text-gray">创建</span>
             </Button>
           </div>
+        </div>
+        <div>
           <Modal
             mask={false}
             title="创建用户"
@@ -303,7 +314,13 @@ export default function AuthMainUser() {
           </Modal>
         </div>
         <Divider style={{ margin: 0 }} />
-        <Table rowSelection={rowSelection} columns={columns} dataSource={data} />;
+        <Table
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={data}
+          bordered={true}
+          size="small"
+        />
       </div>
     </>
   )

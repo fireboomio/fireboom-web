@@ -100,7 +100,9 @@ export default function AuthMainCheck({ content }: Props) {
               {`${config.issuer as string}/.well-known/openid-`}
             </Descriptions.Item>
           ) : (
-            <Descriptions.Item label="jwksJSON">{config.jwksJSON}</Descriptions.Item>
+            <Descriptions.Item label="jwksJSON">
+              <pre>{config.jwksJSON}</pre>
+            </Descriptions.Item>
           )}
           <Descriptions.Item label="用户端点">
             {`${config.issuer as string}/.well-known/openid-`}
