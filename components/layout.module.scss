@@ -82,4 +82,17 @@
   .ant-layout-sider-trigger {
     background: #fbfbfb;
   }
+
+  .ant-menu.ant-menu-inline-collapsed .ant-menu-item-selected {
+    padding-left: 24px !important;
+
+    .ant-image img {
+      width: 34px;
+      height: 34px;
+    }
+
+    .ant-menu-title-content {
+      display: none;
+    }
+  }
 }
