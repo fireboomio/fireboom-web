@@ -1,7 +1,7 @@
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 
@@ -9,72 +9,107 @@ import styles from './layout.module.scss'
 
 const { Sider, Content } = ALayout
 
-const menus = [
+interface MenuT {
+  title: string
+  icon: React.ReactNode
+  link: string
+  position: string
+  svg: React.ReactNode
+}
+
+const menus: MenuT[] = [
   {
     title: '首页',
     icon: <IconFont type="icon-shouye-weixuanzhong" />,
     link: '/',
     position: 'top',
+    svg: <Image src="/assets/home.svg" alt="主页" />,
   },
   {
     title: '数据建模',
     icon: <IconFont type="icon-shujusheji-weixuanzhong" />,
     link: '/modeling',
     position: 'top',
+    svg: <Image src="/assets/modeling.svg" alt="数据建模" />,
   },
   {
     title: '认证鉴权',
     icon: <IconFont type="icon-shenfenyanzheng-weixuanzhong" />,
     link: '/auth',
     position: 'top',
+    svg: <Image src="/assets/auth.svg" alt="认证鉴权" />,
   },
   {
     title: '文件存储',
     icon: <IconFont type="icon-chucun-weixuanzhong" />,
     link: '/storage',
     position: 'top',
+    svg: <Image src="/assets/storage.svg" alt="文件存储" />,
   },
   {
     title: '数据来源',
     icon: <IconFont type="icon-chucun-weixuanzhong" />,
     link: '/datasource',
     position: 'top',
+    svg: <Image src="/assets/datasource.svg" alt="数据来源" />,
   },
   {
     title: 'API 管理',
     icon: <IconFont type="icon-API-weixuanzhong" />,
     link: '/apimanage',
     position: 'top',
+    svg: <Image src="/assets/apimanage.svg" alt="API 管理" />,
   },
   {
     title: 'GraphQL',
     icon: <IconFont type="icon-QLweixuanzhong" />,
     link: '/graphiql',
     position: 'top',
+    svg: <Image src="/assets/graphql.svg" alt="GraphQL" />,
   },
-  { title: '个人资料', icon: <IconFont type=" " />, link: '/profile', position: 'bottom' },
-  { title: '设置', icon: <IconFont type="icon-shezhi" />, link: '/setting', position: 'bottom' },
+  {
+    title: '个人资料',
+    icon: <IconFont type=" " />,
+    link: '/profile',
+    position: 'bottom',
+    svg: <IconFont type=" " />,
+  },
+  {
+    title: '设置',
+    icon: <IconFont type="icon-shezhi" />,
+    link: '/setting',
+    position: 'bottom',
+    svg: <IconFont type="icon-shezhi" />,
+  },
 ]
-
-const topMenuItems = menus
-  .filter((m) => m.position === 'top')
-  .map((m) => ({
-    key: m.link,
-    icon: m.icon,
-    label: <Link href={m.link}>{m.title}</Link>,
-  }))
-
-const bottomMenuItems = menus
-  .filter((m) => m.position === 'bottom')
-  .map((m) => ({
-    key: m.link,
-    icon: m.icon,
-    label: <Link href={m.link}>{m.title}</Link>,
-  }))
 
 export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
   const { pathname } = useRouter()
+
+  const topMenuItems = useMemo(
+    () =>
+      menus
+        .filter((m) => m.position === 'top')
+        .map((m) => ({
+          key: m.link,
+          icon: m.link === pathname ? m.svg : m.icon,
+          label: <Link href={m.link}>{m.title}</Link>,
+        })),
+    [pathname]
+  )
+
+  const bottomMenuItems = useMemo(
+    () =>
+      menus
+        .filter((m) => m.position === 'bottom')
+        .map((m) => ({
+          key: m.link,
+          icon: m.icon,
+          label: <Link href={m.link}>{m.title}</Link>,
+        })),
+    []
+  )
 
   return (
     <ALayout>

@@ -69,6 +69,14 @@
     &::after {
       opacity: 0;
     }
+
+    .ant-image img {
+      padding-left: 0;
+    }
+  }
+
+  .ant-menu .ant-menu-item-selected {
+    padding-left: 20px !important;
   }
 
   .ant-layout-sider-trigger {
