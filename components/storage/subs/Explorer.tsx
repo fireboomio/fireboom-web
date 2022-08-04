@@ -276,7 +276,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                 </div>
               </>
             ) : (
-              <Image width={200} height={200} src={'/logo.png'} alt={target?.value} />
+              <Image width={200} height={200} src={'/assets/logo.png'} alt={target?.value} />
             )}
           </Panel>
           <div className="flex flex-col">

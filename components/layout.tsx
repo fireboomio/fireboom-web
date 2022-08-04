@@ -88,7 +88,7 @@ export default function Layout({ children }: PropsWithChildren) {
         <div className="flex items-center mx-6 my-5">
           <Link href="/">
             <a className="flex items-center">
-              <Image width={36} height={36} src="/logo.png" alt="FireBoom" preview={false} />
+              <Image width={36} height={36} src="/assets/logo.png" alt="FireBoom" preview={false} />
 
               <span
                 className={`${

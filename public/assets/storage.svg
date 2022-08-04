@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>储存-选中</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#B0B4BF" offset="0%"></stop>
+            <stop stop-color="#787D8B" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="26" height="26" rx="6"></rect>
+        <filter x="-26.9%" y="-19.2%" width="153.8%" height="153.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.593658482   0 0 0 0 0.621895856   0 0 0 0 0.687783062  0 0 0 0.340854458 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="100%" y1="0%" x2="0%" y2="0%" id="linearGradient-4">
+            <stop stop-color="#B0A5A6" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#94888A" offset="50.3107779%"></stop>
+            <stop stop-color="#786C6D" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="3.061617e-15%" id="linearGradient-5">
+            <stop stop-color="#FFAC94" offset="0%"></stop>
+            <stop stop-color="#EE646D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="切图" transform="translate(-77.000000, -161.000000)">
+            <g id="编组" transform="translate(81.000000, 163.000000)">
+                <g id="Rectangle" fill-rule="nonzero">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <rect stroke="url(#linearGradient-1)" stroke-width="0.5" stroke-linejoin="square" fill="#FFFFFF" fill-rule="evenodd" x="0.25" y="0.25" width="25.5" height="25.5" rx="6"></rect>
+                </g>
+                <line x1="3.2" y1="25.65" x2="22.45" y2="25.65" id="Path-2" stroke="url(#linearGradient-4)" stroke-width="0.5" fill-rule="nonzero"></line>
+                <g id="储存-选中" transform="translate(3.000000, 3.000000)">
+                    <rect id="Rectangle" fill-opacity="0" fill="#D8D8D8" fill-rule="nonzero" x="0" y="0" width="20" height="20"></rect>
+                    <path d="M3.33333333,4.16666667 L10.3333333,4.16666667 C11.9901876,4.16666667 13.3333333,5.50981242 13.3333333,7.16666667 L13.3333333,7.5 L13.3333333,7.5 L3.33333333,7.5 L3.33333333,4.16666667 Z" id="矩形备份" stroke="#E92E5E" stroke-width="1.5" fill="#E92E5E" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <polygon id="矩形" fill="url(#linearGradient-5)" points="3.33333333 6.66666667 16.6666667 6.66666667 16.6666667 15.8333333 3.33333333 15.8333333"></polygon>
+                    <path d="M4.73333333,13.1666667 L6.93575205,13.1666667 C7.15666595,13.1666667 7.33575205,13.3457528 7.33575205,13.5666667 L7.33575205,14.2450325 C7.33575205,14.4659464 7.15666595,14.6450325 6.93575205,14.6450325 L4.73333333,14.6450325 C4.51241943,14.6450325 4.33333333,14.4659464 4.33333333,14.2450325 L4.33333333,13.5666667 C4.33333333,13.3457528 4.51241943,13.1666667 4.73333333,13.1666667 Z" id="Rectangle" fill="#FFFFFF" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
