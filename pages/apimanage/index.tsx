@@ -448,8 +448,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={connectSwitchOnChange}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className="ml-12" onClick={handleClickEdit}>
-        编辑
+      <Button className={`${styles['my-button']} ml-12`} onClick={handleClickEdit}>
+        <span>编辑</span>
       </Button>
     </div>
   )
