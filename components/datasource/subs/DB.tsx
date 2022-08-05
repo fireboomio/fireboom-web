@@ -224,14 +224,14 @@ export default function DatasourceDBMain({ content, type }: Props) {
     console.log('Success:', values)
     const newValues = { ...config, ...values }
     if (content.name == '') {
-      const req = { ...content, config: JSON.stringify(newValues), name: values.apiNamespace }
+      const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
     } else {
       await requests.put('/dataSource', {
         ...content,
-        config: JSON.stringify(newValues),
+        config: newValues,
         name: values.apiNamespace,
       })
     }

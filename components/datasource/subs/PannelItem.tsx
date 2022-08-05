@@ -48,7 +48,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
       await requests.put('/dataSource', {
         ...datasourceItem,
         name: value,
-        config: JSON.stringify({ ...config, apiNameSpace: value }),
+        config: { ...config, apiNameSpace: value },
       })
       void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
         dispatch({

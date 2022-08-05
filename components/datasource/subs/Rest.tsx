@@ -156,14 +156,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
     //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
     if (content.name == '') {
-      const req = { ...content, config: JSON.stringify(newValues), name: values.apiNameSpace }
+      const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
     } else
       await requests.put('/dataSource', {
         ...content,
-        config: JSON.stringify(newValues),
+        config: newValues,
         name: values.apiNameSpace,
       })
 

@@ -91,7 +91,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
     if (content.name == '') {
       const req = {
         ...content,
-        config: JSON.stringify({ apiNamespace: value, serverName: value, schema: '' }),
+        config: { apiNamespace: value, serverName: value, schema: '' },
         name: value,
       }
       Reflect.deleteProperty(req, 'id')
@@ -101,7 +101,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
     } else
       void requests.put('/dataSource', {
         ...content,
-        config: JSON.stringify({ ...config }),
+        config: { ...config },
         name: value,
       })
     void requests
