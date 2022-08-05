@@ -30,7 +30,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { currDBId } = useContext(DatasourceCurrDBContext)
   const [isHovering, setIsHovering] = useImmer(false)
-  const config = JSON.parse(datasourceItem.config) as Config
+  const config = datasourceItem.config as Config
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     e.domEvent.stopPropagation()
@@ -129,7 +129,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
   )
   return (
     <div
-      className={`flex justify-between items-center py-2.5 pl-5 
+      className={`flex justify-between items-center py-2.5 pl-5
       ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}

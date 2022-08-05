@@ -67,7 +67,7 @@ const columns: ColumnsType<DataType> = [
   },
 ]
 export default function DatasourceGraphalMainCheck({ content, type }: Props) {
-  const config = JSON.parse(content.config) as Config
+  const config = content.config as Config
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)

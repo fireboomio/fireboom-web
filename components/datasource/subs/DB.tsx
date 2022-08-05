@@ -189,7 +189,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
   const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
-  const config = JSON.parse(content.config) as Config
+  const config = content.config as Config
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
@@ -292,7 +292,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   return (
     <>
-      {/* { (() => { your code })() }  useFormWarning的解决方案 
+      {/* { (() => { your code })() }  useFormWarning的解决方案
       在return外定义setPage函数，当切换编辑页面时，在函数中使用useForm 返回相应的html代码*/}
       {type === 'data' ? (
         //查看页面———————————————————————————————————————————————————————————————————————————————————

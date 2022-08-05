@@ -107,7 +107,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const [content, setContent] = useState('')
+  const [_modalContent, setModalContent] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   //datasource逻辑-----
@@ -151,7 +151,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else setCurrDBId(id)
   }
 
-  // const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
+  const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
   //-----datasource逻辑
 
   useEffect(() => {
@@ -435,7 +435,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (!node?.path) return
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    void getFetcher(`/operateApi/${node.path}`).then((res) => setContent(res))
+    void getFetcher(`/operateApi/${node.path}`).then((res) => setModalContent(res))
     setIsModalVisible(true)
   }
 

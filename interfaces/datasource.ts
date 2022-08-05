@@ -13,5 +13,7 @@ export interface DatasourceResp {
   name: string
   sourceType: number
   switch: number
-  config: string
+  config: {
+    [key: string]: string
+  }
 }
