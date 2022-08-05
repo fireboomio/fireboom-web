@@ -126,8 +126,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         setCurrDBId(res.filter((item) => item.sourceType == 1).at(0)?.id)
       })
-      .catch(() => {
-        console.log('get Datasource Data Error')
+      .catch((err: Error) => {
+        throw err
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -153,7 +153,6 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
   //-----datasource逻辑
-
 
   useEffect(() => {
     getFetcher<operationResp[]>('/operateApi')
@@ -478,6 +477,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       <span className="font-bold">API 管理</span>
                       <IconFont type="icon-wenjianshezhi" style={{ fontSize: '18px' }} />
                     </div>
+
                     <div className="flex justify-between mt-7">
                       <Tooltip placement="top" title="设置">
                         <IconFont type="icon-shezhi1" style={{ fontSize: '20px' }} />
@@ -494,6 +494,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
                   </div>
                   <Divider className="my-4" />
+
                   <div className="flex justify-between px-4">
                     <span className="leading-20px font-bold">概览</span>
                     <div className="space-x-4">
@@ -518,6 +519,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
                   </div>
                   <Divider className="my-4" />
+
                   <Tree
                     style={{
                       overflow: 'auto',

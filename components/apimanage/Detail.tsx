@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons'
-import { Badge, Select, Table } from 'antd'
+import { Badge, message, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
@@ -136,9 +136,17 @@ const Detail: FC<DetailProps> = ({ path }) => {
     // console.log(gqlSchemaDef, 'schema')
     // console.log(gqlQueryDef, 'query')
     if (!gqlQueryDef || !gqlSchemaDef) return
-    setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
-    setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
-    setRbac(parseRbac(gqlQueryDef.at(0)?.directives))
+
+    try {
+      setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
+      setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
+      setRbac(parseRbac(gqlQueryDef.at(0)?.directives))
+    } catch (err: unknown) {
+      void message.error('解析失败')
+      console.error(err)
+      return
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
