@@ -32,7 +32,6 @@ import {
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
-import Link from 'next/link'
 import { FC, useCallback, useEffect, useState, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -54,6 +53,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
+import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
 
 type ApiManageProps = {
@@ -107,7 +107,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  // const [content, setContent] = useState('')
+  const [content, setContent] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   //datasource逻辑-----
@@ -151,7 +151,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else setCurrDBId(id)
   }
 
-  const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
+  // const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
   //-----datasource逻辑
 
   useEffect(() => {
@@ -430,14 +430,14 @@ const ApiManage: FC<ApiManageProps> = () => {
       })
   }
 
-  // function handleClickEdit() {
-  //   const node = findNode(selectedKey, treeData)
-  //   if (!node?.path) return
+  function handleClickEdit() {
+    const node = findNode(selectedKey, treeData)
+    if (!node?.path) return
 
-  //   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //   void getFetcher(`/operateApi/${node.path}`).then((res) => setContent(res))
-  //   setIsModalVisible(true)
-  // }
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    void getFetcher(`/operateApi/${node.path}`).then((res) => setContent(res))
+    setIsModalVisible(true)
+  }
 
   const extra = (
     <div className="flex items-center">
@@ -448,15 +448,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={connectSwitchOnChange}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className="ml-12">
-        <Link
-          href={{
-            pathname: '/graphiql',
-            query: { ...findNode(selectedKey, treeData) },
-          }}
-        >
-          编辑
-        </Link>
+      <Button className="ml-12" onClick={handleClickEdit}>
+        编辑
       </Button>
     </div>
   )
@@ -595,13 +588,18 @@ const ApiManage: FC<ApiManageProps> = () => {
           </DatasourceCurrDBContext.Provider>
         </DatasourceDispatchContext.Provider>
       </DatasourceContext.Provider>
+
       <Modal
         title="GraphiQL"
         visible={isModalVisible}
         onOk={() => setIsModalVisible(false)}
         onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        centered
+        bodyStyle={{ height: '90vh' }}
+        width={'90vw'}
       >
-        {/* <GraphiQLApp /> */}
+        <GraphiQLApp />
       </Modal>
     </>
   )
