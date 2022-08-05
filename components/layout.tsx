@@ -46,13 +46,13 @@ const menus: MenuT[] = [
     position: 'top',
     svg: <Image src="/assets/storage.svg" alt="文件存储" preview={false} />,
   },
-  {
-    title: '数据来源',
-    icon: <IconFont type="icon-chucun-weixuanzhong" />,
-    link: '/datasource',
-    position: 'top',
-    svg: <Image src="/assets/datasource.svg" alt="数据来源" preview={false} />,
-  },
+  // {
+  //   title: '数据来源',
+  //   icon: <IconFont type="icon-chucun-weixuanzhong" />,
+  //   link: '/datasource',
+  //   position: 'top',
+  //   svg: <Image src="/assets/datasource.svg" alt="数据来源" preview={false} />,
+  // },
   {
     title: 'API 管理',
     icon: <IconFont type="icon-API-weixuanzhong" />,

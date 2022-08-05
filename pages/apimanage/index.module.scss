@@ -23,11 +23,11 @@
   width: 2px;
   border: 1px solid;
   border-image: linear-gradient(
-      180deg,
-      rgb(176 165 166 / 0%),
-      rgb(227 227 227 / 100%),
-      rgb(120 108 109 / 20%)
-    )
+    180deg,
+    rgb(176 165 166 / 0%),
+    rgb(227 227 227 / 100%),
+    rgb(120 108 109 / 20%)
+  )
     1 1;
   opacity: 0.5;
 }
@@ -41,19 +41,42 @@
     width: 2px;
     border: 1px solid;
     border-image: linear-gradient(
-        180deg,
-        rgb(176 165 166 / 0%),
-        rgb(227 227 227 / 100%),
-        rgb(120 108 109 / 20%)
-      )
+      180deg,
+      rgb(176 165 166 / 0%),
+      rgb(227 227 227 / 100%),
+      rgb(120 108 109 / 20%)
+    )
       1 1;
     opacity: 0.5;
     content: '';
   }
 }
-.datasource-container :global{
+
+.datasource-container :global {
   .ant-input {
     padding-top: 4px;
     padding-bottom: 4px;
+  }
+}
+
+.my-button {
+  width: 64px;
+  height: 28px;
+  padding: 0;
+  font-size: 14px;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+
+  span {
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
   }
 }

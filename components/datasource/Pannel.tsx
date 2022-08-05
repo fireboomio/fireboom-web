@@ -51,8 +51,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
     const data = {
       id: -(datasource.length + 1),
       name: '',
-      config: '2',
-      // eslint-disable-next-line camelcase
+      config: {},
       sourceType: datasourceType,
       switch: 0,
     } as DatasourceResp

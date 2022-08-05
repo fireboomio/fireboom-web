@@ -32,7 +32,6 @@ import {
 import { Key } from 'antd/lib/table/interface'
 import type { DataNode } from 'antd/lib/tree'
 import Head from 'next/head'
-import Link from 'next/link'
 import { FC, useCallback, useEffect, useState, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -54,6 +53,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
+import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
 
 type ApiManageProps = {
@@ -107,7 +107,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  // const [content, setContent] = useState('')
+  const [_modalContent, setModalContent] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   //datasource逻辑-----
@@ -126,8 +126,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         setCurrDBId(res.filter((item) => item.sourceType == 1).at(0)?.id)
       })
-      .catch(() => {
-        console.log('get Datasource Data Error')
+      .catch((err: Error) => {
+        throw err
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -153,7 +153,6 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
   //-----datasource逻辑
-
 
   useEffect(() => {
     getFetcher<operationResp[]>('/operateApi')
@@ -431,14 +430,14 @@ const ApiManage: FC<ApiManageProps> = () => {
       })
   }
 
-  // function handleClickEdit() {
-  //   const node = findNode(selectedKey, treeData)
-  //   if (!node?.path) return
+  function handleClickEdit() {
+    const node = findNode(selectedKey, treeData)
+    if (!node?.path) return
 
-  //   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //   void getFetcher(`/operateApi/${node.path}`).then((res) => setContent(res))
-  //   setIsModalVisible(true)
-  // }
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    void getFetcher(`/operateApi/${node.path}`).then((res) => setModalContent(res))
+    setIsModalVisible(true)
+  }
 
   const extra = (
     <div className="flex items-center">
@@ -449,15 +448,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={connectSwitchOnChange}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className="ml-12">
-        <Link
-          href={{
-            pathname: '/graphiql',
-            query: { ...findNode(selectedKey, treeData) },
-          }}
-        >
-          编辑
-        </Link>
+      <Button className={`${styles['my-button']} ml-12`} onClick={handleClickEdit}>
+        <span>编辑</span>
       </Button>
     </div>
   )
@@ -478,6 +470,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       <span className="font-bold">API 管理</span>
                       <IconFont type="icon-wenjianshezhi" style={{ fontSize: '18px' }} />
                     </div>
+
                     <div className="flex justify-between mt-7">
                       <Tooltip placement="top" title="设置">
                         <IconFont type="icon-shezhi1" style={{ fontSize: '20px' }} />
@@ -494,6 +487,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
                   </div>
                   <Divider className="my-4" />
+
                   <div className="flex justify-between px-4">
                     <span className="leading-20px font-bold">概览</span>
                     <div className="space-x-4">
@@ -518,6 +512,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
                   </div>
                   <Divider className="my-4" />
+
                   <Tree
                     style={{
                       overflow: 'auto',
@@ -593,13 +588,18 @@ const ApiManage: FC<ApiManageProps> = () => {
           </DatasourceCurrDBContext.Provider>
         </DatasourceDispatchContext.Provider>
       </DatasourceContext.Provider>
+
       <Modal
         title="GraphiQL"
         visible={isModalVisible}
         onOk={() => setIsModalVisible(false)}
         onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        centered
+        bodyStyle={{ height: '90vh' }}
+        width={'90vw'}
       >
-        {/* <GraphiQLApp /> */}
+        <GraphiQLApp />
       </Modal>
     </>
   )

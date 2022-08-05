@@ -23,7 +23,7 @@ interface PropsInfo {
 
 function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
   const [isEditing, setIsEditing] = useImmer(content.name == '')
-  const config = JSON.parse(content.config) as Config
+  const config = content.config as Config
 
   useEffect(() => {
     setIsEditing(content.name == '')
@@ -67,7 +67,7 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
 
 export default function DatasourceDeselfMain({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const config = JSON.parse(content.config) as Config
+  const config = content.config as Config
   const dispatch = useContext(DatasourceDispatchContext)
 
   const connectSwitchOnChange = (isChecked: boolean) => {
@@ -91,7 +91,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
     if (content.name == '') {
       const req = {
         ...content,
-        config: JSON.stringify({ apiNamespace: value, serverName: value, schema: '' }),
+        config: { apiNamespace: value, serverName: value, schema: '' },
         name: value,
       }
       Reflect.deleteProperty(req, 'id')
@@ -101,7 +101,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
     } else
       void requests.put('/dataSource', {
         ...content,
-        config: JSON.stringify({ ...config }),
+        config: { ...config },
         name: value,
       })
     void requests
