@@ -37,10 +37,10 @@ export default function Home() {
               </Tooltip>
             }
             suffix={<CloseOutlined />}
-            className="h-6 mt-5.5 ml-6"
+            className=" mt-5.5 ml-6"
           />
           <div className="mt-5.5 flex">
-            <div className="border w-17.5 h-6 pl-1.5 mr-6">
+            <div className="border w-17.5  pl-1.5 mr-6">
               <Image src="/assets/log.svg" alt="图片不见了" width={15} height={13} />
               <span className="ml-2">日志</span>
             </div>
@@ -67,13 +67,13 @@ export default function Home() {
             <div className=" mb-5 ">
               <span className="text-lg flex-grow font-bold">数据概览</span>
               <div className={`${styles['right-data']} border pl-6 pt-4 mb-3 mt-3`}>
-                <h3 className="mb-6">数据源</h3>
+                <h3 className={styles['top-head']}>数据源</h3>
                 <div className=" pb-5 ">
-                  <Row>
+                  <Row gutter={[16, 40]}>
                     <Col span={6}>
                       <div className="flex">
                         <Image src="/assets/DB API.svg" alt="数据库" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>数据库</p>
                         </div>
@@ -82,7 +82,7 @@ export default function Home() {
                     <Col span={6}>
                       <div className="flex">
                         <Image src="/assets/REST API.svg" alt="REST API" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>REST API</p>
                         </div>
@@ -96,7 +96,7 @@ export default function Home() {
                           width={50}
                           height={50}
                         />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>GRAPHQL API</p>
                         </div>
@@ -110,7 +110,7 @@ export default function Home() {
                           width={50}
                           height={50}
                         />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>自定义服务</p>
                         </div>
@@ -119,14 +119,14 @@ export default function Home() {
                   </Row>
                 </div>
               </div>
-              <div className={`${styles['right-data']} border pl-6 pt-4 mb-3`}>
-                <h3 className="mb-6">对外API</h3>
+              <div className={`${styles['right-data']} border pl-6 pt-4`}>
+                <h3 className={styles['top-head']}>对外API</h3>
                 <div className="pb-5">
-                  <Row>
+                  <Row gutter={[16, 40]}>
                     <Col span={6}>
                       <div className="flex ">
                         <Image src="/assets/check.svg" alt="查询" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>查询</p>
                         </div>
@@ -135,7 +135,7 @@ export default function Home() {
                     <Col span={6}>
                       <div className="flex">
                         <Image src="/assets/checkNow.svg" alt="实时查询" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>实时查询</p>
                         </div>
@@ -144,7 +144,7 @@ export default function Home() {
                     <Col span={6}>
                       <div className="flex">
                         <Image src="/assets/change.svg" alt="变更" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>变更</p>
                         </div>
@@ -153,7 +153,7 @@ export default function Home() {
                     <Col span={6}>
                       <div className="flex">
                         <Image src="/assets/subscribe.svg" alt="订阅" width={50} height={50} />
-                        <div>
+                        <div className="ml-8">
                           <span>3</span>
                           <p>订阅</p>
                         </div>
@@ -162,10 +162,10 @@ export default function Home() {
                   </Row>
                 </div>
               </div>
-              <div className="mb-10.5 ">
-                <Row>
+              <div className="mt-3">
+                <Row gutter={[5, 40]}>
                   <Col span={12}>
-                    <div className="border h-27.5 pl-8 pt-6 mr-6">
+                    <div className="border pl-8 pt-6 pb-8 mr-6">
                       <div>
                         <span className="mr-4">OSS存储</span>
                         <span className="text-xl font-medium">1个</span>
@@ -177,7 +177,7 @@ export default function Home() {
                     </div>
                   </Col>
                   <Col span={12}>
-                    <div className="border h-27.5 pl-8 pt-6">
+                    <div className="border pl-8 pt-6 pb-8">
                       <div>
                         <span className="mr-4">身份验证商</span>
                         <span className="text-xl font-medium">1个</span>
@@ -198,13 +198,13 @@ export default function Home() {
               </div>
             </div>
 
-            <div className=" mb-5 ">
+            <div className="mt-10.5">
               <span className="text-lg flex-grow font-bold">前端集成</span>
-              <div className="mt-3">
-                <Row>
+              <div className="mt-3 ">
+                <Row gutter={[5, 40]}>
                   <Col span={12}>
-                    <div className="border h-37.5 pl-6 pt-4 pb-6 mr-6">
-                      <h2>SDK</h2>
+                    <div className="border pl-6 pt-4 pb-6 mr-6">
+                      <h2 className={styles['skd-style']}>SDK</h2>
                       <Row>
                         <Col span={12}>
                           <div>
@@ -215,10 +215,10 @@ export default function Home() {
                                 width={20}
                                 height={17}
                               />
-                              <span className="ml-2.5">REACT</span>
+                              <span className={styles['logo-style']}>REACT</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16 h-7 mr-2 pl-1.5">
+                              <div className="border w-16  mr-2 pl-1.5">
                                 <Image
                                   src="/assets/word.svg"
                                   alt="图片不见了"
@@ -227,7 +227,7 @@ export default function Home() {
                                 />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16 h-7 pl-1.5">
+                              <div className="border w-16  pl-1.5">
                                 <Image
                                   src="/assets/code.svg"
                                   alt="图片不见了"
@@ -248,10 +248,10 @@ export default function Home() {
                                 width={20}
                                 height={17}
                               />
-                              <span className="ml-2.5">VUE</span>
+                              <span className={styles['logo-style']}>VUE</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16 h-7 mr-2 pl-1.5">
+                              <div className="border w-16  mr-2 pl-1.5">
                                 <Image
                                   src="/assets/word.svg"
                                   alt="图片不见了"
@@ -260,7 +260,7 @@ export default function Home() {
                                 />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16 h-7 ">
+                              <div className="border w-16  ">
                                 <Image
                                   src="/assets/code.svg"
                                   alt="图片不见了"
@@ -276,8 +276,8 @@ export default function Home() {
                     </div>
                   </Col>
                   <Col span={12}>
-                    <div className="border h-37.5 pl-6 pt-4 pb-6 mr-6">
-                      <h2>ADMIN后台</h2>
+                    <div className="border pl-6 pt-4 pb-6">
+                      <h2 className={styles['skd-style']}>ADMIN后台</h2>
                       <Row>
                         <Col span={12}>
                           <div>
@@ -288,10 +288,10 @@ export default function Home() {
                                 width={20}
                                 height={17}
                               />
-                              <span className="ml-2.5">REACT</span>
+                              <span className={styles['logo-style']}>REACT</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16 h-7 mr-2 pl-1.5">
+                              <div className="border w-16 mr-2 pl-1.5">
                                 <Image
                                   src="/assets/word.svg"
                                   alt="图片不见了"
@@ -300,7 +300,7 @@ export default function Home() {
                                 />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16 h-7 pl-1.5">
+                              <div className="border w-16  pl-1.5">
                                 <Image
                                   src="/assets/code.svg"
                                   alt="图片不见了"
@@ -321,10 +321,10 @@ export default function Home() {
                                 width={20}
                                 height={17}
                               />
-                              <span className="ml-2.5">VUE</span>
+                              <span className={styles['logo-style']}>VUE</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16 h-7 mr-2 pl-1.5">
+                              <div className="border w-16  mr-2 pl-1.5">
                                 <Image
                                   src="/assets/word.svg"
                                   alt="图片不见了"
@@ -333,7 +333,7 @@ export default function Home() {
                                 />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16 h-7 ">
+                              <div className="border w-16  ">
                                 <Image
                                   src="/assets/code.svg"
                                   alt="图片不见了"
