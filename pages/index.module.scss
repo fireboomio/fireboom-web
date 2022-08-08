@@ -1,0 +1,33 @@
+.main-divider {
+  margin: 28px 0 0 24px;
+}
+
+.right-data {
+  span {
+    width: 15px;
+    height: 33px;
+    font-size: 24px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 33px;
+  }
+  p {
+    width: 100px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #5f6269;
+    line-height: 20px;
+  }
+}
+
+.bottom-data {
+  span {
+    margin-left: 4px;
+    width: 29px;
+    height: 20px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 20px;
+  }
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>数据库</title>
+    <defs>
+        <linearGradient x1="-26.291839%" y1="52.5137182%" x2="100%" y2="45.0612245%" id="linearGradient-1">
+            <stop stop-color="#FF9378" offset="0%"></stop>
+            <stop stop-color="#E13D5B" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="43.0682952%" y1="100%" x2="43.0682952%" y2="4.92661467e-13%" id="linearGradient-2">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#EB5965" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="切图" transform="translate(-160.000000, -91.000000)">
+            <g id="数据库" transform="translate(160.000000, 91.000000)">
+                <rect id="矩形" x="0" y="0" width="50" height="50"></rect>
+                <g id="编组-8" transform="translate(0.000000, 7.000000)">
+                    <rect id="矩形" fill="url(#linearGradient-1)" x="8" y="25" width="35" height="11" rx="2"></rect>
+                    <rect id="矩形" fill="url(#linearGradient-1)" x="8" y="12" width="35" height="11" rx="2"></rect>
+                    <rect id="矩形" stroke="url(#linearGradient-2)" stroke-width="0.5" fill-opacity="0.451467" fill="#FFFFFF" x="0.25" y="0.25" width="49.5" height="16.5" rx="2"></rect>
+                    <circle id="椭圆形" fill="#FFFFFF" cx="37" cy="31" r="2"></circle>
+                    <circle id="椭圆形" fill="#FFFFFF" cx="37" cy="17" r="2"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
