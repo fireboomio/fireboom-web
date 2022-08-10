@@ -39,15 +39,16 @@ export default function Home() {
             suffix={<CloseOutlined />}
             className=" mt-5.5 ml-6"
           />
-          <div className="mt-5.5 flex">
-            <div className="border w-17.5  pl-1.5 mr-6">
-              <Image src="/assets/log.svg" alt="图片不见了" width={15} height={13} />
+
+          <div className="mt-5.5 flex items-center">
+            <div className="border px-2 mr-12 flex items-center">
+              <IconFont type="icon-rizhi1" />
               <span className="ml-2">日志</span>
             </div>
-            <div>
+            <div className="mr-6">
               <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
               <IconFont
-                type="icon-wenjian1"
+                type="icon-wendang"
                 className="text-[22px] ml-4"
                 onClick={handleIconClick}
               />
@@ -72,7 +73,13 @@ export default function Home() {
                   <Row gutter={[16, 40]}>
                     <Col span={6}>
                       <div className="flex">
-                        <Image src="/assets/DB API.svg" alt="数据库" width={50} height={50} />
+                        <Image
+                          src="/assets/DB API.svg"
+                          alt="数据库"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>数据库</p>
@@ -81,7 +88,13 @@ export default function Home() {
                     </Col>
                     <Col span={6}>
                       <div className="flex">
-                        <Image src="/assets/REST API.svg" alt="REST API" width={50} height={50} />
+                        <Image
+                          src="/assets/REST API.svg"
+                          alt="REST API"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>REST API</p>
@@ -95,6 +108,7 @@ export default function Home() {
                           alt="GRAPHQL API"
                           width={50}
                           height={50}
+                          preview={false}
                         />
                         <div className="ml-8">
                           <span>3</span>
@@ -109,6 +123,7 @@ export default function Home() {
                           alt="DefineSelf"
                           width={50}
                           height={50}
+                          preview={false}
                         />
                         <div className="ml-8">
                           <span>3</span>
@@ -125,7 +140,13 @@ export default function Home() {
                   <Row gutter={[16, 40]}>
                     <Col span={6}>
                       <div className="flex ">
-                        <Image src="/assets/check.svg" alt="查询" width={50} height={50} />
+                        <Image
+                          src="/assets/check.svg"
+                          alt="查询"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>查询</p>
@@ -134,7 +155,13 @@ export default function Home() {
                     </Col>
                     <Col span={6}>
                       <div className="flex">
-                        <Image src="/assets/checkNow.svg" alt="实时查询" width={50} height={50} />
+                        <Image
+                          src="/assets/checkNow.svg"
+                          alt="实时查询"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>实时查询</p>
@@ -143,7 +170,13 @@ export default function Home() {
                     </Col>
                     <Col span={6}>
                       <div className="flex">
-                        <Image src="/assets/change.svg" alt="变更" width={50} height={50} />
+                        <Image
+                          src="/assets/change.svg"
+                          alt="变更"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>变更</p>
@@ -152,7 +185,13 @@ export default function Home() {
                     </Col>
                     <Col span={6}>
                       <div className="flex">
-                        <Image src="/assets/subscribe.svg" alt="订阅" width={50} height={50} />
+                        <Image
+                          src="/assets/subscribe.svg"
+                          alt="订阅"
+                          width={50}
+                          height={50}
+                          preview={false}
+                        />
                         <div className="ml-8">
                           <span>3</span>
                           <p>订阅</p>
@@ -209,31 +248,16 @@ export default function Home() {
                         <Col span={12}>
                           <div>
                             <div>
-                              <Image
-                                src="/assets/react.svg"
-                                alt="图片不见了"
-                                width={20}
-                                height={17}
-                              />
+                              <IconFont type="icon-React" className="text-[20px]" />
                               <span className={styles['logo-style']}>REACT</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16  mr-2 pl-1.5">
-                                <Image
-                                  src="/assets/word.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border mr-2 px-2">
+                                <IconFont type="icon-wendang" onClick={handleIconClick} />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16  pl-1.5">
-                                <Image
-                                  src="/assets/code.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border px-2">
+                                <IconFont type="icon-code" onClick={handleIconClick} />
                                 <span>代码</span>
                               </div>
                             </div>
@@ -242,31 +266,16 @@ export default function Home() {
                         <Col span={12}>
                           <div>
                             <div>
-                              <Image
-                                src="/assets/vue.svg"
-                                alt="图片不见了"
-                                width={20}
-                                height={17}
-                              />
+                              <IconFont type="icon-Vue" className="text-[20px]" />
                               <span className={styles['logo-style']}>VUE</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16  mr-2 pl-1.5">
-                                <Image
-                                  src="/assets/word.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border mr-2 px-2">
+                                <IconFont type="icon-wendang" onClick={handleIconClick} />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16  ">
-                                <Image
-                                  src="/assets/code.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border px-2">
+                                <IconFont type="icon-code" onClick={handleIconClick} />
                                 <span>代码</span>
                               </div>
                             </div>
@@ -282,31 +291,16 @@ export default function Home() {
                         <Col span={12}>
                           <div>
                             <div>
-                              <Image
-                                src="/assets/react.svg"
-                                alt="图片不见了"
-                                width={20}
-                                height={17}
-                              />
+                              <IconFont type="icon-React" className="text-[20px]" />
                               <span className={styles['logo-style']}>REACT</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16 mr-2 pl-1.5">
-                                <Image
-                                  src="/assets/word.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border mr-2 px-2">
+                                <IconFont type="icon-wendang" onClick={handleIconClick} />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16  pl-1.5">
-                                <Image
-                                  src="/assets/code.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border px-2">
+                                <IconFont type="icon-code" onClick={handleIconClick} />
                                 <span>代码</span>
                               </div>
                             </div>
@@ -315,31 +309,20 @@ export default function Home() {
                         <Col span={12}>
                           <div>
                             <div>
-                              <Image
-                                src="/assets/vue.svg"
-                                alt="图片不见了"
-                                width={20}
-                                height={17}
+                              <IconFont
+                                type="icon-Vue"
+                                className="text-[20px]"
+                                onClick={handleIconClick}
                               />
                               <span className={styles['logo-style']}>VUE</span>
                             </div>
                             <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                              <div className="border w-16  mr-2 pl-1.5">
-                                <Image
-                                  src="/assets/word.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border mr-2 px-2">
+                                <IconFont type="icon-wendang" onClick={handleIconClick} />
                                 <span>文档</span>
                               </div>
-                              <div className="border w-16  ">
-                                <Image
-                                  src="/assets/code.svg"
-                                  alt="图片不见了"
-                                  width={15}
-                                  height={13}
-                                />
+                              <div className="border px-2">
+                                <IconFont type="icon-code" onClick={handleIconClick} />
                                 <span>代码</span>
                               </div>
                             </div>
