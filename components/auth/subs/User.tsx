@@ -1,22 +1,16 @@
-import {
-  Input,
-  Button,
-  Modal,
-  Form,
-  Table,
-  Divider,
-  Checkbox,
-  Switch,
-  Tabs,
-  Popconfirm,
-  Badge,
-} from 'antd'
+import { Input, Button, Modal, Form, Table, Divider, Switch, Tabs, Popconfirm, Badge } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TableRowSelection } from 'antd/es/table/interface'
 import { useState } from 'react'
 import { useImmer } from 'use-immer'
 
+import type { AuthListType } from '@/interfaces/auth'
+
 import styles from './subs.module.scss'
+
+interface Props {
+  handleTopToggleDesigner: (authType: AuthListType) => void
+}
 
 interface UserProvResp {
   id: number
@@ -55,7 +49,7 @@ const data: UserProvResp[] = [
   },
 ]
 
-export default function AuthMainUser() {
+export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
   // const [userData, setUserData] = useImmer([] as Array<UserProvResp>)
@@ -228,7 +222,7 @@ export default function AuthMainUser() {
             title="创建用户"
             style={{ top: '200px' }}
             width={549}
-            bodyStyle={{ height: '500px' }}
+            bodyStyle={{ height: '350px' }}
             transitionName=""
             visible={userVisible}
             onOk={() => setUserVisible(false)}
@@ -249,8 +243,8 @@ export default function AuthMainUser() {
             <Form
               name="userList"
               form={form}
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 20 }}
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 17 }}
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               onFinish={(values) => {
@@ -259,56 +253,53 @@ export default function AuthMainUser() {
               }}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
-              labelAlign="left"
-              layout="vertical"
+              labelAlign="right"
               className="h-30 mt-8 ml-8"
             >
-              <Tabs defaultActiveKey="1" type="card">
-                <TabPane tab="用户名" key="1">
-                  <Form.Item
-                    label="用户名"
-                    name="name"
-                    rules={[{ required: true, message: '用户名不为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-                <TabPane tab="手机号" key="2">
-                  <Form.Item
-                    label="手机号"
-                    name="phoneNumber"
-                    rules={[{ required: true, message: '手机号不能为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-                <TabPane tab="邮箱" key="3">
-                  <Form.Item
-                    label="邮箱"
-                    name="email"
-                    rules={[{ required: true, message: '邮箱不能为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-              </Tabs>
+              <div className={styles['tabs-style']}>
+                <Tabs defaultActiveKey="1" type="card">
+                  <TabPane tab="用户名" key="1">
+                    <Form.Item
+                      label="用户名"
+                      name="name"
+                      rules={[{ required: true, message: '用户名不为空!' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </TabPane>
+                  <TabPane tab="手机号" key="2">
+                    <Form.Item
+                      label="手机号"
+                      name="phoneNumber"
+                      rules={[{ required: true, message: '手机号不能为空!' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </TabPane>
+                  <TabPane tab="邮箱" key="3">
+                    <Form.Item
+                      label="邮箱"
+                      name="email"
+                      rules={[{ required: true, message: '邮箱不能为空!' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </TabPane>
+                </Tabs>
+              </div>
               <Form.Item label="密码" name="password">
-                <Input />
+                <Input.Password />
               </Form.Item>
               <Form.Item label="确认密码" name="confirmPassword">
-                <Input />
+                <Input.Password />
               </Form.Item>
               <Form.Item name="remember" valuePropName="checked">
-                <Checkbox>发送首次登入地址</Checkbox>
+                <span className="ml-10 mr-2">发送首次登入地址</span>
+                <Switch className={`${styles['switch-edit-btn']}`} size="small" />
               </Form.Item>
               <Form.Item valuePropName="checked" colon={false}>
-                <Switch
-                  className={`${styles['switch-edit-btn']}`}
-                  size="small"
-                  checkedChildren="开"
-                  unCheckedChildren="关"
-                />
-                <span className="ml-5">强制用户在首次登录时修改密码</span>
+                <span className="ml-10 mr-2">强制用户在首次登录时修改密码</span>
+                <Switch className={`${styles['switch-edit-btn']}`} size="small" />
               </Form.Item>
             </Form>
           </Modal>
@@ -320,6 +311,13 @@ export default function AuthMainUser() {
           dataSource={data}
           bordered={true}
           size="small"
+          onRow={() => {
+            return {
+              onClick: () => {
+                handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
+              }, // 点击行
+            }
+          }}
         />
       </div>
     </>

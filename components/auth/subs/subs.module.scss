@@ -183,3 +183,40 @@
     line-height: 18px;
   }
 }
+.tabs-style :global {
+  .ant-tabs-nav-list {
+    margin: 0 auto;
+  }
+  .ant-tabs-tab-btn {
+    margin: 0 auto;
+    color: #e92e5e;
+    line-height: 17px;
+    height: 17px;
+    font-size: 12px;
+  }
+  .ant-tabs-tab {
+    width: 135px;
+    height: 22px;
+    border-color: #e92e5e !important;
+  }
+  .ant-tabs-tab-active {
+    background-color: #e74e61 !important;
+    .ant-tabs-tab-btn {
+      color: #fff !important;
+    }
+  }
+}
+
+// webhooks-style
+.dialog-form :global {
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  .ant-radio-wrapper {
+    margin-right: 72px;
+  }
+  .ant-checkbox-wrapper {
+    width: 45%;
+    margin-bottom: 14px;
+  }
+}
