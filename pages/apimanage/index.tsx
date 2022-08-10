@@ -99,6 +99,27 @@ function findNode(key: string, data: DataNode[] | undefined): DataNode | undefin
   return rv
 }
 
+function getNodeFamily(key: string, data: DataNode[] | undefined) {
+  let parent: DataNode | undefined
+  let curr: DataNode | undefined
+
+  const inner = (key: string, nodes: DataNode[] | undefined) => {
+    if (!nodes) return []
+    nodes.find((x) => {
+      if (x.key === key) {
+        curr = x
+        return [parent, curr]
+      } else {
+        if (x.children) parent = x
+        return inner(key, x.children)
+      }
+    })
+  }
+
+  inner(key, data)
+  return { parent, curr }
+}
+
 const ApiManage: FC<ApiManageProps> = () => {
   const [addType, setAddType] = useState<'文件' | '目录' | '编辑'>(null)
   const [treeData, setTreeData] = useState<DataNode[]>(null!)
@@ -107,8 +128,8 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [inputValue, setInputValue] = useState('')
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const [_modalContent, setModalContent] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [query, setQuery] = useState<string>()
 
   //datasource逻辑-----
   const [showDatasource, setShowDatasource] = useImmer(false)
@@ -233,78 +254,32 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getTreeNode = useCallback(
-    (treeNodeKey: any) => {
-      let parent: any
-      let child: any
-      const getNode = (key: string | number, nodes: DataNode[]) => {
-        for (let index = 0; index < nodes.length; index++) {
-          if (child) {
-            break
-          }
-          if (nodes[index].key === key) {
-            child = nodes[index]
-            break
-          } else {
-            const children = nodes[index].children
-            if (children) {
-              parent = nodes[index]
-              getNode(treeNodeKey, children)
-            }
-          }
-        }
-      }
-      getNode(treeNodeKey, treeData)
-      return {
-        parent,
-        child,
-      }
-    },
-    [treeData]
-  )
-
   const handleAddNode = useCallback(() => {
-    if (!addType) {
-      void message.warn('正在添加中')
-      setRefreshFlag(!refreshFlag)
-    } else {
-      let parent: any
-      let child: any
-      const getParent = (key: string | number, nodes: DataNode[]) => {
-        for (let index = 0; index < nodes.length; index++) {
-          if (child) {
-            break
-          }
-          if (nodes[index].key === key) {
-            child = nodes[index]
-            break
-          } else {
-            const children = nodes[index].children
-            if (children) {
-              parent = nodes[index]
-              getParent(selectedKey, children)
-            }
-          }
-        }
-      }
-      getParent(selectedKey, treeData)
-      const temp = {
-        title: '',
-        key: Date.now(),
-      }
-      if (!child || !parent) {
-        treeData.push(temp)
-      } else if (child!.children) {
-        child!.children.push(temp)
-      } else {
-        parent.children.push(temp)
-      }
-      setCurEditingNode(temp)
-      setTreeData([...treeData])
+    setIsModalVisible(true)
+  }, [])
+
+  const handleSaveGql = (query: string) => {
+    const { parent, curr } = getNodeFamily(selectedKey, treeData)
+    const temp = {
+      title: 'new api',
+      key: Date.now(),
     }
+    const tree = treeData ?? []
+    if (!curr || !parent) {
+      tree.push(temp)
+    } else if (curr.children) {
+      curr.children.push(temp)
+    } else {
+      parent.children.push(temp)
+    }
+
+    setCurEditingNode(temp)
+    setTreeData([...tree])
+
+    setIsModalVisible(false)
     setAddType('文件')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addType, selectedKey, treeData])
+    console.log(query)
+  }
 
   const handleDelete = (treeNodeKey: any) => {
     const node = findNode(treeNodeKey, treeData)
@@ -325,7 +300,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleMenuClick = (arg: any, treeNodeKey: any) => {
     arg.domEvent.stopPropagation()
     if (arg.key === '0') {
-      const { child } = getTreeNode(treeNodeKey)
+      const { child } = findNode(treeNodeKey, treeData)
       setCurEditingNode(child)
     }
   }
@@ -434,8 +409,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     const node = findNode(selectedKey, treeData)
     if (!node?.path) return
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    void getFetcher(`/operateApi/${node.path}`).then((res) => setModalContent(res))
+    void getFetcher(`/operateApi/${node.path as string}`).then((res) => setQuery(res.content))
     setIsModalVisible(true)
   }
 
@@ -599,7 +573,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         bodyStyle={{ height: '90vh' }}
         width={'90vw'}
       >
-        <GraphiQLApp />
+        <GraphiQLApp data={query} onSave={handleSaveGql} />
       </Modal>
     </>
   )
