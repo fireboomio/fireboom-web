@@ -6,7 +6,6 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-// eslint-disable-next-line import/no-unassigned-import
 import styles from './subs.module.scss'
 
 interface SecurConfig {
@@ -28,16 +27,15 @@ const formItemLayoutWithOutLabel = {
 function AuthMainSetting() {
   const [redirectConfig, setRedirectConfig] = useImmer({} as Array<string>)
   const [form] = Form.useForm()
-  const onFinish = (values: RedirectConfig) => {
-    console.log('Success:', values)
+  const onFinish = (_values: RedirectConfig) => {
     void requests.post('/auth/redirectUrl', {
       redirectURLs: ['host1', 'host1'],
     })
   }
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, Array<string>>('/auth/redirectUrl')
-    console.log(result, '123')
     setRedirectConfig(result)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -45,6 +43,7 @@ function AuthMainSetting() {
     //   redirectURLs: ['host1', 'host1'],
     // })
     void getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -145,8 +144,7 @@ function AuthMainSetting() {
 export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
-  const onFinish = (values: SecurConfig) => {
-    console.log('Success:', values)
+  const onFinish = (_values: SecurConfig) => {
     void requests.post('/global', {
       key: 'enableGraphQLEndpoint',
       val: 0,
@@ -163,10 +161,12 @@ export default function SettingMainSecurity() {
   const getData = useCallback(async () => {
     const result = await requests.get<unknown, SecurConfig>('/setting/securityConfig')
     setSecurConfig(result)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     void getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
