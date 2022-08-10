@@ -74,6 +74,7 @@ export default function Authentication() {
                 </Col>
                 <Col span={19}>
                   <AuthContainer
+                    handleTopToggleDesigner={handleTopToggleDesigner}
                     showBottomType={showBottomType}
                     showTopType={showTopType}
                     content={content}

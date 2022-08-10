@@ -175,7 +175,6 @@ export default function AuthMainEdit({ content }: Props) {
           autoComplete="new-password"
           validateTrigger="onBlur"
           labelAlign="left"
-          className="ml-3"
           initialValues={initialValues}
         >
           <Form.Item
@@ -240,9 +239,7 @@ export default function AuthMainEdit({ content }: Props) {
               }}
               value={value}
             >
-              <Radio value={0} className="mr-18">
-                URL
-              </Radio>
+              <Radio value={0}>URL</Radio>
               <Radio value={1}>JSON</Radio>
             </Radio.Group>
           </Form.Item>

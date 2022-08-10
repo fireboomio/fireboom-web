@@ -2,7 +2,7 @@ import { CaretRightOutlined } from '@ant-design/icons'
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvResp } from '@/interfaces/auth'
+import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
 
 import IconFont from '../iconfont'
 import AuthMainCheck from './subs/Check'
@@ -10,14 +10,22 @@ import AuthMainEdit from './subs/Edit'
 // import AuthMainIdentity from './subs/auth-main-identity'
 import AuthMainRole from './subs/Role'
 import AuthMainUser from './subs/User'
+import AuthMainUserDetails from './subs/UserDetails'
+import AuthWebhooks from './subs/Webhooks'
 
 interface Props {
   content: AuthProvResp
   showTopType: string
   showBottomType: string
+  handleTopToggleDesigner: (authType: AuthListType) => void
 }
 
-export default function AuthContainer({ content, showTopType, showBottomType }: Props) {
+export default function AuthContainer({
+  content,
+  showTopType,
+  showBottomType,
+  handleTopToggleDesigner,
+}: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
   const [title, setTitle] = useImmer<React.ReactNode>('')
   const handleIconClick = () => {
@@ -32,7 +40,11 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
         break
       case 'userManage':
         setTitle('用户管理')
-        setViewer(<AuthMainUser />)
+        setViewer(<AuthMainUser handleTopToggleDesigner={handleTopToggleDesigner} />)
+        break
+      case 'userDetails':
+        setTitle('用户详情')
+        setViewer(<AuthMainUserDetails />)
         break
       case 'roleManage':
         setTitle('角色管理')
@@ -52,7 +64,7 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
         break
       case 'webhooks':
         setTitle('webhooks')
-        setViewer(<div>webhooks</div>)
+        setViewer(<AuthWebhooks />)
         break
       default:
         setViewer(<div>error</div>)
@@ -84,7 +96,7 @@ export default function AuthContainer({ content, showTopType, showBottomType }: 
     <div className="pl-6 pr-10 mt-6">
       <div className="flex justify-start items-center mb-5 ">
         <span className="text-lg flex-grow font-bold">
-          验证鉴权
+          身份验证
           <span className="text-base flex-grow font-bold">
             {' '}
             <CaretRightOutlined /> {title}

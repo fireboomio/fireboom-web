@@ -20,5 +20,13 @@ interface AuthListAction {
 
 export interface AuthListType {
   name: string
-  type: 'outline' | 'userManage' | 'roleManage' | 'action' | 'login' | 'connect' | 'webhooks'
+  type:
+    | 'outline'
+    | 'userManage'
+    | 'userDetails'
+    | 'roleManage'
+    | 'action'
+    | 'login'
+    | 'connect'
+    | 'webhooks'
 }

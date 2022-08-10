@@ -112,8 +112,7 @@ export default function AuthMainRole() {
       title: '操作',
       key: 4,
       render: (_, { id }) => (
-        <Button
-          type="text"
+        <span
           className="pl-0 text-red-500"
           onClick={() => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -121,7 +120,7 @@ export default function AuthMainRole() {
           }}
         >
           删除
-        </Button>
+        </span>
       ),
     },
   ]
