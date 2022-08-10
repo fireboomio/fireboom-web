@@ -1,10 +1,15 @@
 import { ArrowRightOutlined, CloseOutlined } from '@ant-design/icons'
 import { Divider, Image, Timeline } from 'antd'
 
+import IconFont from '../iconfont'
 import styles from './home.module.scss'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
+}
+
+const handleIconClick = () => {
+  console.log('aaa')
 }
 
 export function Guide({ handleToggleDesigner }: Props) {
@@ -25,7 +30,7 @@ export function Guide({ handleToggleDesigner }: Props) {
             <div className={`${styles['first-guide']} mt-6`}>
               <span className="font-bold">数据源</span>
               <div className="mr-6">
-                <Image src="/assets/word.svg" alt="图片不见了" width={15} height={13} />
+                <IconFont type="icon-wendang" onClick={handleIconClick} className="mr-1" />
                 <span>文档</span>
               </div>
             </div>
@@ -61,7 +66,7 @@ export function Guide({ handleToggleDesigner }: Props) {
             <div className={styles['first-guide']}>
               <span className="font-bold">OSS存储</span>
               <div className="mr-6">
-                <Image src="/assets/word.svg" alt="图片不见了" width={15} height={13} />
+                <IconFont type="icon-wendang" onClick={handleIconClick} className="mr-1" />
                 <span>文档</span>
               </div>
             </div>
@@ -88,7 +93,7 @@ export function Guide({ handleToggleDesigner }: Props) {
             <div className={styles['first-guide']}>
               <span className="font-bold">身份验证</span>
               <div className="mr-6">
-                <Image src="/assets/word.svg" alt="图片不见了" width={15} height={13} />
+                <IconFont type="icon-wendang" onClick={handleIconClick} className="mr-1" />
                 <span>文档</span>
               </div>
             </div>
@@ -115,7 +120,7 @@ export function Guide({ handleToggleDesigner }: Props) {
             <div className={styles['first-guide']}>
               <span className="font-bold">对外API</span>
               <div className="mr-6">
-                <Image src="/assets/word.svg" alt="图片不见了" width={15} height={13} />
+                <IconFont type="icon-wendang" onClick={handleIconClick} className="mr-1" />
                 <span>文档</span>
               </div>
             </div>

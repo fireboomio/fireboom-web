@@ -41,11 +41,11 @@ export default function Home() {
           />
 
           <div className="mt-5.5 flex items-center">
-            <div className="border px-2 mr-6 flex items-center">
+            <div className="border px-2 mr-12 flex items-center">
               <IconFont type="icon-rizhi1" />
               <span className="ml-2">日志</span>
             </div>
-            <div>
+            <div className="mr-6">
               <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
               <IconFont
                 type="icon-wendang"
