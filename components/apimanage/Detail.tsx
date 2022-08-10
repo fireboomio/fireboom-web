@@ -5,7 +5,7 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType, TableSource, ParameterT } from '@/interfaces/apimanage'
+import { FieldType, TableSource, ParameterT, operationResp } from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
@@ -121,9 +121,9 @@ const Detail: FC<DetailProps> = ({ path }) => {
 
   useEffect(() => {
     if (!path) return
-    getFetcher(`/operateApi/${path}`)
+    getFetcher<operationResp>(`/operateApi/${path}`)
       // getFetcher('/gql-query-str')
-      .then((res) => parse(res as string, { noLocation: true }).definitions)
+      .then((res) => parse(res.content, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
       .then(() => setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST'))
       .catch((err: Error) => {
@@ -143,6 +143,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
       setRbac(parseRbac(gqlQueryDef.at(0)?.directives))
     } catch (err: unknown) {
       void message.error('解析失败')
+      // eslint-disable-next-line no-console
       console.error(err)
       return
     }

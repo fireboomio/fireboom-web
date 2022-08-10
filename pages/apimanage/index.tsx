@@ -76,7 +76,7 @@ function convertToTree(data: operationResp[] | null, lv = '0'): DirTree[] | null
     path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
     children: convertToTree(x.children, `${lv}-${idx}`),
     originTitle: x.title,
-    disable: x.disable,
+    enable: x.enable,
   }))
 }
 
@@ -183,7 +183,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         .put('/operateApi/rename', {
           oldPath: curEditingNode.path,
           newPath: newPath,
-          disable: curEditingNode.disable,
+          enable: !curEditingNode.disable,
         })
         .then((res) => {
           if (res) {
@@ -421,7 +421,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       .put('/operateApi/rename', {
         oldPath: node.path,
         newPath: node.path,
-        disable: !e,
+        enable: e,
       })
       .then((res) => {
         if (res) {
@@ -442,7 +442,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const extra = (
     <div className="flex items-center">
       <Switch
-        checked={!findNode(selectedKey, treeData)?.disable}
+        checked={findNode(selectedKey, treeData)?.enable}
         checkedChildren="开启"
         unCheckedChildren="关闭"
         onChange={connectSwitchOnChange}

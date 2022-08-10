@@ -1,11 +1,26 @@
-export type DirTree = operationResp & { key: number | string }
+export type DirTree = operationItem & { key: number | string }
 
-export interface operationResp {
-  title: string
-  children: operationResp[] | null
+export type operationItem = operationResp & {
   originTitle?: string
   path?: string
-  disable: boolean
+}
+
+type PUBLIC = true
+type PRIVATE = false
+
+export interface operationResp {
+  id: number
+  title: string
+  legal: boolean
+  enable: boolean
+  content: string
+  method: 'GET' | 'POST'
+  operationType: 'queries' | 'mutations' | 'subscriptions'
+  remark: string
+  status: PUBLIC | PRIVATE
+  children: operationResp[] | null
+  createTime: string
+  updateTime: string
 }
 
 export interface FieldType {
