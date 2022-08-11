@@ -46,7 +46,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 `
 
 interface Props {
-  data: string
+  data?: string
   onSave: (query: string) => void
 }
 export default function App({ data, onSave }: Props) {
@@ -94,12 +94,6 @@ export default function App({ data, onSave }: Props) {
   function save() {
     // @ts-ignore
     const content = ref.current?.ref?.props.query as string
-    // const path = router.query.path
-
-    // void requests
-    //   .put('/operateApi', { path: path, content: content })
-    //   .then((_) => void message.success('保存成功'))
-
     return onSave(content)
   }
 

@@ -21,7 +21,7 @@ import {
 } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import Head from 'next/head'
-import { FC, useCallback, useEffect, useState, useReducer } from 'react'
+import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import Detail from '@/components/apimanage/Detail'
@@ -114,7 +114,7 @@ function getNodeFamily(key: string, data: DirTreeNode[] | undefined) {
 
 const ApiManage: FC<ApiManageProps> = () => {
   const [addType, setAddType] = useState<'文件' | '目录' | '编辑' | null>(null)
-  const [treeData, setTreeData] = useState<DirTreeNode[]>(null!)
+  const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   const [selectedKey, setSelectedKey] = useState<string>('')
   const [curEditingNode, setCurEditingNode] = useState<DirTreeNode | null>(null)
   const [inputValue, setInputValue] = useState('')
@@ -122,7 +122,8 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [query, setQuery] = useState<string>()
-  const [path, setPath] = useState<string>()
+
+  const selectedNode = useMemo(() => findNode(selectedKey, treeData), [selectedKey, treeData])
 
   //datasource逻辑-----
   const [showDatasource, setShowDatasource] = useImmer(false)
@@ -247,16 +248,15 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleAddNode = useCallback(() => {
+  const handleAddNode = () => {
+    setAddType('文件')
     setIsModalVisible(true)
-  }, [])
+  }
 
   function handleClickEdit() {
-    const node = findNode(selectedKey, treeData)
-    if (!node?.path) return
+    if (!selectedNode?.path) return
 
-    void getFetcher<OperationResp>(`/operateApi/${node.id}`).then((res) => {
-      setPath(node.path)
+    void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then((res) => {
       setQuery(res.content)
     })
     setIsModalVisible(true)
@@ -264,9 +264,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const handleSaveGql = (query: string) => {
     // 新增
-    if (!path) {
-      setAddType('文件')
-
+    if (addType === '文件') {
       const { parent, curr } = getNodeFamily(selectedKey, treeData)
       const title = 'new'
       const temp = {
@@ -290,24 +288,22 @@ const ApiManage: FC<ApiManageProps> = () => {
 
       // 新增
       void requests
-        .post('/operateApi/createFile', { title: 'new', content: query })
+        .post('/operateApi/createFile', { title: '/new', content: query })
         .then((_) => void message.success('保存成功'))
 
       setAddType(null)
-    } else {
-      const curPath = path.split('/').slice(0, path.split('/').length).join('/')
-      console.log(curPath)
+    } else if (addType === '编辑') {
+      if (!selectedNode) return
       void requests
-        .put('/operateApi', { title: curPath, content: query })
+        .put(`/operateApi/${selectedNode.id}`, { title: selectedNode?.path, content: query })
         .then((_) => void message.success('保存成功'))
     }
     setIsModalVisible(false)
   }
 
-  const handleDelete = (treeNodeKey: string) => {
-    const node = findNode(treeNodeKey, treeData)
+  const handleDelete = () => {
     // @ts-ignore
-    requests.delete(`/operateApi/${node.id}`).finally(() => {
+    requests.delete(`/operateApi/${selectedNode.id}`).finally(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
@@ -320,21 +316,20 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleMenuClick = (arg: unknown, treeNodeKey: string) => {
+  const handleMenuClick = (arg: unknown) => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     arg.domEvent.stopPropagation()
     // @ts-ignore
     if (arg.key === '0') {
-      const child = findNode(treeNodeKey, treeData)
-      setCurEditingNode(child ?? null)
+      setCurEditingNode(selectedNode ?? null)
     }
   }
 
   const titleRender = (nodeData: DirTreeNode) => {
     const menu = (
       <Menu
-        onClick={(menuInfo) => handleMenuClick(menuInfo, nodeData.key)}
+        onClick={(menuInfo) => handleMenuClick(menuInfo)}
         items={[
           {
             key: '0',
@@ -359,7 +354,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             label: (
               <Popconfirm
                 title="确定删除吗?"
-                onConfirm={() => handleDelete(nodeData.key)}
+                onConfirm={handleDelete}
                 okText="删除"
                 cancelText="取消"
                 placement="right"
@@ -419,12 +414,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   }
 
   function connectSwitchOnChange(checked: boolean) {
-    const node = findNode(selectedKey, treeData)
-    if (!node) return
+    if (!selectedNode) return
     void requests
       .put('/operateApi/rename', {
-        oldPath: node.path,
-        newPath: node.path,
+        oldPath: selectedNode.path,
+        newPath: selectedNode.path,
         enable: checked,
       })
       .then((res) => {
@@ -437,7 +431,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const extra = (
     <div className="flex items-center">
       <Switch
-        checked={findNode(selectedKey, treeData)?.enable}
+        checked={selectedNode?.enable}
         checkedChildren="开启"
         unCheckedChildren="关闭"
         onChange={connectSwitchOnChange}
@@ -547,9 +541,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       <div className="flex leading-25px space-x-2">
                         <span className="font-bold text-18px">API 管理</span>
                         <CaretRightOutlined />
-                        <span className="text-16px font-bold">
-                          {findNode(selectedKey, treeData)?.title ?? ''}
-                        </span>
+                        <span className="text-16px font-bold">{selectedNode?.title ?? ''}</span>
                       </div>
                       <div className="space-x-4">
                         <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
@@ -568,7 +560,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
                       <div className="overflow-auto h-[calc(100vh_-_98px)]">
                         {activeKey === '0' ? (
-                          <Detail path={findNode(selectedKey, treeData)?.path ?? ''} />
+                          <Detail node={selectedNode} />
                         ) : activeKey === '1' ? (
                           <Mock />
                         ) : activeKey === '2' ? (

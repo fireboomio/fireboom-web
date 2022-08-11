@@ -1,14 +1,15 @@
-export type DirTree = operationItem & { key: number | string }
+export type DirTreeNode = OperationItem & { key: string; children: DirTreeNode[] | null }
 
-export type operationItem = operationResp & {
-  originTitle?: string
-  path?: string
+export type OperationItem = OperationResp & {
+  originTitle: string
+  path: string
+  children: OperationItem[] | null
 }
 
 type PUBLIC = true
 type PRIVATE = false
 
-export interface operationResp {
+export interface OperationResp {
   id: number
   title: string
   legal: boolean
@@ -18,7 +19,7 @@ export interface operationResp {
   operationType: 'queries' | 'mutations' | 'subscriptions'
   remark: string
   status: PUBLIC | PRIVATE
-  children: operationResp[] | null
+  children: OperationResp[] | null
   createTime: string
   updateTime: string
 }

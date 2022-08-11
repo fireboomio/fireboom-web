@@ -5,16 +5,20 @@ import { FC, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import { FieldType, TableSource, ParameterT, operationResp } from '@/interfaces/apimanage'
+import {
+  FieldType,
+  TableSource,
+  ParameterT,
+  OperationResp,
+  DirTreeNode,
+} from '@/interfaces/apimanage'
 import { getFetcher } from '@/lib/fetchers'
 import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
-type DetailProps = {
-  path: string
-}
+type DetailProps = { node: DirTreeNode | undefined }
 
 type Param = ParameterT & {
   source?: string
@@ -94,7 +98,7 @@ const injectColumns = [
   { title: '来源', dataIndex: 'source' },
 ]
 
-const Detail: FC<DetailProps> = ({ path }) => {
+const Detail: FC<DetailProps> = ({ node }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlQueryDef, setGqlQueryDef] = useState<readonly OperationDefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -120,8 +124,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
   }, [])
 
   useEffect(() => {
-    if (!path) return
-    getFetcher<operationResp>(`/operateApi/${path}`)
+    if (!node) return
+    getFetcher<OperationResp>(`/operateApi/${node.id}`)
       // getFetcher('/gql-query-str')
       .then((res) => parse(res.content, { noLocation: true }).definitions)
       .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
@@ -130,7 +134,7 @@ const Detail: FC<DetailProps> = ({ path }) => {
         throw err
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path])
+  }, [node])
 
   useEffect(() => {
     // console.log(gqlSchemaDef, 'schema')
@@ -145,9 +149,9 @@ const Detail: FC<DetailProps> = ({ path }) => {
       void message.error('解析失败')
       // eslint-disable-next-line no-console
       console.error(err)
+      // throw err
       return
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gqlQueryDef, gqlSchemaDef])
 
@@ -198,6 +202,8 @@ const Detail: FC<DetailProps> = ({ path }) => {
     return data[0].directiveNames?.includes('internalOperation')
   }
 
+  if (!node) return <></>
+
   return (
     <>
       <div className="flex items-center">
@@ -229,9 +235,9 @@ const Detail: FC<DetailProps> = ({ path }) => {
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>{method}</span>
         <span className="flex-1 text-[#000000D9]">
-          {path
+          {node.path
             .split('/')
-            .slice(0, path.split('/').length)
+            .slice(0, node.path.split('/').length)
             .join('/')
             .replace(/\.graphql(\.off)?$/, '')}
         </span>
