@@ -112,7 +112,7 @@ const Hook: FC<HookProps> = ({ node }) => {
         <Editor
           height="90vh"
           defaultLanguage="typescript"
-          defaultValue="// some comment"
+          defaultValue="// 请编辑勾子"
           value={currHook?.content}
           onChange={(value) => handleEditorChange(value)}
           className={`mt-4 ${styles.monaco}`}

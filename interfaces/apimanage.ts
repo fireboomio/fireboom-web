@@ -71,3 +71,8 @@ export interface HookResp {
   hookSwitch: boolean
   hookName: HookName
 }
+
+export interface MockResp {
+  content: string
+  mockSwitch: boolean
+}

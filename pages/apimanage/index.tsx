@@ -561,7 +561,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         {activeKey === '0' ? (
                           <Detail node={selectedNode} />
                         ) : activeKey === '1' ? (
-                          <Mock />
+                          <Mock node={selectedNode} />
                         ) : activeKey === '2' ? (
                           <Hook node={selectedNode} />
                         ) : (
