@@ -257,6 +257,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (!selectedNode?.path) return
 
     void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then((res) => {
+      setAddType('编辑')
       setQuery(res.content)
     })
     setIsModalVisible(true)
@@ -295,8 +296,9 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else if (addType === '编辑') {
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/${selectedNode.id}`, { title: selectedNode?.path, content: query })
+        .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, content: query })
         .then((_) => void message.success('保存成功'))
+      setRefreshFlag(!refreshFlag)
     }
     setIsModalVisible(false)
   }
@@ -416,16 +418,12 @@ const ApiManage: FC<ApiManageProps> = () => {
   function connectSwitchOnChange(checked: boolean) {
     if (!selectedNode) return
     void requests
-      .put('/operateApi/rename', {
+      .put(`/operateApi/rename/${selectedNode.id}`, {
         oldPath: selectedNode.path,
         newPath: selectedNode.path,
         enable: checked,
       })
-      .then((res) => {
-        if (res) {
-          setRefreshFlag(!refreshFlag)
-        }
-      })
+      .then(() => setRefreshFlag(!refreshFlag))
   }
 
   const extra = (
