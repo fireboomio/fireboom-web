@@ -293,6 +293,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         .then((_) => void message.success('保存成功'))
 
       setAddType(null)
+      setRefreshFlag(!refreshFlag)
     } else if (addType === '编辑') {
       if (!selectedNode) return
       void requests
@@ -386,7 +387,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           <>
             <span className="truncate max-w-9rem">{nodeData.title}</span>
             <div className="text-12px  space-x-4">
-              <span className="text-[#AFB0B499]">GET</span>
+              <span className="text-[#AFB0B499]">{nodeData.method}</span>
               <span className="text-[#AFB0B4]">
                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
                   <MoreOutlined onClick={(e) => e.stopPropagation()} />
@@ -562,7 +563,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         ) : activeKey === '1' ? (
                           <Mock />
                         ) : activeKey === '2' ? (
-                          <Hook />
+                          <Hook node={selectedNode} />
                         ) : (
                           <Setting />
                         )}

@@ -57,3 +57,17 @@ export interface ArgumentT {
   value?: string[]
   rendered: string
 }
+
+export type HookName =
+  | 'preResolve'
+  | 'postResolve'
+  | 'customResolve'
+  | 'mutatingPreResolve'
+  | 'mutatingPostResolve'
+
+export interface HookResp {
+  fileName: string
+  content: string
+  hookSwitch: boolean
+  hookName: HookName
+}
