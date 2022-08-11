@@ -41,3 +41,26 @@
     display: none;
   }
 }
+
+// Container-style
+.save-btn {
+  width: 64px;
+  height: 28px;
+  padding: 0;
+  font-size: 14px;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+
+  span {
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+  }
+}
