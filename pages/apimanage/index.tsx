@@ -203,6 +203,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         .then(res => {
           if (res) {
             curEditingNode.title = inputValue
+            curEditingNode.path = newPath
             setCurEditingNode(null)
             setTreeData([...treeData])
           }
