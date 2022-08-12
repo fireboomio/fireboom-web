@@ -35,7 +35,7 @@ const Hook: FC<HookProps> = ({ node }) => {
         throw err
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
+  }, [node, refreshFlag])
 
   useEffect(() => {
     if (!node) return

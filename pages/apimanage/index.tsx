@@ -41,6 +41,7 @@ import {
 } from '@/lib/context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
+import { isEmpty } from '@/lib/utils'
 
 import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
@@ -404,7 +405,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const iconRender = (nodeProps: unknown) => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const hasChildren = !!nodeProps.data.children
+    const hasChildren = !isEmpty(nodeProps.data.children)
     if (hasChildren) {
       // @ts-ignore
       if (nodeProps.expanded) {
@@ -475,7 +476,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       </Tooltip>
                     </div>
                   </div>
-                  <Divider className="my-4" />
+                  <Divider style={{ margin: '14px 0', opacity: 0 }} />
 
                   <div className="flex justify-between px-4">
                     <span className="leading-20px font-bold">概览</span>
@@ -500,7 +501,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       />
                     </div>
                   </div>
-                  <Divider className="my-4" />
+                  <Divider style={{ margin: '14px 0', opacity: 0 }} />
 
                   <Tree
                     style={{

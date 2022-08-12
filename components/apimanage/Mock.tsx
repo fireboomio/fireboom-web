@@ -23,8 +23,7 @@ const Mock: FC<MockProps> = ({ node }) => {
       .catch((err: Error) => {
         throw err
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
+  }, [node, refreshFlag])
 
   function handleEditorChange(value: string | undefined) {
     if (!value) return
