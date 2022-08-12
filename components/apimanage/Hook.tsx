@@ -71,7 +71,7 @@ const Hook: FC<HookProps> = ({ node }) => {
   function toggleSwitch() {
     if (!node) return
     void requests.put(`/operateApi/hooks/${node.id}`, {
-      HookName: activeKey,
+      hookName: activeKey,
       hookSwitch: !currHook?.hookSwitch,
       content: currHook?.content,
     })
