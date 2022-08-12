@@ -80,7 +80,7 @@ export default function SettingCrossdomain() {
               exposedHeaders: corsConfig.exposedHeaders.join(','),
               allowCredentials: corsConfig.allowCredentials == 1 ? true : false,
             }}
-            onFinish={(values) => {
+            onFinish={values => {
               void onFinish(values as CorsFormConfiguration)
             }}
             labelAlign="left"
@@ -170,12 +170,12 @@ export default function SettingCrossdomain() {
                 style={{ width: '90%' }}
                 placeholder="请选择..."
                 onChange={(values: string) => {
-                  const newMethodsList = corsConfig.allowedMethods.filter((item) => item != values)
+                  const newMethodsList = corsConfig.allowedMethods.filter(item => item != values)
                   newMethodsList.unshift(values)
                   void postRequest('allowedMethods', newMethodsList)
                 }}
               >
-                {corsConfig.allowedMethods.map((item) => (
+                {corsConfig.allowedMethods.map(item => (
                   <Select.Option key={item} value={item}>
                     {item}
                   </Select.Option>
@@ -237,7 +237,7 @@ export default function SettingCrossdomain() {
                 rules={[{ required: true, message: 'Username is required' }]}
               >
                 <Switch
-                  onChange={(isChecked) => {
+                  onChange={isChecked => {
                     void postRequest('allowCredentials', isChecked == false ? 0 : 1)
                   }}
                 />

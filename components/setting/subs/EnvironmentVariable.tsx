@@ -35,7 +35,7 @@ export default function SettingMainEnvironmentVariable() {
   }, [])
 
   const onFinish = (values: DataType) => {
-    setEnvironmentConfig((draft) => {
+    setEnvironmentConfig(draft => {
       const newEnvList = draft.environmentList.concat(values)
       void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
         void getData()
@@ -52,8 +52,8 @@ export default function SettingMainEnvironmentVariable() {
   // }
 
   const handleDeleteEnvVariable = (name: string) => {
-    setEnvironmentConfig((draft) => {
-      const newEnvList = draft.environmentList.filter((item) => item.name != name)
+    setEnvironmentConfig(draft => {
+      const newEnvList = draft.environmentList.filter(item => item.name != name)
       void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
         void getData()
       })
@@ -183,7 +183,7 @@ export default function SettingMainEnvironmentVariable() {
         <Table
           columns={columns}
           dataSource={environmentConfig.environmentList}
-          rowKey={(record) => record.name}
+          rowKey={record => record.name}
           pagination={false}
           className="mb-3 "
         />

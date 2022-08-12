@@ -77,7 +77,7 @@ function findNode(key: string, data: DirTreeNode[] | undefined): DirTreeNode | u
 
   const inner = (key: string, nodes: DirTreeNode[] | undefined) => {
     if (!nodes) return undefined
-    nodes.find((x) => {
+    nodes.find(x => {
       if (x.key === key) {
         rv = x
         return x
@@ -97,7 +97,7 @@ function getNodeFamily(key: string, data: DirTreeNode[] | undefined) {
 
   const inner = (key: string, nodes: DirTreeNode[] | undefined) => {
     if (!nodes) return []
-    nodes.find((x) => {
+    nodes.find(x => {
       if (x.key === key) {
         curr = x
         return [parent, curr]
@@ -134,12 +134,12 @@ const ApiManage: FC<ApiManageProps> = () => {
   useEffect(() => {
     requests
       .get<unknown, DatasourceResp[]>('/dataSource')
-      .then((res) => {
+      .then(res => {
         dispatch({
           type: 'fetched',
           data: res,
         })
-        setCurrDBId(res.filter((item) => item.sourceType == 1).at(0)?.id)
+        setCurrDBId(res.filter(item => item.sourceType == 1).at(0)?.id)
       })
       .catch((err: Error) => {
         throw err
@@ -162,11 +162,11 @@ const ApiManage: FC<ApiManageProps> = () => {
     setShowType(type)
     //新增的item点击取消逻辑 // 0 会显示一个空页面
     if (id && id < 0) {
-      setCurrDBId(datasource.filter((item) => item.sourceType == sourceType).at(0)?.id || 0)
+      setCurrDBId(datasource.filter(item => item.sourceType == sourceType).at(0)?.id || 0)
     } else setCurrDBId(id)
   }
 
-  const content = datasource.find((b) => b.id === currDBId) as DatasourceResp
+  const content = datasource.find(b => b.id === currDBId) as DatasourceResp
   //-----datasource逻辑
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       //   console.log(convertToTree(x))
       //   return x
       // })
-      .then((res) => setTreeData(convertToTree(res)))
+      .then(res => setTreeData(convertToTree(res)))
       .catch((err: Error) => {
         throw err
       })
@@ -200,7 +200,7 @@ const ApiManage: FC<ApiManageProps> = () => {
           newPath: newPath,
           enable: curEditingNode.enable,
         })
-        .then((res) => {
+        .then(res => {
           if (res) {
             curEditingNode.title = inputValue
             setCurEditingNode(null)
@@ -219,7 +219,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         .post('/operateApi/createFile', {
           path: curPath,
         })
-        .then((res) => {
+        .then(res => {
           if (res) {
             setRefreshFlag(!refreshFlag)
           }
@@ -256,7 +256,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   function handleClickEdit() {
     if (!selectedNode?.path) return
 
-    void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then((res) => {
+    void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
       setAddType('编辑')
       setQuery(res.content)
     })
@@ -290,7 +290,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       // 新增
       void requests
         .post('/operateApi/createFile', { title: '/new', content: query })
-        .then((_) => void message.success('保存成功'))
+        .then(_ => void message.success('保存成功'))
 
       setAddType(null)
       setRefreshFlag(!refreshFlag)
@@ -298,7 +298,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       if (!selectedNode) return
       void requests
         .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, content: query })
-        .then((_) => void message.success('保存成功'))
+        .then(_ => void message.success('保存成功'))
       setRefreshFlag(!refreshFlag)
     }
     setIsModalVisible(false)
@@ -332,7 +332,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const titleRender = (nodeData: DirTreeNode) => {
     const menu = (
       <Menu
-        onClick={(menuInfo) => handleMenuClick(menuInfo)}
+        onClick={menuInfo => handleMenuClick(menuInfo)}
         items={[
           {
             key: '0',
@@ -362,7 +362,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                 cancelText="取消"
                 placement="right"
               >
-                <a href="#" onClick={(e) => e.stopPropagation()}>
+                <a href="#" onClick={e => e.stopPropagation()}>
                   <IconFont type="icon-shanchu" />
                   <span className="ml-1.5">删除</span>
                 </a>
@@ -390,7 +390,7 @@ const ApiManage: FC<ApiManageProps> = () => {
               <span className="text-[#AFB0B499]">{nodeData.method}</span>
               <span className="text-[#AFB0B4]">
                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-                  <MoreOutlined onClick={(e) => e.stopPropagation()} />
+                  <MoreOutlined onClick={e => e.stopPropagation()} />
                 </Dropdown>
               </span>
             </div>

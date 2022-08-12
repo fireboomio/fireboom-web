@@ -208,7 +208,7 @@ export default function SettingMainSecurity() {
                 <Switch
                   className={styles['switch-edit-btn']}
                   size="small"
-                  onChange={(isChecked) => {
+                  onChange={isChecked => {
                     void postRequest('enableGraphQLEndpoint', isChecked == false ? 0 : 1)
                   }}
                 />
@@ -237,14 +237,14 @@ export default function SettingMainSecurity() {
                               placeholder="请输入域名..."
                               style={{ width: '60%' }}
                               defaultValue={securConfig.allowedHosts[index]}
-                              onBlur={(e) => {
+                              onBlur={e => {
                                 if (e.target.value == '') return
                                 void postRequest(
                                   'allowedHosts',
                                   form.getFieldValue('allowedHosts') as Array<string>
                                 )
                               }}
-                              onPressEnter={(e) => {
+                              onPressEnter={e => {
                                 if (e.target.value == '') return
                                 void postRequest(
                                   'allowedHosts',

@@ -61,7 +61,7 @@ export default function SettingPannel({ handleToggleDesigner }: Props) {
       </div>
 
       <div className="mt-3">
-        {settingTypeList.map((settingType) => (
+        {settingTypeList.map(settingType => (
           <SettingItem
             key={settingType.type}
             handleToggleDesigner={handleToggleDesigner}

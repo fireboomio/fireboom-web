@@ -44,7 +44,7 @@ export default function SettingMainVersion() {
   }, [])
 
   useEffect(() => {
-    void requests.get<unknown, string>('/setting/getTime').then((res) => {
+    void requests.get<unknown, string>('/setting/getTime').then(res => {
       setSystemTime(calTime(res))
     })
     void getData()
@@ -89,7 +89,7 @@ export default function SettingMainVersion() {
                     autoFocus
                     style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
                     type="text"
-                    onBlur={(e) => {
+                    onBlur={e => {
                       setIsApiPortEditing(!isApiPortEditing)
                       void editPort('apiPort', e.target.value)
                     }}
@@ -111,7 +111,7 @@ export default function SettingMainVersion() {
                     autoFocus
                     type="text"
                     style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
-                    onBlur={(e) => {
+                    onBlur={e => {
                       setIsMidPortEditing(!isMidPortEditing)
                       void editPort('middlewarePort', e.target.value)
                     }}
@@ -130,7 +130,7 @@ export default function SettingMainVersion() {
               <Descriptions.Item label="开发环境">
                 <Radio.Group
                   defaultValue={systemConfig.envType}
-                  onChange={(e) => {
+                  onChange={e => {
                     onChange(e, 'envType')
                   }}
                 >
@@ -142,7 +142,7 @@ export default function SettingMainVersion() {
               </Descriptions.Item>
               <Descriptions.Item label="调试:">
                 <Switch
-                  onChange={(value) => {
+                  onChange={value => {
                     void requests.post('/setting', {
                       key: 'devSwitch',
                       val: value == false ? '0' : '1',
@@ -156,7 +156,7 @@ export default function SettingMainVersion() {
               <Descriptions.Item label="日志水平:">
                 <Radio.Group
                   defaultValue={systemConfig.logLevel}
-                  onChange={(e) => {
+                  onChange={e => {
                     onChange(e, 'logLevel')
                   }}
                 >
@@ -175,7 +175,7 @@ export default function SettingMainVersion() {
                   defaultChecked={systemConfig.forcedJumpSwitch == '1' ? true : false}
                   className={styles['switch-edit-btn']}
                   size="small"
-                  onChange={(value) => {
+                  onChange={value => {
                     void requests.post('/setting', {
                       key: 'forcedJumpSwitch',
                       val: value == false ? '0' : '1',

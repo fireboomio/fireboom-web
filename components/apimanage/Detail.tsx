@@ -116,8 +116,8 @@ const Detail: FC<DetailProps> = ({ node }) => {
       //   console.log('ast', ast)
       //   return res
       // })
-      .then((res) => parse(res, { noLocation: true }).definitions)
-      .then((def) => setGqlSchemaDef(def))
+      .then(res => parse(res, { noLocation: true }).definitions)
+      .then(def => setGqlSchemaDef(def))
       .catch((err: Error) => {
         throw err
       })
@@ -127,8 +127,8 @@ const Detail: FC<DetailProps> = ({ node }) => {
     if (!node) return
     getFetcher<OperationResp>(`/operateApi/${node.id}`)
       // getFetcher('/gql-query-str')
-      .then((res) => parse(res.content, { noLocation: true }).definitions)
-      .then((def) => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
+      .then(res => parse(res.content, { noLocation: true }).definitions)
+      .then(def => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
       .then(() => setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST'))
       .catch((err: Error) => {
         throw err
@@ -156,19 +156,19 @@ const Detail: FC<DetailProps> = ({ node }) => {
   }, [gqlQueryDef, gqlSchemaDef])
 
   const makeDS = (ds: ParameterT[]): Param[] => {
-    return ds.map((x) => {
+    return ds.map(x => {
       if (isEmpty(x.directives)) return { ...x, directiveNames: [] }
       return {
         ...x,
         // @ts-ignore
-        source: x.directives.map((x) => makePayload(x.name, x.args)).join(', '),
+        source: x.directives.map(x => makePayload(x.name, x.args)).join(', '),
         // @ts-ignore
-        directiveNames: x.directives.map((x) => x.name),
-        jsonSchema: x.directives?.find((x) => x.name === 'jsonSchema')?.payload?.join(', '),
+        directiveNames: x.directives.map(x => x.name),
+        jsonSchema: x.directives?.find(x => x.name === 'jsonSchema')?.payload?.join(', '),
         // @ts-ignore
         remark: x.directives
-          .filter((x) => !['jsonSchema'].includes(x.name))
-          .map((x) => makePayload(x.name, x.args))
+          .filter(x => !['jsonSchema'].includes(x.name))
+          .map(x => makePayload(x.name, x.args))
           .join(', '),
       }
     })
@@ -177,9 +177,9 @@ const Detail: FC<DetailProps> = ({ node }) => {
   const filterReqDS = (ds: Param[]) => {
     const filterNames = ['hooksVariable', 'jsonSchema']
     return ds.filter(
-      (x) =>
+      x =>
         x.directiveNames.length === 0 ||
-        x.directiveNames.filter((n) => filterNames.includes(n)).length !== 0
+        x.directiveNames.filter(n => filterNames.includes(n)).length !== 0
     )
   }
 
@@ -192,8 +192,8 @@ const Detail: FC<DetailProps> = ({ node }) => {
       'injectGeneratedUUID',
     ]
     return ds
-      .filter((x) => x.directiveNames.length !== 0)
-      .filter((x) => x.directiveNames.filter((n) => filterNames.includes(n)).length !== 0)
+      .filter(x => x.directiveNames.length !== 0)
+      .filter(x => x.directiveNames.filter(n => filterNames.includes(n)).length !== 0)
   }
 
   const isInternal = (data: TableSource[] | undefined) => {

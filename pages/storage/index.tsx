@@ -29,10 +29,10 @@ export default function FileStorage() {
   useEffect(() => {
     void requests
       .get<unknown, StorageResp[]>('/storageBucket')
-      .then((data) => dispatch({ type: 'fetched', data }))
+      .then(data => dispatch({ type: 'fetched', data }))
   }, [])
 
-  const content = useMemo(() => bucketList.find((b) => b.id === currId), [currId, bucketList])
+  const content = useMemo(() => bucketList.find(b => b.id === currId), [currId, bucketList])
 
   function handleSwitch(value: 'explorer' | 'form' | 'detail', id: number | undefined) {
     setCurrId(id)

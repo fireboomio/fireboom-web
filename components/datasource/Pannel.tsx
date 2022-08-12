@@ -25,8 +25,8 @@ function DatasourceList({ onClickItem, datasourceType }: ListProps) {
     <>
       <div>
         {datasource
-          .filter((item) => item.sourceType == datasourceType)
-          .map((datasourceItem) => {
+          .filter(item => item.sourceType == datasourceType)
+          .map(datasourceItem => {
             if (datasourceItem.name != '')
               return (
                 <DatasourceItem
@@ -73,7 +73,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
         <span>{label}</span>
         {hoveringKey == datasourceType ? (
           <PlusOutlined
-            onClick={(event) => {
+            onClick={event => {
               event.stopPropagation()
               setActiveKey(activeKey.concat(datasourceType.toString()))
               addTable(datasourceType)
@@ -96,7 +96,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
                 activeKey={activeKey}
                 ghost
                 bordered
-                onChange={(keys) => {
+                onChange={keys => {
                   setActiveKey(keys as string[])
                 }}
               >

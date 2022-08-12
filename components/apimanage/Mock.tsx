@@ -19,7 +19,7 @@ const Mock: FC<MockProps> = ({ node }) => {
   useEffect(() => {
     if (!node) return
     getFetcher<MockResp>(`/operateApi/getMock/${node.id}`)
-      .then((res) => setMock(res))
+      .then(res => setMock(res))
       .catch((err: Error) => {
         throw err
       })
@@ -73,7 +73,7 @@ const Mock: FC<MockProps> = ({ node }) => {
         defaultLanguage="typescript"
         defaultValue="// 请编辑 Mock"
         value={mock?.content}
-        onChange={(value) => handleEditorChange(value)}
+        onChange={value => handleEditorChange(value)}
         className={`mt-4 ${styles.monaco}`}
       />
     </>

@@ -30,7 +30,7 @@ const Hook: FC<HookProps> = ({ node }) => {
   useEffect(() => {
     if (!node) return
     getFetcher<HookResp[]>(`/operateApi/hooks/${node.id}`)
-      .then((res) => setHooks(res))
+      .then(res => setHooks(res))
       .catch((err: Error) => {
         throw err
       })
@@ -42,11 +42,11 @@ const Hook: FC<HookProps> = ({ node }) => {
 
     void requests
       .get<unknown, HookResp[]>(`/operateApi/hooks/${node.id}`)
-      .then((res) => setHooks(res))
+      .then(res => setHooks(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node])
 
-  const currHook = useMemo(() => hooks?.find((x) => x.hookName === activeKey), [activeKey, hooks])
+  const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
 
   const save = () => {
     if (!node) return
@@ -61,8 +61,8 @@ const Hook: FC<HookProps> = ({ node }) => {
   function handleEditorChange(value: string | undefined) {
     if (!value) return
 
-    setHooks((draft) => {
-      let hook = draft.find((x) => x.hookName === activeKey)
+    setHooks(draft => {
+      let hook = draft.find(x => x.hookName === activeKey)
       if (!hook) hook = { content: '', fileName: '', hookName: activeKey, hookSwitch: false }
       hook.content = value
     })
@@ -114,7 +114,7 @@ const Hook: FC<HookProps> = ({ node }) => {
           defaultLanguage="typescript"
           defaultValue="// 请编辑钩子"
           value={currHook?.content}
-          onChange={(value) => handleEditorChange(value)}
+          onChange={value => handleEditorChange(value)}
           className={`mt-4 ${styles.monaco}`}
         />
       </div>
