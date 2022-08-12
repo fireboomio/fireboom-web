@@ -37,19 +37,22 @@ const Mock: FC<MockProps> = ({ node }) => {
 
   const save = () => {
     if (!node) return
-    void requests.put(`/operateApi/updateMock/${node.id}`, {
-      mockSwitch: mock?.mockSwitch,
-      content: mock?.content,
-    })
-    setRefreshFlag(!refreshFlag)
+    void requests
+      .put(`/operateApi/updateMock/${node.id}`, {
+        mockSwitch: mock?.mockSwitch,
+        content: mock?.content,
+      })
+      .then(() => setRefreshFlag(!refreshFlag))
   }
 
   function toggleSwitch() {
-    setMock({
-      content: mock?.content ?? '',
-      mockSwitch: mock?.mockSwitch ?? false,
-    })
-    save()
+    if (!node) return
+    void requests
+      .put(`/operateApi/updateMock/${node.id}`, {
+        mockSwitch: !mock?.mockSwitch,
+        content: mock?.content,
+      })
+      .then(() => setRefreshFlag(!refreshFlag))
   }
 
   return (
