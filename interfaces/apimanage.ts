@@ -78,10 +78,10 @@ export interface MockResp {
 }
 
 export interface SettingResp {
-  authenticationRequired: boolean
-  cachingEnable: boolean
-  cachingMaxAge: number
-  cachingStaleWhileRevalidate: number
-  liveQueryEnable: boolean
-  liveQueryPollingIntervalSeconds: number
+  authenticationRequired?: boolean
+  cachingEnable?: boolean
+  cachingMaxAge?: number
+  cachingStaleWhileRevalidate?: number
+  liveQueryEnable?: boolean
+  liveQueryPollingIntervalSeconds?: number
 }

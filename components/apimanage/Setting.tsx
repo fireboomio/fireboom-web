@@ -2,7 +2,7 @@ import { Divider, Form, Input, Switch } from 'antd'
 import { FC, useEffect, useState } from 'react'
 
 import { DirTreeNode, SettingResp } from '@/interfaces/apimanage'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import IconFont from '../iconfont'
 
@@ -11,21 +11,48 @@ type SettingProps = { node: DirTreeNode | undefined }
 const Setting: FC<SettingProps> = ({ node }) => {
   const [setting, setSetting] = useState<SettingResp>()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const [submitFlag, setSubmitFlag] = useState<boolean>()
+
   const [form] = Form.useForm()
 
   useEffect(() => {
+    if (!setting) return
     form.resetFields()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setting])
 
   useEffect(() => {
+    if (!setting) return
+    form.submit()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitFlag])
+
+  useEffect(() => {
     if (!node) return
-    getFetcher<SettingResp>(`/operateApi/getSettingByName/${node.id}`, { settingType: '1' })
+    getFetcher<SettingResp>(`/operateApi/setting/${node.id}`, { settingType: '1' })
       .then(res => setSetting(res))
       .catch((err: Error) => {
         throw err
       })
   }, [node, refreshFlag])
+
+  function handleFinish(values: SettingResp) {
+    if (!node) return
+    const payload = {
+      ...values,
+      cachingMaxAge: values.cachingMaxAge ? +values.cachingMaxAge : 0,
+      cachingStaleWhileRevalidate: values.cachingStaleWhileRevalidate
+        ? +values.cachingStaleWhileRevalidate
+        : 0,
+      liveQueryPollingIntervalSeconds: values.liveQueryPollingIntervalSeconds
+        ? +values.liveQueryPollingIntervalSeconds
+        : 0,
+    }
+    setSetting(payload)
+    void requests
+      .put(`/operateApi/setting/${node.id}`, { ...payload, settingType: 1 })
+      .then(_ => setRefreshFlag(!refreshFlag))
+  }
 
   return (
     <Form
@@ -36,6 +63,7 @@ const Setting: FC<SettingProps> = ({ node }) => {
       initialValues={setting}
       autoComplete="off"
       labelAlign="left"
+      onFinish={handleFinish}
     >
       <Divider orientation="left" orientationMargin={0}>
         <div className="text-[#AFB0B4] text-14px space-x-1">
@@ -43,18 +71,26 @@ const Setting: FC<SettingProps> = ({ node }) => {
           <span>授权</span>
         </div>
       </Divider>
+
       <Form.Item
         label="需要授权"
         name="authenticationRequired"
         valuePropName="checked"
         rules={[{ required: false, message: '请选择' }]}
       >
-        <Switch />
+        <Switch
+          checked={setting?.authenticationRequired}
+          onChange={() => {
+            setSetting({ ...setting, authenticationRequired: !setting?.authenticationRequired })
+            setSubmitFlag(!submitFlag)
+          }}
+        />
         <span className="ml-26px text-[#00000040] text-12px inline-flex items-center ">
           <IconFont type="icon-zhuyi" />
           <span className="ml-1">开启后，登录后才能访问</span>
         </span>
       </Form.Item>
+
       <Divider orientation="left" orientationMargin={0} className="mt-42px">
         <div className="text-[#AFB0B4] text-14px space-x-1">
           <IconFont type="icon-huancun" />
@@ -67,21 +103,21 @@ const Setting: FC<SettingProps> = ({ node }) => {
         valuePropName="checked"
         rules={[{ required: false, message: 'Please input your password!' }]}
       >
-        <Switch />
+        <Switch onChange={() => setSubmitFlag(!submitFlag)} />
       </Form.Item>
       <Form.Item
         label="最大时长"
         name="cachingMaxAge"
         rules={[{ required: false, message: 'Please input your password!' }]}
       >
-        <Input suffix="秒" />
+        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
       </Form.Item>
       <Form.Item
         label="重校验时长"
         name="cachingStaleWhileRevalidate"
         rules={[{ required: false, message: 'Please input your password!' }]}
       >
-        <Input suffix="秒" />
+        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
       </Form.Item>
       <Divider orientation="left" orientationMargin={0} className="mt-42px">
         <div className="text-[#AFB0B4] text-14px space-x-1">
@@ -95,14 +131,14 @@ const Setting: FC<SettingProps> = ({ node }) => {
         valuePropName="checked"
         rules={[{ required: false, message: 'Please input your password!' }]}
       >
-        <Switch />
+        <Switch onChange={() => setSubmitFlag(!submitFlag)} />
       </Form.Item>
       <Form.Item
         label="轮询间隔"
         name="liveQueryPollingIntervalSeconds"
         rules={[{ required: false, message: 'Please input your password!' }]}
       >
-        <Input suffix="秒" />
+        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
       </Form.Item>
     </Form>
   )
