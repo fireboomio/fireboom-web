@@ -16,7 +16,7 @@ type RcTabProps = {
   onTabClick?: Dispatch<SetStateAction<string>>
 }
 
-const RcTab: FC<RcTabProps> = (props) => {
+const RcTab: FC<RcTabProps> = props => {
   const [activeKey, setActiveKey] = useState(props.activeKey ?? props.tabs[0].key)
   const handleClick = useCallback(
     (key: string) => {
@@ -37,7 +37,7 @@ const RcTab: FC<RcTabProps> = (props) => {
     <div className={props.className}>
       <div className="flex justify-between">
         <div className="flex space-x-6">
-          {props.tabs.map((i) => (
+          {props.tabs.map(i => (
             <div
               key={i.key}
               className={`text-[#5F6269] cursor-pointer leading-20px ${

@@ -90,8 +90,8 @@ export default function Layout({ children }: PropsWithChildren) {
   const topMenuItems = useMemo(
     () =>
       menus
-        .filter((m) => m.position === 'top')
-        .map((m) => ({
+        .filter(m => m.position === 'top')
+        .map(m => ({
           key: m.link,
           icon: m.link === pathname ? m.svg : m.icon,
           label: <Link href={m.link}>{m.title}</Link>,
@@ -102,8 +102,8 @@ export default function Layout({ children }: PropsWithChildren) {
   const bottomMenuItems = useMemo(
     () =>
       menus
-        .filter((m) => m.position === 'bottom')
-        .map((m) => ({
+        .filter(m => m.position === 'bottom')
+        .map(m => ({
           key: m.link,
           icon: m.icon,
           label: <Link href={m.link}>{m.title}</Link>,
@@ -118,7 +118,7 @@ export default function Layout({ children }: PropsWithChildren) {
         theme="light"
         collapsible
         collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
+        onCollapse={value => setCollapsed(value)}
       >
         <div className="flex items-center mx-6 my-5">
           <Link href="/">

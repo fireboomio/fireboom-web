@@ -19,12 +19,11 @@ const Mock: FC<MockProps> = ({ node }) => {
   useEffect(() => {
     if (!node) return
     getFetcher<MockResp>(`/operateApi/getMock/${node.id}`)
-      .then((res) => setMock(res))
+      .then(res => setMock(res))
       .catch((err: Error) => {
         throw err
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
+  }, [node, refreshFlag])
 
   function handleEditorChange(value: string | undefined) {
     if (!value) return
@@ -37,19 +36,22 @@ const Mock: FC<MockProps> = ({ node }) => {
 
   const save = () => {
     if (!node) return
-    void requests.put(`/operateApi/updateMock/${node.id}`, {
-      mockSwitch: mock?.mockSwitch,
-      content: mock?.content,
-    })
-    setRefreshFlag(!refreshFlag)
+    void requests
+      .put(`/operateApi/updateMock/${node.id}`, {
+        mockSwitch: mock?.mockSwitch,
+        content: mock?.content,
+      })
+      .then(() => setRefreshFlag(!refreshFlag))
   }
 
   function toggleSwitch() {
-    setMock({
-      content: mock?.content ?? '',
-      mockSwitch: mock?.mockSwitch ?? false,
-    })
-    save()
+    if (!node) return
+    void requests
+      .put(`/operateApi/updateMock/${node.id}`, {
+        mockSwitch: !mock?.mockSwitch,
+        content: mock?.content,
+      })
+      .then(() => setRefreshFlag(!refreshFlag))
   }
 
   return (
@@ -73,7 +75,7 @@ const Mock: FC<MockProps> = ({ node }) => {
         defaultLanguage="typescript"
         defaultValue="// 请编辑 Mock"
         value={mock?.content}
-        onChange={(value) => handleEditorChange(value)}
+        onChange={value => handleEditorChange(value)}
         className={`mt-4 ${styles.monaco}`}
       />
     </>

@@ -76,3 +76,12 @@ export interface MockResp {
   content: string
   mockSwitch: boolean
 }
+
+export interface SettingResp {
+  authenticationRequired?: boolean
+  cachingEnable?: boolean
+  cachingMaxAge?: number
+  cachingStaleWhileRevalidate?: number
+  liveQueryEnable?: boolean
+  liveQueryPollingIntervalSeconds?: number
+}

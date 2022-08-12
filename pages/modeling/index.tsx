@@ -21,7 +21,7 @@ export default function Modeling() {
   const [showType, setShowType] = useImmer<ShowTypeT>('data')
 
   useEffect(() => {
-    const entities = blocks.filter((b) => ['model', 'enum'].includes(b.type)) as Entity[]
+    const entities = blocks.filter(b => ['model', 'enum'].includes(b.type)) as Entity[]
     setCurrEntityId(entities.at(0)?.id ?? null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks])
@@ -35,7 +35,7 @@ export default function Modeling() {
   function handleChangeSource(value: string) {
     requests
       .get<unknown, SchemaResp>(`/schemas/${value}`)
-      .then((res) =>
+      .then(res =>
         dispatch({
           type: 'fetched',
           data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx })),

@@ -109,7 +109,7 @@ export default function App({ data, onSave }: Props) {
           fetcher={fetcher}
           schema={schema}
           query={query}
-          ref={(x) => (ref.current = x)}
+          ref={x => (ref.current = x)}
           onEditQuery={setQuery}
         >
           <GraphiQL.Toolbar>

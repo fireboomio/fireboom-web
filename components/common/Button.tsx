@@ -7,7 +7,7 @@ import { ButtonProps } from 'antd/lib/button'
 //   children: React.ReactNode
 // }
 
-const MyButton: React.FC<ButtonProps> = (props) => {
+const MyButton: React.FC<ButtonProps> = props => {
   return (
     <Button className="my-button">
       <span className="text">{props.children}</span>
