@@ -1,5 +1,5 @@
 import { ArrowRightOutlined, CloseOutlined } from '@ant-design/icons'
-import { Divider, Image, Timeline } from 'antd'
+import { Divider, Timeline } from 'antd'
 
 import IconFont from '../iconfont'
 import styles from './home.module.scss'

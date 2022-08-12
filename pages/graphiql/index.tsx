@@ -2,17 +2,14 @@
  * https://github.com/graphql/graphiql/issues/118
  */
 
-import { message } from 'antd'
 import { GraphiQL } from 'graphiql'
 // @ts-ignore
 import GraphiQLExplorer from 'graphiql-explorer'
 import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 
 import 'graphiql/graphiql.css'
-import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 
@@ -48,10 +45,13 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
 `
 
-export default function App() {
+interface Props {
+  data?: string
+  onSave: (query: string) => void
+}
+export default function App({ data, onSave }: Props) {
   const [schema, setSchema] = useState<GraphQLSchema>()
-  const [query, setQuery] = useState<string | undefined>(DEFAULT_QUERY)
-  const router = useRouter()
+  const [query, setQuery] = useState<string | undefined>(data ?? DEFAULT_QUERY)
 
   const ref = useRef<GraphiQL | null>()
 
@@ -67,12 +67,8 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { path } = { ...router.query }
-    if (!path) return
-    void getFetcher(`/operateApi/${path as string}`).then((res) => setQuery(res as string))
-  }, [router])
+    setQuery(data)
+  }, [data])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
@@ -98,11 +94,7 @@ export default function App() {
   function save() {
     // @ts-ignore
     const content = ref.current?.ref?.props.query as string
-    const path = router.query.path
-
-    void requests
-      .put('/operateApi', { path: path, content: content })
-      .then((_) => void message.success('保存成功'))
+    return onSave(content)
   }
 
   return (
