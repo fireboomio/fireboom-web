@@ -462,16 +462,16 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
 
                     <div className="flex justify-between mt-7">
-                      <Tooltip placement="top" title="设置">
+                      <Tooltip className="cursor-pointer" placement="top" title="设置">
                         <IconFont type="icon-shezhi1" style={{ fontSize: '20px' }} />
                       </Tooltip>
-                      <Tooltip placement="top" title="导出">
+                      <Tooltip className="cursor-pointer" placement="top" title="导出">
                         <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
                       </Tooltip>
-                      <Tooltip placement="top" title="表单设计器">
+                      <Tooltip className="cursor-pointer" placement="top" title="表单设计器">
                         <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
                       </Tooltip>
-                      <Tooltip placement="top" title="下载SDK">
+                      <Tooltip className="cursor-pointer" placement="top" title="下载SDK">
                         <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
                       </Tooltip>
                     </div>
