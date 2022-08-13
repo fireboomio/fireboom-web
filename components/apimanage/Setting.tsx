@@ -1,5 +1,5 @@
 import { Divider, Form, Input, Switch } from 'antd'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 
 import { DirTreeNode, SettingResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -15,6 +15,8 @@ const Setting: FC<SettingProps> = ({ node }) => {
 
   const [form] = Form.useForm()
 
+  const settingType = useMemo(() => (node?.id === 0 ? 2 : 1), [node?.id])
+
   useEffect(() => {
     if (!setting) return
     form.resetFields()
@@ -29,12 +31,12 @@ const Setting: FC<SettingProps> = ({ node }) => {
 
   useEffect(() => {
     if (!node) return
-    getFetcher<SettingResp>(`/operateApi/setting/${node.id}`, { settingType: '1' })
+    getFetcher<SettingResp>(`/operateApi/setting/${node.id}`, { settingType: settingType })
       .then(res => setSetting(res))
       .catch((err: Error) => {
         throw err
       })
-  }, [node, refreshFlag])
+  }, [node, refreshFlag, settingType])
 
   function handleFinish(values: SettingResp) {
     if (!node) return
@@ -50,7 +52,7 @@ const Setting: FC<SettingProps> = ({ node }) => {
     }
     setSetting(payload)
     void requests
-      .put(`/operateApi/setting/${node.id}`, { ...payload, settingType: 1 })
+      .put(`/operateApi/setting/${node.id}`, { ...payload, settingType: settingType })
       .then(_ => setRefreshFlag(!refreshFlag))
   }
 

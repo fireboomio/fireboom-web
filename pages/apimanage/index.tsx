@@ -122,6 +122,8 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [activeKey, setActiveKey] = useState<string>('0')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isSettingVisible, setIsSettingVisible] = useState(false)
+  const [isHookVisible, setIsHookVisible] = useState(false)
   const [query, setQuery] = useState<string>()
 
   const selectedNode = useMemo(() => findNode(selectedKey, treeData), [selectedKey, treeData])
@@ -463,7 +465,18 @@ const ApiManage: FC<ApiManageProps> = () => {
 
                     <div className="flex justify-between mt-7">
                       <Tooltip className="cursor-pointer" placement="top" title="设置">
-                        <IconFont type="icon-shezhi1" style={{ fontSize: '20px' }} />
+                        <IconFont
+                          onClick={() => setIsSettingVisible(!isSettingVisible)}
+                          type="icon-shezhi1"
+                          style={{ fontSize: '20px' }}
+                        />
+                      </Tooltip>
+                      <Tooltip className="cursor-pointer" placement="top" title="钩子">
+                        <IconFont
+                          onClick={() => setIsHookVisible(!isHookVisible)}
+                          type="icon-shengchanqianyi"
+                          style={{ fontSize: '20px' }}
+                        />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="导出">
                         <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
@@ -580,6 +593,30 @@ const ApiManage: FC<ApiManageProps> = () => {
           </DatasourceCurrDBContext.Provider>
         </DatasourceDispatchContext.Provider>
       </DatasourceContext.Provider>
+
+      <Modal
+        title="全局设置"
+        visible={isSettingVisible}
+        onOk={() => setIsSettingVisible(false)}
+        onCancel={() => setIsSettingVisible(false)}
+        footer={null}
+        bodyStyle={{ top: '20px' }}
+        width={'60vw'}
+      >
+        <Setting node={{ id: 0 } as DirTreeNode} />
+      </Modal>
+
+      <Modal
+        title="全局钩子"
+        visible={isHookVisible}
+        onOk={() => setIsHookVisible(false)}
+        onCancel={() => setIsHookVisible(false)}
+        footer={null}
+        bodyStyle={{ top: '20px' }}
+        width={'60vw'}
+      >
+        <Hook node={{ id: 0 } as DirTreeNode} />
+      </Modal>
 
       <Modal
         title="GraphiQL"
