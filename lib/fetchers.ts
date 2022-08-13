@@ -23,8 +23,8 @@ requests.interceptors.response.use(
   }
 )
 
-export const getFetcher = <T>(url: string, params?: Record<string, string>) =>
-  requests.get<unknown, T>(url, { params: params }).then((res) => {
+export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
+  requests.get<unknown, T>(url, { params: params }).then(res => {
     return res
   })
 
