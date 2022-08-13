@@ -1,9 +1,10 @@
+import { ExportOutlined } from '@ant-design/icons'
 import { Input, Button, Modal, Form, Table, Divider, Switch, Tabs, Popconfirm, Badge } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TableRowSelection } from 'antd/es/table/interface'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { AuthListType } from '@/interfaces/auth'
 
 import styles from './subs.module.scss'
@@ -35,7 +36,7 @@ const data: UserProvResp[] = [
     name: 'Alean',
     phoneNumber: '18189156130',
     email: '1278154346@qq.com',
-    status: '正常',
+    status: '0',
     lastLoginTime: '2022-06-27 15:47:14',
   },
   {
@@ -44,7 +45,7 @@ const data: UserProvResp[] = [
     name: 'Alean',
     phoneNumber: '18189156130',
     email: '1278154346@qq.com',
-    status: '正常',
+    status: '1',
     lastLoginTime: '2022-06-27 15:47:14',
   },
 ]
@@ -54,6 +55,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   const [userVisible, setUserVisible] = useImmer(false)
   // const [userData, setUserData] = useImmer([] as Array<UserProvResp>)
   const [userData, setUserData] = useImmer(data)
+  const [userStatus, setUserStatus] = useImmer(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const onFinish = (values: UserProvResp) => {
@@ -90,12 +92,18 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
     {
       title: '状态',
       key: 'status',
-      render: () => (
-        <span>
-          <Badge status="success" />
-          正常
-        </span>
-      ),
+      render: () =>
+        userStatus ? (
+          <div>
+            <Badge status="success" />
+            正常
+          </div>
+        ) : (
+          <div className="text-[#F79500]">
+            <IconFont type="icon-lock" className="text-[10px] mr-1" />
+            <span>锁定</span>
+          </div>
+        ),
     },
     {
       title: '最后登入时间',
@@ -105,24 +113,43 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
     {
       title: '操作',
       key: 'action',
-      render: (_, { key }) =>
+      render: (_, record) =>
         userData.length >= 1 ? (
           <div>
             <Popconfirm
-              title="确定要锁定?"
+              title={userStatus ? '确定要锁定' : '确定要解锁'}
               okText="确定"
               cancelText="取消"
-              onConfirm={() => handleUserDelete(key)}
+              onConfirm={(e) => {
+                // @ts-ignore
+                e.stopPropagation()
+                handleUserLock(record.key)
+              }}
+              onCancel={(e) => {
+                // @ts-ignore
+                e.stopPropagation()
+              }}
             >
-              <a>锁定</a>
+              <a onClick={(e) => e.stopPropagation()}>{userStatus ? '锁定' : '解锁'}</a>
             </Popconfirm>
+
             <Popconfirm
               title="确定要删除?"
               okText="确定"
               cancelText="取消"
-              onConfirm={() => handleUserDelete(key)}
+              onConfirm={(e) => {
+                // @ts-ignore
+                e.stopPropagation()
+                handleUserDelete(record.key)
+              }}
+              onCancel={(e) => {
+                // @ts-ignore
+                e.stopPropagation()
+              }}
             >
-              <a className="ml-2">删除</a>
+              <a className="ml-2" onClick={(e) => e.stopPropagation()}>
+                删除
+              </a>
             </Popconfirm>
           </div>
         ) : null,
@@ -130,61 +157,25 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   ]
 
   const handleUserDelete = (key: React.Key) => {
-    setUserData(
-      userData.filter((row) => {
-        return row.key !== key
-      })
-    )
+    setUserData(userData.filter((row) => row.key !== key))
   }
-
-  // const handleUserDelete = (id: number) => {
-  //   data.filter((item) => {
-  //     item.id !== id
-  //   })
-  // }
+  const handleUserLock = (key: React.Key) => {
+    userData.filter((item) => item.key == key)
+    setUserStatus(!userStatus)
+  }
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  const rowSelection: TableRowSelection<UserProvResp> = {
+  const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: 'odd',
-        text: 'Select Odd Row',
-        onSelect: (changableRowKeys) => {
-          let newSelectedRowKeys = []
-          newSelectedRowKeys = changableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false
-            }
-            return true
-          })
-          setSelectedRowKeys(newSelectedRowKeys)
-        },
-      },
-      {
-        key: 'even',
-        text: 'Select Even Row',
-        onSelect: (changableRowKeys) => {
-          let newSelectedRowKeys = []
-          newSelectedRowKeys = changableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true
-            }
-            return false
-          })
-          setSelectedRowKeys(newSelectedRowKeys)
-        },
-      },
-    ],
   }
+
+  const hasSelected = selectedRowKeys.length > 0
+
   return (
     <>
       <div>
@@ -206,12 +197,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
             <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
               <span className="text-sm text-gray">导入</span>
             </Button>
-            <Button
-              className={`${styles['save-btn']} ml-4`}
-              onClick={() => {
-                setUserVisible(true)
-              }}
-            >
+            <Button className={`${styles['save-btn']} ml-4`} onClick={() => setUserVisible(true)}>
               <span className="text-sm text-gray">创建</span>
             </Button>
           </div>
@@ -228,12 +214,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
             onOk={() => setUserVisible(false)}
             onCancel={() => setUserVisible(false)}
             okText={
-              <Button
-                className={styles['save-btn']}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
+              <Button className={styles['save-btn']} onClick={() => form.submit()}>
                 <span>确定</span>
               </Button>
             }
@@ -247,10 +228,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
               wrapperCol={{ span: 17 }}
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={(values) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                void onFinish(values)
-              }}
+              onFinish={(values) => void onFinish(values)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               labelAlign="right"
@@ -308,17 +286,40 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
         <Table
           rowSelection={rowSelection}
           columns={columns}
-          dataSource={data}
+          dataSource={userData}
           bordered={true}
           size="small"
-          onRow={() => {
-            return {
-              onClick: () => {
-                handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
-              }, // 点击行
-            }
-          }}
+          onRow={() => ({
+            onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
+          })}
         />
+        {hasSelected ? (
+          <div className="flex border px-5 py-3 w-140">
+            <div className={styles['right-style']}>
+              已选择
+              <span>{selectedRowKeys.length}</span>个
+            </div>
+            <div className={styles['btn-style']}>
+              <Button
+                className="mr-2 ml-10 text-[ #e92e5e]"
+                icon={<IconFont type="icon-lock" className="text-[16px]" />}
+              >
+                锁定
+              </Button>
+              <Button
+                className="mr-2"
+                icon={<IconFont type="icon-shanchu" className="text-[16px]" />}
+              >
+                删除
+              </Button>
+              <Button icon={<ExportOutlined />}>导出</Button>
+              <Divider type="vertical" className={styles['modal-divider']} />
+            </div>
+            <Button>取消选择</Button>
+          </div>
+        ) : (
+          ''
+        )}
       </div>
     </>
   )
