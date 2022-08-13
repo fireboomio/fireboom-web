@@ -30,3 +30,13 @@ export interface AuthListType {
     | 'connect'
     | 'webhooks'
 }
+
+// 身份验证
+export interface HookResp {
+  content: string
+  fileName: string
+  hookName: string
+  hookSwitch: boolean
+}
+
+export type HookName = 'postAuthentication' | 'mutatingPostAuthenti'
