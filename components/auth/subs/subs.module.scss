@@ -206,6 +206,26 @@
     }
   }
 }
+// user-style
+.right-style {
+  padding: 0;
+  width: 72px;
+  span {
+    color: #e92e5e;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+.btn-style :global {
+  .ant-btn {
+    color: #e92e5e;
+    border-color: #e92e5e;
+  }
+}
+.modal-divider {
+  margin: 0 20px;
+  height: 30px;
+}
 
 // webhooks-style
 .dialog-form :global {
@@ -220,3 +240,53 @@
     margin-bottom: 14px;
   }
 }
+// UserDetails-style
+.user-info {
+  height: 20px;
+  margin-top: 24px;
+  margin-bottom: 14px;
+  font-weight: 500;
+  color: #afb0b4;
+  line-height: 20px;
+}
+
+.form-style :global {
+  .ant-form-item {
+    margin-right: 66px;
+  }
+}
+.mid-word :global {
+  span {
+    width: 84px;
+    height: 20px;
+    font-weight: 500;
+    color: #afb0b4;
+    line-height: 20px;
+  }
+}
+.right-word {
+  span {
+    color: #e92e5e;
+    width: 28px;
+    height: 20px;
+    line-height: 20px;
+  }
+}
+.ant-picker-input {
+  width: 232px;
+}
+// .select-styles {
+//   span:nth-child(1) {
+//     display: block;
+//     height: 20px;
+//     margin-right: 8px;
+//     color: rgba(0, 0, 0, 0.85);
+//     line-height: 20px;
+//   }
+//   span:last-child {
+//     display: block;
+//     height: 12px;
+//     font-weight: 300;
+//     color: rgba(175, 176, 180, 0.5);
+//   }
+// }

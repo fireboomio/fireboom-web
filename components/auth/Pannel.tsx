@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
 import { AuthContext, AuthDispatchContext } from '@/lib/context'
 
-import styles from './Pannel.module.scss'
+import styles from './Common.module.scss'
 import AuthItem from './subs/ItemBottom'
 import AuthItemTop from './subs/ItemTop'
 

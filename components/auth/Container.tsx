@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
 
 import IconFont from '../iconfont'
-import styles from './Pannel.module.scss'
+import styles from './Common.module.scss'
 import AuthMainCheck from './subs/Check'
 import AuthMainEdit from './subs/Edit'
 // import AuthMainIdentity from './subs/auth-main-identity'
@@ -30,7 +30,7 @@ const listMenu = (
         label: (
           <div>
             <LockOutlined className="mr-2" />
-            <span>锁定</span>
+            <span>锁定账号</span>
           </div>
         ),
       },
@@ -39,7 +39,7 @@ const listMenu = (
         label: (
           <div>
             <IconFont type="icon-shanchu" className="mr-2" />
-            <span>删除</span>
+            <span>删除账号</span>
           </div>
         ),
       },
@@ -146,15 +146,17 @@ export default function AuthContainer({
       ) : (
         <div className="flex justify-between">
           <div className="flex">
-            <Image src="/assets/auth.svg" alt="头像" width={50} height={50} preview={false} />
-            <div className="ml-8">
+            <Image src="/assets/auth.svg" alt="头像" width={45} height={45} preview={false} />
+            <div className={styles['user-info']}>
               <span>anson</span>
               <p>ID：6291fe05cbgedyuyu</p>
             </div>
           </div>
           <div>
             <Dropdown overlay={listMenu} placement="bottom">
-              <Button className="mr-2">更多</Button>
+              <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
+                <span className="text-sm text-gray">更多</span>
+              </Button>
             </Dropdown>
             <Button className={`${styles['save-btn']} ml-4`}>重置密码</Button>
           </div>

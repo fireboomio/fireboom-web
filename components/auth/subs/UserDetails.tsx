@@ -1,5 +1,6 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row } from 'antd'
+import type { DatePickerProps } from 'antd'
+import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker, Space } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 // import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -13,32 +14,61 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 interface RoleProvResp {
   id: number
+  key: React.Key
   code: string
   remark: string
-  create_time: string | number
 }
 
 const { TabPane } = Tabs
 const { Option } = Select
+const data: RoleProvResp[] = [
+  {
+    id: 1,
+    key: 1,
+    code: 'user',
+    remark: '普通用户',
+  },
+  {
+    id: 2,
+    key: 2,
+    code: 'user',
+    remark: '普通用户',
+  },
+]
 
 export default function AuthMainUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
+  // const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
+  const [roleData, setRoleData] = useImmer(data)
 
   const onFinish = (values: RoleProvResp) => {
     console.log('Success:', values)
+    setRoleData(
+      roleData.concat({
+        ...values,
+        key: roleData.length + 1,
+      })
+    )
   }
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
 
-  const handleDeleteRole = (id: number) => {
-    console.log('Delete role:', id)
+  const handleDeleteRole = (key: React.Key) => {
+    setRoleData(
+      roleData.filter((row) => {
+        return row.key !== key
+      })
+    )
   }
 
   const onChangeMange = (key: string) => {
     console.log(key, 'onchangeMange')
+  }
+
+  const onChangeTime: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString)
   }
 
   const columns: ColumnsType<RoleProvResp> = [
@@ -55,15 +85,15 @@ export default function AuthMainUserDetails() {
     {
       title: '操作',
       key: 4,
-      render: (_, { id }) => (
+      render: (_, { key }) => (
         <span
           className="pl-0 text-red-500"
           onClick={() => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            void handleDeleteRole(id)
+            void handleDeleteRole(key)
           }}
         >
-          删除
+          撤销角色
         </span>
       ),
     },
@@ -73,11 +103,11 @@ export default function AuthMainUserDetails() {
     <>
       <Tabs defaultActiveKey="1" onChange={onChangeMange}>
         <TabPane tab="用户信息" key="1">
-          <div className="mt-9 mb-3.5 ml-6">个人信息</div>
+          <div className={styles['user-info']}>个人信息</div>
           <Form
             name="basic"
             labelCol={{ span: 6 }}
-            wrapperCol={{ span: 16 }}
+            wrapperCol={{ span: 20 }}
             initialValues={{ remember: true }}
             onFinish={(values) => {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -86,96 +116,107 @@ export default function AuthMainUserDetails() {
             onFinishFailed={onFinishFailed}
             autoComplete="off"
             labelAlign="left"
+            className={styles['form-style']}
           >
             <Row>
               <Col span={8}>
                 <Form.Item label="姓名" name="username">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="用户名" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="昵称" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
                 <Form.Item label="性别" name="username">
-                  <Input />
+                  <Select placeholder="请输入">
+                    <Select.Option value="demo">男</Select.Option>
+                    <Select.Option value="demo">女</Select.Option>
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="生日" name="password">
-                  <Input />
+                  <Space direction="vertical">
+                    <DatePicker onChange={onChangeTime} placeholder="请输入" />
+                  </Space>
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="手机号" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
                 <Form.Item label="邮箱" name="username">
-                  <Input />
+                  <Input
+                    placeholder="请输入"
+                    suffix={<span className="text-[#E92E5E] h-5">发送验证码</span>}
+                  />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="国家代码" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="所在地" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
                 <Form.Item label="公司" name="username">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="城市" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="省/区" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
                 <Form.Item label="街道地址" name="username">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="城市" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="原系统ID" name="password">
-                  <Input />
+                  <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'center' }}>
-                <Form.Item>
-                  <Button>重置</Button>
+                <Form.Item wrapperCol={{ span: 24 }}>
+                  <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
+                    <span className="text-sm text-gray">重置</span>
+                  </Button>
                   <Button className={`${styles['save-btn']} ml-4`} htmlType="submit">
                     保存
                   </Button>
@@ -183,10 +224,10 @@ export default function AuthMainUserDetails() {
               </Col>
             </Row>
           </Form>
-          <div className="flex justify-between items-center">
+          <div className={`${styles['mid-word']} flex justify-between items-center`}>
             <span>原始json数据</span>
-            <div>
-              <IconFont type="icon-fuzhi" className="text-[20px]" />
+            <div className={styles['right-word']}>
+              <IconFont type="icon-fuzhi" className="text-[10px] text-[#E92E5E]" />
               <span>复制</span>
             </div>
           </div>
@@ -213,6 +254,7 @@ export default function AuthMainUserDetails() {
             mask={false}
             title="用户角色"
             width={549}
+            style={{ top: '300px' }}
             transitionName=""
             visible={modal1Visible}
             onOk={() => setModal1Visible(false)}
@@ -251,9 +293,11 @@ export default function AuthMainUserDetails() {
                 name="code"
                 rules={[{ required: true, message: '请选择你的角色' }]}
               >
-                <Select placeholder="Please select a country">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
+                <Select>
+                  <Option value="1">
+                    <span className="mr-2 text-lg ">user</span>
+                    <span className="text-[#AFB0B4] text-xs ">普通用户</span>
+                  </Option>
                 </Select>
               </Form.Item>
             </Form>
