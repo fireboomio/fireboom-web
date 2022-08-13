@@ -1,6 +1,7 @@
 import {
   CaretRightOutlined,
   DownOutlined,
+  FileAddOutlined,
   FileOutlined,
   FolderOpenOutlined,
   FolderOutlined,
@@ -229,9 +230,26 @@ const ApiManage: FC<ApiManageProps> = () => {
           }
         })
         .finally(() => setAddType(null))
+    } else if (addType === '目录') {
+      if (inputValue === '') {
+        setAddType(null)
+        setRefreshFlag(!refreshFlag)
+        return
+      }
+      curEditingNode.title = inputValue
+      curEditingNode.path = `${curEditingNode.path || '/'}${curEditingNode.title}`
+      console.log('c', curEditingNode)
+
+      // 新增
+      void requests
+        .post('/operateApi/createDic', { path: curEditingNode.path })
+        .then(_ => void message.success('保存成功'))
+        .then(() => setRefreshFlag(!refreshFlag))
+
+      setAddType(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue])
+  }, [curEditingNode, inputValue])
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value),
@@ -251,6 +269,33 @@ const ApiManage: FC<ApiManageProps> = () => {
     setCurEditingNode(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleAddDir = () => {
+    setAddType('目录')
+
+    const { parent, curr } = getNodeFamily(selectedKey, treeData)
+    const currPath = selectedNode?.path ?? '/'
+
+    const temp = {
+      title: '',
+      path: currPath,
+      key: Date.now().toString(),
+    } as DirTreeNode
+
+    const tree = treeData ?? []
+    if (!curr || !parent) {
+      tree.push(temp)
+    } else if (curr.children) {
+      curr.children.push(temp)
+    } else {
+      // FIXME:
+      // @ts-ignore
+      parent.children.push(temp)
+    }
+
+    setCurEditingNode(temp)
+    setTreeData([...tree])
+  }
 
   const handleAddNode = () => {
     setAddType('文件')
@@ -407,7 +452,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const iconRender = (nodeProps: unknown) => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const hasChildren = !isEmpty(nodeProps.data.children)
+    const hasChildren = !isEmpty(nodeProps.data.children) || nodeProps.data.id === 0
     if (hasChildren) {
       // @ts-ignore
       if (nodeProps.expanded) {
@@ -493,11 +538,12 @@ const ApiManage: FC<ApiManageProps> = () => {
 
                   <div className="flex justify-between px-4">
                     <span className="leading-20px font-bold">概览</span>
-                    <div className="space-x-4">
+                    <div className="space-x-4 flex items-center">
+                      <FileAddOutlined onClick={handleAddNode} />
                       <IconFont
                         type="icon-wenjianjia1"
                         style={{ fontSize: '18px' }}
-                        onClick={handleAddNode}
+                        onClick={handleAddDir}
                       />
                       <IconFont
                         type="icon-shuaxin"
