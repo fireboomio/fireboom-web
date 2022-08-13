@@ -12,7 +12,7 @@ import styles from './Hook.module.scss'
 
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
-type HookProps = { node: DirTreeNode | undefined }
+type HookProps = { node?: DirTreeNode }
 
 const tabs = [
   { key: 'preResolve', title: 'preResolve' },

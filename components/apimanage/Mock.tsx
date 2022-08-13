@@ -10,7 +10,7 @@ import styles from './Mock.module.scss'
 
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
-type MockProps = { node: DirTreeNode | undefined }
+type MockProps = { node?: DirTreeNode }
 
 const Mock: FC<MockProps> = ({ node }) => {
   const [mock, setMock] = useState<MockResp>()

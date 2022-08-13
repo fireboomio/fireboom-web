@@ -6,7 +6,7 @@ import requests, { getFetcher } from '@/lib/fetchers'
 
 import IconFont from '../iconfont'
 
-type SettingProps = { node: DirTreeNode | undefined }
+type SettingProps = { node?: DirTreeNode }
 
 const Setting: FC<SettingProps> = ({ node }) => {
   const [setting, setSetting] = useState<SettingResp>()
