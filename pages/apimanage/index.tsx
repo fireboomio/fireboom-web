@@ -237,8 +237,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         return
       }
       curEditingNode.title = inputValue
-      curEditingNode.path = `${curEditingNode.path || '/'}${curEditingNode.title}`
-      console.log('c', curEditingNode)
+      curEditingNode.path = `${curEditingNode.path}/${curEditingNode.title}`
 
       // 新增
       void requests
@@ -283,10 +282,13 @@ const ApiManage: FC<ApiManageProps> = () => {
     } as DirTreeNode
 
     const tree = treeData ?? []
-    if (!curr || !parent) {
+    if (!curr && !parent) {
       tree.push(temp)
-    } else if (curr.children) {
-      curr.children.push(temp)
+    } else if (curr) {
+      if (curr.id === 0) {
+        if (curr.children === null) curr.children = []
+        curr.children.push(temp)
+      }
     } else {
       // FIXME:
       // @ts-ignore
@@ -316,17 +318,22 @@ const ApiManage: FC<ApiManageProps> = () => {
     // 新增
     if (addType === '文件') {
       const { parent, curr } = getNodeFamily(selectedKey, treeData)
+      const currPath = selectedNode?.path ?? '/'
       const title = 'new'
       const temp = {
         title: title,
+        path: currPath,
         key: Date.now().toString(),
       } as DirTreeNode
 
       const tree = treeData ?? []
-      if (!curr || !parent) {
+      if (!curr && !parent) {
         tree.push(temp)
-      } else if (curr.children) {
-        curr.children.push(temp)
+      } else if (curr) {
+        if (curr.id === 0) {
+          if (curr.children === null) curr.children = []
+          curr.children.push(temp)
+        }
       } else {
         // FIXME:
         // @ts-ignore
@@ -338,7 +345,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
       // 新增
       void requests
-        .post('/operateApi/createFile', { title: '/new', content: query })
+        .post('/operateApi/createFile', { title: `${temp.path}/${title}`, content: query })
         .then(_ => void message.success('保存成功'))
 
       setAddType(null)
