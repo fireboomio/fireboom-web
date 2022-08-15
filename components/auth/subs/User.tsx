@@ -120,34 +120,34 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
               title={userStatus ? '确定要锁定' : '确定要解锁'}
               okText="确定"
               cancelText="取消"
-              onConfirm={(e) => {
+              onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
                 handleUserLock(record.key)
               }}
-              onCancel={(e) => {
+              onCancel={e => {
                 // @ts-ignore
                 e.stopPropagation()
               }}
             >
-              <a onClick={(e) => e.stopPropagation()}>{userStatus ? '锁定' : '解锁'}</a>
+              <a onClick={e => e.stopPropagation()}>{userStatus ? '锁定' : '解锁'}</a>
             </Popconfirm>
 
             <Popconfirm
               title="确定要删除?"
               okText="确定"
               cancelText="取消"
-              onConfirm={(e) => {
+              onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
                 handleUserDelete(record.key)
               }}
-              onCancel={(e) => {
+              onCancel={e => {
                 // @ts-ignore
                 e.stopPropagation()
               }}
             >
-              <a className="ml-2" onClick={(e) => e.stopPropagation()}>
+              <a className="ml-2" onClick={e => e.stopPropagation()}>
                 删除
               </a>
             </Popconfirm>
@@ -157,11 +157,10 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   ]
 
   const handleUserDelete = (key: React.Key) => {
-    setUserData(userData.filter((row) => row.key !== key))
+    setUserData(userData.filter(row => row.key !== key))
   }
   const handleUserLock = (key: React.Key) => {
-    userData.filter((item) => item.key == key)
-    setUserStatus(!userStatus)
+    setUserStatus(userData.filter(item => item.key == key).at(0)?.status === '0')
   }
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -228,7 +227,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
               wrapperCol={{ span: 17 }}
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={(values) => void onFinish(values)}
+              onFinish={values => void onFinish(values)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               labelAlign="right"
@@ -289,6 +288,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
           dataSource={userData}
           bordered={true}
           size="small"
+          rowKey={record => record.id}
           onRow={() => ({
             onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
           })}

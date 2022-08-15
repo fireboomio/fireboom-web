@@ -8,7 +8,7 @@ import {
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import RcTab from '@/components/rc-tab'
@@ -37,27 +37,30 @@ export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
-  // const [roleFlag, setRoleFlag] = useState<boolean>()
+  const [roleFlag, setRoleFlag] = useState<boolean>()
   const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
   const [hooks, setHooks] = useImmer<HookResp[]>([])
   const [tabs, setTabs] = useState<TabT[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   // 角色管理的相关函数
-  const getData = useCallback(async () => {
-    const authentication = await requests.get<unknown, Array<RoleProvResp>>('/role')
-    setRoleData(authentication)
-    console.log(authentication, 'authentication')
-  }, [])
+  // const getData = useCallback(async () => {
+  //   const authentication = await requests.get<unknown, Array<RoleProvResp>>('/role')
+  //   setRoleData(authentication)
+  //   console.log(authentication, 'authentication')
+  // }, [])
 
   useEffect(() => {
-    void getData()
-  }, [])
+    void requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
+      setRoleData(res)
+      console.log(res, 'authentication')
+    })
+  }, [roleFlag])
 
   const onFinish = async (values: RoleProvResp) => {
     console.log('Success:', values)
     await requests.post('/role', values)
-    await getData()
+    setRoleFlag(!roleFlag)
   }
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
@@ -65,7 +68,7 @@ export default function AuthMainRole() {
 
   const handleDeleteRole = async (id: number) => {
     await requests.delete(`/role/${id}`)
-    await getData()
+    setRoleFlag(!roleFlag)
   }
   const columns: ColumnsType<RoleProvResp> = [
     {
@@ -124,7 +127,7 @@ export default function AuthMainRole() {
   const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
 
   const save = () => {
-    void requests.put('/auth/hooks', {
+    void requests.post('/auth/hooks', {
       hookName: activeKey,
       content: currHook?.content,
       hookSwitch: currHook?.hookSwitch,
