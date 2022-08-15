@@ -54,7 +54,7 @@ export default function Authentication() {
   }
 
   console.log(currAuthProvItemId, '123')
-  const content = authProvList.find((b) => b.id === currAuthProvItemId) as AuthProvResp
+  const content = authProvList.find(b => b.id === currAuthProvItemId) as AuthProvResp
 
   return (
     <>
