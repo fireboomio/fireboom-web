@@ -318,7 +318,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     // 新增
     if (addType === '文件') {
       const { parent, curr } = getNodeFamily(selectedKey, treeData)
-      const currPath = selectedNode?.path ?? '/'
+      const currPath = selectedNode?.path ?? ''
       const title = 'new'
       const temp = {
         title: title,
