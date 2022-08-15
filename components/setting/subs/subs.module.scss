@@ -52,10 +52,9 @@
   border-radius: 4px;
 }
 
-.variable-btn {
-  width: 88px;
+.save-btn {
   height: 28px;
-  padding: 0;
+  padding: 0 15px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
 
@@ -67,10 +66,8 @@
   }
 
   span {
-    width: 64px;
-    height: 20px;
     color: #fff;
-    font-size: 14px;
+    line-height: 20px;
   }
 }
 
@@ -213,4 +210,8 @@
     cursor: not-allowed;
     opacity: 0.5;
   }
+}
+.divider-line {
+  margin: 28px 0 16px;
+  border: 1px solid rgba(95, 98, 105, 0.1);
 }

@@ -31,11 +31,11 @@ const settingTypeList: SettingType[] = [
     type: 'cors',
     icon: <IconFont type="icon-kuayu" />,
   },
-  {
-    name: 'API Token',
-    type: 'API Token',
-    icon: <IconFont type="icon-a-APItoken" />,
-  },
+  // {
+  //   name: 'API Token',
+  //   type: 'API Token',
+  //   icon: <IconFont type="icon-a-APItoken" />,
+  // },
   {
     name: '环境变量',
     type: 'path',

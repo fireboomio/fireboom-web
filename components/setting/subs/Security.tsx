@@ -1,5 +1,5 @@
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
-import { Form, Input, Switch, Button } from 'antd'
+import { Form, Input, Switch, Button, Divider } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -171,6 +171,7 @@ export default function SettingMainSecurity() {
 
   return (
     <>
+      <Divider className={styles['divider-line']} />
       <button
         onClick={() => {
           form.submit()

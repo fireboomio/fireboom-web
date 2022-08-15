@@ -13,31 +13,19 @@ export default function SettingMainAppearance() {
         </div>
         <div className={`${styles['picture-box']} flex`}>
           <div>
-            <Image
-              src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-              alt="图片不见了"
-            />
+            <Image src="/assets/system.svg" alt="图片不见了" />
             <div className="h-5 w-7 mt-4 ml-9">系统</div>
           </div>
           <div>
-            <Image
-              src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-              alt="图片不见了"
-            />
+            <Image src="/assets/light.svg" alt="图片不见了" />
             <div className="h-5 w-7 mt-4 ml-9">亮色</div>
           </div>
           <div>
-            <Image
-              src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-              alt="图片不见了"
-            />
+            <Image src="/assets/dark.svg" alt="图片不见了" />
             <div className="h-5 w-7 mt-4 ml-9">暗色</div>
           </div>
           <div>
-            <Image
-              src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-              alt="图片不见了"
-            />
+            <Image src="/assets/black.svg" alt="图片不见了" />
             <div className="h-5 w-7 mt-4 ml-9">黑色</div>
           </div>
         </div>

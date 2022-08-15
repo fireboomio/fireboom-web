@@ -39,10 +39,10 @@ export default function SettingContainer({ showType }: Props) {
         setTitle('跨域')
         setViewer(<SettingMainCrossdomain />)
         break
-      case 'API Token':
-        setTitle('API Token')
-        setViewer(<div>Api Token</div>)
-        break
+      // case 'API Token':
+      //   setTitle('API Token')
+      //   setViewer(<div>Api Token</div>)
+      //   break
       case 'path':
         setTitle('环境变量')
         setViewer(<SettingMainEnvironmentVariable />)
