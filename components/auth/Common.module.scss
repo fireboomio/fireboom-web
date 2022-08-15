@@ -44,8 +44,8 @@
 
 // Container-style
 .save-btn {
-  padding: 0 10px;
   height: 28px;
+  padding: 0 10px;
   font-size: 14px;
   background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
   border-radius: 2px;
@@ -63,6 +63,7 @@
     line-height: 18px;
   }
 }
+
 .connect-check-btn-common {
   height: 28px;
   padding: 0;
@@ -77,17 +78,19 @@
 
 .user-info :global {
   margin-top: -10px;
+
   span {
     height: 36px;
-    font-size: 32px;
+    color: #000;
     font-weight: 600;
-    color: #000000;
+    font-size: 32px;
     line-height: 36px;
   }
+
   p {
     height: 16px;
-    font-size: 12px;
     color: #afb0b4;
+    font-size: 12px;
     line-height: 16px;
   }
 }

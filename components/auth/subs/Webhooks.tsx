@@ -87,7 +87,7 @@ export default function AuthMainRole() {
       key: 'triggerEvents',
       render: (triggerEvents: string[]) => (
         <>
-          {triggerEvents.map((item) => {
+          {triggerEvents.map(item => {
             return (
               <Tag color="#FA6400" key={item}>
                 {item}
@@ -101,7 +101,7 @@ export default function AuthMainRole() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status) => (
+      render: status => (
         <Switch
           checked={status == 0 ? true : false}
           className={`${styles['switch-edit-btn']}`}
@@ -119,7 +119,7 @@ export default function AuthMainRole() {
     {
       title: '操作',
       key: 4,
-      render: (_) => (
+      render: _ => (
         <span
           className="pl-0 text-red-500"
           onClick={() => {
@@ -183,7 +183,7 @@ export default function AuthMainRole() {
           wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          onFinish={(values) => {
+          onFinish={values => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             void onFinish(values)
           }}
@@ -208,7 +208,7 @@ export default function AuthMainRole() {
             rules={[{ required: true, message: '输入不能为空' }]}
           >
             <Radio.Group
-              onChange={(e) => {
+              onChange={e => {
                 typeChange(e.target.value as string)
               }}
               value={value}

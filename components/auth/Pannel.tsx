@@ -74,7 +74,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
 
   const genExtra = () => (
     <PlusOutlined
-      onClick={(event) => {
+      onClick={event => {
         event.stopPropagation()
         setActiveKey(activeKey.concat('1'))
         console.log(activeKey, 'activeKey')
@@ -99,7 +99,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
       />
 
       <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">通用</h2>
-      {firstTypeList.map((authType) => (
+      {firstTypeList.map(authType => (
         <AuthItemTop
           key={authType.type}
           handleTopToggleDesigner={handleTopToggleDesigner}
@@ -107,7 +107,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
         />
       ))}
       <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">设置</h2>
-      {secondTypeList.map((authType) => (
+      {secondTypeList.map(authType => (
         <AuthItemTop
           key={authType.type}
           handleTopToggleDesigner={handleTopToggleDesigner}
@@ -119,12 +119,12 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           ghost
           bordered
           activeKey={activeKey}
-          onChange={(keys) => {
+          onChange={keys => {
             setActiveKey(keys as string[])
           }}
         >
           <Panel header="其他供应商" key={'1'} extra={genExtra()}>
-            {authList.map((authItem) => {
+            {authList.map(authItem => {
               if (authItem.name != '')
                 return <AuthItem key={authItem.id} authItem={authItem} onClickItem={onClickItem} />
             })}

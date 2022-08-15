@@ -29,7 +29,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
   const [isHovering, setIsHovering] = useImmer(false)
   const config = JSON.parse(authItem.config) as Config
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps['onClick'] = e => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
       setVisible(false)
@@ -45,7 +45,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
         name: value,
         config: JSON.stringify({ ...config, id: value }),
       })
-      void requests.get<unknown, AuthProvResp[]>('/auth').then((res) => {
+      void requests.get<unknown, AuthProvResp[]>('/auth').then(res => {
         dispatch({
           type: 'fetched',
           data: res,
@@ -143,9 +143,9 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
         <GithubOutlined className="mr-2" />
         {isEditing ? (
           <Input
-            onBlur={(e) => void handleItemEdit(e.target.value)}
+            onBlur={e => void handleItemEdit(e.target.value)}
             // @ts-ignore
-            onPressEnter={(e) => void handleItemEdit(e.target.value)}
+            onPressEnter={e => void handleItemEdit(e.target.value)}
             onKeyUp={(e: React.KeyboardEvent) => {
               e.key == 'Escape' && setIsEditing(false)
             }}
@@ -172,13 +172,13 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
           trigger={['click']}
           placement="bottomRight"
           visible={visible}
-          onVisibleChange={(v) => {
+          onVisibleChange={v => {
             setVisible(v)
             leaveItem(v)
           }}
         >
           <MoreOutlined
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             className="m-auto mr-0 pr-2"
             style={{ visibility: isHovering ? 'visible' : 'hidden' }}
           />

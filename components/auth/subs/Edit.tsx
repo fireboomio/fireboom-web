@@ -64,7 +64,7 @@ export default function AuthMainEdit({ content }: Props) {
     }
     void requests
       .get<unknown, AuthProvResp[]>('/auth')
-      .then((res) => {
+      .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
@@ -167,7 +167,7 @@ export default function AuthMainEdit({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={(values) => {
+          onFinish={values => {
             void onFinish(values)
           }}
           onFinishFailed={onFinishFailed}
@@ -234,7 +234,7 @@ export default function AuthMainEdit({ content }: Props) {
           </Form.Item>
           <Form.Item label="JWKS" name="jwks">
             <Radio.Group
-              onChange={(e) => {
+              onChange={e => {
                 typeChange(e.target.value as string)
               }}
               value={value}

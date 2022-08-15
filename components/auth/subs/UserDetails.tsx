@@ -57,7 +57,7 @@ export default function AuthMainUserDetails() {
 
   const handleDeleteRole = (key: React.Key) => {
     setRoleData(
-      roleData.filter((row) => {
+      roleData.filter(row => {
         return row.key !== key
       })
     )
@@ -109,7 +109,7 @@ export default function AuthMainUserDetails() {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 20 }}
             initialValues={{ remember: true }}
-            onFinish={(values) => {
+            onFinish={values => {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               void onFinish(values)
             }}
@@ -279,7 +279,7 @@ export default function AuthMainUserDetails() {
               wrapperCol={{ span: 16 }}
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={(values) => {
+              onFinish={values => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 void onFinish(values)
               }}
@@ -307,7 +307,7 @@ export default function AuthMainUserDetails() {
               <Table
                 columns={columns}
                 dataSource={roleData}
-                rowKey={(record) => record.id}
+                rowKey={record => record.id}
                 rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
                 pagination={false}
               />
@@ -315,7 +315,7 @@ export default function AuthMainUserDetails() {
               <Table
                 columns={columns}
                 dataSource={[]}
-                rowKey={(record) => record.id}
+                rowKey={record => record.id}
                 rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
                 pagination={false}
               />
