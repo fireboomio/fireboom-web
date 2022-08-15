@@ -327,7 +327,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       } as DirTreeNode
 
       const tree = treeData ?? []
-      if (!curr && !parent) {
+      if (!parent) {
         tree.push(temp)
       } else if (curr) {
         if (curr.id === 0) {
