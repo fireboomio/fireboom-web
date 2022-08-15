@@ -8,10 +8,12 @@ import {
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useCallback, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
-import requests from '@/lib/fetchers'
+import RcTab from '@/components/rc-tab'
+import { HookName, HookResp } from '@/interfaces/auth'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -23,12 +25,10 @@ interface RoleProvResp {
   remark: string
   create_time: string | number
 }
-// 身份验证
-interface Authentication {
-  content: string
-  fileName: string
-  hookName: string
-  hookSwitch: boolean
+
+interface TabT {
+  key: string
+  title: string
 }
 
 const { TabPane } = Tabs
@@ -37,52 +37,30 @@ export default function AuthMainRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
-  const [postAuth, setPostAuth] = useImmer({} as Authentication)
-  const [mutatingPostAuth, setMutatingPostAuth] = useImmer({} as Authentication)
+  const [roleFlag, setRoleFlag] = useState<boolean>()
+  const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
+  const [hooks, setHooks] = useImmer<HookResp[]>([])
+  const [tabs, setTabs] = useState<TabT[]>([])
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
-  const getData = useCallback(async () => {
-    const authentication = await requests.get<unknown, Array<RoleProvResp>>('/role')
-    setRoleData(authentication)
-    console.log(authentication, 'authentication')
-  }, [])
-
-  const getStatus = useCallback(async () => {
-    const data = await requests.get<unknown, Array<Authentication>>('/auth/hooks')
-    console.log(data, 'data')
-    setPostAuth(data[0])
-    setMutatingPostAuth(data[1])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // 角色管理的相关函数
+  // const getData = useCallback(async () => {
+  //   const authentication = await requests.get<unknown, Array<RoleProvResp>>('/role')
+  //   setRoleData(authentication)
+  //   console.log(authentication, 'authentication')
+  // }, [])
 
   useEffect(() => {
-    void getData()
-    void getStatus()
-  }, [])
-
-  const putPostAuth = async () => {
-    const res = await requests.put('/auth/hooks', {
-      content: postAuth.content,
-      hookName: postAuth.hookName,
-      hookSwitch: postAuth.hookSwitch,
+    void requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
+      setRoleData(res)
+      console.log(res, 'authentication')
     })
-    void getStatus()
-    console.log(res)
-  }
-
-  const putMutatingPostAuth = async () => {
-    const res = await requests.put('/auth/hooks', {
-      content: mutatingPostAuth.content,
-      hookName: mutatingPostAuth.hookName,
-      hookSwitch: mutatingPostAuth.hookSwitch,
-    })
-    void getStatus()
-    console.log(res)
-  }
+  }, [roleFlag])
 
   const onFinish = async (values: RoleProvResp) => {
     console.log('Success:', values)
     await requests.post('/role', values)
-    await getData()
+    setRoleFlag(!roleFlag)
   }
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
@@ -90,7 +68,7 @@ export default function AuthMainRole() {
 
   const handleDeleteRole = async (id: number) => {
     await requests.delete(`/role/${id}`)
-    await getData()
+    setRoleFlag(!roleFlag)
   }
   const columns: ColumnsType<RoleProvResp> = [
     {
@@ -125,23 +103,59 @@ export default function AuthMainRole() {
     },
   ]
 
-  const onChangeMange = (key: string) => {
-    if (key == '2') {
-      void getStatus()
-    } else {
-      void getData()
-    }
+  // 身份鉴权相关
+  useEffect(() => {
+    getFetcher<HookResp[]>('/auth/hooks')
+      .then(res => setHooks(res))
+      .catch((err: Error) => {
+        throw err
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshFlag])
 
-    console.log(key, 'onchangeMange')
+  useEffect(() => {
+    void requests
+      .get<unknown, HookResp[]>('/auth/hooks')
+      .then(res => {
+        setHooks(res)
+        return res
+      })
+      .then(res => setTabs(res.map(x => ({ key: x.hookName, title: x.hookName }))))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
+
+  const save = () => {
+    void requests.post('/auth/hooks', {
+      hookName: activeKey,
+      content: currHook?.content,
+      hookSwitch: currHook?.hookSwitch,
+    })
+    setRefreshFlag(!refreshFlag)
   }
 
-  const onChangeIdentity = (key: string) => {
-    if (key == '2') {
-      void putMutatingPostAuth()
-    } else {
-      void putPostAuth()
-    }
-    console.log(key, 'onchangeIdentity')
+  function handleEditorChange(value: string | undefined) {
+    if (!value) return
+
+    setHooks(draft => {
+      let hook = draft.find(x => x.hookName === activeKey)
+      if (!hook) hook = { content: '', fileName: '', hookName: activeKey, hookSwitch: false }
+      hook.content = value
+    })
+  }
+
+  function toggleSwitch() {
+    void requests.post('/auth/hooks', {
+      hookName: activeKey,
+      hookSwitch: !currHook?.hookSwitch,
+      content: currHook?.content,
+    })
+    setRefreshFlag(!refreshFlag)
+  }
+
+  const onChangeMange = (key: string) => {
+    console.log(key, 'onchangeMange')
   }
 
   return (
@@ -188,7 +202,7 @@ export default function AuthMainRole() {
               wrapperCol={{ span: 16 }}
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={(values) => {
+              onFinish={values => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 void onFinish(values)
               }}
@@ -214,7 +228,7 @@ export default function AuthMainRole() {
               <Table
                 columns={columns}
                 dataSource={roleData}
-                rowKey={(record) => record.id}
+                rowKey={record => record.id}
                 rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
                 pagination={false}
               />
@@ -222,7 +236,7 @@ export default function AuthMainRole() {
               <Table
                 columns={columns}
                 dataSource={[]}
-                rowKey={(record) => record.id}
+                rowKey={record => record.id}
                 rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
                 pagination={false}
               />
@@ -230,82 +244,42 @@ export default function AuthMainRole() {
           </div>
         </TabPane>
         <TabPane tab="身份鉴权" key="2">
-          <Tabs defaultActiveKey="1" onChange={onChangeIdentity}>
-            <TabPane tab={postAuth.hookName} key="1">
-              <div className="flex justify-between items-center">
-                <div className={styles['auth-head']}>
-                  <InfoCircleOutlined />
-                  <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
-                </div>
-                <div className={`${styles['auth-btn']} flex items-center mr-2`}>
-                  <Button type="text" icon={<PlayCircleOutlined />}>
-                    测试
-                  </Button>
-                  <Button type="text" icon={<PlusCircleOutlined />}>
-                    添加
-                  </Button>
-                  <Button type="text" icon={<UnorderedListOutlined />}>
-                    管理
-                  </Button>
-                  <Button type="text" icon={<PlayCircleOutlined />}>
-                    选择
-                  </Button>
-                  <Switch
-                    checked={postAuth.hookSwitch}
-                    className={styles['switch-edit-btn']}
-                    size="small"
-                    onChange={() => {
-                      void putPostAuth()
-                    }}
-                  />
-                </div>
+          <div>
+            {/* @ts-ignore */}
+            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
+            <div className="flex justify-between items-center">
+              <div className={styles['auth-head']}>
+                <InfoCircleOutlined />
+                <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
               </div>
-              <Editor
-                height="60vh"
-                defaultLanguage="typescript"
-                defaultValue="// some comment"
-                value={postAuth.content}
-                className={`mt-4 ${styles.monaco}`}
-              />
-            </TabPane>
-            <TabPane tab={mutatingPostAuth.hookName} key="2">
-              <div className="flex justify-between items-center">
-                <div className={styles['auth-head']}>
-                  <InfoCircleOutlined />
-                  <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
+              <div className={`${styles['auth-btn']} flex items-center mr-2`}>
+                <Button type="text" icon={<PlayCircleOutlined />}>
+                  测试
+                </Button>
+                <Button type="text" icon={<PlusCircleOutlined />}>
+                  添加
+                </Button>
+                <Button type="text" icon={<UnorderedListOutlined />}>
+                  管理
+                </Button>
+                <Button type="text" icon={<PlayCircleOutlined />}>
+                  选择
+                </Button>
+                <div className="text-[#E92E5E] cursor-pointer" onClick={save}>
+                  <span className="leading-20px ml-1">保存</span>
                 </div>
-                <div className={`${styles['auth-btn']} flex items-center mr-2`}>
-                  <Button type="text" icon={<PlayCircleOutlined />}>
-                    测试
-                  </Button>
-                  <Button type="text" icon={<PlusCircleOutlined />}>
-                    添加
-                  </Button>
-                  <Button type="text" icon={<UnorderedListOutlined />}>
-                    管理
-                  </Button>
-                  <Button type="text" icon={<PlayCircleOutlined />}>
-                    选择
-                  </Button>
-                  <Switch
-                    checked={mutatingPostAuth.hookSwitch}
-                    className={styles['switch-edit-btn']}
-                    size="small"
-                    onChange={() => {
-                      void putMutatingPostAuth()
-                    }}
-                  />
-                </div>
+                <Switch onClick={toggleSwitch} checked={currHook?.hookSwitch} />
               </div>
-              <Editor
-                height="60vh"
-                defaultLanguage="typescript"
-                defaultValue="// some comment"
-                value={mutatingPostAuth.content}
-                className={`mt-4 ${styles.monaco}`}
-              />
-            </TabPane>
-          </Tabs>
+            </div>
+            <Editor
+              height="90vh"
+              defaultLanguage="typescript"
+              defaultValue="// some comment"
+              value={currHook?.content}
+              onChange={value => handleEditorChange(value)}
+              className={`mt-4 ${styles.monaco}`}
+            />
+          </div>
         </TabPane>
       </Tabs>
     </>
