@@ -74,6 +74,25 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
   }))
 }
 
+function findEmptyTitleNode(data: DirTreeNode[] | undefined): DirTreeNode | undefined {
+  let rv
+
+  const inner = (nodes: DirTreeNode[] | undefined) => {
+    if (!nodes) return undefined
+    nodes.find(x => {
+      if (x.title === '') {
+        rv = x
+        return x
+      } else {
+        return inner(x.children ?? undefined)
+      }
+    })
+  }
+
+  inner(data)
+  return rv
+}
+
 function findNode(key: string, data: DirTreeNode[] | undefined): DirTreeNode | undefined {
   let rv
 
@@ -185,6 +204,17 @@ const ApiManage: FC<ApiManageProps> = () => {
       })
   }, [refreshFlag])
 
+  useEffect(() => console.log('s', addType, curEditingNode), [addType, curEditingNode])
+
+  useEffect(() => {
+    if (curEditingNode) {
+      const node = findEmptyTitleNode(treeData)
+      if (!node) return
+      setCurEditingNode(node)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [treeData])
+
   const handlePressEnter = useCallback(() => {
     if (!curEditingNode) {
       setAddType(null)
@@ -219,16 +249,19 @@ const ApiManage: FC<ApiManageProps> = () => {
         return
       }
       curEditingNode.title = inputValue
-      const curPath = `${curEditingNode.path || '/'}${curEditingNode.title}`
+      // const curPath = `${curEditingNode.path || '/'}${curEditingNode.title}`
+
       void requests
         .post('/operateApi/createFile', {
-          path: curPath,
+          title: `${curEditingNode.path}/${curEditingNode.title}`,
+          content: query,
         })
         .then(res => {
           if (res) {
             setRefreshFlag(!refreshFlag)
           }
         })
+        .then(_ => void message.success('保存成功'))
         .finally(() => setAddType(null))
     } else if (addType === '目录') {
       if (inputValue === '') {
@@ -260,14 +293,16 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [])
 
   const handleInputBlur = useCallback(() => {
-    if (curEditingNode === null) {
-      setCurEditingNode(null)
-      setRefreshFlag(!refreshFlag)
-    }
-    setAddType(null)
-    setCurEditingNode(null)
+    console.log(addType)
+    // if (addType === '文件') return
+    // if (curEditingNode?.title === '') return
+    // if (curEditingNode === null) {
+    //   setRefreshFlag(!refreshFlag)
+    // }
+    // setAddType(null)
+    // setCurEditingNode(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [addType, curEditingNode])
 
   const handleAddDir = () => {
     setAddType('目录')
@@ -301,6 +336,34 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const handleAddNode = () => {
     setAddType('文件')
+
+    const { parent, curr } = getNodeFamily(selectedKey, treeData)
+    const currPath = selectedNode?.path ?? ''
+
+    const temp = {
+      title: '',
+      path: currPath,
+      key: Date.now().toString(),
+    } as DirTreeNode
+
+    const tree = treeData ?? []
+    if (!parent) {
+      tree.push(temp)
+    } else if (curr) {
+      if (curr.id === 0) {
+        if (curr.children === null) curr.children = []
+        curr.children.push(temp)
+      }
+    } else {
+      // FIXME:
+      // @ts-ignore
+      parent.children.push(temp)
+    }
+
+    setTreeData([...tree])
+    const etNode = findEmptyTitleNode(treeData)
+    if (!etNode) return
+    setCurEditingNode(etNode)
     setIsModalVisible(true)
   }
 
@@ -317,39 +380,16 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleSaveGql = (query: string) => {
     // 新增
     if (addType === '文件') {
-      const { parent, curr } = getNodeFamily(selectedKey, treeData)
-      const currPath = selectedNode?.path ?? ''
-      const title = 'new'
-      const temp = {
-        title: title,
-        path: currPath,
-        key: Date.now().toString(),
-      } as DirTreeNode
+      if (!curEditingNode) return
+      // void requests
+      //   .post('/operateApi/createFile', {
+      //     title: `${curEditingNode.path}/${curEditingNode.title}`,
+      //     content: query,
+      //   })
+      //   .then(_ => void message.success('保存成功'))
 
-      const tree = treeData ?? []
-      if (!parent) {
-        tree.push(temp)
-      } else if (curr) {
-        if (curr.id === 0) {
-          if (curr.children === null) curr.children = []
-          curr.children.push(temp)
-        }
-      } else {
-        // FIXME:
-        // @ts-ignore
-        parent.children.push(temp)
-      }
-
-      setCurEditingNode(temp)
-      setTreeData([...tree])
-
-      // 新增
-      void requests
-        .post('/operateApi/createFile', { title: `${temp.path}/${title}`, content: query })
-        .then(_ => void message.success('保存成功'))
-
-      setAddType(null)
-      setRefreshFlag(!refreshFlag)
+      // setAddType(null)
+      // setRefreshFlag(!refreshFlag)
     } else if (addType === '编辑') {
       if (!selectedNode) return
       void requests
