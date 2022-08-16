@@ -65,7 +65,7 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
     ...x,
     key: `${lv}-${idx}`,
     title: x.path.split('/')[x.path.split('/').length - 1],
-    basePath: x.path.split('/').slice(0, -1).join('/'),
+    baseDir: x.path.split('/').slice(0, -1).join('/'),
     currDir: x.isDir ? x.path : x.path.split('/').slice(0, -1).join('/'),
     children: convertToTree(x.children, `${lv}-${idx}`),
   }))
@@ -131,7 +131,7 @@ function getNodeFamily(key: string, data: DirTreeNode[] | undefined) {
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
-  const [action, setAction] = useState<'文件' | '目录' | '新建' | '编辑' | '重命名' | null>(null)
+  const [action, setAction] = useState<'创建文件' | '创建目录' | '编辑' | '重命名' | null>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   const [selectedKey, setSelectedKey] = useState<string>('')
   const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
@@ -218,11 +218,11 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (node.isDir) {
       return requests.put('/operateApi/dir', {
         oldPath: `${node.path}`,
-        newPath: `${node.basePath}/${value}`,
+        newPath: `${node.baseDir}/${value}`,
       })
     } else {
       return requests.put(`/operateApi/${node.id}`, {
-        path: `${node.basePath}/${value}`,
+        path: `${node.baseDir}/${value}`,
       })
     }
   }
@@ -232,6 +232,19 @@ const ApiManage: FC<ApiManageProps> = () => {
       return requests.delete('/operateApi/dir', { data: { path: node.path } })
     } else {
       return requests.delete(`/operateApi/${node.id}`)
+    }
+  }
+
+  function createNode(node: DirTreeNode, value: string) {
+    console.log('nn', node)
+    if (node.isDir) {
+      return requests.post('/operateApi/dir', {
+        path: node.path,
+      })
+    } else {
+      return requests.put(`/operateApi/${node.id}`, {
+        path: `${node.baseDir}/${value}`,
+      })
     }
   }
 
@@ -246,7 +259,12 @@ const ApiManage: FC<ApiManageProps> = () => {
         setCurrEditingKey(null)
         setRefreshFlag(!refreshFlag)
       })
-    } else if (action === '文件') {
+    } else if (action === '创建目录') {
+      void createNode(currEditingNode, inputValue).then(() => {
+        setCurrEditingKey(null)
+        setRefreshFlag(!refreshFlag)
+      })
+    } else if (action === '创建文件') {
       //   if (inputValue === '') {
       //     setAction(null)
       //     setRefreshFlag(!refreshFlag)
@@ -294,52 +312,45 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const handleInputBlur = useCallback(() => {
     console.log('action', action)
-    if (action === '重命名') {
-      setAction(null)
-      setCurrEditingKey(null)
-    }
 
     // if (currEditingNode?.title === '') return
     // if (currEditingNode === null) {
     //   setRefreshFlag(!refreshFlag)
     // }
-    // setAction(null)
-    // setcurrEditingNode(null)
+    setAction(null)
+    setCurrEditingKey(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action, currEditingNode])
+  }, [action, currEditingKey])
 
   const handleAddDir = () => {
-    setAction('目录')
+    setAction('创建目录')
 
     const { parent, curr } = getNodeFamily(selectedKey, treeData)
-    const currPath = selectedNode?.path ?? '/'
 
-    const temp = {
+    const node = {
       title: '',
-      path: currPath,
+      baseDir: currEditingNode?.baseDir,
+      isDir: true,
       key: Date.now().toString(),
     } as DirTreeNode
 
     const tree = treeData ?? []
-    if (!curr && !parent) {
-      tree.push(temp)
-    } else if (curr) {
-      if (curr.id === 0) {
-        if (curr.children === null) curr.children = []
-        curr.children.push(temp)
-      }
+    if (!parent) {
+      tree.push(node)
+    } else if (curr?.isDir) {
+      if (curr.children === null) curr.children = []
+      curr.children.push(node)
     } else {
-      // FIXME:
-      // @ts-ignore
-      parent.children.push(temp)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      parent.children!.push(node)
     }
 
-    setCurrEditingKey(temp.key)
+    setCurrEditingKey(node.key)
     setTreeData([...tree])
   }
 
   const handleAddNode = () => {
-    setAction('文件')
+    setAction('创建文件')
 
     const { parent, curr } = getNodeFamily(selectedKey, treeData)
     const currPath = selectedNode?.path ?? ''
@@ -383,7 +394,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   const handleSaveGql = (query: string) => {
     // 新增
-    if (action === '文件') {
+    if (action === '创建文件') {
       if (!currEditingNode) return
       // void requests
       //   .post('/operateApi/createFile', {

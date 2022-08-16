@@ -2,7 +2,8 @@ export type DirTreeNode = OperationItem & { key: string; children: DirTreeNode[]
 
 export type OperationItem = OperationResp & {
   title: string
-  basePath: string
+  baseDir: string
+  currDir: string
   children: OperationItem[] | null
 }
 
