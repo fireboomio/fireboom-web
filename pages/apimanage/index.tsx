@@ -64,13 +64,8 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
   return data.map((x, idx) => ({
     ...x,
     key: `${lv}-${idx}`,
-    id: x.id,
-    title: x.title.split('/')[x.title.split('/').length - 1].replace(/\.graphql(\.off)?$/, ''),
-    path: x.title.split('/').slice(0, x.title.split('/').length).join('/'),
-    // .replace(/\.graphql(\.off)?$/, ''),
+    title: x.path.split('/')[x.path.split('/').length - 1],
     children: convertToTree(x.children, `${lv}-${idx}`),
-    originTitle: x.title,
-    enable: x.enable,
   }))
 }
 
@@ -194,7 +189,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   useEffect(() => {
     getFetcher<OperationResp[]>('/operateApi')
-      // .then((x) => {
+      // .then(x => {
       //   console.log(convertToTree(x))
       //   return x
       // })
@@ -203,8 +198,6 @@ const ApiManage: FC<ApiManageProps> = () => {
         throw err
       })
   }, [refreshFlag])
-
-  useEffect(() => console.log('s', addType, curEditingNode), [addType, curEditingNode])
 
   useEffect(() => {
     if (curEditingNode) {
@@ -367,7 +360,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     setIsModalVisible(true)
   }
 
-  function handleClickEdit() {
+  function handleEdit() {
     if (!selectedNode?.path) return
 
     void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
@@ -400,20 +393,26 @@ const ApiManage: FC<ApiManageProps> = () => {
     setIsModalVisible(false)
   }
 
+  const handleRename = () => {
+    console.log('rename')
+  }
+
   const handleDelete = () => {
-    // @ts-ignore
+    if (!selectedNode) return
     requests.delete(`/operateApi/${selectedNode.id}`).finally(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
 
-  const handleSelectTreeNode = useCallback((selectedKeys: Key[]) => {
-    setShowDatasource(false) //不展示datasource页面
-    if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
-      setSelectedKey(selectedKeys[0] as string)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const handleSelectTreeNode = useCallback(
+    (selectedKeys: Key[]) => {
+      setShowDatasource(false) //不展示datasource页面
+      if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
+        setSelectedKey(selectedKeys[0] as string)
+      }
+    },
+    [selectedKey]
+  )
 
   const handleMenuClick = (arg: unknown) => {
     // @ts-ignore
@@ -433,16 +432,16 @@ const ApiManage: FC<ApiManageProps> = () => {
           {
             key: '0',
             label: (
-              <>
+              <div onClick={handleRename}>
                 <IconFont type="icon-zhongmingming" />
                 <span className="ml-1.5">重命名</span>
-              </>
+              </div>
             ),
           },
           {
             key: '1',
             label: (
-              <div onClick={handleClickEdit}>
+              <div onClick={handleEdit}>
                 <IconFont type="icon-chakan" />
                 <span className="ml-1.5">编辑</span>
               </div>
@@ -532,7 +531,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={connectSwitchOnChange}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className={`${styles['my-button']} ml-12`} onClick={handleClickEdit}>
+      <Button className={`${styles['my-button']} ml-12`} onClick={handleEdit}>
         <span>编辑</span>
       </Button>
     </div>
