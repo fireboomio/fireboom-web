@@ -1,5 +1,3 @@
-import { tmpdir } from 'os'
-
 import {
   CaretRightOutlined,
   DownOutlined,
@@ -229,6 +227,14 @@ const ApiManage: FC<ApiManageProps> = () => {
     }
   }
 
+  function deleteNode(node: DirTreeNode) {
+    if (node.isDir) {
+      return requests.delete('/operateApi/dir', { data: { path: node.path } })
+    } else {
+      return requests.delete(`/operateApi/${node.id}`)
+    }
+  }
+
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
@@ -287,7 +293,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [])
 
   const handleInputBlur = useCallback(() => {
-    console.log(action)
+    console.log('action', action)
     if (action === '重命名') {
       setAction(null)
       setCurrEditingKey(null)
@@ -398,9 +404,9 @@ const ApiManage: FC<ApiManageProps> = () => {
     setIsModalVisible(false)
   }
 
-  const handleDelete = () => {
-    if (!selectedNode) return
-    requests.delete(`/operateApi/${selectedNode.id}`).finally(() => {
+  const handleDelete = (node: DirTreeNode) => {
+    void deleteNode(node).then(() => {
+      setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
     })
   }
@@ -448,7 +454,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             label: (
               <Popconfirm
                 title="确定删除吗?"
-                onConfirm={handleDelete}
+                onConfirm={() => handleDelete(nodeData)}
                 okText="删除"
                 cancelText="取消"
                 placement="right"
