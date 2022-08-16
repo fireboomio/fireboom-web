@@ -24,16 +24,18 @@ const nextConfig = {
         destination: 'http://120.26.62.151:9123/api/v1/:path*',
         // destination: 'http://fireboom.tulingzhihui.com/api/v1/:path*',
         // destination: 'http://192.168.166.199:9123/api/v1/:path*',
-        // destination: 'http://localhost:8080/api/v1/:path*',
+        // destination: 'http://localhost:9123/api/v1/:path*',
       },
       {
         source: '/app/main/graphql',
         destination: 'http://120.26.62.151:9991/app/main/graphql',
         // destination: 'http://fireboom.tulingzhihui.com/app/main/graphql',
+        // destination: 'http://192.168.166.199:9991/app/main/graphql',
+        // destination: 'http://localhost:9991/app/main/graphql',
       },
     ]
   },
-  webpack: (config) => {
+  webpack: config => {
     config.plugins.push(new WindiCSSWebpackPlugin())
     return config
   },
