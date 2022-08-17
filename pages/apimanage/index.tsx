@@ -51,6 +51,8 @@ type ApiManageProps = {
   //
 }
 
+type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
+
 const tabs = [
   { title: '详情', key: '0' },
   { title: 'Mock', key: '1' },
@@ -90,7 +92,7 @@ function findEmptyTitleNode(data: DirTreeNode[] | undefined): DirTreeNode | unde
   return rv
 }
 
-function findNode(key: string, data: DirTreeNode[] | undefined): DirTreeNode | undefined {
+function getNodeByKey(key: string, data: DirTreeNode[] | undefined): DirTreeNode | undefined {
   let rv
 
   const inner = (key: string, nodes: DirTreeNode[] | undefined) => {
@@ -165,7 +167,7 @@ function createNode(node: DirTreeNode, value: string) {
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
-  const [action, setAction] = useState<'创建文件' | '创建目录' | '编辑' | '重命名' | null>(null)
+  const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   const [selectedKey, setSelectedKey] = useState<string>('')
   const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
@@ -177,10 +179,10 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [isHookVisible, setIsHookVisible] = useState(false)
   const [query, setQuery] = useState<string>()
 
-  const selectedNode = useMemo(() => findNode(selectedKey, treeData), [selectedKey, treeData])
+  const selectedNode = useMemo(() => getNodeByKey(selectedKey, treeData), [selectedKey, treeData])
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
-    return findNode(currEditingKey, treeData)
+    return getNodeByKey(currEditingKey, treeData)
   }, [currEditingKey, treeData])
 
   //datasource逻辑-----
@@ -254,50 +256,26 @@ const ApiManage: FC<ApiManageProps> = () => {
       return
     }
 
-    if (action === '重命名') {
-      void renameNode(currEditingNode, inputValue).then(() => {
-        setCurrEditingKey(null)
-        setRefreshFlag(!refreshFlag)
-      })
-    } else if (action === '创建目录') {
-      void createNode(currEditingNode, inputValue).then(() => {
-        setCurrEditingKey(null)
-        setRefreshFlag(!refreshFlag)
-      })
-    } else if (action === '创建文件') {
-      //   if (inputValue === '') {
-      //     setAction(null)
-      //     setRefreshFlag(!refreshFlag)
-      //     return
-      //   }
-      //   currEditingNode.title = inputValue
-      //   // const curPath = `${currEditingNode.path || '/'}${currEditingNode.title}`
-      //   void requests
-      //     .post('/operateApi/createFile', {
-      //       title: `${currEditingNode.path}/${currEditingNode.title}`,
-      //       content: query,
-      //     })
-      //     .then(res => {
-      //       if (res) {
-      //         setRefreshFlag(!refreshFlag)
-      //       }
-      //     })
-      //     .then(_ => void message.success('保存成功'))
-      //     .finally(() => setAction(null))
-      // } else if (action === '目录') {
-      //   if (inputValue === '') {
-      //     setAction(null)
-      //     setRefreshFlag(!refreshFlag)
-      //     return
-      //   }
-      //   currEditingNode.title = inputValue
-      //   currEditingNode.path = `${currEditingNode.path}/${currEditingNode.title}`
-      //   // 新增
-      //   void requests
-      //     .post('/operateApi/createDic', { path: currEditingNode.path })
-      //     .then(_ => void message.success('保存成功'))
-      //     .then(() => setRefreshFlag(!refreshFlag))
-      //   setAction(null)
+    switch (action) {
+      case '重命名':
+        void renameNode(currEditingNode, inputValue).then(() => {
+          setCurrEditingKey(null)
+          setRefreshFlag(!refreshFlag)
+        })
+        break
+      case '创建目录':
+        void createNode(currEditingNode, inputValue).then(() => {
+          setCurrEditingKey(null)
+          setRefreshFlag(!refreshFlag)
+        })
+        break
+      case '创建文件':
+        setQuery('')
+        setIsModalVisible(true)
+        break
+      case '编辑':
+      default:
+        break
     }
   }
 
@@ -319,15 +297,15 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, currEditingKey])
 
-  const handleAddDir = () => {
-    setAction('创建目录')
+  const handleAddNode = (action: ActionT) => {
+    setAction(action)
 
     const { parent, curr } = getNodeFamily(selectedKey, treeData)
 
     const node = {
       title: '',
-      baseDir: curr?.currDir ?? '',
-      isDir: true,
+      path: curr?.currDir ?? '',
+      isDir: action === '创建目录' ? true : false,
       key: Date.now().toString(),
     } as DirTreeNode
 
@@ -346,39 +324,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     setTreeData([...tree])
   }
 
-  const handleAddNode = () => {
-    setAction('创建文件')
-
-    const { parent, curr } = getNodeFamily(selectedKey, treeData)
-    const currPath = selectedNode?.path ?? ''
-
-    const temp = {
-      title: '',
-      path: currPath,
-      key: Date.now().toString(),
-    } as DirTreeNode
-
-    const tree = treeData ?? []
-    if (!parent) {
-      tree.push(temp)
-    } else if (curr) {
-      if (curr.id === 0) {
-        if (curr.children === null) curr.children = []
-        curr.children.push(temp)
-      }
-    } else {
-      // FIXME:
-      // @ts-ignore
-      parent.children.push(temp)
-    }
-
-    setTreeData([...tree])
-    const etNode = findEmptyTitleNode(treeData)
-    if (!etNode) return
-    setCurrEditingKey(etNode.key)
-    setIsModalVisible(true)
-  }
-
   function handleEdit() {
     if (!selectedNode?.path) return
 
@@ -392,13 +337,14 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleSaveGql = (query: string) => {
     // 新增
     if (action === '创建文件') {
+      console.log('ccc', currEditingKey)
       if (!currEditingNode) return
-      // void requests
-      //   .post('/operateApi/createFile', {
-      //     title: `${currEditingNode.path}/${currEditingNode.title}`,
-      //     content: query,
-      //   })
-      //   .then(_ => void message.success('保存成功'))
+      void requests
+        .post('/operateApi', {
+          title: `${currEditingNode.path}/${currEditingNode.title}`,
+          content: query,
+        })
+        .then(_ => void message.success('保存成功'))
 
       // setAction(null)
       // setRefreshFlag(!refreshFlag)
@@ -593,11 +539,11 @@ const ApiManage: FC<ApiManageProps> = () => {
                   <div className="flex justify-between px-4">
                     <span className="leading-20px font-bold">概览</span>
                     <div className="space-x-4 flex items-center">
-                      <FileAddOutlined onClick={handleAddNode} />
+                      <FileAddOutlined onClick={() => handleAddNode('创建文件')} />
                       <IconFont
                         type="icon-wenjianjia1"
                         style={{ fontSize: '18px' }}
-                        onClick={handleAddDir}
+                        onClick={() => handleAddNode('创建目录')}
                       />
                       <IconFont
                         type="icon-shuaxin"
@@ -610,7 +556,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                       <IconFont
                         type="icon-fuzhi"
                         style={{ fontSize: '16px' }}
-                        onClick={handleAddNode}
+                        onClick={() => handleAddNode('创建文件')}
                       />
                     </div>
                   </div>
