@@ -1,24 +1,23 @@
 export type DirTreeNode = OperationItem & { key: string; children: DirTreeNode[] | null }
 
 export type OperationItem = OperationResp & {
-  originTitle: string
-  path: string
+  title: string
+  baseDir: string
+  currDir: string
   children: OperationItem[] | null
 }
 
-type PUBLIC = true
-type PRIVATE = false
-
 export interface OperationResp {
   id: number
-  title: string
-  legal: boolean
-  enable: boolean
+  path: string
   content: string
+  remark: string
+  isDir: boolean
+  enable: boolean
+  legal: boolean
+  isPublic: boolean
   method: 'GET' | 'POST'
   operationType: 'queries' | 'mutations' | 'subscriptions'
-  remark: string
-  status: PUBLIC | PRIVATE
   children: OperationResp[] | null
   createTime: string
   updateTime: string
@@ -64,6 +63,8 @@ export type HookName =
   | 'customResolve'
   | 'mutatingPreResolve'
   | 'mutatingPostResolve'
+  | 'onRequest'
+  | 'onResponse'
 
 export interface HookResp {
   fileName: string

@@ -18,7 +18,7 @@ const Mock: FC<MockProps> = ({ node }) => {
 
   useEffect(() => {
     if (!node) return
-    getFetcher<MockResp>(`/operateApi/getMock/${node.id}`)
+    getFetcher<MockResp>(`/operateApi/mock/${node.id}`)
       .then(res => setMock(res))
       .catch((err: Error) => {
         throw err
@@ -37,7 +37,7 @@ const Mock: FC<MockProps> = ({ node }) => {
   const save = () => {
     if (!node) return
     void requests
-      .put(`/operateApi/updateMock/${node.id}`, {
+      .put(`/operateApi/mock/${node.id}`, {
         mockSwitch: mock?.mockSwitch,
         content: mock?.content,
       })
@@ -47,7 +47,7 @@ const Mock: FC<MockProps> = ({ node }) => {
   function toggleSwitch() {
     if (!node) return
     void requests
-      .put(`/operateApi/updateMock/${node.id}`, {
+      .put(`/operateApi/mock/${node.id}`, {
         mockSwitch: !mock?.mockSwitch,
         content: mock?.content,
       })

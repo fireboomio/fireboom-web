@@ -124,7 +124,7 @@ const Detail: FC<DetailProps> = ({ node }) => {
   }, [])
 
   useEffect(() => {
-    if (!node) return
+    if (!node || node.isDir) return
     getFetcher<OperationResp>(`/operateApi/${node.id}`)
       // getFetcher('/gql-query-str')
       .then(res => parse(res.content, { noLocation: true }).definitions)
