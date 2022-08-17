@@ -141,6 +141,7 @@ function renameNode(node: DirTreeNode, value: string) {
     })
   } else {
     return requests.put(`/operateApi/${node.id}`, {
+      ...node,
       path: `${node.baseDir}/${value}`,
     })
   }
@@ -353,7 +354,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else if (action === '编辑') {
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/${selectedNode.id}`, { content: query })
+        .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, content: query })
         .then(_ => void message.success('保存成功'))
       setRefreshFlag(!refreshFlag)
     }
@@ -473,7 +474,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   function toggleOperation(checked: boolean) {
     if (!selectedNode) return
     void requests
-      .put(`/operateApi/${selectedNode.id}`, { enable: checked })
+      .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, enable: checked })
       .then(() => setRefreshFlag(!refreshFlag))
   }
 
