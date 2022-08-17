@@ -556,11 +556,6 @@ const ApiManage: FC<ApiManageProps> = () => {
                           void message.success('刷新完成')
                         }}
                       />
-                      <IconFont
-                        type="icon-fuzhi"
-                        style={{ fontSize: '16px' }}
-                        onClick={() => handleAddNode('创建文件')}
-                      />
                     </div>
                   </div>
                   <Divider style={{ margin: '14px 0', opacity: 0 }} />
