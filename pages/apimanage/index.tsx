@@ -131,6 +131,39 @@ function getNodeFamily(key: string, data?: DirTreeNode[]) {
   return { parent, curr }
 }
 
+function renameNode(node: DirTreeNode, value: string) {
+  if (node.isDir) {
+    return requests.put('/operateApi/dir', {
+      oldPath: `${node.path}`,
+      newPath: `${node.baseDir}/${value}`,
+    })
+  } else {
+    return requests.put(`/operateApi/${node.id}`, {
+      path: `${node.baseDir}/${value}`,
+    })
+  }
+}
+
+function deleteNode(node: DirTreeNode) {
+  if (node.isDir) {
+    return requests.delete('/operateApi/dir', { data: { path: node.path } })
+  } else {
+    return requests.delete(`/operateApi/${node.id}`)
+  }
+}
+
+function createNode(node: DirTreeNode, value: string) {
+  if (node.isDir) {
+    return requests.post('/operateApi/dir', {
+      path: `${node.baseDir}/${value}`,
+    })
+  } else {
+    return requests.put(`/operateApi/${node.id}`, {
+      path: `${node.baseDir}/${value}`,
+    })
+  }
+}
+
 const ApiManage: FC<ApiManageProps> = () => {
   const [action, setAction] = useState<'创建文件' | '创建目录' | '编辑' | '重命名' | null>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
@@ -215,39 +248,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData])
 
-  function renameNode(node: DirTreeNode, value: string) {
-    if (node.isDir) {
-      return requests.put('/operateApi/dir', {
-        oldPath: `${node.path}`,
-        newPath: `${node.baseDir}/${value}`,
-      })
-    } else {
-      return requests.put(`/operateApi/${node.id}`, {
-        path: `${node.baseDir}/${value}`,
-      })
-    }
-  }
-
-  function deleteNode(node: DirTreeNode) {
-    if (node.isDir) {
-      return requests.delete('/operateApi/dir', { data: { path: node.path } })
-    } else {
-      return requests.delete(`/operateApi/${node.id}`)
-    }
-  }
-
-  function createNode(node: DirTreeNode, value: string) {
-    if (node.isDir) {
-      return requests.post('/operateApi/dir', {
-        path: `${node.baseDir}/${value}`,
-      })
-    } else {
-      return requests.put(`/operateApi/${node.id}`, {
-        path: `${node.baseDir}/${value}`,
-      })
-    }
-  }
-
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
@@ -313,10 +313,6 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleInputBlur = useCallback(() => {
     console.log('action', action)
 
-    // if (currEditingNode?.title === '') return
-    // if (currEditingNode === null) {
-    //   setRefreshFlag(!refreshFlag)
-    // }
     setAction(null)
     setCurrEditingKey(null)
     setRefreshFlag(!refreshFlag)
