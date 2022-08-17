@@ -56,7 +56,7 @@ const tabs = [
   { title: 'Mock', key: '1' },
   { title: '钩子', key: '2' },
   { title: '设置', key: '3' },
-  { title: '调用', key: '4' },
+  // { title: '调用', key: '4' },
 ]
 
 function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
@@ -109,24 +109,25 @@ function findNode(key: string, data: DirTreeNode[] | undefined): DirTreeNode | u
   return rv
 }
 
-function getNodeFamily(key: string, data: DirTreeNode[] | undefined) {
+function getNodeFamily(key: string, data?: DirTreeNode[]) {
   let parent: DirTreeNode | undefined
   let curr: DirTreeNode | undefined
 
-  const inner = (key: string, nodes: DirTreeNode[] | undefined) => {
+  const inner = (key: string, nodes?: DirTreeNode[]) => {
     if (!nodes) return []
     nodes.find(x => {
       if (x.key === key) {
         curr = x
         return [parent, curr]
       } else {
-        if (x.children) parent = x
+        if (!isEmpty(x.children)) parent = x
         return inner(key, x.children ?? undefined)
       }
     })
   }
-
   inner(key, data)
+
+  parent = curr ? parent : undefined
   return { parent, curr }
 }
 
@@ -236,10 +237,9 @@ const ApiManage: FC<ApiManageProps> = () => {
   }
 
   function createNode(node: DirTreeNode, value: string) {
-    console.log('nn', node)
     if (node.isDir) {
       return requests.post('/operateApi/dir', {
-        path: node.path,
+        path: `${node.baseDir}/${value}`,
       })
     } else {
       return requests.put(`/operateApi/${node.id}`, {
@@ -319,6 +319,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     // }
     setAction(null)
     setCurrEditingKey(null)
+    setRefreshFlag(!refreshFlag)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, currEditingKey])
 
@@ -329,7 +330,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
     const node = {
       title: '',
-      baseDir: currEditingNode?.baseDir,
+      baseDir: curr?.currDir ?? '',
       isDir: true,
       key: Date.now().toString(),
     } as DirTreeNode
