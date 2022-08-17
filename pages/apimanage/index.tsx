@@ -232,10 +232,10 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   useEffect(() => {
     getFetcher<OperationResp[]>('/operateApi')
-      .then(x => {
-        console.log('tree', convertToTree(x))
-        return x
-      })
+      // .then(x => {
+      //   console.log('tree', convertToTree(x))
+      //   return x
+      // })
       .then(res => setTreeData(convertToTree(res)))
       .catch((err: Error) => {
         throw err
@@ -291,8 +291,6 @@ const ApiManage: FC<ApiManageProps> = () => {
   }, [])
 
   const handleInputBlur = useCallback(() => {
-    console.log('action', action)
-
     if (action !== '创建文件') {
       setAction(null)
       setCurrEditingKey(null)
@@ -308,21 +306,22 @@ const ApiManage: FC<ApiManageProps> = () => {
 
     const node = {
       title: '',
-      path: curr?.currDir ?? '',
       baseDir: curr?.currDir ?? '',
       isDir: action === '创建目录' ? true : false,
       key: Date.now().toString(),
     } as DirTreeNode
 
+    if (curr?.children === null) curr.children = []
+
     const tree = treeData ?? []
-    if (!parent) {
-      tree.push(node)
-    } else if (curr?.isDir) {
-      if (curr.children === null) curr.children = []
+
+    if (curr?.isDir) {
       curr.children.push(node)
-    } else {
+    } else if (parent) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       parent.children!.push(node)
+    } else {
+      tree.push(node)
     }
 
     setCurrEditingKey(node.key)
@@ -342,7 +341,6 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleSaveGql = (query: string) => {
     if (action === '创建文件') {
       if (!currEditingNode) return
-      console.log('ccc', currEditingNode)
 
       void createNode(currEditingNode, inputValue, query).then(() => {
         setCurrEditingKey(null)
@@ -355,7 +353,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else if (action === '编辑') {
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, content: query })
+        .put(`/operateApi/${selectedNode.id}`, { content: query })
         .then(_ => void message.success('保存成功'))
       setRefreshFlag(!refreshFlag)
     }
@@ -577,9 +575,8 @@ const ApiManage: FC<ApiManageProps> = () => {
                     icon={iconRender}
                     // draggable
                     showIcon
-                    defaultExpandAll
+                    defaultExpandAll={true}
                     defaultExpandParent
-                    defaultSelectedKeys={['0']}
                     switcherIcon={<DownOutlined />}
                     // @ts-ignore
                     treeData={treeData}
