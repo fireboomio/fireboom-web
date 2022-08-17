@@ -63,6 +63,8 @@ export type HookName =
   | 'customResolve'
   | 'mutatingPreResolve'
   | 'mutatingPostResolve'
+  | 'onRequest'
+  | 'onResponse'
 
 export interface HookResp {
   fileName: string

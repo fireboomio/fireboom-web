@@ -31,7 +31,8 @@ const Setting: FC<SettingProps> = ({ node }) => {
 
   useEffect(() => {
     if (!node) return
-    getFetcher<SettingResp>(`/operateApi/setting/${node.id}`, { settingType: settingType })
+    const url = node.id === 0 ? '/operateApi/setting' : `/operateApi/setting/${node.id}`
+    getFetcher<SettingResp>(url, { settingType: settingType })
       .then(res => setSetting(res))
       .catch((err: Error) => {
         throw err
@@ -51,8 +52,10 @@ const Setting: FC<SettingProps> = ({ node }) => {
         : 0,
     }
     setSetting(payload)
+
+    const url = node.id === 0 ? '/operateApi/setting' : `/operateApi/setting/${node.id}`
     void requests
-      .put(`/operateApi/setting/${node.id}`, { ...payload, settingType: settingType })
+      .put(url, { ...payload, settingType: settingType })
       .then(_ => setRefreshFlag(!refreshFlag))
   }
 

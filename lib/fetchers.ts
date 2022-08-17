@@ -4,7 +4,7 @@ import { Result } from '@/interfaces/common'
 
 const requests = axios.create({
   baseURL: '/api/v1',
-  timeout: 3000,
+  timeout: 5000,
 })
 
 requests.interceptors.response.use(

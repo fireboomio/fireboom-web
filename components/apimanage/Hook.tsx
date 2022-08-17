@@ -7,6 +7,7 @@ import { useImmer } from 'use-immer'
 import RcTab from '@/components/rc-tab'
 import { DirTreeNode, HookName, HookResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
+import { isEmpty } from '@/lib/utils'
 
 import styles from './Hook.module.scss'
 
@@ -15,19 +16,19 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 type HookProps = { node?: DirTreeNode }
 
 interface TabT {
-  key: string
-  title: string
+  key: HookName
+  title: HookName
 }
 
 const Hook: FC<HookProps> = ({ node }) => {
-  const [activeKey, setActiveKey] = useState<HookName>('preResolve')
+  const [activeKey, setActiveKey] = useState<HookName>(node?.id === 0 ? 'onRequest' : 'preResolve')
   const [hooks, setHooks] = useImmer<HookResp[]>([])
   const [tabs, setTabs] = useState<TabT[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
     if (!node) return
-    const url = node.id === 0 ? '/operateApi/globalHooks' : `/operateApi/hooks/${node.id}`
+    const url = node.id === 0 ? '/operateApi/hooks' : `/operateApi/hooks/${node.id}`
     getFetcher<HookResp[]>(url)
       .then(res => setHooks(res))
       .catch((err: Error) => {
@@ -37,23 +38,21 @@ const Hook: FC<HookProps> = ({ node }) => {
   }, [node, refreshFlag])
 
   useEffect(() => {
-    if (!node) return
-    const url = node.id === 0 ? '/operateApi/globalHooks' : `/operateApi/hooks/${node.id}`
-    void requests
-      .get<unknown, HookResp[]>(url)
-      .then(res => {
-        setHooks(res)
-        return res
-      })
-      .then(res => setTabs(res.map(x => ({ key: x.hookName, title: x.hookName }))))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node])
+    if (!hooks) return
+    setTabs(hooks.map(x => ({ key: x.hookName, title: x.hookName })))
+  }, [hooks])
+
+  useEffect(() => {
+    if (isEmpty(tabs)) return
+    if (activeKey) return
+    setActiveKey(tabs[0].key)
+  }, [activeKey, tabs])
 
   const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
 
   const save = () => {
     if (!node) return
-    const url = node.id === 0 ? '/operateApi/updateGlobalHooks' : `/operateApi/hooks/${node.id}`
+    const url = node.id === 0 ? '/operateApi/hooks' : `/operateApi/hooks/${node.id}`
     void requests.put(url, {
       hookName: activeKey,
       content: currHook?.content,
@@ -74,7 +73,7 @@ const Hook: FC<HookProps> = ({ node }) => {
 
   function toggleSwitch() {
     if (!node) return
-    const url = node.id === 0 ? '/operateApi/updateGlobalHooks' : `/operateApi/hooks/${node.id}`
+    const url = node.id === 0 ? '/operateApi/hooks' : `/operateApi/hooks/${node.id}`
     void requests.put(url, {
       hookName: activeKey,
       hookSwitch: !currHook?.hookSwitch,
