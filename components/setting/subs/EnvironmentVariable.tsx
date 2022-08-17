@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table, Button, Descriptions, Modal, Form, Input, Divider } from 'antd'
+import { Table, Descriptions, Modal, Form, Input, Divider } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
@@ -10,44 +10,60 @@ import requests from '@/lib/fetchers'
 import styles from './subs.module.scss'
 
 interface DataType {
-  name: string
-  dev?: string
-  pro?: string
+  createTime: string
+  envType: number
+  id: number
+  isDel: number
+  updateTime: string
+  key: string
+  devEnv?: string
+  proEnv?: string
 }
-interface EnvironmentConfig {
-  environmentList: Array<DataType>
-  systemVariable: string
-}
+
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
-  const [environmentConfig, setEnvironmentConfig] = useImmer({} as EnvironmentConfig)
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const [isProEnvVisible, setIsProEnvVisible] = useImmer(false)
+  const [system, setSystem] = useImmer<DataType[]>([])
+  const [id, setID] = useImmer(-1)
+  const [environmentConfig, setEnvironmentConfig] = useImmer<DataType[]>([])
 
   useEffect(() => {
-    void requests.get<unknown, EnvironmentConfig>('/setting/environmentConfig').then(res => {
+    void requests.get<unknown, DataType[]>('/env').then(res => {
+      console.log(res)
       setEnvironmentConfig(res)
+      setSystem(
+        res.filter(item => {
+          item.envType == 1
+        })
+      )
     })
   }, [refreshFlag])
-
   const onFinish = (values: DataType) => {
-    setEnvironmentConfig(draft => {
-      const newEnvList = draft.environmentList?.concat(values)
-      void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
+    console.log('id', id)
+    if (id == -1) {
+      void requests.post('/env', values).then(() => {
         setRefreshFlag(!refreshFlag)
       })
-    })
-    form.setFieldsValue({ name: '', dev: '', pro: '' })
+    } else {
+      const newValues = { ...values, id }
+      void requests.put('/env', newValues).then(() => {
+        setRefreshFlag(!refreshFlag)
+      })
+    }
+    console.log('onFinish', values)
   }
 
-  const handleDeleteEnvVariable = (name: string) => {
-    setEnvironmentConfig(draft => {
-      const newEnvList = draft.environmentList.filter(item => item.name != name)
-      void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
-        setRefreshFlag(!refreshFlag)
-      })
+  const onFinishFailed = (errorInfo: unknown) => {
+    console.log('Failed:', errorInfo)
+  }
+
+  const handleDeleteEnvVariable = (id: number) => {
+    void requests.delete(`/env/${id}`).then(() => {
+      setRefreshFlag(!refreshFlag)
     })
   }
 
@@ -55,49 +71,71 @@ export default function SettingMainEnvironmentVariable() {
     setIsShowSecret(!isShowSecret)
   }
 
-  const showModal = () => {
-    setIsVariableVisible(true)
+  const handleToggleProEnv = () => {
+    setIsProEnvVisible(!isProEnvVisible)
   }
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
+  const showModal = () => {
+    setIsVariableVisible(true)
   }
 
   const columns: ColumnsType<DataType> = [
     {
       title: '变量名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'key',
+      key: 'key',
     },
     {
       title: '开发环境',
-      dataIndex: 'dev',
-      key: 'dev',
+      dataIndex: 'devEnv',
+      key: 'devEnv',
     },
     {
       title: '生产环境',
-      key: 'pro',
-      dataIndex: 'pro',
-      render: (_, { pro }) => <span>{pro}</span>,
+      key: 'proEnv',
+      dataIndex: 'proEnv',
+      render: (_, { proEnv }) => {
+        return isProEnvVisible ? (
+          <div>
+            <span>{proEnv}</span>{' '}
+            <IconFont
+              type="icon-xiaoyanjing-chakan"
+              className="ml-6"
+              onClick={handleToggleProEnv}
+            />{' '}
+          </div>
+        ) : (
+          <div>
+            {' '}
+            <span>**************</span>{' '}
+            <IconFont
+              type="icon-xiaoyanjing-yincang"
+              className="ml-6"
+              onClick={handleToggleProEnv}
+            />
+          </div>
+        )
+      },
     },
 
     {
       title: '操作',
       dataIndex: 'action',
-      render: (_, { name, dev, pro }) => (
+      render: (_, { id, key, devEnv, proEnv }) => (
         <div>
           <IconFont
             type="icon-zhongmingming"
             onClick={() => {
               setIsVariableVisible(true)
-              form.setFieldsValue({ name, dev, pro })
+              form.setFieldsValue({ key, devEnv, proEnv })
+              setID(id)
             }}
             className="mr-3"
           />
           <IconFont
             type="icon-shanchu"
             onClick={() => {
-              handleDeleteEnvVariable(name)
+              handleDeleteEnvVariable(id)
             }}
           />
         </div>
@@ -109,68 +147,78 @@ export default function SettingMainEnvironmentVariable() {
     <>
       <div>
         <Divider className={styles['divider-line']} />
-        <div className="flex items-center justify-between border-gray border-b">
-          <div>
+        <div className="flex justify-between border-gray border-b">
+          <div className="mt-0">
             <span>环境变量</span>
           </div>
-          <Button className={`${styles['save-btn']}  mb-4 mt-4`} onClick={showModal}>
+          <button className={`${styles['save-btn']} mb-4`} onClick={showModal}>
             <span
               className="h-7.5"
               onClick={() => {
+                form.setFieldsValue({ key: '', devEnv: '', proEnv: '' })
                 setIsVariableVisible(true)
+                setID(-1)
               }}
             >
               新建变量
             </span>
-          </Button>
-          <Modal
-            title="新增环境变量"
-            bodyStyle={{
-              width: '549px',
-              height: '200px',
-              margin: '10px auto',
-            }}
-            visible={isVariableVisible}
-            onOk={() => setIsVariableVisible(false)}
-            onCancel={() => setIsVariableVisible(false)}
-            okText={
-              <div
-                className={styles['save-env-btn']}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
-                <span>保存</span>
-              </div>
-            }
-            cancelText={<span className="w-10">取消</span>}
-            okType="text"
-          >
-            <Form
-              form={form}
-              className="ml-15"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 15 }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              labelAlign="left"
-            >
-              <Form.Item label="名称" name="name">
-                <Input />
-              </Form.Item>
-              <Form.Item label="开发环境" name="dev">
-                <Input />
-              </Form.Item>
-              <Form.Item label="生产环境" name="pro">
-                <Input />
-              </Form.Item>
-            </Form>
-          </Modal>
+          </button>
         </div>
+        <Modal
+          mask={false}
+          title="新增环境变量"
+          forceRender={true}
+          transitionName=""
+          bodyStyle={{
+            width: '549px',
+            height: '200px',
+            margin: '10px auto',
+          }}
+          visible={isVariableVisible}
+          onOk={() => setIsVariableVisible(false)}
+          onCancel={() => setIsVariableVisible(false)}
+          okText={
+            <span
+              className={styles['save-env-btn']}
+              onClick={() => {
+                form.submit()
+              }}
+            >
+              <span>保存</span>
+            </span>
+          }
+          cancelText={<span className="w-10">取消</span>}
+          okType="text"
+        >
+          <Form
+            name="envList"
+            form={form}
+            className="ml-15"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 15 }}
+            onFinish={values => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              void onFinish(values)
+            }}
+            autoComplete="off"
+            onFinishFailed={onFinishFailed}
+            labelAlign="left"
+          >
+            <Form.Item label="名称" name="key">
+              <Input />
+            </Form.Item>
+            <Form.Item label="开发环境" name="devEnv">
+              <Input />
+            </Form.Item>
+            <Form.Item label="生产环境" name="proEnv">
+              <Input />
+            </Form.Item>
+          </Form>
+        </Modal>
         <Table
           columns={columns}
-          dataSource={environmentConfig.environmentList}
-          rowKey={record => record.name}
+          dataSource={environmentConfig}
+          rowKey={record => record.key}
           pagination={false}
           className="mb-3 "
         />
@@ -191,11 +239,11 @@ export default function SettingMainEnvironmentVariable() {
               borderBottom: 'none',
             }}
           >
-            <Descriptions.Item label="FIREBOOM_ADMINZ_SECR">
+            <Descriptions.Item label={system[0]?.key ? system[0]?.key : 'FIREBOOM_ADMINZ_SECR'}>
               <span onClick={handleToggleSecret}>
                 {isShowSecret ? (
                   <div>
-                    {environmentConfig.systemVariable}
+                    {system[0]?.devEnv}
                     <IconFont type="icon-xiaoyanjing-chakan" className="ml-6" />
                   </div>
                 ) : (

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { PlusOutlined } from '@ant-design/icons'
 import { Form, Input, Button, Select, Switch, Divider } from 'antd'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -45,6 +45,7 @@ const formItemLayoutWithOutLabel = {
 export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
@@ -55,17 +56,18 @@ export default function SettingCrossdomain() {
       key: key,
       val: value,
     })
-    void getData()
   }, [])
 
-  const getData = useCallback(async () => {
-    const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
-    setCorsConfig(result)
-  }, [])
+  // const getData = useCallback(async () => {
+  //   const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
+  //   setCorsConfig(result)
+  // }, [])
 
   useEffect(() => {
-    void getData()
-  }, [])
+    void requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration').then(res => {
+      setCorsConfig(res)
+    })
+  }, [refreshFlag])
 
   return (
     <>
@@ -117,13 +119,17 @@ export default function SettingCrossdomain() {
                                 void postRequest(
                                   'allowedOrigins',
                                   form.getFieldValue('allowedOrigins') as Array<string>
-                                )
+                                ).then(() => {
+                                  setRefreshFlag(!refreshFlag)
+                                })
                               }}
                               onPressEnter={() => {
                                 void postRequest(
                                   'allowedOrigins',
                                   form.getFieldValue('allowedOrigins') as Array<string>
-                                )
+                                ).then(() => {
+                                  setRefreshFlag(!refreshFlag)
+                                })
                               }}
                             />
                             {fields.length > 1 ? (
@@ -173,7 +179,9 @@ export default function SettingCrossdomain() {
                 onChange={(values: string) => {
                   const newMethodsList = corsConfig.allowedMethods.filter(item => item != values)
                   newMethodsList.unshift(values)
-                  void postRequest('allowedMethods', newMethodsList)
+                  void postRequest('allowedMethods', newMethodsList).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
                 }}
               >
                 {corsConfig.allowedMethods.map(item => (
@@ -190,13 +198,17 @@ export default function SettingCrossdomain() {
                   void postRequest(
                     'allowedHeaders',
                     (form.getFieldValue('allowedHeaders') as string).split(',')
-                  )
+                  ).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
                 }}
                 onPressEnter={() => {
                   void postRequest(
                     'allowedHeaders',
                     (form.getFieldValue('allowedHeaders') as string).split(',')
-                  )
+                  ).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
                 }}
               />
             </Form.Item>
@@ -207,13 +219,17 @@ export default function SettingCrossdomain() {
                   void postRequest(
                     'exposedHeaders',
                     (form.getFieldValue('exposedHeaders') as string).split(',')
-                  )
+                  ).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
                 }}
                 onPressEnter={() => {
                   void postRequest(
                     'exposedHeaders',
                     (form.getFieldValue('exposedHeaders') as string).split(',')
-                  )
+                  ).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
                 }}
               />
             </Form.Item>
@@ -221,10 +237,18 @@ export default function SettingCrossdomain() {
               <Form.Item name="maxAge" validateTrigger={['onChange', 'onBlur']} noStyle>
                 <Input
                   onBlur={() => {
-                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string))
+                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
+                      () => {
+                        setRefreshFlag(!refreshFlag)
+                      }
+                    )
                   }}
                   onPressEnter={() => {
-                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string))
+                    void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
+                      () => {
+                        setRefreshFlag(!refreshFlag)
+                      }
+                    )
                   }}
                 />
               </Form.Item>
@@ -239,7 +263,9 @@ export default function SettingCrossdomain() {
               >
                 <Switch
                   onChange={isChecked => {
-                    void postRequest('allowCredentials', isChecked == false ? 0 : 1)
+                    void postRequest('allowCredentials', isChecked == false ? 0 : 1).then(() => {
+                      setRefreshFlag(!refreshFlag)
+                    })
                   }}
                 />
               </Form.Item>

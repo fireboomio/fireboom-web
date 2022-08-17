@@ -1,6 +1,6 @@
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { Form, Input, Switch, Button, Divider } from 'antd'
-import { useCallback, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -13,10 +13,6 @@ interface SecurConfig {
   allowedHosts: Array<string>
 }
 
-interface RedirectConfig {
-  redirectURLs: Array<string>
-}
-
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
@@ -25,35 +21,24 @@ const formItemLayoutWithOutLabel = {
 }
 
 function AuthMainSetting() {
-  const [redirectConfig, setRedirectConfig] = useImmer({} as Array<string>)
+  const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
   const [form] = Form.useForm()
-  const onFinish = (_values: RedirectConfig) => {
-    void requests.post('/auth/redirectUrl', {
-      redirectURLs: ['host1', 'host1'],
-    })
-  }
-  const getData = useCallback(async () => {
-    const result = await requests.get<unknown, Array<string>>('/auth/redirectUrl')
-    setRedirectConfig(result)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
-    // void requests.post('/auth/redirectUrl', {
-    //   redirectURLs: ['host1', 'host1'],
-    // })
-    void getData()
+    void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
+      setRedirectURLs(res)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [refreshFlag])
 
   return (
     <>
-      {redirectConfig?.length > 0 ? (
+      {redirectURLs?.length > 0 ? (
         <div className={`${styles['form-contain']} `}>
           <Form
             form={form}
-            initialValues={{ redirectURLs: redirectConfig }}
-            onFinish={onFinish}
+            initialValues={{ redirectURLs: redirectURLs }}
             labelAlign="left"
             labelCol={{
               xs: { span: 3 },
@@ -82,20 +67,33 @@ function AuthMainSetting() {
                             <Input
                               placeholder="请输入域名"
                               style={{ width: '60%' }}
-                              defaultValue={redirectConfig[index]}
+                              defaultValue={redirectURLs[index]}
                               onBlur={() => {
-                                void requests.post('/auth/redirectUrl', {
-                                  redirectURLs: form.getFieldValue('redirectURLs') as Array<string>,
-                                })
+                                void requests
+                                  .post('/auth/redirectUrl', {
+                                    redirectURLs: form.getFieldValue(
+                                      'redirectURLs'
+                                    ) as Array<string>,
+                                  })
+                                  .then(() => {
+                                    setRefreshFlag(!refreshFlag)
+                                  })
                               }}
                               onPressEnter={() => {
-                                void requests.post('/auth/redirectUrl', {
-                                  redirectURLs: form.getFieldValue('redirectURLs') as Array<string>,
-                                })
+                                void requests
+                                  .post('/auth/redirectUrl', {
+                                    redirectURLs: form.getFieldValue(
+                                      'redirectURLs'
+                                    ) as Array<string>,
+                                  })
+                                  .then(() => {
+                                    setRefreshFlag(!refreshFlag)
+                                  })
                               }}
                             />
                             {fields.length > 1 ? (
-                              <MinusCircleOutlined
+                              <IconFont
+                                type="icon-guanbi"
                                 className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   void requests
@@ -106,6 +104,7 @@ function AuthMainSetting() {
                                     })
                                     .then(() => {
                                       remove(index)
+                                      setRefreshFlag(!refreshFlag)
                                     })
                                 }}
                               />
@@ -120,9 +119,7 @@ function AuthMainSetting() {
                         style={{ width: '48%' }}
                         icon={<PlusOutlined />}
                         className="text-gray-500/60"
-                        onClick={() => {
-                          add()
-                        }}
+                        onClick={() => add()}
                       >
                         新增域名
                       </Button>
@@ -144,11 +141,16 @@ function AuthMainSetting() {
 export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const onFinish = (_values: SecurConfig) => {
-    void requests.post('/global', {
-      key: 'enableGraphQLEndpoint',
-      val: 0,
-    })
+    void requests
+      .post('/global', {
+        key: 'enableGraphQLEndpoint',
+        val: 0,
+      })
+      .then(() => {
+        setRefreshFlag(!refreshFlag)
+      })
     // void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
   }
   const postRequest = async (key: string, value: string | Array<string> | number) => {
@@ -158,27 +160,23 @@ export default function SettingMainSecurity() {
     })
   }
 
-  const getData = useCallback(async () => {
-    const result = await requests.get<unknown, SecurConfig>('/setting/securityConfig')
-    setSecurConfig(result)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   useEffect(() => {
-    void getData()
+    void requests.get<unknown, SecurConfig>('/setting/securityConfig').then(res => {
+      setSecurConfig(res)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [refreshFlag])
 
   return (
     <>
       <Divider className={styles['divider-line']} />
-      <button
+      {/* <button
         onClick={() => {
           form.submit()
         }}
       >
         提交
-      </button>
+      </button> */}
       {securConfig.allowedHosts?.length > 0 ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
@@ -210,7 +208,11 @@ export default function SettingMainSecurity() {
                   className={styles['switch-edit-btn']}
                   size="small"
                   onChange={isChecked => {
-                    void postRequest('enableGraphQLEndpoint', isChecked == false ? 0 : 1)
+                    void postRequest('enableGraphQLEndpoint', isChecked == false ? 0 : 1).then(
+                      () => {
+                        setRefreshFlag(!refreshFlag)
+                      }
+                    )
                   }}
                 />
               </Form.Item>
@@ -243,14 +245,18 @@ export default function SettingMainSecurity() {
                                 void postRequest(
                                   'allowedHosts',
                                   form.getFieldValue('allowedHosts') as Array<string>
-                                )
+                                ).then(() => {
+                                  setRefreshFlag(!refreshFlag)
+                                })
                               }}
                               onPressEnter={e => {
                                 if (e.target.value == '') return
                                 void postRequest(
                                   'allowedHosts',
                                   form.getFieldValue('allowedHosts') as Array<string>
-                                )
+                                ).then(() => {
+                                  setRefreshFlag(!refreshFlag)
+                                })
                               }}
                             />
                             {fields.length > 1 ? (
@@ -279,9 +285,7 @@ export default function SettingMainSecurity() {
                       <Button
                         type="dashed"
                         style={{ width: '48%' }}
-                        onClick={() => {
-                          add()
-                        }}
+                        onClick={() => add()}
                         icon={<PlusOutlined />}
                         className="text-gray-500/60"
                       >
