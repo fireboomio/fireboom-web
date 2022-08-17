@@ -29,6 +29,7 @@ function AuthMainSetting() {
     void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
       setRedirectURLs(res)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshFlag])
 
   return (
@@ -163,6 +164,7 @@ export default function SettingMainSecurity() {
     void requests.get<unknown, SecurConfig>('/setting/securityConfig').then(res => {
       setSecurConfig(res)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshFlag])
 
   return (
