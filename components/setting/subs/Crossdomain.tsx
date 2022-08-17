@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { PlusOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Select, Switch } from 'antd'
+import { Form, Input, Button, Select, Switch, Divider } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -69,6 +69,7 @@ export default function SettingCrossdomain() {
 
   return (
     <>
+      <Divider className={styles['divider-line']} />
       {corsConfig.allowedOrigins ? (
         <div className={`${styles['form-contain']}`}>
           <Form

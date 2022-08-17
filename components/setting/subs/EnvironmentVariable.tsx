@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table, Button, Descriptions, Modal, Form, Input } from 'antd'
+import { Table, Button, Descriptions, Modal, Form, Input, Divider } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useCallback, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -24,38 +24,29 @@ export default function SettingMainEnvironmentVariable() {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
   const [environmentConfig, setEnvironmentConfig] = useImmer({} as EnvironmentConfig)
-
-  const getData = useCallback(async () => {
-    const result = await requests.get<unknown, EnvironmentConfig>('/setting/environmentConfig')
-    setEnvironmentConfig(result)
-  }, [])
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
-    void getData()
-  }, [])
+    void requests.get<unknown, EnvironmentConfig>('/setting/environmentConfig').then(res => {
+      setEnvironmentConfig(res)
+    })
+  }, [refreshFlag])
 
   const onFinish = (values: DataType) => {
     setEnvironmentConfig(draft => {
-      const newEnvList = draft.environmentList.concat(values)
+      const newEnvList = draft.environmentList?.concat(values)
       void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
-        void getData()
+        setRefreshFlag(!refreshFlag)
       })
     })
+    form.setFieldsValue({ name: '', dev: '', pro: '' })
   }
-
-  // const handleEditVariable = (key: number) => {
-  //   setVariableData(
-  //     variableData.filter((row) => {
-  //       return row.key !== key
-  //     })
-  //   )
-  // }
 
   const handleDeleteEnvVariable = (name: string) => {
     setEnvironmentConfig(draft => {
       const newEnvList = draft.environmentList.filter(item => item.name != name)
       void requests.post('/setting', { key: 'environmentList', val: newEnvList }).then(() => {
-        void getData()
+        setRefreshFlag(!refreshFlag)
       })
     })
   }
@@ -93,13 +84,13 @@ export default function SettingMainEnvironmentVariable() {
     {
       title: '操作',
       dataIndex: 'action',
-      render: (_, { name }) => (
+      render: (_, { name, dev, pro }) => (
         <div>
           <IconFont
             type="icon-zhongmingming"
             onClick={() => {
-              // handleEditVariable(key)
-              console.log('Success:')
+              setIsVariableVisible(true)
+              form.setFieldsValue({ name, dev, pro })
             }}
             className="mr-3"
           />
@@ -117,68 +108,64 @@ export default function SettingMainEnvironmentVariable() {
   return (
     <>
       <div>
+        <Divider className={styles['divider-line']} />
         <div className="flex items-center justify-between border-gray border-b">
           <div>
             <span>环境变量</span>
           </div>
-          <div>
-            <Button
-              className={`${styles['variable-btn']} flex justify-center items-center mb-3`}
-              onClick={showModal}
+          <Button className={`${styles['save-btn']}  mb-4 mt-4`} onClick={showModal}>
+            <span
+              className="h-7.5"
+              onClick={() => {
+                setIsVariableVisible(true)
+              }}
             >
-              <span
-                className="h-7.5"
+              新建变量
+            </span>
+          </Button>
+          <Modal
+            title="新增环境变量"
+            bodyStyle={{
+              width: '549px',
+              height: '200px',
+              margin: '10px auto',
+            }}
+            visible={isVariableVisible}
+            onOk={() => setIsVariableVisible(false)}
+            onCancel={() => setIsVariableVisible(false)}
+            okText={
+              <div
+                className={styles['save-env-btn']}
                 onClick={() => {
-                  setIsVariableVisible(true)
+                  form.submit()
                 }}
               >
-                新建变量
-              </span>
-            </Button>
-            <Modal
-              title="新增环境变量"
-              bodyStyle={{
-                width: '549px',
-                height: '200px',
-                margin: '10px auto',
-              }}
-              visible={isVariableVisible}
-              onOk={() => setIsVariableVisible(false)}
-              onCancel={() => setIsVariableVisible(false)}
-              okText={
-                <div
-                  className={styles['save-env-btn']}
-                  onClick={() => {
-                    form.submit()
-                  }}
-                >
-                  <span>保存</span>
-                </div>
-              }
-              cancelText={<span className="w-10">取消</span>}
-              okType="text"
+                <span>保存</span>
+              </div>
+            }
+            cancelText={<span className="w-10">取消</span>}
+            okType="text"
+          >
+            <Form
+              form={form}
+              className="ml-15"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 15 }}
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+              labelAlign="left"
             >
-              <Form
-                form={form}
-                className="ml-15"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 15 }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                labelAlign="left"
-              >
-                <Form.Item label="名称" name="name">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="开发环境" name="dev">
-                  <Input />
-                </Form.Item>
-                <Form.Item label="生产环境" name="pro">
-                  <Input />
-                </Form.Item>
-              </Form>
-            </Modal>
-          </div>
+              <Form.Item label="名称" name="name">
+                <Input />
+              </Form.Item>
+              <Form.Item label="开发环境" name="dev">
+                <Input />
+              </Form.Item>
+              <Form.Item label="生产环境" name="pro">
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
         </div>
         <Table
           columns={columns}

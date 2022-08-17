@@ -27,7 +27,7 @@ export default function SettingMainVersion() {
   return (
     <>
       <div>
-        <Divider type="horizontal" />
+        <Divider className={styles['divider-line']} />
         <div className="flex justify-center mb-8 ml-5">
           <Descriptions
             column={1}

@@ -3,7 +3,7 @@ import type { RadioChangeEvent } from 'antd'
 import { Descriptions, Divider, Radio, Switch, Input } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { useCallback, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -32,23 +32,30 @@ export default function SettingMainVersion() {
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [systemTime, setSystemTime] = useImmer('')
-
-  const onChange = (e: RadioChangeEvent, key: string) => {
-    void requests.post('/setting', { key: key, val: e.target.value as string })
-    void getData()
-  }
-
-  const getData = useCallback(async () => {
-    const result = await requests.get<unknown, systemConfig>('/setting/systemConfig')
-    setSystemConfig(result)
-  }, [])
+  const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
-    void requests.get<unknown, string>('/setting/getTime').then(res => {
-      setSystemTime(calTime(res))
+    void requests.get<unknown, systemConfig>('/setting/systemConfig').then(res => {
+      setSystemConfig(res)
     })
-    void getData()
+  }, [refreshFlag])
+
+  useEffect(() => {
+    void requests
+      .get<unknown, string>('/setting/getTime')
+      .then(res => {
+        setSystemTime(calTime(res))
+      })
+      .then(() => {
+        setRefreshFlag(!refreshFlag)
+      })
   }, [])
+
+  const onChange = (e: RadioChangeEvent, key: string) => {
+    void requests.post('/setting', { key: key, val: e.target.value as string }).then(() => {
+      setRefreshFlag(!refreshFlag)
+    })
+  }
 
   const calTime = (initTime: string) => {
     // console.log(dayjs.duration(24, 'hours').humanize())
@@ -58,17 +65,17 @@ export default function SettingMainVersion() {
     return `${time.$d.days}天 ${time.$d.hours}时 ${time.$d.minutes}分 ${time.$d.seconds}秒`
   }
 
-  const editPort = async (key: string, value: string) => {
+  const editPort = (key: string, value: string) => {
     if (value == '') return
-    await requests.post('/setting', { key: key, val: value })
-    void getData()
+    void requests.post('/setting', { key: key, val: value }).then(() => {
+      setRefreshFlag(!refreshFlag)
+    })
   }
   return (
     <>
       {systemConfig.apiPort ? (
         <div>
-          <Divider type="horizontal" className="mt-1" />
-
+          <Divider className={styles['divider-line']} />
           <div className="flex justify-center ml-5 ">
             <Descriptions
               colon={false}
