@@ -202,7 +202,7 @@ const Detail: FC<DetailProps> = ({ node }) => {
     return data[0].directiveNames?.includes('internalOperation')
   }
 
-  if (!node) return <></>
+  if (!node || node.isDir) return <></>
 
   return (
     <>
