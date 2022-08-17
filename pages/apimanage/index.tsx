@@ -154,14 +154,15 @@ function deleteNode(node: DirTreeNode) {
   }
 }
 
-function createNode(node: DirTreeNode, value: string) {
+function createNode(node: DirTreeNode, value: string, content?: string) {
   if (node.isDir) {
     return requests.post('/operateApi/dir', {
       path: `${node.baseDir}/${value}`,
     })
   } else {
-    return requests.put(`/operateApi/${node.id}`, {
+    return requests.post('/operateApi', {
       path: `${node.baseDir}/${value}`,
+      content: content,
     })
   }
 }
@@ -270,6 +271,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         break
       case '创建文件':
+        currEditingNode.title = inputValue
         setQuery('')
         setIsModalVisible(true)
         break
@@ -291,9 +293,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleInputBlur = useCallback(() => {
     console.log('action', action)
 
-    setAction(null)
-    setCurrEditingKey(null)
-    setRefreshFlag(!refreshFlag)
+    if (action !== '创建文件') {
+      setAction(null)
+      setCurrEditingKey(null)
+      setRefreshFlag(!refreshFlag)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, currEditingKey])
 
@@ -305,6 +309,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     const node = {
       title: '',
       path: curr?.currDir ?? '',
+      baseDir: curr?.currDir ?? '',
       isDir: action === '创建目录' ? true : false,
       key: Date.now().toString(),
     } as DirTreeNode
@@ -335,16 +340,15 @@ const ApiManage: FC<ApiManageProps> = () => {
   }
 
   const handleSaveGql = (query: string) => {
-    // 新增
     if (action === '创建文件') {
-      console.log('ccc', currEditingKey)
       if (!currEditingNode) return
-      void requests
-        .post('/operateApi', {
-          title: `${currEditingNode.path}/${currEditingNode.title}`,
-          content: query,
-        })
-        .then(_ => void message.success('保存成功'))
+      console.log('ccc', currEditingNode)
+
+      void createNode(currEditingNode, inputValue, query).then(() => {
+        setCurrEditingKey(null)
+        setRefreshFlag(!refreshFlag)
+        void message.success('保存成功')
+      })
 
       // setAction(null)
       // setRefreshFlag(!refreshFlag)
