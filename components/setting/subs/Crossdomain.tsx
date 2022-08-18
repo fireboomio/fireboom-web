@@ -175,6 +175,7 @@ export default function SettingCrossdomain() {
             <Form.Item name="allowedMethods" label="允许方法" className="-mt-3">
               <Select
                 style={{ width: '90%' }}
+                mode="multiple"
                 placeholder="请选择..."
                 onChange={(values: string) => {
                   const newMethodsList = corsConfig.allowedMethods.filter(item => item != values)
@@ -184,7 +185,7 @@ export default function SettingCrossdomain() {
                   })
                 }}
               >
-                {corsConfig.allowedMethods.map(item => (
+                {['GET', 'POST', 'PUT', 'DELETE'].map(item => (
                   <Select.Option key={item} value={item}>
                     {item}
                   </Select.Option>
