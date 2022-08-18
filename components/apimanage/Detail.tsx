@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons'
-import { Badge, message, Select, Table } from 'antd'
+import { Badge, Input, message, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 
@@ -12,13 +12,13 @@ import {
   OperationResp,
   DirTreeNode,
 } from '@/interfaces/apimanage'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
-type DetailProps = { node: DirTreeNode | undefined }
+type DetailProps = { nodeId: number | undefined }
 
 type Param = ParameterT & {
   source?: string
@@ -98,14 +98,16 @@ const injectColumns = [
   { title: '来源', dataIndex: 'source' },
 ]
 
-const Detail: FC<DetailProps> = ({ node }) => {
+const Detail: FC<DetailProps> = ({ nodeId }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlQueryDef, setGqlQueryDef] = useState<readonly OperationDefinitionNode[]>(undefined!)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlSchemaDef, setGqlSchemaDef] = useState<readonly DefinitionNode[]>(undefined!)
+  const [node, setNode] = useState<DirTreeNode>()
   const [dataSource, setDataSource] = useState<TableSource[] | undefined>([])
   const [reqDataSource, setReqDataSource] = useState<ParameterT[]>([])
   const [tabActiveKey, setTabActiveKey] = useState('0')
+  const [editRemark, setEditRemark] = useState(false)
   const [rbac, setRbac] = useState<{ key: string; value: string[] | undefined }>()
   const [method, setMethod] = useState<'POST' | 'GET'>()
 
@@ -123,10 +125,19 @@ const Detail: FC<DetailProps> = ({ node }) => {
       })
   }, [])
 
+  // useEffect(() => {
+  //   if (!nodeId || nodeId === 0) return
+
+  //   void getFetcher<OperationResp>(`/operateApi/${nodeId}`).then(res => setNode(res))
+  // }, [nodeId])
+
   useEffect(() => {
-    if (!node || node.isDir) return
-    getFetcher<OperationResp>(`/operateApi/${node.id}`)
-      // getFetcher('/gql-query-str')
+    if (!nodeId || nodeId === 0) return
+    getFetcher<OperationResp>(`/operateApi/${nodeId}`)
+      .then(res => {
+        setNode(res as DirTreeNode)
+        return res
+      })
       .then(res => parse(res.content, { noLocation: true }).definitions)
       .then(def => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
       .then(() => setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST'))
@@ -134,7 +145,7 @@ const Detail: FC<DetailProps> = ({ node }) => {
         throw err
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node])
+  }, [nodeId])
 
   useEffect(() => {
     // console.log(gqlSchemaDef, 'schema')
@@ -202,20 +213,44 @@ const Detail: FC<DetailProps> = ({ node }) => {
     return data[0].directiveNames?.includes('internalOperation')
   }
 
-  if (!node) return <></>
+  function updateRemark(value: string) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    void requests
+      .put<unknown, DirTreeNode>(`/operateApi/${node!.id}`, { ...node, remark: value })
+      .then(res => setNode(res))
+    setEditRemark(false)
+  }
+
+  if (!node || node.isDir) return <></>
 
   return (
     <>
       <div className="flex items-center">
-        <div className={`flex items-center space-x-1 ${styles.label}`}>
-          <span className="text-12px  text-[#5F6269] leading-17px">注册接口</span>
-          <EditOutlined />
+        <div className={'flex items-center flex-shrink-0 space-x-1'}>
+          {editRemark ? (
+            <Input
+              placeholder="请输入备注"
+              size="small"
+              defaultValue={node.remark || node.title}
+              onPressEnter={e => updateRemark(e.target.value)}
+              onKeyUp={(e: React.KeyboardEvent) => e.key == 'Escape' && setEditRemark(false)}
+              onBlur={() => setEditRemark(false)}
+            />
+          ) : (
+            <span className="text-12px  text-[#5F6269] leading-17px">
+              {node.remark || node.title}
+            </span>
+          )}
+          <EditOutlined onClick={() => setEditRemark(!editRemark)} />
         </div>
         <div className="flex items-center flex-1">
-          <div className="flex items-center space-x-1">
-            <span className="text-[#AFB0B4]">#23234456</span>
-            <IconFont type="icon-fuzhi" className="text-[#AFB0B4]" />
-            <EditOutlined className="text-[#AFB0B4]" />
+          <div className="flex items-center space-x-1 ml-4">
+            <span className="text-[#AFB0B4]">{node.id}</span>
+            <IconFont
+              type="icon-fuzhi"
+              className="text-[#AFB0B4]"
+              onClick={() => void navigator.clipboard.writeText(`${node.id}`)}
+            />
           </div>
           <div className="flex items-center space-x-1 ml-7">
             {isInternal(dataSource) ? (
@@ -234,13 +269,7 @@ const Detail: FC<DetailProps> = ({ node }) => {
       </div>
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>{method}</span>
-        <span className="flex-1 text-[#000000D9]">
-          {node.path
-            .split('/')
-            .slice(0, node.path.split('/').length)
-            .join('/')
-            .replace(/\.graphql(\.off)?$/, '')}
-        </span>
+        <span className="flex-1 text-[#000000D9]">{node?.path ?? ''}</span>
       </div>
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>

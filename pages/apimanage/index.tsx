@@ -556,11 +556,6 @@ const ApiManage: FC<ApiManageProps> = () => {
                           void message.success('刷新完成')
                         }}
                       />
-                      <IconFont
-                        type="icon-fuzhi"
-                        style={{ fontSize: '16px' }}
-                        onClick={() => handleAddNode('创建文件')}
-                      />
                     </div>
                   </div>
                   <Divider style={{ margin: '14px 0', opacity: 0 }} />
@@ -623,7 +618,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
                       <div className="overflow-auto h-[calc(100vh_-_98px)]">
                         {activeKey === '0' ? (
-                          <Detail node={selectedNode} />
+                          <Detail nodeId={selectedNode?.id} />
                         ) : activeKey === '1' ? (
                           <Mock node={selectedNode} />
                         ) : activeKey === '2' ? (
