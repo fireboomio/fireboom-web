@@ -618,7 +618,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
                       <div className="overflow-auto h-[calc(100vh_-_98px)]">
                         {activeKey === '0' ? (
-                          <Detail node={selectedNode} />
+                          <Detail nodeId={selectedNode?.id} />
                         ) : activeKey === '1' ? (
                           <Mock node={selectedNode} />
                         ) : activeKey === '2' ? (
