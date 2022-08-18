@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table, Descriptions, Modal, Form, Input, Divider } from 'antd'
+import { Table, Descriptions, Modal, Form, Input, Divider, Popconfirm } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
@@ -132,12 +132,22 @@ export default function SettingMainEnvironmentVariable() {
             }}
             className="mr-3"
           />
-          <IconFont
-            type="icon-shanchu"
-            onClick={() => {
+          <Popconfirm
+            title="确定要删除?"
+            okText="确定"
+            cancelText="取消"
+            onConfirm={e => {
+              // @ts-ignore
+              e.stopPropagation()
               handleDeleteEnvVariable(id)
             }}
-          />
+            onCancel={e => {
+              // @ts-ignore
+              e.stopPropagation()
+            }}
+          >
+            <IconFont type="icon-shanchu" onClick={e => e.stopPropagation()} />
+          </Popconfirm>
         </div>
       ),
     },
@@ -204,7 +214,23 @@ export default function SettingMainEnvironmentVariable() {
             onFinishFailed={onFinishFailed}
             labelAlign="left"
           >
-            <Form.Item label="名称" name="key">
+            <Form.Item
+              label="名称"
+              name="key"
+              rules={[
+                { required: true, message: '名称不能为空' },
+                {
+                  validator: (rule, value) => {
+                    const index = environmentConfig.findIndex(item => item.key == value)
+                    if (index != -1) {
+                      return Promise.reject('名称重复')
+                    } else {
+                      return Promise.resolve()
+                    }
+                  },
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
             <Form.Item label="开发环境" name="devEnv">

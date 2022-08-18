@@ -32,6 +32,7 @@ export default function SettingMainVersion() {
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [systemTime, setSystemTime] = useImmer('')
+  const [refreshTime, setRefreshTime] = useState<boolean>()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
@@ -47,9 +48,12 @@ export default function SettingMainVersion() {
         setSystemTime(calTime(res))
       })
       .then(() => {
+        setInterval(() => {
+          setRefreshTime(!refreshTime)
+        }, 1000)
         setRefreshFlag(!refreshFlag)
       })
-  }, [])
+  }, [refreshTime])
 
   const onChange = (e: RadioChangeEvent, key: string) => {
     void requests.post('/setting', { key: key, val: e.target.value as string }).then(() => {
