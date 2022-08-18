@@ -354,7 +354,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     } else if (action === '编辑') {
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/${selectedNode.id}`, { ...selectedNode, content: query })
+        .put(`/operateApi/content/${selectedNode.id}`, { content: query })
         .then(_ => void message.success('保存成功'))
       setRefreshFlag(!refreshFlag)
     }
