@@ -214,8 +214,8 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   }
 
   function updateRemark(value: string) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     void requests
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .put<unknown, DirTreeNode>(`/operateApi/${node!.id}`, { ...node, remark: value })
       .then(res => setNode(res))
     setEditRemark(false)
