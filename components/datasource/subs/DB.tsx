@@ -210,7 +210,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
           dispatch({ type: 'fetched', data: res })
         })
       })
@@ -237,7 +237,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     }
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
-      .then((res) => {
+      .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
@@ -455,7 +455,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 12 }}
-              onFinish={(values) => {
+              onFinish={values => {
                 void onFinish(values)
               }}
               onFinishFailed={onFinishFailed}
@@ -487,8 +487,12 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>
 
-              <Form.Item label="类型:" name="dbType">
-                <Select placeholder="请输入...">
+              <Form.Item
+                label="类型:"
+                name="dbType"
+                rules={[{ required: true, message: '类型不能为空' }]}
+              >
+                <Select placeholder="请输入..." defaultValue="MySQL">
                   <Select.Option value="MySQL">MySql</Select.Option>
                   <Select.Option value="SQLITE">SQLITE</Select.Option>
                   <Select.Option value="PGSQL">PGSQL</Select.Option>
@@ -498,7 +502,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
               <Form.Item label="类型:" name="appendType">
                 <Radio.Group
-                  onChange={(e) => {
+                  onChange={e => {
                     typeChange(e.target.value as string)
                   }}
                 >

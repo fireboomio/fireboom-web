@@ -12,6 +12,7 @@ import {
   Select,
   Table,
   Tag,
+  Modal,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
@@ -23,6 +24,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
+import GraphiQLApp from '../../../pages/graphiql'
 import styles from './Graphal.module.scss'
 
 interface Props {
@@ -73,6 +75,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
+  const [isModalVisible, setIsModalVisible] = useImmer(false)
+
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
@@ -90,7 +94,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
     console.log('SuccessValues:', values)
-    values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
+    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
     const index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
     const fileId = (config.loadSchemaFromString as string)?.substring(index + 1) //文件id
@@ -137,7 +141,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
       })
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
-      .then((res) => {
+      .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
@@ -168,7 +172,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
           dispatch({ type: 'fetched', data: res })
         })
       })
@@ -180,6 +184,10 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
     console.log('删除文件')
     setDeleteFlag(true)
     setFile({} as unknown as UploadFile)
+  }
+
+  function testGql() {
+    setIsModalVisible(true)
   }
 
   if (!content) {
@@ -208,7 +216,10 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 className={styles['switch-check-btn']}
               />
               <div className="w-160px">
-                <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+                <Button
+                  className={`${styles['connect-check-btn-common']} w-16 ml-4`}
+                  onClick={() => testGql()}
+                >
                   <span>测试</span>
                 </Button>
                 <Button
@@ -404,9 +415,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={(values) => {
-                void onFinish(values as Config)
-              }}
+              onFinish={values => void onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger="onBlur"
@@ -624,6 +633,20 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
           </div>
         </>
       )}
+
+      <Modal
+        title="GraphiQL"
+        visible={isModalVisible}
+        onOk={() => setIsModalVisible(false)}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        centered
+        bodyStyle={{ height: '90vh' }}
+        width={'90vw'}
+      >
+        {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+        <GraphiQLApp url={config.url as string} data={''} onSave={() => {}} />
+      </Modal>
     </>
   )
 }

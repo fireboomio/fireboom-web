@@ -238,7 +238,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
             />
           ) : (
             <span className="text-12px  text-[#5F6269] leading-17px">
-              {node.remark || node.title}
+              {node.remark || '暂无备注'}
             </span>
           )}
           <EditOutlined onClick={() => setEditRemark(!editRemark)} />
@@ -321,6 +321,8 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
               columns={columns}
               dataSource={dataSource}
               pagination={false}
+              defaultExpandAllRows={true}
+              expandable={{ defaultExpandAllRows: true }}
             />
           </div>
         </div>
