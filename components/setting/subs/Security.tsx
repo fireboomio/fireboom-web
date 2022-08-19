@@ -24,6 +24,7 @@ function AuthMainSetting() {
   const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\\.-]+)\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\/?$/
 
   useEffect(() => {
     void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
@@ -60,7 +61,17 @@ function AuthMainSetting() {
                 <>
                   {fields.map((field, index) => (
                     <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                      <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                      <Form.Item
+                        {...field}
+                        validateTrigger={['onChange', 'onBlur']}
+                        noStyle
+                        rules={[
+                          {
+                            pattern: urlReg,
+                            message: '请填写规范域名',
+                          },
+                        ]}
+                      >
                         <div>
                           <div>{'域名' + (index + 1).toString() + ':'}</div>
                           <Input
@@ -134,6 +145,8 @@ export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\\.-]+)\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\/?$/
+
   const onFinish = (_values: SecurConfig) => {
     void requests
       .post('/global', {
@@ -222,7 +235,17 @@ export default function SettingMainSecurity() {
                 <>
                   {fields.map((field, index) => (
                     <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                      <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                      <Form.Item
+                        {...field}
+                        validateTrigger={['onChange', 'onBlur']}
+                        noStyle
+                        rules={[
+                          {
+                            pattern: urlReg,
+                            message: '请填写规范域名',
+                          },
+                        ]}
+                      >
                         <div className="">
                           <div>{'域名' + (index + 1).toString() + ':'}</div>
                           <Input

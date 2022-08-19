@@ -46,6 +46,7 @@ export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\\.-]+)\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\/?$/
 
   const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
@@ -108,7 +109,17 @@ export default function SettingCrossdomain() {
                   <>
                     {fields.map((field, index) => (
                       <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                        <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                        <Form.Item
+                          {...field}
+                          validateTrigger={['onChange', 'onBlur']}
+                          noStyle
+                          rules={[
+                            {
+                              pattern: urlReg,
+                              message: '请填写规范域名',
+                            },
+                          ]}
+                        >
                           <div>
                             <div>{'域名' + (index + 1).toString() + ':'}</div>
                             <Input
@@ -235,7 +246,17 @@ export default function SettingCrossdomain() {
               />
             </Form.Item>
             <Form.Item label="跨域时间">
-              <Form.Item name="maxAge" validateTrigger={['onChange', 'onBlur']} noStyle>
+              <Form.Item
+                name="maxAge"
+                validateTrigger={['onChange', 'onBlur']}
+                noStyle
+                rules={[
+                  {
+                    pattern: new RegExp('^\\d+$', 'g'),
+                    message: '请填写数字',
+                  },
+                ]}
+              >
                 <Input
                   onBlur={() => {
                     void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
@@ -256,12 +277,7 @@ export default function SettingCrossdomain() {
               <span className="ml-2">秒</span>
             </Form.Item>
             <Form.Item label="允许证书">
-              <Form.Item
-                valuePropName="checked"
-                name="allowCredentials"
-                noStyle
-                rules={[{ required: true, message: 'Username is required' }]}
-              >
+              <Form.Item valuePropName="checked" name="allowCredentials" noStyle required>
                 <Switch
                   onChange={isChecked => {
                     void postRequest('allowCredentials', isChecked == false ? 0 : 1).then(() => {
