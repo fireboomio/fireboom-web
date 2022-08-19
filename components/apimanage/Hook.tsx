@@ -61,20 +61,20 @@ const defaults = {
 //     console.log('hello')
 //     return
 // }`,
-  onRequest: `import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
+  onRequest: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
+// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
 
-export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphRequest) {
-  console.log('onOriginRequest', request.headers)
-  return request
-}`,
-  onResponse: `import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
+// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphRequest) {
+//   console.log('onOriginRequest', request.headers)
+//   return request
+// }`,
+  onResponse: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
+// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
 
-export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphResponse) {
-  console.log('onOriginRequest', request.headers)
-  return request
-}`,
+// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphResponse) {
+//   console.log('onOriginRequest', request.headers)
+//   return request
+// }`,
 }
 
 const Hook: FC<HookProps> = ({ node }) => {
