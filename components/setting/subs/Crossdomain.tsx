@@ -46,7 +46,9 @@ export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\\.-]+)\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\/?$/
+  // eslint-disable-next-line no-useless-escape
+  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  const timeReg = /^[0-8][0-6]([0-3][0-9][0-9])|([4][0][0])$/
 
   const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
@@ -252,8 +254,8 @@ export default function SettingCrossdomain() {
                 noStyle
                 rules={[
                   {
-                    pattern: new RegExp('^\\d+$', 'g'),
-                    message: '请填写数字',
+                    pattern: timeReg,
+                    message: '请填写范围内的跨域时间',
                   },
                 ]}
               >

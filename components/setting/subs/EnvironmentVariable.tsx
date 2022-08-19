@@ -30,6 +30,9 @@ export default function SettingMainEnvironmentVariable() {
   const [system, setSystem] = useImmer<DataType[]>([])
   const [id, setID] = useImmer(-1)
   const [environmentConfig, setEnvironmentConfig] = useImmer<DataType[]>([])
+  const envReg =
+    // eslint-disable-next-line no-useless-escape
+    /^jdbc:(microsoft:)?sqlserver:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))(;[ \d\w\/=\?%\-&_~`@[\]\':+!]*)?$/
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
@@ -220,6 +223,10 @@ export default function SettingMainEnvironmentVariable() {
               rules={[
                 { required: true, message: '名称不能为空' },
                 {
+                  pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                  message: '名称只有由数字、字母、下划线组成',
+                },
+                {
                   validator: (rule, value) => {
                     const index = environmentConfig.findIndex(item => item.key == value)
                     if (index != -1) {
@@ -233,10 +240,18 @@ export default function SettingMainEnvironmentVariable() {
             >
               <Input />
             </Form.Item>
-            <Form.Item label="开发环境" name="devEnv">
+            <Form.Item
+              label="开发环境"
+              name="devEnv"
+              rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="生产环境" name="proEnv">
+            <Form.Item
+              label="生产环境"
+              name="proEnv"
+              rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
+            >
               <Input />
             </Form.Item>
           </Form>
