@@ -46,10 +46,11 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 `
 
 interface Props {
+  url?: string
   data?: string
   onSave: (query: string) => void
 }
-export default function App({ data, onSave }: Props) {
+export default function App({ url, data, onSave }: Props) {
   const [schema, setSchema] = useState<GraphQLSchema>()
   const [query, setQuery] = useState<string | undefined>(data ?? DEFAULT_QUERY)
 
@@ -64,6 +65,7 @@ export default function App({ data, onSave }: Props) {
       .catch((err: Error) => {
         throw err
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function App({ data, onSave }: Props) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
-    return fetch('/app/main/graphql', {
+    return fetch(url ?? '/app/main/graphql', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
