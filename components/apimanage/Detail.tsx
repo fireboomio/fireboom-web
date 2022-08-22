@@ -18,6 +18,8 @@ import { isEmpty } from '@/lib/utils'
 
 import styles from './Detail.module.scss'
 
+const { Option } = Select
+
 type DetailProps = { nodeId: number | undefined }
 
 type Param = ParameterT & {
@@ -25,6 +27,12 @@ type Param = ParameterT & {
   directiveNames: string[]
   jsonSchema?: string
   remark?: string
+}
+
+interface RoleT {
+  id: number
+  code: string
+  remark: string
 }
 
 const tabs = [
@@ -98,6 +106,13 @@ const injectColumns = [
   { title: '来源', dataIndex: 'source' },
 ]
 
+const roleKeys = [
+  { key: 'requireMatchAll', label: 'requireMatchAll' },
+  { key: 'requireMatchAny', label: 'requireMatchAny' },
+  { key: 'denyMatchAll', label: 'denyMatchAll' },
+  { key: 'denyMatchAny', label: 'denyMatchAny' },
+]
+
 const Detail: FC<DetailProps> = ({ nodeId }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [gqlQueryDef, setGqlQueryDef] = useState<readonly OperationDefinitionNode[]>(undefined!)
@@ -109,7 +124,10 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [editRemark, setEditRemark] = useState(false)
   const [rbac, setRbac] = useState<{ key: string; value: string[] | undefined }>()
+  const [opts, setOpts] = useState<{ key: string; label: string }[]>()
   const [method, setMethod] = useState<'POST' | 'GET'>()
+  const [roleKey, setRoleKey] = useState<string>()
+  const [roleVal, setRoleVal] = useState<string[]>()
 
   useEffect(() => {
     getFetcher<string>('/operateApi/getGenerateSchema')
@@ -125,11 +143,9 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       })
   }, [])
 
-  // useEffect(() => {
-  //   if (!nodeId || nodeId === 0) return
-
-  //   void getFetcher<OperationResp>(`/operateApi/${nodeId}`).then(res => setNode(res))
-  // }, [nodeId])
+  useEffect(() => {
+    setRoleVal(rbac?.value)
+  }, [rbac?.value])
 
   useEffect(() => {
     if (!nodeId || nodeId === 0) return
@@ -144,6 +160,15 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       .catch((err: Error) => {
         throw err
       })
+
+    void getFetcher<RoleT[]>('/role')
+      .then(res =>
+        res.map(x => ({
+          key: x.code,
+          label: x.code,
+        }))
+      )
+      .then(res => setOpts(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeId])
 
@@ -274,13 +299,27 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
         <div className="flex-1 flex items-center">
-          <Select className="w-160px" value={rbac?.key ?? ''} dropdownClassName="hidden" />
+          <Select className="w-160px" value={roleKey ?? rbac?.key} onChange={v => setRoleKey(v)}>
+            {roleKeys.map(x => (
+              <Option key={x.key} value={x.label}>
+                {x.key}
+              </Option>
+            ))}
+          </Select>
           <Select
             className="flex-1"
             mode="multiple"
-            value={rbac?.value ?? []}
-            dropdownClassName="hidden"
-          />
+            value={roleVal ?? rbac?.value}
+            onChange={v => setRoleVal(v)}
+          >
+            {opts
+              ? opts.map(x => (
+                  <Option key={x.key} value={x.label}>
+                    {x.key}
+                  </Option>
+                ))
+              : []}
+          </Select>
         </div>
       </div>
 
