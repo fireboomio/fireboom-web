@@ -35,6 +35,7 @@ interface DataType {
   inputType: string
   isOpen: boolean
 }
+
 const columns: ColumnsType<DataType> = [
   {
     title: '表',
@@ -109,13 +110,22 @@ const data: DataType[] = [
   },
 ]
 const { Option } = Select
+const port = /^(([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5]))$/
+const domainReg = /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$/
+const ipReg =
+  /^((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]\d)|\d)(\.((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]\d)|\d)){3}$/
+const envReg =
+  // eslint-disable-next-line no-useless-escape
+  /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
+const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
+
 const initForm = (
   <Form.Item label="连接URL">
     <Input.Group compact>
       <Form.Item
         name={['databaseUrl', 'kind']}
         noStyle
-        rules={[{ required: true, message: 'typeName is required' }]}
+        rules={[{ required: true, message: '类型不能为空' }]}
       >
         <Select className="w-1/5">
           <Option value="0">值</Option>
@@ -125,7 +135,7 @@ const initForm = (
       <Form.Item
         name={['databaseUrl', 'val']}
         noStyle
-        rules={[{ required: true, message: '连接名不能为空' }]}
+        rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
       >
         <Input style={{ width: '80%' }} placeholder="请输入" />
       </Form.Item>
@@ -134,7 +144,17 @@ const initForm = (
 )
 const paramForm = (
   <>
-    <Form.Item label="主机:" name="host" rules={[{ required: true, message: '主机名不能为空' }]}>
+    <Form.Item
+      label="主机:"
+      name="host"
+      rules={[
+        { required: true, message: '主机名不能为空' },
+        {
+          pattern: domainReg || ipReg,
+          message: '请填写规范域名或者ip',
+        },
+      ]}
+    >
       <Input placeholder="请输入..." />
     </Form.Item>
     <Form.Item
@@ -143,14 +163,24 @@ const paramForm = (
       rules={[
         { required: true, message: '数据库名不能为空' },
         {
-          pattern: new RegExp('^\\w+$', 'g'),
-          message: '只允许包含字母，数字，下划线',
+          pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+          message: '数据库名只有由数字、字母、下划线组成',
         },
       ]}
     >
       <Input placeholder="请输入..." />
     </Form.Item>
-    <Form.Item label="端口:" name="port" rules={[{ required: true, message: '端口号不能为空' }]}>
+    <Form.Item
+      label="端口:"
+      name="port"
+      rules={[
+        { required: true, message: '端口号不能为空' },
+        {
+          pattern: port,
+          message: '端口范围为0-9999',
+        },
+      ]}
+    >
       <Input placeholder="请输入..." />
     </Form.Item>
     <Form.Item
@@ -159,8 +189,8 @@ const paramForm = (
       rules={[
         { required: true, message: '用户名不能为空' },
         {
-          pattern: new RegExp('^\\w+$', 'g'),
-          message: '只允许包含字母，数字，下划线',
+          pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+          message: '用户名只有由数字、字母、下划线组成',
         },
       ]}
     >
@@ -172,8 +202,8 @@ const paramForm = (
       rules={[
         { required: true, message: '密码不能为空' },
         {
-          pattern: new RegExp('^\\w+$', 'g'),
-          message: '只允许包含字母，数字，下划线',
+          pattern: passwordReg,
+          message: '请输入4-64位包含数字、字母和非中文字符的组合',
         },
       ]}
     >
@@ -460,7 +490,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               }}
               onFinishFailed={onFinishFailed}
               onValuesChange={onValuesChange}
-              validateTrigger="onBlur"
+              validateTrigger={['onBlur', 'onChange']}
               autoComplete="new-password"
               labelAlign="left"
               initialValues={{
@@ -482,11 +512,18 @@ export default function DatasourceDBMain({ content, type }: Props) {
               <Form.Item
                 label="名称:"
                 name="apiNamespace"
-                rules={[{ required: true, message: '连接名不能为空' }]}
+                rules={[
+                  { required: true, message: '连接名不能为空' },
+                  {
+                    pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                    message: '连接名只有由数字、字母、下划线组成',
+                  },
+                ]}
               >
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>
 
+<<<<<<< HEAD
               <Form.Item
                 label="类型:"
                 name="dbType"
@@ -494,6 +531,13 @@ export default function DatasourceDBMain({ content, type }: Props) {
               >
                 <Select placeholder="请输入..." defaultValue="MySQL">
                   <Select.Option value="MySQL">MySql</Select.Option>
+=======
+              <Form.Item label="类型:" name="dbType">
+                <Select placeholder="请输入...">
+                  <Select.Option value="MySQL" defaultValue="MySQL">
+                    MySql
+                  </Select.Option>
+>>>>>>> e35b74e (数据源页面增加表单校验规则)
                   <Select.Option value="SQLITE">SQLITE</Select.Option>
                   <Select.Option value="PGSQL">PGSQL</Select.Option>
                   <Select.Option value="MONGODB">MONGODB</Select.Option>
