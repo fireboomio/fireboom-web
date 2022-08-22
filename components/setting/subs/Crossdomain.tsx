@@ -46,8 +46,8 @@ export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  // eslint-disable-next-line no-useless-escape
-  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   const timeReg = /^[0-8][0-6]([0-3][0-9][0-9])|([4][0][0])$/
 
   const onFinish = (values: CorsFormConfiguration) => {
