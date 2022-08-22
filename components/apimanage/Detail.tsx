@@ -246,6 +246,21 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
     setEditRemark(false)
   }
 
+  function onRoleKeyChange(v: string) {
+    setRoleKey(v)
+    updateGql(v, roleVal ?? [])
+  }
+
+  function onRoleValChange(v: string[]) {
+    setRoleVal(v)
+    updateGql(roleKey ?? '', v)
+  }
+
+  function updateGql(k: string, v: string[]) {
+    console.log('query', gqlQueryDef.at(0))
+    console.log('upup', k, v)
+  }
+
   if (!node || node.isDir) return <></>
 
   return (
@@ -299,7 +314,11 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       <div className="mt-4 flex items-center">
         <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
         <div className="flex-1 flex items-center">
-          <Select className="w-160px" value={roleKey ?? rbac?.key} onChange={v => setRoleKey(v)}>
+          <Select
+            className="w-160px"
+            value={roleKey ?? rbac?.key}
+            onChange={v => onRoleKeyChange(v)}
+          >
             {roleKeys.map(x => (
               <Option key={x.key} value={x.label}>
                 {x.key}
@@ -310,7 +329,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
             className="flex-1"
             mode="multiple"
             value={roleVal ?? rbac?.value}
-            onChange={v => setRoleVal(v)}
+            onChange={v => onRoleValChange(v)}
           >
             {opts
               ? opts.map(x => (
