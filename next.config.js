@@ -8,7 +8,7 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
-  // trailingSlash: true,
+  trailingSlash: true,
   async rewrites() {
     return [
       {
