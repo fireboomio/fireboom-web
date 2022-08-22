@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import { Result } from '@/interfaces/common'
@@ -16,6 +17,7 @@ requests.interceptors.response.use(
     } else {
       // eslint-disable-next-line no-console
       console.warn(resp.data.message)
+      void message.error(resp.data.message)
     }
   },
   (error: AxiosError) => {
