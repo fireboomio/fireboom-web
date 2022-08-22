@@ -432,13 +432,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-<<<<<<< HEAD
               onFinish={values => void onFinish(values as Config)}
-=======
-              onFinish={values => {
-                void onFinish(values as Config)
-              }}
->>>>>>> e35b74e (数据源页面增加表单校验规则)
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}

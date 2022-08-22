@@ -523,7 +523,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>
 
-<<<<<<< HEAD
               <Form.Item
                 label="类型:"
                 name="dbType"
@@ -531,13 +530,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
               >
                 <Select placeholder="请输入..." defaultValue="MySQL">
                   <Select.Option value="MySQL">MySql</Select.Option>
-=======
-              <Form.Item label="类型:" name="dbType">
-                <Select placeholder="请输入...">
-                  <Select.Option value="MySQL" defaultValue="MySQL">
-                    MySql
-                  </Select.Option>
->>>>>>> e35b74e (数据源页面增加表单校验规则)
                   <Select.Option value="SQLITE">SQLITE</Select.Option>
                   <Select.Option value="PGSQL">PGSQL</Select.Option>
                   <Select.Option value="MONGODB">MONGODB</Select.Option>
