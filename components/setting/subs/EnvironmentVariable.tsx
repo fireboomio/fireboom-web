@@ -207,6 +207,7 @@ export default function SettingMainEnvironmentVariable() {
           <Form
             name="envList"
             form={form}
+            validateTrigger={['onBlur', 'onChange']}
             className="ml-15"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
@@ -244,6 +245,7 @@ export default function SettingMainEnvironmentVariable() {
             <Form.Item
               label="开发环境"
               name="devEnv"
+              required
               rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
             >
               <Input />
@@ -251,6 +253,7 @@ export default function SettingMainEnvironmentVariable() {
             <Form.Item
               label="生产环境"
               name="proEnv"
+              required
               rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
             >
               <Input />
