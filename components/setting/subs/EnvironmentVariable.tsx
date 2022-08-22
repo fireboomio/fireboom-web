@@ -20,6 +20,10 @@ interface DataType {
   proEnv?: string
 }
 
+interface FromValues {
+  [key: string]: number | string | boolean
+}
+
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
@@ -30,9 +34,6 @@ export default function SettingMainEnvironmentVariable() {
   const [system, setSystem] = useImmer<DataType[]>([])
   const [id, setID] = useImmer(-1)
   const [environmentConfig, setEnvironmentConfig] = useImmer<DataType[]>([])
-  const envReg =
-    // eslint-disable-next-line no-useless-escape
-    /^jdbc:(microsoft:)?sqlserver:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))(;[ \d\w\/=\?%\-&_~`@[\]\':+!]*)?$/
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
@@ -45,7 +46,7 @@ export default function SettingMainEnvironmentVariable() {
       )
     })
   }, [refreshFlag])
-  const onFinish = (values: DataType) => {
+  const onFinish = (values: FromValues) => {
     console.log('id', id)
     if (id == -1) {
       void requests.post('/env', values).then(() => {
@@ -224,7 +225,7 @@ export default function SettingMainEnvironmentVariable() {
                 { required: true, message: '名称不能为空' },
                 {
                   pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                  message: '名称只有由数字、字母、下划线组成',
+                  message: '名称只有由数字、字母、下划线组成，且首字母为非数字',
                 },
                 {
                   validator: (rule, value) => {
@@ -243,14 +244,14 @@ export default function SettingMainEnvironmentVariable() {
             <Form.Item
               label="开发环境"
               name="devEnv"
-              rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
+              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="生产环境"
               name="proEnv"
-              rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
+              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
             >
               <Input />
             </Form.Item>

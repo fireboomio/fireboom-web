@@ -24,8 +24,8 @@ function AuthMainSetting() {
   const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  // eslint-disable-next-line no-useless-escape
-  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
 
   useEffect(() => {
     void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
@@ -146,8 +146,8 @@ export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  // eslint-disable-next-line no-useless-escape
-  const urlReg = /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
 
   const onFinish = (_values: SecurConfig) => {
     void requests

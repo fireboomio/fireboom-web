@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import type { RadioChangeEvent } from 'antd'
 import { Descriptions, Divider, Radio, Switch, Input } from 'antd'
 import dayjs from 'dayjs'
@@ -31,8 +32,7 @@ export default function SettingMainVersion() {
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
-  const [systemTime, setSystemTime] = useImmer('')
-  const [refreshTime, setRefreshTime] = useState<boolean>()
+  const [count, setCount] = useImmer(0)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
 
   useEffect(() => {
@@ -45,15 +45,21 @@ export default function SettingMainVersion() {
     void requests
       .get<unknown, string>('/setting/getTime')
       .then(res => {
-        setSystemTime(calTime(res))
+        console.log(res, 'res')
+        const count = Date.parse(res)
+        setCount(count)
       })
       .then(() => {
-        setInterval(() => {
-          setRefreshTime(!refreshTime)
-        }, 1000)
         setRefreshFlag(!refreshFlag)
       })
-  }, [refreshTime])
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => setCount(count => count + 1), 1000)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   const onChange = (e: RadioChangeEvent, key: string) => {
     void requests.post('/setting', { key: key, val: e.target.value as string }).then(() => {
@@ -93,7 +99,9 @@ export default function SettingMainVersion() {
                 color: 'gray',
               }}
             >
-              <Descriptions.Item label="运行时长:">{systemTime}</Descriptions.Item>
+              <Descriptions.Item label="运行时长:">
+                {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
+              </Descriptions.Item>
               <Descriptions.Item label="API端口:" className="w-20">
                 {isApiPortEditing ? (
                   <Input
