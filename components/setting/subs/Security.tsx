@@ -24,9 +24,7 @@ function AuthMainSetting() {
   const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
-
+  const urlReg = /^(http(s?)|):\/\/(.+)$/
   useEffect(() => {
     void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
       setRedirectURLs(res)
@@ -146,8 +144,7 @@ export default function SettingMainSecurity() {
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
+  const urlReg = /^(http(s?)|):\/\/(.+)$/
 
   const onFinish = (_values: SecurConfig) => {
     void requests

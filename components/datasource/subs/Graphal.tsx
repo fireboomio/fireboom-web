@@ -163,13 +163,19 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
         return
       case '1':
-        setRulesObj({ pattern: urlReg, message: '请输入正确格式的环境变量' })
+        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入正确格式的环境变量' })
         // form.setFieldsValue({ note: 'Hi, lady!' })
         return
       case '2':
         setRulesObj({ pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g, message: '请输入合法的变量名' })
       // form.setFieldsValue({ note: 'Hi there!' })
     }
+  }
+
+  const children: React.ReactNode[] = []
+
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`)
   }
 
   //文件上传过程钩子
@@ -622,24 +628,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customFloatScalars"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('标量不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
 
                   <Form.Item
@@ -650,24 +650,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customIntScalars"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('标量不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
                   <Form.Item
                     label={
@@ -679,22 +673,16 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     colon={false}
                     style={{ marginBottom: '20px' }}
                     name="skipRenameRootFields"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('字段不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[]}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
                 </Panel>
               </Collapse>

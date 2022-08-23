@@ -46,9 +46,8 @@ export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
-  const timeReg = /^[0-8][0-6]([0-3][0-9][0-9])|([4][0][0])$/
+  const urlReg = /^(http(s?)|):\/\/(.+)$/
+  // 0- 86400
 
   const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
@@ -254,8 +253,15 @@ export default function SettingCrossdomain() {
                 noStyle
                 rules={[
                   {
-                    pattern: timeReg,
-                    message: '请填写范围内的跨域时间',
+                    validator: (rule, value: number) => {
+                      if (value) {
+                        if (value < 0 || value > 86400) {
+                          return Promise.reject('请填写范围内的跨域时间,范围为0- 86400 秒')
+                        } else {
+                          return Promise.resolve()
+                        }
+                      }
+                    },
                   },
                 ]}
               >
