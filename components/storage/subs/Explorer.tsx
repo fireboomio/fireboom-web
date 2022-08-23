@@ -19,6 +19,7 @@ import {
   Drawer,
   Collapse,
   Input,
+  message,
 } from 'antd'
 import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
@@ -196,6 +197,12 @@ export default function StorageExplorer({ bucketId }: Props) {
     return mime.indexOf('image/') === 0
   }
 
+  const deleteFile = () => {
+    void requests
+      .post('/s3Upload/remove', { bucketID: bucketId, fileName: target?.name })
+      .then(() => void message.success('删除成功'))
+  }
+
   return (
     <>
       <div className="pb-8px flex items-center justify-between border-gray border-b mb-8">
@@ -245,11 +252,11 @@ export default function StorageExplorer({ bucketId }: Props) {
           </Dropdown>
           <Divider type="vertical" className="mr-5 h-5" />
           <Upload
-            className={`${styles['upload']}`}
+            // className={`${styles['upload']}`}
             action="/api/v1/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
-            onChange={() => setRefreshFlag(!refreshFlag)}
+            // onChange={() => setRefreshFlag(!refreshFlag)}
           >
             <Button className="mr-2">上传</Button>
           </Upload>
@@ -306,8 +313,15 @@ export default function StorageExplorer({ bucketId }: Props) {
           </Panel>
           <div className="flex flex-col">
             <Button className="m-1.5">下载</Button>
-            <Button className="m-1.5">复制URL</Button>
-            <Button className="m-1.5">删除</Button>
+            <Button
+              onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
+              className="m-1.5"
+            >
+              复制URL
+            </Button>
+            <Button onClick={deleteFile} className="m-1.5">
+              删除
+            </Button>
           </div>
         </Collapse>
       </Drawer>
