@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Badge, Input, message, Select, Table } from 'antd'
-import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
+import { print, parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
 import * as _ from 'shades'
 
@@ -258,7 +258,6 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   }
 
   function updateGql(k: string, v: string[]) {
-    console.log('query', gqlQueryDef.at(0))
     const keyed = _.mod(
       // @ts-ignore
       'directives',
@@ -275,7 +274,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     )(x => (x = k))(gqlQueryDef[0])
 
-    const payload = _.mod(
+    const payloadAST = _.mod(
       // @ts-ignore
       'directives',
       // @ts-ignore
@@ -290,7 +289,12 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     )(x => (x = v.map(y => ({ kind: 'EnumValue', value: y }))))(keyed)
-    console.log(payload)
+    // @ts-ignore
+    const payload = print(payloadAST)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    void requests.put<unknown, DirTreeNode>(`/operateApi/content/${node!.id}`, {
+      content: payload,
+    })
   }
 
   if (!node || node.isDir) return <></>
