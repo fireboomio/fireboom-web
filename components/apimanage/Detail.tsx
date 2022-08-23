@@ -2,6 +2,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { Badge, Input, message, Select, Table } from 'antd'
 import { parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
 import { FC, useEffect, useState } from 'react'
+import * as _ from 'shades'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
@@ -258,7 +259,38 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
 
   function updateGql(k: string, v: string[]) {
     console.log('query', gqlQueryDef.at(0))
-    console.log('upup', k, v)
+    const keyed = _.mod(
+      // @ts-ignore
+      'directives',
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      _.findBy(x => x.name.value === 'rbac'),
+      'arguments',
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      _.findBy(x => x.name.kind === 'Name'),
+      'name',
+      'value'
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    )(x => (x = k))(gqlQueryDef[0])
+
+    const payload = _.mod(
+      // @ts-ignore
+      'directives',
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      _.findBy(x => x.name.value === 'rbac'),
+      'arguments',
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      _.findBy(x => x.name.kind === 'Name'),
+      'value',
+      'values'
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    )(x => (x = v.map(y => ({ kind: 'EnumValue', value: y }))))(keyed)
+    console.log(payload)
   }
 
   if (!node || node.isDir) return <></>
