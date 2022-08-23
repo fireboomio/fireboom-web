@@ -53,15 +53,16 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
   const [breads, setBreads] = useImmer<string[]>(['/'])
+  const [refreshFlag, setRefreshFlag] = useImmer(false)
 
   useEffect(() => {
     if (!bucketId) return
 
     void requests
       .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
-      .then((res) =>
+      .then(res =>
         res
-          .map((x) => ({
+          .map(x => ({
             label: (
               <>
                 <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
@@ -72,11 +73,11 @@ export default function StorageExplorer({ bucketId }: Props) {
             isLeaf: !x.isDir,
             ...x,
           }))
-          .filter((x) => x.name !== '')
+          .filter(x => x.name !== '')
       )
-      .then((res) => setOptions(res))
+      .then(res => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketId])
+  }, [bucketId, refreshFlag])
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
@@ -158,7 +159,7 @@ export default function StorageExplorer({ bucketId }: Props) {
     })
 
     const fileOpts = files
-      .map((x) => ({
+      .map(x => ({
         label: (
           <>
             <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
@@ -169,7 +170,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         isLeaf: !x.isDir,
         ...x,
       }))
-      .filter((x) => x.value !== targetOption.value)
+      .filter(x => x.value !== targetOption.value)
 
     targetOption.children = fileOpts
     targetOption.loading = false
@@ -211,7 +212,11 @@ export default function StorageExplorer({ bucketId }: Props) {
             />
           )}
           <Divider type="vertical" className="mr-5 h-5" />
-          <Button icon={<SyncOutlined />} className="mr-2">
+          <Button
+            onClick={() => setRefreshFlag(!refreshFlag)}
+            icon={<SyncOutlined />}
+            className="mr-2"
+          >
             刷新
           </Button>
           <Dropdown overlay={listMenu} placement="bottom">
@@ -225,7 +230,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Button>
           </Dropdown>
           <Divider type="vertical" className="mr-5 h-5" />
-          <Upload>
+          <Upload className={`${styles['upload']}`}>
             <Button className="mr-2">上传</Button>
           </Upload>
         </div>
@@ -235,7 +240,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         open
         options={options}
         // @ts-ignore
-        loadData={(x) => void loadData(x)}
+        loadData={x => void loadData(x)}
         // @ts-ignore
         onChange={onChange}
         changeOnSelect
