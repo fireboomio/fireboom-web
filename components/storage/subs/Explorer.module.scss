@@ -29,3 +29,9 @@
     height: 100%;
   }
 }
+
+.upload :global {
+  .ant-upload-list-text-container {
+    display: none;
+  }
+}
