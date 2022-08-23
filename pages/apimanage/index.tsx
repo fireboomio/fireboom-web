@@ -117,6 +117,7 @@ function getNodeFamily(key: string, data?: DirTreeNode[]) {
 
   const inner = (key: string, nodes?: DirTreeNode[]) => {
     if (!nodes) return []
+    parent = undefined
     nodes.find(x => {
       if (x.key === key) {
         curr = x
