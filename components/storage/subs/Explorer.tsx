@@ -21,7 +21,7 @@ import {
   Input,
 } from 'antd'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -55,6 +55,13 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [breads, setBreads] = useImmer<string[]>(['/'])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
 
+  const uploadPath = useMemo(() => {
+    const rv = target?.isLeaf
+      ? target.value.split('/').slice(0, -1).join('/') ?? ''
+      : target?.value ?? ''
+    return rv
+  }, [target])
+
   useEffect(() => {
     if (!bucketId) return
 
@@ -77,7 +84,13 @@ export default function StorageExplorer({ bucketId }: Props) {
       )
       .then(res => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketId, refreshFlag])
+  }, [bucketId])
+
+  useEffect(() => {
+    if (!target) return
+    void loadData([{ ...target }])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshFlag])
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
@@ -151,6 +164,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const loadData = async (selectedOptions: Option[]) => {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
+    setTarget({ ...targetOption })
 
     if (targetOption.isLeaf) return
 
@@ -230,7 +244,13 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Button>
           </Dropdown>
           <Divider type="vertical" className="mr-5 h-5" />
-          <Upload className={`${styles['upload']}`}>
+          <Upload
+            className={`${styles['upload']}`}
+            action="/api/v1/s3Upload/upload"
+            data={{ bucketID: bucketId, path: uploadPath }}
+            showUploadList={false}
+            onChange={() => setRefreshFlag(!refreshFlag)}
+          >
             <Button className="mr-2">上传</Button>
           </Upload>
         </div>
