@@ -127,7 +127,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   const [rbac, setRbac] = useState<{ key: string; value: string[] | undefined }>()
   const [opts, setOpts] = useState<{ key: string; label: string }[]>()
   const [method, setMethod] = useState<'POST' | 'GET'>()
-  const [roleKey, setRoleKey] = useState<string>()
+  const [roleKey, setRoleKey] = useState<string>('requireMatchAll')
   const [roleVal, setRoleVal] = useState<string[]>()
 
   useEffect(() => {
@@ -150,6 +150,8 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
 
   useEffect(() => {
     if (!nodeId || nodeId === 0) return
+    setRoleKey('requireMatchAll')
+    setRoleVal([])
     getFetcher<OperationResp>(`/operateApi/${nodeId}`)
       .then(res => {
         setNode(res as DirTreeNode)
@@ -258,12 +260,26 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   }
 
   function updateGql(k: string, v: string[]) {
+    const obj = JSON.parse(JSON.stringify(gqlQueryDef[0])) as OperationDefinitionNode
+    const rbacNode = obj.directives?.find(x => x.name.value === 'rbac') ?? {
+      kind: 'Directive',
+      name: { kind: 'Name', value: 'rbac' },
+      arguments: [
+        {
+          kind: 'Argument',
+          name: { kind: 'Name', value: '' },
+          value: { kind: 'ListValue', values: [] },
+        },
+      ],
+    }
+
+    if (isEmpty(obj.directives)) {
+      // @ts-ignore
+      obj.directives = [rbacNode]
+    }
+
     const keyed = _.mod(
       // @ts-ignore
-      'directives',
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      _.findBy(x => x.name.value === 'rbac'),
       'arguments',
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -272,14 +288,10 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       'value'
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    )(x => (x = k))(gqlQueryDef[0])
+    )(x => (x = k))(rbacNode)
 
-    const payloadAST = _.mod(
+    const rabcAST = _.mod(
       // @ts-ignore
-      'directives',
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      _.findBy(x => x.name.value === 'rbac'),
       'arguments',
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -289,12 +301,24 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     )(x => (x = v.map(y => ({ kind: 'EnumValue', value: y }))))(keyed)
-    // @ts-ignore
-    const payload = print(payloadAST)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    void requests.put<unknown, DirTreeNode>(`/operateApi/content/${node!.id}`, {
-      content: payload,
-    })
+
+    const ast = _.mod(
+      'directives',
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      _.findBy(x => x.name.value === 'rbac')
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    )(x => (x = rabcAST))(obj)
+
+    if (k || roleKey || rbac?.key) {
+      // @ts-ignore
+      const payload = print(ast)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      void requests.put<unknown, DirTreeNode>(`/operateApi/content/${node!.id}`, {
+        content: payload,
+      })
+    }
   }
 
   if (!node || node.isDir) return <></>
@@ -352,7 +376,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
         <div className="flex-1 flex items-center">
           <Select
             className="w-160px"
-            value={roleKey ?? rbac?.key}
+            value={roleKey || rbac?.key || 'requireMatchAll'}
             onChange={v => onRoleKeyChange(v)}
           >
             {roleKeys.map(x => (
