@@ -73,6 +73,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
+  const [rulesObj, setRulesObj] = useImmer({})
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
@@ -80,7 +81,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
-
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
     setIsShowUpSchema(config.loadSchemaFromString !== undefined)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,6 +155,21 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
     console.log('123')
+  }
+  // 表单选择后规则校验改变
+  const onGenderChange = (value: string) => {
+    switch (value) {
+      case '0':
+        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        return
+      case '1':
+        setRulesObj({ pattern: urlReg, message: '请输入正确格式的环境变量' })
+        // form.setFieldsValue({ note: 'Hi, lady!' })
+        return
+      case '2':
+        setRulesObj({ pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g, message: '请输入合法的变量名' })
+      // form.setFieldsValue({ note: 'Hi there!' })
+    }
   }
 
   //文件上传过程钩子
@@ -418,7 +435,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               onFinish={values => void onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
-              validateTrigger="onBlur"
+              validateTrigger={['onBlur', 'onChange']}
               className="ml-3"
               labelAlign="left"
               initialValues={{
@@ -455,6 +472,12 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 }
                 colon={false}
                 required
+                rules={[
+                  {
+                    pattern: urlReg,
+                    message: '请填写规范域名',
+                  },
+                ]}
                 style={{ marginBottom: '20px' }}
                 name="url"
               >
@@ -530,13 +553,17 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             <Input />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
-                            <Select>
+                            <Select onChange={onGenderChange}>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                               <Option value="2">转发自客户端</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item className="w-135" name={[field.name, 'val']}>
+                          <Form.Item
+                            className="w-135"
+                            name={[field.name, 'val']}
+                            rules={[rulesObj]}
+                          >
                             <Input placeholder="请输入..." />
                           </Form.Item>
                           <IconFont
@@ -595,6 +622,20 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customFloatScalars"
+                    rules={[
+                      {
+                        validator: (rule, value: Array<string>) => {
+                          const regResult = value.some((item: string) =>
+                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
+                          )
+                          if (!regResult) {
+                            return Promise.reject('标量不符合规则')
+                          } else {
+                            return Promise.resolve()
+                          }
+                        },
+                      },
+                    ]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -609,6 +650,20 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customIntScalars"
+                    rules={[
+                      {
+                        validator: (rule, value: Array<string>) => {
+                          const regResult = value.some((item: string) =>
+                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
+                          )
+                          if (!regResult) {
+                            return Promise.reject('标量不符合规则')
+                          } else {
+                            return Promise.resolve()
+                          }
+                        },
+                      },
+                    ]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -624,6 +679,20 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     colon={false}
                     style={{ marginBottom: '20px' }}
                     name="skipRenameRootFields"
+                    rules={[
+                      {
+                        validator: (rule, value: Array<string>) => {
+                          const regResult = value.some((item: string) =>
+                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
+                          )
+                          if (!regResult) {
+                            return Promise.reject('字段不符合规则')
+                          } else {
+                            return Promise.resolve()
+                          }
+                        },
+                      },
+                    ]}
                   >
                     <Input placeholder="请输入..." />
                   </Form.Item>

@@ -46,6 +46,9 @@ export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
+  const timeReg = /^[0-8][0-6]([0-3][0-9][0-9])|([4][0][0])$/
 
   const onFinish = (values: CorsFormConfiguration) => {
     console.log('Success:', values)
@@ -108,7 +111,17 @@ export default function SettingCrossdomain() {
                   <>
                     {fields.map((field, index) => (
                       <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                        <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle>
+                        <Form.Item
+                          {...field}
+                          validateTrigger={['onChange', 'onBlur']}
+                          noStyle
+                          rules={[
+                            {
+                              pattern: urlReg,
+                              message: '请填写规范域名',
+                            },
+                          ]}
+                        >
                           <div>
                             <div>{'域名' + (index + 1).toString() + ':'}</div>
                             <Input
@@ -175,6 +188,7 @@ export default function SettingCrossdomain() {
             <Form.Item name="allowedMethods" label="允许方法" className="-mt-3">
               <Select
                 style={{ width: '90%' }}
+                mode="multiple"
                 placeholder="请选择..."
                 onChange={(values: string) => {
                   const newMethodsList = corsConfig.allowedMethods.filter(item => item != values)
@@ -184,7 +198,7 @@ export default function SettingCrossdomain() {
                   })
                 }}
               >
-                {corsConfig.allowedMethods.map(item => (
+                {['GET', 'POST', 'PUT', 'DELETE'].map(item => (
                   <Select.Option key={item} value={item}>
                     {item}
                   </Select.Option>
@@ -234,7 +248,17 @@ export default function SettingCrossdomain() {
               />
             </Form.Item>
             <Form.Item label="跨域时间">
-              <Form.Item name="maxAge" validateTrigger={['onChange', 'onBlur']} noStyle>
+              <Form.Item
+                name="maxAge"
+                validateTrigger={['onChange', 'onBlur']}
+                noStyle
+                rules={[
+                  {
+                    pattern: timeReg,
+                    message: '请填写范围内的跨域时间',
+                  },
+                ]}
+              >
                 <Input
                   onBlur={() => {
                     void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
@@ -255,12 +279,7 @@ export default function SettingCrossdomain() {
               <span className="ml-2">秒</span>
             </Form.Item>
             <Form.Item label="允许证书">
-              <Form.Item
-                valuePropName="checked"
-                name="allowCredentials"
-                noStyle
-                rules={[{ required: true, message: 'Username is required' }]}
-              >
+              <Form.Item valuePropName="checked" name="allowCredentials" noStyle required>
                 <Switch
                   onChange={isChecked => {
                     void postRequest('allowCredentials', isChecked == false ? 0 : 1).then(() => {

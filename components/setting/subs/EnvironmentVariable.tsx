@@ -20,6 +20,10 @@ interface DataType {
   proEnv?: string
 }
 
+interface FromValues {
+  [key: string]: number | string | boolean
+}
+
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
@@ -42,7 +46,7 @@ export default function SettingMainEnvironmentVariable() {
       )
     })
   }, [refreshFlag])
-  const onFinish = (values: DataType) => {
+  const onFinish = (values: FromValues) => {
     console.log('id', id)
     if (id == -1) {
       void requests.post('/env', values).then(() => {
@@ -203,6 +207,7 @@ export default function SettingMainEnvironmentVariable() {
           <Form
             name="envList"
             form={form}
+            validateTrigger={['onBlur', 'onChange']}
             className="ml-15"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
@@ -220,6 +225,10 @@ export default function SettingMainEnvironmentVariable() {
               rules={[
                 { required: true, message: '名称不能为空' },
                 {
+                  pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                  message: '名称只有由数字、字母、下划线组成，且首字母为非数字',
+                },
+                {
                   validator: (rule, value) => {
                     const index = environmentConfig.findIndex(item => item.key == value)
                     if (index != -1) {
@@ -233,10 +242,20 @@ export default function SettingMainEnvironmentVariable() {
             >
               <Input />
             </Form.Item>
-            <Form.Item label="开发环境" name="devEnv">
+            <Form.Item
+              label="开发环境"
+              name="devEnv"
+              required
+              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="生产环境" name="proEnv">
+            <Form.Item
+              label="生产环境"
+              name="proEnv"
+              required
+              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
+            >
               <Input />
             </Form.Item>
           </Form>

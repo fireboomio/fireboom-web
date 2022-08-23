@@ -80,8 +80,11 @@ export default function DatasourceRestMain({ content, type }: Props) {
   const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
+  const [rulesObj, setRulesObj] = useImmer({})
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [isRadioShow, setIsRadioShow] = useImmer(true)
+  const urlReg =
+    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
 
   useEffect(() => {
     form.resetFields()
@@ -95,7 +98,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
           dispatch({ type: 'fetched', data: res })
         })
       })
@@ -116,10 +119,26 @@ export default function DatasourceRestMain({ content, type }: Props) {
     setIsEyeShow(!isEyeShow)
   }
 
+  // 表单选择后规则校验改变
+  const onGenderChange = (value: string) => {
+    switch (value) {
+      case '1':
+        setRulesObj({
+          pattern: /^\w{1,128}$/g,
+          message: '请输入长度不大于128的非空值',
+        })
+        return
+      case '2':
+        setRulesObj({ pattern: urlReg, message: '请输入正确格式的环境变量' })
+        // form.setFieldsValue({ note: 'Hi, lady!' })
+        return
+    }
+  }
+
   //表单上传成功回调
   const onFinish = async (values: FromValues) => {
     console.log('Success:', values)
-    values.headers = (values.headers as Array<DataType>)?.filter((item) => item.key != undefined)
+    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
     const index = (config.filePath as string)?.lastIndexOf('/')
     const fileId = (config.filePath as string)?.substring(index + 1) //获取文件id
@@ -169,7 +188,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
-      .then((res) => {
+      .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
@@ -458,12 +477,12 @@ export default function DatasourceRestMain({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={(values) => {
+              onFinish={values => {
                 void onFinish(values as Config)
               }}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
-              validateTrigger="onBlur"
+              validateTrigger={['onBlur', 'onChange']}
               labelAlign="left"
               className="ml-3"
               initialValues={{
@@ -622,27 +641,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
                     <>
                       <Form.Item label="密钥">
                         <Input.Group compact>
-                          <Form.Item
-                            name={['secret', 'kind']}
-                            noStyle
-                            rules={[{ required: true, message: 'typeName is required' }]}
-                          >
-                            <Select className="w-1/5">
-                              <Option value="0">值</Option>
-                              <Option value="1">环境变量</Option>
+                          <Form.Item name={['secret', 'kind']} noStyle>
+                            <Select className="w-1/5" onChange={onGenderChange}>
+                              <Option value="0"> </Option>
+                              <Option value="1">值</Option>
+                              <Option value="2">环境变量</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item
-                            name={['secret', 'val']}
-                            noStyle
-                            rules={[
-                              { required: true, message: '连接名不能为空' },
-                              {
-                                pattern: new RegExp('^\\w+$', 'g'),
-                                message: '只允许包含字母，数字，下划线',
-                              },
-                            ]}
-                          >
+                          <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
                             <Input style={{ width: '80%' }} placeholder="请输入" />
                           </Form.Item>
                         </Input.Group>
