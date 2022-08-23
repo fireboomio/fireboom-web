@@ -296,9 +296,12 @@ const ApiManage: FC<ApiManageProps> = () => {
       setAction(null)
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
+    } else if (currEditingKey !== null) {
+      setAction(null)
+      setCurrEditingKey(null)
+      setRefreshFlag(!refreshFlag)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action, currEditingKey])
+  }, [action, currEditingKey, refreshFlag])
 
   const handleAddNode = (action: ActionT) => {
     setAction(action)
