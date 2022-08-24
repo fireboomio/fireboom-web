@@ -19,9 +19,10 @@ import {
   Drawer,
   Collapse,
   Input,
+  message,
 } from 'antd'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -53,15 +54,23 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
   const [breads, setBreads] = useImmer<string[]>(['/'])
+  const [refreshFlag, setRefreshFlag] = useImmer(false)
+
+  const uploadPath = useMemo(() => {
+    const rv = target?.isLeaf
+      ? target.value.split('/').slice(0, -1).join('/') ?? ''
+      : target?.value ?? ''
+    return rv
+  }, [target])
 
   useEffect(() => {
     if (!bucketId) return
 
     void requests
       .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
-      .then((res) =>
+      .then(res =>
         res
-          .map((x) => ({
+          .map(x => ({
             label: (
               <>
                 <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
@@ -72,11 +81,17 @@ export default function StorageExplorer({ bucketId }: Props) {
             isLeaf: !x.isDir,
             ...x,
           }))
-          .filter((x) => x.name !== '')
+          .filter(x => x.name !== '')
       )
-      .then((res) => setOptions(res))
+      .then(res => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketId])
+
+  useEffect(() => {
+    if (!target) return
+    void loadData([{ ...target }])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshFlag])
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
@@ -150,6 +165,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const loadData = async (selectedOptions: Option[]) => {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
+    setTarget({ ...targetOption })
 
     if (targetOption.isLeaf) return
 
@@ -158,7 +174,7 @@ export default function StorageExplorer({ bucketId }: Props) {
     })
 
     const fileOpts = files
-      .map((x) => ({
+      .map(x => ({
         label: (
           <>
             <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
@@ -169,7 +185,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         isLeaf: !x.isDir,
         ...x,
       }))
-      .filter((x) => x.value !== targetOption.value)
+      .filter(x => x.value !== targetOption.value)
 
     targetOption.children = fileOpts
     targetOption.loading = false
@@ -179,6 +195,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   const isImage = (mime: string | undefined) => {
     if (!mime) return undefined
     return mime.indexOf('image/') === 0
+  }
+
+  const deleteFile = () => {
+    void requests
+      .post('/s3Upload/remove', { bucketID: bucketId, fileName: target?.name })
+      .then(() => void message.success('删除成功'))
   }
 
   return (
@@ -211,7 +233,11 @@ export default function StorageExplorer({ bucketId }: Props) {
             />
           )}
           <Divider type="vertical" className="mr-5 h-5" />
-          <Button icon={<SyncOutlined />} className="mr-2">
+          <Button
+            onClick={() => setRefreshFlag(!refreshFlag)}
+            icon={<SyncOutlined />}
+            className="mr-2"
+          >
             刷新
           </Button>
           <Dropdown overlay={listMenu} placement="bottom">
@@ -225,7 +251,13 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Button>
           </Dropdown>
           <Divider type="vertical" className="mr-5 h-5" />
-          <Upload>
+          <Upload
+            // className={`${styles['upload']}`}
+            action="/api/v1/s3Upload/upload"
+            data={{ bucketID: bucketId, path: uploadPath }}
+            showUploadList={false}
+            // onChange={() => setRefreshFlag(!refreshFlag)}
+          >
             <Button className="mr-2">上传</Button>
           </Upload>
         </div>
@@ -235,7 +267,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         open
         options={options}
         // @ts-ignore
-        loadData={(x) => void loadData(x)}
+        loadData={x => void loadData(x)}
         // @ts-ignore
         onChange={onChange}
         changeOnSelect
@@ -281,8 +313,15 @@ export default function StorageExplorer({ bucketId }: Props) {
           </Panel>
           <div className="flex flex-col">
             <Button className="m-1.5">下载</Button>
-            <Button className="m-1.5">复制URL</Button>
-            <Button className="m-1.5">删除</Button>
+            <Button
+              onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
+              className="m-1.5"
+            >
+              复制URL
+            </Button>
+            <Button onClick={deleteFile} className="m-1.5">
+              删除
+            </Button>
           </div>
         </Collapse>
       </Drawer>
