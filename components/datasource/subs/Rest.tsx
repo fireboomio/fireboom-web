@@ -371,7 +371,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
           <Collapse
             ghost
             bordered={false}
-            defaultActiveKey={['1']}
+            defaultActiveKey={['0']}
             expandIcon={({ isActive }) => (
               <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
             )}
@@ -474,9 +474,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={values => {
-                void onFinish(values as Config)
-              }}
+              onFinish={values => void onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
@@ -484,7 +482,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               className="ml-3"
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
-                headers: config.headers || [{ kind: '0' }],
+                headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
               }}
@@ -598,21 +596,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                   </Select>
                                 )}
                               </Form.Item>
-                              <IconFont
-                                type="icon-guanbi"
-                                onClick={() => {
-                                  remove(index)
-                                }}
-                              />
+                              <IconFont type="icon-guanbi" onClick={() => remove(index)} />
                             </Space>
                           ))}
 
                           <Form.Item wrapperCol={{ span: 16 }}>
                             <Button
                               type="dashed"
-                              onClick={() => {
-                                add({ kind: '0' })
-                              }}
+                              onClick={() => add({ kind: '0' })}
                               icon={<PlusOutlined />}
                               className="text-gray-500/60 w-1/1"
                             >
@@ -716,7 +707,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Tabs>
               <Collapse
                 bordered={false}
-                defaultActiveKey={['1']}
+                defaultActiveKey={['0']}
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                 className="site-collapse-custom-collapse bg-light-50"
               >
