@@ -121,25 +121,27 @@ export default function DatasourceRestMain({ content, type }: Props) {
   // 表单选择后规则校验改变
   const onGenderChange = (value: string) => {
     console.log('value', onGenderChange)
-    if (value) {
-      switch (value) {
-        case '0':
-          setIsValue(true)
-          setRulesObj({
-            pattern: /^\w{1,128}$/g,
-            message: '请输入长度不大于128的非空值',
-          })
-          return
-        case '1':
-          setIsValue(false)
-          return
-        case '2':
-          setIsValue(true)
-          setRulesObj({
-            pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-            message: '以字母或下划线开头，只能由字母、下划线和数字组成',
-          })
-      }
+
+    switch (value) {
+      case '0':
+        setIsValue(true)
+        setRulesObj({
+          pattern: /^\w{1,128}$/g,
+          message: '请输入长度不大于128的非空值',
+        })
+        return
+      case '1':
+        setIsValue(false)
+        return
+      case '2':
+        setIsValue(true)
+        setRulesObj({
+          pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+          message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+        })
+        return
+      default:
+        return
     }
   }
 

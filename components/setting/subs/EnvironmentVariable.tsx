@@ -230,7 +230,7 @@ export default function SettingMainEnvironmentVariable() {
                 { required: true, message: '名称不能为空' },
                 {
                   pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                  message: '名称只有由数字、字母、下划线组成，且首字母为非数字',
+                  message: '以字母或下划线开头，只能由数字、字母、下划线组成',
                 },
                 {
                   validator: (rule, value) => {
