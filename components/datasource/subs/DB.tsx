@@ -119,107 +119,126 @@ const ipReg =
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
-const initForm = (
-  <Form.Item label="连接URL">
-    <Input.Group compact>
-      <Form.Item
-        name={['databaseUrl', 'kind']}
-        noStyle
-        rules={[{ required: true, message: '类型不能为空' }]}
-      >
-        <Select className="w-1/5">
-          <Option value="0">值</Option>
-          <Option value="1">环境变量</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name={['databaseUrl', 'val']}
-        noStyle
-        // rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
-      >
-        <Input style={{ width: '80%' }} placeholder="请输入" />
-      </Form.Item>
-    </Input.Group>
-  </Form.Item>
-)
-const paramForm = (
-  <>
-    <Form.Item
-      label="主机:"
-      name="host"
-      rules={[
-        { required: true, message: '主机名不能为空' },
-        {
-          pattern: domainReg || ipReg,
-          message: '请填写规范域名或者ip',
-        },
-      ]}
-    >
-      <Input placeholder="请输入..." />
-    </Form.Item>
-    <Form.Item
-      label="数据库名:"
-      name="dbName"
-      rules={[
-        { required: true, message: '数据库名不能为空' },
-        {
-          pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-          message: '数据库名只有由数字、字母、下划线组成',
-        },
-      ]}
-    >
-      <Input placeholder="请输入..." />
-    </Form.Item>
-    <Form.Item
-      label="端口:"
-      name="port"
-      rules={[
-        { required: true, message: '端口号不能为空' },
-        {
-          pattern: port,
-          message: '端口范围为0-9999',
-        },
-      ]}
-    >
-      <Input placeholder="请输入..." />
-    </Form.Item>
-    <Form.Item
-      label="用户:"
-      name="userName"
-      rules={[
-        { required: true, message: '用户名不能为空' },
-        {
-          pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-          message: '用户名只有由数字、字母、下划线组成',
-        },
-      ]}
-    >
-      <Input placeholder="请输入..." />
-    </Form.Item>
-    <Form.Item
-      label="密码:"
-      name="password"
-      rules={[
-        { required: true, message: '密码不能为空' },
-        {
-          pattern: passwordReg,
-          message: '请输入4-64位包含数字、字母和非中文字符的组合',
-        },
-      ]}
-    >
-      <Input.Password placeholder="请输入..." />
-    </Form.Item>
-  </>
-)
-
 export default function DatasourceDBMain({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
-  const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
   const config = content.config as Config
+  const [rulesObj, setRulesObj] = useImmer({})
+  const [isValue, setIsValue] = useImmer(true)
+
+  // 表单选择后规则校验改变
+  const onGenderChange = (value: string) => {
+    console.log(value, 'value')
+    switch (value) {
+      case '0':
+        setIsValue(true)
+        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        return
+      case '1':
+        setIsValue(false)
+        return
+      default:
+        setIsValue(false)
+        return
+    }
+  }
+
+  const initForm = (
+    <Form.Item label="连接URL">
+      <Input.Group compact>
+        <Form.Item name={['databaseUrl', 'kind']} noStyle>
+          <Select className="w-1/5" onChange={onGenderChange}>
+            <Option value="0">值</Option>
+            <Option value="1">环境变量</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+          {isValue ? (
+            <Input style={{ width: '80%' }} placeholder="请输入" />
+          ) : (
+            <Select className="w-1/5" style={{ width: '80%' }}>
+              <Option value="1">1</Option>
+              <Option value="2">2</Option>
+            </Select>
+          )}
+        </Form.Item>
+      </Input.Group>
+    </Form.Item>
+  )
+  const paramForm = (
+    <>
+      <Form.Item
+        label="主机:"
+        name="host"
+        rules={[
+          { required: true, message: '主机名不能为空' },
+          {
+            pattern: domainReg || ipReg,
+            message: '请填写规范域名或者ip',
+          },
+        ]}
+      >
+        <Input placeholder="请输入..." />
+      </Form.Item>
+      <Form.Item
+        label="数据库名:"
+        name="dbName"
+        rules={[
+          { required: true, message: '数据库名不能为空' },
+          {
+            pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
+          },
+        ]}
+      >
+        <Input placeholder="请输入..." />
+      </Form.Item>
+      <Form.Item
+        label="端口:"
+        name="port"
+        rules={[
+          { required: true, message: '端口号不能为空' },
+          {
+            pattern: port,
+            message: '端口范围为0-9999',
+          },
+        ]}
+      >
+        <Input placeholder="请输入..." />
+      </Form.Item>
+      <Form.Item
+        label="用户:"
+        name="userName"
+        rules={[
+          { required: true, message: '用户名不能为空' },
+          {
+            pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
+          },
+        ]}
+      >
+        <Input placeholder="请输入..." />
+      </Form.Item>
+      <Form.Item
+        label="密码:"
+        name="password"
+        rules={[
+          { required: true, message: '密码不能为空' },
+          {
+            pattern: passwordReg,
+            message: '请输入4-64位包含数字、字母和非中文字符的组合',
+          },
+        ]}
+      >
+        <Input.Password placeholder="请输入..." />
+      </Form.Item>
+    </>
+  )
+
+  const [viewerForm, setViewerForm] = useImmer<React.ReactNode>(initForm)
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
@@ -227,6 +246,12 @@ export default function DatasourceDBMain({ content, type }: Props) {
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
+
+  useEffect(() => {
+    setViewerForm(initForm)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValue])
+
   //查看页面逻辑
   if (!content) {
     return <></>
@@ -516,7 +541,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                   { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: '连接名只有由数字、字母、下划线组成',
+                    message: '以字母或下划线开头，只能由数字、字母、下划线组成',
                   },
                 ]}
               >
