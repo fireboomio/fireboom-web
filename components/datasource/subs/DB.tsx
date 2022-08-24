@@ -513,7 +513,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 label="名称:"
                 name="apiNamespace"
                 rules={[
-                  { required: true, message: '连接名不能为空' },
+                  { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
                     message: '连接名只有由数字、字母、下划线组成',

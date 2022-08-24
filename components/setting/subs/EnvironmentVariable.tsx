@@ -88,16 +88,19 @@ export default function SettingMainEnvironmentVariable() {
       title: '变量名',
       dataIndex: 'key',
       key: 'key',
+      width: 200,
     },
     {
       title: '开发环境',
       dataIndex: 'devEnv',
       key: 'devEnv',
+      width: 200,
     },
     {
       title: '生产环境',
       key: 'proEnv',
       dataIndex: 'proEnv',
+      width: 200,
       render: (_, { proEnv }) => {
         return isProEnvVisible ? (
           <div>
@@ -125,6 +128,7 @@ export default function SettingMainEnvironmentVariable() {
     {
       title: '操作',
       dataIndex: 'action',
+      width: 200,
       render: (_, { id, key, devEnv, proEnv }) => (
         <div>
           <IconFont
@@ -180,7 +184,7 @@ export default function SettingMainEnvironmentVariable() {
         </div>
         <Modal
           mask={false}
-          title="新增环境变量"
+          title={id === -1 ? '新增环境变量' : '修改环境变量'}
           forceRender={true}
           transitionName=""
           bodyStyle={{
