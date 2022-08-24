@@ -109,10 +109,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   const config = content.config as Config
 
-  const onChange = (key: string) => {
-    console.log(key)
-  }
-
   //密码显示与隐藏
   const changeEyeState = () => {
     setIsEyeShow(!isEyeShow)
@@ -147,7 +143,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   //表单上传成功回调
   const onFinish = async (values: FromValues) => {
-    console.log('Success:', values)
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
     const index = (config.filePath as string)?.lastIndexOf('/')
@@ -213,22 +208,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   //文件上传过程钩子
   const normFile = (e: UploadProps) => {
-    console.log('Upload event:', e)
     if (Array.isArray(e)) {
       return e
     }
     return e?.fileList
   }
 
-  //请求头授权Tab切换回调
-  const onChangeTab = (key: string) => {
-    console.log(key)
-  }
-
   //单选框改变，表单变化回调
   const onChangeRadio = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value)
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     setValue(e.target.value)
     setIsRadioShow(!isRadioShow)
@@ -321,7 +308,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
             </Descriptions>
           </div>
 
-          <Tabs defaultActiveKey="1" onChange={onChange}>
+          <Tabs defaultActiveKey="1">
             <TabPane tab="请求头" key="1">
               <div className={`${styles['table-contain']}`}>
                 <Table
@@ -384,7 +371,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
           <Collapse
             ghost
             bordered={false}
-            defaultActiveKey={['1']}
+            defaultActiveKey={['0']}
             expandIcon={({ isActive }) => (
               <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
             )}
@@ -487,9 +474,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={values => {
-                void onFinish(values as Config)
-              }}
+              onFinish={values => void onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
@@ -497,7 +482,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               className="ml-3"
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
-                headers: config.headers || [{ kind: '0' }],
+                headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
               }}
@@ -523,6 +508,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
               <Form.Item
+                rules={[{ required: true, message: '请上传 OAS 文件' }]}
                 label={
                   <div>
                     <span>指定OAS:</span>
@@ -548,7 +534,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
                   }
                   maxCount={1}
                   beforeUpload={(file: UploadFile) => {
-                    console.log(file, 'file')
                     const req = new RegExp('.json|.yaml', 'g')
                     if (req.test(file.name)) {
                       setFile(file)
@@ -565,7 +550,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 </Upload>
               </Form.Item>
 
-              <Tabs defaultActiveKey="1" onChange={onChangeTab} className="ml-3">
+              <Tabs defaultActiveKey="1" className="ml-3">
                 <TabPane tab="请求头" key="1">
                   <Form.Item
                     wrapperCol={{
@@ -611,21 +596,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                   </Select>
                                 )}
                               </Form.Item>
-                              <IconFont
-                                type="icon-guanbi"
-                                onClick={() => {
-                                  remove(index)
-                                }}
-                              />
+                              <IconFont type="icon-guanbi" onClick={() => remove(index)} />
                             </Space>
                           ))}
 
                           <Form.Item wrapperCol={{ span: 16 }}>
                             <Button
                               type="dashed"
-                              onClick={() => {
-                                add({ kind: '0' })
-                              }}
+                              onClick={() => add({ kind: '0' })}
                               icon={<PlusOutlined />}
                               className="text-gray-500/60 w-1/1"
                             >
@@ -729,7 +707,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
               </Tabs>
               <Collapse
                 bordered={false}
-                defaultActiveKey={['1']}
+                defaultActiveKey={['0']}
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                 className="site-collapse-custom-collapse bg-light-50"
               >

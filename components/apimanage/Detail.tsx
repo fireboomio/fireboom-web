@@ -390,6 +390,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
             mode="multiple"
             value={roleVal ?? rbac?.value}
             onChange={v => onRoleValChange(v)}
+            placeholder="暂无角色"
           >
             {opts
               ? opts.map(x => (
