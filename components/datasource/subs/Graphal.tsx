@@ -77,6 +77,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
+  const [isValue, setIsValue] = useImmer(true)
 
   const [form] = Form.useForm()
   const { Option } = Select
@@ -160,16 +161,32 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const onGenderChange = (value: string) => {
     switch (value) {
       case '0':
+        setIsValue(true)
         setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
         return
       case '1':
-        setRulesObj({ pattern: urlReg, message: '请输入正确格式的环境变量' })
-        // form.setFieldsValue({ note: 'Hi, lady!' })
+        setIsValue(false)
         return
       case '2':
-        setRulesObj({ pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g, message: '请输入合法的变量名' })
-      // form.setFieldsValue({ note: 'Hi there!' })
+        setIsValue(true)
+        setRulesObj({
+          pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+          message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+        })
+        return
+      default:
+        return
     }
+  }
+
+  const children: React.ReactNode[] = []
+
+  const handleChange = (value: string) => {
+    setRulesObj({
+      pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+      message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+    })
+    console.log(`selected ${value}`)
   }
 
   //文件上传过程钩子
@@ -564,7 +581,14 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             name={[field.name, 'val']}
                             rules={[rulesObj]}
                           >
-                            <Input placeholder="请输入..." />
+                            {isValue ? (
+                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                            ) : (
+                              <Select className="w-1/5" style={{ width: '80%' }}>
+                                <Option value="1">1</Option>
+                                <Option value="2">2</Option>
+                              </Select>
+                            )}
                           </Form.Item>
                           <IconFont
                             type="icon-guanbi"
@@ -622,24 +646,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customFloatScalars"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('标量不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[rulesObj]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
 
                   <Form.Item
@@ -650,24 +668,18 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customIntScalars"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('标量不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[rulesObj]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
                   <Form.Item
                     label={
@@ -679,22 +691,16 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     colon={false}
                     style={{ marginBottom: '20px' }}
                     name="skipRenameRootFields"
-                    rules={[
-                      {
-                        validator: (rule, value: Array<string>) => {
-                          const regResult = value.some((item: string) =>
-                            /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item)
-                          )
-                          if (!regResult) {
-                            return Promise.reject('字段不符合规则')
-                          } else {
-                            return Promise.resolve()
-                          }
-                        },
-                      },
-                    ]}
+                    rules={[rulesObj]}
                   >
-                    <Input placeholder="请输入..." />
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={handleChange}
+                    >
+                      {children}
+                    </Select>
                   </Form.Item>
                 </Panel>
               </Collapse>

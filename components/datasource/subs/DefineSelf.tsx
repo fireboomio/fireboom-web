@@ -39,9 +39,9 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
     <div>
       {isEditing ? (
         <Input
-          onBlur={(e) => handleItemEdit(e.target.value)}
+          onBlur={e => handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => handleItemEdit(e.target.value)}
+          onPressEnter={e => handleItemEdit(e.target.value)}
           style={{ width: '200px' }}
           className="text-sm font-normal leading-4 h-5 pl-1"
           defaultValue={config.serverName as string}
@@ -77,7 +77,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
           dispatch({ type: 'fetched', data: res })
         })
       })
@@ -95,7 +95,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
         name: value,
       }
       Reflect.deleteProperty(req, 'id')
-      void requests.post<unknown, number>('/dataSource', req).then((res) => {
+      void requests.post<unknown, number>('/dataSource', req).then(res => {
         content.id = res
       })
     } else
@@ -106,7 +106,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
       })
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
-      .then((res) => {
+      .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
@@ -149,14 +149,6 @@ export default function DatasourceDeselfMain({ content }: Props) {
               name="apiNamespace"
               editDefineSelf={editDefineSelf}
             />
-          </Descriptions.Item>
-          <Descriptions.Item label="类型">
-            {/* <DatasourceDefineItem
-              content={content}
-              name="serverName"
-              editDefineSelf={editDefineSelf}
-        />*/}
-            {config.serverName}
           </Descriptions.Item>
         </Descriptions>
       </div>

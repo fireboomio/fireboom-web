@@ -114,9 +114,9 @@ const port = /^(([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5]))$/
 const domainReg = /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$/
 const ipReg =
   /^((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]\d)|\d)(\.((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]\d)|\d)){3}$/
-const envReg =
-  // eslint-disable-next-line no-useless-escape
-  /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
+// const envReg =
+//   // eslint-disable-next-line no-useless-escape
+//   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
 const initForm = (
@@ -135,7 +135,7 @@ const initForm = (
       <Form.Item
         name={['databaseUrl', 'val']}
         noStyle
-        rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
+        // rules={[{ pattern: envReg, message: '请输入正确的格式' }]}
       >
         <Input style={{ width: '80%' }} placeholder="请输入" />
       </Form.Item>
@@ -513,7 +513,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                 label="名称:"
                 name="apiNamespace"
                 rules={[
-                  { required: true, message: '连接名不能为空' },
+                  { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
                     message: '连接名只有由数字、字母、下划线组成',
@@ -526,9 +526,9 @@ export default function DatasourceDBMain({ content, type }: Props) {
               <Form.Item
                 label="类型:"
                 name="dbType"
-                rules={[{ required: true, message: '类型不能为空' }]}
+                // rules={[{ required: true, message: '类型不能为空' }]}
               >
-                <Select placeholder="请输入..." defaultValue="MySQL">
+                <Select placeholder="请输入...">
                   <Select.Option value="MySQL">MySql</Select.Option>
                   <Select.Option value="SQLITE">SQLITE</Select.Option>
                   <Select.Option value="PGSQL">PGSQL</Select.Option>
