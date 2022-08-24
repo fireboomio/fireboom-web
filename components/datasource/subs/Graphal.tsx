@@ -77,6 +77,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
+  const [isValue, setIsValue] = useImmer(true)
 
   const [form] = Form.useForm()
   const { Option } = Select
@@ -158,23 +159,32 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   }
   // 表单选择后规则校验改变
   const onGenderChange = (value: string) => {
-    switch (value) {
-      case '0':
-        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
-        return
-      case '1':
-        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入正确格式的环境变量' })
-        // form.setFieldsValue({ note: 'Hi, lady!' })
-        return
-      case '2':
-        setRulesObj({ pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g, message: '请输入合法的变量名' })
-      // form.setFieldsValue({ note: 'Hi there!' })
+    if (value) {
+      switch (value) {
+        case '0':
+          setIsValue(true)
+          setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+          return
+        case '1':
+          setIsValue(false)
+          return
+        case '2':
+          setIsValue(true)
+          setRulesObj({
+            pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+            message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+          })
+      }
     }
   }
 
   const children: React.ReactNode[] = []
 
   const handleChange = (value: string) => {
+    setRulesObj({
+      pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+      message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+    })
     console.log(`selected ${value}`)
   }
 
@@ -570,7 +580,14 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             name={[field.name, 'val']}
                             rules={[rulesObj]}
                           >
-                            <Input placeholder="请输入..." />
+                            {isValue ? (
+                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                            ) : (
+                              <Select className="w-1/5" style={{ width: '80%' }}>
+                                <Option value="1">1</Option>
+                                <Option value="2">2</Option>
+                              </Select>
+                            )}
                           </Form.Item>
                           <IconFont
                             type="icon-guanbi"
@@ -628,7 +645,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customFloatScalars"
-                    rules={[]}
+                    rules={[rulesObj]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -650,7 +667,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                       </div>
                     }
                     name="customIntScalars"
-                    rules={[]}
+                    rules={[rulesObj]}
                     colon={false}
                     style={{ marginBottom: '20px' }}
                   >
@@ -673,7 +690,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     colon={false}
                     style={{ marginBottom: '20px' }}
                     name="skipRenameRootFields"
-                    rules={[]}
+                    rules={[rulesObj]}
                   >
                     <Select
                       mode="tags"

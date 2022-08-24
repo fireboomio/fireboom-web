@@ -83,8 +83,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
   const [rulesObj, setRulesObj] = useImmer({})
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [isRadioShow, setIsRadioShow] = useImmer(true)
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
+  const [isValue, setIsValue] = useImmer(true)
 
   useEffect(() => {
     form.resetFields()
@@ -121,17 +120,26 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   // 表单选择后规则校验改变
   const onGenderChange = (value: string) => {
-    switch (value) {
-      case '1':
-        setRulesObj({
-          pattern: /^\w{1,128}$/g,
-          message: '请输入长度不大于128的非空值',
-        })
-        return
-      case '2':
-        setRulesObj({ pattern: urlReg, message: '请输入正确格式的环境变量' })
-        // form.setFieldsValue({ note: 'Hi, lady!' })
-        return
+    console.log('value', onGenderChange)
+    if (value) {
+      switch (value) {
+        case '0':
+          setIsValue(true)
+          setRulesObj({
+            pattern: /^\w{1,128}$/g,
+            message: '请输入长度不大于128的非空值',
+          })
+          return
+        case '1':
+          setIsValue(false)
+          return
+        case '2':
+          setIsValue(true)
+          setRulesObj({
+            pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+            message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+          })
+      }
     }
   }
 
@@ -500,10 +508,10 @@ export default function DatasourceRestMain({ content, type }: Props) {
                   </div>
                 }
                 rules={[
-                  { required: true, message: 'Please input nameSpace!' },
+                  { required: true, message: '请输入名称' },
                   {
-                    pattern: new RegExp('^\\w+$', 'g'),
-                    message: '只允许包含数字，字母，下划线',
+                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
+                    message: '以字母或下划线开头，只能由字母、下划线和数字组成',
                   },
                 ]}
                 name="apiNameSpace"
@@ -580,7 +588,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'kind']}
                               >
-                                <Select>
+                                <Select onChange={onGenderChange}>
                                   <Option value="0">值</Option>
                                   <Option value="1">环境变量</Option>
                                   <Option value="2">转发自客户端</Option>
@@ -590,8 +598,16 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                 className="w-135"
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'val']}
+                                rules={[rulesObj]}
                               >
-                                <Input placeholder="请输入..." />
+                                {isValue ? (
+                                  <Input style={{ width: '80%' }} placeholder="请输入" />
+                                ) : (
+                                  <Select className="w-1/5" style={{ width: '80%' }}>
+                                    <Option value="1">1</Option>
+                                    <Option value="2">2</Option>
+                                  </Select>
+                                )}
                               </Form.Item>
                               <IconFont
                                 type="icon-guanbi"
@@ -643,13 +659,19 @@ export default function DatasourceRestMain({ content, type }: Props) {
                         <Input.Group compact>
                           <Form.Item name={['secret', 'kind']} noStyle>
                             <Select className="w-1/5" onChange={onGenderChange}>
-                              <Option value="0"> </Option>
-                              <Option value="1">值</Option>
-                              <Option value="2">环境变量</Option>
+                              <Option value="0">值</Option>
+                              <Option value="1">环境变量</Option>
                             </Select>
                           </Form.Item>
                           <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
-                            <Input style={{ width: '80%' }} placeholder="请输入" />
+                            {isValue ? (
+                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                            ) : (
+                              <Select className="w-1/5" style={{ width: '80%' }}>
+                                <Option value="1">1</Option>
+                                <Option value="2">2</Option>
+                              </Select>
+                            )}
                           </Form.Item>
                         </Input.Group>
                       </Form.Item>
@@ -664,28 +686,21 @@ export default function DatasourceRestMain({ content, type }: Props) {
                     <>
                       <Form.Item label="密钥">
                         <Input.Group compact>
-                          <Form.Item
-                            name={['secret', 'kind']}
-                            noStyle
-                            rules={[{ required: true, message: 'typeName is required' }]}
-                          >
-                            <Select className="w-1/5">
+                          <Form.Item name={['secret', 'kind']} noStyle>
+                            <Select className="w-1/5" onChange={onGenderChange}>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item
-                            name={['secret', 'val']}
-                            noStyle
-                            rules={[
-                              { required: true, message: '连接名不能为空' },
-                              {
-                                pattern: new RegExp('^\\w+$', 'g'),
-                                message: '只允许包含字母，数字，下划线',
-                              },
-                            ]}
-                          >
-                            <Input style={{ width: '80%' }} placeholder="请输入" />
+                          <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
+                            {isValue ? (
+                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                            ) : (
+                              <Select className="w-1/5" style={{ width: '80%' }}>
+                                <Option value="1">1</Option>
+                                <Option value="2">2</Option>
+                              </Select>
+                            )}
                           </Form.Item>
                         </Input.Group>
                       </Form.Item>
