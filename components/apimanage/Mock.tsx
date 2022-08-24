@@ -83,7 +83,7 @@ const Mock: FC<MockProps> = ({ node }) => {
         height="90vh"
         defaultLanguage="typescript"
         defaultValue={defaultMock}
-        value={mock?.content}
+        value={mock?.content || defaultMock}
         onChange={value => handleEditorChange(value)}
         className={`mt-4 ${styles.monaco}`}
       />
