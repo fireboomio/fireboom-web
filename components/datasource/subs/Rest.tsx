@@ -523,6 +523,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
               <Form.Item
+                rules={[{ required: true, message: '请上传 OAS 文件' }]}
                 label={
                   <div>
                     <span>指定OAS:</span>
@@ -548,7 +549,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
                   }
                   maxCount={1}
                   beforeUpload={(file: UploadFile) => {
-                    console.log(file, 'file')
                     const req = new RegExp('.json|.yaml', 'g')
                     if (req.test(file.name)) {
                       setFile(file)
