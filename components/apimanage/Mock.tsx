@@ -12,6 +12,15 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 type MockProps = { node?: DirTreeNode }
 
+const defaultMock = `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
+// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
+// import type { Context } from "@wundergraph/sdk"
+
+// export default mock(ctx: Context<User, InternalClient>) {
+//     console.log('hello')
+//     return
+// }`
+
 const Mock: FC<MockProps> = ({ node }) => {
   const [mock, setMock] = useState<MockResp>()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
@@ -73,7 +82,7 @@ const Mock: FC<MockProps> = ({ node }) => {
       <Editor
         height="90vh"
         defaultLanguage="typescript"
-        defaultValue="// 请编辑 Mock"
+        defaultValue={defaultMock}
         value={mock?.content}
         onChange={value => handleEditorChange(value)}
         className={`mt-4 ${styles.monaco}`}
