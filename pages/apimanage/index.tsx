@@ -181,6 +181,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [isSettingVisible, setIsSettingVisible] = useState(false)
   const [isHookVisible, setIsHookVisible] = useState(false)
   const [query, setQuery] = useState<string>()
+  const [isBlur, setIsBlur] = useState(false)
 
   const selectedNode = useMemo(() => getNodeByKey(selectedKey, treeData), [selectedKey, treeData])
   const currEditingNode = useMemo(() => {
@@ -253,6 +254,16 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData])
 
+  useEffect(() => {
+    if (!isModalVisible && isBlur) {
+      setAction(null)
+      setCurrEditingKey(null)
+      setRefreshFlag(!refreshFlag)
+    }
+    setIsBlur(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalVisible, isBlur])
+
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
@@ -273,9 +284,14 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         break
       case '创建文件':
-        currEditingNode.title = inputValue
-        setQuery('')
-        setIsModalVisible(true)
+        if (isEmpty(inputValue)) {
+          setCurrEditingKey(null)
+          setRefreshFlag(!refreshFlag)
+        } else {
+          currEditingNode.title = inputValue
+          setQuery('')
+          setIsModalVisible(true)
+        }
         break
       case '编辑':
       default:
@@ -291,18 +307,6 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleInputClick = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation()
   }, [])
-
-  const handleInputBlur = useCallback(() => {
-    if (action !== '创建文件') {
-      setAction(null)
-      setCurrEditingKey(null)
-      setRefreshFlag(!refreshFlag)
-    } else if (currEditingKey !== null) {
-      setAction(null)
-      setCurrEditingKey(null)
-      setRefreshFlag(!refreshFlag)
-    }
-  }, [action, currEditingKey, refreshFlag])
 
   const handleAddNode = (action: ActionT) => {
     setAction(action)
@@ -440,7 +444,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}
-            onBlur={handleInputBlur}
+            onBlur={() => setIsBlur(true)}
           />
         ) : (
           <>
