@@ -96,7 +96,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
-    console.log('SuccessValues:', values)
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
     const index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
@@ -155,8 +154,8 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   //表单提交失败回调
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
-    console.log('123')
   }
+
   // 表单选择后规则校验改变
   const onGenderChange = (value: string) => {
     switch (value) {
@@ -191,7 +190,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   //文件上传过程钩子
   const normFile = (e: UploadProps) => {
-    console.log('Upload event:', e)
     if (Array.isArray(e)) {
       return e
     }
@@ -210,12 +208,10 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
           dispatch({ type: 'fetched', data: res })
         })
       })
-    console.log('switch change')
   }
 
   //移除文件回调
   const onRemoveFile = () => {
-    console.log('删除文件')
     setDeleteFlag(true)
     setFile({} as unknown as UploadFile)
   }
@@ -539,7 +535,6 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                     onRemove={onRemoveFile}
                     maxCount={1}
                     beforeUpload={(file: UploadFile) => {
-                      console.log(file, 'file')
                       const req = new RegExp('.json|.yaml', 'g')
                       if (req.test(file.name)) {
                         setFile(file)

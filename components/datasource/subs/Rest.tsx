@@ -109,10 +109,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   const config = content.config as Config
 
-  const onChange = (key: string) => {
-    console.log(key)
-  }
-
   //密码显示与隐藏
   const changeEyeState = () => {
     setIsEyeShow(!isEyeShow)
@@ -147,7 +143,6 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   //表单上传成功回调
   const onFinish = async (values: FromValues) => {
-    console.log('Success:', values)
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
     const index = (config.filePath as string)?.lastIndexOf('/')
@@ -213,22 +208,14 @@ export default function DatasourceRestMain({ content, type }: Props) {
 
   //文件上传过程钩子
   const normFile = (e: UploadProps) => {
-    console.log('Upload event:', e)
     if (Array.isArray(e)) {
       return e
     }
     return e?.fileList
   }
 
-  //请求头授权Tab切换回调
-  const onChangeTab = (key: string) => {
-    console.log(key)
-  }
-
   //单选框改变，表单变化回调
   const onChangeRadio = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value)
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     setValue(e.target.value)
     setIsRadioShow(!isRadioShow)
@@ -321,7 +308,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
             </Descriptions>
           </div>
 
-          <Tabs defaultActiveKey="1" onChange={onChange}>
+          <Tabs defaultActiveKey="1">
             <TabPane tab="请求头" key="1">
               <div className={`${styles['table-contain']}`}>
                 <Table
@@ -565,7 +552,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                 </Upload>
               </Form.Item>
 
-              <Tabs defaultActiveKey="1" onChange={onChangeTab} className="ml-3">
+              <Tabs defaultActiveKey="1" className="ml-3">
                 <TabPane tab="请求头" key="1">
                   <Form.Item
                     wrapperCol={{

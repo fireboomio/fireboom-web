@@ -244,14 +244,12 @@ export default function DatasourceDBMain({ content, type }: Props) {
           dispatch({ type: 'fetched', data: res })
         })
       })
-    console.log('switch change')
   }
 
   //编辑页面逻辑
 
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
-    console.log('Success:', values)
     const newValues = { ...config, ...values }
     if (content.name == '') {
       const req = { ...content, config: newValues, name: values.apiNamespace }
@@ -281,7 +279,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   //表单item值改变回调
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    console.log(allValues, 'allValues')
     for (const key in allValues) {
       if ((allValues[key] as string) == undefined) {
         setDisabled(true)

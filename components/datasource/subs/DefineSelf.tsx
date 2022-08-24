@@ -81,7 +81,6 @@ export default function DatasourceDeselfMain({ content }: Props) {
           dispatch({ type: 'fetched', data: res })
         })
       })
-    console.log('switch change')
   }
 
   const editDefineSelf = (value: string) => {

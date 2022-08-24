@@ -32,7 +32,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
   const [isHovering, setIsHovering] = useImmer(false)
   const config = datasourceItem.config as Config
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps['onClick'] = e => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
       setVisible(false)
@@ -41,7 +41,6 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
 
   //重命名input框onblur或enter回调
   async function handleItemEdit(value: string) {
-    console.log(datasourceItem)
     if (value === '') {
       dispatch({ type: 'deleted', data: datasourceItem })
     } else {
@@ -50,7 +49,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
         name: value,
         config: { ...config, apiNameSpace: value },
       })
-      void requests.get<unknown, DatasourceResp[]>('/dataSource').then((res) => {
+      void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
         dispatch({
           type: 'fetched',
           data: res,
@@ -168,9 +167,9 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
 
         {isEditing ? (
           <Input
-            onBlur={(e) => void handleItemEdit(e.target.value)}
+            onBlur={e => void handleItemEdit(e.target.value)}
             // @ts-ignore
-            onPressEnter={(e) => void handleItemEdit(e.target.value)}
+            onPressEnter={e => void handleItemEdit(e.target.value)}
             onKeyUp={(e: React.KeyboardEvent) => {
               e.key == 'Escape' && setIsEditing(false)
             }}
@@ -201,14 +200,14 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
           trigger={['click']}
           placement="bottomRight"
           visible={visible}
-          onVisibleChange={(v) => {
+          onVisibleChange={v => {
             setVisible(v)
             leaveItem(v)
           }}
         >
           <IconFont
             type="icon-gengduo-shu-xuanzhong"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             className="m-auto mr-0 pr-2"
             style={{ visibility: isHovering ? 'visible' : 'hidden' }}
           />
