@@ -42,7 +42,7 @@ import {
 } from '@/lib/context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
-import { isEmpty } from '@/lib/utils'
+import { isEmpty, isUpperCase } from '@/lib/utils'
 
 import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
@@ -287,6 +287,9 @@ const ApiManage: FC<ApiManageProps> = () => {
         if (isEmpty(inputValue)) {
           setCurrEditingKey(null)
           setRefreshFlag(!refreshFlag)
+          // @ts-ignore
+        } else if (!isUpperCase(inputValue.at(0))) {
+          void message.warn('文件名必须以大写字母开头！')
         } else {
           currEditingNode.title = inputValue
           setQuery('')
