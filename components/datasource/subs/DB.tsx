@@ -303,14 +303,11 @@ export default function DatasourceDBMain({ content, type }: Props) {
   }
 
   //表单item值改变回调
-  const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    for (const key in allValues) {
-      if ((allValues[key] as string) == undefined) {
-        setDisabled(true)
-        return
-      }
-    }
-    setDisabled(false)
+  const onValuesChange = (allValues: FromValues) => {
+    console.log(allValues, 'allValues')
+    const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
+    console.log(hasErrors, 'hasErrors')
+    setDisabled(hasErrors)
   }
 
   //测试连接 成功与失败提示
@@ -508,6 +505,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 12 }}
               onFinish={values => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 void onFinish(values)
               }}
               onFinishFailed={onFinishFailed}

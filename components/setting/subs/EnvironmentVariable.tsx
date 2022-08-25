@@ -31,9 +31,11 @@ export default function SettingMainEnvironmentVariable() {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
   const [isProEnvVisible, setIsProEnvVisible] = useImmer(false)
+  const [disabled, setDisabled] = useImmer(true)
   const [system, setSystem] = useImmer<DataType[]>([])
   const [id, setID] = useImmer(-1)
   const [environmentConfig, setEnvironmentConfig] = useImmer<DataType[]>([])
+  const [selectInfo, setSelectInfo] = useState('')
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
@@ -75,12 +77,24 @@ export default function SettingMainEnvironmentVariable() {
     setIsShowSecret(!isShowSecret)
   }
 
-  const handleToggleProEnv = () => {
+  const isCheckShow = (key: string) => key === selectInfo
+
+  const handleToggleProEnv = (key: string) => {
+    setSelectInfo(key)
     setIsProEnvVisible(!isProEnvVisible)
   }
 
   const showModal = () => {
+    form.resetFields()
     setIsVariableVisible(true)
+  }
+
+  // 表单item值改变回调
+  const onValuesChange = (allValues: FromValues) => {
+    console.log(allValues, 'allValues')
+    const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
+    console.log(hasErrors, 'hasErrors')
+    setDisabled(hasErrors)
   }
 
   const columns: ColumnsType<DataType> = [
@@ -101,16 +115,29 @@ export default function SettingMainEnvironmentVariable() {
       key: 'proEnv',
       dataIndex: 'proEnv',
       width: 200,
-      render: (_, { proEnv }) => {
-        return isProEnvVisible ? (
-          <div>
-            <span>{proEnv}</span>{' '}
-            <IconFont
-              type="icon-xiaoyanjing-chakan"
-              className="ml-6"
-              onClick={handleToggleProEnv}
-            />{' '}
-          </div>
+      render: (_, { key, proEnv }) => {
+        const isThisLine = isCheckShow(key)
+        return isThisLine ? (
+          isProEnvVisible ? (
+            <div>
+              <span>{proEnv}</span>{' '}
+              <IconFont
+                type="icon-xiaoyanjing-chakan"
+                className="ml-6"
+                onClick={() => handleToggleProEnv(key)}
+              />{' '}
+            </div>
+          ) : (
+            <div>
+              {' '}
+              <span>**************</span>{' '}
+              <IconFont
+                type="icon-xiaoyanjing-yincang"
+                className="ml-6"
+                onClick={() => handleToggleProEnv(key)}
+              />
+            </div>
+          )
         ) : (
           <div>
             {' '}
@@ -118,7 +145,7 @@ export default function SettingMainEnvironmentVariable() {
             <IconFont
               type="icon-xiaoyanjing-yincang"
               className="ml-6"
-              onClick={handleToggleProEnv}
+              onClick={() => handleToggleProEnv(key)}
             />
           </div>
         )
@@ -195,6 +222,9 @@ export default function SettingMainEnvironmentVariable() {
           visible={isVariableVisible}
           onOk={() => setIsVariableVisible(false)}
           onCancel={() => setIsVariableVisible(false)}
+          okButtonProps={{
+            disabled: disabled,
+          }}
           okText={
             <span
               className={styles['save-env-btn']}
@@ -202,7 +232,7 @@ export default function SettingMainEnvironmentVariable() {
                 form.submit()
               }}
             >
-              <span>保存</span>
+              {id === -1 ? '创建' : '保存'}
             </span>
           }
           cancelText={<span className="w-10">取消</span>}
@@ -220,6 +250,7 @@ export default function SettingMainEnvironmentVariable() {
               void onFinish(values)
             }}
             autoComplete="off"
+            onValuesChange={onValuesChange}
             onFinishFailed={onFinishFailed}
             labelAlign="left"
           >
@@ -249,16 +280,20 @@ export default function SettingMainEnvironmentVariable() {
             <Form.Item
               label="开发环境"
               name="devEnv"
-              required
-              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
+              rules={[
+                { required: true, message: '开发环境不能为空' },
+                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="生产环境"
               name="proEnv"
-              required
-              rules={[{ pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }]}
+              rules={[
+                { required: true, message: '生产环境不能为空' },
+                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' },
+              ]}
             >
               <Input />
             </Form.Item>
