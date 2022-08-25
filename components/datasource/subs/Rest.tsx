@@ -115,8 +115,8 @@ export default function DatasourceRestMain({ content, type }: Props) {
   }
 
   // 表单选择后规则校验改变
-  const onGenderChange = (value: string) => {
-    console.log('value', onGenderChange)
+  const onValueChange = (value: string) => {
+    console.log('value', onValueChange)
 
     switch (value) {
       case '0':
@@ -575,7 +575,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                                 wrapperCol={{ span: 24 }}
                                 name={[field.name, 'kind']}
                               >
-                                <Select onChange={onGenderChange}>
+                                <Select onChange={onValueChange}>
                                   <Option value="0">值</Option>
                                   <Option value="1">环境变量</Option>
                                   <Option value="2">转发自客户端</Option>
@@ -638,7 +638,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                       <Form.Item label="密钥">
                         <Input.Group compact>
                           <Form.Item name={['secret', 'kind']} noStyle>
-                            <Select className="w-1/5" onChange={onGenderChange}>
+                            <Select className="w-1/5" onChange={onValueChange}>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                             </Select>
@@ -667,7 +667,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
                       <Form.Item label="密钥">
                         <Input.Group compact>
                           <Form.Item name={['secret', 'kind']} noStyle>
-                            <Select className="w-1/5" onChange={onGenderChange}>
+                            <Select className="w-1/5" onChange={onValueChange}>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                             </Select>

@@ -130,7 +130,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
   const [isValue, setIsValue] = useImmer(true)
 
   // 表单选择后规则校验改变
-  const onGenderChange = (value: string) => {
+  const onValueChange = (value: string) => {
     console.log(value, 'value')
     switch (value) {
       case '0':
@@ -150,7 +150,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     <Form.Item label="连接URL">
       <Input.Group compact>
         <Form.Item name={['databaseUrl', 'kind']} noStyle>
-          <Select className="w-1/5" onChange={onGenderChange}>
+          <Select className="w-1/5" onChange={onValueChange}>
             <Option value="0">值</Option>
             <Option value="1">环境变量</Option>
           </Select>
