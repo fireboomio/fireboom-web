@@ -157,7 +157,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
   }
 
   // 表单选择后规则校验改变
-  const onGenderChange = (value: string) => {
+  const onValueChange = (value: string) => {
     switch (value) {
       case '0':
         setIsValue(true)
@@ -565,7 +565,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                             <Input />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
-                            <Select onChange={onGenderChange}>
+                            <Select onChange={onValueChange}>
                               <Option value="0">值</Option>
                               <Option value="1">环境变量</Option>
                               <Option value="2">转发自客户端</Option>

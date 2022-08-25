@@ -96,24 +96,22 @@ function AuthMainSetting() {
                                 })
                             }}
                           />
-                          {fields.length > 1 ? (
-                            <IconFont
-                              type="icon-guanbi"
-                              className={`${styles['form-delete-icon']}`}
-                              onClick={() => {
-                                void requests
-                                  .post('/auth/redirectUrl', {
-                                    redirectURLs: (
-                                      form.getFieldValue('redirectURLs') as Array<string>
-                                    ).filter((_, i) => i != index),
-                                  })
-                                  .then(() => {
-                                    remove(index)
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                              }}
-                            />
-                          ) : null}
+                          <IconFont
+                            type="icon-guanbi"
+                            className={`${styles['form-delete-icon']}`}
+                            onClick={() => {
+                              void requests
+                                .post('/auth/redirectUrl', {
+                                  redirectURLs: (
+                                    form.getFieldValue('redirectURLs') as Array<string>
+                                  ).filter((_, i) => i != index),
+                                })
+                                .then(() => {
+                                  remove(index)
+                                  setRefreshFlag(!refreshFlag)
+                                })
+                            }}
+                          />
                         </div>
                       </Form.Item>
                     </Form.Item>
@@ -272,24 +270,23 @@ export default function SettingMainSecurity() {
                               })
                             }}
                           />
-                          {fields.length > 1 ? (
-                            <IconFont
-                              type="icon-guanbi"
-                              className={`${styles['form-delete-icon']}`}
-                              onClick={() => {
-                                void requests
-                                  .post('/global', {
-                                    key: 'allowedHosts',
-                                    val: (
-                                      form.getFieldValue('allowedHosts') as Array<string>
-                                    ).filter((_, i) => i != index),
-                                  })
-                                  .then(() => {
-                                    remove(index)
-                                  })
-                              }}
-                            />
-                          ) : null}
+
+                          <IconFont
+                            type="icon-guanbi"
+                            className={`${styles['form-delete-icon']}`}
+                            onClick={() => {
+                              void requests
+                                .post('/global', {
+                                  key: 'allowedHosts',
+                                  val: (form.getFieldValue('allowedHosts') as Array<string>).filter(
+                                    (_, i) => i != index
+                                  ),
+                                })
+                                .then(() => {
+                                  remove(index)
+                                })
+                            }}
+                          />
                         </div>
                       </Form.Item>
                     </Form.Item>
