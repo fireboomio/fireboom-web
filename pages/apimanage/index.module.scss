@@ -80,3 +80,15 @@
     line-height: 18px;
   }
 }
+
+.tree-item {
+  .symbol {
+    visibility: hidden;
+  }
+}
+
+.tree-item:hover {
+  .symbol {
+    visibility: visible;
+  }
+}

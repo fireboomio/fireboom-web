@@ -439,7 +439,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     )
 
     return (
-      <div className="flex justify-between items-center">
+      <div className={`flex justify-between items-center ${styles['tree-item']}`}>
         {currEditingKey && nodeData.key === currEditingKey ? (
           <Input
             defaultValue={nodeData.title}
@@ -454,7 +454,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             <span className="truncate max-w-9rem">{nodeData.title}</span>
             <div className="text-12px  space-x-4">
               <span className="text-[#AFB0B499]">{nodeData.method}</span>
-              <span className="text-[#AFB0B4]">
+              <span className={`text-[#AFB0B4] ${styles['symbol']}`}>
                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
                   <MoreOutlined onClick={e => e.stopPropagation()} />
                 </Dropdown>
