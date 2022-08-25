@@ -135,7 +135,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
           bordered
           column={1}
           size="small"
-          className="w-270 mt-4"
+          className="w-full mt-4"
           labelStyle={{
             backgroundColor: 'white',
             width: '30%',
@@ -164,7 +164,6 @@ export default function DatasourceDeselfMain({ content }: Props) {
         className={`mt-4 ${styles.monaco}`}
         value="//comment"
       />
-      <div />
     </>
   )
 }
