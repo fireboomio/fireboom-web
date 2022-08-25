@@ -149,7 +149,11 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
   }, [rbac?.value])
 
   useEffect(() => {
-    if (!nodeId || nodeId === 0) return
+    if (!nodeId || nodeId === 0) {
+      setNode(undefined)
+      return
+    }
+
     setRoleKey('requireMatchAll')
     setRoleVal([])
     getFetcher<OperationResp>(`/operateApi/${nodeId}`)

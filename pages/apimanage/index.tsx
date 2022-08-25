@@ -42,7 +42,7 @@ import {
 } from '@/lib/context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
-import { isEmpty } from '@/lib/utils'
+import { isEmpty, isUpperCase } from '@/lib/utils'
 
 import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
@@ -287,6 +287,9 @@ const ApiManage: FC<ApiManageProps> = () => {
         if (isEmpty(inputValue)) {
           setCurrEditingKey(null)
           setRefreshFlag(!refreshFlag)
+          // @ts-ignore
+        } else if (!isUpperCase(inputValue.at(0))) {
+          void message.warn('文件名必须以大写字母开头！')
         } else {
           currEditingNode.title = inputValue
           setQuery('')
@@ -436,7 +439,7 @@ const ApiManage: FC<ApiManageProps> = () => {
     )
 
     return (
-      <div className="flex justify-between items-center">
+      <div className={`flex justify-between items-center ${styles['tree-item']}`}>
         {currEditingKey && nodeData.key === currEditingKey ? (
           <Input
             defaultValue={nodeData.title}
@@ -451,7 +454,7 @@ const ApiManage: FC<ApiManageProps> = () => {
             <span className="truncate max-w-9rem">{nodeData.title}</span>
             <div className="text-12px  space-x-4">
               <span className="text-[#AFB0B499]">{nodeData.method}</span>
-              <span className="text-[#AFB0B4]">
+              <span className={`text-[#AFB0B4] ${styles['symbol']}`}>
                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
                   <MoreOutlined onClick={e => e.stopPropagation()} />
                 </Dropdown>
@@ -535,13 +538,17 @@ const ApiManage: FC<ApiManageProps> = () => {
                         />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="导出">
-                        <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
+                        <a href="/api/v1/operateApi/json" download="oas.json">
+                          <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
+                        </a>
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="表单设计器">
                         <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="下载SDK">
-                        <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
+                        <a href="/api/v1/operateApi/sdk" download="sdk">
+                          <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
+                        </a>
                       </Tooltip>
                     </div>
                   </div>
@@ -560,8 +567,14 @@ const ApiManage: FC<ApiManageProps> = () => {
                         type="icon-shuaxin"
                         style={{ fontSize: '16px' }}
                         onClick={() => {
-                          setRefreshFlag(!refreshFlag)
-                          void message.success('刷新完成')
+                          void getFetcher<OperationResp[]>('/operateApi')
+                            .then(res => setTreeData(convertToTree(res)))
+                            // .then(() => setSelectedKey(''))
+                            .then(() => message.success('刷新完成！'))
+                            .catch((err: Error) => {
+                              void message.error('获取文件列表失败！')
+                              throw err
+                            })
                         }}
                       />
                     </div>
