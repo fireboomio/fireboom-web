@@ -569,6 +569,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         onClick={() => {
                           void getFetcher<OperationResp[]>('/operateApi')
                             .then(res => setTreeData(convertToTree(res)))
+                            // .then(() => setSelectedKey(''))
                             .then(() => message.success('刷新完成！'))
                             .catch((err: Error) => {
                               void message.error('获取文件列表失败！')
