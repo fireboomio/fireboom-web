@@ -560,8 +560,13 @@ const ApiManage: FC<ApiManageProps> = () => {
                         type="icon-shuaxin"
                         style={{ fontSize: '16px' }}
                         onClick={() => {
-                          setRefreshFlag(!refreshFlag)
-                          void message.success('刷新完成')
+                          void getFetcher<OperationResp[]>('/operateApi')
+                            .then(res => setTreeData(convertToTree(res)))
+                            .then(() => message.success('刷新完成！'))
+                            .catch((err: Error) => {
+                              void message.error('获取文件列表失败！')
+                              throw err
+                            })
                         }}
                       />
                     </div>
