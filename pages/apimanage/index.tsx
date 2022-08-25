@@ -538,13 +538,17 @@ const ApiManage: FC<ApiManageProps> = () => {
                         />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="导出">
-                        <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
+                        <a href="/api/v1/operateApi/json" download="oas.json">
+                          <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
+                        </a>
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="表单设计器">
                         <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="下载SDK">
-                        <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
+                        <a href="/api/v1/operateApi/sdk" download="sdk">
+                          <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
+                        </a>
                       </Tooltip>
                     </div>
                   </div>
