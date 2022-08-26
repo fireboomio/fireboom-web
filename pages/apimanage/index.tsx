@@ -629,28 +629,34 @@ const ApiManage: FC<ApiManageProps> = () => {
                       </div>
                     </div>
 
-                    <div className="mt-7">
-                      <RcTab
-                        tabs={tabs}
-                        onTabClick={setActiveKey}
-                        activeKey={activeKey}
-                        extra={extra}
-                      />
+                    {!selectedNode ? (
+                      <></>
+                    ) : selectedNode?.isDir ? (
+                      <></>
+                    ) : (
+                      <div className="mt-7">
+                        <RcTab
+                          tabs={tabs}
+                          onTabClick={setActiveKey}
+                          activeKey={activeKey}
+                          extra={extra}
+                        />
 
-                      <div className="overflow-auto h-[calc(100vh_-_98px)]">
-                        {activeKey === '0' ? (
-                          <Detail nodeId={selectedNode?.id} />
-                        ) : activeKey === '1' ? (
-                          <Mock node={selectedNode} />
-                        ) : activeKey === '2' ? (
-                          <Hook node={selectedNode} />
-                        ) : activeKey === '3' ? (
-                          <Setting node={selectedNode} />
-                        ) : (
-                          <></>
-                        )}
+                        <div className="overflow-auto h-[calc(100vh_-_98px)]">
+                          {activeKey === '0' ? (
+                            <Detail nodeId={selectedNode?.id} />
+                          ) : activeKey === '1' ? (
+                            <Mock node={selectedNode} />
+                          ) : activeKey === '2' ? (
+                            <Hook node={selectedNode} />
+                          ) : activeKey === '3' ? (
+                            <Setting node={selectedNode} />
+                          ) : (
+                            <></>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
