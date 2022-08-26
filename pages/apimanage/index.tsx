@@ -264,6 +264,13 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisible, isBlur])
 
+  useEffect(() => {
+    if (action === '编辑' && selectedKey) {
+      handleEdit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedKey, action])
+
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
@@ -296,7 +303,6 @@ const ApiManage: FC<ApiManageProps> = () => {
           setIsModalVisible(true)
         }
         break
-      case '编辑':
       default:
         break
     }
@@ -344,7 +350,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (!selectedNode?.path) return
 
     void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
-      setAction('编辑')
       setQuery(res.content)
     })
     setIsModalVisible(true)
@@ -366,9 +371,10 @@ const ApiManage: FC<ApiManageProps> = () => {
       if (!selectedNode) return
       void requests
         .put(`/operateApi/content/${selectedNode.id}`, { content: query })
-        .then(_ => void message.success('保存成功'))
-      setRefreshFlag(!refreshFlag)
+        .then(() => void message.success('保存成功'))
+        .then(() => setRefreshFlag(!refreshFlag))
     }
+    setAction(null)
     setIsModalVisible(false)
   }
 
@@ -387,22 +393,27 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleMenuClick = (info: unknown, nodeData: DirTreeNode) => {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    info.domEvent.stopPropagation()
-    setCurrEditingKey(nodeData.key)
-  }
+  // const handleMenuClick = (info: unknown, nodeData: DirTreeNode) => {
+  //   // @ts-ignore
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  //   info.domEvent.stopPropagation()
+  //   setCurrEditingKey(nodeData.key)
+  // }
 
   const titleRender = (nodeData: DirTreeNode) => {
     const menu = (
       <Menu
-        onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
+        // onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
         items={[
           {
             key: '0',
             label: (
-              <div onClick={() => setAction('重命名')}>
+              <div
+                onClick={() => {
+                  setCurrEditingKey(nodeData.key)
+                  setAction('重命名')
+                }}
+              >
                 <IconFont type="icon-zhongmingming" />
                 <span className="ml-1.5">重命名</span>
               </div>
@@ -411,7 +422,12 @@ const ApiManage: FC<ApiManageProps> = () => {
           {
             key: '1',
             label: (
-              <div onClick={handleEdit}>
+              <div
+                onClick={() => {
+                  setAction('编辑')
+                  setSelectedKey(nodeData.key)
+                }}
+              >
                 <IconFont type="icon-chakan" />
                 <span className="ml-1.5">编辑</span>
               </div>
@@ -498,7 +514,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={toggleOperation}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className={`${styles['my-button']} ml-12`} onClick={handleEdit}>
+      <Button className={`${styles['my-button']} ml-12`} onClick={() => setAction('编辑')}>
         <span>编辑</span>
       </Button>
     </div>
@@ -692,8 +708,16 @@ const ApiManage: FC<ApiManageProps> = () => {
       <Modal
         title="GraphiQL"
         visible={isModalVisible}
-        onOk={() => setIsModalVisible(false)}
-        onCancel={() => setIsModalVisible(false)}
+        onOk={() => {
+          setCurrEditingKey(null)
+          setAction(null)
+          setIsModalVisible(false)
+        }}
+        onCancel={() => {
+          setCurrEditingKey(null)
+          setAction(null)
+          setIsModalVisible(false)
+        }}
         footer={null}
         centered
         bodyStyle={{ height: '90vh' }}
