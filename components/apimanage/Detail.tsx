@@ -163,7 +163,6 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       })
       .then(res => parse(res.content, { noLocation: true }).definitions)
       .then(def => setGqlQueryDef(def as readonly OperationDefinitionNode[]))
-      .then(() => setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST'))
       .catch((err: Error) => {
         throw err
       })
@@ -188,6 +187,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       setDataSource(parseGql(gqlSchemaDef, gqlQueryDef[0]))
       setReqDataSource(parseParameters(gqlQueryDef[0].variableDefinitions))
       setRbac(parseRbac(gqlQueryDef.at(0)?.directives))
+      setMethod(gqlQueryDef?.at(0)?.operation === 'query' ? 'GET' : 'POST')
     } catch (err: unknown) {
       void message.error('解析失败')
       // eslint-disable-next-line no-console
