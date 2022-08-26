@@ -21,6 +21,7 @@ import {
   Button,
 } from 'antd'
 import { Key } from 'antd/lib/table/interface'
+import { OperationDefinitionNode, parse } from 'graphql'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { useImmer } from 'use-immer'
@@ -156,15 +157,18 @@ function deleteNode(node: DirTreeNode) {
   }
 }
 
-function createNode(node: DirTreeNode, value: string, content?: string) {
+function createNode(node: DirTreeNode, value: string, content: string) {
   if (node.isDir) {
     return requests.post('/operateApi/dir', {
       path: `${node.baseDir}/${value}`,
     })
   } else {
+    const op = parse(content, { noLocation: true }).definitions[0] as OperationDefinitionNode
+
     return requests.post('/operateApi', {
       path: `${node.baseDir}/${value}`,
       content: content,
+      operationType: op.operation,
     })
   }
 }
@@ -194,6 +198,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
   const [currDBId, setCurrDBId] = useImmer<number | null | undefined>(null)
+  const [isColl, setIsColl] = useImmer(true)
+
+  const style = useMemo(() => {
+    return isColl ? { height: 'calc(100vh - 220px)' } : { height: 'calc(100vh - 380px)' }
+  }, [isColl])
 
   useEffect(() => {
     requests
@@ -264,6 +273,13 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisible, isBlur])
 
+  useEffect(() => {
+    if (action === '编辑' && selectedKey) {
+      handleEdit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedKey, action])
+
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
@@ -278,7 +294,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         break
       case '创建目录':
-        void createNode(currEditingNode, inputValue).then(() => {
+        void createNode(currEditingNode, inputValue, '').then(() => {
           setCurrEditingKey(null)
           setRefreshFlag(!refreshFlag)
         })
@@ -296,7 +312,6 @@ const ApiManage: FC<ApiManageProps> = () => {
           setIsModalVisible(true)
         }
         break
-      case '编辑':
       default:
         break
     }
@@ -344,7 +359,6 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (!selectedNode?.path) return
 
     void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
-      setAction('编辑')
       setQuery(res.content)
     })
     setIsModalVisible(true)
@@ -363,12 +377,18 @@ const ApiManage: FC<ApiManageProps> = () => {
       // setAction(null)
       // setRefreshFlag(!refreshFlag)
     } else if (action === '编辑') {
+      const op = parse(query, { noLocation: true }).definitions[0] as OperationDefinitionNode
+
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/content/${selectedNode.id}`, { content: query })
-        .then(_ => void message.success('保存成功'))
-      setRefreshFlag(!refreshFlag)
+        .put(`/operateApi/content/${selectedNode.id}`, {
+          content: query,
+          operationType: op.operation,
+        })
+        .then(() => void message.success('保存成功'))
+        .then(() => setRefreshFlag(!refreshFlag))
     }
+    setAction(null)
     setIsModalVisible(false)
   }
 
@@ -387,22 +407,27 @@ const ApiManage: FC<ApiManageProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleMenuClick = (info: unknown, nodeData: DirTreeNode) => {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    info.domEvent.stopPropagation()
-    setCurrEditingKey(nodeData.key)
-  }
+  // const handleMenuClick = (info: unknown, nodeData: DirTreeNode) => {
+  //   // @ts-ignore
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  //   info.domEvent.stopPropagation()
+  //   setCurrEditingKey(nodeData.key)
+  // }
 
   const titleRender = (nodeData: DirTreeNode) => {
     const menu = (
       <Menu
-        onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
+        // onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
         items={[
           {
             key: '0',
             label: (
-              <div onClick={() => setAction('重命名')}>
+              <div
+                onClick={() => {
+                  setCurrEditingKey(nodeData.key)
+                  setAction('重命名')
+                }}
+              >
                 <IconFont type="icon-zhongmingming" />
                 <span className="ml-1.5">重命名</span>
               </div>
@@ -411,7 +436,12 @@ const ApiManage: FC<ApiManageProps> = () => {
           {
             key: '1',
             label: (
-              <div onClick={handleEdit}>
+              <div
+                onClick={() => {
+                  setAction('编辑')
+                  setSelectedKey(nodeData.key)
+                }}
+              >
                 <IconFont type="icon-chakan" />
                 <span className="ml-1.5">编辑</span>
               </div>
@@ -498,7 +528,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         onChange={toggleOperation}
         className="ml-6 w-15 bg-[#8ABE2A]"
       />
-      <Button className={`${styles['my-button']} ml-12`} onClick={handleEdit}>
+      <Button className={`${styles['my-button']} ml-12`} onClick={() => setAction('编辑')}>
         <span>编辑</span>
       </Button>
     </div>
@@ -582,11 +612,8 @@ const ApiManage: FC<ApiManageProps> = () => {
                   <Divider style={{ margin: '14px 0', opacity: 0 }} />
 
                   <Tree
-                    style={{
-                      overflow: 'auto',
-                      height: 'calc(100vh - 350px)',
-                      marginBottom: '10px',
-                    }}
+                    rootClassName="overflow-auto"
+                    rootStyle={style}
                     // @ts-ignore
                     titleRender={titleRender}
                     icon={iconRender}
@@ -601,7 +628,11 @@ const ApiManage: FC<ApiManageProps> = () => {
                     onSelect={handleSelectTreeNode}
                   />
                   {/*--- datasource更改 */}
-                  <div className="fixed w-70 bottom-0 bg-white" style={{ overflow: 'auto' }}>
+                  <div
+                    className="fixed w-70 bottom-0 bg-white"
+                    style={{ overflow: 'auto' }}
+                    onClick={() => setIsColl(!isColl)}
+                  >
                     <DatasourcePannel onClickItem={handleClickItem} />
                   </div>
                   {/* datasource更改 ---*/}
@@ -629,28 +660,34 @@ const ApiManage: FC<ApiManageProps> = () => {
                       </div>
                     </div>
 
-                    <div className="mt-7">
-                      <RcTab
-                        tabs={tabs}
-                        onTabClick={setActiveKey}
-                        activeKey={activeKey}
-                        extra={extra}
-                      />
+                    {!selectedNode ? (
+                      <></>
+                    ) : selectedNode?.isDir ? (
+                      <></>
+                    ) : (
+                      <div className="mt-7">
+                        <RcTab
+                          tabs={tabs}
+                          onTabClick={setActiveKey}
+                          activeKey={activeKey}
+                          extra={extra}
+                        />
 
-                      <div className="overflow-auto h-[calc(100vh_-_98px)]">
-                        {activeKey === '0' ? (
-                          <Detail nodeId={selectedNode?.id} />
-                        ) : activeKey === '1' ? (
-                          <Mock node={selectedNode} />
-                        ) : activeKey === '2' ? (
-                          <Hook node={selectedNode} />
-                        ) : activeKey === '3' ? (
-                          <Setting node={selectedNode} />
-                        ) : (
-                          <></>
-                        )}
+                        <div className="overflow-auto h-[calc(100vh_-_98px)]">
+                          {activeKey === '0' ? (
+                            <Detail nodeId={selectedNode?.id} />
+                          ) : activeKey === '1' ? (
+                            <Mock node={selectedNode} />
+                          ) : activeKey === '2' ? (
+                            <Hook node={selectedNode} />
+                          ) : activeKey === '3' ? (
+                            <Setting node={selectedNode} />
+                          ) : (
+                            <></>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -686,8 +723,16 @@ const ApiManage: FC<ApiManageProps> = () => {
       <Modal
         title="GraphiQL"
         visible={isModalVisible}
-        onOk={() => setIsModalVisible(false)}
-        onCancel={() => setIsModalVisible(false)}
+        onOk={() => {
+          setCurrEditingKey(null)
+          setAction(null)
+          setIsModalVisible(false)
+        }}
+        onCancel={() => {
+          setCurrEditingKey(null)
+          setAction(null)
+          setIsModalVisible(false)
+        }}
         footer={null}
         centered
         bodyStyle={{ height: '90vh' }}

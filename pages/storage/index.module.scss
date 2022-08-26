@@ -1,4 +1,7 @@
 .col-left {
+  width: 280px;
+  max-width: 280px;
+
   &::after {
     position: absolute;
     top: 0;

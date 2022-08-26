@@ -91,7 +91,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       <div className={styles['datasource-collapse']}>
         <Collapse ghost bordered>
           <Panel header={<div className="w-52 flex justify-between py-2">外部数据源</div>} key={1}>
-            <div className="h-50" style={{ overflow: 'auto' }}>
+            <div className="h-40" style={{ overflow: 'auto' }}>
               <Collapse
                 activeKey={activeKey}
                 ghost

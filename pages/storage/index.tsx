@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd'
+import { Row } from 'antd'
 import Head from 'next/head'
 import { useEffect, useMemo, useReducer } from 'react'
 import { useImmer } from 'use-immer'
@@ -49,12 +49,12 @@ export default function FileStorage() {
             </Head>
 
             <Row className="h-screen">
-              <Col span={5} className={styles['col-left']}>
+              <div className={`flex-1 ${styles['col-left']}`}>
                 <StoragePannel />
-              </Col>
-              <Col span={19}>
+              </div>
+              <div className="flex-1">
                 <StorageContainer showType={showType} content={content} />
-              </Col>
+              </div>
             </Row>
           </StorageSwitchContext.Provider>
         </StorageCurrFileContext.Provider>
