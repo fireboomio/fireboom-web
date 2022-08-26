@@ -16,8 +16,8 @@ dayjs.extend(duration)
 interface systemConfig {
   apiPort: string
   debugSwitch: string
-  devSwitch: string
-  forcedJumpSwitch: string
+  devSwitch: boolean
+  forcedJumpSwitch: boolean
   logLevel: string
   middlewarePort: string
   envType: string
@@ -33,7 +33,7 @@ export default function SettingMainVersion() {
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const [refreshFlag, setRefreshFlag] = useState<boolean | null | undefined>()
 
   useEffect(() => {
     void requests.get<unknown, systemConfig>('/setting/systemConfig').then(res => {
@@ -83,69 +83,70 @@ export default function SettingMainVersion() {
   }
   return (
     <>
-      <div>
-        <Divider className={styles['divider-line']} />
-        <div className="flex justify-center ml-5 ">
-          <Descriptions
-            colon={false}
-            column={1}
-            className={styles['descriptions-box']}
-            labelStyle={{
-              backgroundColor: 'white',
-              width: '15%',
-              borderRight: 'none',
-              borderBottom: 'none',
-              color: 'gray',
-            }}
-          >
-            <Descriptions.Item label="运行时长:">
-              {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
-            </Descriptions.Item>
-            <Descriptions.Item label="API端口:" className="w-20">
-              {isApiPortEditing ? (
-                <Input
-                  autoFocus
-                  style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
+      {systemConfig.apiPort ? (
+        <div>
+          <Divider className={styles['divider-line']} />
+          <div className="flex justify-center ml-5 ">
+            <Descriptions
+              colon={false}
+              column={1}
+              className={styles['descriptions-box']}
+              labelStyle={{
+                backgroundColor: 'white',
+                width: '15%',
+                borderRight: 'none',
+                borderBottom: 'none',
+                color: 'gray',
+              }}
+            >
+              <Descriptions.Item label="运行时长:">
+                {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
+              </Descriptions.Item>
+              <Descriptions.Item label="API端口:" className="w-20">
+                {isApiPortEditing ? (
+                  <Input
+                    autoFocus
+                    style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
+                    type="text"
+                    onBlur={e => {
+                      setIsApiPortEditing(!isApiPortEditing)
+                      void editPort('apiPort', e.target.value)
+                    }}
+                  />
+                ) : (
+                  <span>{systemConfig.apiPort}</span>
+                )}
+                <IconFont
+                  type="icon-bianji"
+                  className="ml-2"
+                  onClick={() => {
                     setIsApiPortEditing(!isApiPortEditing)
-                    void editPort('apiPort', e.target.value)
                   }}
                 />
-              ) : (
-                <span>{systemConfig.apiPort}</span>
-              )}
-              <IconFont
-                type="icon-bianji"
-                className="ml-2"
-                onClick={() => {
-                  setIsApiPortEditing(!isApiPortEditing)
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item label="中间件端口:">
-              {isMidPortEditing ? (
-                <Input
-                  autoFocus
-                  type="text"
-                  style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
-                  onBlur={e => {
+              </Descriptions.Item>
+              <Descriptions.Item label="中间件端口:">
+                {isMidPortEditing ? (
+                  <Input
+                    autoFocus
+                    type="text"
+                    style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
+                    onBlur={e => {
+                      setIsMidPortEditing(!isMidPortEditing)
+                      void editPort('middlewarePort', e.target.value)
+                    }}
+                  />
+                ) : (
+                  <span>{systemConfig.middlewarePort}</span>
+                )}
+                <IconFont
+                  type="icon-bianji"
+                  className="ml-2"
+                  onClick={() => {
                     setIsMidPortEditing(!isMidPortEditing)
-                    void editPort('middlewarePort', e.target.value)
                   }}
                 />
-              ) : (
-                <span>{systemConfig.middlewarePort}</span>
-              )}
-              <IconFont
-                type="icon-bianji"
-                className="ml-2"
-                onClick={() => {
-                  setIsMidPortEditing(!isMidPortEditing)
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item label="开发环境">
+              </Descriptions.Item>
+              {/* <Descriptions.Item label="开发环境">
               <Radio.Group
                 defaultValue={systemConfig.envType}
                 onChange={e => {
@@ -157,8 +158,8 @@ export default function SettingMainVersion() {
                 </Radio>
                 <Radio value={'1'}>生产环境</Radio>
               </Radio.Group>
-            </Descriptions.Item>
-            <Descriptions.Item label="调试:">
+            </Descriptions.Item> */}
+              {/* <Descriptions.Item label="调试:">
               <Switch
                 onChange={value => {
                   void requests.post('/setting', {
@@ -170,49 +171,97 @@ export default function SettingMainVersion() {
                 className={styles['switch-edit-btn']}
                 size="small"
               />
-            </Descriptions.Item>
-            <Descriptions.Item label="日志水平:">
-              <Radio.Group
-                defaultValue={systemConfig.logLevel}
-                onChange={e => {
-                  onChange(e, 'logLevel')
-                }}
-              >
-                <Radio value={'1'} className="mr-15 ">
-                  info
-                </Radio>
-                <Radio value={'2'} className="mr-15">
-                  debug
-                </Radio>
-                <Radio value={'3'}> error </Radio>
-              </Radio.Group>
-            </Descriptions.Item>
-
-            <Descriptions.Item label="强制跳转:">
-              <Switch
-                defaultChecked={systemConfig.forcedJumpSwitch == '1' ? true : false}
-                className={styles['switch-edit-btn']}
-                size="small"
-                onChange={value => {
-                  void requests.post('/setting', {
-                    key: 'forcedJumpSwitch',
-                    val: value == false ? '0' : '1',
-                  })
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item label=" ">
-              <button className={styles['edit-btn']}>
-                <span>重启</span>
-              </button>
-              <span className={styles.setTitle}>
-                <IconFont type="icon-zhuyi" className="text-[14px]" />
-                XXX已修改，请点击重启
-              </span>
-            </Descriptions.Item>
-          </Descriptions>
+            </Descriptions.Item> */}
+              <Descriptions.Item label="日志水平:">
+                <Radio.Group
+                  value={systemConfig.logLevel}
+                  onChange={e => {
+                    onChange(e, 'logLevel')
+                  }}
+                >
+                  <Radio value={'1'} className="mr-15 ">
+                    info
+                  </Radio>
+                  <Radio value={'2'} className="mr-15">
+                    debug
+                  </Radio>
+                  <Radio value={'3'}> error </Radio>
+                </Radio.Group>
+              </Descriptions.Item>
+              <Descriptions.Item label="开发者模式:">
+                <Switch
+                  checked={systemConfig.devSwitch}
+                  className={styles['switch-edit-btn']}
+                  size="small"
+                  onChange={value => {
+                    void requests
+                      .post('/setting', {
+                        key: 'devSwitch',
+                        val: value,
+                      })
+                      .then(() => {
+                        setRefreshFlag(!refreshFlag)
+                      })
+                  }}
+                />
+              </Descriptions.Item>
+              <Descriptions.Item label="强制跳转:">
+                <Switch
+                  checked={systemConfig.devSwitch ? false : systemConfig.forcedJumpSwitch}
+                  className={styles['switch-edit-btn']}
+                  size="small"
+                  onChange={value => {
+                    void requests
+                      .post('/setting', {
+                        key: 'forcedJumpSwitch',
+                        val: value,
+                      })
+                      .then(() => {
+                        setRefreshFlag(!refreshFlag)
+                      })
+                  }}
+                />
+              </Descriptions.Item>
+              {/* <Descriptions.Item label=" ">
+                <button
+                  className={styles['edit-btn']}
+                  onClick={() => {
+                    void requests.get('/wdg/reStart').then(res => {
+                      console.log(res, '重启')
+                    })
+                  }}
+                >
+                  <span>重启</span>
+                </button>
+                <button
+                  className={styles['edit-btn']}
+                  onClick={() => {
+                    void requests.get('/wdg/start').then(res => {
+                      console.log(res, '开始')
+                    })
+                  }}
+                >
+                  <span>开始</span>
+                </button>
+                <button
+                  className={styles['edit-btn']}
+                  onClick={() => {
+                    void requests.get('/wdg/close').then(res => {
+                      console.log(res, '关闭')
+                    })
+                  }}
+                >
+                  <span>暂停</span>
+                </button>
+                <span className={styles.setTitle}>
+                  <IconFont type="icon-zhuyi" className="text-[14px]" />
+                  XXX已修改，请点击重启
+                </span>
+              </Descriptions.Item> */}
+            </Descriptions>
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   )
 }

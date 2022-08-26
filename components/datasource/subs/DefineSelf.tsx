@@ -113,6 +113,10 @@ export default function DatasourceDeselfMain({ content }: Props) {
       })
   }
 
+  const save = () => {
+    console.log()
+  }
+
   return (
     <>
       <div className="border-gray border-b pb-5 flex justify-between">
@@ -120,7 +124,10 @@ export default function DatasourceDeselfMain({ content }: Props) {
           <span className="ml-2">{content.name}</span>
           <span className="ml-2 text-xs text-gray-500/80">main</span>
         </div>
-        <div>
+        <div className="flex items-center">
+          <div className="text-[#E92E5E] cursor-pointer mr-5" onClick={save}>
+            <span className="leading-20px ml-1">保存</span>
+          </div>
           <Switch
             checked={content.switch == 0 ? true : false}
             onChange={connectSwitchOnChange}

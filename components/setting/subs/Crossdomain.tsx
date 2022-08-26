@@ -13,7 +13,7 @@ interface CorsConfiguration {
   allowedOrigins: Array<string>
   allowedMethods: Array<string>
   allowedHeaders: Array<string>
-  allowCredentials: number
+  allowCredentials: boolean
   exposedHeaders: Array<string>
   maxAge: number
 }
@@ -22,7 +22,7 @@ interface CorsFormConfiguration {
   allowedOrigins: Array<string>
   allowedMethods: Array<string>
   allowedHeaders: string
-  allowCredentials: number
+  allowCredentials: boolean
   exposedHeaders: string
   maxAge: number
 }
@@ -53,17 +53,15 @@ export default function SettingCrossdomain() {
     console.log('Success:', values)
   }
 
-  const postRequest = useCallback(async (key: string, value: string | Array<string> | number) => {
-    await requests.post('/global', {
-      key: key,
-      val: value,
-    })
-  }, [])
-
-  // const getData = useCallback(async () => {
-  //   const result = await requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration')
-  //   setCorsConfig(result)
-  // }, [])
+  const postRequest = useCallback(
+    async (key: string, value: string | Array<string> | boolean | number) => {
+      await requests.post('/global', {
+        key: key,
+        val: value,
+      })
+    },
+    []
+  )
 
   useEffect(() => {
     void requests.get<unknown, CorsConfiguration>('/setting/corsConfiguration').then(res => {
@@ -83,7 +81,7 @@ export default function SettingCrossdomain() {
               maxAge: corsConfig.maxAge,
               allowedHeaders: corsConfig.allowedHeaders.join(','),
               exposedHeaders: corsConfig.exposedHeaders.join(','),
-              allowCredentials: corsConfig.allowCredentials == 1 ? true : false,
+              allowCredentials: corsConfig.allowCredentials,
             }}
             onFinish={values => {
               void onFinish(values as CorsFormConfiguration)
@@ -144,24 +142,23 @@ export default function SettingCrossdomain() {
                                 })
                               }}
                             />
-                            {fields.length > 1 ? (
-                              <IconFont
-                                type="icon-guanbi"
-                                className={`${styles['form-delete-icon']}`}
-                                onClick={() => {
-                                  void requests
-                                    .post('/global', {
-                                      key: 'allowedOrigins',
-                                      val: (
-                                        form.getFieldValue('allowedOrigins') as Array<string>
-                                      ).filter((_, i) => i != index),
-                                    })
-                                    .then(() => {
-                                      remove(index)
-                                    })
-                                }}
-                              />
-                            ) : null}
+
+                            <IconFont
+                              type="icon-guanbi"
+                              className={`${styles['form-delete-icon']}`}
+                              onClick={() => {
+                                void requests
+                                  .post('/global', {
+                                    key: 'allowedOrigins',
+                                    val: (
+                                      form.getFieldValue('allowedOrigins') as Array<string>
+                                    ).filter((_, i) => i != index),
+                                  })
+                                  .then(() => {
+                                    remove(index)
+                                  })
+                              }}
+                            />
                           </div>
                         </Form.Item>
                       </Form.Item>
@@ -287,8 +284,9 @@ export default function SettingCrossdomain() {
             <Form.Item label="允许证书">
               <Form.Item valuePropName="checked" name="allowCredentials" noStyle required>
                 <Switch
+                  checked={corsConfig.allowCredentials}
                   onChange={isChecked => {
-                    void postRequest('allowCredentials', isChecked == false ? 0 : 1).then(() => {
+                    void postRequest('allowCredentials', isChecked).then(() => {
                       setRefreshFlag(!refreshFlag)
                     })
                   }}
