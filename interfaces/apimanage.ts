@@ -17,7 +17,7 @@ export interface OperationResp {
   legal: boolean
   isPublic: boolean
   method: 'GET' | 'POST'
-  operationType: 'queries' | 'mutations' | 'subscriptions'
+  operationType: 'query' | 'mutation' | 'subscription'
   children: OperationResp[] | null
   createTime: string
   updateTime: string

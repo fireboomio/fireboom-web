@@ -21,6 +21,7 @@ import {
   Button,
 } from 'antd'
 import { Key } from 'antd/lib/table/interface'
+import { OperationDefinitionNode, parse } from 'graphql'
 import Head from 'next/head'
 import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { useImmer } from 'use-immer'
@@ -156,15 +157,18 @@ function deleteNode(node: DirTreeNode) {
   }
 }
 
-function createNode(node: DirTreeNode, value: string, content?: string) {
+function createNode(node: DirTreeNode, value: string, content: string) {
   if (node.isDir) {
     return requests.post('/operateApi/dir', {
       path: `${node.baseDir}/${value}`,
     })
   } else {
+    const op = parse(content, { noLocation: true }).definitions[0] as OperationDefinitionNode
+
     return requests.post('/operateApi', {
       path: `${node.baseDir}/${value}`,
       content: content,
+      operationType: op.operation,
     })
   }
 }
@@ -285,7 +289,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         })
         break
       case '创建目录':
-        void createNode(currEditingNode, inputValue).then(() => {
+        void createNode(currEditingNode, inputValue, '').then(() => {
           setCurrEditingKey(null)
           setRefreshFlag(!refreshFlag)
         })
@@ -368,9 +372,14 @@ const ApiManage: FC<ApiManageProps> = () => {
       // setAction(null)
       // setRefreshFlag(!refreshFlag)
     } else if (action === '编辑') {
+      const op = parse(query, { noLocation: true }).definitions[0] as OperationDefinitionNode
+
       if (!selectedNode) return
       void requests
-        .put(`/operateApi/content/${selectedNode.id}`, { content: query })
+        .put(`/operateApi/content/${selectedNode.id}`, {
+          content: query,
+          operationType: op.operation,
+        })
         .then(() => void message.success('保存成功'))
         .then(() => setRefreshFlag(!refreshFlag))
     }
