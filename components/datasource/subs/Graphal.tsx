@@ -465,13 +465,20 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
               <Form.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>命名空间:</span>
+                    <span className={styles['label-style']}>名称:</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
                   </div>
                 }
                 colon={false}
                 style={{ marginBottom: '20px' }}
                 name="apiNameSpace"
+                rules={[
+                  { required: true, message: '名称不能为空' },
+                  {
+                    pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                    message: '以字母或下划线开头，只能由数字、字母、下划线组成',
+                  },
+                ]}
               >
                 <Input placeholder="请输入..." />
               </Form.Item>
@@ -497,7 +504,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
 
-              <Form.Item name="agreement" valuePropName="checked">
+              <Form.Item name="agreement">
                 <Checkbox
                   onChange={() => {
                     setIsShowUpSchema(!isShowUpSchema)
