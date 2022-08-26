@@ -198,6 +198,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
   const [showType, setShowType] = useImmer('data')
   const [currDBId, setCurrDBId] = useImmer<number | null | undefined>(null)
+  const [isColl, setIsColl] = useImmer(true)
+
+  const style = useMemo(() => {
+    return isColl ? { height: 'calc(100vh - 220px)' } : { height: 'calc(100vh - 380px)' }
+  }, [isColl])
 
   useEffect(() => {
     requests
@@ -607,11 +612,8 @@ const ApiManage: FC<ApiManageProps> = () => {
                   <Divider style={{ margin: '14px 0', opacity: 0 }} />
 
                   <Tree
-                    style={{
-                      overflow: 'auto',
-                      height: 'calc(100vh - 350px)',
-                      marginBottom: '10px',
-                    }}
+                    rootClassName="overflow-auto"
+                    rootStyle={style}
                     // @ts-ignore
                     titleRender={titleRender}
                     icon={iconRender}
@@ -626,7 +628,11 @@ const ApiManage: FC<ApiManageProps> = () => {
                     onSelect={handleSelectTreeNode}
                   />
                   {/*--- datasource更改 */}
-                  <div className="fixed w-70 bottom-0 bg-white" style={{ overflow: 'auto' }}>
+                  <div
+                    className="fixed w-70 bottom-0 bg-white"
+                    style={{ overflow: 'auto' }}
+                    onClick={() => setIsColl(!isColl)}
+                  >
                     <DatasourcePannel onClickItem={handleClickItem} />
                   </div>
                   {/* datasource更改 ---*/}
