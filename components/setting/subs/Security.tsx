@@ -219,7 +219,9 @@ export default function SettingMainSecurity() {
                   checked={securConfig.enableGraphQLEndpoint}
                   size="small"
                   onChange={isChecked => {
-                    void postRequest('enableGraphQLEndpoint', isChecked)
+                    void postRequest('enableGraphQLEndpoint', isChecked).then(() => {
+                      setRefreshFlag(!refreshFlag)
+                    })
                   }}
                 />
               </Form.Item>

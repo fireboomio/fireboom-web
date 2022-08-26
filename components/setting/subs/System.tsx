@@ -15,7 +15,7 @@ dayjs.extend(duration)
 
 interface systemConfig {
   apiPort: string
-  debugSwitch: string
+  debugSwitch: boolean
   devSwitch: boolean
   forcedJumpSwitch: boolean
   logLevel: string
@@ -34,6 +34,7 @@ export default function SettingMainVersion() {
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
   const [refreshFlag, setRefreshFlag] = useState<boolean | null | undefined>()
+  // const [value, setValue] = useState(true)
 
   useEffect(() => {
     void requests.get<unknown, systemConfig>('/setting/systemConfig').then(res => {
@@ -62,7 +63,8 @@ export default function SettingMainVersion() {
   }, [])
 
   const onChange = (e: RadioChangeEvent, key: string) => {
-    void requests.post('/setting', { key: key, val: e.target.value as string }).then(() => {
+    console.log(e, 'e')
+    void requests.post('/setting', { key: key, val: e.target.value as boolean }).then(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
@@ -146,32 +148,36 @@ export default function SettingMainVersion() {
                   }}
                 />
               </Descriptions.Item>
-              {/* <Descriptions.Item label="开发环境">
-              <Radio.Group
-                defaultValue={systemConfig.envType}
-                onChange={e => {
-                  onChange(e, 'envType')
-                }}
-              >
-                <Radio value={'0'} className="mr-15">
-                  开发环境
-                </Radio>
-                <Radio value={'1'}>生产环境</Radio>
-              </Radio.Group>
-            </Descriptions.Item> */}
-              {/* <Descriptions.Item label="调试:">
-              <Switch
-                onChange={value => {
-                  void requests.post('/setting', {
-                    key: 'devSwitch',
-                    val: value == false ? '0' : '1',
-                  })
-                }}
-                defaultChecked={systemConfig.devSwitch == '1' ? true : false}
-                className={styles['switch-edit-btn']}
-                size="small"
-              />
-            </Descriptions.Item> */}
+              <Descriptions.Item label="开发环境">
+                <Radio.Group
+                  value={systemConfig.devSwitch}
+                  onChange={e => {
+                    onChange(e, 'devSwitch')
+                  }}
+                >
+                  <Radio value={true} className="mr-15">
+                    开发环境
+                  </Radio>
+                  <Radio value={false}>生产环境</Radio>
+                </Radio.Group>
+              </Descriptions.Item>
+              <Descriptions.Item label="调试:">
+                <Switch
+                  onChange={value => {
+                    void requests
+                      .post('/setting', {
+                        key: 'debugSwitch',
+                        val: value,
+                      })
+                      .then(() => {
+                        setRefreshFlag(!refreshFlag)
+                      })
+                  }}
+                  defaultChecked={systemConfig.debugSwitch}
+                  className={styles['switch-edit-btn']}
+                  size="small"
+                />
+              </Descriptions.Item>
               <Descriptions.Item label="日志水平:">
                 <Radio.Group
                   value={systemConfig.logLevel}
@@ -188,41 +194,27 @@ export default function SettingMainVersion() {
                   <Radio value={'3'}> error </Radio>
                 </Radio.Group>
               </Descriptions.Item>
-              <Descriptions.Item label="开发者模式:">
-                <Switch
-                  checked={systemConfig.devSwitch}
-                  className={styles['switch-edit-btn']}
-                  size="small"
-                  onChange={value => {
-                    void requests
-                      .post('/setting', {
-                        key: 'devSwitch',
-                        val: value,
-                      })
-                      .then(() => {
-                        setRefreshFlag(!refreshFlag)
-                      })
-                  }}
-                />
-              </Descriptions.Item>
-              <Descriptions.Item label="强制跳转:">
-                <Switch
-                  checked={systemConfig.devSwitch ? false : systemConfig.forcedJumpSwitch}
-                  className={styles['switch-edit-btn']}
-                  size="small"
-                  onChange={value => {
-                    void requests
-                      .post('/setting', {
-                        key: 'forcedJumpSwitch',
-                        val: value,
-                      })
-                      .then(() => {
-                        setRefreshFlag(!refreshFlag)
-                      })
-                  }}
-                />
-              </Descriptions.Item>
-              {/* <Descriptions.Item label=" ">
+              {!systemConfig.devSwitch ? (
+                <Descriptions.Item label="强制跳转:">
+                  <Switch
+                    checked={systemConfig.forcedJumpSwitch}
+                    className={styles['switch-edit-btn']}
+                    size="small"
+                    onChange={value => {
+                      void requests
+                        .post('/setting', {
+                          key: 'forcedJumpSwitch',
+                          val: value,
+                        })
+                        .then(() => {
+                          setRefreshFlag(!refreshFlag)
+                        })
+                    }}
+                  />
+                </Descriptions.Item>
+              ) : null}
+
+              <Descriptions.Item label=" ">
                 <button
                   className={styles['edit-btn']}
                   onClick={() => {
@@ -257,7 +249,7 @@ export default function SettingMainVersion() {
                   <IconFont type="icon-zhuyi" className="text-[14px]" />
                   XXX已修改，请点击重启
                 </span>
-              </Descriptions.Item> */}
+              </Descriptions.Item>
             </Descriptions>
           </div>
         </div>
