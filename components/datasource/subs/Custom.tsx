@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react'
-import { Descriptions, Input, Switch } from 'antd'
+import { Descriptions, Input, Switch, Button } from 'antd'
 import { ReactNode, useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -46,7 +46,6 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
           // @ts-ignore
           onPressEnter={e => handleItemEdit(e.target.value)}
           style={{ width: '200px' }}
-          className="text-sm font-normal leading-4 h-5 pl-1"
           defaultValue={config.serverName as string}
           autoFocus
           placeholder="请输入外部数据源名"
@@ -54,12 +53,7 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
       ) : (
         <>
           {config[name]}
-          <span
-            onClick={() => {
-              setIsEditing(true)
-            }}
-            className="ml-3"
-          >
+          <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
             <IconFont type="icon-bianji" />
           </span>
         </>
@@ -122,24 +116,26 @@ export default function Custom({ content }: Props) {
 
   return (
     <>
-      <div className="border-gray border-b pb-5 flex justify-between">
+      <div className="pb-9px flex items-center justify-between border-gray border-b mb-5">
         <div>
           <span className="ml-2">{content.name}</span>
-          <span className="ml-2 text-xs text-gray-500/80">main</span>
         </div>
-        <div className="flex items-center">
-          <div className="text-[#E92E5E] cursor-pointer mr-5" onClick={save}>
-            <span className="leading-20px ml-1">保存</span>
-          </div>
+        <div className="flex  items-center">
           <Switch
             checked={content.switch == 0 ? true : false}
-            onChange={connectSwitchOnChange}
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            style={{ height: '24px', width: '60px' }}
+            onChange={connectSwitchOnChange}
+            className={styles['switch-check-btn']}
           />
+          <div className="">
+            <Button className={`${styles['edit-btn']} ml-4`} onClick={save}>
+              <span>保存</span>
+            </Button>
+          </div>
         </div>
       </div>
+
       <div className="flex justify-center">
         <Descriptions
           bordered
@@ -152,7 +148,7 @@ export default function Custom({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="连接名">
+          <Descriptions.Item label="连接名" className="h-12">
             <DatasourceDefineItem
               content={content}
               name="apiNamespace"

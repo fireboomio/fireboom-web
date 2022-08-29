@@ -57,11 +57,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
       ) : content.sourceType === 3 ? (
         <Graphql content={content} type={showType} />
       ) : content.sourceType === 4 ? (
-        showType === 'detail' ? (
-          <Custom content={content} />
-        ) : (
-          <></>
-        )
+        <Custom content={content} />
       ) : (
         <></>
       )}
