@@ -258,9 +258,7 @@ export default function SettingMainSecurity() {
                             <Input
                               placeholder="请输入域名..."
                               style={{ width: '60%' }}
-                              defaultValue={
-                                securConfig.allowedHosts?.length && securConfig.allowedHosts[index]
-                              }
+                              defaultValue={securConfig.allowedHosts[index]}
                               onBlur={e => {
                                 if (e.target.value == '') return
                                 void postRequest(
