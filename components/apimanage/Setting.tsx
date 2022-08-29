@@ -96,55 +96,61 @@ const Setting: FC<SettingProps> = ({ node }) => {
         </span>
       </Form.Item>
 
-      <Divider orientation="left" orientationMargin={0} className="mt-42px">
-        <div className="text-[#AFB0B4] text-14px space-x-1">
-          <IconFont type="icon-huancun" />
-          <span>缓存</span>
-        </div>
-      </Divider>
-      <Form.Item
-        label="开启缓存"
-        name="cachingEnable"
-        valuePropName="checked"
-        rules={[{ required: false, message: 'Please input your password!' }]}
-      >
-        <Switch onChange={() => setSubmitFlag(!submitFlag)} />
-      </Form.Item>
-      <Form.Item
-        label="最大时长"
-        name="cachingMaxAge"
-        rules={[{ required: false, message: 'Please input your password!' }]}
-      >
-        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
-      </Form.Item>
-      <Form.Item
-        label="重校验时长"
-        name="cachingStaleWhileRevalidate"
-        rules={[{ required: false, message: 'Please input your password!' }]}
-      >
-        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
-      </Form.Item>
-      <Divider orientation="left" orientationMargin={0} className="mt-42px">
-        <div className="text-[#AFB0B4] text-14px space-x-1">
-          <IconFont type="icon-shishi" />
-          <span>实时</span>
-        </div>
-      </Divider>
-      <Form.Item
-        label="开启实时"
-        name="liveQueryEnable"
-        valuePropName="checked"
-        rules={[{ required: false, message: 'Please input your password!' }]}
-      >
-        <Switch onChange={() => setSubmitFlag(!submitFlag)} />
-      </Form.Item>
-      <Form.Item
-        label="轮询间隔"
-        name="liveQueryPollingIntervalSeconds"
-        rules={[{ required: false, message: 'Please input your password!' }]}
-      >
-        <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
-      </Form.Item>
+      {node?.operationType !== 'query' ? (
+        <></>
+      ) : (
+        <>
+          <Divider orientation="left" orientationMargin={0} className="mt-42px">
+            <div className="text-[#AFB0B4] text-14px space-x-1">
+              <IconFont type="icon-huancun" />
+              <span>缓存</span>
+            </div>
+          </Divider>
+          <Form.Item
+            label="开启缓存"
+            name="cachingEnable"
+            valuePropName="checked"
+            rules={[{ required: false, message: 'Please input your password!' }]}
+          >
+            <Switch onChange={() => setSubmitFlag(!submitFlag)} />
+          </Form.Item>
+          <Form.Item
+            label="最大时长"
+            name="cachingMaxAge"
+            rules={[{ required: false, message: 'Please input your password!' }]}
+          >
+            <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
+          </Form.Item>
+          <Form.Item
+            label="重校验时长"
+            name="cachingStaleWhileRevalidate"
+            rules={[{ required: false, message: 'Please input your password!' }]}
+          >
+            <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
+          </Form.Item>
+          <Divider orientation="left" orientationMargin={0} className="mt-42px">
+            <div className="text-[#AFB0B4] text-14px space-x-1">
+              <IconFont type="icon-shishi" />
+              <span>实时</span>
+            </div>
+          </Divider>
+          <Form.Item
+            label="开启实时"
+            name="liveQueryEnable"
+            valuePropName="checked"
+            rules={[{ required: false, message: 'Please input your password!' }]}
+          >
+            <Switch onChange={() => setSubmitFlag(!submitFlag)} />
+          </Form.Item>
+          <Form.Item
+            label="轮询间隔"
+            name="liveQueryPollingIntervalSeconds"
+            rules={[{ required: false, message: 'Please input your password!' }]}
+          >
+            <Input suffix="秒" onBlur={() => setSubmitFlag(!submitFlag)} />
+          </Form.Item>
+        </>
+      )}
     </Form>
   )
 }

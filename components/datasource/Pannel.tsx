@@ -23,20 +23,18 @@ function DatasourceList({ onClickItem, datasourceType }: ListProps) {
 
   return (
     <>
-      <div>
-        {datasource
-          .filter(item => item.sourceType == datasourceType)
-          .map(datasourceItem => {
-            if (datasourceItem.name != '')
-              return (
-                <DatasourceItem
-                  key={datasourceItem.id}
-                  datasourceItem={datasourceItem}
-                  onClickItem={onClickItem}
-                />
-              )
-          })}
-      </div>
+      {datasource
+        .filter(item => item.sourceType == datasourceType)
+        .map(datasourceItem => {
+          if (datasourceItem.name != '')
+            return (
+              <DatasourceItem
+                key={datasourceItem.id}
+                datasourceItem={datasourceItem}
+                onClickItem={onClickItem}
+              />
+            )
+        })}
     </>
   )
 }
@@ -96,9 +94,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
                 activeKey={activeKey}
                 ghost
                 bordered
-                onChange={keys => {
-                  setActiveKey(keys as string[])
-                }}
+                onChange={keys => setActiveKey(keys as string[])}
               >
                 <Panel
                   header={setHeader('DB', 1)}

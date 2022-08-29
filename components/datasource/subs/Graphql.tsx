@@ -20,16 +20,16 @@ import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import GraphiQLApp from '../../../pages/graphiql'
-import styles from './Graphal.module.scss'
+import styles from './Graphql.module.scss'
 
 interface Props {
   content: DatasourceResp
-  type: string
+  type: ShowType
 }
 interface Config {
   [key: string]: string | undefined | number
@@ -68,7 +68,7 @@ const columns: ColumnsType<DataType> = [
     ),
   },
 ]
-export default function DatasourceGraphalMainCheck({ content, type }: Props) {
+export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -147,7 +147,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
-        handleToggleDesigner('data', content.id)
+        handleToggleDesigner('detail', content.id)
       })
   }
 
@@ -180,12 +180,11 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   const children: React.ReactNode[] = []
 
-  const handleChange = (value: string) => {
+  const handleChange = (_value: string) => {
     setRulesObj({
       pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
       message: '以字母或下划线开头，只能由字母、下划线和数字组成',
     })
-    console.log(`selected ${value}`)
   }
 
   //文件上传过程钩子
@@ -226,7 +225,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
 
   return (
     <>
-      {type === 'data' ? (
+      {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         //查看页面--------------------------------------------------------------------------
         <>
@@ -254,9 +253,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
                 </Button>
                 <Button
                   className={`${styles['edit-btn']} ml-4`}
-                  onClick={() => {
-                    handleToggleDesigner('edit', content.id)
-                  }}
+                  onClick={() => handleToggleDesigner('form', content.id)}
                 >
                   <span>编辑</span>
                 </Button>
@@ -422,9 +419,7 @@ export default function DatasourceGraphalMainCheck({ content, type }: Props) {
             <div className="flex justify-center items-center w-40">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                onClick={() => {
-                  handleToggleDesigner('data', content.id, content.sourceType)
-                }}
+                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
               >
                 <span>取消</span>
               </Button>

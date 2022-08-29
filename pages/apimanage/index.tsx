@@ -34,7 +34,7 @@ import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceContext,
   DatasourceDispatchContext,
@@ -196,7 +196,7 @@ const ApiManage: FC<ApiManageProps> = () => {
   //datasource逻辑-----
   const [showDatasource, setShowDatasource] = useImmer(false)
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
-  const [showType, setShowType] = useImmer('data')
+  const [showType, setShowType] = useImmer<ShowType>('detail')
   const [currDBId, setCurrDBId] = useImmer<number | null | undefined>(null)
   const [isColl, setIsColl] = useImmer(true)
 
@@ -223,14 +223,14 @@ const ApiManage: FC<ApiManageProps> = () => {
   const handleClickItem = (datasourceItem: DatasourceResp) => {
     setShowDatasource(true)
     if (datasourceItem.name == '') {
-      setShowType('edit')
+      setShowType('form')
     } else {
-      setShowType('data')
+      setShowType('detail')
     }
     setCurrDBId(datasourceItem.id)
   }
 
-  const handleToggleDesigner = (type: string, id?: number, sourceType?: number) => {
+  const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
     setShowDatasource(true)
     setShowType(type)
     //新增的item点击取消逻辑 // 0 会显示一个空页面

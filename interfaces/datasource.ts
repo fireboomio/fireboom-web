@@ -1,19 +1,27 @@
+export type ShowType = 'form' | 'detail' | 'setting'
+
 export type DatasourceAction = DatasourceSingleAction | DatasourceListAction
 
 interface DatasourceSingleAction {
   type: 'selected' | 'added' | 'deleted' | 'changed'
   data: DatasourceResp
 }
+
 interface DatasourceListAction {
   type: 'fetched'
   data: DatasourceResp[]
 }
+
+export interface Config {
+  apiNamespace: string
+  schema: string
+  serverName: string
+}
+
 export interface DatasourceResp {
   id: number
   name: string
   sourceType: number
   switch: number
-  config: {
-    [key: string]: string
-  }
+  config: Config
 }

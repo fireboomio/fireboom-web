@@ -1,14 +1,14 @@
 import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
+import type { DatasourceResp, DatasourceAction, ShowType } from '@/interfaces/datasource'
 
 interface DatasourceCurrDBContextT {
   currDBId: number | null | undefined
   setCurrDBId: useImmer.Updater<number | null | undefined>
 }
 interface DatasourceToggleContext {
-  handleToggleDesigner: (type: string, id?: number, sourceType?: number) => void
+  handleToggleDesigner: (type: ShowType, id?: number, sourceType?: number) => void
 }
 export const DatasourceContext = createContext([] as DatasourceResp[])
 export const DatasourceDispatchContext = createContext({} as Dispatch<DatasourceAction>)

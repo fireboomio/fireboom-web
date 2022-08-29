@@ -5,7 +5,7 @@ import { useEffect, useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceContext,
   DatasourceDispatchContext,
@@ -19,7 +19,7 @@ import styles from './index.module.scss'
 
 export default function Datasource() {
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
-  const [showType, setShowType] = useImmer('data')
+  const [showType, setShowType] = useImmer<ShowType>('detail')
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
 
   useEffect(() => {
@@ -39,14 +39,14 @@ export default function Datasource() {
 
   const handleClickItem = (datasourceItem: DatasourceResp) => {
     if (datasourceItem.name == '') {
-      setShowType('edit')
+      setShowType('form')
     } else {
-      setShowType('data')
+      setShowType('detail')
     }
     setCurrDBId(datasourceItem.id)
   }
 
-  const handleToggleDesigner = (type: string, id?: number, sourceType?: number) => {
+  const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
     setShowType(type)
     //新增的item点击取消逻辑 // 0 会显示一个空页面
     if (id && id < 0) {

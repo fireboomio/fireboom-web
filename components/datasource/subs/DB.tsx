@@ -7,14 +7,14 @@ import { useContext, ReactNode, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
 interface Props {
   content: DatasourceResp
-  type: string
+  type: ShowType
 }
 
 interface Config {
@@ -119,7 +119,7 @@ const ipReg =
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
-export default function DatasourceDBMain({ content, type }: Props) {
+export default function DB({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [disabled, setDisabled] = useImmer(false)
@@ -131,7 +131,6 @@ export default function DatasourceDBMain({ content, type }: Props) {
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
-    console.log(value, 'value')
     switch (value) {
       case '0':
         setIsValue(true)
@@ -294,7 +293,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
-        handleToggleDesigner('data', content.id)
+        handleToggleDesigner('detail', content.id)
       })
   }
 
@@ -303,10 +302,8 @@ export default function DatasourceDBMain({ content, type }: Props) {
   }
 
   //表单item值改变回调
-  const onValuesChange = (allValues: FromValues) => {
-    console.log(allValues, 'allValues')
+  const onValuesChange = (_allValues: FromValues) => {
     const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
-    console.log(hasErrors, 'hasErrors')
     setDisabled(hasErrors)
   }
 
@@ -343,7 +340,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
     <>
       {/* { (() => { your code })() }  useFormWarning的解决方案
       在return外定义setPage函数，当切换编辑页面时，在函数中使用useForm 返回相应的html代码*/}
-      {type === 'data' ? (
+      {type === 'detail' ? (
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
@@ -371,9 +368,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               </Button>
               <Button
                 className={`${styles['connect-check-btn']}  ml-4`}
-                onClick={() => {
-                  handleToggleDesigner('edit', content.id)
-                }}
+                onClick={() => handleToggleDesigner('form', content.id)}
               >
                 <span>编辑</span>
               </Button>
@@ -381,9 +376,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
           </div>
           <div
             className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}
-            onClick={() => {
-              handleToggleDesigner('Setting', content.id)
-            }}
+            onClick={() => handleToggleDesigner('setting', content.id)}
           >
             <span className="w-14 h-5">更多设置</span> <RightOutlined />
           </div>
@@ -420,9 +413,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                         <IconFont
                           className="ml-2"
                           type="icon-xiaoyanjing-chakan"
-                          onClick={() => {
-                            setIsSecretShow(!isSecretShow)
-                          }}
+                          onClick={() => setIsSecretShow(!isSecretShow)}
                         />
                       </span>
                     ) : (
@@ -431,9 +422,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
                         <IconFont
                           className="ml-2"
                           type="icon-xiaoyanjing-yincang"
-                          onClick={() => {
-                            setIsSecretShow(!isSecretShow)
-                          }}
+                          onClick={() => setIsSecretShow(!isSecretShow)}
                         />
                       </span>
                     )}
@@ -457,7 +446,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
             </Descriptions>
           </div>
         </div>
-      ) : type === 'edit' ? (
+      ) : type === 'form' ? (
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         <div>
@@ -478,9 +467,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
             <div className="flex  items-center justify-end w-36">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 mr-4`}
-                onClick={() => {
-                  handleToggleDesigner('data', content.id, content.sourceType)
-                }}
+                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
               >
                 取消
               </Button>
@@ -488,9 +475,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               <Button
                 disabled={disabled}
                 className={`${styles['connect-check-btn']}`}
-                onClick={() => {
-                  form.submit()
-                }}
+                onClick={() => form.submit()}
               >
                 {content.name == '' ? '创建' : '保存'}
               </Button>
@@ -557,11 +542,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               </Form.Item>
 
               <Form.Item label="类型:" name="appendType">
-                <Radio.Group
-                  onChange={e => {
-                    typeChange(e.target.value as string)
-                  }}
-                >
+                <Radio.Group onChange={e => typeChange(e.target.value as string)}>
                   <Radio value="0" style={{ marginRight: '50px' }}>
                     连接URL
                   </Radio>
@@ -591,9 +572,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               layout="vertical"
               size="small"
               className="w-3/8 mr-10"
-              labelStyle={{
-                width: '30%',
-              }}
+              labelStyle={{ width: '30%' }}
             >
               <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
                 <Editor
@@ -609,9 +588,7 @@ export default function DatasourceDBMain({ content, type }: Props) {
               layout="vertical"
               size="small"
               className="w-5/8"
-              labelStyle={{
-                width: '30%',
-              }}
+              labelStyle={{ width: '30%' }}
             >
               <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
                 <div className={`${styles['db-setting-table']}`}>

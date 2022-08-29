@@ -1,6 +1,6 @@
 import Editor from '@monaco-editor/react'
-import { Descriptions, Input, Switch } from 'antd'
-import { ReactNode, useContext, useEffect } from 'react'
+import { Descriptions, Input, Switch, Button, message } from 'antd'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -8,67 +8,29 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './DefineSelf.module.scss'
+import styles from './Custom.module.scss'
+
 interface Props {
   content: DatasourceResp
 }
-interface Config {
-  [key: string]: ReactNode
-}
-interface PropsInfo {
-  content: DatasourceResp
-  name: string
-  editDefineSelf: (value: string) => void
-}
 
-function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
+export default function Custom({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(content.name == '')
-  const config = content.config as Config
+  const [code, setCode] = useImmer('')
+
+  const config = content.config
 
   useEffect(() => {
     setIsEditing(content.name == '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content])
 
-  function handleItemEdit(value: string) {
-    editDefineSelf(value)
-    setIsEditing(false)
-  }
-
-  return (
-    <div>
-      {isEditing ? (
-        <Input
-          onBlur={e => handleItemEdit(e.target.value)}
-          // @ts-ignore
-          onPressEnter={e => handleItemEdit(e.target.value)}
-          style={{ width: '200px' }}
-          className="text-sm font-normal leading-4 h-5 pl-1"
-          defaultValue={config.serverName as string}
-          autoFocus
-          placeholder="请输入外部数据源名"
-        />
-      ) : (
-        <>
-          {config[name]}
-          <span
-            onClick={() => {
-              setIsEditing(true)
-            }}
-            className="ml-3"
-          >
-            <IconFont type="icon-bianji" />
-          </span>
-        </>
-      )}
-    </div>
-  )
-}
-
-export default function DatasourceDeselfMain({ content }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const config = content.config as Config
-  const dispatch = useContext(DatasourceDispatchContext)
+  useEffect(() => {
+    setCode(content.config.schema)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content.config.schema])
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -83,10 +45,11 @@ export default function DatasourceDeselfMain({ content }: Props) {
       })
   }
 
-  const editDefineSelf = (value: string) => {
+  const handleEdit = (value: string) => {
     if (value == '') {
       return
     }
+
     if (content.name == '') {
       const req = {
         ...content,
@@ -97,46 +60,54 @@ export default function DatasourceDeselfMain({ content }: Props) {
       void requests.post<unknown, number>('/dataSource', req).then(res => {
         content.id = res
       })
-    } else
+    } else {
       void requests.put('/dataSource', {
         ...content,
-        config: { ...config },
+        config: { ...config, apiNamespace: value, serverName: value },
         name: value,
       })
+    }
+
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
       .then(res => {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
-        handleToggleDesigner('data', content.id)
+        handleToggleDesigner('detail', content.id)
       })
+
+    setIsEditing(false)
   }
 
   const save = () => {
-    console.log()
+    void requests
+      .put(`/dataSource/content/${content.id}`, { content: code })
+      .then(() => void message.success('保存成功!'))
   }
 
   return (
     <>
-      <div className="border-gray border-b pb-5 flex justify-between">
+      <div className="pb-9px flex items-center justify-between border-gray border-b mb-5">
         <div>
           <span className="ml-2">{content.name}</span>
-          <span className="ml-2 text-xs text-gray-500/80">main</span>
         </div>
-        <div className="flex items-center">
-          <div className="text-[#E92E5E] cursor-pointer mr-5" onClick={save}>
-            <span className="leading-20px ml-1">保存</span>
-          </div>
+        <div className="flex  items-center">
           <Switch
             checked={content.switch == 0 ? true : false}
-            onChange={connectSwitchOnChange}
             checkedChildren="开启"
             unCheckedChildren="关闭"
-            style={{ height: '24px', width: '60px' }}
+            onChange={connectSwitchOnChange}
+            className={styles['switch-check-btn']}
           />
+          <div className="">
+            <Button className={`${styles['edit-btn']} ml-4`} onClick={save}>
+              <span>保存</span>
+            </Button>
+          </div>
         </div>
       </div>
+
       <div className="flex justify-center">
         <Descriptions
           bordered
@@ -149,12 +120,27 @@ export default function DatasourceDeselfMain({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="连接名">
-            <DatasourceDefineItem
-              content={content}
-              name="apiNamespace"
-              editDefineSelf={editDefineSelf}
-            />
+          <Descriptions.Item label="连接名" className="h-12">
+            <>
+              {isEditing ? (
+                <Input
+                  onBlur={e => handleEdit(e.target.value)}
+                  // @ts-ignore
+                  onPressEnter={e => handleEdit(e.target.value)}
+                  style={{ width: '200px' }}
+                  defaultValue={config.serverName}
+                  autoFocus
+                  placeholder="请输入外部数据源名"
+                />
+              ) : (
+                <>
+                  {config.apiNamespace}
+                  <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
+                    <IconFont type="icon-bianji" />
+                  </span>
+                </>
+              )}
+            </>
           </Descriptions.Item>
         </Descriptions>
       </div>
@@ -169,7 +155,8 @@ export default function DatasourceDeselfMain({ content }: Props) {
         defaultLanguage="typescript"
         defaultValue="// some comment"
         className={`mt-4 ${styles.monaco}`}
-        value="//comment"
+        value={code}
+        onChange={value => setCode(value ?? '')}
       />
     </>
   )
