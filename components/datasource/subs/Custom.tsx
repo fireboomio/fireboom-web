@@ -1,6 +1,6 @@
 import Editor from '@monaco-editor/react'
-import { Descriptions, Input, Switch, Button } from 'antd'
-import { ReactNode, useContext, useEffect } from 'react'
+import { Descriptions, Input, Switch, Button, message } from 'antd'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -14,58 +14,23 @@ interface Props {
   content: DatasourceResp
 }
 
-interface Config {
-  [key: string]: ReactNode
-}
-
-interface PropsInfo {
-  content: DatasourceResp
-  name: string
-  editDefineSelf: (value: string) => void
-}
-
-function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
+export default function Custom({ content }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(content.name == '')
-  const config = content.config as Config
+  const [code, setCode] = useImmer('')
+
+  const config = content.config
 
   useEffect(() => {
     setIsEditing(content.name == '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content])
 
-  function handleItemEdit(value: string) {
-    editDefineSelf(value)
-    setIsEditing(false)
-  }
-
-  return (
-    <div>
-      {isEditing ? (
-        <Input
-          onBlur={e => handleItemEdit(e.target.value)}
-          // @ts-ignore
-          onPressEnter={e => handleItemEdit(e.target.value)}
-          style={{ width: '200px' }}
-          defaultValue={config.serverName as string}
-          autoFocus
-          placeholder="请输入外部数据源名"
-        />
-      ) : (
-        <>
-          {config[name]}
-          <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
-            <IconFont type="icon-bianji" />
-          </span>
-        </>
-      )}
-    </div>
-  )
-}
-
-export default function Custom({ content }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const config = content.config as Config
-  const dispatch = useContext(DatasourceDispatchContext)
+  useEffect(() => {
+    setCode(content.config.schema)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content.config.schema])
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -80,10 +45,11 @@ export default function Custom({ content }: Props) {
       })
   }
 
-  const editDefineSelf = (value: string) => {
+  const handleEdit = (value: string) => {
     if (value == '') {
       return
     }
+
     if (content.name == '') {
       const req = {
         ...content,
@@ -94,12 +60,14 @@ export default function Custom({ content }: Props) {
       void requests.post<unknown, number>('/dataSource', req).then(res => {
         content.id = res
       })
-    } else
+    } else {
       void requests.put('/dataSource', {
         ...content,
-        config: { ...config },
+        config: { ...config, apiNamespace: value, serverName: value },
         name: value,
       })
+    }
+
     void requests
       .get<unknown, DatasourceResp[]>('/dataSource')
       .then(res => {
@@ -108,10 +76,14 @@ export default function Custom({ content }: Props) {
       .then(() => {
         handleToggleDesigner('detail', content.id)
       })
+
+    setIsEditing(false)
   }
 
   const save = () => {
-    console.log()
+    void requests
+      .put(`/dataSource/content/${content.id}`, { content: code })
+      .then(() => void message.success('保存成功!'))
   }
 
   return (
@@ -149,11 +121,26 @@ export default function Custom({ content }: Props) {
           }}
         >
           <Descriptions.Item label="连接名" className="h-12">
-            <DatasourceDefineItem
-              content={content}
-              name="apiNamespace"
-              editDefineSelf={editDefineSelf}
-            />
+            <>
+              {isEditing ? (
+                <Input
+                  onBlur={e => handleEdit(e.target.value)}
+                  // @ts-ignore
+                  onPressEnter={e => handleEdit(e.target.value)}
+                  style={{ width: '200px' }}
+                  defaultValue={config.serverName}
+                  autoFocus
+                  placeholder="请输入外部数据源名"
+                />
+              ) : (
+                <>
+                  {config.apiNamespace}
+                  <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
+                    <IconFont type="icon-bianji" />
+                  </span>
+                </>
+              )}
+            </>
           </Descriptions.Item>
         </Descriptions>
       </div>
@@ -168,7 +155,8 @@ export default function Custom({ content }: Props) {
         defaultLanguage="typescript"
         defaultValue="// some comment"
         className={`mt-4 ${styles.monaco}`}
-        value="//comment"
+        value={code}
+        onChange={value => setCode(value ?? '')}
       />
     </>
   )
