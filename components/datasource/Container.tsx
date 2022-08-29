@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { useImmer } from 'use-immer'
+import { useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
@@ -15,36 +14,30 @@ interface Props {
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
-  const [viewer, setViewer] = useImmer<React.ReactNode>('')
-  const [title, setTitile] = useImmer('')
-
   const handleIconClick = () => {
     console.log('aaa')
   }
 
-  useEffect(() => {
-    if (content)
-      if (showType == 'setting') {
-        setTitile('设置')
-        setViewer(<DatasourceDBMain content={content} type={showType} />)
-      } else {
-        if (content.sourceType == 1) {
-          setTitile('DB')
-          setViewer(<DatasourceDBMain content={content} type={showType} />)
-        } else if (content.sourceType == 2) {
-          setTitile('REST')
-          setViewer(<DatasourceRestMain content={content} type={showType} />)
-        } else if (content.sourceType == 3) {
-          setTitile('Graphal')
-          setViewer(<DatasourceGraphalMain content={content} type={showType} />)
-        } else if (content.sourceType == 4) {
-          setTitile('自定义')
-          setViewer(<DatasourceDeselfMainEdit content={content} />)
-        }
-      }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showType, content])
+  const title = useMemo(() => {
+    let rv = ''
+    switch (content.sourceType) {
+      case 1:
+        rv = showType == 'setting' ? '设置' : 'DB'
+        break
+      case 2:
+        rv = 'REST'
+        break
+      case 3:
+        rv = 'GraphQL'
+        break
+      case 4:
+        rv = '自定义'
+        break
+      default:
+        break
+    }
+    return rv
+  }, [content.sourceType, showType])
 
   return (
     <div className="pl-6 mt-6 mr-6">
@@ -56,7 +49,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
         <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
       </div>
-      {viewer}
+
+      {content.sourceType === 1 ? (
+        <DatasourceDBMain content={content} type={showType} />
+      ) : content.sourceType === 2 ? (
+        <DatasourceRestMain content={content} type={showType} />
+      ) : content.sourceType === 3 ? (
+        <DatasourceGraphalMain content={content} type={showType} />
+      ) : content.sourceType === 4 ? (
+        <DatasourceDeselfMainEdit content={content} />
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
