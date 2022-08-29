@@ -3,9 +3,9 @@ import { useMemo } from 'react'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
 import IconFont from '../iconfont'
+import DatasourceDeselfMainEdit from './subs/Custom'
 import DatasourceDBMain from './subs/DB'
-import DatasourceDeselfMainEdit from './subs/DefineSelf'
-import DatasourceGraphalMain from './subs/Graphal'
+import DatasourceGraphalMain from './subs/Graphql'
 import DatasourceRestMain from './subs/Rest'
 
 interface Props {
@@ -57,7 +57,11 @@ export default function DatasourceContainer({ content, showType }: Props) {
       ) : content.sourceType === 3 ? (
         <DatasourceGraphalMain content={content} type={showType} />
       ) : content.sourceType === 4 ? (
-        <DatasourceDeselfMainEdit content={content} />
+        showType === 'detail' ? (
+          <DatasourceDeselfMainEdit content={content} />
+        ) : (
+          <></>
+        )
       ) : (
         <></>
       )}

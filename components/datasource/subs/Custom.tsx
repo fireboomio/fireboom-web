@@ -8,13 +8,16 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './DefineSelf.module.scss'
+import styles from './Custom.module.scss'
+
 interface Props {
   content: DatasourceResp
 }
+
 interface Config {
   [key: string]: ReactNode
 }
+
 interface PropsInfo {
   content: DatasourceResp
   name: string

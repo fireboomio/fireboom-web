@@ -25,7 +25,7 @@ import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/contex
 import requests from '@/lib/fetchers'
 
 import GraphiQLApp from '../../../pages/graphiql'
-import styles from './Graphal.module.scss'
+import styles from './Graphql.module.scss'
 
 interface Props {
   content: DatasourceResp
