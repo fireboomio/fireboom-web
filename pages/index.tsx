@@ -82,6 +82,7 @@ export default function Home() {
     void requests.get<unknown, HomeConfig>('/home').then(res => {
       setHomeConfig(res)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { homeApi, homeAuth, homeDataSource, homeOss } = homeConfig

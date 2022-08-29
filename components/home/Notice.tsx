@@ -24,6 +24,7 @@ export function Notice({ handleToggleDesigner }: Props) {
       setNoticeConfig(res)
       console.log(noticeConfig, 'noticeConfig')
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleClick = () => {
