@@ -180,12 +180,11 @@ export default function Graphql({ content, type }: Props) {
 
   const children: React.ReactNode[] = []
 
-  const handleChange = (value: string) => {
+  const handleChange = (_value: string) => {
     setRulesObj({
       pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
       message: '以字母或下划线开头，只能由字母、下划线和数字组成',
     })
-    console.log(`selected ${value}`)
   }
 
   //文件上传过程钩子

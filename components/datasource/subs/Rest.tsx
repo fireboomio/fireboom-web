@@ -116,8 +116,6 @@ export default function Rest({ content, type }: Props) {
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
-    console.log('value', onValueChange)
-
     switch (value) {
       case '0':
         setIsValue(true)
