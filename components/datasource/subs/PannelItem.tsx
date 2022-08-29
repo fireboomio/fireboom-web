@@ -93,11 +93,7 @@ export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
         {
           key: '2',
           label: (
-            <div
-              onClick={() => {
-                handleToggleDesigner('edit', datasourceItem.id)
-              }}
-            >
+            <div onClick={() => handleToggleDesigner('form', datasourceItem.id)}>
               <IconFont type="icon-bianji" />
               <span className="ml-1.5">编辑</span>
             </div>

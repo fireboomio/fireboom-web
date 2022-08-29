@@ -23,7 +23,7 @@ import { RedocStandalone } from 'redoc'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
@@ -31,7 +31,7 @@ import styles from './Rest.module.scss'
 
 interface Props {
   content: DatasourceResp
-  type: string
+  type: ShowType
 }
 
 interface Config {
@@ -197,7 +197,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
-        handleToggleDesigner('data', content.id)
+        handleToggleDesigner('detail', content.id)
       })
   }
 
@@ -232,7 +232,7 @@ export default function DatasourceRestMain({ content, type }: Props) {
   const { Panel } = Collapse
   return (
     <>
-      {type === 'data' ? (
+      {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
           <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
@@ -252,17 +252,13 @@ export default function DatasourceRestMain({ content, type }: Props) {
               />
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                onClick={() => {
-                  setTestVisible(true)
-                }}
+                onClick={() => setTestVisible(true)}
               >
                 <span>测试</span>
               </Button>
               <Button
                 className={`${styles['edit-btn']} ml-4`}
-                onClick={() => {
-                  handleToggleDesigner('edit', content.id)
-                }}
+                onClick={() => handleToggleDesigner('form', content.id)}
               >
                 <span>编辑</span>
               </Button>
@@ -451,18 +447,11 @@ export default function DatasourceRestMain({ content, type }: Props) {
             <div className="flex justify-center items-center w-160px">
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                onClick={() => {
-                  handleToggleDesigner('data', content.id, content.sourceType)
-                }}
+                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
               >
                 <span>取消</span>
               </Button>
-              <Button
-                className={`${styles['edit-btn']} ml-4`}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
+              <Button className={`${styles['edit-btn']} ml-4`} onClick={() => form.submit()}>
                 {content.name == '' ? '创建' : '保存'}
               </Button>
             </div>

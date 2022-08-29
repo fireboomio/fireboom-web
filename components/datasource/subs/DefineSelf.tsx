@@ -109,7 +109,7 @@ export default function DatasourceDeselfMain({ content }: Props) {
         dispatch({ type: 'fetched', data: res })
       })
       .then(() => {
-        handleToggleDesigner('data', content.id)
+        handleToggleDesigner('detail', content.id)
       })
   }
 

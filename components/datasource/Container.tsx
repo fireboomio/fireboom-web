@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
 import IconFont from '../iconfont'
 import DatasourceDBMain from './subs/DB'
@@ -11,7 +11,7 @@ import DatasourceRestMain from './subs/Rest'
 
 interface Props {
   content: DatasourceResp
-  showType: string
+  showType: ShowType
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
@@ -24,7 +24,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
 
   useEffect(() => {
     if (content)
-      if (showType == 'Setting') {
+      if (showType == 'setting') {
         setTitile('设置')
         setViewer(<DatasourceDBMain content={content} type={showType} />)
       } else {
