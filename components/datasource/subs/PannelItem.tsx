@@ -23,7 +23,7 @@ interface Config {
   [key: string]: string
 }
 
-export default function DatasourceItem({ datasourceItem, onClickItem }: Props) {
+export default function PannelItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(datasourceItem.name == '')
   const [visible, setVisible] = useImmer(false)

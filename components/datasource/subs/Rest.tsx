@@ -72,7 +72,7 @@ const columns: ColumnsType<DataType> = [
   },
 ]
 
-export default function DatasourceRestMain({ content, type }: Props) {
+export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()

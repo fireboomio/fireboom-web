@@ -3,10 +3,10 @@ import { useMemo } from 'react'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
 import IconFont from '../iconfont'
-import DatasourceDeselfMainEdit from './subs/Custom'
-import DatasourceDBMain from './subs/DB'
-import DatasourceGraphalMain from './subs/Graphql'
-import DatasourceRestMain from './subs/Rest'
+import Custom from './subs/Custom'
+import DB from './subs/DB'
+import Graphql from './subs/Graphql'
+import Rest from './subs/Rest'
 
 interface Props {
   content: DatasourceResp
@@ -51,14 +51,14 @@ export default function DatasourceContainer({ content, showType }: Props) {
       </div>
 
       {content.sourceType === 1 ? (
-        <DatasourceDBMain content={content} type={showType} />
+        <DB content={content} type={showType} />
       ) : content.sourceType === 2 ? (
-        <DatasourceRestMain content={content} type={showType} />
+        <Rest content={content} type={showType} />
       ) : content.sourceType === 3 ? (
-        <DatasourceGraphalMain content={content} type={showType} />
+        <Graphql content={content} type={showType} />
       ) : content.sourceType === 4 ? (
         showType === 'detail' ? (
-          <DatasourceDeselfMainEdit content={content} />
+          <Custom content={content} />
         ) : (
           <></>
         )

@@ -68,7 +68,7 @@ const columns: ColumnsType<DataType> = [
     ),
   },
 ]
-export default function DatasourceGraphalMainCheck({ content, type }: Props) {
+export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)

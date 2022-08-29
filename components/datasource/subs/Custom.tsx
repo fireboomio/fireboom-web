@@ -68,7 +68,7 @@ function DatasourceDefineItem({ content, name, editDefineSelf }: PropsInfo) {
   )
 }
 
-export default function DatasourceDeselfMain({ content }: Props) {
+export default function Custom({ content }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const config = content.config as Config
   const dispatch = useContext(DatasourceDispatchContext)
