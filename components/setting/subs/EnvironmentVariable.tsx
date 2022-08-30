@@ -39,7 +39,6 @@ export default function SettingMainEnvironmentVariable() {
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
-      console.log(res)
       setEnvironmentConfig(res)
       setSystem(
         res.filter(item => {
@@ -49,7 +48,6 @@ export default function SettingMainEnvironmentVariable() {
     })
   }, [refreshFlag])
   const onFinish = (values: FromValues) => {
-    console.log('id', id)
     if (id == -1) {
       void requests.post('/env', values).then(() => {
         setRefreshFlag(!refreshFlag)
@@ -60,7 +58,6 @@ export default function SettingMainEnvironmentVariable() {
         setRefreshFlag(!refreshFlag)
       })
     }
-    console.log('onFinish', values)
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
@@ -90,10 +87,8 @@ export default function SettingMainEnvironmentVariable() {
   }
 
   // 表单item值改变回调
-  const onValuesChange = (allValues: FromValues) => {
-    console.log(allValues, 'allValues')
+  const onValuesChange = () => {
     const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
-    console.log(hasErrors, 'hasErrors')
     setDisabled(hasErrors)
   }
 

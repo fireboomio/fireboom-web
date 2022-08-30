@@ -46,7 +46,6 @@ export default function SettingMainVersion() {
     void requests
       .get<unknown, string>('/setting/getTime')
       .then(res => {
-        console.log(res, 'res')
         const count = Date.parse(res)
         setCount(count)
       })
@@ -63,14 +62,12 @@ export default function SettingMainVersion() {
   }, [])
 
   const onChange = (e: RadioChangeEvent, key: string) => {
-    console.log(e, 'e')
     void requests.post('/setting', { key: key, val: e.target.value as boolean }).then(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
 
   const calTime = (initTime: string) => {
-    // console.log(dayjs.duration(24, 'hours').humanize())
     const time = dayjs.duration(dayjs().diff(dayjs(initTime), 'seconds'), 'seconds') as unknown as {
       $d: Runtime
     }
@@ -218,9 +215,7 @@ export default function SettingMainVersion() {
                 <button
                   className={styles['edit-btn']}
                   onClick={() => {
-                    void requests.get('/wdg/reStart').then(res => {
-                      console.log(res, '重启')
-                    })
+                    void requests.get('/wdg/reStart')
                   }}
                 >
                   <span>重启</span>
@@ -228,9 +223,7 @@ export default function SettingMainVersion() {
                 <button
                   className={styles['edit-btn']}
                   onClick={() => {
-                    void requests.get('/wdg/start').then(res => {
-                      console.log(res, '开始')
-                    })
+                    void requests.get('/wdg/start')
                   }}
                 >
                   <span>开始</span>
@@ -238,9 +231,7 @@ export default function SettingMainVersion() {
                 <button
                   className={styles['edit-btn']}
                   onClick={() => {
-                    void requests.get('/wdg/close').then(res => {
-                      console.log(res, '关闭')
-                    })
+                    void requests.get('/wdg/close')
                   }}
                 >
                   <span>暂停</span>

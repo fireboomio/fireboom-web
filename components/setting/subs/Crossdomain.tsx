@@ -17,15 +17,6 @@ interface CorsConfiguration {
   exposedHeaders: Array<string>
   maxAge: number
 }
-//允许证书传0,1
-interface CorsFormConfiguration {
-  allowedOrigins: Array<string>
-  allowedMethods: Array<string>
-  allowedHeaders: string
-  allowCredentials: boolean
-  exposedHeaders: string
-  maxAge: number
-}
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
@@ -48,10 +39,6 @@ export default function SettingCrossdomain() {
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const urlReg = /^(http(s?)|):\/\/(.+)$/
   // 0- 86400
-
-  const onFinish = (values: CorsFormConfiguration) => {
-    console.log('Success:', values)
-  }
 
   const postRequest = useCallback(
     async (key: string, value: string | Array<string> | boolean | number) => {
@@ -82,9 +69,6 @@ export default function SettingCrossdomain() {
               allowedHeaders: corsConfig.allowedHeaders.join(','),
               exposedHeaders: corsConfig.exposedHeaders.join(','),
               allowCredentials: corsConfig.allowCredentials,
-            }}
-            onFinish={values => {
-              void onFinish(values as CorsFormConfiguration)
             }}
             labelAlign="left"
             labelCol={{
