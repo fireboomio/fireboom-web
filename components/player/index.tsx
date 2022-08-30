@@ -25,10 +25,10 @@ const Player: React.FC<Props> = ({ className }) => {
   }
 
   return (
-    <Draggable defaultPosition={{ x: 0, y: 0 }}>
+    <Draggable defaultPosition={{ x: 0, y: 0 }} bounds="parent" handle=".drag-handler">
       <div className={className}>
         <div className={styles.player}>
-          <MoreOutlined className={styles['player-palm']} />
+          <MoreOutlined className={`drag-handler ${styles['player-palm']}`} />
 
           <div className={styles['player-pannel']}>
             <PlayCircleOutlined
