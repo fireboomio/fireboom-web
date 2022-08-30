@@ -246,6 +246,7 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
 
+  // 连接URL，值和环境变量切换,对应选择框切换，重新渲染获取数据
   useEffect(() => {
     setViewerForm(initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -533,7 +534,7 @@ export default function DB({ content, type }: Props) {
                 name="dbType"
                 // rules={[{ required: true, message: '类型不能为空' }]}
               >
-                <Select placeholder="请输入...">
+                <Select placeholder="请输入..." defaultValue="MySQL">
                   <Select.Option value="MySQL">MySql</Select.Option>
                   <Select.Option value="SQLITE">SQLITE</Select.Option>
                   <Select.Option value="PGSQL">PGSQL</Select.Option>

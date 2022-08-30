@@ -39,7 +39,6 @@ export default function SettingMainEnvironmentVariable() {
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
-      console.log(res)
       setEnvironmentConfig(res)
       setSystem(
         res.filter(item => {
@@ -48,8 +47,8 @@ export default function SettingMainEnvironmentVariable() {
       )
     })
   }, [refreshFlag])
+
   const onFinish = (values: FromValues) => {
-    console.log('id', id)
     if (id == -1) {
       void requests.post('/env', values).then(() => {
         setRefreshFlag(!refreshFlag)
@@ -60,7 +59,6 @@ export default function SettingMainEnvironmentVariable() {
         setRefreshFlag(!refreshFlag)
       })
     }
-    console.log('onFinish', values)
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
@@ -72,28 +70,25 @@ export default function SettingMainEnvironmentVariable() {
       setRefreshFlag(!refreshFlag)
     })
   }
-
+  // 控制下边的变量值显示
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
-
+  // 控制表格里面生成环境显示
   const isCheckShow = (key: string) => key === selectInfo
 
   const handleToggleProEnv = (key: string) => {
     setSelectInfo(key)
     setIsProEnvVisible(!isProEnvVisible)
   }
-
+  // 弹窗重置后显示
   const showModal = () => {
     form.resetFields()
     setIsVariableVisible(true)
   }
-
   // 表单item值改变回调
-  const onValuesChange = (allValues: FromValues) => {
-    console.log(allValues, 'allValues')
+  const onValuesChange = () => {
     const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
-    console.log(hasErrors, 'hasErrors')
     setDisabled(hasErrors)
   }
 

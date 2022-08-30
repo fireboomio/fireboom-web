@@ -227,7 +227,7 @@ export default function SettingMainSecurity() {
               </Form.Item>
               <span className={styles.setTitle}>
                 <IconFont type="icon-zhuyi" className="mr-1 text-[14px]" />
-                <span>https://loacalhost:9999</span>
+                <span>https://loacalhost:9991/api/main/graphql</span>
               </span>
             </Form.Item>
             <Form.Item
