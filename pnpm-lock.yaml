@@ -32,6 +32,7 @@ specifiers:
   next-plugin-antd-less: ^1.8.0
   react: ^18.2.0
   react-dom: ^18.2.0
+  react-draggable: ^4.4.5
   react-is: ^18.2.0
   redoc: 2.0.0-rc.74
   sass: ^1.53.0
@@ -65,6 +66,7 @@ dependencies:
   next-plugin-antd-less: registry.npmmirror.com/next-plugin-antd-less/1.8.0_webpack@5.74.0
   react: registry.npmmirror.com/react/18.2.0
   react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
+  react-draggable: registry.npmmirror.com/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y
   react-is: registry.npmmirror.com/react-is/18.2.0
   redoc: registry.npmmirror.com/redoc/2.0.0-rc.74_desvwqjab7sr6b2zmrs5mnelwi
   shades: registry.npmmirror.com/shades/2.2.0
@@ -7080,6 +7082,21 @@ packages:
       loose-envify: registry.npmmirror.com/loose-envify/1.4.0
       react: registry.npmmirror.com/react/18.2.0
       scheduler: registry.npmmirror.com/scheduler/0.23.0
+
+  registry.npmmirror.com/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-draggable/-/react-draggable-4.4.5.tgz}
+    id: registry.npmmirror.com/react-draggable/4.4.5
+    name: react-draggable
+    version: 4.4.5
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
+    dependencies:
+      clsx: registry.npmmirror.com/clsx/1.2.1
+      prop-types: registry.npmmirror.com/prop-types/15.8.1
+      react: registry.npmmirror.com/react/18.2.0
+      react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
+    dev: false
 
   registry.npmmirror.com/react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-is/-/react-is-16.13.1.tgz}

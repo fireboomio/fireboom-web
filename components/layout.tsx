@@ -6,6 +6,7 @@ import { PropsWithChildren, useMemo, useState } from 'react'
 import IconFont from '@/components/iconfont'
 
 import styles from './layout.module.scss'
+import Player from './player'
 
 const { Sider, Content } = ALayout
 
@@ -113,6 +114,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <ALayout>
+      <Player className="fixed top-4 right-65 z-101" />
       <Sider
         className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
         theme="light"
