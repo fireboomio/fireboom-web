@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react'
 import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import { useContext, ReactNode, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface Config {
-  [key: string]: ReactNode
+  [key: string]: string
 }
 interface FromValues {
   [key: string]: number | string | boolean

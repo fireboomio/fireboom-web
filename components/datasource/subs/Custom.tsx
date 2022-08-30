@@ -10,6 +10,12 @@ import requests from '@/lib/fetchers'
 
 import styles from './Custom.module.scss'
 
+export interface Config {
+  apiNamespace: string
+  schema: string
+  serverName: string
+}
+
 interface Props {
   content: DatasourceResp
 }
@@ -20,7 +26,7 @@ export default function Custom({ content }: Props) {
   const [isEditing, setIsEditing] = useImmer(content.name == '')
   const [code, setCode] = useImmer('')
 
-  const config = content.config
+  const config = content.config as unknown as Config
 
   useEffect(() => {
     setIsEditing(content.name == '')
@@ -28,7 +34,7 @@ export default function Custom({ content }: Props) {
   }, [content])
 
   useEffect(() => {
-    setCode(content.config.schema)
+    setCode(config.schema)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content.config.schema])
 

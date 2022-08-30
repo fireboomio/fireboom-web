@@ -12,16 +12,12 @@ interface DatasourceListAction {
   data: DatasourceResp[]
 }
 
-export interface Config {
-  apiNamespace: string
-  schema: string
-  serverName: string
-}
-
 export interface DatasourceResp {
   id: number
   name: string
   sourceType: number
   switch: number
-  config: Config
+  config: {
+    [key: string]: string | number | undefined
+  }
 }
