@@ -1,5 +1,8 @@
 import { BorderOutlined, MoreOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons'
+import { message } from 'antd'
 import Draggable from 'react-draggable'
+
+import requests from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 
@@ -10,15 +13,15 @@ interface Props {
 // eslint-disable-next-line react/prop-types
 const Player: React.FC<Props> = ({ className }) => {
   function play() {
-    console.log('play')
+    void requests.post('/api/v1/wdg/start').then(() => void message.success('启动成功!'))
   }
 
   function reload() {
-    console.log('reload')
+    void requests.post('/api/v1/wdg/reStart').then(() => void message.success('重启成功!'))
   }
 
   function stop() {
-    console.log('stop')
+    void requests.post('/api/v1/wdg/close').then(() => void message.success('停止成功!'))
   }
 
   return (
