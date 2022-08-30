@@ -24,21 +24,12 @@ const formItemLayoutWithOutLabel = {
     sm: { span: 16 },
   },
 }
-// let corsConfiguration: CorsConfiguration = {
-//   allowedOrigins: [],
-//   allowedMethods: [],
-//   allowedHeaders: [],
-//   allowCredentials: 0,
-//   exposedHeaders: [],
-//   maxAge: 0,
-// }
 
 export default function SettingCrossdomain() {
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const urlReg = /^(http(s?)|):\/\/(.+)$/
-  // 0- 86400
 
   const postRequest = useCallback(
     async (key: string, value: string | Array<string> | boolean | number) => {
