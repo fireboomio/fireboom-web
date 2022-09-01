@@ -14,6 +14,7 @@ import {
   Table,
   Tag,
   Modal,
+  message,
 } from 'antd'
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -201,7 +202,8 @@ export default function Rest({ content, type }: Props) {
 
   //表单上传失败回调
   const onFinishFailed = (errorInfo: object) => {
-    console.log('Failed:', errorInfo)
+    void message.error('提交失败!')
+    throw errorInfo
   }
 
   //文件上传过程钩子
