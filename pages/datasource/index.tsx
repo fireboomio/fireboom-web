@@ -23,18 +23,13 @@ export default function Datasource() {
   const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
 
   useEffect(() => {
-    requests
-      .get<unknown, DatasourceResp[]>('/dataSource')
-      .then(res => {
-        dispatch({
-          type: 'fetched',
-          data: res,
-        })
-        setCurrDBId(res.filter(item => item.sourceType == 1).at(0)?.id)
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
+      dispatch({
+        type: 'fetched',
+        data: res,
       })
-      .catch(() => {
-        console.log('get Datasource Data Error')
-      })
+      setCurrDBId(res.filter(item => item.sourceType == 1).at(0)?.id)
+    })
   }, [])
 
   const handleClickItem = (datasourceItem: DatasourceResp) => {
