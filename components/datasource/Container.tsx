@@ -9,7 +9,7 @@ import Graphql from './subs/Graphql'
 import Rest from './subs/Rest'
 
 interface Props {
-  content: DatasourceResp
+  content?: DatasourceResp
   showType: ShowType
 }
 
@@ -20,7 +20,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
 
   const title = useMemo(() => {
     let rv = ''
-    switch (content.sourceType) {
+    switch (content?.sourceType) {
       case 1:
         rv = showType == 'setting' ? '设置' : 'DB'
         break
@@ -37,7 +37,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
         break
     }
     return rv
-  }, [content.sourceType, showType])
+  }, [content?.sourceType, showType])
+
+  if (!content) return <></>
 
   return (
     <div className="pl-6 mt-6 mr-6">

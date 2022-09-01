@@ -18,11 +18,10 @@ interface NoticeConfig {
 }
 
 export function Notice({ handleToggleDesigner }: Props) {
-  const [noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
+  const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
   useEffect(() => {
     void requests.get<unknown, NoticeConfig[]>('/home/bulletin').then(res => {
       setNoticeConfig(res)
-      console.log(noticeConfig, 'noticeConfig')
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
