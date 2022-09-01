@@ -1,9 +1,11 @@
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { PropsWithChildren, useMemo, useState } from 'react'
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
+import { Status } from '@/interfaces/common'
+import { DOMAIN } from '@/lib/common'
 
 import styles from './layout.module.scss'
 import Player from './player'
@@ -87,6 +89,7 @@ const menus: MenuT[] = [
 export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
   const { pathname } = useRouter()
+  const [status, setStatus] = useState<Status>('其他')
 
   const topMenuItems = useMemo(
     () =>
@@ -112,9 +115,42 @@ export default function Layout({ children }: PropsWithChildren) {
     []
   )
 
+  useEffect(() => {
+    void fetch(`${DOMAIN}/api/v1/wdg/state`).then(res => {
+      const reader = res.body?.getReader()
+      if (!reader) return
+
+      // @ts-ignore
+      const process = ({ value, done }) => {
+        if (done) {
+          return
+        }
+
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          const data = new Response(value)
+
+          void data.json().then(res => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+            setStatus(res.result)
+          })
+        } catch (error) {
+          setStatus('其他')
+          throw error
+        }
+
+        // @ts-ignore
+        void reader.read().then(process)
+      }
+
+      // @ts-ignore
+      void reader.read().then(process)
+    })
+  }, [])
+
   return (
     <ALayout>
-      <Player className="fixed top-4 right-65 z-101" />
+      <Player className="fixed top-4 right-65 z-101" status={status} />
       <Sider
         className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
         theme="light"

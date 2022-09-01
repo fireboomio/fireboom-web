@@ -1,52 +1,35 @@
 import { BorderOutlined, MoreOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons'
 import { message } from 'antd'
-import { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
+import { Status } from '@/interfaces/common'
 import requests from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 
 interface Props {
   className?: string
+  status: Status
 }
 
-type Status = '运行中' | '已停止'
-
 // eslint-disable-next-line react/prop-types
-const Player: React.FC<Props> = ({ className }) => {
-  const [status, setStatus] = useState<Status>()
-  const [refreshFlag, setRefreshFlag] = useState(false)
-
-  useEffect(() => {
-    void requests.get<unknown, Status>('api/v1/wdg/state').then(res => {
-      console.log(res)
-      setStatus(res)
-    })
-  }, [refreshFlag])
-
+const Player: React.FC<Props> = ({ className, status }) => {
   function play() {
-    if (status === '运行中') {
+    if (status === '已启动') {
       void message.warn('不能重复运行！')
     }
-    void requests
-      .post('/api/v1/wdg/start')
-      .then(() => setRefreshFlag(!refreshFlag))
-      .then(() => void message.success('正在启动!'))
+    void requests.get('/wdg/start').then(() => void message.success('正在启动!'))
   }
 
   function reload() {
-    void requests
-      .post('/api/v1/wdg/reStart')
-      .then(() => setRefreshFlag(!refreshFlag))
-      .then(() => void message.success('正在重启!'))
+    void requests.get('/wdg/reStart').then(() => void message.success('正在重启!'))
   }
 
   function stop() {
-    if (status === '已停止') {
+    if (status === '已关闭') {
       void message.warn('程序已经停止！')
     }
-    void requests.post('/api/v1/wdg/close').then(() => void message.success('停止命令已发送!'))
+    void requests.get('/wdg/close').then(() => void message.success('停止命令已发送!'))
   }
 
   return (
