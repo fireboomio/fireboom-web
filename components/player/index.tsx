@@ -1,14 +1,14 @@
 import { message, Image } from 'antd'
 import Draggable from 'react-draggable'
 
-import { Status } from '@/interfaces/common'
+import { EngineStatus } from '@/interfaces/common'
 import requests from '@/lib/fetchers'
 
 import styles from './index.module.scss'
 
 interface Props {
   className?: string
-  status: Status
+  status: EngineStatus
 }
 
 // eslint-disable-next-line react/prop-types

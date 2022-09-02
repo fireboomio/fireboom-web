@@ -6,8 +6,11 @@ import { useRouter } from 'next/router'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
-import { Status } from '@/interfaces/common'
+import { Info } from '@/interfaces/common'
+import { VersionConfig } from '@/interfaces/setting'
 import { DOMAIN } from '@/lib/common'
+import requests from '@/lib/fetchers'
+import { isEmpty } from '@/lib/utils'
 
 import styles from './layout.module.scss'
 import Player from './player'
@@ -99,7 +102,8 @@ const menus: MenuT[] = [
 export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
   const { pathname } = useRouter()
-  const [status, setStatus] = useState<Status>('其他')
+  const [info, setInfo] = useState<Info>()
+  const [version, setVersion] = useState('0.1.0')
 
   const topMenuItems = useMemo(
     () =>
@@ -126,6 +130,20 @@ export default function Layout({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
+    void requests.get<unknown, VersionConfig>('/setting/versionConfig').then(res => {
+      if (!isEmpty(res.versionNum)) {
+        setVersion(res.versionNum)
+      }
+    })
+  })
+
+  useEffect(() => {
+    // setInfo({
+    //   errorInfo: { errTotal: 10, warnTotal: 22 },
+    //   engineStatus: '启动中',
+    //   hookStatus: '已停止',
+    // })
+    // return
     void fetch(`${DOMAIN}/api/v1/wdg/state`).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
@@ -142,11 +160,11 @@ export default function Layout({ children }: PropsWithChildren) {
 
           void data.json().then(res => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-            setStatus(res.result)
+            setInfo(res.result)
           })
         } catch (error) {
-          setStatus('其他')
-          throw error
+          // eslint-disable-next-line no-console
+          console.log(error)
         }
 
         // @ts-ignore
@@ -160,7 +178,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <ALayout>
-      <Player className="fixed top-4 right-65 z-101" status={status} />
+      <Player className="fixed top-4 right-65 z-101" status={info?.engineStatus ?? '--'} />
       <Sider
         className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
         theme="light"
@@ -205,7 +223,12 @@ export default function Layout({ children }: PropsWithChildren) {
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
         <Footer className={styles.footer}>
-          <StatusBar status={status} />
+          <StatusBar
+            version={version}
+            errorInfo={info?.errorInfo}
+            engineStatus={info?.engineStatus}
+            hookStatus={info?.hookStatus}
+          />
         </Footer>
       </ALayout>
     </ALayout>

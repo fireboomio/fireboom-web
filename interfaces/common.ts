@@ -4,4 +4,15 @@ export interface Result<T> {
   result: T
 }
 
-export type Status = '已启动' | '已关闭' | '编译中' | '其他'
+export type EngineStatus = '已启动' | '已关闭' | '编译中' | '--'
+
+export interface ErrorInfo {
+  warnTotal: number
+  errTotal: number
+}
+
+export interface Info {
+  errorInfo: ErrorInfo
+  engineStatus: EngineStatus
+  hookStatus: string
+}
