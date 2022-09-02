@@ -1,3 +1,4 @@
+import { QuestionCircleOutlined, WhatsAppOutlined } from '@ant-design/icons'
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -71,18 +72,25 @@ const menus: MenuT[] = [
     svg: <Image src="/assets/graphql.svg" alt="GraphQL" preview={false} />,
   },
   {
-    title: '个人资料',
-    icon: <IconFont type=" " />,
-    link: '/profile',
+    title: '帮助',
+    icon: <QuestionCircleOutlined />,
+    link: '/help',
     position: 'bottom',
-    svg: <IconFont type=" " />,
+    svg: <Image src="/assets/help.png" alt="帮助" preview={false} />,
+  },
+  {
+    title: '支持',
+    icon: <WhatsAppOutlined />,
+    link: '/support',
+    position: 'bottom',
+    svg: <Image src="/assets/support.png" alt="支持" preview={false} />,
   },
   {
     title: '设置',
     icon: <IconFont type="icon-shezhi" />,
     link: '/setting',
     position: 'bottom',
-    svg: <IconFont type="icon-shezhi" />,
+    svg: <Image src="/assets/setting.png" alt="设置" preview={false} />,
   },
 ]
 
@@ -183,7 +191,12 @@ export default function Layout({ children }: PropsWithChildren) {
         />
 
         <div className="absolute w-full bottom-12">
-          <Menu className="bg-[#FBFBFB]" mode="inline" items={bottomMenuItems} />
+          <Menu
+            selectedKeys={[pathname]}
+            className="bg-[#FBFBFB]"
+            mode="inline"
+            items={bottomMenuItems}
+          />
         </div>
       </Sider>
 
