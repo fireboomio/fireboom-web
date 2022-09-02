@@ -48,7 +48,7 @@ export default function FileStorage() {
               <title>FireBoom - 文件存储</title>
             </Head>
 
-            <Row className="h-screen">
+            <Row className="h-[calc(100vh_-_36px)]">
               <div className={`flex-1 ${styles['col-left']}`}>
                 <StoragePannel />
               </div>

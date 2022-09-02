@@ -201,7 +201,9 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [isColl, setIsColl] = useImmer(true)
 
   const style = useMemo(() => {
-    return isColl ? { height: 'calc(100vh - 220px)' } : { height: 'calc(100vh - 380px)' }
+    return isColl
+      ? { height: 'calc(100vh - 226px - 36px)' }
+      : { height: 'calc(100vh - 380px -36px)' }
   }, [isColl])
 
   useEffect(() => {
@@ -629,7 +631,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                   />
                   {/*--- datasource更改 */}
                   <div
-                    className="fixed w-70 bottom-0 bg-white"
+                    className="fixed w-70 bottom-9 bg-white"
                     style={{ overflow: 'auto' }}
                     onClick={() => setIsColl(!isColl)}
                   >
@@ -673,7 +675,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                           extra={extra}
                         />
 
-                        <div className="overflow-auto h-[calc(100vh_-_98px)]">
+                        <div className="overflow-auto h-[calc(100vh_-_167px)]">
                           {activeKey === '0' ? (
                             <Detail nodeId={selectedNode?.id} />
                           ) : activeKey === '1' ? (

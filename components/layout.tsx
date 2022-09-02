@@ -7,16 +7,19 @@ import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 import { Info } from '@/interfaces/common'
-import { VersionConfig } from '@/interfaces/setting'
 import { DOMAIN } from '@/lib/common'
 import requests from '@/lib/fetchers'
-import { isEmpty } from '@/lib/utils'
 
 import styles from './layout.module.scss'
 import Player from './player'
 import StatusBar from './status-bar'
 
 const { Sider, Content } = ALayout
+
+interface BarOnce {
+  version: string
+  env: string
+}
 
 interface MenuT {
   title: string
@@ -103,7 +106,8 @@ export default function Layout({ children }: PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false)
   const { pathname } = useRouter()
   const [info, setInfo] = useState<Info>()
-  const [version, setVersion] = useState('0.1.0')
+  const [version, setVersion] = useState<string>('--')
+  const [env, setEnv] = useState<string>('--')
 
   const topMenuItems = useMemo(
     () =>
@@ -130,12 +134,11 @@ export default function Layout({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
-    void requests.get<unknown, VersionConfig>('/setting/versionConfig').then(res => {
-      if (!isEmpty(res.versionNum)) {
-        setVersion(res.versionNum)
-      }
+    void requests.get<unknown, BarOnce>('/wdg/barOnce').then(res => {
+      setVersion(res.version)
+      setEnv(res.env)
     })
-  })
+  }, [])
 
   useEffect(() => {
     // setInfo({
@@ -160,7 +163,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
           void data.json().then(res => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-            setInfo(res.result)
+            setInfo(res)
           })
         } catch (error) {
           // eslint-disable-next-line no-console
@@ -225,6 +228,7 @@ export default function Layout({ children }: PropsWithChildren) {
         <Footer className={styles.footer}>
           <StatusBar
             version={version}
+            env={env}
             errorInfo={info?.errorInfo}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}

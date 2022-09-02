@@ -7,6 +7,7 @@ import styles from './index.module.scss'
 
 interface Props {
   className?: string
+  env?: string
   version?: string
   errorInfo?: ErrorInfo
   engineStatus?: string
@@ -16,6 +17,7 @@ interface Props {
 // eslint-disable-next-line react/prop-types
 const StatusBar: React.FC<Props> = ({
   className,
+  env,
   version,
   errorInfo,
   engineStatus,
@@ -25,6 +27,9 @@ const StatusBar: React.FC<Props> = ({
     <div className={className}>
       <div className={styles['status-bar']}>
         <span className={styles['info']}>
+          <span className={styles['info-env']}>
+            <span>{env}</span>
+          </span>
           <span className={styles['info-version']}>
             <span>FB: </span>
             <span className="ml-2">{version}</span>

@@ -22,7 +22,7 @@ export default function Setting() {
         <title>FireBoom - 设置</title>
       </Head>
 
-      <Row className="h-screen">
+      <Row className="h-[calc(100vh_-_36px)]">
         <Col span={5} className={styles['col-left']}>
           <SettingPannel handleToggleDesigner={handleToggleDesigner} />
         </Col>
