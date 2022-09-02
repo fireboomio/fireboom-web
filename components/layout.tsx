@@ -1,5 +1,6 @@
 import { QuestionCircleOutlined, WhatsAppOutlined } from '@ant-design/icons'
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
+import { Footer } from 'antd/lib/layout/layout'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
@@ -10,6 +11,7 @@ import { DOMAIN } from '@/lib/common'
 
 import styles from './layout.module.scss'
 import Player from './player'
+import StatusBar from './status-bar'
 
 const { Sider, Content } = ALayout
 
@@ -202,6 +204,9 @@ export default function Layout({ children }: PropsWithChildren) {
 
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
+        <Footer className={styles.footer}>
+          <StatusBar status={status} />
+        </Footer>
       </ALayout>
     </ALayout>
   )
