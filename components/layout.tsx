@@ -178,7 +178,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <ALayout>
-      <Player className="fixed top-4 right-65 z-101" status={info?.engineStatus ?? '--'} />
+      <Player className="fixed top-4 right-65 z-500" status={info?.engineStatus ?? '--'} />
       <Sider
         className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
         theme="light"
