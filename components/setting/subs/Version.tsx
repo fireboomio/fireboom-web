@@ -2,15 +2,10 @@ import { Descriptions, Divider } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import { VersionConfig } from '@/interfaces/setting'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
-
-interface VersionConfig {
-  versionNum: string
-  prismaVersion: string
-  copyright: string
-}
 
 export default function SettingMainVersion() {
   const [verConfig, setVerConfig] = useImmer({} as VersionConfig)

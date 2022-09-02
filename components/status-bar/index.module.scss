@@ -1,0 +1,19 @@
+.status-bar {
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 11px 20px;
+  background: #e8f6ff;
+
+  .info {
+    color: #31688b;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 137px;
+
+    & > span {
+      margin: 0 10px;
+    }
+  }
+}
