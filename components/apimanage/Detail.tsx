@@ -371,41 +371,47 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
           </div>
         </div>
       </div>
-      <div className="mt-4 flex items-center">
-        <span className={`text-[#5F6269] ${styles.label}`}>{method}</span>
-        <span className="flex-1 text-[#000000D9]">{node?.path ?? ''}</span>
-      </div>
-      <div className="mt-4 flex items-center">
-        <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
-        <div className="flex-1 flex items-center">
-          <Select
-            className="w-160px"
-            value={roleKey || rbac?.key || 'requireMatchAll'}
-            onChange={v => onRoleKeyChange(v)}
-          >
-            {roleKeys.map(x => (
-              <Option key={x.key} value={x.label}>
-                {x.key}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            className="flex-1"
-            mode="multiple"
-            value={roleVal ?? rbac?.value}
-            onChange={v => onRoleValChange(v)}
-            placeholder="暂无角色"
-          >
-            {opts
-              ? opts.map(x => (
+      {isInternal(dataSource) ? (
+        <></>
+      ) : (
+        <>
+          <div className="mt-4 flex items-center">
+            <span className={`text-[#5F6269] ${styles.label}`}>{method}</span>
+            <span className="flex-1 text-[#000000D9]">{node?.path ?? ''}</span>
+          </div>
+          <div className="mt-4 flex items-center">
+            <span className={`text-[#5F6269] ${styles.label}`}>用户角色</span>
+            <div className="flex-1 flex items-center">
+              <Select
+                className="w-160px"
+                value={roleKey || rbac?.key || 'requireMatchAll'}
+                onChange={v => onRoleKeyChange(v)}
+              >
+                {roleKeys.map(x => (
                   <Option key={x.key} value={x.label}>
                     {x.key}
                   </Option>
-                ))
-              : []}
-          </Select>
-        </div>
-      </div>
+                ))}
+              </Select>
+              <Select
+                className="flex-1"
+                mode="multiple"
+                value={roleVal ?? rbac?.value}
+                onChange={v => onRoleValChange(v)}
+                placeholder="暂无角色"
+              >
+                {opts
+                  ? opts.map(x => (
+                      <Option key={x.key} value={x.label}>
+                        {x.key}
+                      </Option>
+                    ))
+                  : []}
+              </Select>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="mt-42px">
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} />
