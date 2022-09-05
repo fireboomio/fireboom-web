@@ -5,21 +5,33 @@ import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import { AuthPannel, AuthContainer } from '@/components/auth'
+import { AuthContainer, AuthPannel } from '@/components/auth'
 import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
-import { AuthContext, AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
+import {
+  AuthContext,
+  AuthCurrContext,
+  AuthDispatchContext,
+  AuthToggleContext,
+  ConnectorContext,
+} from '@/lib/context'
+import { ConnectorContextType } from '@/lib/context/auth-context'
 import { getFetcher } from '@/lib/fetchers'
 import authReducer from '@/lib/reducers/auth-reducer'
+import connectorReducer from '@/lib/reducers/connector-reducer'
 
 import styles from './index.module.scss'
 
 export default function Authentication() {
   const [authProvList, dispatch] = useReducer(authReducer, [])
+  const [connector, connectorDispatch] = useReducer(connectorReducer, {
+    currentConnector: null,
+    connectors: [],
+  })
   const [showBottomType, setShowBottomType] = useImmer('data')
   const [showTopType, setShowTopType] = useImmer('userManage')
-
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
-  const { data, error } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
+
+  const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
   useEffect(() => {
     data &&
       dispatch({
@@ -28,8 +40,9 @@ export default function Authentication() {
       })
   }, [data])
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  // TODO: add
+  // if (error) return <div>failed to load</div>
+  // if (!data) return <div>loading...</div>
 
   // TODO: need refine
 
@@ -40,7 +53,6 @@ export default function Authentication() {
       setShowBottomType('data')
     }
 
-    console.log(currAuthProvItemId, '123111111')
     setCurrAuthProvItemId(authItem.id)
   }
 
@@ -53,7 +65,6 @@ export default function Authentication() {
     setShowTopType(authType.type)
   }
 
-  console.log(currAuthProvItemId, '123')
   const content = authProvList.find(b => b.id === currAuthProvItemId) as AuthProvResp
 
   return (
@@ -62,25 +73,29 @@ export default function Authentication() {
         <AuthDispatchContext.Provider value={dispatch}>
           <AuthCurrContext.Provider value={{ currAuthProvItemId, setCurrAuthProvItemId }}>
             <AuthToggleContext.Provider value={{ handleBottomToggleDesigner }}>
-              <Head>
-                <title>FireBoom - 认证鉴权</title>
-              </Head>
-              <Row className="h-screen">
-                <Col span={5} className={styles['col-left']}>
-                  <AuthPannel
-                    onClickItem={onClickItem}
-                    handleTopToggleDesigner={handleTopToggleDesigner}
-                  />
-                </Col>
-                <Col span={19}>
-                  <AuthContainer
-                    handleTopToggleDesigner={handleTopToggleDesigner}
-                    showBottomType={showBottomType}
-                    showTopType={showTopType}
-                    content={content}
-                  />
-                </Col>
-              </Row>
+              <ConnectorContext.Provider
+                value={{ connector, connectorDispatch } as ConnectorContextType}
+              >
+                <Head>
+                  <title>FireBoom - 认证鉴权</title>
+                </Head>
+                <Row className="h-screen">
+                  <Col span={5} className={styles['col-left']}>
+                    <AuthPannel
+                      onClickItem={onClickItem}
+                      handleTopToggleDesigner={handleTopToggleDesigner}
+                    />
+                  </Col>
+                  <Col span={19}>
+                    <AuthContainer
+                      handleTopToggleDesigner={handleTopToggleDesigner}
+                      showBottomType={showBottomType}
+                      showTopType={showTopType}
+                      content={content}
+                    />
+                  </Col>
+                </Row>
+              </ConnectorContext.Provider>
             </AuthToggleContext.Provider>
           </AuthCurrContext.Provider>
         </AuthDispatchContext.Provider>

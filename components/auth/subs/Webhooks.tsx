@@ -1,6 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Table, Modal, Form, Input, Switch, Radio, Checkbox, Tag } from 'antd'
-import { CheckboxValueType } from 'antd/lib/checkbox/Group'
 import type { ColumnsType } from 'antd/lib/table'
 // import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -56,7 +55,6 @@ export default function AuthMainRole() {
   const [hooksData, setHooksData] = useImmer(data)
 
   const onFinish = (values: hooksProvResp) => {
-    console.log('Success:', values)
     setHooksData(
       hooksData.concat({
         ...values,
@@ -64,15 +62,9 @@ export default function AuthMainRole() {
       })
     )
   }
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
 
   const typeChange = (value: string) => {
     setValue(value)
-  }
-  const onCheckChange = (checkedValues: CheckboxValueType[]) => {
-    console.log('checked = ', checkedValues)
   }
 
   const columns: ColumnsType<object> = [
@@ -164,12 +156,7 @@ export default function AuthMainRole() {
         onOk={() => setHooksVisible(false)}
         onCancel={() => setHooksVisible(false)}
         okText={
-          <Button
-            className={styles['save-btn']}
-            onClick={() => {
-              form.submit()
-            }}
-          >
+          <Button className={styles['save-btn']} onClick={() => form.submit()}>
             <span>确定</span>
           </Button>
         }
@@ -183,11 +170,7 @@ export default function AuthMainRole() {
           wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          onFinish={values => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            void onFinish(values)
-          }}
-          onFinishFailed={onFinishFailed}
+          onFinish={values => void onFinish(values)}
           autoComplete="off"
           labelAlign="left"
           className={styles['dialog-form']}
@@ -207,12 +190,7 @@ export default function AuthMainRole() {
             name="triggerEvents"
             rules={[{ required: true, message: '输入不能为空' }]}
           >
-            <Radio.Group
-              onChange={e => {
-                typeChange(e.target.value as string)
-              }}
-              value={value}
-            >
+            <Radio.Group onChange={e => typeChange(e.target.value as string)} value={value}>
               <Radio value={1} className="mr-180">
                 静态
               </Radio>
@@ -231,7 +209,7 @@ export default function AuthMainRole() {
             name="triggerEvents"
             rules={[{ required: true, message: '输入不能为空' }]}
           >
-            <Checkbox.Group options={options} onChange={onCheckChange} />
+            <Checkbox.Group options={options} />
           </Form.Item>
         </Form>
       </Modal>

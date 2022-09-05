@@ -4,6 +4,11 @@ export interface Result<T> {
   result: T
 }
 
+export interface Action<T> {
+  type: string
+  payload: T
+}
+
 export type EngineStatus = '已启动' | '已关闭' | '编译中' | '--'
 
 export interface ErrorInfo {

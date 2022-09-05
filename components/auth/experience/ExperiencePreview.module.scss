@@ -1,0 +1,64 @@
+/* stylelint-disable selector-class-pattern */
+.experiencePreviewWrapper {
+  width: 50%;
+  height: 100vh;
+  padding: 18px 24px;
+  background: #f7f8fa;
+}
+
+.experiencePreviewTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.experiencePreviewTitleLeft {
+  display: flex;
+  align-items: center;
+
+  & > span:nth-child(1) {
+    margin-right: 6px;
+    color: #e13d5b;
+    font-size: 10px;
+  }
+}
+
+.experiencePreviewTitleRight {
+  display: flex;
+
+  & > div {
+    margin-left: 16px;
+  }
+}
+
+.experiencePreviewDetailContent {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.tabStyle :global {
+  & .ant-tabs-tab {
+    width: 77px;
+    height: 33px;
+    background: transparent !important;
+    border: transparent !important;
+
+    & > .ant-tabs-tab-btn {
+      font-size: 12px;
+    }
+  }
+
+  & .ant-tabs-tab-active {
+    background: #fff !important;
+    border-radius: 8px !important;
+
+    & > .ant-tabs-tab-btn {
+      color: #000 !important;
+      font-size: 14px;
+    }
+  }
+
+  & .ant-tabs-nav::before {
+    display: none !important;
+  }
+}

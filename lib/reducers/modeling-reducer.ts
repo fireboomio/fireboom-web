@@ -12,7 +12,7 @@ export default function modelingReducer(blocks: Block[], action: BlockAction) {
       return [...blocks, action.data]
     }
     case 'changed':
-      return blocks.map((b) => {
+      return blocks.map(b => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,7 +20,7 @@ export default function modelingReducer(blocks: Block[], action: BlockAction) {
         }
       })
     case 'deleted': {
-      return blocks.filter((b) => b.id !== action.data.id)
+      return blocks.filter(b => b.id !== action.data.id)
     }
     default:
       return blocks

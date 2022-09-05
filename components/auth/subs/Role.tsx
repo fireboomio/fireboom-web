@@ -53,17 +53,12 @@ export default function AuthMainRole() {
   useEffect(() => {
     void requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
       setRoleData(res)
-      console.log(res, 'authentication')
     })
   }, [roleFlag])
 
   const onFinish = async (values: RoleProvResp) => {
-    console.log('Success:', values)
     await requests.post('/role', values)
     setRoleFlag(!roleFlag)
-  }
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
   }
 
   const handleDeleteRole = async (id: number) => {
@@ -154,13 +149,9 @@ export default function AuthMainRole() {
     setRefreshFlag(!refreshFlag)
   }
 
-  const onChangeMange = (key: string) => {
-    console.log(key, 'onchangeMange')
-  }
-
   return (
     <>
-      <Tabs defaultActiveKey="1" onChange={onChangeMange}>
+      <Tabs defaultActiveKey="1">
         <TabPane tab="角色管理" key="1">
           <div className="flex justify-between items-center mb-4">
             <span className="text-base text-gray">角色管理</span>
@@ -206,7 +197,6 @@ export default function AuthMainRole() {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 void onFinish(values)
               }}
-              onFinishFailed={onFinishFailed}
               autoComplete="off"
               labelAlign="left"
               className="h-30 mt-8 ml-8"

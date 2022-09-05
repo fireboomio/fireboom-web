@@ -1,5 +1,4 @@
 import Editor, { loader } from '@monaco-editor/react'
-import type { DatePickerProps } from 'antd'
 import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker, Space } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 // import { useCallback, useEffect } from 'react'
@@ -43,16 +42,12 @@ export default function AuthMainUserDetails() {
   const [roleData, setRoleData] = useImmer(data)
 
   const onFinish = (values: RoleProvResp) => {
-    console.log('Success:', values)
     setRoleData(
       roleData.concat({
         ...values,
         key: roleData.length + 1,
       })
     )
-  }
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
   }
 
   const handleDeleteRole = (key: React.Key) => {
@@ -61,14 +56,6 @@ export default function AuthMainUserDetails() {
         return row.key !== key
       })
     )
-  }
-
-  const onChangeMange = (key: string) => {
-    console.log(key, 'onchangeMange')
-  }
-
-  const onChangeTime: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString)
   }
 
   const columns: ColumnsType<RoleProvResp> = [
@@ -101,7 +88,7 @@ export default function AuthMainUserDetails() {
 
   return (
     <>
-      <Tabs defaultActiveKey="1" onChange={onChangeMange}>
+      <Tabs defaultActiveKey="1">
         <TabPane tab="用户信息" key="1">
           <div className={styles['user-info']}>个人信息</div>
           <Form
@@ -113,7 +100,6 @@ export default function AuthMainUserDetails() {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               void onFinish(values)
             }}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
             labelAlign="left"
             className={styles['form-style']}
@@ -147,7 +133,7 @@ export default function AuthMainUserDetails() {
               <Col span={8}>
                 <Form.Item label="生日" name="password">
                   <Space direction="vertical">
-                    <DatePicker onChange={onChangeTime} placeholder="请输入" />
+                    <DatePicker placeholder="请输入" />
                   </Space>
                 </Form.Item>
               </Col>
@@ -283,7 +269,6 @@ export default function AuthMainUserDetails() {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 void onFinish(values)
               }}
-              onFinishFailed={onFinishFailed}
               autoComplete="off"
               labelAlign="left"
               className="h-30 mt-8 ml-8"

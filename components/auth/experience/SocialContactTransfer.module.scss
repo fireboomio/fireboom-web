@@ -1,0 +1,30 @@
+/* stylelint-disable selector-class-pattern */
+.transferWrapper :global {
+  & label {
+    display: none;
+  }
+
+  & .ant-transfer-list {
+    width: 50%;
+  }
+}
+
+.transferItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    & > span {
+      margin-right: 6px;
+    }
+  }
+
+  & > span {
+    color: #e92e5e;
+  }
+}

@@ -28,6 +28,7 @@ export interface AuthListType {
     | 'action'
     | 'login'
     | 'connect'
+    | 'connectDetails'
     | 'webhooks'
 }
 

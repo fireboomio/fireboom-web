@@ -12,7 +12,7 @@ export default function AuthReducer(authList: AuthProvResp[], action: AuthAction
       return [...authList, action.data]
     }
     case 'changed':
-      return authList.map((b) => {
+      return authList.map(b => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,7 +20,7 @@ export default function AuthReducer(authList: AuthProvResp[], action: AuthAction
         }
       })
     case 'deleted': {
-      return authList.filter((b) => b.id !== action.data.id)
+      return authList.filter(b => b.id !== action.data.id)
     }
     default:
       return authList

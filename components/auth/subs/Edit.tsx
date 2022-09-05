@@ -2,7 +2,6 @@
 import { RightOutlined } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
-import type { CheckboxValueType } from 'antd/es/checkbox/Group'
 import { useContext, ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -47,10 +46,8 @@ export default function AuthMainEdit({ content }: Props) {
     return <></>
   }
   const onFinish = async (values: FromValues) => {
-    console.log(values, 'values')
     const newValues = { ...config, ...values }
     const newContent = { ...content, switchState: values.switchState, name: values.id }
-    console.log(newValues, 'newValue', newContent, 'newContent')
     if (content.name == '') {
       const req = { ...newContent, config: JSON.stringify(newValues) }
       Reflect.deleteProperty(req, 'id')
@@ -72,21 +69,12 @@ export default function AuthMainEdit({ content }: Props) {
       })
   }
 
-  const onFinishFailed = (errorInfo: object) => {
-    console.log('Failed:', errorInfo)
-  }
-
   const typeChange = (value: string) => {
     setValue(value)
     setIsRadioShow(value == '1')
   }
 
-  const onChangeCheckbox = (checkedValues: CheckboxValueType[]) => {
-    console.log('checked = ', checkedValues)
-  }
-
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    console.log(allValues, 'allValues')
     setInputValue(allValues.issuer)
     for (const key in allValues) {
       if ((allValues[key] as string) == undefined) {
@@ -170,7 +158,6 @@ export default function AuthMainEdit({ content }: Props) {
           onFinish={values => {
             void onFinish(values)
           }}
-          onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
           autoComplete="new-password"
           validateTrigger="onBlur"
@@ -261,7 +248,7 @@ export default function AuthMainEdit({ content }: Props) {
             <Input disabled value={`${inputValue as string}/.well-known/openid-`} />
           </Form.Item>
           <Form.Item label="是否开启" name="switchState">
-            <Checkbox.Group options={options} onChange={onChangeCheckbox} />
+            <Checkbox.Group options={options} />
           </Form.Item>
         </Form>
       </div>

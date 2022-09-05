@@ -12,7 +12,7 @@ export default function datasourceReducer(datasource: DatasourceResp[], action: 
       return [...datasource, action.data]
     }
     case 'changed':
-      return datasource.map((b) => {
+      return datasource.map(b => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,7 +20,7 @@ export default function datasourceReducer(datasource: DatasourceResp[], action: 
         }
       })
     case 'deleted': {
-      return datasource.filter((b) => b.id !== action.data.id)
+      return datasource.filter(b => b.id !== action.data.id)
     }
     default:
       return datasource
