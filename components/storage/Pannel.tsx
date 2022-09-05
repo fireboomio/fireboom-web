@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useContext } from 'react'
 
-import { StorageContext, StorageSwitchContext } from '@/lib/context'
+import { StorageContext, StorageSwitchContext } from '@/lib/context/storage-context'
 
 import styles from './Pannel.module.scss'
 import StoragePannelItem from './subs/PannelItem'
@@ -35,7 +35,7 @@ export default function StoragePannel() {
       </div>
 
       <div className="mt-3">
-        {bucketList.map((item) => (
+        {bucketList.map(item => (
           <StoragePannelItem key={item.id} bucket={item} />
         ))}
       </div>

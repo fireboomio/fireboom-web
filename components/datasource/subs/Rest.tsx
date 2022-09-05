@@ -25,7 +25,10 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import { DatasourceDispatchContext, DatasourceToggleContext } from '@/lib/context'
+import {
+  DatasourceDispatchContext,
+  DatasourceToggleContext,
+} from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 import styles from './Rest.module.scss'

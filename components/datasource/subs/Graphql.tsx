@@ -21,7 +21,10 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import { DatasourceToggleContext, DatasourceDispatchContext } from '@/lib/context'
+import {
+  DatasourceToggleContext,
+  DatasourceDispatchContext,
+} from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 import GraphiQLApp from '../../../pages/graphiql'

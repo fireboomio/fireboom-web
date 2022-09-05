@@ -9,7 +9,7 @@ import {
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
   DatasourceToggleContext,
-} from '@/lib/context'
+} from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 import styles from './PannelItem.module.scss'

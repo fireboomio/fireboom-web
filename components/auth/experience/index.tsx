@@ -4,7 +4,7 @@ import type { SWRResponse } from 'swr'
 import { AuthListType } from '@/interfaces/auth'
 import { Connector } from '@/interfaces/connector'
 import { Experience as ExperienceType } from '@/interfaces/experience'
-import { ConnectorContext } from '@/lib/context'
+import { ConnectorContext } from '@/lib/context/auth-context'
 import { useFetchConnector } from '@/lib/service/connector'
 import { useFetchExperience } from '@/lib/service/experience'
 

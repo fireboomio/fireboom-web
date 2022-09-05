@@ -13,8 +13,8 @@ import {
   AuthDispatchContext,
   AuthToggleContext,
   ConnectorContext,
-} from '@/lib/context'
-import { ConnectorContextType } from '@/lib/context/auth-context'
+  ConnectorContextType,
+} from '@/lib/context/auth-context'
 import { getFetcher } from '@/lib/fetchers'
 import authReducer from '@/lib/reducers/auth-reducer'
 import connectorReducer from '@/lib/reducers/connector-reducer'

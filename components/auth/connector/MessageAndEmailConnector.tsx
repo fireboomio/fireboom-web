@@ -6,7 +6,7 @@ import React, { useContext, useState } from 'react'
 import { AuthListType } from '@/interfaces/auth'
 import { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context'
+import { ConnectorContext } from '@/lib/context/auth-context'
 
 import ConnectorModal from './ConnectorModal'
 import styles from './MessageAndEmailConnector.module.scss'

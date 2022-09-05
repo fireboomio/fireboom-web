@@ -5,7 +5,7 @@ import React, { useContext, useState } from 'react'
 
 import { AuthListType } from '@/interfaces/auth'
 import { Connector as ConnectorType } from '@/interfaces/connector'
-import { ConnectorContext } from '@/lib/context'
+import { ConnectorContext } from '@/lib/context/auth-context'
 
 import ConnectorModal from './ConnectorModal'
 import styles from './SocialContactConnector.module.scss'

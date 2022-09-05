@@ -4,7 +4,7 @@ import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
-import { StorageSwitchContext } from '@/lib/context'
+import { StorageSwitchContext } from '@/lib/context/storage-context'
 
 import styles from './subs.module.scss'
 

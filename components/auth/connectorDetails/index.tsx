@@ -9,7 +9,7 @@ import locale from 'react-json-editor-ajrm/locale/zh-cn'
 import { AuthListType } from '@/interfaces/auth'
 import { Connector as ConnectorType } from '@/interfaces/connector'
 import { ConnectorTitleEnum, ConnectorTypeEnum, SMS, SOCIAL } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context'
+import { ConnectorContext } from '@/lib/context/auth-context'
 import { deleteConnector, upsertConnector } from '@/lib/service/connector'
 
 import ConnectorModal from '../connector/ConnectorModal'

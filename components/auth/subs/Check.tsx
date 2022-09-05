@@ -6,7 +6,7 @@ import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext } from '@/lib/context'
+import { AuthToggleContext } from '@/lib/context/auth-context'
 
 import styles from './subs.module.scss'
 interface Props {

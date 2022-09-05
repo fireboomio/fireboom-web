@@ -40,7 +40,7 @@ import {
   DatasourceDispatchContext,
   DatasourceCurrDBContext,
   DatasourceToggleContext,
-} from '@/lib/context'
+} from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'

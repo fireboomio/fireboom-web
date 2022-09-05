@@ -10,7 +10,7 @@ import {
   StorageDispatchContext,
   StorageCurrFileContext,
   StorageSwitchContext,
-} from '@/lib/context'
+} from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 import storageReducer from '@/lib/reducers/storage-reducer'
 

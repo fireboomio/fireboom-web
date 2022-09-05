@@ -6,7 +6,7 @@ import { useContext, ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext, AuthDispatchContext } from '@/lib/context'
+import { AuthToggleContext, AuthDispatchContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
