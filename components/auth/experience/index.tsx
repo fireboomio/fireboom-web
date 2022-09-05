@@ -20,7 +20,6 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   const { data: connectorsData } = connectorsDataRes
   const { connectorDispatch } = useContext(ConnectorContext)
 
-  console.log('bbb', connectorDispatch)
   useEffect(() => {
     connectorDispatch({ type: 'fetchConnector', payload: connectorsData || [] })
     // eslint-disable-next-line react-hooks/exhaustive-deps
