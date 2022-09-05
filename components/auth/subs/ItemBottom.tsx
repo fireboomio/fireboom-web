@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context'
+import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
 import styles from '../Common.module.scss'

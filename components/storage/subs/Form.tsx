@@ -2,7 +2,7 @@ import { Button, Form, Input, message, Switch } from 'antd'
 import { useContext, useMemo } from 'react'
 
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
-import { StorageSwitchContext, StorageDispatchContext } from '@/lib/context'
+import { StorageSwitchContext, StorageDispatchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
@@ -65,7 +65,7 @@ export default function StorageForm({ content }: Props) {
           name="basic"
           labelCol={{ span: 3 }}
           wrapperCol={{ span: 11 }}
-          onFinish={(values) => void onFinish(values as StorageConfig)}
+          onFinish={values => void onFinish(values as StorageConfig)}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"

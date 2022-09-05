@@ -6,7 +6,11 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
-import { StorageDispatchContext, StorageCurrFileContext, StorageSwitchContext } from '@/lib/context'
+import {
+  StorageDispatchContext,
+  StorageCurrFileContext,
+  StorageSwitchContext,
+} from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
 import styles from '../Pannel.module.scss'
@@ -23,7 +27,7 @@ export default function StoragePannelItem({ bucket }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const [isHovering, setIsHovering] = useImmer(bucket.id === currId)
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps['onClick'] = e => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2' || e.key === '3') {
       setVisible(false)
@@ -130,9 +134,9 @@ export default function StoragePannelItem({ bucket }: Props) {
     >
       {isEditing ? (
         <Input
-          onBlur={(e) => void handleItemEdit(e.target.value)}
+          onBlur={e => void handleItemEdit(e.target.value)}
           // @ts-ignore
-          onPressEnter={(e) => void handleItemEdit(e.target.value)}
+          onPressEnter={e => void handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={bucket.name}
           autoFocus
@@ -154,13 +158,13 @@ export default function StoragePannelItem({ bucket }: Props) {
         trigger={['click']}
         placement="bottomRight"
         visible={visible}
-        onVisibleChange={(v) => {
+        onVisibleChange={v => {
           setVisible(v)
           leaveItem(v)
         }}
       >
         <MoreOutlined
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />

@@ -5,7 +5,7 @@ import type { SWRResponse } from 'swr'
 import { AuthListType } from '@/interfaces/auth'
 import { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context'
+import { ConnectorContext } from '@/lib/context/auth-context'
 import { useFetchConnector } from '@/lib/service/connector'
 
 import MessageAndEmailConnector from './MessageAndEmailConnector'

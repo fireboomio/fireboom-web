@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
-import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context'
+import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context/datasource-context'
 
 import styles from './Pannel.module.scss'
 import DatasourceItem from './subs/PannelItem'
