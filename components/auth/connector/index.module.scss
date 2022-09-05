@@ -1,0 +1,18 @@
+/* stylelint-disable selector-class-pattern */
+.title {
+  font-size: 14px;
+}
+
+.titlePlaceholder {
+  margin-left: 8px;
+  color: rgb(175 176 180 / 60%);
+  font-size: 12px;
+}
+
+.tabStyle :global {
+  & .ant-tabs-tab {
+    margin-top: 16px;
+    color: #5f6269;
+    border-top: 1px solid rgb(95 98 105 / 10%);
+  }
+}

@@ -7,14 +7,18 @@ specifiers:
   '@babel/preset-typescript': ^7.18.6
   '@monaco-editor/react': ^4.4.5
   '@mrleebo/prisma-ast': ^0.3.1
+  '@types/lodash': ^4.14.184
   '@types/node': 17.0.42
   '@types/react': ^18.0.15
   '@types/react-dom': ^18.0.6
+  '@types/react-json-editor-ajrm': ^2.5.3
   '@typescript-eslint/eslint-plugin': ^5.30.7
   '@typescript-eslint/parser': ^5.30.7
   antd: ^4.21.7
   axios: ^0.27.2
   babel-plugin-import: ^1.13.5
+  classnames: ^2.3.1
+  copy-to-clipboard: ^3.3.2
   core-js: ^3.24.1
   dayjs: ^1.11.4
   eslint: ^8.20.0
@@ -26,6 +30,7 @@ specifiers:
   graphiql-explorer: ^0.9.0
   graphql: ^16.5.0
   immer: ^9.0.15
+  lodash: ^4.17.21
   mobx: ^6.6.1
   monaco-editor: ^0.33.0
   next: 12.1.6
@@ -34,6 +39,7 @@ specifiers:
   react-dom: ^18.2.0
   react-draggable: ^4.4.5
   react-is: ^18.2.0
+  react-json-editor-ajrm: ^2.5.13
   redoc: 2.0.0-rc.74
   sass: ^1.53.0
   shades: ^2.2.0
@@ -55,12 +61,15 @@ dependencies:
   '@mrleebo/prisma-ast': registry.npmmirror.com/@mrleebo/prisma-ast/0.3.1
   antd: registry.npmmirror.com/antd/4.22.3_biqbaboplfbrettd7655fr4n2y
   axios: registry.npmmirror.com/axios/0.27.2
+  classnames: registry.npmmirror.com/classnames/2.3.1
+  copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.2
   core-js: registry.npmmirror.com/core-js/3.24.1
   dayjs: registry.npmmirror.com/dayjs/1.11.4
   graphiql: registry.npmmirror.com/graphiql/1.10.0_zkdzug2ddmjkl7zhmovudbhvte
   graphiql-explorer: registry.npmmirror.com/graphiql-explorer/0.9.0_phmus7xcbidy3raesi6r6zwaqe
   graphql: registry.npmmirror.com/graphql/16.5.0
   immer: registry.npmmirror.com/immer/9.0.15
+  lodash: registry.npmmirror.com/lodash/4.17.21
   mobx: registry.npmmirror.com/mobx/6.6.1
   next: registry.npmmirror.com/next/12.1.6_4cmzoagh3xnjv5n5kgk5jkku4q
   next-plugin-antd-less: registry.npmmirror.com/next-plugin-antd-less/1.8.0_webpack@5.74.0
@@ -68,6 +77,7 @@ dependencies:
   react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
   react-draggable: registry.npmmirror.com/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y
   react-is: registry.npmmirror.com/react-is/18.2.0
+  react-json-editor-ajrm: registry.npmmirror.com/react-json-editor-ajrm/2.5.13_biqbaboplfbrettd7655fr4n2y
   redoc: registry.npmmirror.com/redoc/2.0.0-rc.74_desvwqjab7sr6b2zmrs5mnelwi
   shades: registry.npmmirror.com/shades/2.2.0
   styled-components: registry.npmmirror.com/styled-components/5.3.5_7i5myeigehqah43i5u7wbekgba
@@ -78,9 +88,11 @@ devDependencies:
   '@babel/core': registry.npmmirror.com/@babel/core/7.18.10
   '@babel/plugin-proposal-pipeline-operator': registry.npmmirror.com/@babel/plugin-proposal-pipeline-operator/7.18.9_@babel+core@7.18.10
   '@babel/preset-typescript': registry.npmmirror.com/@babel/preset-typescript/7.18.6_@babel+core@7.18.10
+  '@types/lodash': registry.npmmirror.com/@types/lodash/4.14.184
   '@types/node': registry.npmmirror.com/@types/node/17.0.42
   '@types/react': registry.npmmirror.com/@types/react/18.0.15
   '@types/react-dom': registry.npmmirror.com/@types/react-dom/18.0.6
+  '@types/react-json-editor-ajrm': registry.npmmirror.com/@types/react-json-editor-ajrm/2.5.3
   '@typescript-eslint/eslint-plugin': registry.npmmirror.com/@typescript-eslint/eslint-plugin/5.32.0_iosr3hrei2tubxveewluhu5lhy
   '@typescript-eslint/parser': registry.npmmirror.com/@typescript-eslint/parser/5.32.0_qugx7qdu5zevzvxaiqyxfiwquq
   babel-plugin-import: registry.npmmirror.com/babel-plugin-import/1.13.5
@@ -689,7 +701,7 @@ packages:
       '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.6.0_ptifrddraqio2yl47aedy3mncm
       codemirror: registry.npmmirror.com/codemirror/5.65.7
       codemirror-graphql: registry.npmmirror.com/codemirror-graphql/1.3.2_gg44lmguha7frhlzltjxv5icbe
-      copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.1
+      copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.2
       escape-html: registry.npmmirror.com/escape-html/1.0.3
       graphql: registry.npmmirror.com/graphql/16.5.0
       graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.5.0
@@ -1127,6 +1139,12 @@ packages:
     version: 0.0.29
     dev: true
 
+  registry.npmmirror.com/@types/lodash/4.14.184:
+    resolution: {integrity: sha512-RoZphVtHbxPZizt4IcILciSWiC6dcn+eZ8oX9IWEYfDMcocdd42f7NPI6fQj+6zI8y4E0L7gu2pcZKLGTRaV9Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/lodash/-/lodash-4.14.184.tgz}
+    name: '@types/lodash'
+    version: 4.14.184
+    dev: true
+
   registry.npmmirror.com/@types/minimatch/3.0.5:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/minimatch/-/minimatch-3.0.5.tgz}
     name: '@types/minimatch'
@@ -1172,6 +1190,14 @@ packages:
     resolution: {integrity: sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/react-dom/-/react-dom-18.0.6.tgz}
     name: '@types/react-dom'
     version: 18.0.6
+    dependencies:
+      '@types/react': registry.npmmirror.com/@types/react/18.0.15
+    dev: true
+
+  registry.npmmirror.com/@types/react-json-editor-ajrm/2.5.3:
+    resolution: {integrity: sha512-hHf3FU1HjL6Lm3rK2iWUJtoYpZ1qDCSffnLAQXCf++TP1Ms18rnB06gBK3psQ8NEW6CfrfRNlirIL3D/P80QVg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/react-json-editor-ajrm/-/react-json-editor-ajrm-2.5.3.tgz}
+    name: '@types/react-json-editor-ajrm'
+    version: 2.5.3
     dependencies:
       '@types/react': registry.npmmirror.com/@types/react/18.0.15
     dev: true
@@ -1645,7 +1671,7 @@ packages:
       '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.18.9
       '@ctrl/tinycolor': registry.npmmirror.com/@ctrl/tinycolor/3.4.1
       classnames: registry.npmmirror.com/classnames/2.3.1
-      copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.1
+      copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.2
       lodash: registry.npmmirror.com/lodash/4.17.21
       memoize-one: registry.npmmirror.com/memoize-one/6.0.0
       moment: registry.npmmirror.com/moment/2.29.4
@@ -2433,10 +2459,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  registry.npmmirror.com/copy-to-clipboard/3.3.1:
-    resolution: {integrity: sha512-i13qo6kIHTTpCm8/Wup+0b1mVWETvu2kIMzKoK8FpkLkFxlt0znUAHcMzox+T8sPlqtZXq3CulEjQHsYiGFJUw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/copy-to-clipboard/-/copy-to-clipboard-3.3.1.tgz}
+  registry.npmmirror.com/copy-to-clipboard/3.3.2:
+    resolution: {integrity: sha512-Vme1Z6RUDzrb6xAI7EZlVZ5uvOk2F//GaxKUxajDqm9LhOVM1inxNAD2vy+UZDYsd0uyA9s7b3/FVZPSxqrCfg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/copy-to-clipboard/-/copy-to-clipboard-3.3.2.tgz}
     name: copy-to-clipboard
-    version: 3.3.1
+    version: 3.3.2
     dependencies:
       toggle-selection: registry.npmmirror.com/toggle-selection/1.0.6
     dev: false
@@ -7107,6 +7133,20 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-is/-/react-is-18.2.0.tgz}
     name: react-is
     version: 18.2.0
+    dev: false
+
+  registry.npmmirror.com/react-json-editor-ajrm/2.5.13_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-uYRJFzY34w7coLxeWPFZGyQpWdBKK5e8R9jBZTJ5gAFp3WuGVG2DdGZ8oJKOVJy0hqkxS9DzJIzGmmxHHQ9afA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-json-editor-ajrm/-/react-json-editor-ajrm-2.5.13.tgz}
+    id: registry.npmmirror.com/react-json-editor-ajrm/2.5.13
+    name: react-json-editor-ajrm
+    version: 2.5.13
+    peerDependencies:
+      react: '>=16.2.0'
+      react-dom: '>=16.2.0'
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime/7.18.9
+      react: registry.npmmirror.com/react/18.2.0
+      react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
     dev: false
 
   registry.npmmirror.com/react-tabs/3.2.3_react@18.2.0:

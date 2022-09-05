@@ -12,7 +12,7 @@ export default function storageReducer(bucketList: StorageResp[], action: Storag
       return [...bucketList, action.data]
     }
     case 'changed':
-      return bucketList.map((b) => {
+      return bucketList.map(b => {
         if (b.id === action.data.id) {
           return action.data
         } else {
@@ -20,7 +20,7 @@ export default function storageReducer(bucketList: StorageResp[], action: Storag
         }
       })
     case 'deleted': {
-      return bucketList.filter((b) => b.id !== action.data.id)
+      return bucketList.filter(b => b.id !== action.data.id)
     }
     default:
       return bucketList

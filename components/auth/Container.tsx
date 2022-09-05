@@ -7,6 +7,9 @@ import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
 
 import IconFont from '../iconfont'
 import styles from './Common.module.scss'
+import Connector from './connector'
+import ConnectorDetails from './connectorDetails'
+import Experience from './experience'
 import AuthMainCheck from './subs/Check'
 import AuthMainEdit from './subs/Edit'
 // import AuthMainIdentity from './subs/auth-main-identity'
@@ -14,7 +17,6 @@ import AuthMainRole from './subs/Role'
 import AuthMainUser from './subs/User'
 import AuthMainUserDetails from './subs/UserDetails'
 import AuthWebhooks from './subs/Webhooks'
-
 interface Props {
   content: AuthProvResp
   showTopType: string
@@ -65,7 +67,7 @@ export default function AuthContainer({
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
   const [title, setTitle] = useImmer<React.ReactNode>('')
   const handleIconClick = () => {
-    console.log('aaa')
+    console.log('handleIconClick')
   }
 
   useEffect(() => {
@@ -92,11 +94,15 @@ export default function AuthContainer({
         break
       case 'login':
         setTitle('登入体验')
-        setViewer(<div>登入体验</div>)
+        setViewer(<Experience handleTopToggleDesigner={handleTopToggleDesigner} />)
         break
       case 'connect':
         setTitle('连接器')
-        setViewer(<div>连接器</div>)
+        setViewer(<Connector handleTopToggleDesigner={handleTopToggleDesigner} />)
+        break
+      case 'connectDetails':
+        setTitle('连接器详情')
+        setViewer(<ConnectorDetails handleTopToggleDesigner={handleTopToggleDesigner} />)
         break
       case 'webhooks':
         setTitle('webhooks')
@@ -129,7 +135,7 @@ export default function AuthContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBottomType, content])
   return (
-    <div className="pl-6 pr-10 mt-6">
+    <div className="pl-6 pr-6 mt-6">
       {showTopType !== 'userDetails' ? (
         <div className="flex justify-start items-center mb-5 ">
           <span className="text-lg flex-grow font-bold">

@@ -60,7 +60,6 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
 
   // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
   function addTable() {
-    console.log(authList.length, 'authList.length', authList)
     const data = {
       id: -(authList.length + 1),
       name: '',
@@ -77,7 +76,6 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
       onClick={event => {
         event.stopPropagation()
         setActiveKey(activeKey.concat('1'))
-        console.log(activeKey, 'activeKey')
         addTable()
       }}
     />

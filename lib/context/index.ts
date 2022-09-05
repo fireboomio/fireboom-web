@@ -3,6 +3,7 @@ import {
   AuthDispatchContext,
   AuthCurrContext,
   AuthToggleContext,
+  ConnectorContext,
 } from './auth-context'
 import {
   DatasourceContext,
@@ -38,4 +39,5 @@ export {
   AuthDispatchContext,
   AuthCurrContext,
   AuthToggleContext,
+  ConnectorContext,
 }

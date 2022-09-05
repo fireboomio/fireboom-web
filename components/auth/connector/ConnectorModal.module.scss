@@ -1,0 +1,13 @@
+.next-button {
+  color: #fff;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+}
+
+.modal-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-items: center;
+  row-gap: 16px;
+  column-gap: 16px;
+}

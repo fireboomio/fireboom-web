@@ -27,8 +27,6 @@ const { Search } = Input
 
 const { TabPane } = Tabs
 
-const onSearch = (value: string) => console.log(value)
-
 const data: UserProvResp[] = [
   {
     id: 1,
@@ -59,7 +57,6 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const onFinish = (values: UserProvResp) => {
-    console.log('Success:', values)
     setUserData(
       userData.concat({
         ...values,
@@ -69,10 +66,6 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
     // await requests.post('/role', values)
     // await getData()
   }
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
-
   const columns: ColumnsType<UserProvResp> = [
     {
       title: '用户',
@@ -164,7 +157,6 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
   }
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -184,11 +176,7 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
         </div>
         <Divider style={{ margin: 10 }} />
         <div className="flex justify-between items-center mb-2">
-          <Search
-            placeholder="搜索用户名、邮箱或手机号"
-            onSearch={onSearch}
-            style={{ width: 228, height: 32 }}
-          />
+          <Search placeholder="搜索用户名、邮箱或手机号" style={{ width: 228, height: 32 }} />
           <div className="flex items-center mb-2">
             <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
               <span className="text-sm text-gray">导出全部</span>
@@ -228,7 +216,6 @@ export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
               initialValues={{ remember: true }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               onFinish={values => void onFinish(values)}
-              onFinishFailed={onFinishFailed}
               autoComplete="off"
               labelAlign="right"
               className="h-30 mt-8 ml-8"
