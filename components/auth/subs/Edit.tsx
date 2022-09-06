@@ -217,7 +217,7 @@ export default function AuthMainEdit({ content }: Props) {
             <Input placeholder="请输入..." value={inputValue} />
           </Form.Item>
           <Form.Item label="服务发现地址">
-            <Input value={`${inputValue as string}/.well-known/openid`} disabled />
+            <Input value={`${inputValue as string}/.well-known/openid-configuration`} disabled />
           </Form.Item>
           <Form.Item label="JWKS" name="jwks">
             <Radio.Group
@@ -241,11 +241,15 @@ export default function AuthMainEdit({ content }: Props) {
             </Form.Item>
           ) : (
             <Form.Item label="jwksURL">
-              <Input disabled value={`${inputValue as string}/.well-known/openid-`} suffix="浏览" />
+              <Input
+                disabled
+                value={`${inputValue as string}/.well-known/jwks.json`}
+                suffix="浏览"
+              />
             </Form.Item>
           )}
           <Form.Item label="用户端点">
-            <Input disabled value={`${inputValue as string}/.well-known/openid-`} />
+            <Input disabled value={`${inputValue as string}/me`} />
           </Form.Item>
           <Form.Item label="是否开启" name="switchState">
             <Checkbox.Group options={options} />
