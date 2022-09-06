@@ -27,7 +27,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
   const { currAuthProvItemId } = useContext(AuthCurrContext)
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isHovering, setIsHovering] = useImmer(false)
-  const config = JSON.parse(authItem.config) as Config
+  const config = authItem.config as unknown as Config
 
   const handleMenuClick: MenuProps['onClick'] = e => {
     e.domEvent.stopPropagation()

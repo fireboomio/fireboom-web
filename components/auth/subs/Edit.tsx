@@ -34,8 +34,8 @@ export default function AuthMainEdit({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
-  const config = JSON.parse(content.config) as Config
   const [value, setValue] = useImmer('')
+  const config = content.config as unknown as Config
   const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
   const [disabled, setDisabled] = useImmer(false)
   const [inputValue, setInputValue] = useImmer(
@@ -49,7 +49,7 @@ export default function AuthMainEdit({ content }: Props) {
     const newValues = { ...config, ...values }
     const newContent = { ...content, switchState: values.switchState, name: values.id }
     if (content.name == '') {
-      const req = { ...newContent, config: JSON.stringify(newValues) }
+      const req = { ...newContent, config: newValues }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/auth', req)
       content.id = result

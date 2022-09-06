@@ -23,7 +23,7 @@ export default function AuthMainCheck({ content }: Props) {
     return <></>
   }
 
-  const config = JSON.parse(content.config) as Config
+  const config = content.config as unknown as Config
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
