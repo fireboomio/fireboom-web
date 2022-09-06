@@ -48,7 +48,7 @@ const data: UserProvResp[] = [
   },
 ]
 
-export default function AuthMainUser({ handleTopToggleDesigner }: Props) {
+export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
   // const [userData, setUserData] = useImmer([] as Array<UserProvResp>)

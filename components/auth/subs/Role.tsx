@@ -33,7 +33,7 @@ interface TabT {
 
 const { TabPane } = Tabs
 
-export default function AuthMainRole() {
+export default function AuthRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)

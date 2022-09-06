@@ -35,7 +35,7 @@ const data: RoleProvResp[] = [
   },
 ]
 
-export default function AuthMainUserDetails() {
+export default function AuthUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   // const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)

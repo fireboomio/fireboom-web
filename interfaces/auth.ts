@@ -2,8 +2,8 @@ export interface AuthProvResp {
   id: number
   name: string
   authSupplier: string
-  switchState: Array<string>
-  config: string
+  switchState: string[]
+  config: Record<string, string | number | boolean>
 }
 
 export type AuthAction = AuthsingleAction | AuthListAction
