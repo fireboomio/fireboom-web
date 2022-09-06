@@ -1,5 +1,5 @@
 import { Select } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
 
@@ -23,6 +23,13 @@ export default function AuthDB() {
     setOptions(opts)
   }, [])
 
+  const databases = useMemo(() => {
+    return [
+      { name: 'aaa', isOk: true },
+      { name: 'bbb', isOk: false },
+    ]
+  }, [])
+
   return (
     <>
       <div className="flex items-center my-6">
@@ -41,14 +48,38 @@ export default function AuthDB() {
       </div>
 
       <div
-        className="px-6 py-4 rounded bg-[#E0202017] text-[#000000D9]"
+        className="px-6 py-4 text-base rounded bg-[#E0202017] text-[#000000D9]"
         style={{ border: '1px solid #E02020' }}
       >
         所选数据库暂无预制表结构不完整，是否覆盖
       </div>
 
-      <div className="flex px-8 py-3">
-        <div>数据库：</div>
+      <div className="mt-7 ">
+        <div className="px-8 py-3 text-base text-[#787D8B]">
+          <span>数据库：</span>
+          <span>sss</span>
+        </div>
+        <div style={{ border: '1px solid rgba(95,98,105,0.1)' }} />
+
+        <div className="flex items-center">
+          <div>
+            {databases.map(x => (
+              <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
+                <div className="mr-4">✅</div>
+                <div className="text-base text-[#000000D9]">{x.name}</div>
+              </div>
+            ))}
+          </div>
+
+          <div>
+            {databases.map(x => (
+              <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
+                <div className="mr-4">❎</div>
+                <div className="text-base text-[#000000D9]">{x.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   )
