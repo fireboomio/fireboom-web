@@ -31,28 +31,28 @@ const listMenu = (
       {
         key: '0',
         label: (
-          <div>
+          <>
             <LockOutlined className="mr-2" />
             <span>锁定账号</span>
-          </div>
+          </>
         ),
       },
       {
         key: '1',
         label: (
-          <div>
+          <>
             <IconFont type="icon-shanchu" className="mr-2" />
             <span>删除账号</span>
-          </div>
+          </>
         ),
       },
       {
         key: '2',
         label: (
-          <div>
+          <>
             <PoweroffOutlined className="mr-2" />
             <span>强制下线</span>
-          </div>
+          </>
         ),
       },
     ]}
