@@ -209,7 +209,7 @@ export default function AuthMainEdit({ content }: Props) {
             rules={[
               { required: true, message: 'Issuer不能为空' },
               {
-                pattern: new RegExp('^https?:\\/\\/[\\.\\wd\\d\\/]+$', 'g'),
+                pattern: /^https?:\/\/[.\w\d/]+$/,
                 message: '只允许输入链接',
               },
             ]}
