@@ -43,7 +43,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
       await requests.put('/auth', {
         ...authItem,
         name: value,
-        config: JSON.stringify({ ...config, id: value }),
+        config: { ...config, id: value },
       })
       void requests.get<unknown, AuthProvResp[]>('/auth').then(res => {
         dispatch({

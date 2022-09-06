@@ -56,7 +56,7 @@ export default function AuthMainEdit({ content }: Props) {
     } else {
       await requests.put('/auth', {
         ...newContent,
-        config: JSON.stringify(newValues),
+        config: newValues,
       })
     }
     void requests

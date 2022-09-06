@@ -16,9 +16,7 @@ export default function AuthItemTop({ handleTopToggleDesigner, authType }: Props
         style={isHovering ? { background: '#F8F8F9' } : {}}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        onClick={() => {
-          handleTopToggleDesigner(authType)
-        }}
+        onClick={() => handleTopToggleDesigner(authType)}
       >
         <div className="ml-8 w-14 h-4 text-[#000000] leading-loose">{authType.name}</div>
       </div>

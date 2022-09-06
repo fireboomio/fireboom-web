@@ -128,7 +128,7 @@ export default function AuthContainer({
           setViewer(<AuthMainEdit content={content} />)
           break
         default:
-          setViewer(JSON.stringify(content))
+          setViewer(<></>)
           break
       }
     }
