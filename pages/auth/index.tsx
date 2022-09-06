@@ -79,7 +79,7 @@ export default function Authentication() {
                 <Head>
                   <title>FireBoom - 认证鉴权</title>
                 </Head>
-                <Row className="h-screen">
+                <Row className="h-[calc(100vh_-_36px)]">
                   <Col span={5} className={styles['col-left']}>
                     <AuthPannel
                       onClickItem={onClickItem}
