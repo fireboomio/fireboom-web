@@ -30,6 +30,7 @@ export interface AuthListType {
     | 'connect'
     | 'connectDetails'
     | 'webhooks'
+    | 'db'
 }
 
 // 身份验证

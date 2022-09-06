@@ -53,6 +53,13 @@ const secondTypeList: AuthListType[] = [
   },
 ]
 
+const thirdTypeList: AuthListType[] = [
+  {
+    name: '数据库',
+    type: 'db',
+  },
+]
+
 export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Props) {
   const authList = useContext(AuthContext)
   const dispatch = useContext(AuthDispatchContext)
@@ -96,7 +103,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
         authType={{ name: '概览', type: 'outline' }}
       />
 
-      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">通用</h2>
+      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">用户</h2>
       {firstTypeList.map(authType => (
         <AuthItemTop
           key={authType.type}
@@ -104,7 +111,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           authType={authType}
         />
       ))}
-      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">设置</h2>
+      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">通用</h2>
       {secondTypeList.map(authType => (
         <AuthItemTop
           key={authType.type}
@@ -112,6 +119,15 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           authType={authType}
         />
       ))}
+      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">设置</h2>
+      {thirdTypeList.map(authType => (
+        <AuthItemTop
+          key={authType.type}
+          handleTopToggleDesigner={handleTopToggleDesigner}
+          authType={authType}
+        />
+      ))}
+
       <div className="mt-3 absolute w-full bottom-1 h-50" style={{ overflow: 'auto' }}>
         <Collapse
           ghost
