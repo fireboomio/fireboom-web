@@ -34,7 +34,7 @@ const firstTypeList: AuthListType[] = [
   },
   {
     name: '操作日志',
-    type: 'action',
+    type: 'log',
   },
 ]
 

@@ -18,19 +18,21 @@ interface AuthListAction {
   data: AuthProvResp[]
 }
 
+export type MenuType =
+  | 'outline'
+  | 'userManage'
+  | 'userDetails'
+  | 'roleManage'
+  | 'log'
+  | 'login'
+  | 'connect'
+  | 'connectDetails'
+  | 'webhooks'
+  | 'db'
+
 export interface AuthListType {
   name: string
-  type:
-    | 'outline'
-    | 'userManage'
-    | 'userDetails'
-    | 'roleManage'
-    | 'action'
-    | 'login'
-    | 'connect'
-    | 'connectDetails'
-    | 'webhooks'
-    | 'db'
+  type: MenuType
 }
 
 // 身份验证

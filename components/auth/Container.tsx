@@ -88,7 +88,7 @@ export default function AuthContainer({
         setTitle('角色管理')
         setViewer(<AuthMainRole />)
         break
-      case 'action':
+      case 'log':
         setTitle('操作日志')
         setViewer(<div>操作日志</div>)
         break

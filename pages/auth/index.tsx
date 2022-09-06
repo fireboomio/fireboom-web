@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { AuthContainer, AuthPannel } from '@/components/auth'
-import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
+import type { AuthListType, AuthProvResp, MenuType } from '@/interfaces/auth'
 import {
   AuthContext,
   AuthCurrContext,
@@ -28,7 +28,7 @@ export default function Authentication() {
     connectors: [],
   })
   const [showBottomType, setShowBottomType] = useImmer('data')
-  const [showTopType, setShowTopType] = useImmer('userManage')
+  const [showTopType, setShowTopType] = useImmer<MenuType>('userManage')
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
 
   const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
