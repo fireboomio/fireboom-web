@@ -13,6 +13,7 @@ import requests from '@/lib/fetchers'
 import styles from './layout.module.scss'
 import Player from './player'
 import StatusBar from './status-bar'
+import Window from './window'
 
 const { Sider, Content } = ALayout
 
@@ -108,6 +109,7 @@ export default function Layout({ children }: PropsWithChildren) {
   const [info, setInfo] = useState<Info>()
   const [version, setVersion] = useState<string>('--')
   const [env, setEnv] = useState<string>('--')
+  const [showWindow, setShowWindow] = useState(false)
 
   const topMenuItems = useMemo(
     () =>
@@ -225,6 +227,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
+        {showWindow ? <Window /> : <></>}
         <Footer className={styles.footer}>
           <StatusBar
             version={version}
@@ -232,6 +235,7 @@ export default function Layout({ children }: PropsWithChildren) {
             errorInfo={info?.errorInfo}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
+            toggleWindow={() => setShowWindow(!showWindow)}
           />
         </Footer>
       </ALayout>

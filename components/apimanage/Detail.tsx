@@ -37,14 +37,8 @@ interface RoleT {
 }
 
 const tabs = [
-  {
-    title: '请求参数',
-    key: '0',
-  },
-  {
-    title: '注入参数',
-    key: '1',
-  },
+  { title: '请求参数', key: '0' },
+  { title: '注入参数', key: '1' },
 ]
 
 const columns = [
