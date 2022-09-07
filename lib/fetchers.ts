@@ -21,6 +21,9 @@ requests.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    void message.error(error?.response?.data?.message ?? '发生未知错误！')
     return Promise.reject(error)
   }
 )
