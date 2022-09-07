@@ -10,13 +10,14 @@ import styles from './Common.module.scss'
 import Connector from './connector'
 import ConnectorDetails from './connectorDetails'
 import Experience from './experience'
-import AuthMainCheck from './subs/Check'
-import AuthMainEdit from './subs/Edit'
-// import AuthMainIdentity from './subs/auth-main-identity'
-import AuthMainRole from './subs/Role'
-import AuthMainUser from './subs/User'
-import AuthMainUserDetails from './subs/UserDetails'
+import AuthCheck from './subs/Check'
+import AuthDB from './subs/DB'
+import AuthEdit from './subs/Edit'
+import AuthRole from './subs/Role'
+import AuthUser from './subs/User'
+import AuthUserDetails from './subs/UserDetails'
 import AuthWebhooks from './subs/Webhooks'
+
 interface Props {
   content: AuthProvResp
   showTopType: string
@@ -30,28 +31,28 @@ const listMenu = (
       {
         key: '0',
         label: (
-          <div>
+          <>
             <LockOutlined className="mr-2" />
             <span>锁定账号</span>
-          </div>
+          </>
         ),
       },
       {
         key: '1',
         label: (
-          <div>
+          <>
             <IconFont type="icon-shanchu" className="mr-2" />
             <span>删除账号</span>
-          </div>
+          </>
         ),
       },
       {
         key: '2',
         label: (
-          <div>
+          <>
             <PoweroffOutlined className="mr-2" />
             <span>强制下线</span>
-          </div>
+          </>
         ),
       },
     ]}
@@ -78,17 +79,17 @@ export default function AuthContainer({
         break
       case 'userManage':
         setTitle('用户管理')
-        setViewer(<AuthMainUser handleTopToggleDesigner={handleTopToggleDesigner} />)
+        setViewer(<AuthUser handleTopToggleDesigner={handleTopToggleDesigner} />)
         break
       case 'userDetails':
         setTitle('用户详情')
-        setViewer(<AuthMainUserDetails />)
+        setViewer(<AuthUserDetails />)
         break
       case 'roleManage':
         setTitle('角色管理')
-        setViewer(<AuthMainRole />)
+        setViewer(<AuthRole />)
         break
-      case 'action':
+      case 'log':
         setTitle('操作日志')
         setViewer(<div>操作日志</div>)
         break
@@ -108,6 +109,10 @@ export default function AuthContainer({
         setTitle('webhooks')
         setViewer(<AuthWebhooks />)
         break
+      case 'db':
+        setTitle('数据库')
+        setViewer(<AuthDB />)
+        break
       default:
         setViewer(<div>error</div>)
         break
@@ -121,14 +126,14 @@ export default function AuthContainer({
       switch (showBottomType) {
         case 'data':
           setTitle('身份验证')
-          setViewer(<AuthMainCheck content={content} />)
+          setViewer(<AuthCheck content={content} />)
           break
         case 'edit':
           setTitle('身份验证')
-          setViewer(<AuthMainEdit content={content} />)
+          setViewer(<AuthEdit content={content} />)
           break
         default:
-          setViewer(JSON.stringify(content))
+          setViewer(<></>)
           break
       }
     }

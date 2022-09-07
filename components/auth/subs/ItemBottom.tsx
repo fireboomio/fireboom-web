@@ -43,7 +43,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
       await requests.put('/auth', {
         ...authItem,
         name: value,
-        config: JSON.stringify({ ...config, id: value }),
+        config: { ...config, id: value },
       })
       void requests.get<unknown, AuthProvResp[]>('/auth').then(res => {
         dispatch({
@@ -76,11 +76,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
         {
           key: '1',
           label: (
-            <div
-              onClick={() => {
-                setIsEditing(!isEditing)
-              }}
-            >
+            <div onClick={() => setIsEditing(!isEditing)}>
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
@@ -89,11 +85,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
         {
           key: '2',
           label: (
-            <div
-              onClick={() => {
-                handleBottomToggleDesigner('edit', authItem.id)
-              }}
-            >
+            <div onClick={() => handleBottomToggleDesigner('edit', authItem.id)}>
               <IconFont type="icon-bianji" />
               <span className="ml-1.5">配置</span>
             </div>
@@ -155,14 +147,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
             placeholder="请输入供应商ID"
           />
         ) : (
-          <div
-            onClick={() => {
-              // setIsEditing(true)
-            }}
-            className="text-sm font-normal leading-4"
-          >
-            {authItem.name}
-          </div>
+          <div className="text-sm font-normal leading-4">{authItem.name}</div>
         )}
       </div>
       <div>

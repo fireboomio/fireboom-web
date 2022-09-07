@@ -370,11 +370,15 @@ const ApiManage: FC<ApiManageProps> = () => {
     if (action === '创建文件') {
       if (!currEditingNode) return
 
-      void createNode(currEditingNode, inputValue, query).then(() => {
-        setCurrEditingKey(null)
-        setRefreshFlag(!refreshFlag)
-        void message.success('保存成功')
-      })
+      void createNode(currEditingNode, inputValue, query)
+        .then(() => {
+          setCurrEditingKey(null)
+          setRefreshFlag(!refreshFlag)
+          void message.success('保存成功')
+        })
+        .catch(_ => {
+          return
+        })
 
       // setAction(null)
       // setRefreshFlag(!refreshFlag)
