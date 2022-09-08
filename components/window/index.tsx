@@ -14,37 +14,25 @@ const tabs = [
 const Window: React.FC = () => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [log, setLog] = useState('')
+  const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    // setInfo({
-    //   errorInfo: { errTotal: 10, warnTotal: 22 },
-    //   engineStatus: '启动中',
-    //   hookStatus: '已停止',
-    // })
-    // return
     void fetch(`${DOMAIN}/api/v1/wdg/log`).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
 
       // @ts-ignore
       const process = ({ value, done }) => {
-        if (done) {
-          return
-        }
+        if (done) return
 
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
-          void data.text().then(x =>
-            setLog(() => {
-              return isEmpty(log) ? x : `${log}\n${x}`
-            })
-          )
+          void data.text().then(x => setMsg(x))
         } catch (error) {
           // eslint-disable-next-line no-console
           console.log(error)
         }
-
         // @ts-ignore
         void reader.read().then(process)
       }
@@ -53,6 +41,15 @@ const Window: React.FC = () => {
       void reader.read().then(process)
     })
   }, [])
+
+  useEffect(() => {
+    let sym = '\n'
+    if (isEmpty(log) || isEmpty(msg)) {
+      sym = ''
+    }
+    setLog(`${log}${sym}${msg}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [msg])
 
   return (
     <div className="fixed w-full bottom-36px h-348px max-h-348px bg-[#fff] z-200 px-7 py-5 border">
