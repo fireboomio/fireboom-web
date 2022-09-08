@@ -233,7 +233,11 @@ export default function Layout({ children }: PropsWithChildren) {
 
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
-        {showWindow ? <Window style={windowStyle} /> : <></>}
+        {showWindow ? (
+          <Window style={windowStyle} toggleWindow={() => setShowWindow(!showWindow)} />
+        ) : (
+          <></>
+        )}
         <Footer className={styles.footer}>
           <StatusBar
             version={version}
