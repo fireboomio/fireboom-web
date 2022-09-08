@@ -111,6 +111,12 @@ export default function Layout({ children }: PropsWithChildren) {
   const [env, setEnv] = useState<string>('--')
   const [showWindow, setShowWindow] = useState(false)
 
+  const windowStyle = useMemo(() => {
+    const diff = collapsed ? '80px' : '200px'
+    return { width: `calc(100vw - ${diff})` }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collapsed])
+
   const topMenuItems = useMemo(
     () =>
       menus
@@ -185,7 +191,7 @@ export default function Layout({ children }: PropsWithChildren) {
     <ALayout>
       <Player className="fixed top-4 right-65 z-500" status={info?.engineStatus ?? '--'} />
       <Sider
-        className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
+        className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB] border`}
         theme="light"
         collapsible
         collapsed={collapsed}
@@ -227,7 +233,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
-        {showWindow ? <Window /> : <></>}
+        {showWindow ? <Window style={windowStyle} /> : <></>}
         <Footer className={styles.footer}>
           <StatusBar
             version={version}

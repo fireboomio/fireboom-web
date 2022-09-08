@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash'
-import { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 
 import { DOMAIN } from '@/lib/common'
 
@@ -11,7 +11,8 @@ const tabs = [
   { title: '问题', key: '1' },
 ]
 
-const Window: React.FC = () => {
+// eslint-disable-next-line react/prop-types
+const Window: React.FC<{ style: CSSProperties }> = ({ style }) => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [log, setLog] = useState('')
   const [msg, setMsg] = useState('')
@@ -52,7 +53,10 @@ const Window: React.FC = () => {
   }, [msg])
 
   return (
-    <div className="fixed w-full bottom-36px h-348px max-h-348px bg-[#fff] z-200 px-7 py-5 border">
+    <div
+      className="absolute bottom-36px h-348px max-h-348px bg-[#fff] z-200 px-7 py-5 border"
+      style={style}
+    >
       <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} />
       {tabActiveKey === '0' ? <Log>{log}</Log> : <></>}
     </div>
