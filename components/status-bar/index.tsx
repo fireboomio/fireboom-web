@@ -12,6 +12,7 @@ interface Props {
   errorInfo?: ErrorInfo
   engineStatus?: string
   hookStatus?: string
+  toggleWindow: () => void
 }
 
 // eslint-disable-next-line react/prop-types
@@ -22,6 +23,7 @@ const StatusBar: React.FC<Props> = ({
   errorInfo,
   engineStatus,
   hookStatus,
+  toggleWindow,
 }) => {
   return (
     <div className={className}>
@@ -36,13 +38,21 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className={styles['info-problem']}>
             <span>错误信息：</span>
-            <span className="ml-1">
-              <Image height={13} width={13} src="/assets/error.png" alt="错误" preview={false} />
-              {errorInfo?.errTotal ?? 0}
-            </span>
-            <span className="ml-1">
-              <Image height={13} width={13} src="/assets/warning.png" alt="警告" preview={false} />
-              {errorInfo?.warnTotal ?? 0}
+            <span onClick={toggleWindow} className="cursor-pointer">
+              <span className="ml-1">
+                <Image height={13} width={13} src="/assets/error.png" alt="错误" preview={false} />
+                {errorInfo?.errTotal ?? 0}
+              </span>
+              <span className="ml-1">
+                <Image
+                  height={13}
+                  width={13}
+                  src="/assets/warning.png"
+                  alt="警告"
+                  preview={false}
+                />
+                {errorInfo?.warnTotal ?? 0}
+              </span>
             </span>
           </span>
           <span className={styles['info-engine']}>

@@ -13,6 +13,7 @@ import requests from '@/lib/fetchers'
 import styles from './layout.module.scss'
 import Player from './player'
 import StatusBar from './status-bar'
+import Window from './window'
 
 const { Sider, Content } = ALayout
 
@@ -108,6 +109,13 @@ export default function Layout({ children }: PropsWithChildren) {
   const [info, setInfo] = useState<Info>()
   const [version, setVersion] = useState<string>('--')
   const [env, setEnv] = useState<string>('--')
+  const [showWindow, setShowWindow] = useState(false)
+
+  const windowStyle = useMemo(() => {
+    const diff = collapsed ? '80px' : '200px'
+    return { width: `calc(100vw - ${diff})` }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collapsed])
 
   const topMenuItems = useMemo(
     () =>
@@ -183,7 +191,7 @@ export default function Layout({ children }: PropsWithChildren) {
     <ALayout>
       <Player className="fixed top-4 right-65 z-500" status={info?.engineStatus ?? '--'} />
       <Sider
-        className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB]`}
+        className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB] border`}
         theme="light"
         collapsible
         collapsed={collapsed}
@@ -225,6 +233,7 @@ export default function Layout({ children }: PropsWithChildren) {
 
       <ALayout className="site-layout">
         <Content className="bg-white">{children}</Content>
+        {showWindow ? <Window style={windowStyle} /> : <></>}
         <Footer className={styles.footer}>
           <StatusBar
             version={version}
@@ -232,6 +241,7 @@ export default function Layout({ children }: PropsWithChildren) {
             errorInfo={info?.errorInfo}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
+            toggleWindow={() => setShowWindow(!showWindow)}
           />
         </Footer>
       </ALayout>

@@ -67,6 +67,7 @@ export default function AuthContainer({
 }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
   const [title, setTitle] = useImmer<React.ReactNode>('')
+
   const handleIconClick = () => {
     console.log('handleIconClick')
   }

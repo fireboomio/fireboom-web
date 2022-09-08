@@ -1,5 +1,4 @@
-import { InfoCircleOutlined, CloseOutlined } from '@ant-design/icons'
-import { Col, Row, Input, Tooltip, Image, Divider, Progress, Badge } from 'antd'
+import { Col, Row, Image, Progress, Badge } from 'antd'
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -90,6 +89,7 @@ export default function Home() {
   const { liveQueryTotal, mutationsTotal, queryTotal, subscriptionsTotal } = homeApi
   const { authTotal, todayInsertUser, totalUser } = homeAuth
   const { ossTotal, totalMemory, useMemory } = homeOss
+
   return (
     <>
       <Head>
@@ -97,43 +97,21 @@ export default function Home() {
         <meta name="description" content="FireBoom" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        <div className="flex justify-between">
-          <Input
-            disabled
-            value="系统当前为“开发模式”，前往“设置-》系统设置”切换为“生产模式”"
-            style={{ width: '38%' }}
-            prefix={
-              <Tooltip title="Extra information">
-                <InfoCircleOutlined style={{ color: 'rgba(number,number,number,.45)' }} />
-              </Tooltip>
-            }
-            suffix={<CloseOutlined />}
-            className=" mt-5.5 ml-6"
-          />
 
-          <div className="mt-5.5 flex items-center">
-            <div className="border px-2 mr-12 flex items-center">
-              <IconFont type="icon-rizhi1" />
-              <span className="ml-2">日志</span>
-            </div>
-            <div className="mr-6">
-              <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-              <IconFont
-                type="icon-wendang"
-                className="text-[22px] ml-4"
-                onClick={handleIconClick}
-              />
-              <IconFont
-                type="icon-bangzhu"
-                className="text-[22px] ml-4"
-                onClick={handleIconClick}
-              />
-            </div>
-          </div>
+      <div className="flex items-center justify-end mx-6 my-5.5">
+        <div className="border cursor-pointer px-3 py-1">
+          <IconFont type="icon-rizhi1" />
+          <span className="ml-2">日志</span>
         </div>
-        <Divider className={styles['main-divider']} />
+
+        <div className="ml-8">
+          <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
+          <IconFont type="icon-wendang" className="text-[22px] ml-4" onClick={handleIconClick} />
+          <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
+        </div>
       </div>
+      <div className={styles['main-divider']} />
+
       <div className="overflow-y-scroll h-180">
         <Row className="h-screen">
           <Col span={18} className={styles['col-left']}>
@@ -361,6 +339,7 @@ export default function Home() {
               </div>
             </div>
           </Col>
+
           <Col span={6}>
             {showType == 'notice' ? (
               <Notice handleToggleDesigner={handleToggleDesigner} />
