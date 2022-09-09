@@ -42,7 +42,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
   const authList = useContext(AuthContext)
   const dispatch = useContext(AuthDispatchContext)
   const [activeKey, setActiveKey] = useImmer<string[]>([])
-  const [selectedType, setSelectedType] = useImmer('')
+  const [selectedType, setSelectedType] = useImmer('userManage')
 
   // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
   function addTable() {

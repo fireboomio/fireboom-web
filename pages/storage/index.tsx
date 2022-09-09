@@ -52,6 +52,9 @@ export default function FileStorage() {
               <div className={`flex-1 ${styles['col-left']}`}>
                 <StoragePannel />
               </div>
+
+              <div className={styles.divider} />
+
               <div className="flex-1">
                 <StorageContainer showType={showType} content={content} />
               </div>

@@ -84,6 +84,9 @@ export default function Authentication() {
                     handleTopToggleDesigner={handleTopToggleDesigner}
                   />
                 </div>
+
+                <div className={styles.divider} />
+
                 <div className="flex-1">
                   <AuthContainer
                     handleTopToggleDesigner={handleTopToggleDesigner}
