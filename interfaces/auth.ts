@@ -19,6 +19,7 @@ interface AuthListAction {
 }
 
 export type MenuType =
+  | 'title'
   | 'outline'
   | 'userManage'
   | 'userDetails'

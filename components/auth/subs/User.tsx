@@ -170,144 +170,144 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   return (
     <>
       <div>
-        <div>
-          <span className="text-base text-gray mr-4">用户列表</span>
-          <span className={styles['auth-head']}>当前用户池的所有用户，在这里你可以对用户</span>
-        </div>
-        <Divider style={{ margin: 10 }} />
-        <div className="flex justify-between items-center mb-2">
-          <Search placeholder="搜索用户名、邮箱或手机号" style={{ width: 228, height: 32 }} />
-          <div className="flex items-center mb-2">
-            <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
-              <span className="text-sm text-gray">导出全部</span>
-            </Button>
-            <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
-              <span className="text-sm text-gray">导入</span>
-            </Button>
-            <Button className={`${styles['save-btn']} ml-4`} onClick={() => setUserVisible(true)}>
-              <span className="text-sm text-gray">创建</span>
-            </Button>
-          </div>
-        </div>
-        <div>
-          <Modal
-            mask={false}
-            title="创建用户"
-            style={{ top: '200px' }}
-            width={549}
-            bodyStyle={{ height: '350px' }}
-            transitionName=""
-            visible={userVisible}
-            onOk={() => setUserVisible(false)}
-            onCancel={() => setUserVisible(false)}
-            okText={
-              <Button className={styles['save-btn']} onClick={() => form.submit()}>
-                <span>确定</span>
-              </Button>
-            }
-            okType="text"
-            cancelText="取消"
-          >
-            <Form
-              name="userList"
-              form={form}
-              labelCol={{ span: 5 }}
-              wrapperCol={{ span: 17 }}
-              initialValues={{ remember: true }}
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={values => void onFinish(values)}
-              autoComplete="off"
-              labelAlign="right"
-              className="h-30 mt-8 ml-8"
-            >
-              <div className={styles['tabs-style']}>
-                <Tabs defaultActiveKey="1" type="card">
-                  <TabPane tab="用户名" key="1">
-                    <Form.Item
-                      label="用户名"
-                      name="name"
-                      rules={[{ required: true, message: '用户名不为空!' }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </TabPane>
-                  <TabPane tab="手机号" key="2">
-                    <Form.Item
-                      label="手机号"
-                      name="phoneNumber"
-                      rules={[{ required: true, message: '手机号不能为空!' }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </TabPane>
-                  <TabPane tab="邮箱" key="3">
-                    <Form.Item
-                      label="邮箱"
-                      name="email"
-                      rules={[{ required: true, message: '邮箱不能为空!' }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </TabPane>
-                </Tabs>
-              </div>
-              <Form.Item label="密码" name="password">
-                <Input.Password />
-              </Form.Item>
-              <Form.Item label="确认密码" name="confirmPassword">
-                <Input.Password />
-              </Form.Item>
-              <Form.Item name="remember" valuePropName="checked">
-                <span className="ml-10 mr-2">发送首次登入地址</span>
-                <Switch className={`${styles['switch-edit-btn']}`} size="small" />
-              </Form.Item>
-              <Form.Item valuePropName="checked" colon={false}>
-                <span className="ml-10 mr-2">强制用户在首次登录时修改密码</span>
-                <Switch className={`${styles['switch-edit-btn']}`} size="small" />
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-        <Divider style={{ margin: 0 }} />
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={userData}
-          bordered={true}
-          size="small"
-          rowKey={record => record.id}
-          onRow={() => ({
-            onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
-          })}
-        />
-        {hasSelected ? (
-          <div className="flex border px-5 py-3 w-140">
-            <div className={styles['right-style']}>
-              已选择
-              <span>{selectedRowKeys.length}</span>个
-            </div>
-            <div className={styles['btn-style']}>
-              <Button
-                className="mr-2 ml-10 text-[ #e92e5e]"
-                icon={<IconFont type="icon-lock" className="text-[16px]" />}
-              >
-                锁定
-              </Button>
-              <Button
-                className="mr-2"
-                icon={<IconFont type="icon-shanchu" className="text-[16px]" />}
-              >
-                删除
-              </Button>
-              <Button icon={<ExportOutlined />}>导出</Button>
-              <Divider type="vertical" className={styles['modal-divider']} />
-            </div>
-            <Button>取消选择</Button>
-          </div>
-        ) : (
-          ''
-        )}
+        <span className="text-base text-gray mr-4">用户列表</span>
+        <span className={styles['auth-head']}>当前用户池的所有用户，在这里你可以对用户</span>
       </div>
+      <Divider style={{ margin: 10 }} />
+      <div className="flex justify-between items-center mb-2">
+        <Search placeholder="搜索用户名、邮箱或手机号" style={{ width: 228, height: 32 }} />
+        <div className="flex items-center mb-2">
+          <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
+            <span className="text-sm text-gray">导出全部</span>
+          </Button>
+          <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+            <span className="text-sm text-gray">导入</span>
+          </Button>
+          <Button className={`${styles['save-btn']} ml-4`} onClick={() => setUserVisible(true)}>
+            <span className="text-sm text-gray">创建</span>
+          </Button>
+        </div>
+      </div>
+      <div>
+        <Modal
+          mask={false}
+          title="创建用户"
+          style={{ top: '200px' }}
+          width={549}
+          bodyStyle={{ height: '350px' }}
+          transitionName=""
+          visible={userVisible}
+          onOk={() => setUserVisible(false)}
+          onCancel={() => setUserVisible(false)}
+          okText={
+            <Button className={styles['save-btn']} onClick={() => form.submit()}>
+              <span>确定</span>
+            </Button>
+          }
+          okType="text"
+          cancelText="取消"
+        >
+          <Form
+            name="userList"
+            form={form}
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 17 }}
+            initialValues={{ remember: true }}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            onFinish={values => void onFinish(values)}
+            autoComplete="off"
+            labelAlign="right"
+            className="h-30 mt-8 ml-8"
+          >
+            <div className={styles['tabs-style']}>
+              <Tabs defaultActiveKey="1" type="card">
+                <TabPane tab="用户名" key="1">
+                  <Form.Item
+                    label="用户名"
+                    name="name"
+                    rules={[{ required: true, message: '用户名不为空!' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </TabPane>
+                <TabPane tab="手机号" key="2">
+                  <Form.Item
+                    label="手机号"
+                    name="phoneNumber"
+                    rules={[{ required: true, message: '手机号不能为空!' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </TabPane>
+                <TabPane tab="邮箱" key="3">
+                  <Form.Item
+                    label="邮箱"
+                    name="email"
+                    rules={[{ required: true, message: '邮箱不能为空!' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </TabPane>
+              </Tabs>
+            </div>
+            <Form.Item label="密码" name="password">
+              <Input.Password />
+            </Form.Item>
+            <Form.Item label="确认密码" name="confirmPassword">
+              <Input.Password />
+            </Form.Item>
+            <Form.Item name="remember" valuePropName="checked">
+              <span className="ml-10 mr-2">发送首次登入地址</span>
+              <Switch className={`${styles['switch-edit-btn']}`} size="small" />
+            </Form.Item>
+            <Form.Item valuePropName="checked" colon={false}>
+              <span className="ml-10 mr-2">强制用户在首次登录时修改密码</span>
+              <Switch className={`${styles['switch-edit-btn']}`} size="small" />
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
+      <Divider style={{ margin: 0 }} />
+
+      <Table
+        rowSelection={rowSelection}
+        columns={columns}
+        dataSource={userData}
+        bordered={true}
+        size="small"
+        rowKey={record => record.id}
+        rowClassName="cursor-pointer"
+        onRow={() => ({
+          onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
+        })}
+      />
+      {hasSelected ? (
+        <div className="flex border px-5 py-3 w-140">
+          <div className={styles['right-style']}>
+            已选择
+            <span>{selectedRowKeys.length}</span>个
+          </div>
+          <div className={styles['btn-style']}>
+            <Button
+              className="mr-2 ml-10 text-[ #e92e5e]"
+              icon={<IconFont type="icon-lock" className="text-[16px]" />}
+            >
+              锁定
+            </Button>
+            <Button
+              className="mr-2"
+              icon={<IconFont type="icon-shanchu" className="text-[16px]" />}
+            >
+              删除
+            </Button>
+            <Button icon={<ExportOutlined />}>导出</Button>
+            <Divider type="vertical" className={styles['modal-divider']} />
+          </div>
+          <Button>取消选择</Button>
+        </div>
+      ) : (
+        ''
+      )}
     </>
   )
 }

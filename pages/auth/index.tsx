@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Col, Row } from 'antd'
+import { Row } from 'antd'
 import Head from 'next/head'
 import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
@@ -68,38 +67,39 @@ export default function Authentication() {
   const content = authProvList.find(b => b.id === currAuthProvItemId) as AuthProvResp
 
   return (
-    <>
-      <AuthContext.Provider value={authProvList}>
-        <AuthDispatchContext.Provider value={dispatch}>
-          <AuthCurrContext.Provider value={{ currAuthProvItemId, setCurrAuthProvItemId }}>
-            <AuthToggleContext.Provider value={{ handleBottomToggleDesigner }}>
-              <ConnectorContext.Provider
-                value={{ connector, connectorDispatch } as ConnectorContextType}
-              >
-                <Head>
-                  <title>FireBoom - 认证鉴权</title>
-                </Head>
-                <Row className="h-[calc(100vh_-_36px)]">
-                  <Col span={5} className={styles['col-left']}>
-                    <AuthPannel
-                      onClickItem={onClickItem}
-                      handleTopToggleDesigner={handleTopToggleDesigner}
-                    />
-                  </Col>
-                  <Col span={19}>
-                    <AuthContainer
-                      handleTopToggleDesigner={handleTopToggleDesigner}
-                      showBottomType={showBottomType}
-                      showTopType={showTopType}
-                      content={content}
-                    />
-                  </Col>
-                </Row>
-              </ConnectorContext.Provider>
-            </AuthToggleContext.Provider>
-          </AuthCurrContext.Provider>
-        </AuthDispatchContext.Provider>
-      </AuthContext.Provider>
-    </>
+    <AuthContext.Provider value={authProvList}>
+      <AuthDispatchContext.Provider value={dispatch}>
+        <AuthCurrContext.Provider value={{ currAuthProvItemId, setCurrAuthProvItemId }}>
+          <AuthToggleContext.Provider value={{ handleBottomToggleDesigner }}>
+            <ConnectorContext.Provider
+              value={{ connector, connectorDispatch } as ConnectorContextType}
+            >
+              <Head>
+                <title>FireBoom - 认证鉴权</title>
+              </Head>
+              <Row className="h-[calc(100vh_-_36px)]">
+                <div className={`flex-1 ${styles['col-left']}`}>
+                  <AuthPannel
+                    onClickItem={onClickItem}
+                    handleTopToggleDesigner={handleTopToggleDesigner}
+                  />
+                </div>
+
+                <div className={styles.divider} />
+
+                <div className="flex-1">
+                  <AuthContainer
+                    handleTopToggleDesigner={handleTopToggleDesigner}
+                    showBottomType={showBottomType}
+                    showTopType={showTopType}
+                    content={content}
+                  />
+                </div>
+              </Row>
+            </ConnectorContext.Provider>
+          </AuthToggleContext.Provider>
+        </AuthCurrContext.Provider>
+      </AuthDispatchContext.Provider>
+    </AuthContext.Provider>
   )
 }

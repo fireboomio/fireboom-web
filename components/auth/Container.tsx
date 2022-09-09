@@ -147,7 +147,6 @@ export default function AuthContainer({
           <span className="text-lg flex-grow font-bold">
             身份验证
             <span className="text-base flex-grow font-bold">
-              {' '}
               <CaretRightOutlined /> {title}
             </span>
           </span>
