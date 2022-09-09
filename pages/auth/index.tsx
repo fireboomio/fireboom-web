@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Col, Row } from 'antd'
+import { Row } from 'antd'
 import Head from 'next/head'
 import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
@@ -79,20 +78,20 @@ export default function Authentication() {
                 <title>FireBoom - 认证鉴权</title>
               </Head>
               <Row className="h-[calc(100vh_-_36px)]">
-                <Col span={5} className={styles['col-left']}>
+                <div className={`flex-1 ${styles['col-left']}`}>
                   <AuthPannel
                     onClickItem={onClickItem}
                     handleTopToggleDesigner={handleTopToggleDesigner}
                   />
-                </Col>
-                <Col span={19}>
+                </div>
+                <div className="flex-1">
                   <AuthContainer
                     handleTopToggleDesigner={handleTopToggleDesigner}
                     showBottomType={showBottomType}
                     showTopType={showTopType}
                     content={content}
                   />
-                </Col>
+                </div>
               </Row>
             </ConnectorContext.Provider>
           </AuthToggleContext.Provider>
