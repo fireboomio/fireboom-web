@@ -9,7 +9,6 @@ import { AuthContext, AuthDispatchContext } from '@/lib/context/auth-context'
 
 import styles from './Common.module.scss'
 import AuthItem from './subs/ItemBottom'
-import AuthItemTop from './subs/ItemTop'
 
 interface Props {
   onClickItem: (authItem: AuthProvResp) => void
@@ -82,11 +81,12 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
         return x.type === 'title' ? (
           <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">{x.name}</h2>
         ) : (
-          <AuthItemTop
-            key={x.type}
-            handleTopToggleDesigner={handleTopToggleDesigner}
-            authType={x}
-          />
+          <div
+            className="pl-8 py-2.5 cursor-pointer hover:bg-[#F8F8F9]"
+            onClick={() => handleTopToggleDesigner(x)}
+          >
+            <div className="text-[#000000] h-4 leading-4">{x.name}</div>
+          </div>
         )
       })}
 
