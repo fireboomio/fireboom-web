@@ -41,7 +41,8 @@ const typeList: AuthListType[] = [
 export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Props) {
   const authList = useContext(AuthContext)
   const dispatch = useContext(AuthDispatchContext)
-  const [activeKey, setActiveKey] = useImmer([] as Array<string>)
+  const [activeKey, setActiveKey] = useImmer<string[]>([])
+  const [selectedType, setSelectedType] = useImmer('')
 
   // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
   function addTable() {
@@ -82,8 +83,13 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">{x.name}</h2>
         ) : (
           <div
-            className="pl-8 py-2.5 cursor-pointer hover:bg-[#F8F8F9]"
-            onClick={() => handleTopToggleDesigner(x)}
+            className={`pl-8 py-2.5 cursor-pointer hover:bg-[#F8F8F9] ${
+              x.type === selectedType ? 'bg-[#F8F8F9]' : ''
+            }`}
+            onClick={() => {
+              setSelectedType(x.type)
+              handleTopToggleDesigner(x)
+            }}
           >
             <div className="text-[#000000] h-4 leading-4">{x.name}</div>
           </div>
@@ -95,9 +101,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           ghost
           bordered
           activeKey={activeKey}
-          onChange={keys => {
-            setActiveKey(keys as string[])
-          }}
+          onChange={keys => setActiveKey(keys as string[])}
         >
           <Panel header="其他供应商" key={'1'} extra={genExtra()}>
             {authList.map(authItem => {
