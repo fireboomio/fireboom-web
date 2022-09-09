@@ -23,41 +23,20 @@ const initSettingPage: AuthListType = {
   type: 'userManage',
 }
 
-const firstTypeList: AuthListType[] = [
-  {
-    name: '用户管理',
-    type: 'userManage',
-  },
-  {
-    name: '角色管理',
-    type: 'roleManage',
-  },
-  {
-    name: '操作日志',
-    type: 'log',
-  },
-]
+const typeList: AuthListType[] = [
+  { name: '概览', type: 'outline' },
+  { name: '用户', type: 'title' },
+  { name: '用户管理', type: 'userManage' },
+  { name: '角色管理', type: 'roleManage' },
+  { name: '操作日志', type: 'log' },
 
-const secondTypeList: AuthListType[] = [
-  {
-    name: '登入体验',
-    type: 'login',
-  },
-  {
-    name: '连接器',
-    type: 'connect',
-  },
-  {
-    name: 'webhooks',
-    type: 'webhooks',
-  },
-]
+  { name: '通用', type: 'title' },
+  { name: '登入体验', type: 'login' },
+  { name: '连接器', type: 'connect' },
+  { name: 'webhooks', type: 'webhooks' },
 
-const thirdTypeList: AuthListType[] = [
-  {
-    name: '数据库',
-    type: 'db',
-  },
+  { name: '设置', type: 'title' },
+  { name: '数据库', type: 'db' },
 ]
 
 export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Props) {
@@ -98,35 +77,18 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
       <div className="border-gray border-b ">
         <div className={`${styles.title} text-lg font-bold mt-6 ml-4 mb-8`}>身份验证</div>
       </div>
-      <AuthItemTop
-        handleTopToggleDesigner={handleTopToggleDesigner}
-        authType={{ name: '概览', type: 'outline' }}
-      />
 
-      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">用户</h2>
-      {firstTypeList.map(authType => (
-        <AuthItemTop
-          key={authType.type}
-          handleTopToggleDesigner={handleTopToggleDesigner}
-          authType={authType}
-        />
-      ))}
-      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">通用</h2>
-      {secondTypeList.map(authType => (
-        <AuthItemTop
-          key={authType.type}
-          handleTopToggleDesigner={handleTopToggleDesigner}
-          authType={authType}
-        />
-      ))}
-      <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">设置</h2>
-      {thirdTypeList.map(authType => (
-        <AuthItemTop
-          key={authType.type}
-          handleTopToggleDesigner={handleTopToggleDesigner}
-          authType={authType}
-        />
-      ))}
+      {typeList.map(x => {
+        return x.type === 'title' ? (
+          <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">{x.name}</h2>
+        ) : (
+          <AuthItemTop
+            key={x.type}
+            handleTopToggleDesigner={handleTopToggleDesigner}
+            authType={x}
+          />
+        )
+      })}
 
       <div className="mt-3 absolute w-full bottom-1 h-50" style={{ overflow: 'auto' }}>
         <Collapse
