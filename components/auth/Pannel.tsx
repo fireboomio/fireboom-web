@@ -27,7 +27,7 @@ const typeList: AuthListType[] = [
   { name: '用户', type: 'title' },
   { name: '用户管理', type: 'userManage' },
   { name: '角色管理', type: 'roleManage' },
-  { name: '操作日志', type: 'log' },
+  // { name: '操作日志', type: 'log' },
 
   { name: '通用', type: 'title' },
   { name: '登入体验', type: 'login' },

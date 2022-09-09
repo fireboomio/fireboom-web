@@ -149,12 +149,6 @@ export default function Layout({ children }: PropsWithChildren) {
   }, [])
 
   useEffect(() => {
-    // setInfo({
-    //   errorInfo: { errTotal: 10, warnTotal: 22 },
-    //   engineStatus: '启动中',
-    //   hookStatus: '已停止',
-    // })
-    // return
     void fetch(`${DOMAIN}/api/v1/wdg/state`).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
