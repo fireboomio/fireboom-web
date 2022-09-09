@@ -177,6 +177,7 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
           pagination={false}
           columns={columns as DataType[]}
           dataSource={tableData}
+          rowClassName="cursor-pointer"
         />
       </div>
 

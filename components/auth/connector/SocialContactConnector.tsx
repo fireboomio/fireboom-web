@@ -146,6 +146,7 @@ const SocialContactConnector: React.FC<Props> = ({ data = [], handleTopToggleDes
           pagination={false}
           columns={columns as DataType[]}
           dataSource={tableData}
+          rowClassName="cursor-pointer"
         />
       </div>
 
