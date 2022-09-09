@@ -99,7 +99,7 @@ export default function Home() {
       </Head>
 
       <div className="flex items-center justify-end mx-6 my-5.5">
-        <div className="border cursor-pointer px-3 py-1">
+        <div className="invisible border cursor-pointer px-3 py-1">
           <IconFont type="icon-rizhi1" />
           <span className="ml-2">日志</span>
         </div>
