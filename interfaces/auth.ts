@@ -45,3 +45,28 @@ export interface HookResp {
 }
 
 export type HookName = 'postAuthentication' | 'mutatingPostAuthenti'
+
+type UNLOCK = 0
+type LOCK = 1
+
+export interface User {
+  id: number
+  email: string
+  encryptionPassword: string
+  mateData: string
+  mobile: string
+  name: string
+  nickName: string
+  status: UNLOCK | LOCK
+  lastLoginTime: string
+  createTime: string
+  updateTime: string
+  userName: string
+}
+
+export interface OAuthResp {
+  currPage: number
+  pageSize: number
+  totalPage: number
+  userList: User[]
+}

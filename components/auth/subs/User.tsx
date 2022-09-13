@@ -1,11 +1,12 @@
 import { ExportOutlined } from '@ant-design/icons'
 import { Input, Button, Modal, Form, Table, Divider, Switch, Tabs, Popconfirm, Badge } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { AuthListType } from '@/interfaces/auth'
+import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
+import { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -13,60 +14,33 @@ interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void
 }
 
-interface UserProvResp {
-  id: number
-  key: React.Key
-  name: string
-  phoneNumber: string
-  email: string
-  status: string
-  lastLoginTime: string
-}
-
 const { Search } = Input
 
 const { TabPane } = Tabs
 
-const data: UserProvResp[] = [
-  {
-    id: 1,
-    key: 1,
-    name: 'Alean',
-    phoneNumber: '18189156130',
-    email: '1278154346@qq.com',
-    status: '0',
-    lastLoginTime: '2022-06-27 15:47:14',
-  },
-  {
-    id: 2,
-    key: 2,
-    name: 'Alean',
-    phoneNumber: '18189156130',
-    email: '1278154346@qq.com',
-    status: '1',
-    lastLoginTime: '2022-06-27 15:47:14',
-  },
-]
-
 export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
-  // const [userData, setUserData] = useImmer([] as Array<UserProvResp>)
-  const [userData, setUserData] = useImmer(data)
+  const [userData, setUserData] = useImmer<User[]>([])
   const [userStatus, setUserStatus] = useImmer(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
-  const onFinish = (values: UserProvResp) => {
+  useEffect(() => {
+    void getFetcher<OAuthResp>('/oauth').then(res => setUserData(res.userList))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const onFinish = (values: User) => {
     setUserData(
       userData.concat({
         ...values,
-        key: userData.length + 1,
+        // key: userData.length + 1,
       })
     )
     // await requests.post('/role', values)
     // await getData()
   }
-  const columns: ColumnsType<UserProvResp> = [
+  const columns: ColumnsType<User> = [
     {
       title: '用户',
       dataIndex: 'name',
@@ -74,8 +48,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     },
     {
       title: '手机号',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      dataIndex: 'mobile',
+      key: 'mobile',
     },
     {
       title: '邮箱',
@@ -116,7 +90,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
-                handleUserLock(record.key)
+                handleUserLock(record.id)
               }}
               onCancel={e => {
                 // @ts-ignore
@@ -133,7 +107,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
-                handleUserDelete(record.key)
+                handleUserDelete(record.id)
               }}
               // @ts-ignore
               onCancel={e => e.stopPropagation()}
@@ -148,19 +122,17 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   ]
 
   const handleUserDelete = (key: React.Key) => {
-    setUserData(userData.filter(row => row.key !== key))
+    setUserData(userData.filter(row => row.id !== key))
   }
   const handleUserLock = (key: React.Key) => {
-    setUserStatus(userData.filter(item => item.key == key).at(0)?.status === '0')
-  }
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys)
+    setUserStatus(userData.filter(item => item.id == key).at(0)?.status === 0)
   }
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: onSelectChange,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys)
+    },
   }
 
   const hasSelected = selectedRowKeys.length > 0
@@ -272,7 +244,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               <TabPane tab="手机号" key="2">
                 <Form.Item
                   label="手机号"
-                  name="phoneNumber"
+                  name="mobile"
                   rules={[{ required: true, message: '手机号不能为空!' }]}
                 >
                   <Input />
