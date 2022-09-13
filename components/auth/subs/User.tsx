@@ -108,7 +108,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
       key: 'action',
       render: (_, record) =>
         userData.length >= 1 ? (
-          <div>
+          <>
             <Popconfirm
               title={userStatus ? '确定要锁定' : '确定要解锁'}
               okText="确定"
@@ -135,16 +135,14 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
                 e.stopPropagation()
                 handleUserDelete(record.key)
               }}
-              onCancel={e => {
-                // @ts-ignore
-                e.stopPropagation()
-              }}
+              // @ts-ignore
+              onCancel={e => e.stopPropagation()}
             >
               <a className="ml-2" onClick={e => e.stopPropagation()}>
                 删除
               </a>
             </Popconfirm>
-          </div>
+          </>
         ) : null,
     },
   ]
@@ -188,85 +186,6 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
           </Button>
         </div>
       </div>
-      <div>
-        <Modal
-          mask={false}
-          title="创建用户"
-          style={{ top: '200px' }}
-          width={549}
-          bodyStyle={{ height: '350px' }}
-          transitionName=""
-          visible={userVisible}
-          onOk={() => setUserVisible(false)}
-          onCancel={() => setUserVisible(false)}
-          okText={
-            <Button className={styles['save-btn']} onClick={() => form.submit()}>
-              <span>确定</span>
-            </Button>
-          }
-          okType="text"
-          cancelText="取消"
-        >
-          <Form
-            name="userList"
-            form={form}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 17 }}
-            initialValues={{ remember: true }}
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            onFinish={values => void onFinish(values)}
-            autoComplete="off"
-            labelAlign="right"
-            className="h-30 mt-8 ml-8"
-          >
-            <div className={styles['tabs-style']}>
-              <Tabs defaultActiveKey="1" type="card">
-                <TabPane tab="用户名" key="1">
-                  <Form.Item
-                    label="用户名"
-                    name="name"
-                    rules={[{ required: true, message: '用户名不为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-                <TabPane tab="手机号" key="2">
-                  <Form.Item
-                    label="手机号"
-                    name="phoneNumber"
-                    rules={[{ required: true, message: '手机号不能为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-                <TabPane tab="邮箱" key="3">
-                  <Form.Item
-                    label="邮箱"
-                    name="email"
-                    rules={[{ required: true, message: '邮箱不能为空!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </TabPane>
-              </Tabs>
-            </div>
-            <Form.Item label="密码" name="password">
-              <Input.Password />
-            </Form.Item>
-            <Form.Item label="确认密码" name="confirmPassword">
-              <Input.Password />
-            </Form.Item>
-            <Form.Item name="remember" valuePropName="checked">
-              <span className="ml-10 mr-2">发送首次登入地址</span>
-              <Switch className={`${styles['switch-edit-btn']}`} size="small" />
-            </Form.Item>
-            <Form.Item valuePropName="checked" colon={false}>
-              <span className="ml-10 mr-2">强制用户在首次登录时修改密码</span>
-              <Switch className={`${styles['switch-edit-btn']}`} size="small" />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
       <Divider style={{ margin: 0 }} />
 
       <Table
@@ -308,6 +227,84 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
       ) : (
         ''
       )}
+
+      <Modal
+        mask={false}
+        title="创建用户"
+        style={{ top: '200px' }}
+        width={549}
+        bodyStyle={{ height: '350px' }}
+        transitionName=""
+        visible={userVisible}
+        onOk={() => setUserVisible(false)}
+        onCancel={() => setUserVisible(false)}
+        okText={
+          <Button className={styles['save-btn']} onClick={() => form.submit()}>
+            <span>确定</span>
+          </Button>
+        }
+        okType="text"
+        cancelText="取消"
+      >
+        <Form
+          name="userList"
+          form={form}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 17 }}
+          initialValues={{ remember: true }}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          onFinish={values => void onFinish(values)}
+          autoComplete="off"
+          labelAlign="right"
+          className="h-30 mt-8 ml-8"
+        >
+          <div className={styles['tabs-style']}>
+            <Tabs defaultActiveKey="1" type="card">
+              <TabPane tab="用户名" key="1">
+                <Form.Item
+                  label="用户名"
+                  name="name"
+                  rules={[{ required: true, message: '用户名不为空!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </TabPane>
+              <TabPane tab="手机号" key="2">
+                <Form.Item
+                  label="手机号"
+                  name="phoneNumber"
+                  rules={[{ required: true, message: '手机号不能为空!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </TabPane>
+              <TabPane tab="邮箱" key="3">
+                <Form.Item
+                  label="邮箱"
+                  name="email"
+                  rules={[{ required: true, message: '邮箱不能为空!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </TabPane>
+            </Tabs>
+          </div>
+          <Form.Item label="密码" name="password">
+            <Input.Password />
+          </Form.Item>
+          <Form.Item label="确认密码" name="confirmPassword">
+            <Input.Password />
+          </Form.Item>
+          <Form.Item name="remember" valuePropName="checked">
+            <span className="ml-10 mr-2">发送首次登入地址</span>
+            <Switch className={`${styles['switch-edit-btn']}`} size="small" />
+          </Form.Item>
+          <Form.Item valuePropName="checked" colon={false}>
+            <span className="ml-10 mr-2">强制用户在首次登录时修改密码</span>
+            <Switch className={`${styles['switch-edit-btn']}`} size="small" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   )
 }
