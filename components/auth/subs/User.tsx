@@ -24,6 +24,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [userData, setUserData] = useImmer<User[]>([])
   const [userStatus, setUserStatus] = useImmer(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [currPage, _setCurrPage] = useImmer(1)
 
   useEffect(() => {
     void getFetcher<OAuthResp>('/oauth').then(res => setUserData(res.userList))
@@ -137,6 +138,20 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
 
   const hasSelected = selectedRowKeys.length > 0
 
+  const paginationProps = {
+    showSizeChanger: false,
+    showQuickJumper: false,
+    pageSize: 10,
+    current: currPage,
+    onChange: (current: number) => changePage(current),
+  }
+
+  function changePage(current: number) {
+    void getFetcher<OAuthResp>('/oauth', { currPage: current }).then(res =>
+      setUserData(res.userList)
+    )
+  }
+
   return (
     <>
       <div>
@@ -171,7 +186,9 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         onRow={() => ({
           onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
         })}
+        pagination={paginationProps}
       />
+
       {hasSelected ? (
         <div className="flex border px-5 py-3 w-140">
           <div className={styles['right-style']}>
