@@ -148,6 +148,10 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     )
   }
 
+  function search(value: string) {
+    void getFetcher<OAuthResp>('/oauth', { search: value }).then(res => setUserData(res.userList))
+  }
+
   return (
     <>
       <div>
@@ -157,7 +161,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
       <Divider style={{ margin: 10 }} />
 
       <div className="flex justify-between items-center mb-2">
-        <Search placeholder="搜索用户名、邮箱或手机号" style={{ width: 228, height: 32 }} />
+        <Search
+          placeholder="搜索用户名、邮箱或手机号"
+          style={{ width: 228, height: 32 }}
+          onSearch={search}
+        />
         <div className="flex items-center mb-2">
           <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
             <span className="text-sm text-gray">导出全部</span>
