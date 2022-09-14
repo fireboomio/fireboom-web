@@ -152,6 +152,12 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     void getFetcher<OAuthResp>('/oauth', { search: value }).then(res => setUserData(res.userList))
   }
 
+  function exportUsers(keys?: React.Key[]) {
+    void requests.post('/oauth/export', { ids: keys }).then(res => {
+      console.log(res)
+    })
+  }
+
   return (
     <>
       <div>
@@ -167,7 +173,10 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
           onSearch={search}
         />
         <div className="flex items-center mb-2">
-          <Button className={`${styles['connect-check-btn-common']} w-20 ml-4`}>
+          <Button
+            className={`${styles['connect-check-btn-common']} w-20 ml-4`}
+            onClick={() => exportUsers()}
+          >
             <span className="text-sm text-gray">导出全部</span>
           </Button>
           <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
@@ -216,7 +225,9 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
             >
               删除
             </Button>
-            <Button icon={<ExportOutlined />}>导出</Button>
+            <Button icon={<ExportOutlined />} onClick={() => exportUsers(selectedRowKeys)}>
+              导出
+            </Button>
             <Divider type="vertical" className={styles['modal-divider']} />
           </div>
           <Button>取消选择</Button>
