@@ -46,8 +46,8 @@ export interface HookResp {
 
 export type HookName = 'postAuthentication' | 'mutatingPostAuthenti'
 
-type UNLOCK = 0
-type LOCK = 1
+type UNLOCK = true
+type LOCK = false
 
 export interface User {
   id: number

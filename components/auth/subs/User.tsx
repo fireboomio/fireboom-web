@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -22,14 +22,16 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
   const [userData, setUserData] = useImmer<User[]>([])
-  const [userStatus, setUserStatus] = useImmer(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [currPage, _setCurrPage] = useImmer(1)
+  const [refreshFlag, setRefreshFlag] = useImmer(true)
 
   useEffect(() => {
-    void getFetcher<OAuthResp>('/oauth').then(res => setUserData(res.userList))
+    void getFetcher<OAuthResp>('/oauth', { currPage: currPage }).then(res =>
+      setUserData(res.userList)
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [refreshFlag])
 
   const onFinish = (values: User) => {
     setUserData(
@@ -41,27 +43,16 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     // await requests.post('/role', values)
     // await getData()
   }
+
   const columns: ColumnsType<User> = [
-    {
-      title: '用户',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '手机号',
-      dataIndex: 'mobile',
-      key: 'mobile',
-    },
-    {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-    },
+    { title: '用户', dataIndex: 'name', key: 'name' },
+    { title: '手机号', dataIndex: 'mobile', key: 'mobile' },
+    { title: '邮箱', dataIndex: 'email', key: 'email' },
     {
       title: '状态',
       key: 'status',
-      render: () =>
-        userStatus ? (
+      render: (_, rcd) =>
+        !rcd.status ? (
           <div>
             <Badge status="success" />
             正常
@@ -73,11 +64,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
           </div>
         ),
     },
-    {
-      title: '最后登入时间',
-      dataIndex: 'lastLoginTime',
-      key: 'lastLoginTime',
-    },
+    { title: '最后登入时间', dataIndex: 'lastLoginTime', key: 'lastLoginTime' },
     {
       title: '操作',
       key: 'action',
@@ -85,20 +72,20 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         userData.length >= 1 ? (
           <>
             <Popconfirm
-              title={userStatus ? '确定要锁定' : '确定要解锁'}
+              title={!record.status ? '确定要锁定' : '确定要解锁'}
               okText="确定"
               cancelText="取消"
               onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
-                handleUserLock(record.id)
+                toggleLock(record)
               }}
               onCancel={e => {
                 // @ts-ignore
                 e.stopPropagation()
               }}
             >
-              <a onClick={e => e.stopPropagation()}>{userStatus ? '锁定' : '解锁'}</a>
+              <a onClick={e => e.stopPropagation()}>{!record.status ? '锁定' : '解锁'}</a>
             </Popconfirm>
 
             <Popconfirm
@@ -108,7 +95,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               onConfirm={e => {
                 // @ts-ignore
                 e.stopPropagation()
-                handleUserDelete(record.id)
+                handleDelete([record.id])
               }}
               // @ts-ignore
               onCancel={e => e.stopPropagation()}
@@ -122,11 +109,20 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     },
   ]
 
-  const handleUserDelete = (key: React.Key) => {
-    setUserData(userData.filter(row => row.id !== key))
+  const handleDelete = (keys: React.Key[]) => {
+    void requests.delete('/oauth', { data: { ids: keys } }).then(() => setRefreshFlag(!refreshFlag))
   }
-  const handleUserLock = (key: React.Key) => {
-    setUserStatus(userData.filter(item => item.id == key).at(0)?.status === 0)
+
+  const toggleLock = (rcd: User | React.Key[]) => {
+    if (Array.isArray(rcd)) {
+      void requests
+        .put('/oauth/status', { ids: rcd, status: false })
+        .then(() => setRefreshFlag(!refreshFlag))
+    } else {
+      void requests
+        .put('/oauth/status', { ids: [rcd.id], status: !rcd.status })
+        .then(() => setRefreshFlag(!refreshFlag))
+    }
   }
 
   const rowSelection = {
@@ -159,6 +155,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         <span className={styles['auth-head']}>当前用户池的所有用户，在这里你可以对用户</span>
       </div>
       <Divider style={{ margin: 10 }} />
+
       <div className="flex justify-between items-center mb-2">
         <Search placeholder="搜索用户名、邮箱或手机号" style={{ width: 228, height: 32 }} />
         <div className="flex items-center mb-2">
@@ -195,16 +192,19 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
             已选择
             <span>{selectedRowKeys.length}</span>个
           </div>
+
           <div className={styles['btn-style']}>
             <Button
               className="mr-2 ml-10 text-[ #e92e5e]"
               icon={<IconFont type="icon-lock" className="text-[16px]" />}
+              onClick={() => toggleLock(selectedRowKeys)}
             >
               锁定
             </Button>
             <Button
               className="mr-2"
               icon={<IconFont type="icon-shanchu" className="text-[16px]" />}
+              onClick={() => handleDelete(selectedRowKeys)}
             >
               删除
             </Button>
