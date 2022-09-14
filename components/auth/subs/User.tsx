@@ -16,8 +16,6 @@ interface Props {
 
 const { Search } = Input
 
-const { TabPane } = Tabs
-
 export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
@@ -34,14 +32,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }, [refreshFlag])
 
   const onFinish = (values: User) => {
-    setUserData(
-      userData.concat({
-        ...values,
-        // key: userData.length + 1,
-      })
-    )
-    // await requests.post('/role', values)
-    // await getData()
+    console.log(values)
+    void requests.post('/oauth', values).then(() => setRefreshFlag(!refreshFlag))
   }
 
   const columns: ColumnsType<User> = [
@@ -158,6 +150,44 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     })
   }
 
+  const tabItems = [
+    {
+      label: '用户名',
+      key: '1',
+      children: (
+        <Form.Item
+          label="用户名"
+          name="name"
+          rules={[{ required: true, message: '用户名不为空!' }]}
+        >
+          <Input />
+        </Form.Item>
+      ),
+    },
+    {
+      label: '手机号',
+      key: '2',
+      children: (
+        <Form.Item
+          label="手机号"
+          name="mobile"
+          rules={[{ required: true, message: '手机号不能为空!' }]}
+        >
+          <Input />
+        </Form.Item>
+      ),
+    },
+    {
+      label: '邮箱',
+      key: '3',
+      children: (
+        <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '邮箱不能为空!' }]}>
+          <Input />
+        </Form.Item>
+      ),
+    },
+  ]
+
   return (
     <>
       <div>
@@ -212,7 +242,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
 
           <div className={styles['btn-style']}>
             <Button
-              className="mr-2 ml-10 text-[ #e92e5e]"
+              className="mr-2 ml-10 text-[#e92e5e]"
               icon={<IconFont type="icon-lock" className="text-[16px]" />}
               onClick={() => toggleLock(selectedRowKeys)}
             >
@@ -242,9 +272,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         style={{ top: '200px' }}
         width={549}
         bodyStyle={{ height: '350px' }}
-        transitionName=""
-        visible={userVisible}
-        onOk={() => setUserVisible(false)}
+        open={userVisible}
+        onOk={() => {
+          form.submit()
+          // setUserVisible(false)
+        }}
         onCancel={() => setUserVisible(false)}
         okText={
           <Button className={styles['save-btn']} onClick={() => form.submit()}>
@@ -267,40 +299,30 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
           className="h-30 mt-8 ml-8"
         >
           <div className={styles['tabs-style']}>
-            <Tabs defaultActiveKey="1" type="card">
-              <TabPane tab="用户名" key="1">
-                <Form.Item
-                  label="用户名"
-                  name="name"
-                  rules={[{ required: true, message: '用户名不为空!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </TabPane>
-              <TabPane tab="手机号" key="2">
-                <Form.Item
-                  label="手机号"
-                  name="mobile"
-                  rules={[{ required: true, message: '手机号不能为空!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </TabPane>
-              <TabPane tab="邮箱" key="3">
-                <Form.Item
-                  label="邮箱"
-                  name="email"
-                  rules={[{ required: true, message: '邮箱不能为空!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </TabPane>
-            </Tabs>
+            <Tabs defaultActiveKey="1" type="card" items={tabItems} />
           </div>
-          <Form.Item label="密码" name="password">
+          <Form.Item
+            label="密码"
+            name="password"
+            rules={[{ required: true, message: '请再次输入密码!' }]}
+          >
             <Input.Password />
           </Form.Item>
-          <Form.Item label="确认密码" name="confirmPassword">
+          <Form.Item
+            label="确认密码"
+            name="confirmPassword"
+            rules={[
+              { required: true, message: '请再次输入密码!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve()
+                  }
+                  return Promise.reject(new Error('密码不一致!'))
+                },
+              }),
+            ]}
+          >
             <Input.Password />
           </Form.Item>
           <Form.Item name="remember" valuePropName="checked">
