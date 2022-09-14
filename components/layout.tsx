@@ -155,18 +155,13 @@ export default function Layout({ children }: PropsWithChildren) {
 
       // @ts-ignore
       const process = ({ value, done }) => {
-        if (done) {
-          return
-        }
+        if (done) return
 
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
-
-          void data.json().then(res => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-            setInfo(res)
-          })
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          void data.json().then(res => setInfo(res))
         } catch (error) {
           // eslint-disable-next-line no-console
           console.log(error)
