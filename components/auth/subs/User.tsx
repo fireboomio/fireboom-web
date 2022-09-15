@@ -183,6 +183,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }
 
   function handleRowClick(rcd: User) {
+    console.log(rcd)
     handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
   }
 
@@ -226,7 +227,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         rowKey={record => record.id}
         rowClassName="cursor-pointer"
         onRow={rcd => ({
-          onClick: handleRowClick(rcd),
+          onClick: () => handleRowClick(rcd),
         })}
         pagination={paginationProps}
       />
