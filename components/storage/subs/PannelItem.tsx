@@ -136,6 +136,7 @@ export default function StoragePannelItem({ bucket }: Props) {
         <Input
           onBlur={e => void handleItemEdit(e.target.value)}
           // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           onPressEnter={e => void handleItemEdit(e.target.value)}
           className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
           defaultValue={bucket.name}

@@ -135,6 +135,7 @@ export default function Custom({ content }: Props) {
                 <Input
                   onBlur={e => handleEdit(e.target.value)}
                   // @ts-ignore
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                   onPressEnter={e => handleEdit(e.target.value)}
                   style={{ width: '200px' }}
                   defaultValue={config.serverName}

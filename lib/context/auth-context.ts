@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from 'react'
 import * as useImmer from 'use-immer'
 
-import type { AuthProvResp, AuthAction } from '@/interfaces/auth'
+import type { AuthProvResp, AuthAction, User } from '@/interfaces/auth'
 import { Action } from '@/interfaces/common'
 import { Connector } from '@/interfaces/connector'
 
@@ -12,6 +12,10 @@ interface AuthCurrContextT {
 
 interface AuthToggleContext {
   handleBottomToggleDesigner: (type: 'data' | 'edit', id?: number) => void
+}
+interface AuthUserCurrContextT {
+  authUserCurr: User
+  setAuthUserCurr: useImmer.Updater<User>
 }
 
 export interface ConnectorContextType {
@@ -27,3 +31,5 @@ export const AuthDispatchContext = createContext({} as Dispatch<AuthAction>)
 export const AuthCurrContext = createContext({} as AuthCurrContextT)
 export const AuthToggleContext = createContext({} as AuthToggleContext)
 export const ConnectorContext = createContext({} as ConnectorContextType)
+
+export const AuthUserCurrContext = createContext<AuthUserCurrContextT>({} as AuthUserCurrContextT)

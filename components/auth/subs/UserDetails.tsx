@@ -1,11 +1,13 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker, Space } from 'antd'
+import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-// import { useCallback, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-// import requests from '@/lib/fetchers'
+import { User } from '@/interfaces/auth'
+import { AuthUserCurrContext } from '@/lib/context/auth-context'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -13,50 +15,28 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 interface RoleProvResp {
   id: number
-  key: React.Key
   code: string
   remark: string
 }
 
 const { TabPane } = Tabs
 const { Option } = Select
-const data: RoleProvResp[] = [
-  {
-    id: 1,
-    key: 1,
-    code: 'user',
-    remark: '普通用户',
-  },
-  {
-    id: 2,
-    key: 2,
-    code: 'user',
-    remark: '普通用户',
-  },
-]
 
 export default function AuthUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  // const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
-  const [roleData, setRoleData] = useImmer(data)
+  const [roleData, setRoleData] = useImmer<RoleProvResp[]>([])
+  const { authUserCurr, setAuthUserCurr } = useContext(AuthUserCurrContext)
+  const [refreshFlag, setRefreshFlag] = useImmer(false)
 
-  const onFinish = (values: RoleProvResp) => {
-    setRoleData(
-      roleData.concat({
-        ...values,
-        key: roleData.length + 1,
-      })
-    )
+  const onFinish = (values: User) => {
+    void requests.put(`/oauth/${authUserCurr.id}`, { values })
   }
 
-  const handleDeleteRole = (key: React.Key) => {
-    setRoleData(
-      roleData.filter(row => {
-        return row.key !== key
-      })
-    )
-  }
+  useEffect(() => {
+    void getFetcher<RoleProvResp[]>(`/oauth/role/${authUserCurr.id}`).then(x => setRoleData(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUserCurr.id, refreshFlag])
 
   const columns: ColumnsType<RoleProvResp> = [
     {
@@ -72,19 +52,28 @@ export default function AuthUserDetails() {
     {
       title: '操作',
       key: 4,
-      render: (_, { key }) => (
+      render: (_, { id }) => (
         <span
-          className="pl-0 text-red-500"
-          onClick={() => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            void handleDeleteRole(key)
-          }}
+          className="pl-0 text-red-500 cursor-pointer"
+          onClick={() => void handleDeleteRole(id)}
         >
           撤销角色
         </span>
       ),
     },
   ]
+
+  const handleDeleteRole = (id: number) => {
+    void requests.post(`/oauth/role/${id}`).then(() => setRefreshFlag(!refreshFlag))
+  }
+
+  // @ts-ignore
+  function handleValueChange(_, allVal) {
+    // TODO:
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setAuthUserCurr(allVal)
+  }
 
   return (
     <>
@@ -95,104 +84,77 @@ export default function AuthUserDetails() {
             name="basic"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 20 }}
-            initialValues={{ remember: true }}
-            onFinish={values => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              void onFinish(values)
-            }}
+            initialValues={authUserCurr}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            onFinish={values => void onFinish(values)}
             autoComplete="off"
             labelAlign="left"
             className={styles['form-style']}
+            onValuesChange={handleValueChange}
           >
             <Row>
               <Col span={8}>
-                <Form.Item label="姓名" name="username">
+                <Form.Item label="用户名" name="name">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="用户名" name="password">
+                <Form.Item label="昵称" name="nickName">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="昵称" name="password">
+                <Form.Item
+                  label="姓名"
+                  name="metaData.realname"
+                  initialValue={authUserCurr.metaData?.realname}
+                >
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="性别" name="username">
+                <Form.Item label="性别" name="metaData.gender">
                   <Select placeholder="请输入">
-                    <Select.Option value="demo">男</Select.Option>
-                    <Select.Option value="demo">女</Select.Option>
+                    <Select.Option value="男">男</Select.Option>
+                    <Select.Option value="女">女</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="生日" name="password">
-                  <Space direction="vertical">
-                    <DatePicker placeholder="请输入" />
-                  </Space>
+                <Form.Item label="生日" name="metaData.birthday">
+                  {/* <Space direction="vertical"> */}
+                  <DatePicker placeholder="请输入" />
+                  {/* </Space> */}
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="手机号" name="password">
+                <Form.Item label="手机号" name="mobile">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="邮箱" name="username">
+                <Form.Item label="邮箱" name="email">
                   <Input
                     placeholder="请输入"
-                    suffix={<span className="text-[#E92E5E] h-5">发送验证码</span>}
+                    // suffix={<span className="text-[#E92E5E] h-5">发送验证码</span>}
                   />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="国家代码" name="password">
+                <Form.Item
+                  label="邮政编码"
+                  name="metaData.postCode"
+                  initialValue={authUserCurr.metaData?.postCode}
+                >
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="所在地" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="公司" name="username">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="城市" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="省/区" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="街道地址" name="username">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="城市" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="原系统ID" name="password">
+                <Form.Item label="原系统ID" name="metaData.originID">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
@@ -201,7 +163,9 @@ export default function AuthUserDetails() {
               <Col span={24} style={{ textAlign: 'center' }}>
                 <Form.Item wrapperCol={{ span: 24 }}>
                   <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
-                    <span className="text-sm text-gray">重置</span>
+                    <span className="text-sm text-gray" onClick={() => form.resetFields()}>
+                      重置
+                    </span>
                   </Button>
                   <Button className={`${styles['save-btn']} ml-4`} htmlType="submit">
                     保存
@@ -220,7 +184,8 @@ export default function AuthUserDetails() {
           <Editor
             height="90vh"
             defaultLanguage="typescript"
-            defaultValue="// some comment"
+            defaultValue=""
+            value={JSON.stringify(authUserCurr, null, 2)}
             className={`mt-4 ${styles.monaco}`}
           />
         </TabPane>

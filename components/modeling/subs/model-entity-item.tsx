@@ -22,7 +22,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
   const [visible, setVisible] = useImmer(false)
   const { currEntityId, setCurrEntityId: _ } = useContext(ModelingCurrEntityContext)
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps['onClick'] = e => {
     e.domEvent.stopPropagation()
     if (e.key === '1' || e.key === '2') {
       setVisible(false)
@@ -108,9 +108,10 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
 
   const itemContent = isEditing ? (
     <Input
-      onBlur={(e) => renameEntity(e.target.value)}
+      onBlur={e => renameEntity(e.target.value)}
       // @ts-ignore
-      onPressEnter={(e) => renameEntity(e.target.value)}
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      onPressEnter={e => renameEntity(e.target.value)}
       onKeyUp={handlePressKey}
       className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
       defaultValue={entity.name}
@@ -146,13 +147,13 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
         trigger={['click']}
         placement="bottomRight"
         visible={visible}
-        onVisibleChange={(v) => {
+        onVisibleChange={v => {
           setVisible(v)
           leaveItem(v)
         }}
       >
         <MoreOutlined
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
           className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />

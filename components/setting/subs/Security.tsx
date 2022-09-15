@@ -269,6 +269,7 @@ export default function SettingMainSecurity() {
                                 })
                               }}
                               onPressEnter={e => {
+                                // @ts-ignore
                                 if (e.target.value == '') return
                                 void postRequest(
                                   'allowedHosts',

@@ -163,17 +163,13 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
     <>
       <div className={styles.tableWrapper}>
         <Table
-          onHeaderRow={() => {
-            return {
-              className: styles.headerWidth,
-            }
-          }}
-          onRow={record => {
-            return {
-              className: styles.tableItemWidth,
-              onClick: handleRowClick(record as unknown as ConnectorType),
-            }
-          }}
+          onHeaderRow={() => ({
+            className: styles.headerWidth,
+          })}
+          onRow={record => ({
+            className: styles.tableItemWidth,
+            onClick: handleRowClick(record as unknown as ConnectorType),
+          })}
           pagination={false}
           columns={columns as DataType[]}
           dataSource={tableData}

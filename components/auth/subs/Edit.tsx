@@ -100,9 +100,9 @@ export default function AuthMainEdit({ content }: Props) {
         clientId: '',
         clientSecret: '',
         issuer: '',
-        jwks: '0',
+        jwks: 0,
         jwksJSON: '',
-        switchState: '',
+        switchState: [],
       }
 
   return (
