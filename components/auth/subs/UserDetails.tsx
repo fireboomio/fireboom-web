@@ -1,13 +1,13 @@
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import { User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
-import requests from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -15,45 +15,28 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 interface RoleProvResp {
   id: number
-  key: React.Key
   code: string
   remark: string
 }
 
 const { TabPane } = Tabs
 const { Option } = Select
-const data: RoleProvResp[] = [
-  {
-    id: 1,
-    key: 1,
-    code: 'user',
-    remark: '普通用户',
-  },
-  {
-    id: 2,
-    key: 2,
-    code: 'user',
-    remark: '普通用户',
-  },
-]
 
 export default function AuthUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  const [roleData, setRoleData] = useImmer(data)
+  const [roleData, setRoleData] = useImmer<RoleProvResp[]>([])
   const { authUserCurr, setAuthUserCurr } = useContext(AuthUserCurrContext)
+  const [refreshFlag, setRefreshFlag] = useImmer(false)
 
   const onFinish = (values: User) => {
     void requests.put(`/oauth/${authUserCurr.id}`, { values })
   }
 
-  const handleDeleteRole = (key: React.Key) => {
-    setRoleData(
-      roleData.filter(row => {
-        return row.key !== key
-      })
-    )
-  }
+  useEffect(() => {
+    void getFetcher<RoleProvResp[]>(`/oauth/role/${authUserCurr.id}`).then(x => setRoleData(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUserCurr.id, refreshFlag])
 
   const columns: ColumnsType<RoleProvResp> = [
     {
@@ -69,19 +52,20 @@ export default function AuthUserDetails() {
     {
       title: '操作',
       key: 4,
-      render: (_, { key }) => (
+      render: (_, { id }) => (
         <span
-          className="pl-0 text-red-500"
-          onClick={() => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            void handleDeleteRole(key)
-          }}
+          className="pl-0 text-red-500 cursor-pointer"
+          onClick={() => void handleDeleteRole(id)}
         >
           撤销角色
         </span>
       ),
     },
   ]
+
+  const handleDeleteRole = (id: number) => {
+    void requests.post(`/oauth/role/${id}`).then(() => setRefreshFlag(!refreshFlag))
+  }
 
   // @ts-ignore
   function handleValueChange(_, allVal) {
