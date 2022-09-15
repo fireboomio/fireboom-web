@@ -165,6 +165,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           <Input
             onBlur={e => void handleItemEdit(e.target.value)}
             // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             onPressEnter={e => void handleItemEdit(e.target.value)}
             onKeyUp={(e: React.KeyboardEvent) => {
               e.key == 'Escape' && setIsEditing(false)

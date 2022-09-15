@@ -330,6 +330,8 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
               placeholder="请输入备注"
               size="small"
               defaultValue={node.remark || node.title}
+              // @ts-ignore
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               onPressEnter={e => updateRemark(e.target.value)}
               onKeyUp={(e: React.KeyboardEvent) => e.key == 'Escape' && setEditRemark(false)}
               onBlur={() => setEditRemark(false)}
