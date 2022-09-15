@@ -16,6 +16,40 @@ interface Props {
 
 const { Search } = Input
 
+const tabItems = [
+  {
+    label: '用户名',
+    key: '1',
+    children: (
+      <Form.Item label="用户名" name="name" rules={[{ required: true, message: '用户名不为空!' }]}>
+        <Input />
+      </Form.Item>
+    ),
+  },
+  {
+    label: '手机号',
+    key: '2',
+    children: (
+      <Form.Item
+        label="手机号"
+        name="mobile"
+        rules={[{ required: true, message: '手机号不能为空!' }]}
+      >
+        <Input />
+      </Form.Item>
+    ),
+  },
+  {
+    label: '邮箱',
+    key: '3',
+    children: (
+      <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '邮箱不能为空!' }]}>
+        <Input />
+      </Form.Item>
+    ),
+  },
+]
+
 export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
@@ -72,10 +106,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
                 e.stopPropagation()
                 toggleLock(record)
               }}
-              onCancel={e => {
-                // @ts-ignore
-                e.stopPropagation()
-              }}
+              // @ts-ignore
+              onCancel={e => e.stopPropagation()}
             >
               <a onClick={e => e.stopPropagation()}>{!record.status ? '锁定' : '解锁'}</a>
             </Popconfirm>
@@ -150,43 +182,9 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     })
   }
 
-  const tabItems = [
-    {
-      label: '用户名',
-      key: '1',
-      children: (
-        <Form.Item
-          label="用户名"
-          name="name"
-          rules={[{ required: true, message: '用户名不为空!' }]}
-        >
-          <Input />
-        </Form.Item>
-      ),
-    },
-    {
-      label: '手机号',
-      key: '2',
-      children: (
-        <Form.Item
-          label="手机号"
-          name="mobile"
-          rules={[{ required: true, message: '手机号不能为空!' }]}
-        >
-          <Input />
-        </Form.Item>
-      ),
-    },
-    {
-      label: '邮箱',
-      key: '3',
-      children: (
-        <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '邮箱不能为空!' }]}>
-          <Input />
-        </Form.Item>
-      ),
-    },
-  ]
+  function handleRowClick(rcd: User) {
+    handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
+  }
 
   return (
     <>
@@ -227,8 +225,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         size="small"
         rowKey={record => record.id}
         rowClassName="cursor-pointer"
-        onRow={() => ({
-          onClick: () => handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' }),
+        onRow={rcd => ({
+          onClick: handleRowClick(rcd),
         })}
         pagination={paginationProps}
       />

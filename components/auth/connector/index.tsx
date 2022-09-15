@@ -31,7 +31,7 @@ const Connector: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   }, [data])
 
   return (
-    <div>
+    <>
       <span className={styles.title}>连接器</span>
       <span className={styles.titlePlaceholder}>设置连接器，开启无密码和社交登录</span>
       <div className={styles.tabStyle}>
@@ -50,7 +50,7 @@ const Connector: React.FC<Props> = ({ handleTopToggleDesigner }) => {
           </TabPane>
         </Tabs>
       </div>
-    </div>
+    </>
   )
 }
 export default Connector

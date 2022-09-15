@@ -140,6 +140,7 @@ export default function AuthContainer({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBottomType, content])
+
   return (
     <div className="pl-6 pr-6 mt-6">
       {showTopType !== 'userDetails' ? (

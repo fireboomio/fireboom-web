@@ -32,7 +32,7 @@ const typeList: AuthListType[] = [
   { name: '通用', type: 'title' },
   { name: '登入体验', type: 'login' },
   { name: '连接器', type: 'connect' },
-  { name: 'webhooks', type: 'webhooks' },
+  // { name: 'webhooks', type: 'webhooks' },
 
   { name: '设置', type: 'title' },
   { name: '数据库', type: 'db' },
