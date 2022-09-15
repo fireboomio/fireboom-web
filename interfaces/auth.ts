@@ -53,7 +53,7 @@ export interface User {
   id: number
   email: string
   encryptionPassword: string
-  mateData: string
+  metaData: Record<string, string | number | boolean>
   mobile: string
   name: string
   nickName: string

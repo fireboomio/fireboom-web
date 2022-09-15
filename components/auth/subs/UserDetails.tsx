@@ -1,11 +1,13 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker, Space } from 'antd'
+import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
+import { User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
+import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
 
@@ -38,17 +40,11 @@ const data: RoleProvResp[] = [
 export default function AuthUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
-  // const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
   const [roleData, setRoleData] = useImmer(data)
-  const { authUserCurr } = useContext(AuthUserCurrContext)
+  const { authUserCurr, setAuthUserCurr } = useContext(AuthUserCurrContext)
 
-  const onFinish = (values: RoleProvResp) => {
-    setRoleData(
-      roleData.concat({
-        ...values,
-        key: roleData.length + 1,
-      })
-    )
+  const onFinish = (values: User) => {
+    void requests.put(`/oauth/${authUserCurr.id}`, { values })
   }
 
   const handleDeleteRole = (key: React.Key) => {
@@ -87,7 +83,13 @@ export default function AuthUserDetails() {
     },
   ]
 
-  console.log('bb', authUserCurr)
+  // @ts-ignore
+  function handleValueChange(_, allVal) {
+    // TODO:
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setAuthUserCurr(allVal)
+  }
 
   return (
     <>
@@ -99,13 +101,12 @@ export default function AuthUserDetails() {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 20 }}
             initialValues={authUserCurr}
-            onFinish={values => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              void onFinish(values)
-            }}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            onFinish={values => void onFinish(values)}
             autoComplete="off"
             labelAlign="left"
             className={styles['form-style']}
+            onValuesChange={handleValueChange}
           >
             <Row>
               <Col span={8}>
@@ -119,14 +120,18 @@ export default function AuthUserDetails() {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="姓名" name="realname">
+                <Form.Item
+                  label="姓名"
+                  name="metaData.realname"
+                  initialValue={authUserCurr.metaData?.realname}
+                >
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="性别" name="gender">
+                <Form.Item label="性别" name="metaData.gender">
                   <Select placeholder="请输入">
                     <Select.Option value="男">男</Select.Option>
                     <Select.Option value="女">女</Select.Option>
@@ -134,7 +139,7 @@ export default function AuthUserDetails() {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="生日" name="birthday">
+                <Form.Item label="生日" name="metaData.birthday">
                   {/* <Space direction="vertical"> */}
                   <DatePicker placeholder="请输入" />
                   {/* </Space> */}
@@ -156,12 +161,16 @@ export default function AuthUserDetails() {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="邮政编码" name="postCode">
+                <Form.Item
+                  label="邮政编码"
+                  name="metaData.postCode"
+                  initialValue={authUserCurr.metaData?.postCode}
+                >
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="原系统ID" name="password">
+                <Form.Item label="原系统ID" name="metaData.originID">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
@@ -170,7 +179,9 @@ export default function AuthUserDetails() {
               <Col span={24} style={{ textAlign: 'center' }}>
                 <Form.Item wrapperCol={{ span: 24 }}>
                   <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
-                    <span className="text-sm text-gray">重置</span>
+                    <span className="text-sm text-gray" onClick={() => form.resetFields()}>
+                      重置
+                    </span>
                   </Button>
                   <Button className={`${styles['save-btn']} ml-4`} htmlType="submit">
                     保存
@@ -189,7 +200,8 @@ export default function AuthUserDetails() {
           <Editor
             height="90vh"
             defaultLanguage="typescript"
-            defaultValue="// some comment"
+            defaultValue=""
+            value={JSON.stringify(authUserCurr, null, 2)}
             className={`mt-4 ${styles.monaco}`}
           />
         </TabPane>
