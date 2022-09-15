@@ -1,11 +1,11 @@
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker, Space } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-// import { useCallback, useEffect } from 'react'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-// import requests from '@/lib/fetchers'
+import { AuthUserCurrContext } from '@/lib/context/auth-context'
 
 import styles from './subs.module.scss'
 
@@ -40,6 +40,7 @@ export default function AuthUserDetails() {
   const [modal1Visible, setModal1Visible] = useImmer(false)
   // const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
   const [roleData, setRoleData] = useImmer(data)
+  const { authUserCurr } = useContext(AuthUserCurrContext)
 
   const onFinish = (values: RoleProvResp) => {
     setRoleData(
@@ -86,6 +87,8 @@ export default function AuthUserDetails() {
     },
   ]
 
+  console.log('bb', authUserCurr)
+
   return (
     <>
       <Tabs defaultActiveKey="1">
@@ -95,7 +98,7 @@ export default function AuthUserDetails() {
             name="basic"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 20 }}
-            initialValues={{ remember: true }}
+            initialValues={authUserCurr}
             onFinish={values => {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               void onFinish(values)
@@ -106,88 +109,54 @@ export default function AuthUserDetails() {
           >
             <Row>
               <Col span={8}>
-                <Form.Item label="姓名" name="username">
+                <Form.Item label="用户名" name="name">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="用户名" name="password">
+                <Form.Item label="昵称" name="nickName">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="昵称" name="password">
+                <Form.Item label="姓名" name="realname">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="性别" name="username">
+                <Form.Item label="性别" name="gender">
                   <Select placeholder="请输入">
-                    <Select.Option value="demo">男</Select.Option>
-                    <Select.Option value="demo">女</Select.Option>
+                    <Select.Option value="男">男</Select.Option>
+                    <Select.Option value="女">女</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="生日" name="password">
-                  <Space direction="vertical">
-                    <DatePicker placeholder="请输入" />
-                  </Space>
+                <Form.Item label="生日" name="birthday">
+                  {/* <Space direction="vertical"> */}
+                  <DatePicker placeholder="请输入" />
+                  {/* </Space> */}
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="手机号" name="password">
+                <Form.Item label="手机号" name="mobile">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item label="邮箱" name="username">
+                <Form.Item label="邮箱" name="email">
                   <Input
                     placeholder="请输入"
-                    suffix={<span className="text-[#E92E5E] h-5">发送验证码</span>}
+                    // suffix={<span className="text-[#E92E5E] h-5">发送验证码</span>}
                   />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="国家代码" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="所在地" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="公司" name="username">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="城市" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="省/区" name="password">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="街道地址" name="username">
-                  <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="城市" name="password">
+                <Form.Item label="邮政编码" name="postCode">
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>

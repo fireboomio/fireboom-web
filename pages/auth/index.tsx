@@ -5,12 +5,13 @@ import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
 import { AuthContainer, AuthPannel } from '@/components/auth'
-import type { AuthListType, AuthProvResp, MenuType } from '@/interfaces/auth'
+import type { AuthListType, AuthProvResp, MenuType, User } from '@/interfaces/auth'
 import {
   AuthContext,
   AuthCurrContext,
   AuthDispatchContext,
   AuthToggleContext,
+  AuthUserCurrContext,
   ConnectorContext,
   ConnectorContextType,
 } from '@/lib/context/auth-context'
@@ -29,6 +30,7 @@ export default function Authentication() {
   const [showBottomType, setShowBottomType] = useImmer('data')
   const [showTopType, setShowTopType] = useImmer<MenuType>('userManage')
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
+  const [authUserCurr, setAuthUserCurr] = useImmer({} as User)
 
   const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
   useEffect(() => {
@@ -74,28 +76,30 @@ export default function Authentication() {
             <ConnectorContext.Provider
               value={{ connector, connectorDispatch } as ConnectorContextType}
             >
-              <Head>
-                <title>FireBoom - 认证鉴权</title>
-              </Head>
-              <Row className="h-[calc(100vh_-_36px)]">
-                <div className={`flex-1 ${styles['col-left']}`}>
-                  <AuthPannel
-                    onClickItem={onClickItem}
-                    handleTopToggleDesigner={handleTopToggleDesigner}
-                  />
-                </div>
+              <AuthUserCurrContext.Provider value={{ authUserCurr, setAuthUserCurr }}>
+                <Head>
+                  <title>FireBoom - 认证鉴权</title>
+                </Head>
+                <Row className="h-[calc(100vh_-_36px)]">
+                  <div className={`flex-1 ${styles['col-left']}`}>
+                    <AuthPannel
+                      onClickItem={onClickItem}
+                      handleTopToggleDesigner={handleTopToggleDesigner}
+                    />
+                  </div>
 
-                <div className={styles.divider} />
+                  <div className={styles.divider} />
 
-                <div className="flex-1">
-                  <AuthContainer
-                    handleTopToggleDesigner={handleTopToggleDesigner}
-                    showBottomType={showBottomType}
-                    showTopType={showTopType}
-                    content={content}
-                  />
-                </div>
-              </Row>
+                  <div className="flex-1">
+                    <AuthContainer
+                      handleTopToggleDesigner={handleTopToggleDesigner}
+                      showBottomType={showBottomType}
+                      showTopType={showTopType}
+                      content={content}
+                    />
+                  </div>
+                </Row>
+              </AuthUserCurrContext.Provider>
             </ConnectorContext.Provider>
           </AuthToggleContext.Provider>
         </AuthCurrContext.Provider>

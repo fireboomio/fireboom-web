@@ -1,11 +1,12 @@
 import { ExportOutlined } from '@ant-design/icons'
 import { Input, Button, Modal, Form, Table, Divider, Switch, Tabs, Popconfirm, Badge } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
+import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
@@ -57,6 +58,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [currPage, _setCurrPage] = useImmer(1)
   const [refreshFlag, setRefreshFlag] = useImmer(true)
+  const { setAuthUserCurr } = useContext(AuthUserCurrContext)
 
   useEffect(() => {
     void getFetcher<OAuthResp>('/oauth', { currPage: currPage }).then(res =>
@@ -183,11 +185,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }
 
   function handleRowClick(rcd: User) {
-    console.log(rcd)
     // void router.push({
     //   pathname: '/auth/user-manage/[id]',
     //   query: { id: 1 },
     // })
+    setAuthUserCurr(rcd)
     handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
   }
 
