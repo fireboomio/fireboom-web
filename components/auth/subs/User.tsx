@@ -184,6 +184,10 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
 
   function handleRowClick(rcd: User) {
     console.log(rcd)
+    // void router.push({
+    //   pathname: '/auth/user-manage/[id]',
+    //   query: { id: 1 },
+    // })
     handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
   }
 
