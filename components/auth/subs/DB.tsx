@@ -2,6 +2,8 @@ import { Select } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
+import { DatasourceResp } from '@/interfaces/datasource'
+import { getFetcher } from '@/lib/fetchers'
 
 interface OptionType {
   label: string
@@ -10,20 +12,24 @@ interface OptionType {
 
 export default function AuthDB() {
   const [options, setOptions] = useState<OptionType[]>()
+  const [selectedDB, setSelectedDB] = useState<string>()
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`)
   }
 
   useEffect(() => {
-    const opts = [
-      { label: 'aaa', value: 'aaa' },
-      { label: 'bbb', value: 'bbb' },
-    ]
-    setOptions(opts)
+    void getFetcher<DatasourceResp[]>('/dataSource').then(res => {
+      const opts = res.map(x => ({
+        label: x.name,
+        value: x.name,
+      }))
+      setOptions(opts)
+      setSelectedDB(opts.at(0)?.label)
+    })
   }, [])
 
-  const databases = useMemo(() => {
+  const tables = useMemo(() => {
     return [
       { name: 'aaa', isOk: true },
       { name: 'bbb', isOk: false },
@@ -36,7 +42,7 @@ export default function AuthDB() {
         <div className="text-base mr-4">数据库</div>
         <Select
           size="middle"
-          defaultValue=""
+          value={selectedDB}
           style={{ width: 270 }}
           onChange={handleChange}
           options={options}
@@ -63,7 +69,7 @@ export default function AuthDB() {
 
         <div className="flex items-center">
           <div>
-            {databases.map(x => (
+            {tables.map(x => (
               <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
                 <div className="mr-4">✅</div>
                 <div className="text-base text-[#000000D9]">{x.name}</div>
@@ -72,7 +78,7 @@ export default function AuthDB() {
           </div>
 
           <div>
-            {databases.map(x => (
+            {tables.map(x => (
               <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
                 <div className="mr-4">❎</div>
                 <div className="text-base text-[#000000D9]">{x.name}</div>
