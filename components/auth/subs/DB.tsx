@@ -10,31 +10,49 @@ interface OptionType {
   value: string
 }
 
+interface TableT {
+  name: string
+  isOk: boolean
+}
+
 export default function AuthDB() {
   const [options, setOptions] = useState<OptionType[]>()
   const [selectedDB, setSelectedDB] = useState<string>()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const [tables, setTables] = useState<TableT[]>([])
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`)
   }
 
+  const dbName = useMemo(() => {
+    const opt = options?.find(x => x.value === selectedDB)
+    return opt?.label
+  }, [options, selectedDB])
+
   useEffect(() => {
     void getFetcher<DatasourceResp[]>('/dataSource').then(res => {
       const opts = res.map(x => ({
         label: x.name,
-        value: x.name,
+        value: x.id.toString(),
       }))
       setOptions(opts)
-      setSelectedDB(opts.at(0)?.label)
+      setSelectedDB(opts.at(0)?.value)
     })
   }, [])
 
-  const tables = useMemo(() => {
-    return [
-      { name: 'aaa', isOk: true },
-      { name: 'bbb', isOk: false },
-    ]
-  }, [])
+  useEffect(() => {
+    if (!selectedDB) return
+
+    void getFetcher<{ exist: string[]; notExist: string[] }>(
+      `/oauth/tables/${selectedDB ?? ''}`
+    ).then(res => {
+      console.log(res)
+      const oks = res.exist.map(x => ({ name: x, isOk: true }))
+      const nooks = res.notExist.map(x => ({ name: x, isOk: false }))
+      setTables(oks.concat(nooks))
+    })
+  }, [selectedDB])
 
   return (
     <>
@@ -42,7 +60,7 @@ export default function AuthDB() {
         <div className="text-base mr-4">数据库</div>
         <Select
           size="middle"
-          value={selectedDB}
+          value={selectedDB ?? ''}
           style={{ width: 270 }}
           onChange={handleChange}
           options={options}
@@ -63,27 +81,31 @@ export default function AuthDB() {
       <div className="mt-7 ">
         <div className="px-8 py-3 text-base text-[#787D8B]">
           <span>数据库：</span>
-          <span>sss</span>
+          <span>{dbName}</span>
         </div>
         <div style={{ border: '1px solid rgba(95,98,105,0.1)' }} />
 
         <div className="flex items-center">
           <div>
-            {tables.map(x => (
-              <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
-                <div className="mr-4">✅</div>
-                <div className="text-base text-[#000000D9]">{x.name}</div>
-              </div>
-            ))}
+            {tables
+              .filter(x => x.isOk === true)
+              .map(x => (
+                <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
+                  <div className="mr-4">✅</div>
+                  <div className="text-base text-[#000000D9]">{x.name}</div>
+                </div>
+              ))}
           </div>
 
           <div>
-            {tables.map(x => (
-              <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
-                <div className="mr-4">❎</div>
-                <div className="text-base text-[#000000D9]">{x.name}</div>
-              </div>
-            ))}
+            {tables
+              .filter(x => x.isOk === false)
+              .map(x => (
+                <div key={x.name} className="flex items-center mt-3 mx-8 my-1.5 text-base">
+                  <div className="mr-4">❎</div>
+                  <div className="text-base text-[#000000D9]">{x.name}</div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
