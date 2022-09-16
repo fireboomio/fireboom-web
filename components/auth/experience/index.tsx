@@ -9,6 +9,7 @@ import { ConnectorContext } from '@/lib/context/auth-context'
 import { useFetchConnector } from '@/lib/service/connector'
 import { useFetchExperience } from '@/lib/service/experience'
 
+import Brand from './Brand'
 import ExperiencePreview from './ExperiencePreview'
 import ExperienceSetting from './ExperienceSetting'
 
@@ -41,7 +42,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
 
       <div className="flex">
         {tabActiveKey === '0' ? (
-          <></>
+          <Brand data={experienceData} />
         ) : tabActiveKey === '1' ? (
           <>
             {experienceData && (
