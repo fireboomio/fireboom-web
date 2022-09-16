@@ -1,4 +1,5 @@
-import { Select } from 'antd'
+import { Button, Select, Upload } from 'antd'
+import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
@@ -20,6 +21,7 @@ export default function AuthDB() {
   const [selectedDB, setSelectedDB] = useState<string>()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [tables, setTables] = useState<TableT[]>([])
+  const [isComplete, setIsComplete] = useState(true)
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`)
@@ -47,9 +49,9 @@ export default function AuthDB() {
     void getFetcher<{ exist: string[]; notExist: string[] }>(
       `/oauth/tables/${selectedDB ?? ''}`
     ).then(res => {
-      console.log(res)
       const oks = res.exist.map(x => ({ name: x, isOk: true }))
       const nooks = res.notExist.map(x => ({ name: x, isOk: false }))
+      setIsComplete(nooks.length === 0)
       setTables(oks.concat(nooks))
     })
   }, [selectedDB])
@@ -75,7 +77,24 @@ export default function AuthDB() {
         className="px-6 py-4 text-base rounded bg-[#E0202017] text-[#000000D9]"
         style={{ border: '1px solid #E02020' }}
       >
-        所选数据库暂无预制表结构不完整，是否覆盖
+        {isComplete ? (
+          <>
+            <a download={'预置'} href={`/api/v1/oauth/tables/${selectedDB ?? ''}/export`}>
+              下载
+            </a>{' '}
+            预置表结构，手工导入
+          </>
+        ) : (
+          <>
+            所选数据库暂无预制表结构，是否导入？
+            <Upload
+              action={`/api/v1/oauth/tables/${selectedDB ?? ''}/import`}
+              showUploadList={false}
+            >
+              <Button type="primary">导入</Button>
+            </Upload>
+          </>
+        )}
       </div>
 
       <div className="mt-7 ">
