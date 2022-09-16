@@ -77,8 +77,6 @@
 }
 
 .user-info :global {
-  margin-top: -10px;
-
   span {
     height: 36px;
     color: #000;
@@ -89,6 +87,7 @@
 
   p {
     height: 16px;
+    margin-bottom: 0;
     color: #afb0b4;
     font-size: 12px;
     line-height: 16px;

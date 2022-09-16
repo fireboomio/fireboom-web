@@ -1,9 +1,10 @@
 import { CaretRightOutlined, LockOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Menu, Image } from 'antd'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
+import { AuthUserCurrContext } from '@/lib/context/auth-context'
 
 import IconFont from '../iconfont'
 import styles from './Common.module.scss'
@@ -67,6 +68,7 @@ export default function AuthContainer({
 }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
   const [title, setTitle] = useImmer<React.ReactNode>('')
+  const { authUserCurr } = useContext(AuthUserCurrContext)
 
   const handleIconClick = () => {
     console.log('handleIconClick')
@@ -156,12 +158,12 @@ export default function AuthContainer({
           <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
         </div>
       ) : (
-        <div className="flex justify-between">
-          <div className="flex">
+        <div className="flex justify-between items-center mt-9 mb-5">
+          <div className="flex items-center">
             <Image src="/assets/auth.svg" alt="头像" width={45} height={45} preview={false} />
-            <div className={styles['user-info']}>
-              <span>anson</span>
-              <p>ID：6291fe05cbgedyuyu</p>
+            <div className={`ml-2 ${styles['user-info']}`}>
+              <span>{authUserCurr.name}</span>
+              <p>ID：{authUserCurr.id}</p>
             </div>
           </div>
           <div>
