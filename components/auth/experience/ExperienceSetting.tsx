@@ -93,7 +93,7 @@ const ExperienceSetting: React.FC<Props> = ({
   const email = Form.useWatch('email', form) as boolean
   const sms = Form.useWatch('sms', form) as boolean
 
-  const handleFinish = async (value: LoginFormType) => {
+  const handleFinish = (value: LoginFormType) => {
     const sms = mainLoginMethod == 'sms' ? 'primary' : value.sms ? 'secondary' : 'disabled'
     const email = mainLoginMethod == 'email' ? 'primary' : value.email ? 'secondary' : 'disabled'
     const social = mainLoginMethod == 'social' ? 'primary' : value.social ? 'secondary' : 'disabled'
@@ -109,10 +109,7 @@ const ExperienceSetting: React.FC<Props> = ({
         username: username,
       },
     }
-    const res = await upsertExperience(args)
-    if (res) {
-      alert('保存成功')
-    }
+    void upsertExperience(args).then(() => alert('保存成功'))
   }
 
   const handleTransferChange = (_value: string[]) => {
@@ -155,7 +152,7 @@ const ExperienceSetting: React.FC<Props> = ({
 
   return (
     <div className={styles.experienceSettingWrapper}>
-      <Form form={form} initialValues={initValues} onFinish={void handleFinish}>
+      <Form form={form} initialValues={initValues} onFinish={handleFinish}>
         <div className={styles.title}>
           <h1>登录体验设置</h1>
           <h2>自定义登录界面，并实时预览真实效果</h2>
