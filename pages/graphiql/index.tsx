@@ -94,8 +94,7 @@ export default function App({ url, data, onSave }: Props) {
   }
 
   function save() {
-    // @ts-ignore
-    const content = ref.current?.ref?.props.query as string
+    const content = ref.current?.props.query as string
     return onSave(content)
   }
 
