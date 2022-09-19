@@ -15,4 +15,10 @@ export interface BrandType {
   darkMode: boolean
   color: string
   logo: string
+  slogan: string
+}
+
+export interface OtherType {
+  enabled: boolean
+  contractUrl: string
 }
