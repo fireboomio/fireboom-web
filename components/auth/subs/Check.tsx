@@ -5,6 +5,7 @@ import { Descriptions, Button } from 'antd'
 import { ReactNode, useContext } from 'react'
 import { useImmer } from 'use-immer'
 
+import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
@@ -20,7 +21,7 @@ export default function AuthMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
   if (!content) {
-    return <></>
+    return <Error50x />
   }
 
   const config = content.config as unknown as Config

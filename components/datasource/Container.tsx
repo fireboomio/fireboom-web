@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
+import Error50x from '../ErrorPage/50x'
 import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -39,7 +40,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     return rv
   }, [content?.sourceType, showType])
 
-  if (!content) return <></>
+  if (!content) return <Error50x />
 
   return (
     <div className="pl-6 mt-6 mr-6">

@@ -1,6 +1,7 @@
 import { Button, Form, Input } from 'antd'
 import { useEffect, useState } from 'react'
 
+import Error404 from '@/components/ErrorPage/404'
 import { BrandType } from '@/interfaces/experience'
 import requests from '@/lib/fetchers'
 
@@ -31,7 +32,7 @@ const Brand: React.FC<Props> = ({ data }) => {
     })
   }
 
-  if (!state) return <></>
+  if (!state) return <Error404 />
 
   return (
     <div className="w-1/2 pr-6">

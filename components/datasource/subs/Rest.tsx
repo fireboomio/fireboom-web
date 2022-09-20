@@ -23,6 +23,7 @@ import { useContext, useEffect } from 'react'
 import { RedocStandalone } from 'redoc'
 import { useImmer } from 'use-immer'
 
+import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
@@ -108,7 +109,7 @@ export default function Rest({ content, type }: Props) {
   }
 
   if (!content) {
-    return <></>
+    return <Error50x />
   }
 
   const config = content.config as Config
