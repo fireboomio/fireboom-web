@@ -25,7 +25,7 @@
 .sider :global {
   .ant-menu-item {
     display: flex;
-    align-items: start !important;
+    align-items: flex-start !important;
 
     a {
       color: #5f6269;
@@ -58,7 +58,7 @@
   .ant-menu .ant-menu-item-active,
   .ant-menu .ant-menu-item-selected {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
 
     &::before {
       position: absolute;
