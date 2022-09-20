@@ -31,7 +31,11 @@ interface MenuT {
 const menus: MenuT[] = [
   {
     title: '首页',
-    icon: <Image height={26} width={26} src="/assets/home_dark.svg" alt="主页" preview={false} />,
+    icon: (
+      <Link href={'/'}>
+        <Image height={26} width={26} src="/assets/home_dark.svg" alt="主页" preview={false} />
+      </Link>
+    ),
     link: '/',
     position: 'top',
     svg: <Image height={26} width={26} src="/assets/home.svg" alt="主页" preview={false} />,
@@ -39,13 +43,15 @@ const menus: MenuT[] = [
   {
     title: '数据建模',
     icon: (
-      <Image
-        height={26}
-        width={26}
-        src="/assets/modeling_dark.svg"
-        alt="数据建模"
-        preview={false}
-      />
+      <Link href={'/modeling'}>
+        <Image
+          height={26}
+          width={26}
+          src="/assets/modeling_dark.svg"
+          alt="数据建模"
+          preview={false}
+        />
+      </Link>
     ),
     link: '/modeling',
     position: 'top',
@@ -54,7 +60,9 @@ const menus: MenuT[] = [
   {
     title: '认证鉴权',
     icon: (
-      <Image height={26} width={26} src="/assets/auth_dark.svg" alt="认证鉴权" preview={false} />
+      <Link href={'/auth'}>
+        <Image height={26} width={26} src="/assets/auth_dark.svg" alt="认证鉴权" preview={false} />
+      </Link>
     ),
     link: '/auth',
     position: 'top',
@@ -63,7 +71,15 @@ const menus: MenuT[] = [
   {
     title: '文件存储',
     icon: (
-      <Image height={26} width={26} src="/assets/storage_dark.svg" alt="文件存储" preview={false} />
+      <Link href={'/storage'}>
+        <Image
+          height={26}
+          width={26}
+          src="/assets/storage_dark.svg"
+          alt="文件存储"
+          preview={false}
+        />
+      </Link>
     ),
     link: '/storage',
     position: 'top',
@@ -79,7 +95,9 @@ const menus: MenuT[] = [
   {
     title: 'API 管理',
     icon: (
-      <Image height={26} width={26} src="/assets/api_dark.svg" alt="API 管理" preview={false} />
+      <Link href={'/apimanage'}>
+        <Image height={26} width={26} src="/assets/api_dark.svg" alt="API 管理" preview={false} />
+      </Link>
     ),
     link: '/apimanage',
     position: 'top',
@@ -88,7 +106,15 @@ const menus: MenuT[] = [
   {
     title: 'GraphQL',
     icon: (
-      <Image height={26} width={26} src="/assets/graphiql_dark.svg" alt="GraphQL" preview={false} />
+      <Link href={'/graphiql'}>
+        <Image
+          height={26}
+          width={26}
+          src="/assets/graphiql_dark.svg"
+          alt="GraphQL"
+          preview={false}
+        />
+      </Link>
     ),
     link: '/graphiql',
     position: 'top',
@@ -96,7 +122,11 @@ const menus: MenuT[] = [
   },
   {
     title: '帮助',
-    icon: <Image height={26} width={26} src="/assets/help_dark.svg" alt="帮助" preview={false} />,
+    icon: (
+      <Link href={'/help'}>
+        <Image height={26} width={26} src="/assets/help_dark.svg" alt="帮助" preview={false} />
+      </Link>
+    ),
     link: '/help',
     position: 'bottom',
     svg: <Image height={26} width={26} src="/assets/help.svg" alt="帮助" preview={false} />,
@@ -104,7 +134,9 @@ const menus: MenuT[] = [
   {
     title: '支持',
     icon: (
-      <Image height={26} width={26} src="/assets/support_dark.svg" alt="支持" preview={false} />
+      <Link href={'/support'}>
+        <Image height={26} width={26} src="/assets/support_dark.svg" alt="支持" preview={false} />
+      </Link>
     ),
     link: '/support',
     position: 'bottom',
@@ -113,7 +145,9 @@ const menus: MenuT[] = [
   {
     title: '设置',
     icon: (
-      <Image height={26} width={26} src="/assets/setting_dark.svg" alt="设置" preview={false} />
+      <Link href={'/setting'}>
+        <Image height={26} width={26} src="/assets/setting_dark.svg" alt="设置" preview={false} />
+      </Link>
     ),
     link: '/setting',
     position: 'bottom',
