@@ -6,6 +6,8 @@ import { useImmer } from 'use-immer'
 import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 
+import Error404 from '../ErrorPage/404'
+import ErrorWorking from '../ErrorPage/Working'
 import IconFont from '../iconfont'
 import styles from './Common.module.scss'
 import Connector from './connector'
@@ -78,7 +80,7 @@ export default function AuthContainer({
     switch (showTopType) {
       case 'outline':
         setTitle('概览')
-        setViewer(<div>概览</div>)
+        setViewer(<ErrorWorking />)
         break
       case 'userManage':
         setTitle('用户管理')
@@ -94,7 +96,7 @@ export default function AuthContainer({
         break
       case 'log':
         setTitle('操作日志')
-        setViewer(<div>操作日志</div>)
+        setViewer(<ErrorWorking />)
         break
       case 'login':
         setTitle('登入体验')
@@ -117,7 +119,7 @@ export default function AuthContainer({
         setViewer(<AuthDB />)
         break
       default:
-        setViewer(<div>error</div>)
+        setViewer(<Error404 />)
         break
     }
 

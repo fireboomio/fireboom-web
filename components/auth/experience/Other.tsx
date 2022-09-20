@@ -1,6 +1,7 @@
 import { Button, Form, Input, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 
+import Error50x from '@/components/ErrorPage/50x'
 import { OtherType } from '@/interfaces/experience'
 import requests from '@/lib/fetchers'
 
@@ -25,7 +26,7 @@ const Other: React.FC<Props> = ({ data }) => {
     })
   }
 
-  if (!state) return <></>
+  if (!state) return <Error50x />
 
   return (
     <div className="w-1/2 pr-6">

@@ -214,7 +214,7 @@ export default function SettingMainEnvironmentVariable() {
             height: '200px',
             margin: '10px auto',
           }}
-          visible={isVariableVisible}
+          open={isVariableVisible}
           onOk={() => setIsVariableVisible(false)}
           onCancel={() => setIsVariableVisible(false)}
           okButtonProps={{

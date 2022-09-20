@@ -33,7 +33,7 @@ const ConnectorModal: React.FC<Props> = ({
           下一步
         </Button>,
       ]}
-      visible={isModalVisible}
+      open={isModalVisible}
       onOk={handleModelOk}
       onCancel={handleModelCancel}
     >

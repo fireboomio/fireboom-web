@@ -5,6 +5,7 @@ import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
 import { useContext, ReactNode } from 'react'
 import { useImmer } from 'use-immer'
 
+import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext, AuthDispatchContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
@@ -43,7 +44,7 @@ export default function AuthMainEdit({ content }: Props) {
   )
 
   if (!content) {
-    return <></>
+    return <Error50x />
   }
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }

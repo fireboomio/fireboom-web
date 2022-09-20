@@ -207,7 +207,7 @@ export default function AuthUserDetails() {
             width={549}
             style={{ top: '300px' }}
             transitionName=""
-            visible={modal1Visible}
+            open={modal1Visible}
             onOk={() => setModal1Visible(false)}
             onCancel={() => setModal1Visible(false)}
             okText={

@@ -19,6 +19,7 @@ import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
@@ -223,7 +224,7 @@ export default function Graphql({ content, type }: Props) {
   }
 
   if (!content) {
-    return <></>
+    return <Error50x />
   }
 
   return (
@@ -711,7 +712,7 @@ export default function Graphql({ content, type }: Props) {
 
       <Modal
         title="GraphiQL"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => setIsModalVisible(false)}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

@@ -6,6 +6,7 @@ import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
@@ -257,7 +258,7 @@ export default function DB({ content, type }: Props) {
 
   //查看页面逻辑
   if (!content) {
-    return <></>
+    return <Error50x />
   }
 
   //是否开启数据源开关回调
