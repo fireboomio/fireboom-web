@@ -17,6 +17,7 @@ import requests, { getFetcher } from '@/lib/fetchers'
 import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
 
+import Error404 from '../ErrorPage/404'
 import styles from './Detail.module.scss'
 
 const { Option } = Select
@@ -68,31 +69,12 @@ const columns = [
 ]
 
 const reqColumns = [
-  {
-    title: '参数名',
-    dataIndex: 'name',
-  },
-  {
-    title: '位置',
-    dataIndex: 'position',
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-  },
-  {
-    title: '必须',
-    dataIndex: 'isRequired',
-    render: (x: boolean) => <div>{x ? '是' : '否'}</div>,
-  },
-  {
-    title: 'jsonSchema',
-    dataIndex: 'jsonSchema',
-  },
-  {
-    title: '备注',
-    dataIndex: 'remark',
-  },
+  { title: '参数名', dataIndex: 'name' },
+  { title: '位置', dataIndex: 'position' },
+  { title: '类型', dataIndex: 'type' },
+  { title: '必须', dataIndex: 'isRequired', render: (x: boolean) => <div>{x ? '是' : '否'}</div> },
+  { title: 'jsonSchema', dataIndex: 'jsonSchema' },
+  { title: '备注', dataIndex: 'remark' },
 ]
 
 const injectColumns = [
@@ -319,7 +301,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
     }
   }
 
-  if (!node || node.isDir) return <></>
+  if (!node || node.isDir) return <Error404 />
 
   return (
     <>

@@ -26,6 +26,8 @@ import Head from 'next/head'
 import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
+import Error404 from '@/components/ErrorPage/404'
+import Error50x from '@/components/ErrorPage/50x'
 import Detail from '@/components/apimanage/Detail'
 import Hook from '@/components/apimanage/Hook'
 import Mock from '@/components/apimanage/Mock'
@@ -667,9 +669,9 @@ const ApiManage: FC<ApiManageProps> = () => {
                     </div>
 
                     {!selectedNode ? (
-                      <></>
+                      <Error404 />
                     ) : selectedNode?.isDir ? (
-                      <></>
+                      <Error404 />
                     ) : (
                       <div className="mt-7">
                         <RcTab
@@ -689,7 +691,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                           ) : activeKey === '3' ? (
                             <Setting node={selectedNode} />
                           ) : (
-                            <></>
+                            <Error50x />
                           )}
                         </div>
                       </div>
