@@ -711,7 +711,7 @@ export default function Graphql({ content, type }: Props) {
 
       <Modal
         title="GraphiQL"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => setIsModalVisible(false)}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

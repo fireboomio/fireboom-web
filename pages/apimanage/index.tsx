@@ -706,7 +706,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
       <Modal
         title="全局设置"
-        visible={isSettingVisible}
+        open={isSettingVisible}
         onOk={() => setIsSettingVisible(false)}
         onCancel={() => setIsSettingVisible(false)}
         footer={null}
@@ -718,7 +718,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
       <Modal
         title="全局钩子"
-        visible={isHookVisible}
+        open={isHookVisible}
         onOk={() => setIsHookVisible(false)}
         onCancel={() => setIsHookVisible(false)}
         footer={null}
@@ -730,7 +730,7 @@ const ApiManage: FC<ApiManageProps> = () => {
 
       <Modal
         title="GraphiQL"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => {
           setCurrEditingKey(null)
           setAction(null)

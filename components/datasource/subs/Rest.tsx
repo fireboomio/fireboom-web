@@ -409,7 +409,7 @@ export default function Rest({ content, type }: Props) {
           {/* 测试功能 */}
           <Modal
             centered
-            visible={testVisible}
+            open={testVisible}
             onCancel={() => setTestVisible(false)}
             destroyOnClose={true}
             width={'80%'}

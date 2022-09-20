@@ -170,7 +170,7 @@ export default function AuthRole() {
             style={{ top: '200px' }}
             width={549}
             transitionName=""
-            visible={modal1Visible}
+            open={modal1Visible}
             onOk={() => setModal1Visible(false)}
             onCancel={() => setModal1Visible(false)}
             okText={

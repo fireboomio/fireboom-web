@@ -23,7 +23,7 @@ function TypeModalContent({ onClick }: PropoverProps) {
   const [types, setTypes] = useImmer(PRISMA_BASE_TYPES)
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setTypes(types.filter((type) => type.toLowerCase().includes(e.target.value)))
+    setTypes(types.filter(type => type.toLowerCase().includes(e.target.value)))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -75,12 +75,12 @@ function AttrRelation({ attr }: { attr: Attribute }) {
   if (!attr.args || attr.args.length === 0) return <>@{attr.name}()</>
 
   // @ts-ignore
-  const fieldsObj = attr.args.find((a) => a.value.key === 'fields')
+  const fieldsObj = attr.args.find(a => a.value.key === 'fields')
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const fields = (fieldsObj.value.value.args as string[]).join(', ')
   // @ts-ignore
-  const refObj = attr.args.find((a) => a.value.key === 'references')
+  const refObj = attr.args.find(a => a.value.key === 'references')
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const refs = (refObj.value.value.args as string[]).join(', ')
@@ -96,7 +96,7 @@ function TableAttr({ attributes }: { attributes: ModelAttribute[] }) {
   return (
     <>
       {attributes?.map((attr, idx) => {
-        const args = attr.args.map((arg) => {
+        const args = attr.args.map(arg => {
           // @ts-ignore
           switch (arg.value.key) {
             case 'fields':
@@ -152,14 +152,14 @@ export default function ModelDesignerModel({ model }: Props) {
   const [typePopVisible, setTypePopVisible] = useImmer(false)
   const [activeCell, setActiveCell] = useImmer({ col: '', idx: -1 })
   const [fields, setFields] = useImmer<Field[]>(
-    properties.filter((p) => p.type === 'field') as Field[]
+    properties.filter(p => p.type === 'field') as Field[]
   )
   const [attributes, _setAttributes] = useImmer<ModelAttribute[]>(
-    properties.filter((p) => p.type === 'attribute') as ModelAttribute[]
+    properties.filter(p => p.type === 'attribute') as ModelAttribute[]
   )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setFields(properties.filter((p) => p.type === 'field') as Field[]), [model])
+  useEffect(() => setFields(properties.filter(p => p.type === 'field') as Field[]), [model])
 
   function handleTypeSelect(_value: string) {
     // TODO: 更新 cell 类型
@@ -218,7 +218,7 @@ export default function ModelDesignerModel({ model }: Props) {
         closable={false}
         footer={null}
         title="字段类型"
-        visible={typePopVisible}
+        open={typePopVisible}
         destroyOnClose={true}
         onCancel={() => {
           setActiveCell({ col: '', idx: -1 })
