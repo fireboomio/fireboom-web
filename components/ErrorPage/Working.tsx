@@ -1,6 +1,6 @@
 import { Image } from 'antd'
 
-export default function Error4042() {
+export default function ErrorWorking() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <Image src="/assets/404-2.png" height={151} width={173} alt="50x" preview={false} />
