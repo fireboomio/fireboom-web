@@ -1,11 +1,9 @@
-import { QuestionCircleOutlined, WhatsAppOutlined } from '@ant-design/icons'
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import { Footer } from 'antd/lib/layout/layout'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
-import IconFont from '@/components/iconfont'
 import { Info } from '@/interfaces/common'
 import { DOMAIN } from '@/lib/common'
 import requests from '@/lib/fetchers'
@@ -33,73 +31,93 @@ interface MenuT {
 const menus: MenuT[] = [
   {
     title: '首页',
-    icon: <IconFont type="icon-shouye-weixuanzhong" />,
+    icon: <Image height={26} width={26} src="/assets/home_dark.svg" alt="主页" preview={false} />,
     link: '/',
     position: 'top',
-    svg: <Image src="/assets/home.svg" alt="主页" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/home.svg" alt="主页" preview={false} />,
   },
   {
     title: '数据建模',
-    icon: <IconFont type="icon-shujusheji-weixuanzhong" />,
+    icon: (
+      <Image
+        height={26}
+        width={26}
+        src="/assets/modeling_dark.svg"
+        alt="数据建模"
+        preview={false}
+      />
+    ),
     link: '/modeling',
     position: 'top',
-    svg: <Image src="/assets/modeling.svg" alt="数据建模" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/modeling.svg" alt="数据建模" preview={false} />,
   },
   {
     title: '认证鉴权',
-    icon: <IconFont type="icon-shenfenyanzheng-weixuanzhong" />,
+    icon: (
+      <Image height={26} width={26} src="/assets/auth_dark.svg" alt="认证鉴权" preview={false} />
+    ),
     link: '/auth',
     position: 'top',
-    svg: <Image src="/assets/auth.svg" alt="认证鉴权" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/auth.svg" alt="认证鉴权" preview={false} />,
   },
   {
     title: '文件存储',
-    icon: <IconFont type="icon-chucun-weixuanzhong" />,
+    icon: (
+      <Image height={26} width={26} src="/assets/storage_dark.svg" alt="文件存储" preview={false} />
+    ),
     link: '/storage',
     position: 'top',
-    svg: <Image src="/assets/storage.svg" alt="文件存储" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/storage.svg" alt="文件存储" preview={false} />,
   },
   // {
   //   title: '数据来源',
   //   icon: <IconFont type="icon-chucun-weixuanzhong" />,
   //   link: '/datasource',
   //   position: 'top',
-  //   svg: <Image src="/assets/datasource.svg" alt="数据来源" preview={false} />,
+  //   svg: <Image  height={26} width={26} src="/assets/datasource.svg" alt="数据来源" preview={false} />,
   // },
   {
     title: 'API 管理',
-    icon: <IconFont type="icon-API-weixuanzhong" />,
+    icon: (
+      <Image height={26} width={26} src="/assets/api_dark.svg" alt="API 管理" preview={false} />
+    ),
     link: '/apimanage',
     position: 'top',
-    svg: <Image src="/assets/apimanage.svg" alt="API 管理" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/api.svg" alt="API 管理" preview={false} />,
   },
   {
     title: 'GraphQL',
-    icon: <IconFont type="icon-QLweixuanzhong" />,
+    icon: (
+      <Image height={26} width={26} src="/assets/graphiql_dark.svg" alt="GraphQL" preview={false} />
+    ),
     link: '/graphiql',
     position: 'top',
-    svg: <Image src="/assets/graphql.svg" alt="GraphQL" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/graphiql.svg" alt="GraphQL" preview={false} />,
   },
   {
     title: '帮助',
-    icon: <QuestionCircleOutlined />,
+    icon: <Image height={26} width={26} src="/assets/help_dark.svg" alt="帮助" preview={false} />,
     link: '/help',
     position: 'bottom',
-    svg: <Image src="/assets/help.png" alt="帮助" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/help.svg" alt="帮助" preview={false} />,
   },
   {
     title: '支持',
-    icon: <WhatsAppOutlined />,
+    icon: (
+      <Image height={26} width={26} src="/assets/support_dark.svg" alt="支持" preview={false} />
+    ),
     link: '/support',
     position: 'bottom',
-    svg: <Image src="/assets/support.png" alt="支持" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/support.svg" alt="支持" preview={false} />,
   },
   {
     title: '设置',
-    icon: <IconFont type="icon-shezhi" />,
+    icon: (
+      <Image height={26} width={26} src="/assets/setting_dark.svg" alt="设置" preview={false} />
+    ),
     link: '/setting',
     position: 'bottom',
-    svg: <Image src="/assets/setting.png" alt="设置" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/setting.png" alt="设置" preview={false} />,
   },
 ]
 

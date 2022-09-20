@@ -24,6 +24,9 @@
 
 .sider :global {
   .ant-menu-item {
+    display: flex;
+    align-items: start !important;
+
     a {
       color: #5f6269;
       font-weight: 400;
@@ -33,7 +36,7 @@
   }
 
   .ant-menu:not(.ant-menu-horizontal, .ant-menu-inline-collapsed) .ant-menu-item-icon {
-    padding-left: 6px;
+    padding-left: 0;
   }
 
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-active,
@@ -54,6 +57,9 @@
 
   .ant-menu .ant-menu-item-active,
   .ant-menu .ant-menu-item-selected {
+    display: flex;
+    align-items: start;
+
     &::before {
       position: absolute;
       top: 0;
@@ -75,20 +81,20 @@
     }
   }
 
-  .ant-menu .ant-menu-item-selected {
-    padding-left: 20px !important;
-  }
-
   .ant-layout-sider-trigger {
     background: #fbfbfb;
   }
 
-  .ant-menu.ant-menu-inline-collapsed .ant-menu-item-selected {
-    padding-left: 24px !important;
+  .ant-menu.ant-menu-inline-collapsed {
+    .ant-menu-item {
+      display: block;
+    }
 
-    .ant-image img {
-      width: 34px;
-      height: 34px;
+    .ant-menu-item-selected {
+      // .ant-image img {
+      //   width: 34px;
+      //   height: 34px;
+      // }
     }
 
     .ant-menu-title-content {
