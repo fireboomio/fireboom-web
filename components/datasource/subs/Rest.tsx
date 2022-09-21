@@ -1,4 +1,4 @@
-import { CaretRightOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Descriptions,
   Space,
@@ -13,14 +13,12 @@ import {
   Collapse,
   Table,
   Tag,
-  Modal,
   message,
 } from 'antd'
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
-import { RedocStandalone } from 'redoc'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
@@ -82,7 +80,7 @@ export default function Rest({ content, type }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
   const [isEyeShow, setIsEyeShow] = useImmer(false)
-  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
+  // const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [rulesObj, setRulesObj] = useImmer({})
@@ -256,15 +254,15 @@ export default function Rest({ content, type }: Props) {
               />
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                onClick={() => setTestVisible(true)}
+                // onClick={() => setTestVisible(true)}
               >
-                <span>测试</span>
+                测试
               </Button>
               <Button
                 className={`${styles['edit-btn']} ml-4`}
                 onClick={() => handleToggleDesigner('form', content.id)}
               >
-                <span>编辑</span>
+                编辑
               </Button>
             </div>
           </div>
@@ -408,7 +406,7 @@ export default function Rest({ content, type }: Props) {
             </Panel>
           </Collapse>
           {/* 测试功能 */}
-          <Modal
+          {/* <Modal
             centered
             open={testVisible}
             onCancel={() => setTestVisible(false)}
@@ -428,7 +426,7 @@ export default function Rest({ content, type }: Props) {
                 }}
               />
             </div>
-          </Modal>
+          </Modal> */}
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
