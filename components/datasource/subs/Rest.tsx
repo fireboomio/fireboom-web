@@ -25,6 +25,7 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import { DOMAIN } from '@/lib/common'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext,
@@ -404,10 +405,10 @@ export default function Rest({ content, type }: Props) {
               >
                 <Descriptions.Item
                   label={
-                    <div>
+                    <>
                       <span className={styles['label-style']}>是否状态联合:</span>
                       <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                    </div>
+                    </>
                   }
                   className="justify-start"
                 >
@@ -433,7 +434,7 @@ export default function Rest({ content, type }: Props) {
             <div className={styles['redoc-container']}>
               {/* @ts-ignore */}
               <rapi-doc
-                spec-url="//petstore.swagger.io/v2/swagger.json"
+                spec-url={`//${DOMAIN}/static/upload/oas/${config.filePath ?? ''}`}
                 show-header="false"
                 show-info="false"
                 allow-authentication="false"
