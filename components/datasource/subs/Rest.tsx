@@ -447,20 +447,20 @@ export default function Rest({ content, type }: Props) {
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
-        <div>
+        <>
           <div className="pb-9px flex items-center justify-between border-gray border-b">
             {content.name == '' ? (
-              <div>
+              <>
                 <IconFont type="icon-shujuyuantubiao1" />
                 <span className="ml-2">创建数据源</span>
-              </div>
+              </>
             ) : (
-              <div>
+              <>
                 <IconFont type="icon-shujuyuantubiao1" />
                 <span className="ml-2">
                   {content.name} <span className="text-xs text-gray-500/80">GET</span>
                 </span>
-              </div>
+              </>
             )}
 
             <div className="flex justify-center items-center w-160px">
@@ -738,7 +738,7 @@ export default function Rest({ content, type }: Props) {
               </Collapse>
             </Form>
           </div>
-        </div>
+        </>
       )}
     </>
   )
