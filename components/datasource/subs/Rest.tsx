@@ -14,6 +14,7 @@ import {
   Table,
   Tag,
   message,
+  Modal,
 } from 'antd'
 import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -24,6 +25,7 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import { DOMAIN } from '@/lib/common'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext,
@@ -74,13 +76,18 @@ const columns: ColumnsType<DataType> = [
     ),
   },
 ]
+declare global {
+  interface Window {
+    hbspt: unknown
+  }
+}
 
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
   const [isEyeShow, setIsEyeShow] = useImmer(false)
-  // const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
+  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [rulesObj, setRulesObj] = useImmer({})
@@ -92,6 +99,15 @@ export default function Rest({ content, type }: Props) {
     form.resetFields()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
+
+  useEffect(() => {
+    if (window && document) {
+      const script = document.createElement('script')
+      const body = document.getElementsByTagName('body')[0]
+      script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
+      body.appendChild(script)
+    }
+  }, [])
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -254,7 +270,7 @@ export default function Rest({ content, type }: Props) {
               />
               <Button
                 className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                // onClick={() => setTestVisible(true)}
+                onClick={() => setTestVisible(true)}
               >
                 测试
               </Button>
@@ -389,10 +405,10 @@ export default function Rest({ content, type }: Props) {
               >
                 <Descriptions.Item
                   label={
-                    <div>
+                    <>
                       <span className={styles['label-style']}>是否状态联合:</span>
                       <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                    </div>
+                    </>
                   }
                   className="justify-start"
                 >
@@ -406,7 +422,7 @@ export default function Rest({ content, type }: Props) {
             </Panel>
           </Collapse>
           {/* 测试功能 */}
-          {/* <Modal
+          <Modal
             centered
             open={testVisible}
             onCancel={() => setTestVisible(false)}
@@ -414,19 +430,20 @@ export default function Rest({ content, type }: Props) {
             width={'80%'}
             bodyStyle={{ height: '885px', overflow: 'auto' }}
             footer={null}
-            closeIcon={<CloseOutlined className="mr-6" />}
           >
             <div className={styles['redoc-container']}>
-              <RedocStandalone
-                specUrl="http://petstore.swagger.io/v2/swagger.json"
-                options={{
-                  nativeScrollbars: true,
-                  theme: { colors: { primary: { main: '#dd5522' } } },
-                  disableSearch: false,
-                }}
+              {/* @ts-ignore */}
+              <rapi-doc
+                spec-url={`//${DOMAIN}/static/upload/oas/${config.filePath ?? ''}`}
+                show-header="false"
+                show-info="false"
+                allow-authentication="false"
+                allow-server-selection="false"
+                allow-api-list-style-selection="false"
+                render-style="read"
               />
             </div>
-          </Modal> */}
+          </Modal>
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
