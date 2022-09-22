@@ -15,6 +15,7 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+    "types": ["next", "next/image-types/global"],
     "paths": {
       "@/components/*": ["components/*"],
       "@/interfaces/*": ["interfaces/*"],
