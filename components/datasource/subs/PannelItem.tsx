@@ -80,11 +80,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
         {
           key: '1',
           label: (
-            <div
-              onClick={() => {
-                setIsEditing(!isEditing)
-              }}
-            >
+            <div onClick={() => setIsEditing(!isEditing)}>
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
@@ -131,9 +127,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onDoubleClick={() => setIsEditing(true)}
-      onClick={() => {
-        onClickItem(datasourceItem)
-      }}
+      onClick={() => onClickItem(datasourceItem)}
     >
       <div className="flex items-center cursor-pointer">
         <IconFont
@@ -197,7 +191,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           trigger={['click']}
           placement="bottomRight"
           visible={visible}
-          onVisibleChange={v => {
+          onOpenChange={v => {
             setVisible(v)
             leaveItem(v)
           }}
