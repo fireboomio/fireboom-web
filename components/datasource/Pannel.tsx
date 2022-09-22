@@ -14,26 +14,20 @@ interface Props {
 }
 interface ListProps {
   onClickItem: (dsItem: DatasourceResp) => void
-  datasourceType: number
+  // datasourceType: number
 }
 const { Panel } = Collapse
 
-function DatasourceList({ onClickItem, datasourceType }: ListProps) {
+function DatasourceList({ onClickItem }: ListProps) {
   const datasource = useContext(DatasourceContext)
 
   return (
     <>
       {datasource
-        .filter(item => item.sourceType == datasourceType)
-        .map(datasourceItem => {
-          if (datasourceItem.name != '')
-            return (
-              <DatasourceItem
-                key={datasourceItem.id}
-                datasourceItem={datasourceItem}
-                onClickItem={onClickItem}
-              />
-            )
+        // .filter(item => item.sourceType == datasourceType)
+        .map(item => {
+          if (item.name != '')
+            return <DatasourceItem key={item.id} datasourceItem={item} onClickItem={onClickItem} />
         })}
     </>
   )
@@ -89,7 +83,8 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       <div className={styles['datasource-collapse']}>
         <Collapse ghost bordered>
           <Panel header={<div className="w-52 flex justify-between py-2">外部数据源</div>} key={1}>
-            <div className="h-40" style={{ overflow: 'auto' }}>
+            <DatasourceList onClickItem={onClickItem} />
+            {/* <div className="h-40" style={{ overflow: 'auto' }}>
               <Collapse
                 activeKey={activeKey}
                 ghost
@@ -125,7 +120,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
                   <DatasourceList onClickItem={onClickItem} datasourceType={4} />
                 </Panel>
               </Collapse>
-            </div>
+            </div> */}
           </Panel>
         </Collapse>
       </div>

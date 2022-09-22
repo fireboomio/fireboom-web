@@ -124,7 +124,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
   )
   return (
     <div
-      className={`flex justify-between items-center py-2.5 pl-5
+      className={`flex justify-between items-center py-2.5 pl-5 cursor-pointer
       ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
