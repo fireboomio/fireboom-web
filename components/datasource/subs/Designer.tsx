@@ -1,6 +1,6 @@
-import { Image } from 'antd'
 import { useContext } from 'react'
 
+import IconFont from '@/components/iconfont'
 import { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -13,18 +13,18 @@ const data = [
   {
     name: 'API',
     items: [
-      { name: 'REST API', logo: 'api-rest.svg', sourceType: 2 },
-      { name: 'GraphQL API', logo: 'api-graphql.svg', sourceType: 3 },
+      { name: 'REST API', logo: 'icon-shujuyuantubiao3', sourceType: 2 },
+      { name: 'GraphQL API', logo: 'icon-QLweixuanzhong1', sourceType: 3 },
     ],
   },
   {
     name: '数据库',
     items: [
-      { name: 'PostgreSQL', logo: 'api-db.svg', sourceType: 1, dbType: 'PGSQL' },
-      { name: 'MySQL', logo: 'api-db.svg', sourceType: 1, dbType: 'MySql' },
+      { name: 'PostgreSQL', logo: 'icon-shujuyuantubiao2', sourceType: 1, dbType: 'PGSQL' },
+      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'MySql' },
     ],
   },
-  { name: '自定义', items: [{ name: '自定义', logo: 'api-custom.svg', sourceType: 4 }] },
+  { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] },
 ]
 
 export default function Designer() {
@@ -50,6 +50,7 @@ export default function Designer() {
           <div className={`text-lg ${styles['title']}`}>
             <span className="pl-2.5">{category.name}</span>
           </div>
+
           <div className="flex flex-wrap gap-x-9.5 gap-y-5 items-center my-4">
             {category.items.map(x => (
               <>
@@ -60,13 +61,14 @@ export default function Designer() {
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                   onClick={() => handleClick(x.sourceType, x.dbType)}
                 >
-                  <Image
+                  {/* <Image
                     height={28}
                     width={28}
                     src={`/assets/${x.logo}`}
                     alt={x.name}
                     preview={false}
-                  />
+                  /> */}
+                  <IconFont type={x.logo} style={{ fontSize: '16px' }} />
                   <span className="ml-3">{x.name}</span>
                 </div>
               </>
