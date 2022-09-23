@@ -1,10 +1,13 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Collapse } from 'antd'
 import { useContext } from 'react'
-import { useImmer } from 'use-immer'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
-import { DatasourceContext, DatasourceDispatchContext } from '@/lib/context/datasource-context'
+import {
+  DatasourceContext,
+  DatasourceDispatchContext,
+  DatasourceToggleContext,
+} from '@/lib/context/datasource-context'
 
 import styles from './Pannel.module.scss'
 import DatasourceItem from './subs/PannelItem'
@@ -36,10 +39,9 @@ function DatasourceList({ onClickItem }: ListProps) {
 export default function DatasourcePannel({ onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const datasource = useContext(DatasourceContext)
-  const [activeKey, setActiveKey] = useImmer([] as Array<string>)
-  const [hoveringKey, setHoveringKey] = useImmer(0)
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
 
-  function addTable(datasourceType: number) {
+  function _addTable(datasourceType: number) {
     const data = {
       id: -(datasource.length + 1),
       name: '',
@@ -51,38 +53,26 @@ export default function DatasourcePannel({ onClickItem }: Props) {
     onClickItem(data)
   }
 
-  function setHeader(label: string, datasourceType: number) {
-    return (
-      <div
-        className="w-full flex justify-between items-center py-2 pr-1 "
-        onMouseEnter={() => {
-          setHoveringKey(datasourceType)
-        }}
-        onMouseLeave={() => {
-          setHoveringKey(0)
-        }}
-      >
-        <span>{label}</span>
-        {hoveringKey == datasourceType ? (
-          <PlusOutlined
-            onClick={event => {
-              event.stopPropagation()
-              setActiveKey(activeKey.concat(datasourceType.toString()))
-              addTable(datasourceType)
-            }}
-          />
-        ) : (
-          ''
-        )}
-      </div>
-    )
+  // @ts-ignore
+  function handleClick(e) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    e.stopPropagation()
+    handleToggleDesigner('db-select')
   }
+
+  const header = (
+    <div className="flex justify-between items-center">
+      <div className="w-52 flex justify-between py-2">外部数据源</div>
+
+      <PlusOutlined onClick={handleClick} />
+    </div>
+  )
 
   return (
     <>
       <div className={styles['datasource-collapse']}>
         <Collapse ghost bordered>
-          <Panel header={<div className="w-52 flex justify-between py-2">外部数据源</div>} key={1}>
+          <Panel header={header} key={1}>
             <DatasourceList onClickItem={onClickItem} />
             {/* <div className="h-40" style={{ overflow: 'auto' }}>
               <Collapse
