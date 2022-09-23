@@ -257,9 +257,7 @@ export default function DB({ content, type }: Props) {
   }, [isValue])
 
   //查看页面逻辑
-  if (!content) {
-    return <Error50x />
-  }
+  if (!content) return <Error50x />
 
   //是否开启数据源开关回调
   const connectSwitchOnChange = (isChecked: boolean) => {
@@ -356,7 +354,7 @@ export default function DB({ content, type }: Props) {
                 {content.name} <span className="text-[#AFB0B4] text-[12px]">main</span>
               </span>
             </div>
-            <div className="flex  items-center">
+            <div className="flex items-center">
               <Switch
                 checked={content.switch == 0 ? true : false}
                 checkedChildren="开启"

@@ -124,7 +124,7 @@ export default function Home() {
                     <Row gutter={[16, 40]}>
                       <Col span={6}>
                         <div className="flex">
-                          <Image src="/assets/DB API.svg" alt="数据库" preview={false} />
+                          <Image src="/assets/api-db.svg" alt="数据库" preview={false} />
                           <div className="ml-8">
                             <span>{dbTotal}</span>
                             <p>数据库</p>
@@ -133,7 +133,7 @@ export default function Home() {
                       </Col>
                       <Col span={6}>
                         <div className="flex">
-                          <Image src="/assets/REST API.svg" alt="REST API" preview={false} />
+                          <Image src="/assets/api-rest.svg" alt="REST API" preview={false} />
                           <div className="ml-8">
                             <span>{RestTotal}</span>
                             <p>REST API</p>
@@ -142,7 +142,7 @@ export default function Home() {
                       </Col>
                       <Col span={6}>
                         <div className="flex">
-                          <Image src="/assets/GRAPHQL API.svg" alt="GRAPHQL API" preview={false} />
+                          <Image src="/assets/api-graphql.svg" alt="GRAPHQL API" preview={false} />
                           <div className="ml-8">
                             <span>{GraphqlTotal}</span>
                             <p>GRAPHQL API</p>
@@ -151,7 +151,7 @@ export default function Home() {
                       </Col>
                       <Col span={6}>
                         <div className="flex">
-                          <Image src="/assets/DefineSelf.svg" alt="DefineSelf" preview={false} />
+                          <Image src="/assets/api-custom.svg" alt="custom" preview={false} />
                           <div className="ml-8">
                             <span>{CustomerTotal}</span>
                             <p>自定义服务</p>
