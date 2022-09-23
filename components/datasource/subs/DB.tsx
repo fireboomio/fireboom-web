@@ -531,7 +531,7 @@ export default function DB({ content, type }: Props) {
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 label="类型:"
                 name="dbType"
                 // rules={[{ required: true, message: '类型不能为空' }]}
@@ -542,7 +542,7 @@ export default function DB({ content, type }: Props) {
                   <Select.Option value="PGSQL">PGSQL</Select.Option>
                   <Select.Option value="MONGODB">MONGODB</Select.Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item label="类型:" name="appendType">
                 <Radio.Group onChange={e => typeChange(e.target.value as string)}>

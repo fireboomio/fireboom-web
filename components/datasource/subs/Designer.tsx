@@ -20,8 +20,8 @@ const data = [
   {
     name: '数据库',
     items: [
-      { name: 'PostgreSQL', logo: 'api-db.svg', sourceType: 1 },
-      { name: 'MySQL', logo: 'api-db.svg', sourceType: 1 },
+      { name: 'PostgreSQL', logo: 'api-db.svg', sourceType: 1, dbType: 'PGSQL' },
+      { name: 'MySQL', logo: 'api-db.svg', sourceType: 1, dbType: 'MySql' },
     ],
   },
   { name: '自定义', items: [{ name: '自定义', logo: 'api-custom.svg', sourceType: 4 }] },
@@ -31,11 +31,11 @@ export default function Designer() {
   const dispatch = useContext(DatasourceDispatchContext)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
 
-  function handleClick(sourceType: number) {
+  function handleClick(sourceType: number, dbType: string) {
     const data = {
-      id: -Date.now(),
+      id: Date.now(),
       name: '',
-      config: {},
+      config: { dbType: dbType },
       sourceType: sourceType,
       switch: 0,
     } as DatasourceResp
@@ -56,7 +56,9 @@ export default function Designer() {
                 <div
                   key={x.name}
                   className="cursor-pointer text-[#333333FF] border border-gray-300/20 bg-[#FDFDFDFF] py-3.5 pl-4 min-w-53 w-53"
-                  onClick={() => handleClick(x.sourceType)}
+                  // @ts-ignore
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                  onClick={() => handleClick(x.sourceType, x.dbType)}
                 >
                   <Image
                     height={28}
