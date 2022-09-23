@@ -13,7 +13,7 @@ import {
   DatasourceToggleContext,
   DatasourceDispatchContext,
 } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
 interface Props {
@@ -38,6 +38,11 @@ interface DataType {
   resType: string
   inputType: string
   isOpen: boolean
+}
+
+interface OptionT {
+  label: string
+  value: string
 }
 
 const columns: ColumnsType<DataType> = [
@@ -132,6 +137,8 @@ export default function DB({ content, type }: Props) {
   const config = content.config as Config
   const [rulesObj, setRulesObj] = useImmer({})
   const [isValue, setIsValue] = useImmer(true)
+  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const [envVal, setEnvVal] = useImmer('')
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -142,12 +149,23 @@ export default function DB({ content, type }: Props) {
         return
       case '1':
         setIsValue(false)
+        setEnvVal('')
         return
       default:
         setIsValue(false)
         return
     }
   }
+
+  useEffect(() => {
+    void getFetcher('/env')
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
+      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      .then(x => setEnvOpts(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const initForm = (
     <Form.Item label="连接URL">
@@ -162,10 +180,7 @@ export default function DB({ content, type }: Props) {
           {isValue ? (
             <Input style={{ width: '80%' }} placeholder="请输入" />
           ) : (
-            <Select className="w-1/5" style={{ width: '80%' }}>
-              <Option value="1">1</Option>
-              <Option value="2">2</Option>
-            </Select>
+            <Select className="w-1/5" style={{ width: '80%' }} options={envOpts} value={envVal} />
           )}
         </Form.Item>
       </Input.Group>
