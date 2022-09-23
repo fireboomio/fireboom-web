@@ -1,0 +1,8 @@
+.title::before {
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  background: #ff5e5e;
+  border-radius: 0 3px 3px 0;
+  content: "";
+}

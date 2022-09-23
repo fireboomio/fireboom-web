@@ -80,11 +80,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
         {
           key: '1',
           label: (
-            <div
-              onClick={() => {
-                setIsEditing(!isEditing)
-              }}
-            >
+            <div onClick={() => setIsEditing(!isEditing)}>
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
@@ -124,16 +120,14 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
   )
   return (
     <div
-      className={`flex justify-between items-center py-2.5 pl-5
+      className={`flex justify-between items-center py-2.5 pl-5 cursor-pointer
       ${datasourceItem.id === currDBId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={datasourceItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onDoubleClick={() => setIsEditing(true)}
-      onClick={() => {
-        onClickItem(datasourceItem)
-      }}
+      onClick={() => onClickItem(datasourceItem)}
     >
       <div className="flex items-center cursor-pointer">
         <IconFont
@@ -197,7 +191,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           trigger={['click']}
           placement="bottomRight"
           visible={visible}
-          onVisibleChange={v => {
+          onOpenChange={v => {
             setVisible(v)
             leaveItem(v)
           }}

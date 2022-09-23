@@ -2,10 +2,10 @@ import { useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 
-import Error50x from '../ErrorPage/50x'
 import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
+import Designer from './subs/Designer'
 import Graphql from './subs/Graphql'
 import Rest from './subs/Rest'
 
@@ -40,7 +40,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
     return rv
   }, [content?.sourceType, showType])
 
-  if (!content) return <Error50x />
+  if (!content)
+    return (
+      <div className="pl-6 mt-6 mr-6">
+        <div className="flex justify-start items-center  mb-24px">
+          <span className="text-base flex-grow font-bold text-[18px]">外部数据源 / 选择数据源</span>
+          <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
+          <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
+          <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
+        </div>
+        <Designer />
+      </div>
+    )
 
   return (
     <div className="pl-6 mt-6 mr-6">

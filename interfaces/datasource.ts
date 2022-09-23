@@ -1,4 +1,4 @@
-export type ShowType = 'form' | 'detail' | 'setting'
+export type ShowType = 'form' | 'detail' | 'setting' | 'db-select'
 
 export type DatasourceAction = DatasourceSingleAction | DatasourceListAction
 
