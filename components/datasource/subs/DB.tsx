@@ -157,10 +157,7 @@ export default function DB({ content, type }: Props) {
     }
   }
 
-  // FIXME:
   const onValue2Change = (value: string) => {
-    console.log(envVal, value)
-    console.log(envOpts)
     setEnvVal(value)
   }
 

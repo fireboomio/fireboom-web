@@ -30,7 +30,7 @@ import {
   DatasourceDispatchContext,
   DatasourceToggleContext,
 } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './Rest.module.scss'
 
@@ -82,6 +82,11 @@ declare global {
   }
 }
 
+interface OptionT {
+  label: string
+  value: string
+}
+
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -94,6 +99,9 @@ export default function Rest({ content, type }: Props) {
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [isRadioShow, setIsRadioShow] = useImmer(true)
   const [isValue, setIsValue] = useImmer(true)
+
+  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const [envVal, setEnvVal] = useImmer('')
 
   useEffect(() => {
     form.resetFields()
@@ -108,6 +116,20 @@ export default function Rest({ content, type }: Props) {
       body.appendChild(script)
     }
   }, [])
+
+  useEffect(() => {
+    void getFetcher('/env')
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
+      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      .then(x => setEnvOpts(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const onValue2Change = (value: string) => {
+    setEnvVal(value)
+  }
 
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -145,6 +167,7 @@ export default function Rest({ content, type }: Props) {
         return
       case '1':
         setIsValue(false)
+        setEnvVal(envOpts.at(0)?.label ?? '')
         return
       case '2':
         setIsValue(true)
@@ -651,7 +674,7 @@ export default function Rest({ content, type }: Props) {
                               <Option value="1">环境变量</Option>
                             </Select>
                           </Form.Item>
-                          <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
+                          {/* <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
                             {isValue ? (
                               <Input style={{ width: '80%' }} placeholder="请输入" />
                             ) : (
@@ -660,7 +683,23 @@ export default function Rest({ content, type }: Props) {
                                 <Option value="2">2</Option>
                               </Select>
                             )}
-                          </Form.Item>
+                          </Form.Item> */}
+
+                          {isValue ? (
+                            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                            </Form.Item>
+                          ) : (
+                            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+                              <Select
+                                className="w-1/5"
+                                style={{ width: '80%' }}
+                                options={envOpts}
+                                value={envVal}
+                                onChange={onValue2Change}
+                              />
+                            </Form.Item>
+                          )}
                         </Input.Group>
                       </Form.Item>
 
