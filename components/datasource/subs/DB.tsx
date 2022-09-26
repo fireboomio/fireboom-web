@@ -149,12 +149,19 @@ export default function DB({ content, type }: Props) {
         return
       case '1':
         setIsValue(false)
-        setEnvVal('')
+        setEnvVal(envOpts.at(0)?.label ?? '')
         return
       default:
         setIsValue(false)
         return
     }
+  }
+
+  // FIXME:
+  const onValue2Change = (value: string) => {
+    console.log(envVal, value)
+    console.log(envOpts)
+    setEnvVal(value)
   }
 
   useEffect(() => {
@@ -176,16 +183,25 @@ export default function DB({ content, type }: Props) {
             <Option value="1">环境变量</Option>
           </Select>
         </Form.Item>
-        <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-          {isValue ? (
+        {isValue ? (
+          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
             <Input style={{ width: '80%' }} placeholder="请输入" />
-          ) : (
-            <Select className="w-1/5" style={{ width: '80%' }} options={envOpts} value={envVal} />
-          )}
-        </Form.Item>
+          </Form.Item>
+        ) : (
+          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+            <Select
+              className="w-1/5"
+              style={{ width: '80%' }}
+              options={envOpts}
+              value={envVal}
+              onChange={onValue2Change}
+            />
+          </Form.Item>
+        )}
       </Input.Group>
     </Form.Item>
   )
+
   const paramForm = (
     <>
       <Form.Item
@@ -193,10 +209,7 @@ export default function DB({ content, type }: Props) {
         name="host"
         rules={[
           { required: true, message: '主机名不能为空' },
-          {
-            pattern: domainReg || ipReg,
-            message: '请填写规范域名或者ip',
-          },
+          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' },
         ]}
       >
         <Input placeholder="请输入..." />
@@ -219,10 +232,7 @@ export default function DB({ content, type }: Props) {
         name="port"
         rules={[
           { required: true, message: '端口号不能为空' },
-          {
-            pattern: port,
-            message: '端口范围为0-9999',
-          },
+          { pattern: port, message: '端口范围为0-9999' },
         ]}
       >
         <Input placeholder="请输入..." />
@@ -245,10 +255,7 @@ export default function DB({ content, type }: Props) {
         name="password"
         rules={[
           { required: true, message: '密码不能为空' },
-          {
-            pattern: passwordReg,
-            message: '请输入4-64位包含数字、字母和非中文字符的组合',
-          },
+          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' },
         ]}
       >
         <Input.Password placeholder="请输入..." />
