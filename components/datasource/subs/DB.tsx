@@ -13,7 +13,7 @@ import {
   DatasourceToggleContext,
   DatasourceDispatchContext,
 } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
 interface Props {
@@ -38,6 +38,11 @@ interface DataType {
   resType: string
   inputType: string
   isOpen: boolean
+}
+
+interface OptionT {
+  label: string
+  value: string
 }
 
 const columns: ColumnsType<DataType> = [
@@ -132,6 +137,8 @@ export default function DB({ content, type }: Props) {
   const config = content.config as Config
   const [rulesObj, setRulesObj] = useImmer({})
   const [isValue, setIsValue] = useImmer(true)
+  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const [envVal, setEnvVal] = useImmer('')
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -142,12 +149,30 @@ export default function DB({ content, type }: Props) {
         return
       case '1':
         setIsValue(false)
+        setEnvVal(envOpts.at(0)?.label ?? '')
         return
       default:
         setIsValue(false)
         return
     }
   }
+
+  // FIXME:
+  const onValue2Change = (value: string) => {
+    console.log(envVal, value)
+    console.log(envOpts)
+    setEnvVal(value)
+  }
+
+  useEffect(() => {
+    void getFetcher('/env')
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
+      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      .then(x => setEnvOpts(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const initForm = (
     <Form.Item label="连接URL">
@@ -158,19 +183,25 @@ export default function DB({ content, type }: Props) {
             <Option value="1">环境变量</Option>
           </Select>
         </Form.Item>
-        <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-          {isValue ? (
+        {isValue ? (
+          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
             <Input style={{ width: '80%' }} placeholder="请输入" />
-          ) : (
-            <Select className="w-1/5" style={{ width: '80%' }}>
-              <Option value="1">1</Option>
-              <Option value="2">2</Option>
-            </Select>
-          )}
-        </Form.Item>
+          </Form.Item>
+        ) : (
+          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+            <Select
+              className="w-1/5"
+              style={{ width: '80%' }}
+              options={envOpts}
+              value={envVal}
+              onChange={onValue2Change}
+            />
+          </Form.Item>
+        )}
       </Input.Group>
     </Form.Item>
   )
+
   const paramForm = (
     <>
       <Form.Item
@@ -178,10 +209,7 @@ export default function DB({ content, type }: Props) {
         name="host"
         rules={[
           { required: true, message: '主机名不能为空' },
-          {
-            pattern: domainReg || ipReg,
-            message: '请填写规范域名或者ip',
-          },
+          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' },
         ]}
       >
         <Input placeholder="请输入..." />
@@ -204,10 +232,7 @@ export default function DB({ content, type }: Props) {
         name="port"
         rules={[
           { required: true, message: '端口号不能为空' },
-          {
-            pattern: port,
-            message: '端口范围为0-9999',
-          },
+          { pattern: port, message: '端口范围为0-9999' },
         ]}
       >
         <Input placeholder="请输入..." />
@@ -230,10 +255,7 @@ export default function DB({ content, type }: Props) {
         name="password"
         rules={[
           { required: true, message: '密码不能为空' },
-          {
-            pattern: passwordReg,
-            message: '请输入4-64位包含数字、字母和非中文字符的组合',
-          },
+          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' },
         ]}
       >
         <Input.Password placeholder="请输入..." />
