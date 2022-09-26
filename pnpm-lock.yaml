@@ -20,6 +20,8 @@ specifiers:
   classnames: ^2.3.2
   copy-to-clipboard: ^3.3.2
   dayjs: ^1.11.5
+  echarts: ^5.4.0
+  echarts-for-react: ^3.0.2
   eslint: ^8.23.1
   eslint-config-next: 12.1.6
   eslint-plugin-import: ^2.26.0
@@ -60,6 +62,8 @@ dependencies:
   classnames: registry.npmmirror.com/classnames/2.3.2
   copy-to-clipboard: registry.npmmirror.com/copy-to-clipboard/3.3.2
   dayjs: registry.npmmirror.com/dayjs/1.11.5
+  echarts: registry.npmmirror.com/echarts/5.4.0
+  echarts-for-react: registry.npmmirror.com/echarts-for-react/3.0.2_echarts@5.4.0+react@18.2.0
   graphiql: registry.npmmirror.com/graphiql/1.11.5_sfpuo3qx4ekyw7mqd47bn2okvm
   graphiql-explorer: registry.npmmirror.com/graphiql-explorer/0.9.0_gdcq4dv6opitr3wbfwyjmanyra
   graphql: registry.npmmirror.com/graphql/16.6.0
@@ -2616,6 +2620,30 @@ packages:
     dependencies:
       is-obj: registry.npmmirror.com/is-obj/2.0.0
     dev: true
+
+  registry.npmmirror.com/echarts-for-react/3.0.2_echarts@5.4.0+react@18.2.0:
+    resolution: {integrity: sha512-DRwIiTzx8JfwPOVgGttDytBqdp5VzCSyMRIxubgU/g2n9y3VLUmF2FK7Icmg/sNVkv4+rktmrLN9w22U2yy3fA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/echarts-for-react/-/echarts-for-react-3.0.2.tgz}
+    id: registry.npmmirror.com/echarts-for-react/3.0.2
+    name: echarts-for-react
+    version: 3.0.2
+    peerDependencies:
+      echarts: ^3.0.0 || ^4.0.0 || ^5.0.0
+      react: ^15.0.0 || >=16.0.0
+    dependencies:
+      echarts: registry.npmmirror.com/echarts/5.4.0
+      fast-deep-equal: registry.npmmirror.com/fast-deep-equal/3.1.3
+      react: registry.npmmirror.com/react/18.2.0
+      size-sensor: registry.npmmirror.com/size-sensor/1.0.1
+    dev: false
+
+  registry.npmmirror.com/echarts/5.4.0:
+    resolution: {integrity: sha512-uPsO9VRUIKAdFOoH3B0aNg7NRVdN7aM39/OjovjO9MwmWsAkfGyeXJhK+dbRi51iDrQWliXV60/XwLA7kg3z0w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/echarts/-/echarts-5.4.0.tgz}
+    name: echarts
+    version: 5.4.0
+    dependencies:
+      tslib: registry.npmmirror.com/tslib/2.3.0
+      zrender: registry.npmmirror.com/zrender/5.4.0
+    dev: false
 
   registry.npmmirror.com/electron-to-chromium/1.4.249:
     resolution: {integrity: sha512-GMCxR3p2HQvIw47A599crTKYZprqihoBL4lDSAUmr7IYekXFK5t/WgEBrGJDCa2HWIZFQEkGuMqPCi05ceYqPQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.4.249.tgz}
@@ -5700,7 +5728,7 @@ packages:
     dependencies:
       htmlparser2: registry.npmmirror.com/htmlparser2/3.10.1
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
     dev: true
 
   registry.npmmirror.com/postcss-jsx/0.36.4_j55xdkkcxc32kvnyvx3y7casfm:
@@ -5714,7 +5742,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.19.0
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5738,7 +5766,7 @@ packages:
       postcss-syntax: '>=0.36.0'
     dependencies:
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
       remark: registry.npmmirror.com/remark/10.0.1
       unist-util-find-all-after: registry.npmmirror.com/unist-util-find-all-after/1.0.5
     dev: true
@@ -5860,7 +5888,7 @@ packages:
       postcss: registry.npmmirror.com/postcss/8.4.16
     dev: true
 
-  registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq:
+  registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16:
     resolution: {integrity: sha512-nBRg/i7E3SOHWxF3PpF5WnJM/jQ1YpY9000OaVXlAQj6Zp/kIqJxEDWIZ67tAd7NLuk7zqN4yqe9nc0oNAOs1w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/postcss-syntax/-/postcss-syntax-0.36.2.tgz}
     id: registry.npmmirror.com/postcss-syntax/0.36.2
     name: postcss-syntax
@@ -5884,12 +5912,7 @@ packages:
       postcss-scss:
         optional: true
     dependencies:
-      postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-html: registry.npmmirror.com/postcss-html/0.36.0_j55xdkkcxc32kvnyvx3y7casfm
-      postcss-jsx: registry.npmmirror.com/postcss-jsx/0.36.4_j55xdkkcxc32kvnyvx3y7casfm
-      postcss-less: registry.npmmirror.com/postcss-less/3.1.4
-      postcss-markdown: registry.npmmirror.com/postcss-markdown/0.36.0_j55xdkkcxc32kvnyvx3y7casfm
-      postcss-scss: registry.npmmirror.com/postcss-scss/2.1.1
+      postcss: registry.npmmirror.com/postcss/8.4.16
     dev: true
 
   registry.npmmirror.com/postcss-value-parser/3.3.1:
@@ -7150,6 +7173,12 @@ packages:
     version: 3.0.7
     dev: true
 
+  registry.npmmirror.com/size-sensor/1.0.1:
+    resolution: {integrity: sha512-QTy7MnuugCFXIedXRpUSk9gUnyNiaxIdxGfUjr8xxXOqIB3QvBUYP9+b51oCg2C4dnhaeNk/h57TxjbvoJrJUA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/size-sensor/-/size-sensor-1.0.1.tgz}
+    name: size-sensor
+    version: 1.0.1
+    dev: false
+
   registry.npmmirror.com/slash/2.0.0:
     resolution: {integrity: sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/slash/-/slash-2.0.0.tgz}
     name: slash
@@ -7714,7 +7743,7 @@ packages:
       postcss-sass: registry.npmmirror.com/postcss-sass/0.3.5
       postcss-scss: registry.npmmirror.com/postcss-scss/2.1.1
       postcss-selector-parser: registry.npmmirror.com/postcss-selector-parser/3.1.2
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
       postcss-value-parser: registry.npmmirror.com/postcss-value-parser/3.3.1
       resolve-from: registry.npmmirror.com/resolve-from/4.0.0
       signal-exit: registry.npmmirror.com/signal-exit/3.0.7
@@ -7974,6 +8003,12 @@ packages:
     name: tslib
     version: 1.14.1
     dev: true
+
+  registry.npmmirror.com/tslib/2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.3.0.tgz}
+    name: tslib
+    version: 2.3.0
+    dev: false
 
   registry.npmmirror.com/tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.4.0.tgz}
@@ -8474,3 +8509,11 @@ packages:
     version: 0.1.0
     engines: {node: '>=10'}
     dev: true
+
+  registry.npmmirror.com/zrender/5.4.0:
+    resolution: {integrity: sha512-rOS09Z2HSVGFs2dn/TuYk5BlCaZcVe8UDLLjj1ySYF828LATKKdxuakSZMvrDz54yiKPDYVfjdKqcX8Jky3BIA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/zrender/-/zrender-5.4.0.tgz}
+    name: zrender
+    version: 5.4.0
+    dependencies:
+      tslib: registry.npmmirror.com/tslib/2.3.0
+    dev: false

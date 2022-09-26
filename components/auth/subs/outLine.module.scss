@@ -1,0 +1,49 @@
+.container{
+  background: #fdfdfd;
+}
+
+
+
+.cardTitleLine{
+  display: flex;
+  align-items: center;
+  &Title{
+    font-size: 16px;
+    line-height: 22px;
+  }
+  &TipIcon{
+    width:16px;
+    height: 16px;
+    margin-left: 2px;
+    background: red;
+  }
+}
+.cardDetailLine{
+  height: 33px;
+  margin-top: 17px;
+  &Number{
+    font-size: 24px;
+    line-height: 33px;
+    font-weight: bold;
+    &Text{
+      font-size: 14px;
+      color: rgba(95,98,105,0.6);
+      vertical-align: 1px;
+    }
+  }
+}
+
+.up{
+  font-size: 14px;
+  color: #6ACF00;
+  &Icon{
+
+  }
+}
+.down{
+  font-size: 14px;
+  color: #E02020;
+  &Icon{
+
+  }
+}

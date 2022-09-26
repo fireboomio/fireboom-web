@@ -20,6 +20,7 @@ import AuthRole from './subs/Role'
 import AuthUser from './subs/User'
 import AuthUserDetails from './subs/UserDetails'
 import AuthWebhooks from './subs/Webhooks'
+import AuthOutLine from './subs/OutLine'
 
 interface Props {
   content: AuthProvResp
@@ -80,7 +81,7 @@ export default function AuthContainer({
     switch (showTopType) {
       case 'outline':
         setTitle('概览')
-        setViewer(<ErrorWorking />)
+        setViewer(<AuthOutLine />)
         break
       case 'userManage':
         setTitle('用户管理')
@@ -146,15 +147,18 @@ export default function AuthContainer({
   }, [showBottomType, content])
 
   return (
-    <div className="pl-6 pr-6 mt-6">
+    <div className={'pl-6 pr-6 pt-6' +(showTopType==='outline'?' bg-[#FDFDFDFF]':'')}>
       {showTopType !== 'userDetails' ? (
-        <div className="flex justify-start items-center mb-5 ">
-          <span className="text-lg flex-grow font-bold">
+        <div className="flex justify-start items-center mb-2.5 ">
+          {showTopType === 'outline' ?<div className="flex-grow">
+            <div className="font-bold text-lg leading-6">概览</div>
+            <div className="mt1.5 text-xs " style={{ color:'rgba(175,176,180,0.6)' }}>查看所以应用的数据情况</div>
+          </div>: <span className="text-lg flex-grow font-bold">
             身份验证
             <span className="text-base flex-grow font-bold">
               <CaretRightOutlined /> {title}
             </span>
-          </span>
+          </span>}
           <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
           <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
           <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
