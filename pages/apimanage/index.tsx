@@ -423,7 +423,24 @@ const ApiManage: FC<ApiManageProps> = () => {
   //   setCurrEditingKey(nodeData.key)
   // }
 
+  function calcMiniStatus(nodeData: DirTreeNode) {
+    if (nodeData.legal) {
+      return (
+        <div className="">
+          <IconFont type="icon-zhuyi" color="red" />
+          <span className="ml-1">非法</span>
+        </div>
+      )
+    } else if (!nodeData.isPublic) {
+      return '内部'
+    } else {
+      return nodeData.method
+    }
+  }
+
   const titleRender = (nodeData: DirTreeNode) => {
+    const miniStatus = calcMiniStatus(nodeData)
+
     const menu = (
       <Menu
         // onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
@@ -491,8 +508,8 @@ const ApiManage: FC<ApiManageProps> = () => {
         ) : (
           <>
             <span className="truncate max-w-9rem">{nodeData.title}</span>
-            <div className="text-12px  space-x-4">
-              <span className="text-[#AFB0B499]">{nodeData.method}</span>
+            <div className="flex items-center text-12px space-x-4">
+              <span className="text-[#AFB0B499]">{miniStatus}</span>
               <span className={`text-[#AFB0B4] ${styles['symbol']}`}>
                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
                   <MoreOutlined onClick={e => e.stopPropagation()} />
