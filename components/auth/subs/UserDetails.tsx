@@ -202,12 +202,7 @@ export default function AuthUserDetails() {
           onOk={() => setModal1Visible(false)}
           onCancel={() => setModal1Visible(false)}
           okText={
-            <Button
-              className={styles['save-btn']}
-              onClick={() => {
-                form.submit()
-              }}
-            >
+            <Button className={styles['save-btn']} onClick={() => form.submit()}>
               <span>确定</span>
             </Button>
           }
