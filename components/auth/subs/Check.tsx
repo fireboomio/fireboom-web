@@ -2,7 +2,6 @@
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions, Button } from 'antd'
-import Link from 'next/link'
 import { ReactNode, useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -77,7 +76,7 @@ export default function AuthMainCheck({ content }: Props) {
           }}
         >
           <Descriptions.Item label="供应商ID">
-            <Link href={sid}>{config.id}</Link>
+            <a href={sid}>{config.id}</a>
           </Descriptions.Item>
           <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
