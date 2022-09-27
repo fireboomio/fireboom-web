@@ -2,7 +2,6 @@ import { Button, Select, Upload } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
-import { DatasourceResp } from '@/interfaces/datasource'
 import { getFetcher } from '@/lib/fetchers'
 
 interface OptionType {
@@ -32,12 +31,18 @@ export default function AuthDB() {
   }, [options, selectedDB])
 
   useEffect(() => {
-    void getFetcher<DatasourceResp[]>('/dataSource').then(res => {
-      const opts = res.map(x => ({
+    void getFetcher('/oauth/dblist').then(res => {
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const opts = res.dbs.map(x => ({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         label: x.name,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         value: x.id.toString(),
       }))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       setOptions(opts)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       setSelectedDB(opts.at(0)?.value)
     })
   }, [])
