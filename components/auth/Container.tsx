@@ -16,11 +16,11 @@ import Experience from './experience'
 import AuthCheck from './subs/Check'
 import AuthDB from './subs/DB'
 import AuthEdit from './subs/Edit'
+import AuthOutLine from './subs/OutLine'
 import AuthRole from './subs/Role'
 import AuthUser from './subs/User'
 import AuthUserDetails from './subs/UserDetails'
 import AuthWebhooks from './subs/Webhooks'
-import AuthOutLine from './subs/OutLine'
 
 interface Props {
   content: AuthProvResp
