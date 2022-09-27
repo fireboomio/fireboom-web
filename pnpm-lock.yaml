@@ -32,6 +32,7 @@ specifiers:
   graphql: ^16.6.0
   immer: ^9.0.15
   lodash: ^4.17.21
+  moment: ^2.29.4
   monaco-editor: ^0.33.0
   next: 12.1.6
   next-plugin-antd-less: ^1.8.0
@@ -69,6 +70,7 @@ dependencies:
   graphql: registry.npmmirror.com/graphql/16.6.0
   immer: registry.npmmirror.com/immer/9.0.15
   lodash: registry.npmmirror.com/lodash/4.17.21
+  moment: registry.npmmirror.com/moment/2.29.4
   next: registry.npmmirror.com/next/12.1.6_psqvd2pzzkjlzpo33alcb6tbxu
   next-plugin-antd-less: registry.npmmirror.com/next-plugin-antd-less/1.8.0_webpack@5.74.0
   react: registry.npmmirror.com/react/18.2.0
