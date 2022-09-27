@@ -1,4 +1,4 @@
-import { Divider, Card, Row, Col, Tooltip, DatePicker } from 'antd'
+import { Divider, Card, Row, Col, Tooltip, DatePicker, Image } from 'antd'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import moment from 'moment'
@@ -50,14 +50,14 @@ export default function AuthOutLine() {
   const chartOptions = activeUser?.thirtyActive
     ? {
         grid: {
-          top: '15',
+          top: '25',
           left: '40',
           right: '30',
           bottom: '30',
         },
-      lineStyle:{
-          color:'rgba(24, 40, 168, 1)'
-      },
+        lineStyle: {
+          color: 'rgba(24, 40, 168, 1)',
+        },
         xAxis: {
           data: activeUser?.thirtyActive.map(x => x.dataString),
           axisTick: { show: false },
@@ -108,11 +108,13 @@ export default function AuthOutLine() {
     tooltip,
     count,
     upCount,
+    icon,
   }: {
     title: string
     tooltip: string
     count?: number
     upCount?: number
+    icon?: string
   }) => {
     return (
       <Card bodyStyle={{ padding: '20px 24px' }} bordered>
@@ -141,7 +143,16 @@ export default function AuthOutLine() {
             </>
           )}
         </div>
-        <image className="absolute right-6 bottom-5 bg-red-500 block w-37px h-37px"/>
+        {icon && (
+          <Image
+            src={icon}
+            height={37}
+            width={37}
+            preview={false}
+            alt="用户"
+            rootClassName={styles.cardIcon}
+          />
+        )}
       </Card>
     )
   }
@@ -157,6 +168,7 @@ export default function AuthOutLine() {
               tooltip: '总用户',
               count: newUser?.totalUser,
               upCount: 0,
+              icon: '/assets/total-user.png',
             })}
           </Col>
           <Col span={8}>
@@ -165,6 +177,7 @@ export default function AuthOutLine() {
               tooltip: '今日注册到你应用上到新用户数',
               count: newUser?.todayInsertUser.count,
               upCount: newUser?.todayInsertUser.upCount,
+              icon: '/assets/today-user.png',
             })}
           </Col>
           <Col span={8}>
@@ -173,23 +186,37 @@ export default function AuthOutLine() {
               tooltip: '最近7日注册到你应用上到新用户数',
               count: newUser?.sevenDayUser.count,
               upCount: newUser?.sevenDayUser.upCount,
+              icon: '/assets/week-user.png',
             })}
           </Col>
         </Row>
       </div>
       <div className={styles.chart} style={{ marginTop: 12 }}>
         <Card bodyStyle={{ padding: 0 }} bordered>
-          <div className="pl-6 pt-5 text-base leading-22px h-18">
-            <div>日活用户</div>
-            {activeUser?.dayActive.upCount ? (
-              <div
-                style={{ marginTop: 7 }}
-                className={styles[activeUser?.dayActive.upCount > 0 ? 'up' : 'down']}
-              >
-                <div className={styles.Icon} />
-                {Math.abs(activeUser?.dayActive.upCount)}
+          <div className="pl-6 pt-5 h-18">
+            <div className="text-base leading-22px flex items-center">
+              日活用户
+              <Tooltip title="每日登录过你的应用到独立用户数">
+                <div className={styles.cardTitleLineTipIcon} style={{ marginLeft: 2 }} />
+              </Tooltip>
+            </div>
+            {activeUser?.dayActive?.count !== void 0 && (
+              <div className={styles.cardDetailLine} style={{ marginTop: 10 }}>
+                <div className={styles.cardDetailLineNumber}>
+                  {activeUser?.dayActive.count}
+                  <span className={styles.cardDetailLineNumberText}>人</span>
+                </div>
+                {activeUser?.dayActive.upCount ? (
+                  <div
+                    style={{ marginTop: 7 }}
+                    className={styles[activeUser?.dayActive.upCount > 0 ? 'up' : 'down']}
+                  >
+                    <div className={styles.Icon} />
+                    {Math.abs(activeUser?.dayActive.upCount)}
+                  </div>
+                ) : null}
               </div>
-            ) : null}
+            )}
           </div>
           <div className="absolute top-5 right-8">
             <DatePicker defaultValue={chartDate} onChange={onDateChange} />
@@ -205,7 +232,7 @@ export default function AuthOutLine() {
           <Col span={8}>
             {renderCard({
               title: '周活用户',
-              tooltip: '最近7日在你的应用上交换过 token 的独立用户数',
+              tooltip: '最近7日登录过你的应用到独立用户数',
               count: activeUser?.weekActive.count,
               upCount: activeUser?.weekActive.upCount,
             })}
@@ -213,7 +240,7 @@ export default function AuthOutLine() {
           <Col span={8}>
             {renderCard({
               title: '月活用户',
-              tooltip: '最近30日在你的应用上交换过 token 的独立用户数',
+              tooltip: '最近30日登录过你的应用到独立用户数',
               count: activeUser?.monthActive.count,
               upCount: activeUser?.monthActive.upCount,
             })}

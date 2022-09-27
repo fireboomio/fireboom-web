@@ -43,8 +43,8 @@
   align-items: center;
   .Icon{
     width: 17px;
-    height: 9px;
-    background: #6ACF00;
+    height: 10px;
+    background: url(/assets/up-mark.png) no-repeat center/contain;
   }
 }
 .down{
@@ -55,8 +55,14 @@
   align-items: center;
   .Icon{
     width: 17px;
-    height: 9px;
-    background: #E02020;
+    height: 10px;
+    background: url(/assets/down-mark.png) no-repeat center/contain;
     margin-right: 4px;
   }
+}
+
+.cardIcon{
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
 }
