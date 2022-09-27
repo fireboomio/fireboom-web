@@ -50,7 +50,7 @@ type UNLOCK = true
 type LOCK = false
 
 export interface User {
-  id: number
+  id: string
   email: string
   encryptionPassword: string
   metaData: Record<string, string | number | boolean>
