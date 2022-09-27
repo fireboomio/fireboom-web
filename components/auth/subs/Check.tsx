@@ -2,11 +2,13 @@
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions, Button } from 'antd'
-import { ReactNode, useContext } from 'react'
+import Link from 'next/link'
+import { ReactNode, useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
+import { DOMAIN, HOST } from '@/lib/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
 import styles from './subs.module.scss'
@@ -16,15 +18,17 @@ interface Props {
 interface Config {
   [key: string]: ReactNode
 }
+
 export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
-  if (!content) {
-    return <Error50x />
-  }
-
   const config = content.config as unknown as Config
+
+  const sid = useMemo(() => {
+    return `${HOST}/api/main/auth/cookie/callback/${config.id as string}?redirect_uri=${DOMAIN}/`
+  }, [config.id])
+
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
@@ -39,6 +43,8 @@ export default function AuthMainCheck({ content }: Props) {
       : content.switchState[0] == 'cookieBased'
       ? '基于Cookie'
       : ''
+
+  if (!content) return <Error50x />
 
   return (
     <>
@@ -70,7 +76,9 @@ export default function AuthMainCheck({ content }: Props) {
             borderBottom: 'none',
           }}
         >
-          <Descriptions.Item label="供应商ID">{config.id}</Descriptions.Item>
+          <Descriptions.Item label="供应商ID">
+            <Link href={sid}>{config.id}</Link>
+          </Descriptions.Item>
           <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>

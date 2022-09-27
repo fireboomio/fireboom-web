@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-import { RightOutlined } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
 import { useContext, ReactNode } from 'react'
@@ -145,9 +144,7 @@ export default function AuthMainEdit({ content }: Props) {
         </div>
       </div>
       <div className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}>
-        <span className=" w-19 h-5 float-right">
-          前往管理 <RightOutlined />
-        </span>
+        <span className=" w-19 h-5 float-right">{/* 前往管理 <RightOutlined /> */}</span>
       </div>
       <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
