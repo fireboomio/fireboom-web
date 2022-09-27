@@ -1,7 +1,6 @@
 import { Row } from 'antd'
 import Head from 'next/head'
-import { useEffect, useReducer } from 'react'
-import useSWR from 'swr'
+import { useReducer } from 'react'
 import { useImmer } from 'use-immer'
 
 import { AuthContainer, AuthPannel } from '@/components/auth'
@@ -15,7 +14,6 @@ import {
   ConnectorContext,
   ConnectorContextType,
 } from '@/lib/context/auth-context'
-import { getFetcher } from '@/lib/fetchers'
 import authReducer from '@/lib/reducers/auth-reducer'
 import connectorReducer from '@/lib/reducers/connector-reducer'
 
@@ -32,14 +30,14 @@ export default function Authentication() {
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
   const [authUserCurr, setAuthUserCurr] = useImmer({} as User)
 
-  const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
-  useEffect(() => {
-    data &&
-      dispatch({
-        type: 'fetched',
-        data,
-      })
-  }, [data])
+  // const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
+  // useEffect(() => {
+  //   data &&
+  //     dispatch({
+  //       type: 'fetched',
+  //       data,
+  //     })
+  // }, [data])
 
   // TODO: add
   // if (error) return <div>failed to load</div>

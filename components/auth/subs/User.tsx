@@ -68,7 +68,6 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }, [refreshFlag])
 
   const onFinish = (values: User) => {
-    console.log(values)
     void requests.post('/oauth', values).then(() => setRefreshFlag(!refreshFlag))
   }
 
