@@ -321,10 +321,10 @@ export default function Rest({ content, type }: Props) {
             >
               <Descriptions.Item
                 label={
-                  <div>
+                  <>
                     <span className={styles['label-style']}>名称</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
+                  </>
                 }
                 className="justify-start"
               >
@@ -332,10 +332,21 @@ export default function Rest({ content, type }: Props) {
               </Descriptions.Item>
               <Descriptions.Item
                 label={
-                  <div>
+                  <>
+                    <span className={styles['label-style']}>Rest 端点</span>
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                  </>
+                }
+                className="justify-start"
+              >
+                {config.baseUrl}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <>
                     <span className={styles['label-style']}>指定OAS</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
+                  </>
                 }
                 className="justify-start"
               >
@@ -361,10 +372,10 @@ export default function Rest({ content, type }: Props) {
             </TabPane>
             <TabPane
               tab={
-                <div>
+                <>
                   <span className={styles['label-style']}>授权</span>
                   <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                </div>
+                </>
               }
               key="2"
             >
@@ -388,15 +399,15 @@ export default function Rest({ content, type }: Props) {
                   </Descriptions.Item>
                   <Descriptions.Item label="密钥">
                     {isEyeShow ? (
-                      <div>
+                      <>
                         <span className="mr-5">{(config.secret as unknown as DataType)?.val}</span>
                         <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
-                      </div>
+                      </>
                     ) : (
-                      <div>
+                      <>
                         <span className="mr-5">********</span>
                         <IconFont type="icon-xiaoyanjing-yincang" onClick={changeEyeState} />
-                      </div>
+                      </>
                     )}
                   </Descriptions.Item>
                   <Descriptions.Item label="签名方法">{config.signingMethod}</Descriptions.Item>
@@ -513,6 +524,7 @@ export default function Rest({ content, type }: Props) {
               className="ml-3"
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
+                baseUrl: config.baseUrl,
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
@@ -520,10 +532,10 @@ export default function Rest({ content, type }: Props) {
             >
               <Form.Item
                 label={
-                  <div>
+                  <>
                     <span>名称:</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
+                  </>
                 }
                 rules={[
                   { required: true, message: '请输入名称' },
@@ -539,12 +551,31 @@ export default function Rest({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
               <Form.Item
+                label={
+                  <>
+                    <span>Rest 端点:</span>
+                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                  </>
+                }
+                rules={[
+                  {
+                    pattern: /^https?:\/\/[.\w\d/]+$/g,
+                    message: '只允许输入链接',
+                  },
+                ]}
+                name="baseUrl"
+                colon={false}
+                style={{ marginBottom: '20px' }}
+              >
+                <Input placeholder="请输入..." />
+              </Form.Item>
+              <Form.Item
                 rules={[{ required: true, message: '请上传 OAS 文件' }]}
                 label={
-                  <div>
+                  <>
                     <span>指定OAS:</span>
                     <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                  </div>
+                  </>
                 }
                 colon={false}
                 name="filePath"
@@ -674,17 +705,6 @@ export default function Rest({ content, type }: Props) {
                               <Option value="1">环境变量</Option>
                             </Select>
                           </Form.Item>
-                          {/* <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
-                            {isValue ? (
-                              <Input style={{ width: '80%' }} placeholder="请输入" />
-                            ) : (
-                              <Select className="w-1/5" style={{ width: '80%' }}>
-                                <Option value="1">1</Option>
-                                <Option value="2">2</Option>
-                              </Select>
-                            )}
-                          </Form.Item> */}
-
                           {isValue ? (
                             <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
                               <Input style={{ width: '80%' }} placeholder="请输入" />
@@ -733,13 +753,13 @@ export default function Rest({ content, type }: Props) {
                       </Form.Item>
                       <Form.Item
                         label={
-                          <div>
+                          <>
                             <span>Token 端点:</span>
                             <IconFont
                               type="icon-wenhao"
                               className={`${styles['form-icon']} ml-1`}
                             />
-                          </div>
+                          </>
                         }
                         colon={false}
                         required
@@ -761,10 +781,10 @@ export default function Rest({ content, type }: Props) {
                 <Panel header="更多" key="1" className="site-collapse-custom-panel">
                   <Form.Item
                     label={
-                      <div>
+                      <>
                         <span className={styles['label-style']}>是否状态联合:</span>
                         <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                      </div>
+                      </>
                     }
                     name="statusCodeUnions"
                     colon={false}
