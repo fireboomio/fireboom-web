@@ -1,4 +1,4 @@
-import { Col, Row, Image, Progress, Badge } from 'antd'
+import { Col, Row, Image, Progress, Badge, Card } from 'antd'
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -23,6 +23,7 @@ interface HomeDataSource {
   RestTotal: number
   dbTotal: number
 }
+
 interface HomeOss {
   ossTotal: number
   totalMemory: string
@@ -63,6 +64,7 @@ const initialValues = {
     GraphqlTotal: 0,
     RestTotal: 0,
     dbTotal: 0,
+    dbTotal2: 0,
   },
   homeOss: {
     ossTotal: 0,
@@ -90,6 +92,27 @@ export default function Home() {
   const { authTotal, todayInsertUser, totalUser } = homeAuth
   const { ossTotal, totalMemory, useMemory } = homeOss
 
+  const renderFeItem = (image: string, name: string, _doc: string, _code: string) => {
+    return (
+      <div className={styles.item}>
+        <div className={styles.nameLine}>
+          <div className={[styles.image, image].join(' ')} />
+          <div className={styles.name}>{name}</div>
+        </div>
+        <div className={styles.btnLine}>
+          <div className={styles.btn}>
+            <div className={[styles.image, styles.imageDoc].join(' ')} />
+            <div className={styles.text}>文档</div>
+          </div>
+          <div className={styles.btn}>
+            <div className={[styles.image, styles.imageCode].join(' ')} />
+            <div className={styles.text}>代码</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -98,258 +121,222 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex items-center justify-end mx-6 my-5.5">
-        <div className="invisible border cursor-pointer px-3 py-1">
-          <IconFont type="icon-rizhi1" />
-          <span className="ml-2">日志</span>
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-end mx-6 my-5.5">
+          <div className="invisible border cursor-pointer px-3 py-1">
+            <IconFont type="icon-rizhi1" />
+            <span className="ml-2">日志</span>
+          </div>
+
+          <div className="ml-8">
+            <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
+            <IconFont type="icon-wendang" className="text-[22px] ml-4" onClick={handleIconClick} />
+            <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
+          </div>
         </div>
 
-        <div className="ml-8">
-          <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-          <IconFont type="icon-wendang" className="text-[22px] ml-4" onClick={handleIconClick} />
-          <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
-        </div>
-      </div>
-      <div className={styles['main-divider']} />
-
-      <div className="overflow-y-scroll h-180">
-        <Row className="h-screen">
-          <Col span={18} className={styles['col-left']}>
-            <div className="pl-6 pr-10 mt-6">
-              <div className=" mb-5 ">
-                <span className="text-lg flex-grow font-bold">数据概览</span>
-                <div className={`${styles['right-data']} border pl-6 pt-4 mb-3 mt-3`}>
-                  <h3 className={styles['top-head']}>数据源</h3>
-                  <div className=" pb-5 ">
-                    <Row gutter={[16, 40]}>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/api-db.svg" alt="数据库" preview={false} />
-                          <div className="ml-8">
-                            <span>{dbTotal}</span>
-                            <p>数据库</p>
-                          </div>
+        <div className="flex-1 min-h-0">
+          <div className={styles.bodyContainer}>
+            <div className={styles.centerContainer}>
+              <div className={styles.row}>
+                <div className={[styles.card, styles.moduleData].join(' ')}>
+                  <div className={styles.cardTitle}>数据源</div>
+                  <div className="flex">
+                    <div className={[styles.dataCard, styles.dataCard1].join(' ')}>
+                      <div className={styles.dataCardBody}>
+                        <div className={styles.info}>
+                          <div className={styles.name}>数据库</div>
+                          <div className={styles.number}>{dbTotal}</div>
                         </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/api-rest.svg" alt="REST API" preview={false} />
-                          <div className="ml-8">
-                            <span>{RestTotal}</span>
-                            <p>REST API</p>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/api-graphql.svg" alt="GRAPHQL API" preview={false} />
-                          <div className="ml-8">
-                            <span>{GraphqlTotal}</span>
-                            <p>GRAPHQL API</p>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/api-custom.svg" alt="custom" preview={false} />
-                          <div className="ml-8">
-                            <span>{CustomerTotal}</span>
-                            <p>自定义服务</p>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-                <div className={`${styles['right-data']} border pl-6 pt-4`}>
-                  <h3 className={styles['top-head']}>对外API</h3>
-                  <div className="pb-5">
-                    <Row gutter={[16, 40]}>
-                      <Col span={6}>
-                        <div className="flex ">
-                          <Image src="/assets/check.svg" alt="查询" preview={false} />
-                          <div className="ml-8">
-                            <span>{queryTotal}</span>
-                            <p>查询</p>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/checkNow.svg" alt="实时查询" preview={false} />
-                          <div className="ml-8">
-                            <span>{liveQueryTotal}</span>
-                            <p>实时查询</p>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/change.svg" alt="变更" preview={false} />
-                          <div className="ml-8">
-                            <span>{mutationsTotal}</span>
-                            <p>变更</p>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col span={6}>
-                        <div className="flex">
-                          <Image src="/assets/subscribe.svg" alt="订阅" preview={false} />
-                          <div className="ml-8">
-                            <span>{subscriptionsTotal}</span>
-                            <p>订阅</p>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <Row gutter={[5, 40]}>
-                    <Col span={12}>
-                      <div className="border pl-8 pt-6 pb-8 mr-6">
-                        <div>
-                          <span className="mr-4">OSS存储</span>
-                          <span className="text-xl font-medium">{`${ossTotal}个`}</span>
-                        </div>
-                        <div className="flex mt-6">
-                          <Progress percent={70} strokeColor="red" size="small" showInfo={false} />
-                          <span className="pl-4.2 w-40">{`已使用 ${useMemory}g/${totalMemory}g`}</span>
-                        </div>
+                        <Image
+                          width={54}
+                          height={54}
+                          src="/assets/api-db.png"
+                          alt="数据库"
+                          preview={false}
+                        />
                       </div>
-                    </Col>
-                    <Col span={12}>
-                      <div className="border pl-8 pt-6 pb-8">
-                        <div>
-                          <span className="mr-4">身份验证商</span>
-                          <span className="text-xl font-medium">{`${authTotal}个`}</span>
+                    </div>
+                    <div className={[styles.dataCard, styles.dataCard2].join(' ')}>
+                      <div className={styles.dataCardBody}>
+                        <div className={styles.info}>
+                          <div className={styles.name}>REST API</div>
+                          <div className={styles.number}>{RestTotal}</div>
                         </div>
-                        <div className="mt-6 mr-20">
-                          <Row>
-                            <Col span={12}>
-                              <Badge text={`累计用户${totalUser}个`} color="cyan" />
-                            </Col>
-                            <Col span={12}>
-                              <Badge text={`新增用户${todayInsertUser}个`} color="purple" />
-                            </Col>
-                          </Row>
-                        </div>
+                        <Image
+                          width={54}
+                          height={54}
+                          src="/assets/api-rest.png"
+                          alt="REST API"
+                          preview={false}
+                        />
                       </div>
-                    </Col>
-                  </Row>
+                    </div>
+                    <div className={[styles.dataCard, styles.dataCard3].join(' ')}>
+                      <div className={styles.dataCardBody}>
+                        <div className={styles.info}>
+                          <div className={styles.name}>GRAPHQL API</div>
+                          <div className={styles.number}>{GraphqlTotal}</div>
+                        </div>
+                        <Image
+                          width={54}
+                          height={54}
+                          src="/assets/api-graphql.png"
+                          alt="GRAPHQL API"
+                          preview={false}
+                        />
+                      </div>
+                    </div>
+                    <div className={[styles.dataCard, styles.dataCard4].join(' ')}>
+                      <div className={styles.dataCardBody}>
+                        <div className={styles.info}>
+                          <div className={styles.name}>自定义服务</div>
+                          <div className={styles.number}>{CustomerTotal}</div>
+                        </div>
+                        <Image
+                          width={54}
+                          height={54}
+                          src="/assets/api-custom.png"
+                          alt="自定义服务"
+                          preview={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-10.5">
-                <span className="text-lg flex-grow font-bold">前端集成</span>
-                <div className="mt-3 ">
-                  <Row gutter={[5, 40]}>
-                    <Col span={12}>
-                      <div className="border pl-6 pt-4 pb-6 mr-6">
-                        <h2 className={styles['skd-style']}>SDK</h2>
-                        <Row>
-                          <Col span={12}>
-                            <div>
-                              <div>
-                                <IconFont type="icon-React" className="text-[20px]" />
-                                <span className={styles['logo-style']}>REACT</span>
-                              </div>
-                              <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                                <div className="border mr-2 px-2">
-                                  <IconFont type="icon-wendang" onClick={handleIconClick} />
-                                  <span>文档</span>
-                                </div>
-                                <div className="border px-2">
-                                  <IconFont type="icon-code" onClick={handleIconClick} />
-                                  <span>代码</span>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                          <Col span={12}>
-                            <div>
-                              <div>
-                                <IconFont type="icon-Vue" className="text-[20px]" />
-                                <span className={styles['logo-style']}>VUE</span>
-                              </div>
-                              <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                                <div className="border mr-2 px-2">
-                                  <IconFont type="icon-wendang" onClick={handleIconClick} />
-                                  <span>文档</span>
-                                </div>
-                                <div className="border px-2">
-                                  <IconFont type="icon-code" onClick={handleIconClick} />
-                                  <span>代码</span>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                        </Row>
+              <div className={styles.row}>
+                <div className={[styles.card, styles.moduleApi].join(' ')}>
+                  <div className={styles.cardTitle}>对外API</div>
+                  <div className="flex">
+                    <div className={styles.apiCard}>
+                      <div className={styles.info}>
+                        <div className={styles.name}>查询</div>
+                        <div className={styles.number}>{queryTotal}</div>
                       </div>
-                    </Col>
-                    <Col span={12}>
-                      <div className="border pl-6 pt-4 pb-6">
-                        <h2 className={styles['skd-style']}>ADMIN后台</h2>
-                        <Row>
-                          <Col span={12}>
-                            <div>
-                              <div>
-                                <IconFont type="icon-React" className="text-[20px]" />
-                                <span className={styles['logo-style']}>REACT</span>
-                              </div>
-                              <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                                <div className="border mr-2 px-2">
-                                  <IconFont type="icon-wendang" onClick={handleIconClick} />
-                                  <span>文档</span>
-                                </div>
-                                <div className="border px-2">
-                                  <IconFont type="icon-code" onClick={handleIconClick} />
-                                  <span>代码</span>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                          <Col span={12}>
-                            <div>
-                              <div>
-                                <IconFont
-                                  type="icon-Vue"
-                                  className="text-[20px]"
-                                  onClick={handleIconClick}
-                                />
-                                <span className={styles['logo-style']}>VUE</span>
-                              </div>
-                              <div className={`${styles['bottom-data']} flex mt-3.5`}>
-                                <div className="border mr-2 px-2">
-                                  <IconFont type="icon-wendang" onClick={handleIconClick} />
-                                  <span>文档</span>
-                                </div>
-                                <div className="border px-2">
-                                  <IconFont type="icon-code" onClick={handleIconClick} />
-                                  <span>代码</span>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                        </Row>
+                      <Image
+                        width={54}
+                        height={54}
+                        src="/assets/api-query.png"
+                        alt="查询"
+                        preview={false}
+                      />
+                    </div>
+                    <div className={styles.apiCard}>
+                      <div className={styles.info}>
+                        <div className={styles.name}>实时查询</div>
+                        <div className={styles.number}>{liveQueryTotal}</div>
                       </div>
-                    </Col>
-                  </Row>
+                      <Image
+                        width={54}
+                        height={54}
+                        src="/assets/api-live-query.png"
+                        alt="实时查询"
+                        preview={false}
+                      />
+                    </div>
+                    <div className={styles.apiCard}>
+                      <div className={styles.info}>
+                        <div className={styles.name}>变更</div>
+                        <div className={styles.number}>{mutationsTotal}</div>
+                      </div>
+                      <Image
+                        width={54}
+                        height={54}
+                        src="/assets/api-mutation.png"
+                        alt="变更"
+                        preview={false}
+                      />
+                    </div>
+                    <div className={styles.apiCard}>
+                      <div className={styles.info}>
+                        <div className={styles.name}>订阅</div>
+                        <div className={styles.number}>{subscriptionsTotal}</div>
+                      </div>
+                      <Image
+                        width={54}
+                        height={54}
+                        src="/assets/api-subscription.png"
+                        alt="订阅"
+                        preview={false}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.row}>
+                <div className={[styles.card, styles.moduleSingle].join(' ')}>
+                  <div className={styles.title}>
+                    <div className={styles.text}>OSS存储</div>
+                    <div className={styles.number}>{ossTotal}</div>
+                    <div className={styles.numberText}>个</div>
+                  </div>
+                  <div className={styles.memoryLine}>
+                    已使用 {useMemory}G<span className={styles.memoryTotal}>{totalMemory}/G</span>
+                  </div>
+                  <div className={styles.memoryProgress}>
+                    <div
+                      className={styles.active}
+                      style={{
+                        width:
+                          String(((Number(useMemory) || 0) / (Number(totalMemory) || 1)) * 100) +
+                          '%',
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className={[styles.card, styles.moduleSingle].join(' ')}>
+                  <div className={styles.title}>
+                    <div className={styles.text}>身份验证商</div>
+                    <div className={styles.number}>{authTotal}</div>
+                    <div className={styles.numberText}>个</div>
+                  </div>
+                  <div className={styles.authLine}>
+                    <div className={styles.item}>
+                      <div className={[styles.icon, styles.icon1].join(' ')} />
+                      <div className={styles.label}>累计用户</div>
+                      <div className={styles.text}>{totalUser}个</div>
+                    </div>
+                    <div className={styles.item}>
+                      <div className={[styles.icon, styles.icon2].join(' ')} />
+                      <div className={styles.label}>新增用户</div>
+                      <div className={styles.text}>{todayInsertUser}个</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.row}>
+                <div className={[styles.card, styles.moduleFe].join(' ')}>
+                  <div className={styles.cardTitle}>前端集成</div>
+                  <div className={styles.blocks}>
+                    <div className={styles.block}>
+                      <div className={styles.title}>SDK</div>
+                      <div className={styles.items}>
+                        {renderFeItem(styles.react, 'REACT', '', '')}
+                        {renderFeItem(styles.vue, 'VUE', '', '')}
+                      </div>
+                    </div>
+                    <div className={styles.block}>
+                      <div className={styles.title}>ADMIN后台</div>
+                      <div className={styles.items}>
+                        {renderFeItem(styles.react, 'REACT', '', '')}
+                        {renderFeItem(styles.vue, 'VUE', '', '')}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </Col>
 
-          <Col span={6}>
-            {showType == 'notice' ? (
+            <div className="flex-shrink-0 w-380px ml-18px relative">
               <Notice handleToggleDesigner={handleToggleDesigner} />
-            ) : showType == 'guide' ? (
-              <Guide handleToggleDesigner={handleToggleDesigner} />
-            ) : (
-              ''
-            )}
-          </Col>
-        </Row>
+              {showType == 'guide' ? <Guide handleToggleDesigner={handleToggleDesigner} /> : null}
+            </div>
+          </div>
+        </div>
       </div>
     </>
   )

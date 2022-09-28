@@ -1,23 +1,297 @@
-.first-guide {
+.guideContainer {
+  background: #FFFFFF;
+  box-shadow: -6px 0px 12px 0px rgba(207, 215, 223, 0.45);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding-top: 7px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  flex-direction: column;
+  z-index: 20;
 }
 
-.first-divider {
-  margin: 24px 0;
+.guideList {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .block {
+    .head {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 10px 23px 0;
+      &:not(:first-child){
+        padding-top: 26px;
+      }
+      overflow: hidden;
+
+      .icon {
+        width: 17px;
+        height: 17px;
+        position: relative;
+        &0{
+          background: url(/assets/guide/circle-wait.png) no-repeat center/contain;
+        }
+        &1{
+          background: url(/assets/guide/finish.png) no-repeat center/contain;
+        }
+        &2{
+          background: url(/assets/guide/circle-part.png) no-repeat center/contain;
+        }
+      }
+
+      .title {
+        margin-left: 14px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #787D8B;
+      }
+
+      .tip {
+        margin-left: 8px;
+        font-size: 11px;
+        color: #ADADAD;
+      }
+
+      .docIcon {
+        width: 14px;
+        height: 14px;
+        position: relative;
+        top: -7px;
+        background: url(/assets/guide/icon-doc.png) no-repeat center/contain;
+      }
+
+      .doc {
+        position: relative;
+        top: -7px;
+        margin-left: 2px;
+        font-size: 11px;
+        color: #A7AAB2;
+        cursor: pointer;
+
+        &::after {
+          content: ' ';
+          position: absolute;
+          left: -20px;
+          top: -5px;
+          bottom: -5px;
+          right: -10px;
+        }
+      }
+    }
+
+    .item {
+      padding: 8px 23px 10px 27px;
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+
+      .icon {
+        width: 9px;
+        height: 9px;
+        margin-top: 15px;
+        position: relative;
+        &0{
+          background: url(/assets/guide/circle-wait.png) no-repeat center/contain;
+        }
+        &1{
+          background: url(/assets/guide/circle-finish.png) no-repeat center/contain;
+        }
+      }
+
+      .info {
+        margin-left: 19px;
+        flex: 1 1 0;
+        min-width: 0;
+
+        .title {
+          margin-top: 5px;
+          font-size: 12px;
+          line-height: 1;
+          color: #AFB0B4;
+        }
+
+        .status {
+          margin-top: 8px;
+          font-size: 11px;
+          line-height: 1;
+          color: #ADADAD;
+        }
+      }
+
+      .btn {
+        width: 53px;
+        height: 23px;
+        border: 1px solid #ADADAD;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: #222222;
+        cursor: pointer;
+
+        .arrow {
+          width: 11px;
+          height: 11px;
+          background: url(/assets/guide/icon-arrow.png) no-repeat center/contain;
+        }
+      }
+    }
+  }
 }
 
-.second-divider {
-  margin: 20px 0;
+.lineUp{
+  position: absolute;
+  left: calc(50% - 2px);
+  right: calc(50% - 2px);
+  bottom: 50%;
+  top: -80px;
+  z-index: -1;
+}
+.lineDown{
+  position: absolute;
+  left: calc(50% - 2px);
+  right: calc(50% - 2px);
+  top: 50%;
+  bottom: -80px;
+  z-index: -1;
 }
 
-.notice-main :global {
-  margin-bottom: 30px;
+.noticeContainer {
+  z-index: 10;
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  right: 24px;
+  left: 0;
+  background: white;
+  border-radius: 17px;
 
-  .ant-tag {
-    height: 22px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+
+}
+
+.rowList {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.noticeRow {
+  position: relative;
+  padding: 20px 24px;
+  cursor: pointer;
+
+  &:not(:first-child)::after {
+    z-index: 1;
+    content: ' ';
+    position: absolute;
+    left: 23px;
+    right: 23px;
+    top: 0;
+    height: 1px;
+    background: #f9f9f9;
+  }
+
+  display: flex;
+  align-items: flex-start;
+
+  .icon {
+    width: 33px;
+    height: 33px;
+    margin-top: 1px;
+    background: red;
+    margin-right: 12px;
+
+    &1 {
+      background: url(/assets/notice-1.png) no-repeat center/contain;
+    }
+
+    &2 {
+      background: url(/assets/notice-2.png) no-repeat center/contain;
+    }
+  }
+
+  .info {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 14px;
+    line-height: 1;
+    font-weight: bold;
+    color: #222;
+    display: flex;
+    align-items: center;
+
+    .dot {
+      margin-left: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 6px;
+      background: #F7393E;
+    }
+  }
+
+  .text {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .time {
     margin-top: 3px;
+    font-size: 11px;
+    line-height: 1;
+    color: #B0B0B0;
+    width: 55px;
+    text-align: right;
+  }
+}
+
+.guideEntry {
+  position: absolute;
+  z-index: 10;
+  right: -8px;
+  bottom: 21px;
+  width: 65px;
+  height: 65px;
+  background: url(/assets/home-guide.png) no-repeat center/contain;
+  cursor: pointer;
+
+  &::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 37px;
+    content: '指引';
+    font-size: 11px;
+    line-height: 1;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
   }
 }

@@ -272,7 +272,7 @@ export default function Layout({ children }: PropsWithChildren) {
         </div>
       </Sider>
 
-      <ALayout className="site-layout">
+      <ALayout className="site-layout" style={{height: '100vh'}}>
         <Content className="bg-white">{children}</Content>
         {showWindow ? (
           <Window style={windowStyle} toggleWindow={() => setShowWindow(!showWindow)} />

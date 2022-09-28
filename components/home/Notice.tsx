@@ -1,5 +1,5 @@
 import { RightOutlined } from '@ant-design/icons'
-import { Divider, Tag } from 'antd'
+import { Divider, Tag, Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -30,33 +30,29 @@ export function Notice({ handleToggleDesigner }: Props) {
     handleToggleDesigner('guide')
   }
   return (
-    <>
-      <p className="text-right text-[#E92E5E] mr-6 mt-5" onClick={handleClick}>
-        新手引导
-      </p>
-      <Divider className={styles['first-divider']} />
-      <div className="">
-        <div className={`${styles['notice-main']} flex`}>
-          <Tag color="#8B6BE6">公告</Tag>
-          <span className="flex-1">FireBoom版本升级，请及时更新，体验新功能</span>
-          <span className="text-[#b8bbc3] text-xs block w-13 mt-0.5 mr-4">30分钟前</span>
-        </div>
-        <div className={`${styles['notice-main']} flex`}>
-          <Tag color="#8B6BE6">公告</Tag>
-          <span className="flex-1">FireBoom版本升级，请及时更新，体验新功能</span>
-          <span className="text-[#b8bbc3] text-xs block w-13 mt-0.5 mr-4">30分钟前</span>
-        </div>
-        <div className={`${styles['notice-main']} flex`}>
-          <Tag color="#8B6BE6">公告</Tag>
-          <span className="flex-1">FireBoom版本升级，请及时更新，体验新功能</span>
-          <span className="text-[#b8bbc3] text-xs block w-13 mt-0.5 mr-4">30分钟前</span>
-        </div>
-        <div className="text-center text-[#E92E5E] mt-4 absolute w-full bottom-33">
-          <span className=" w-19 h-5">
-            查看更多 <RightOutlined />
-          </span>
+    <div className={styles.noticeContainer}>
+      <div className="flex items-center pl-23px h-53px pt-2 sticky top-0 bg-white z-10">
+        <div className="flex-1 text-17px font-bold">通知</div>
+        <div className="flex flex-0 h-full p-18px text-0px cursor-pointer">
+          <div className="text-11px text-[#ADADAD]">更多</div>
+          <Image alt="更多" width={12} height={12} preview={false} src="/assets/icon-more.png" />
         </div>
       </div>
-    </>
+      <div className={styles.rowList}>
+        {_noticeConfig.map(row => (
+          <div className={styles.noticeRow} key={row.title}>
+            <div className={[styles.icon, styles['icon' + String(row.bulletinType)]].join(' ')} />
+            <div className={styles.info}>
+              <div className={styles.title}>
+                {{ 1: '公告信息', 2: '消息通知' }[row.bulletinType]}
+              </div>
+              <div className={styles.text}>{row.title}</div>
+            </div>
+            <div className={styles.time}>{row.date}</div>
+          </div>
+        ))}
+      </div>
+      <div className={styles.guideEntry} onClick={handleClick}/>
+    </div>
   )
 }

@@ -1,57 +1,393 @@
-.main-divider {
-  height: 1px;
-  border: 1px solid rgb(95 98 105 / 10%);
+.bodyContainer {
+  display: flex;
+  overflow: hidden;
+  background: #f5f7f9;
+  height: 100%;
 }
 
-.right-data {
-  span {
-    width: 15px;
-    height: 33px;
-    color: rgb(0 0 0 / 85%);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 33px;
-  }
+.centerContainer {
+  padding: 24px 0 24px 22px;
 
-  p {
-    width: 100px;
-    height: 20px;
-    color: #5f6269;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
+  height: 100%;
+  flex: 1;
+  min-width: 0;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-.bottom-data {
-  span {
-    height: 20px;
-    margin-left: 4px;
-    color: rgb(0 0 0 / 85%);
-    font-size: 14px;
-    line-height: 20px;
+
+.row {
+  display: flex;
+  &:not(:first-child) {
+    margin-top: 18px;
   }
 }
 
-.logo-style {
-  margin-left: 10px;
-  color: rgb(0 0 0 / 85%);
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 22px;
+.card {
+  flex: 1;
+  background: white;
+  border-radius: 17px;
+
+  &:not(:first-child) {
+    margin-left: 18px;
+  }
+
+  padding: 23px;
 }
 
-.skd-style {
-  height: 22px;
-  color: rgb(0 0 0 / 85%);
-  font-size: 16px;
-  line-height: 22px;
+.cardTitle {
+  font-size: 17px;
+  line-height: 17px;
+  color: #222;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 
-.top-head {
-  height: 22px;
-  margin-bottom: 26px;
-  color: rgb(0 0 0 / 85%);
-  font-size: 16px;
-  line-height: 22px;
+.moduleData {
+  padding-bottom: 20px;
+
+  .dataCard {
+    flex: 1;
+    height: 84px;
+    position: relative;
+
+    .dataCardBody {
+      border-radius: 12px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      padding: 15px 17px;
+
+      .info {
+        flex: 1;
+        min-width: 0;
+
+        .name {
+          font-size: 13px;
+          line-height: 14px;
+          color: white;
+          margin-top: 5px;
+          white-space: nowrap;
+        }
+
+        .number {
+          font-size: 24px;
+          line-height: 24px;
+          color: white;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    &:not(:first-child) {
+      margin-left: 13px;
+    }
+
+    &::after {
+      content: ' ';
+      left: 20px;
+      right: 20px;
+      bottom: 0;
+      height: 10px;
+      position: absolute;
+      filter: blur(8px);
+      z-index: -0;
+    }
+
+    &1 {
+      .dataCardBody {
+        background-image: linear-gradient(to right, #d14f5f, #f09d93);
+      }
+
+      &::after {
+        background-image: linear-gradient(to right, #d14f5f, #f09d93);
+      }
+    }
+
+    &2 {
+      .dataCardBody {
+        background-image: linear-gradient(to right, #5ebcd4, #37D7CC);
+      }
+
+      &::after {
+        background-image: linear-gradient(to right, #5ebcd4, #37D7CC);
+      }
+    }
+
+    &3 {
+      .dataCardBody {
+        background-image: linear-gradient(to right, #597DF5, #88C1FE);
+      }
+
+      &::after {
+        background-image: linear-gradient(to right, #597DF5, #88C1FE);
+      }
+    }
+
+    &4 {
+      .dataCardBody {
+        background-image: linear-gradient(to right, #E571CD, #FEB0A8);
+      }
+
+      &::after {
+        background-image: linear-gradient(to right, #E571CD, #FEB0A8);
+      }
+    }
+  }
+}
+
+.moduleApi {
+  padding-bottom: 14px;
+
+  .apiCard {
+    flex: 1;
+    height: 83px;
+    background: #F8F9FD;
+    border-radius: 14px;
+
+    &:not(:first-child) {
+      margin-left: 13px;
+    }
+
+    display: flex;
+    align-items: center;
+    padding: 0 17px;
+
+    .info {
+      flex: 1 1 0;
+      min-width: 0;
+
+      .name {
+        font-size: 14px;
+        color: #5F6269;
+      }
+
+      .number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #222222;
+        margin-top: 11px;
+      }
+    }
+  }
+}
+
+.moduleSingle {
+  height: 105px;
+  padding: 0 23px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    height: 16px;
+    margin-top: 27px;
+
+    .text {
+      font-size: 17px;
+    }
+
+    .number {
+      margin-left: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      position: relative;
+      top: -3px;
+    }
+
+    .numberText {
+      margin-left: 2px;
+      font-size: 12px;
+    }
+  }
+
+  .memoryLine {
+    margin-top: 9px;
+    font-size: 12px;
+    line-height: 1;
+    color: #FF5E5E;
+
+    .memoryTotal {
+      margin-left: 5px;
+      font-size: 11px;
+      color: #ADADAD;
+    }
+  }
+
+  .memoryProgress {
+    position: relative;
+    margin-top: 10px;
+    height: 9px;
+    background: #F9F2F2;
+    border-radius: 5px;
+    overflow: hidden;
+
+    .active {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #FF5E5E, #FF9E9E);
+    }
+  }
+
+  .authLine {
+    margin-top: 17px;
+    height: 30px;
+    display: flex;
+
+    .item {
+      flex: 1;
+
+      &:not(:first-child) {
+        margin-left: 11px;
+      }
+
+      padding: 0 6px;
+      background: #F8F9FD;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+
+      .icon {
+        width: 2px;
+        height: 18px;
+        border-radius: 0px 2px 2px 0px;
+
+        &1 {
+          background: #5C81F9;
+        }
+
+        &2 {
+          background: #FFB53D;
+        }
+      }
+
+      .label {
+        margin-left: 10px;
+        font-size: 11px;
+        color: #888888;
+      }
+
+      .text {
+        margin-left: 8px;
+        font-size: 14px;
+        color: #222222;
+      }
+    }
+  }
+}
+
+.moduleFe {
+  .blocks {
+    margin-top: 15px;
+    display: flex;
+
+    .block {
+      flex: 1;
+      padding-bottom: 20px;
+
+      &:not(:first-child) {
+        margin-left: 16px;
+      }
+
+      background: #FDFDFD;
+      border: 1px solid #EDEDED;
+      border-radius: 14px;
+
+      .title {
+        font-size: 17px;
+        line-height: 1;
+        font-weight: 600;
+        margin: 17px 17px 0;
+      }
+    }
+
+    .items {
+      margin-top: 18px;
+      display: flex;
+      padding: 0 11px;
+
+      .item {
+        flex: 1;
+
+        &:not(:first-child) {
+          margin-left: 20px;
+        }
+
+        .nameLine {
+          display: flex;
+          align-items: center;
+
+          .image {
+            width: 58px;
+            height: 58px;
+            background: red;
+          }
+
+          .react {
+            background: url(/assets/fe-react.png) no-repeat center/contain;
+          }
+
+          .vue {
+            background: url(/assets/fe-vue.png) no-repeat center/contain;
+          }
+
+          .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #222222;
+            margin-left: 2px;
+          }
+        }
+
+        .btnLine {
+          display: flex;
+
+          .btn {
+            margin-left: 8px;
+            width: 53px;
+            height: 23px;
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            box-shadow: 0px 2px 0px 0px #EDEDED;
+            border-radius: 5px;
+            padding-left: 9px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            .image {
+              width: 12px;
+              height: 12px;
+              background: red;
+
+              &Doc {
+                background: url(/assets/fe-doc.png) no-repeat center/contain;
+              }
+
+              &Code {
+                background: url(/assets/fe-code.png) no-repeat center/contain;
+              }
+            }
+
+            .text {
+              margin-left: 1px;
+              font-size: 11px;
+              color: #222222;
+            }
+          }
+        }
+      }
+    }
+  }
 }
