@@ -1,7 +1,5 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
-import Editor from '@monaco-editor/react'
-import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification, Table } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -16,6 +14,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
+import Setting from './Setting'
 interface Props {
   content: DatasourceResp
   type: ShowType
@@ -31,93 +30,93 @@ interface FromValues {
 interface Props {
   content: DatasourceResp
 }
-interface DataType {
-  key: string
-  table: string
-  field: string
-  resType: string
-  inputType: string
-  isOpen: boolean
-}
+// interface DataType {
+//   key: string
+//   table: string
+//   field: string
+//   resType: string
+//   inputType: string
+//   isOpen: boolean
+// }
 
 interface OptionT {
   label: string
   value: string
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: '表',
-    dataIndex: 'table',
-    key: 'table',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="table">table</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
-  },
-  {
-    title: '字段',
-    dataIndex: 'field',
-    key: 'field',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="jack">Jack</Option>
-        <Option value="table">table</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
-  },
-  {
-    title: '响应类型',
-    dataIndex: 'resType',
-    key: 'resType',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="table">table</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
-  },
-  {
-    title: '输入类型',
-    key: 'inputType',
-    dataIndex: 'inputType',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="table">table</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
-  },
-  {
-    title: '是否开启',
-    key: 'isOpen',
-    render: () => <Switch className="w-8 h-2" />,
-  },
-]
-const data: DataType[] = [
-  {
-    key: '1',
-    table: 'John Brown',
-    field: '123',
-    resType: 'New York No. 1 ',
-    inputType: '222',
-    isOpen: true,
-  },
-  {
-    key: '2',
-    table: 'John Brown',
-    field: '123',
-    resType: 'New York No. 1 ',
-    inputType: '222',
-    isOpen: false,
-  },
-]
+// const columns: ColumnsType<DataType> = [
+//   {
+//     title: '表',
+//     dataIndex: 'table',
+//     key: 'table',
+//     render: () => (
+//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+//         <Option value="table">table</Option>
+//         <Option value="lucy">Lucy</Option>
+//         <Option value="Yiminghe">yiminghe</Option>
+//       </Select>
+//     ),
+//   },
+//   {
+//     title: '字段',
+//     dataIndex: 'field',
+//     key: 'field',
+//     render: () => (
+//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+//         <Option value="jack">Jack</Option>
+//         <Option value="table">table</Option>
+//         <Option value="Yiminghe">yiminghe</Option>
+//       </Select>
+//     ),
+//   },
+//   {
+//     title: '响应类型',
+//     dataIndex: 'resType',
+//     key: 'resType',
+//     render: () => (
+//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+//         <Option value="table">table</Option>
+//         <Option value="lucy">Lucy</Option>
+//         <Option value="Yiminghe">yiminghe</Option>
+//       </Select>
+//     ),
+//   },
+//   {
+//     title: '输入类型',
+//     key: 'inputType',
+//     dataIndex: 'inputType',
+//     render: () => (
+//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+//         <Option value="table">table</Option>
+//         <Option value="lucy">Lucy</Option>
+//         <Option value="Yiminghe">yiminghe</Option>
+//       </Select>
+//     ),
+//   },
+//   {
+//     title: '是否开启',
+//     key: 'isOpen',
+//     render: () => <Switch className="w-8 h-2" />,
+//   },
+// ]
+// const data: DataType[] = [
+//   {
+//     key: '1',
+//     table: 'John Brown',
+//     field: '123',
+//     resType: 'New York No. 1 ',
+//     inputType: '222',
+//     isOpen: true,
+//   },
+//   {
+//     key: '2',
+//     table: 'John Brown',
+//     field: '123',
+//     resType: 'New York No. 1 ',
+//     inputType: '222',
+//     isOpen: false,
+//   },
+// ]
 const { Option } = Select
 const port = /^(([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5]))$/
 const domainReg = /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$/
@@ -587,39 +586,38 @@ export default function DB({ content, type }: Props) {
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
         //设置页面———————————————————————————————————————————————————————————————————————————————————
-        <>
-          <div className="flex">
-            <Descriptions
-              bordered
-              layout="vertical"
-              size="small"
-              className="w-3/8 mr-10"
-              labelStyle={{ width: '30%' }}
-            >
-              <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
-                <Editor
-                  height="90vh"
-                  defaultLanguage="typescript"
-                  defaultValue="// some comment"
-                  className={`${styles.monaco}`}
-                />
-              </Descriptions.Item>
-            </Descriptions>
-            <Descriptions
-              bordered
-              layout="vertical"
-              size="small"
-              className="w-5/8"
-              labelStyle={{ width: '30%' }}
-            >
-              <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
-                <div className={`${styles['db-setting-table']}`}>
-                  <Table columns={columns} dataSource={data} pagination={false} />
-                </div>
-              </Descriptions.Item>
-            </Descriptions>
-          </div>
-        </>
+        // <div className="flex">
+        //   <Descriptions
+        //     bordered
+        //     layout="vertical"
+        //     size="small"
+        //     className="w-3/8 mr-10"
+        //     labelStyle={{ width: '30%' }}
+        //   >
+        //     <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
+        //       <Editor
+        //         height="90vh"
+        //         defaultLanguage="typescript"
+        //         defaultValue="// some comment"
+        //         className={`${styles.monaco}`}
+        //       />
+        //     </Descriptions.Item>
+        //   </Descriptions>
+        //   <Descriptions
+        //     bordered
+        //     layout="vertical"
+        //     size="small"
+        //     className="w-5/8"
+        //     labelStyle={{ width: '30%' }}
+        //   >
+        //     <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
+        //       <div className={`${styles['db-setting-table']}`}>
+        //         <Table columns={columns} dataSource={data} pagination={false} />
+        //       </div>
+        //     </Descriptions.Item>
+        //   </Descriptions>
+        // </div>
+        <Setting />
       )}
     </>
   )
