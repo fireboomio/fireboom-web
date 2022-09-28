@@ -1,4 +1,4 @@
-import { Col, Row, Image, Progress, Badge, Card } from 'antd'
+import { Image } from 'antd'
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -44,7 +44,7 @@ interface HomeConfig {
 }
 
 const handleIconClick = () => {
-  console.log('aaa')
+  //
 }
 
 const initialValues = {

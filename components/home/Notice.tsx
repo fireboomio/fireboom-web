@@ -1,5 +1,4 @@
-import { RightOutlined } from '@ant-design/icons'
-import { Divider, Tag, Image } from 'antd'
+import { Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 

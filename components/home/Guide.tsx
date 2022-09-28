@@ -1,9 +1,6 @@
-import { ArrowRightOutlined, CloseOutlined } from '@ant-design/icons'
 import { Image } from 'antd'
 
-import IconFont from '../iconfont'
 import styles from './home.module.scss'
-import { useImmer } from 'use-immer'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
