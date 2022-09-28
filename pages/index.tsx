@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import AvatarBox from '@/components/common/AvatarBox'
 import { Guide } from '@/components/home/Guide'
 import { Notice } from '@/components/home/Notice'
 import IconFont from '@/components/iconfont'
@@ -41,10 +42,6 @@ interface HomeConfig {
   homeAuth: HomeAuth
   homeDataSource: HomeDataSource
   homeOss: HomeOss
-}
-
-const handleIconClick = () => {
-  //
 }
 
 const initialValues = {
@@ -113,6 +110,10 @@ export default function Home() {
     )
   }
 
+  function handleAvatarClick() {
+    console.log('Avatar Clicked')
+  }
+
   return (
     <>
       <Head>
@@ -128,11 +129,18 @@ export default function Home() {
             <span className="ml-2">日志</span>
           </div>
 
-          <div className="ml-8">
+          <AvatarBox
+            className="ml-9 cursor-pointer"
+            name="bbbbbbbbbbbbb"
+            logo="https://api.multiavatar.com/Binx Bond.svg"
+            onClick={handleAvatarClick}
+          />
+
+          {/* <div className="ml-8">
             <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
             <IconFont type="icon-wendang" className="text-[22px] ml-4" onClick={handleIconClick} />
             <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex-1 min-h-0">
