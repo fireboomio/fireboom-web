@@ -116,16 +116,14 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
   )
   return (
     <div
-      className={`flex justify-between items-center py-2.5 pl-4 "
+      className={`flex justify-between items-center py-2.5 pl-4 cursor-pointer
       ${authItem.id === currAuthProvItemId ? 'bg-[#F8F8F9]' : ''}`}
       style={isHovering ? { background: '#F8F8F9' } : {}}
       key={authItem.name}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onDoubleClick={() => setIsEditing(true)}
-      onClick={() => {
-        onClickItem(authItem)
-      }}
+      onClick={() => onClickItem(authItem)}
     >
       <div className="flex items-center cursor-pointer">
         <BarsOutlined
