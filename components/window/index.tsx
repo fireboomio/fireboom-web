@@ -1,7 +1,7 @@
 import { Image } from 'antd'
-import { isEmpty } from 'lodash'
 import { CSSProperties, useEffect, useState } from 'react'
 
+import { LogMessage } from '@/interfaces/window'
 import { DOMAIN } from '@/lib/common'
 
 import RcTab from '../rc-tab'
@@ -19,8 +19,8 @@ interface Props {
 // eslint-disable-next-line react/prop-types
 const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
-  const [log, setLog] = useState('')
-  const [msg, setMsg] = useState('')
+  const [log, setLog] = useState<LogMessage[]>([])
+  const [msg, setMsg] = useState<LogMessage>()
 
   useEffect(() => {
     void fetch(`${DOMAIN}/api/v1/wdg/log`).then(res => {
@@ -34,7 +34,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
-          void data.text().then(x => setMsg(x))
+          void data.json().then((x: LogMessage) => setMsg(x))
         } catch (error) {
           // eslint-disable-next-line no-console
           console.log(error)
@@ -49,11 +49,9 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   }, [])
 
   useEffect(() => {
-    let sym = '\n'
-    if (isEmpty(log) || isEmpty(msg)) {
-      sym = ''
-    }
-    setLog(`${log}${sym}${msg}`)
+    if (!msg) return
+
+    setLog(log.concat(msg))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msg])
 
@@ -66,7 +64,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
           width={20}
           alt="清空"
           preview={false}
-          onClick={() => setLog('')}
+          onClick={() => setLog([])}
         />
       </div>
       <div className="ml-4">
