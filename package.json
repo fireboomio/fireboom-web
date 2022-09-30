@@ -2,14 +2,12 @@
   "name": "fire-boom",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview",
     "lint": "pnpm lint:next && pnpm lint:css",
     "lint:ts": "tsc --noEmit && eslint --config .eslintrc.js --rule 'no-console: 0' './**/*.{ts,tsx}'",
-    "lint:next": "next lint",
     "lint:css": "stylelint '**/*.scss' '**/*.css'"
   },
   "dependencies": {
