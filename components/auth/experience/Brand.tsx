@@ -1,4 +1,4 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Error404 from '@/components/ErrorPage/404'
@@ -20,16 +20,18 @@ const Brand: React.FC<Props> = ({ data }) => {
   }, [data])
 
   function handleFinish(values: BrandType) {
-    void requests.post('/auth/brand', {
-      branding: {
-        logoUrl: values?.logo,
-        slogan: values?.slogan,
-      },
-      color: {
-        isDarkModeEnabled: values?.darkMode,
-        primaryColor: values?.color,
-      },
-    })
+    void requests
+      .post('/auth/brand', {
+        branding: {
+          logoUrl: values?.logo,
+          slogan: values?.slogan,
+        },
+        color: {
+          isDarkModeEnabled: values?.darkMode,
+          primaryColor: values?.color,
+        },
+      })
+      .then(() => message.success('保存成功'))
   }
 
   if (!state) return <Error404 />
