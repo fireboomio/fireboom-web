@@ -54,7 +54,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         logo: x.branding.logoUrl,
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        slogan: x.branding.logoUrl,
+        slogan: x.branding.slogan,
       })
     })
   }, [])

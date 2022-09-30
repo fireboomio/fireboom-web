@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Form, Select, Switch } from 'antd'
+import { Button, Checkbox, Form, message, Select, Switch } from 'antd'
 import groupBy from 'lodash/groupBy'
 import React from 'react'
 
@@ -109,7 +109,7 @@ const ExperienceSetting: React.FC<Props> = ({
         username: username,
       },
     }
-    void upsertExperience(args).then(() => alert('保存成功'))
+    void upsertExperience(args).then(() => message.success('保存成功'))
   }
 
   const handleTransferChange = (_value: string[]) => {
@@ -173,15 +173,13 @@ const ExperienceSetting: React.FC<Props> = ({
           {switchHint(mainLoginMethod)}
         </div>
         {mainLoginMethod === 'social' && !otherMethodAvailable && (
-          <div>
-            <Form.Item name="socialValue">
-              <SocialContactTransfer
-                data={socialTransferData}
-                onChange={handleTransferChange}
-                selectedData={data?.socialSignInConnectorTargets ?? []}
-              />
-            </Form.Item>
-          </div>
+          <Form.Item name="socialValue">
+            <SocialContactTransfer
+              data={socialTransferData}
+              onChange={handleTransferChange}
+              selectedData={data?.socialSignInConnectorTargets ?? []}
+            />
+          </Form.Item>
         )}
         <div className={styles.otherLogin}>
           <div className={styles.otherLoginTitle}>

@@ -182,7 +182,7 @@ export default function AuthUserDetails() {
       </TabPane>
       <TabPane tab="角色权限" key="2">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-base text-gray">用户角色</span>
+          <span className="text-base text-[#AFB0B4FF]">用户角色</span>
           <Button
             className="px-4 py-0 h-7.5"
             onClick={() => {
@@ -192,6 +192,7 @@ export default function AuthUserDetails() {
             <span className="text-sm text-gray">添加</span>
           </Button>
         </div>
+
         <Modal
           mask={false}
           title="用户角色"

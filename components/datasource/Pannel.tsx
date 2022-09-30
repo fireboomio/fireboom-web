@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Collapse } from 'antd'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
@@ -40,6 +40,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const datasource = useContext(DatasourceContext)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const [isHovering, setIsHovering] = useState(false)
 
   function _addTable(datasourceType: number) {
     const data = {
@@ -61,10 +62,16 @@ export default function DatasourcePannel({ onClickItem }: Props) {
   }
 
   const header = (
-    <div className="flex justify-between items-center">
+    <div
+      className="flex justify-between items-center"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       <div className="w-52 flex justify-between py-2">外部数据源</div>
 
-      <PlusOutlined onClick={handleClick} />
+      <div className={isHovering ? 'block' : 'hidden'}>
+        <PlusOutlined onClick={handleClick} />
+      </div>
     </div>
   )
 
