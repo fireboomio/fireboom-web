@@ -192,6 +192,7 @@ export default function AuthUserDetails() {
             <span className="text-sm text-gray">添加</span>
           </Button>
         </div>
+
         <Modal
           mask={false}
           title="用户角色"
