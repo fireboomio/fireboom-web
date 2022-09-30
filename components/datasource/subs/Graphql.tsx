@@ -7,19 +7,19 @@ import {
   Form,
   Input,
   Checkbox,
-  Upload,
   Space,
   Select,
-  Table,
   Tag,
   Modal,
+  Image,
 } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
+import FormToolTip from '@/components/common/FormTooltip'
+import Uploader from '@/components/common/Uploader'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
@@ -38,40 +38,33 @@ interface Props {
 interface Config {
   [key: string]: string | undefined | number
 }
+
 interface DataType {
   key: string
   kind: string
   val: string
 }
+
 interface FromValues {
   [key: string]: string | undefined | number | Array<DataType>
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    dataIndex: 'key',
-    key: 'key',
-    width: '30%',
-    render: (_, { key }) => <span className="pl-1">{key}</span>,
-  },
-  {
-    dataIndex: 'val',
-    key: 'val',
-    width: '70%',
-    render: (_, { kind, val }) => (
-      <div className="flex items-center">
-        {kind == '0' ? (
-          <IconFont type="icon-zhi" className="text-[24px]" />
-        ) : kind == '1' ? (
-          <IconFont type="icon-shifoubixu2" className="text-[24px]" />
-        ) : (
-          <IconFont type="icon-biangeng1" className="text-[24px]" />
-        )}
-        <span className="ml-2">{val}</span>
-      </div>
-    ),
-  },
-]
+const renderIcon = (kind: string) => (
+  <Image
+    width={14}
+    height={14}
+    preview={false}
+    alt="请求头类型"
+    src={
+      {
+        0: '/assets/header-value.png',
+        1: '/assets/header-env.png',
+        2: '/assets/header-relay.png',
+      }[kind]
+    }
+  />
+)
+
 export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
@@ -248,15 +241,12 @@ export default function Graphql({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <div className="w-160px">
-                <Button
-                  className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                  onClick={() => testGql()}
-                >
+              <div>
+                <Button className={'btn-light-bordered w-16 ml-4'} onClick={() => testGql()}>
                   <span>测试</span>
                 </Button>
                 <Button
-                  className={`${styles['edit-btn']} ml-4`}
+                  className={'btn-light-full ml-4'}
                   onClick={() => handleToggleDesigner('form', content.id)}
                 >
                   <span>编辑</span>
@@ -270,19 +260,17 @@ export default function Graphql({ content, type }: Props) {
               bordered
               column={1}
               size="small"
-              className={styles['descriptions-box']}
               labelStyle={{
-                backgroundColor: 'white',
-                width: '30.5%',
-                borderRight: 'none',
-                borderBottom: 'none',
+                width: 190,
               }}
             >
               <Descriptions.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>名称</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    <span className={styles['label-style']}>
+                      名称
+                      <FormToolTip title="test" />
+                    </span>
                   </div>
                 }
                 className="justify-start"
@@ -293,8 +281,10 @@ export default function Graphql({ content, type }: Props) {
               <Descriptions.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>Graphql 端点</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    <span className={styles['label-style']}>
+                      Graphql 端点
+                      <FormToolTip title="test" />
+                    </span>
                   </div>
                 }
                 className="justify-start"
@@ -306,8 +296,10 @@ export default function Graphql({ content, type }: Props) {
                 <Descriptions.Item
                   label={
                     <div>
-                      <span className={styles['label-style']}>指定Schema</span>
-                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                      <span className={styles['label-style']}>
+                        指定Schema
+                        <FormToolTip title="test" />
+                      </span>
                     </div>
                   }
                   className="justify-start"
@@ -321,15 +313,37 @@ export default function Graphql({ content, type }: Props) {
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
           <div className={`${styles['table-contain']}`}>
-            <Table
+            <Descriptions
               bordered
-              showHeader={false}
-              columns={columns}
-              rowKey="key"
-              dataSource={(config.headers as unknown as Array<DataType>) || []}
-              pagination={false}
-              className="mb-10"
-            />
+              column={1}
+              size="small"
+              labelStyle={{
+                width: 190,
+              }}
+            >
+              {((config?.headers as unknown as DataType[]) ?? []).map(
+                ({ key = '', kind = '', val = '' }) => (
+                  <Descriptions.Item
+                    key={key}
+                    label={
+                      <div>
+                        <span className={styles['label-style']}>
+                          {key}
+                          <FormToolTip title="test" />
+                        </span>
+                      </div>
+                    }
+                    className="justify-start"
+                    style={{ wordBreak: 'break-all' }}
+                  >
+                    <div className="flex items-start">
+                      <div className="pt-2px">{renderIcon(kind)}</div>
+                      <div className="flex-1 min-w-0 ml-2">{val}</div>
+                    </div>
+                  </Descriptions.Item>
+                )
+              )}
+            </Descriptions>
           </div>
           <Collapse
             ghost
@@ -343,21 +357,20 @@ export default function Graphql({ content, type }: Props) {
             <Panel header="更多" key="1" className="site-collapse-custom-panel">
               <div className="flex justify-center mb-8">
                 <Descriptions
-                  colon={false}
+                  bordered
                   column={1}
+                  size="small"
                   labelStyle={{
-                    backgroundColor: 'white',
-                    width: '31%',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                    marginLeft: '10px',
+                    width: 190,
                   }}
                 >
                   <Descriptions.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>是否内部</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          是否内部
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     className="justify-start"
@@ -367,8 +380,10 @@ export default function Graphql({ content, type }: Props) {
                   <Descriptions.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>自定义Float标量</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          自定义Float标量
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     className="justify-start"
@@ -378,8 +393,10 @@ export default function Graphql({ content, type }: Props) {
                   <Descriptions.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>自定义INT标量</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          自定义INT标量
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     className="justify-start"
@@ -389,8 +406,10 @@ export default function Graphql({ content, type }: Props) {
                   <Descriptions.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>排除重命名根字段</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          排除重命名根字段
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     className="justify-start"
@@ -420,22 +439,6 @@ export default function Graphql({ content, type }: Props) {
                 </span>
               </div>
             )}
-            <div className="flex justify-center items-center w-40">
-              <Button
-                className={`${styles['connect-check-btn-common']} w-16 ml-4`}
-                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
-              >
-                <span>取消</span>
-              </Button>
-              <Button
-                className={`${styles['edit-btn']} ml-4`}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
-                {content.name == '' ? '创建' : '保存'}
-              </Button>
-            </div>
           </div>
 
           <div className="py-6 rounded-xl mb-4">
@@ -449,7 +452,7 @@ export default function Graphql({ content, type }: Props) {
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
               className="ml-3"
-              labelAlign="left"
+              labelAlign="right"
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
                 url: config.url,
@@ -464,8 +467,10 @@ export default function Graphql({ content, type }: Props) {
               <Form.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>名称:</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    <span className={styles['label-style']}>
+                      名称:
+                      <FormToolTip title="test" />
+                    </span>
                   </div>
                 }
                 colon={false}
@@ -485,8 +490,10 @@ export default function Graphql({ content, type }: Props) {
               <Form.Item
                 label={
                   <div>
-                    <span className={styles['label-style']}>Graphql 端点:</span>
-                    <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                    <span className={styles['label-style']}>
+                      Graphql 端点:
+                      <FormToolTip title="test" />
+                    </span>
                   </div>
                 }
                 colon={false}
@@ -503,7 +510,7 @@ export default function Graphql({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
 
-              <Form.Item name="agreement">
+              <Form.Item name="agreement" label=" ">
                 <Checkbox
                   onChange={() => {
                     setIsShowUpSchema(!isShowUpSchema)
@@ -516,8 +523,10 @@ export default function Graphql({ content, type }: Props) {
                 <Form.Item
                   label={
                     <div>
-                      <span className={styles['label-style']}>指定Schema:</span>
-                      <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                      <span className={styles['label-style']}>
+                        指定Schema:
+                        <FormToolTip title="test" />
+                      </span>
                     </div>
                   }
                   colon={false}
@@ -527,7 +536,7 @@ export default function Graphql({ content, type }: Props) {
                   style={{ marginBottom: '48px' }}
                   getValueFromEvent={normFile}
                 >
-                  <Upload
+                  <Uploader
                     defaultFileList={
                       (config.loadSchemaFromString as string)
                         ? [
@@ -553,7 +562,7 @@ export default function Graphql({ content, type }: Props) {
                     <Button icon={<PlusOutlined />} className="w-159.5">
                       添加文件
                     </Button>
-                  </Upload>
+                  </Uploader>
                 </Form.Item>
               ) : (
                 ''
@@ -563,27 +572,27 @@ export default function Graphql({ content, type }: Props) {
 
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Form.List name="headers">
-                  {(fields, { add, remove }, { errors }) => (
+                  {(fields, { add }, { errors }) => (
                     <>
-                      {fields.map((field, index) => (
-                        <Space key={field.key} align="baseline">
+                      {fields.map((field) => (
+                        <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
                           <Form.Item className="w-52.5" name={[field.name, 'key']}>
                             <Input />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select onChange={onValueChange}>
-                              <Option value="0">值</Option>
-                              <Option value="1">环境变量</Option>
-                              <Option value="2">转发自客户端</Option>
+                              <Option value="0"><span className="mr-1 relative top-2px">{renderIcon('0')}</span>值</Option>
+                              <Option value="1"><span className="mr-1 relative top-2px">{renderIcon('1')}</span>环境变量</Option>
+                              <Option value="2"><span className="mr-1 relative top-2px">{renderIcon('2')}</span>转发自客户端</Option>
                             </Select>
                           </Form.Item>
                           <Form.Item
-                            className="w-135"
+                            className="w-135 flex-0"
                             name={[field.name, 'val']}
                             rules={[rulesObj]}
                           >
                             {isValue ? (
-                              <Input style={{ width: '80%' }} placeholder="请输入" />
+                              <Input placeholder="请输入" />
                             ) : (
                               <Select className="w-1/5" style={{ width: '80%' }}>
                                 <Option value="1">1</Option>
@@ -591,11 +600,12 @@ export default function Graphql({ content, type }: Props) {
                               </Select>
                             )}
                           </Form.Item>
-                          <IconFont
-                            type="icon-guanbi"
-                            onClick={() => {
-                              remove(index)
-                            }}
+                          <Image
+                            alt="清除"
+                            width={14}
+                            height={14}
+                            preview={false}
+                            src="/assets/clear.png"
                           />
                         </Space>
                       ))}
@@ -619,17 +629,20 @@ export default function Graphql({ content, type }: Props) {
               </Form.Item>
 
               <Collapse
+                ghost
                 bordered={false}
-                defaultActiveKey={['1']}
+                defaultActiveKey={['0']}
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                className="site-collapse-custom-collapse bg-light-50"
+                className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
               >
                 <Panel header="更多" key="1" className="site-collapse-custom-panel">
                   <Form.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>是否内部:</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          是否内部
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     valuePropName="checked"
@@ -642,8 +655,10 @@ export default function Graphql({ content, type }: Props) {
                   <Form.Item
                     label={
                       <div className="">
-                        <span className={styles['label-style']}>自定义Float标量:</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          自定义Float标量
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     name="customFloatScalars"
@@ -664,8 +679,10 @@ export default function Graphql({ content, type }: Props) {
                   <Form.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>自定义INT标量:</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          自定义INT标量
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     name="customIntScalars"
@@ -685,8 +702,10 @@ export default function Graphql({ content, type }: Props) {
                   <Form.Item
                     label={
                       <div>
-                        <span className={styles['label-style']}>排除重命名根字段:</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <span className={styles['label-style']}>
+                          排除重命名根字段
+                          <FormToolTip title="test" />
+                        </span>
                       </div>
                     }
                     colon={false}
@@ -706,6 +725,22 @@ export default function Graphql({ content, type }: Props) {
                 </Panel>
               </Collapse>
             </Form>
+            <div className="flex justify-center items-center w-40 mt-5">
+              <Button
+                className={'btn-save ml-4'}
+                onClick={() => {
+                  form.submit()
+                }}
+              >
+                {content.name == '' ? '创建' : '保存'}
+              </Button>
+              <Button
+                className={'btn-cancel ml-4'}
+                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
+              >
+                <span>取消</span>
+              </Button>
+            </div>
           </div>
         </>
       )}

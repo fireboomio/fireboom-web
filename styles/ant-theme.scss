@@ -1,0 +1,153 @@
+body {
+  .ant-form-item-label{
+    margin-right: 70px;
+    padding-right: 10px;
+    >label{
+
+      font-size: 12px;
+      color: #909399;
+    }
+  }
+
+  // 表单校验
+  .ant-form-item-explain-error{
+    margin: 8px 0 8px 26px;
+    position: relative;
+    &::before{
+      content: ' ';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: url(/assets/validate-error.png) no-repeat center/contain;
+    }
+  }
+
+  // input
+  .ant-input {
+    border-color: #F2F4F8;
+    background: #F2F4F8;
+  }
+  .ant-input-affix-wrapper{
+    background: #F2F4F8 !important;
+  }
+  // select
+  .ant-select .ant-select-selector{
+    border-color: #F2F4F8 !important;
+    background: #F2F4F8 !important;
+  }
+
+
+  .tabs-form{
+    font-size: 14px;
+    .ant-tabs-tab{
+      color: #A7AAB2;
+    }
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+      color: #222;
+    }
+    .ant-tabs-tab:hover{
+      color: #222;
+    }
+    .ant-tabs-ink-bar{
+      display: none;
+    }
+    .ant-tabs-nav{
+      margin: 0;
+    }
+    .ant-tabs-nav::before{
+      display: none;
+    }
+  }
+
+  // descriptions组件
+  .ant-descriptions{
+    width: 100%;
+  }
+  .ant-descriptions-bordered .ant-descriptions-view {
+    border-color: #DCDFE6;
+    border-radius: 6px;
+    overflow: hidden;
+    .ant-descriptions-item-label{
+      color: #909399 ;
+      width: 150px;
+      text-align: right;
+      padding-right: 47px;
+      background: white;
+      font-size: 12px;
+      border-color: #DCDFE6 !important;
+    }
+    .ant-descriptions-row{
+      border-color: #DCDFE6 !important;
+    }
+    .ant-descriptions-item-content{
+      padding-left: 38px;
+      color: #222;
+      font-size: 12px;
+    }
+  }
+
+  // switch组件
+  .ant-switch{
+    background: linear-gradient(118deg, #E2E2E2 0%, #A6A6A6 100%);
+  }
+  .ant-switch-checked{
+    background: linear-gradient(180deg, #2DD386 0%, #56DEAB 100%);
+  }
+
+  // button
+  .ant-btn{
+    border-radius: 6px;
+  }
+  // 浅色空心按钮
+  .btn-light-border{
+    color: #FF5E5E;
+    border-color: #FF5E5E;
+  }
+  // 浅色实心按钮
+  .btn-light-full{
+    color: #FF5E5E;
+    background: #FFEEEE;
+    border-color: #FFEEEE;
+    &:hover{
+      color: #FF5E5E;
+      background: #FFEEEE;
+      border-color: #FFEEEE;
+    }
+  }
+  // 保存按钮
+  .btn-save{
+    background: #FF5E5E;
+    color: white;
+    border-color: #FF5E5E;
+  }
+  // 取消按钮
+  .btn-cancel{
+    background: #F0F0F0;
+    color: #ADADAD;
+    border-color: #F0F0F0;
+  }
+
+  // collapse
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 0;
+  }
+
+  .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0;
+  }
+
+  // radio
+  .ant-radio:hover .ant-radio-inner{
+    border-color: #FF5E5E;
+  }
+  .ant-radio-checked .ant-radio-inner{
+    border: 4px solid #FF5E5E;
+    &::after{
+      display: none;
+    }
+  }
+}
+

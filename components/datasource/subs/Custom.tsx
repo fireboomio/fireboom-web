@@ -123,11 +123,6 @@ export default function Custom({ content }: Props) {
           column={1}
           size="small"
           className="w-full mt-4"
-          labelStyle={{
-            backgroundColor: 'white',
-            width: '30%',
-            borderBottom: 'none',
-          }}
         >
           <Descriptions.Item label="连接名" className="h-12">
             <>
