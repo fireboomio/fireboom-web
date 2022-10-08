@@ -5,8 +5,8 @@
   width: 95px;
   height: 24px;
   margin-top: 5px;
-  padding: 0 10px;
   margin-left: 146px;
+  padding: 0 10px;
   color: #d83860;
   font-size: 14px;
   background: linear-gradient(56deg, #fcf2f0 0%, #f3e5e5 100%);
@@ -45,22 +45,22 @@
 .connect-check-btn-common {
   height: 28px;
   padding: 0;
-  background: #ffffff;
+  background: #fff;
   border-radius: 2px;
+
   span {
-    line-height: 18px;
     font-size: 14px;
+    line-height: 18px;
   }
 }
 
-
 .db-check-setting {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #e92e5e;
-  line-height: 20px;
   margin-right: 8px;
+  color: #e92e5e;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, "PingFang SC";
+  line-height: 20px;
 }
 
 .form-contain :global {
@@ -77,17 +77,5 @@
 .des-contain :global {
   .ant-descriptions-row {
     height: 40px;
-  }
-}
-
-.monaco {
-  height: 452px;
-  padding: 16px 0;
-}
-
-.db-setting-table :global {
-  .ant-table-cell {
-    background-color: white;
-    padding: 8px 8px;
   }
 }
