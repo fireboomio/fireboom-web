@@ -9,6 +9,11 @@ body {
     }
   }
 
+  .ant-image{
+    font-size: 0; // 解决image组件幽灵空格问题
+    display: inline-flex;
+  }
+
   // 表单校验
   .ant-form-item-explain-error{
     margin: 8px 0 8px 26px;

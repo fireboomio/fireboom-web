@@ -1,6 +1,8 @@
 import { Upload } from 'antd'
 import type { UploadProps } from 'antd/es/upload/interface'
 
+import { formatBytes } from '@/lib/utils'
+
 import styles from './Uploader.module.scss'
 
 const FormToolTip = (props: UploadProps) => {
@@ -12,7 +14,8 @@ const FormToolTip = (props: UploadProps) => {
           <div className={styles.file} key={file.uid}>
             <div className={styles.icon} />
             <div className={styles.text}>{file.name}</div>
-            <div className={styles.size}>100KB</div>
+            {file.size && <div className={styles.size}>{formatBytes(file.size)}</div>}
+            <div className="flex-1"/>
             <div className={styles.clear} onClick={remove} />
           </div>
         )}
