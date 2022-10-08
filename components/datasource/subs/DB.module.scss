@@ -44,22 +44,22 @@
 .connect-check-btn-common {
   height: 28px;
   padding: 0;
-  background: #ffffff;
+  background: #fff;
   border-radius: 2px;
+
   span {
-    line-height: 18px;
     font-size: 14px;
+    line-height: 18px;
   }
 }
 
-
 .db-check-setting {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #e92e5e;
-  line-height: 20px;
   margin-right: 8px;
+  color: #e92e5e;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, "PingFang SC";
+  line-height: 20px;
 }
 
 .form-contain :global {
