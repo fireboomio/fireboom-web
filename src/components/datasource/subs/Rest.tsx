@@ -78,6 +78,23 @@ const columns: ColumnsType<DataType> = [
     ),
   },
 ]
+
+const renderIcon = (kind: string) => (
+  <Image
+    width={14}
+    height={14}
+    preview={false}
+    alt="请求头类型"
+    src={
+      {
+        0: '/assets/header-value.png',
+        1: '/assets/header-env.png',
+        2: '/assets/header-relay.png',
+      }[kind]
+    }
+  />
+)
+
 declare global {
   interface Window {
     hbspt: unknown
@@ -351,17 +368,38 @@ export default function Rest({ content, type }: Props) {
           <div className="tabs-form">
             <Tabs defaultActiveKey="1">
               <TabPane tab="请求头" key="1">
-                <div className={`${styles['table-contain']}`}>
-                  <Table
-                    bordered
-                    showHeader={false}
-                    columns={columns}
-                    rowKey="key"
-                    dataSource={(config.headers as unknown as Array<DataType>) || []}
-                    pagination={false}
-                    className="mb-10"
-                  />
-                </div>
+                <Descriptions
+                  className="mb-8"
+                  bordered
+                  column={1}
+                  size="small"
+                  labelStyle={{
+                    width: 190,
+                  }}
+                >
+                  {((config?.headers as unknown as DataType[]) ?? []).map(
+                    ({ key = '', kind = '', val = '' }) => (
+                      <Descriptions.Item
+                        key={key}
+                        label={
+                          <div>
+                        <span className={styles['label-style']}>
+                          {key}
+                          <FormToolTip title="test" />
+                        </span>
+                          </div>
+                        }
+                        className="justify-start"
+                        style={{ wordBreak: 'break-all' }}
+                      >
+                        <div className="flex items-center">
+                          <div className="text-0px">{renderIcon(kind)}</div>
+                          <div className="flex-1 min-w-0 ml-2">{val}</div>
+                        </div>
+                      </Descriptions.Item>
+                    )
+                  )}
+                </Descriptions>
               </TabPane>
               <TabPane
                 tab={
@@ -602,9 +640,24 @@ export default function Rest({ content, type }: Props) {
                                   name={[field.name, 'kind']}
                                 >
                                   <Select onChange={onValueChange}>
-                                    <Option value="0">值</Option>
-                                    <Option value="1">环境变量</Option>
-                                    <Option value="2">转发自客户端</Option>
+                                    <Option value="0">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('0')}
+                                </span>
+                                      值
+                                    </Option>
+                                    <Option value="1">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('1')}
+                                </span>
+                                      环境变量
+                                    </Option>
+                                    <Option value="2">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('2')}
+                                </span>
+                                      转发自客户端
+                                    </Option>
                                   </Select>
                                 </Form.Item>
                                 <Form.Item

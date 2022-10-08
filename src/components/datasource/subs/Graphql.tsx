@@ -337,7 +337,7 @@ export default function Graphql({ content, type }: Props) {
                     style={{ wordBreak: 'break-all' }}
                   >
                     <div className="flex items-center">
-                      <div className="pb-2px">{renderIcon(kind)}</div>
+                      <div className="text-0px">{renderIcon(kind)}</div>
                       <div className="flex-1 min-w-0 ml-2">{val}</div>
                     </div>
                   </Descriptions.Item>
@@ -574,16 +574,31 @@ export default function Graphql({ content, type }: Props) {
                 <Form.List name="headers">
                   {(fields, { add }, { errors }) => (
                     <>
-                      {fields.map((field) => (
+                      {fields.map(field => (
                         <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
                           <Form.Item className="w-52.5" name={[field.name, 'key']}>
                             <Input />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select onChange={onValueChange}>
-                              <Option value="0"><span className="mr-1 relative bottom-1px">{renderIcon('0')}</span>值</Option>
-                              <Option value="1"><span className="mr-1 relative bottom-1px">{renderIcon('1')}</span>环境变量</Option>
-                              <Option value="2"><span className="mr-1 relative bottom-1px">{renderIcon('2')}</span>转发自客户端</Option>
+                              <Option value="0">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('0')}
+                                </span>
+                                值
+                              </Option>
+                              <Option value="1">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('1')}
+                                </span>
+                                环境变量
+                              </Option>
+                              <Option value="2">
+                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                  {renderIcon('2')}
+                                </span>
+                                转发自客户端
+                              </Option>
                             </Select>
                           </Form.Item>
                           <Form.Item
