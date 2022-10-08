@@ -138,6 +138,11 @@ body {
   .ant-collapse-content > .ant-collapse-content-box {
     padding: 0;
   }
+  .ant-collapse-header-text{
+    font-size: 14px;
+    font-weight: 500;
+    color: #222;
+  }
 
   // radio
   .ant-radio:hover .ant-radio-inner{

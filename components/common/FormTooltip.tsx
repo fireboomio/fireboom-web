@@ -18,21 +18,22 @@ const FormToolTip = (props: Props) => {
       }}
     >
       <Tooltip title={props.title} arrowPointAtCenter>
-
-        <Image
-          width={10}
-          height={10}
-          alt="提示"
-          preview={false}
+        <div
           style={{
             position: 'absolute',
             top: '50%',
             transform: 'translateY(-50%)',
             fontSize: 0,
             maxWidth: 'initial'
-          }}
-          src="/assets/warning.png"
-        />
+          }}>
+          <Image
+            width={10}
+            height={10}
+            alt="提示"
+            preview={false}
+            src="/assets/warning.png"
+          />
+        </div>
       </Tooltip>
     </div>
   )

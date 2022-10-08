@@ -312,7 +312,7 @@ export default function Graphql({ content, type }: Props) {
             </Descriptions>
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
-          <div className={`${styles['table-contain']}`}>
+          <div className={`${styles['table-contain']} mb-8`}>
             <Descriptions
               bordered
               column={1}
@@ -336,8 +336,8 @@ export default function Graphql({ content, type }: Props) {
                     className="justify-start"
                     style={{ wordBreak: 'break-all' }}
                   >
-                    <div className="flex items-start">
-                      <div className="pt-2px">{renderIcon(kind)}</div>
+                    <div className="flex items-center">
+                      <div className="pb-2px">{renderIcon(kind)}</div>
                       <div className="flex-1 min-w-0 ml-2">{val}</div>
                     </div>
                   </Descriptions.Item>
@@ -354,7 +354,7 @@ export default function Graphql({ content, type }: Props) {
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
-            <Panel header="更多" key="1" className="site-collapse-custom-panel">
+            <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
               <div className="flex justify-center mb-8">
                 <Descriptions
                   bordered
@@ -581,9 +581,9 @@ export default function Graphql({ content, type }: Props) {
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select onChange={onValueChange}>
-                              <Option value="0"><span className="mr-1 relative top-2px">{renderIcon('0')}</span>值</Option>
-                              <Option value="1"><span className="mr-1 relative top-2px">{renderIcon('1')}</span>环境变量</Option>
-                              <Option value="2"><span className="mr-1 relative top-2px">{renderIcon('2')}</span>转发自客户端</Option>
+                              <Option value="0"><span className="mr-1 relative bottom-1px">{renderIcon('0')}</span>值</Option>
+                              <Option value="1"><span className="mr-1 relative bottom-1px">{renderIcon('1')}</span>环境变量</Option>
+                              <Option value="2"><span className="mr-1 relative bottom-1px">{renderIcon('2')}</span>转发自客户端</Option>
                             </Select>
                           </Form.Item>
                           <Form.Item
@@ -635,7 +635,7 @@ export default function Graphql({ content, type }: Props) {
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                 className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
               >
-                <Panel header="更多" key="1" className="site-collapse-custom-panel">
+                <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
                   <Form.Item
                     label={
                       <div>
