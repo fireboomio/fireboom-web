@@ -7,6 +7,7 @@ import App from './App'
 import 'virtual:windi-components.css'
 import 'virtual:windi-utilities.css'
 import './styles/globals.css'
+import './styles/ant-theme.scss'
 
 const container = document.getElementById('app')
 const root = createRoot(container!)
