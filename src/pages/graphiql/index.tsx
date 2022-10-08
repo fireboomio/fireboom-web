@@ -10,7 +10,7 @@ import 'graphiql/graphiql.css'
 import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
-// import FlowChart from '@/components/charts/FlowChart'
+import FlowChart from '@/components/charts/FlowChart'
 
 // import styles from './index.module.scss'
 
@@ -134,7 +134,7 @@ export default function App({ url, data, onSave }: Props) {
         </GraphiQL.Toolbar>
       </GraphiQL> */}
         <div className="flex-1">123</div>
-        {/* <FlowChart /> */}
+        <FlowChart />
       </div>
     </>
   )
