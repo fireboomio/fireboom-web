@@ -2,6 +2,8 @@ import 'antd/dist/antd.css'
 // eslint-disable-next-line import/no-unresolved
 import 'windi.css'
 import '@/styles/globals.css'
+// eslint-disable-next-line import/no-unassigned-import
+import '../styles/ant-theme.scss'
 
 import type { AppProps } from 'next/app'
 

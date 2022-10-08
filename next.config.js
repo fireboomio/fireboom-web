@@ -45,7 +45,11 @@ const nextConfig = {
     loader: 'akamai',
     path: '',
   },
-  modifyVars: { '@primary-color': '#E92E5E' },
+  modifyVars: {
+    '@primary-color': '#E92E5E',
+    '@border-radius-base': '6px',
+    '@form-item-trailing-colon': false,
+  },
 }
 
 module.exports = withAntdLess(nextConfig)

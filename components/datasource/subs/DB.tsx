@@ -381,14 +381,14 @@ export default function DB({ content, type }: Props) {
                 className="mr-10 w-15"
                 style={{ marginRight: '30px' }}
               />
-              <Button className={`${styles['connect-check-btn-common']} w-20`}>
+              <Button className={'btn-light-border'}>
                 <span>测试链接</span>
               </Button>
-              <Button className={`${styles['connect-check-btn-common']} w-16 ml-4`}>
+              <Button className={'btn-light-border w-16 ml-4'}>
                 <span>设计</span>
               </Button>
               <Button
-                className={`${styles['connect-check-btn']}  ml-4`}
+                className={'btn-light-full  ml-4'}
                 onClick={() => handleToggleDesigner('form', content.id)}
               >
                 <span>编辑</span>
@@ -401,19 +401,11 @@ export default function DB({ content, type }: Props) {
           >
             <span className="w-14 h-5">更多设置</span> <RightOutlined />
           </div>
-          <div className={`mt-8 ${styles['des-contain']}`}>
+          <div className={'mt-8'}>
             <Descriptions
               bordered
               column={1}
               size="small"
-              labelStyle={{
-                paddingLeft: '24px',
-                color: '#5F6269',
-                backgroundColor: 'white',
-                width: '25%',
-                borderRight: 'none',
-                borderBottom: 'none',
-              }}
             >
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
@@ -484,23 +476,6 @@ export default function DB({ content, type }: Props) {
                 <span className="ml-2 text-xs text-gray-500/80">main</span>
               </div>
             )}
-
-            <div className="flex  items-center justify-end w-36">
-              <Button
-                className={`${styles['connect-check-btn-common']} w-16 mr-4`}
-                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
-              >
-                取消
-              </Button>
-
-              <Button
-                disabled={disabled}
-                className={`${styles['connect-check-btn']}`}
-                onClick={() => form.submit()}
-              >
-                {content.name == '' ? '创建' : '保存'}
-              </Button>
-            </div>
           </div>
 
           <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
@@ -518,7 +493,7 @@ export default function DB({ content, type }: Props) {
               onValuesChange={onValuesChange}
               validateTrigger={['onBlur', 'onChange']}
               autoComplete="new-password"
-              labelAlign="left"
+              labelAlign="right"
               initialValues={{
                 apiNamespace: config.apiNamespace,
                 dbType: config.dbType,
@@ -571,7 +546,7 @@ export default function DB({ content, type }: Props) {
                 </Radio.Group>
               </Form.Item>
               {viewerForm}
-              <Form.Item>
+              <Form.Item label=" ">
                 <Button
                   className={styles['connect-edit-btn']}
                   onClick={() => openNotification('bottomLeft')}
@@ -581,6 +556,21 @@ export default function DB({ content, type }: Props) {
                 </Button>
               </Form.Item>
             </Form>
+            <div className="flex  items-center justify-end w-36">
+              <Button
+                disabled={disabled}
+                className={'btn-save mr-4'}
+                onClick={() => form.submit()}
+              >
+                {content.name == '' ? '创建' : '保存'}
+              </Button>
+              <Button
+                className={'btn-cancel'}
+                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
+              >
+                重置
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
