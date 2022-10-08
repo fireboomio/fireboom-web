@@ -1,12 +1,15 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from 'react'
 
+import { LogMessage } from '@/interfaces/window'
+
 type Props = {
-  log: string
+  log: LogMessage[]
 }
 
 const tabs = [
-  { key: '0', name: '核心日志' },
-  { key: '1', name: '钩子日志' },
+  { key: '1', name: '核心日志' },
+  { key: '2', name: '钩子日志' },
 ]
 
 // eslint-disable-next-line react/prop-types
@@ -22,7 +25,10 @@ const Log: React.FC<Props> = ({ log }) => {
   }, [content])
 
   useEffect(() => {
-    setContent(log)
+    const displayLog = log.filter(x => {
+      return `${x.logType}` === selectedKey
+    })
+    setContent(displayLog.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
   }, [selectedKey, log])
 
   return (

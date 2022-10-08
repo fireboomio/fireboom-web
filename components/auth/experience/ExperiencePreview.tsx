@@ -12,7 +12,7 @@ const ExperiencePreview: React.FC = () => {
       <div className={styles.experiencePreviewTitle}>
         <div className={styles.experiencePreviewTitleLeft}>
           <span>{'//'}</span>
-          <span>登陆预览</span>
+          <span>登录预览</span>
         </div>
         <div className={styles.experiencePreviewTitleRight}>
           <Select defaultValue="英文" style={{ width: 120 }}>
