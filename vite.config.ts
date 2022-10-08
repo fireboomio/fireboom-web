@@ -79,7 +79,7 @@ export default defineConfig({
       dirs: 'src/pages'
     })
   ],
-  optimizeDeps: {
-    exclude: ['@antv/x6-react-shape']
-  }
+  // optimizeDeps: {
+  //   exclude: ['@antv/x6-react-shape']
+  // }
 })
