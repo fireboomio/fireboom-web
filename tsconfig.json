@@ -15,11 +15,12 @@
     "jsx": "react-jsx",
     "incremental": true,
     "baseUrl": ".",
-    "types": ["vite/client", "vite-plugin-pages/client"],
+    "rootDir": "./src",
+    "types": ["vite/client", "vite-plugin-pages/client-react"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

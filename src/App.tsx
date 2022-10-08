@@ -8,7 +8,7 @@ import Layout from './components/layout'
 import routes from '~react-pages'
 
 // eslint-disable-next-line no-console
-console.debug(routes)
+console.log(routes)
 
 export default function App() {
   return (
