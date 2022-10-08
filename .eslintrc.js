@@ -54,6 +54,8 @@ module.exports = {
         pathGroupsExcludedImportTypes: [],
       },
     ],
+    'import/no-unresolved': 'off',
+    'import/no-unassigned-import': 'off',
     'react/self-closing-comp': 'error',
     'no-console': 'warn',
     'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
