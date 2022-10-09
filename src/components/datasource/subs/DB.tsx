@@ -329,7 +329,15 @@ export default function DB({ content, type }: Props) {
   }
 
   //测试连接 成功与失败提示
-  const openNotification = (placement: NotificationPlacement) => {
+  const testLink = (placement: NotificationPlacement) => {
+    void requests
+      .post('/checkDBConn', {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: { sourceType: content.sourceType, config: config },
+      })
+      .then(x => console.log(x))
+
     notification.open({
       message: <IconFont type="icon-xingzhuangjiehe" />,
       description: (
@@ -381,7 +389,7 @@ export default function DB({ content, type }: Props) {
                 className="mr-10 w-15"
                 style={{ marginRight: '30px' }}
               />
-              <Button className={'btn-light-border'}>
+              <Button className={'btn-light-border'} onClick={() => testLink('bottomLeft')}>
                 <span>测试链接</span>
               </Button>
               <Button className={'btn-light-border w-16 ml-4'}>
@@ -402,11 +410,7 @@ export default function DB({ content, type }: Props) {
             <span className="w-14 h-5">更多设置</span> <RightOutlined />
           </div>
           <div className={'mt-8'}>
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-            >
+            <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
               <Descriptions.Item label="类型">
@@ -485,10 +489,8 @@ export default function DB({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 12 }}
-              onFinish={values => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                void onFinish(values)
-              }}
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              onFinish={values => void onFinish(values)}
               onFinishFailed={onFinishFailed}
               onValuesChange={onValuesChange}
               validateTrigger={['onBlur', 'onChange']}
@@ -549,7 +551,7 @@ export default function DB({ content, type }: Props) {
               <Form.Item label=" ">
                 <Button
                   className={styles['connect-edit-btn']}
-                  onClick={() => openNotification('bottomLeft')}
+                  onClick={() => testLink('bottomLeft')}
                 >
                   <RightSquareOutlined />
                   <span>测试链接</span>
@@ -557,11 +559,7 @@ export default function DB({ content, type }: Props) {
               </Form.Item>
             </Form>
             <div className="flex  items-center justify-end w-36">
-              <Button
-                disabled={disabled}
-                className={'btn-save mr-4'}
-                onClick={() => form.submit()}
-              >
+              <Button disabled={disabled} className={'btn-save mr-4'} onClick={() => form.submit()}>
                 {content.name == '' ? '创建' : '保存'}
               </Button>
               <Button

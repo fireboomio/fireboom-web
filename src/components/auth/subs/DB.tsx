@@ -1,8 +1,8 @@
-import { Button, Select, Upload } from 'antd'
+import { Button, message, Select } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
-import { getFetcher } from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 interface OptionType {
   label: string
@@ -22,7 +22,7 @@ export default function AuthDB() {
   const [isComplete, setIsComplete] = useState(true)
 
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`)
+    setSelectedDB(value)
   }
 
   const dbName = useMemo(() => {
@@ -60,6 +60,12 @@ export default function AuthDB() {
     })
   }, [selectedDB])
 
+  function handleImport() {
+    void requests
+      .post(`/oauth/tables/${selectedDB ?? ''}/import`)
+      .then(() => message.success('导入成功!'))
+  }
+
   return (
     <>
       <div className="flex items-center my-6">
@@ -91,12 +97,9 @@ export default function AuthDB() {
         ) : (
           <>
             所选数据库暂无预制表结构，是否导入？
-            <Upload
-              action={`/api/v1/oauth/tables/${selectedDB ?? ''}/import`}
-              showUploadList={false}
-            >
-              <Button type="primary">导入</Button>
-            </Upload>
+            <Button type="primary" onClick={handleImport}>
+              导入
+            </Button>
           </>
         )}
       </div>
