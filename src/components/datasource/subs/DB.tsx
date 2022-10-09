@@ -331,10 +331,10 @@ export default function DB({ content, type }: Props) {
   //测试连接 成功与失败提示
   const testLink = (placement: NotificationPlacement) => {
     void requests
-      .get('/checkDBConn', {
+      .post('/checkDBConn', {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        params: { sourceType: content.sourceType, url: config.databaseUrl.val },
+        data: { sourceType: content.sourceType, config: config },
       })
       .then(x => console.log(x))
 
