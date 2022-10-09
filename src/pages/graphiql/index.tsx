@@ -1,9 +1,8 @@
 /*
  * https://github.com/graphql/graphiql/issues/118
  */
-
 // @ts-ignore
-import GraphiQLExplorer from 'graphiql-explorer'
+import GraphiqlExplorer1 from 'graphiql-explorer'
 import { GraphiQL, GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
@@ -11,6 +10,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import FlowChart from '@/components/charts/FlowChart'
+
+import GraphiQLExplorer from './components/GraphiqlExplorer'
 
 // import styles from './index.module.scss'
 
@@ -107,6 +108,7 @@ export default function App({ url, data, onSave }: Props) {
 
       <div className="flex h-full">
         <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
+        <GraphiqlExplorer1 schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
         {/* <GraphiQL
         fetcher={fetcher}
         schema={schema}

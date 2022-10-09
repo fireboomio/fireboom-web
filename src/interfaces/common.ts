@@ -21,3 +21,7 @@ export interface Info {
   engineStatus: EngineStatus
   hookStatus: string
 }
+
+export interface WithClassNames {
+  classNames?: string
+}
