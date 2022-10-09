@@ -1,0 +1,94 @@
+.container {
+  @apply bg-white pt-3 pb-2 pl-3 z-2 relative;
+
+  &.opened {
+    @apply h-20;
+
+    &::before {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      height: 6px;
+      background: white;
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      right: 28px;
+      bottom: -5px;
+      left: 28px;
+      z-index: 1;
+      height: 10px;
+      background: rgb(95 98 105 / 10%);
+      filter: blur(4px);
+      content: '';
+    }
+  }
+
+  .select {
+    @apply flex-1 ml-2px;
+
+    :global {
+      .ant-select-selector {
+        height: 28px;
+        background: white !important;
+        border-color: rgb(175 176 180 / 60%);
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .button {
+    @apply bg-white border-none h-8 shadow mt-1 text-center text-xs text-primary ml-2 pb-2 w-14 z-2 relative appearance-none;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      width: 8px;
+      background: white;
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: 4px;
+      bottom: 6px;
+      left: -2px;
+      z-index: 1;
+      width: 10px;
+      background: rgb(95 98 105 / 10%);
+      filter: blur(4px);
+      content: '';
+    }
+  }
+
+  .radio {
+    :global {
+      .ant-radio {
+        top: 0.05em;
+      }
+
+      .ant-radio-inner {
+        @apply h-3 w-3;
+      }
+
+      span.ant-radio + * {
+        padding-left: 4px;
+      }
+
+      .ant-radio-wrapper:last-child {
+        margin-right: 0;
+
+        .ant-radio + * {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+}
