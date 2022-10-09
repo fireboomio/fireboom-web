@@ -34,6 +34,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [brandData, setBrandData] = useState<BrandType>()
   const [otherData, setOtherData] = useState<OtherType>()
+  const [refreshFlag, setRefreshFlag] = useState(false)
 
   useEffect(() => {
     connectorDispatch({ type: 'fetchConnector', payload: connectorsData || [] })
@@ -57,7 +58,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         slogan: x.branding.slogan,
       })
     })
-  }, [])
+  }, [refreshFlag])
 
   useEffect(() => {
     void getFetcher('/auth/otherConfig').then(x => {
@@ -70,11 +71,18 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         contractUrl: x.contentUrl,
       })
     })
-  }, [])
+  }, [refreshFlag])
 
   return (
     <>
-      <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} />
+      <RcTab
+        tabs={tabs}
+        onTabClick={x => {
+          setRefreshFlag(!refreshFlag)
+          setTabActiveKey(x)
+        }}
+        activeKey={tabActiveKey}
+      />
 
       <div className="flex">
         {tabActiveKey === '0' ? (
