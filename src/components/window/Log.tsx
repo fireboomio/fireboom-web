@@ -14,7 +14,7 @@ const tabs = [
 
 // eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ log }) => {
-  const [selectedKey, setSelectedKey] = useState('0')
+  const [selectedKey, setSelectedKey] = useState('1')
   const [content, setContent] = useState('')
   const logRef = useRef(null)
 
@@ -39,7 +39,7 @@ const Log: React.FC<Props> = ({ log }) => {
       </pre>
 
       <div className="w-1/10 border-l">
-        <ul>
+        <ul className="list-none">
           {tabs.map(x => (
             <li
               onClick={() => setSelectedKey(x.key)}
