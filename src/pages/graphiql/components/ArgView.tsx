@@ -1,6 +1,8 @@
-import { GraphQLArgument, GraphQLInputObjectType, isObjectType, isScalarType } from 'graphql'
+import { GraphQLArgument, GraphQLInputObjectType, isEnumType, isInputObjectType, isListType, isObjectType, isScalarType } from 'graphql'
 import { useState } from 'react'
 
+import BaseView from './BaseView'
+import { CommonViews, generateCommonViews } from './ViewFactory'
 import { ExpandedIcon, ExpandIcon, UnselectedCheckbox } from './icons'
 import { checkboxStyle } from './utils'
 
@@ -9,26 +11,12 @@ interface ArgViewProps {
 }
 
 const ArgView = ({ arg }: ArgViewProps) => {
-  const [expanded, setExpanded] = useState(false)
-  const isScalar = isScalarType(arg.type)
-  const isObject = isObjectType(arg.type)
-  console.log('isScalar', isScalar, 'isObject', isObject)
-
+  console.log(isInputObjectType(arg), isInputObjectType(arg.type), arg.name)
   return (
     <>
-      <div className="py-2px text-[#8b2bb9]">
-        {!isScalar ? (
-          expanded ? (
-            <ExpandedIcon className="flex-shrink-0" onClick={() => setExpanded(false)} />
-          ) : (
-            <ExpandIcon className="flex-shrink-0" onClick={() => setExpanded(true)} />
-          )
-        ) : (
-          <UnselectedCheckbox className="flex-shrink-0" style={checkboxStyle} />
-        )}
-        {arg.name}
-      </div>
-      {expanded && isObject && 111}
+      <BaseView color="purple" name={arg.name} selectable={isScalarType(arg.type) || (isListType(arg.type) && isEnumType(arg.type.ofType))} expandedChildren={
+        <CommonViews obj={arg.type} />
+      } />
     </>
   )
 }

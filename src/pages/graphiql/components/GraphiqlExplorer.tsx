@@ -1,10 +1,8 @@
-import { GraphQLField, GraphQLFieldMap, GraphQLSchema } from 'graphql'
+import { GraphQLField, GraphQLSchema } from 'graphql'
 import { useMemo, useState } from 'react'
 
 import ExplorerFilter from './ExplorerFilter'
-import FieldView from './FieldView'
-import { generateFieldViews } from './ViewFactory'
-import { arraySort, convertGraphiQLFieldMapToArray } from './utils'
+import { MultipleFieldViews } from './ViewFactory'
 
 const filters = [
   { label: '全部', value: '' },
@@ -15,7 +13,6 @@ const filters = [
 
 const values = filters.map(item => item.value)
 type FilterType = typeof values[number]
-type GraphiQLFieldArray = GraphQLField<any, any>[]
 
 interface GraphiqlExplorerProps {
   schema?: GraphQLSchema
@@ -57,7 +54,7 @@ const GraphiqlExplorer = ({ schema, onSelect }: GraphiqlExplorerProps) => {
             fontFamily: 'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace',
           }}
         >
-          {generateFieldViews(visibleFields, true)}
+          <MultipleFieldViews map={visibleFields} sort />
         </div>
       )}
     </div>
