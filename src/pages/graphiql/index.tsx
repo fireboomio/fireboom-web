@@ -136,7 +136,7 @@ export default function App({ url, data, onSave }: Props) {
         </GraphiQL.Toolbar>
       </GraphiQL> */}
         <div className="flex-1">123</div>
-        <FlowChart />
+        {/* <FlowChart /> */}
       </div>
     </>
   )
