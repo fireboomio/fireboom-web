@@ -61,10 +61,9 @@ export default function AuthUserDetails() {
 
   // @ts-ignore
   function handleValueChange(_, allVal) {
-    // TODO:
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    setAuthUserCurr(allVal)
+    setAuthUserCurr({ ...allVal, ...authUserCurr })
   }
 
   return (
