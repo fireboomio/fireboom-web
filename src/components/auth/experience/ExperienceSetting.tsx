@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, message, Select, Switch } from 'antd'
 import groupBy from 'lodash/groupBy'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { AuthListType } from '@/interfaces/auth'
 import { Connector } from '@/interfaces/connector'
@@ -92,6 +92,15 @@ const ExperienceSetting: React.FC<Props> = ({
   const social = Form.useWatch('social', form) as boolean
   const email = Form.useWatch('email', form) as boolean
   const sms = Form.useWatch('sms', form) as boolean
+
+  useEffect(() => {
+    if (social || email || sms) {
+      form.setFieldValue('otherMethodAvailable', true)
+    } else {
+      form.setFieldValue('otherMethodAvailable', false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleFinish = (value: LoginFormType) => {
     const sms = mainLoginMethod == 'sms' ? 'primary' : value.sms ? 'secondary' : 'disabled'
