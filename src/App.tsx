@@ -3,7 +3,8 @@ import {
   useRoutes,
 } from 'react-router-dom'
 
-import Layout from './components/layout'
+// import Layout from './components/layout'
+import Workbench from './components/workbench'
 
 import routes from '~react-pages'
 
@@ -12,11 +13,11 @@ console.log(routes)
 
 export default function App() {
   return (
-    <Layout>
+    <Workbench>
       <Suspense fallback={<></>}>
         {useRoutes(routes)}
       </Suspense>
-    </Layout>
+    </Workbench>
   )
 }
 

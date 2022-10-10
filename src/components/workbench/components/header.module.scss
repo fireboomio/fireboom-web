@@ -1,0 +1,74 @@
+.header {
+  background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  @apply h-full
+}
+
+.dashboardIcon {
+  width: 14px;
+  height: 14px;
+  background: url(/assets/workbench/header-dashboard.png) no-repeat center/contain;
+}
+
+.logo {
+  width: 20px;
+  height: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background: url(/assets/logo.png) no-repeat center/contain;
+}
+
+.splitLine {
+  width: 1px;
+  height: 14px;
+  background: #AFB0B4 60%;
+}
+
+.title {
+  margin-left: 24px;
+  @apply font-medium
+}
+
+.titleIcon {
+  width: 6px;
+  height: 6px;
+  background: url(/assets/workbench/header-edit.png) no-repeat center/contain;
+  margin-left: 8px;
+}
+
+.headBtn {
+  width: 32px;
+  height: 26px;
+  background: #FCFCFC;
+  box-shadow: 0px 1px 1px 0px rgba(120, 125, 139, 0.2);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 16px;
+}
+
+.helpIcon{
+  width: 14px;
+  height: 14px;
+  background: url(/assets/workbench/header-help.png) no-repeat center/contain;
+}
+.configIcon {
+  width: 14px;
+  height: 14px;
+  background: url(/assets/workbench/header-setting.png) no-repeat center/contain;
+  margin-left: 16px;
+}
+.avatar{
+  @apply flex items-center
+  width: 28px;
+  height: 28px;
+  border-radius: 28px;
+  box-shadow: 0px 2px 4px 0px rgba(120,125,139,0.17);
+  border: 1px solid rgba(255, 147, 120, 1);
+  margin-left: 22px;
+  padding: 3px;
+  font-size: 0;
+}
