@@ -79,8 +79,8 @@ export default function Graphql({ content, type }: Props) {
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
+  const urlReg = /^https?:\/\/[.\w\d:/]+$/i
+  // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
     setIsShowUpSchema(config.loadSchemaFromString !== undefined)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -256,20 +256,13 @@ export default function Graphql({ content, type }: Props) {
           </div>
 
           <div className="flex justify-center mb-8">
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-              labelStyle={{
-                width: 190,
-              }}
-            >
+            <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               <Descriptions.Item
                 label={
                   <div>
                     <span className={styles['label-style']}>
                       名称
-                      <FormToolTip title="test" />
+                      <FormToolTip title="名称" />
                     </span>
                   </div>
                 }
@@ -283,7 +276,7 @@ export default function Graphql({ content, type }: Props) {
                   <div>
                     <span className={styles['label-style']}>
                       Graphql 端点
-                      <FormToolTip title="test" />
+                      <FormToolTip title="Graphql 端点" />
                     </span>
                   </div>
                 }
@@ -298,7 +291,7 @@ export default function Graphql({ content, type }: Props) {
                     <div>
                       <span className={styles['label-style']}>
                         指定Schema
-                        <FormToolTip title="test" />
+                        <FormToolTip title="指定Schema" />
                       </span>
                     </div>
                   }
@@ -369,7 +362,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           是否内部
-                          <FormToolTip title="test" />
+                          <FormToolTip title="是否内部" />
                         </span>
                       </div>
                     }
@@ -382,7 +375,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           自定义Float标量
-                          <FormToolTip title="test" />
+                          <FormToolTip title="自定义Float标量" />
                         </span>
                       </div>
                     }
@@ -395,7 +388,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           自定义INT标量
-                          <FormToolTip title="test" />
+                          <FormToolTip title="自定义INT标量" />
                         </span>
                       </div>
                     }
@@ -408,7 +401,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           排除重命名根字段
-                          <FormToolTip title="test" />
+                          <FormToolTip title="排除重命名根字段" />
                         </span>
                       </div>
                     }
@@ -469,7 +462,7 @@ export default function Graphql({ content, type }: Props) {
                   <div>
                     <span className={styles['label-style']}>
                       名称:
-                      <FormToolTip title="test" />
+                      <FormToolTip title="名称" />
                     </span>
                   </div>
                 }
@@ -492,7 +485,7 @@ export default function Graphql({ content, type }: Props) {
                   <div>
                     <span className={styles['label-style']}>
                       Graphql 端点:
-                      <FormToolTip title="test" />
+                      <FormToolTip title="Graphql 端点" />
                     </span>
                   </div>
                 }
@@ -525,7 +518,7 @@ export default function Graphql({ content, type }: Props) {
                     <div>
                       <span className={styles['label-style']}>
                         指定Schema:
-                        <FormToolTip title="test" />
+                        <FormToolTip title="指定Schema" />
                       </span>
                     </div>
                   }
@@ -656,7 +649,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           是否内部
-                          <FormToolTip title="test" />
+                          <FormToolTip title="是否内部" />
                         </span>
                       </div>
                     }
@@ -672,7 +665,7 @@ export default function Graphql({ content, type }: Props) {
                       <div className="">
                         <span className={styles['label-style']}>
                           自定义Float标量
-                          <FormToolTip title="test" />
+                          <FormToolTip title="自定义Float标量" />
                         </span>
                       </div>
                     }
@@ -696,7 +689,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           自定义INT标量
-                          <FormToolTip title="test" />
+                          <FormToolTip title="自定义INT标量" />
                         </span>
                       </div>
                     }
@@ -719,7 +712,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           排除重命名根字段
-                          <FormToolTip title="test" />
+                          <FormToolTip title="排除重命名根字段" />
                         </span>
                       </div>
                     }
