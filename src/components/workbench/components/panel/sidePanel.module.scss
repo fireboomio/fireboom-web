@@ -1,0 +1,83 @@
+.container {
+  flex: 0 0 auto;
+  min-height: 26px;
+  display: flex;
+  flex-direction: column;
+
+  &.active {
+    flex: 1 1 auto;
+  }
+
+  display: flex;
+  flex-direction: column;
+
+  &:not(:first-child) {
+    border-top: 1px solid rgba(95, 98, 105, 0.1);
+  }
+
+  overflow: hidden;
+}
+
+.header {
+  flex: 0 0 auto;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px 0 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(115,122,139,0.1);
+
+  .arrow {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    background: url(/assets/workbench/panel-arrow.png) no-repeat center/contain;
+    transform: rotate(-90deg);
+  }
+
+  &.headerOpen {
+    .arrow {
+      transform: none;
+    }
+  }
+
+  .title {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-left: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .add {
+    width: 13px;
+    height: 13px;
+    background: url(/assets/workbench/panel-add.png) no-repeat center/contain;
+    margin-right: 2px;
+  }
+
+  .action {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 4px;
+    flex: 0 0 auto;
+  }
+}
+.content{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

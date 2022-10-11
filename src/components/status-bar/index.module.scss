@@ -2,18 +2,30 @@
   bottom: 0;
   display: flex;
   align-items: center;
-  height: 36px;
+  height: 28px;
   padding: 11px 20px;
   background: #e8f6ff;
 
   .info {
-    color: #31688b;
+    color: #326D9F;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 14px;
+    display: flex;
+    align-items: center;
+  }
 
-    & > span {
-      margin: 0 10px;
-    }
+  .gitIcon{
+    width: 19px;
+    height: 7px;
+    background: url(/assets/workbench/footer-git.png) no-repeat center/contain;
+    margin-right: 6px;
+  }
+
+  .errLabel{
+    @apply px-10px bg-white rounded-4px flex items-center h-5
+  }
+  .statusLabel{
+    @apply px-7px bg-white rounded-4px flex items-center h-5
   }
 }

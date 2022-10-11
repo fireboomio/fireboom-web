@@ -29,6 +29,8 @@ const StatusBar: React.FC<Props> = ({
     <div className={className}>
       <div className={styles['status-bar']}>
         <span className={styles['info']}>
+          <span className={styles.gitIcon} />
+          <span className="mr-12">CONNECT GIT (BETA)</span>
           <span className={styles['info-env']}>
             <span>{env}</span>
           </span>
@@ -36,32 +38,25 @@ const StatusBar: React.FC<Props> = ({
             <span>FB: </span>
             <span className="ml-2">{version}</span>
           </span>
-          <span className={styles['info-problem']}>
-            <span>错误信息：</span>
-            <span onClick={toggleWindow} className="cursor-pointer">
-              <span className="ml-1">
-                <Image height={13} width={13} src="/assets/error.png" alt="错误" preview={false} />
-                {errorInfo?.errTotal ?? 0}
-              </span>
-              <span className="ml-1">
-                <Image
-                  height={13}
-                  width={13}
-                  src="/assets/warning.png"
-                  alt="警告"
-                  preview={false}
-                />
-                {errorInfo?.warnTotal ?? 0}
-              </span>
+          <span onClick={toggleWindow} className="cursor-pointer flex items-center">
+            <span className={styles.errLabel}>
+              <Image height={13} width={13} src="/assets/workbench/footer-error.png" alt="错误" preview={false} />
+              <span className="ml-2">{errorInfo?.errTotal ?? 0}</span>
+            </span>
+            <span className={styles.errLabel} style={{ marginLeft: 8 }}>
+              <Image height={13} width={13} src="/assets/workbench/footer-warning.png" alt="警告" preview={false} />
+              <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
             </span>
           </span>
-          <span className={styles['info-engine']}>
-            <span>引擎状态：</span>
-            <span className="ml-1">{engineStatus}</span>
+          <span className="ml-18">引擎状态：</span>
+          <span className={styles.errLabel}>
+            <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
+            <span className="ml-1 text-[#50C772]">{engineStatus}</span>
           </span>
-          <span className={styles['info-hooks']}>
-            <span>钩子状态：</span>
-            <span className="ml-1">{hookStatus}</span>
+          <span className="ml-4.5">钩子状态：</span>
+          <span className={styles.errLabel}>
+            <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
+            <span className="ml-1 text-[#50C772]">{hookStatus}</span>
           </span>
         </span>
       </div>
