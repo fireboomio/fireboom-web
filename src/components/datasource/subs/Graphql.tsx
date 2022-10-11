@@ -79,8 +79,8 @@ export default function Graphql({ content, type }: Props) {
   const [form] = Form.useForm()
   const { Option } = Select
   const { Panel } = Collapse
-  const urlReg =
-    /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
+  const urlReg = /^https?:\/\/[.\w\d:/]+$/i
+  // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
     setIsShowUpSchema(config.loadSchemaFromString !== undefined)
     // eslint-disable-next-line react-hooks/exhaustive-deps
