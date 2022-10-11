@@ -1,13 +1,14 @@
 import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tree } from 'antd'
 import { Key } from 'antd/lib/table/interface'
 import { OperationDefinitionNode, parse } from 'graphql/index'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
 import { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
+import { WorkbenchContext } from '@/lib/context/workbench-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
 import GraphiQLApp from '@/pages/graphiql'
@@ -35,6 +36,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const selectedNode = useMemo(() => getNodeByKey(selectedKey, treeData), [selectedKey, treeData])
 
+  const { refreshMap, navCheck } = useContext(WorkbenchContext)
+
+  // 监听location变化，及时清空选中状态
   useEffect(() => {
     if (location.pathname !== `/apimanage/${selectedNode?.id || ' '}`) {
       setSelectedKey('')
@@ -47,11 +51,21 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       //   console.log('tree', convertToTree(x))
       //   return x
       // })
-      .then(res => setTreeData(convertToTree(res)))
+      .then(res => {
+        const tree = convertToTree(res, '0')
+        setTreeData(tree)
+
+        // 根据当前path识别需要选中高亮的项目
+        const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+        if (pathId) {
+          const currentNode = getNodeById(pathId, tree)
+          currentNode?.key && setSelectedKey(currentNode?.key)
+        }
+      })
       .catch((err: Error) => {
         throw err
       })
-  }, [refreshFlag])
+  }, [refreshFlag, refreshMap.api])
 
   useEffect(() => {
     if (currEditingNode) {
@@ -78,32 +92,24 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKey, action])
-  /////
-
-  useEffect(() => {
-    getFetcher<OperationResp[]>('/operateApi')
-      // .then(x => {
-      //   console.log('tree', convertToTree(x))
-      //   return x
-      // })
-      .then(res => setTreeData(convertToTree(res)))
-      .catch((err: Error) => {
-        throw err
-      })
-  }, [refreshFlag])
 
   const handleSelectTreeNode = useCallback(
     (selectedKeys: Key[], { node }: { node: DirTreeNode }) => {
-      if (node.isDir) {
-        return
-      }
-      if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
-        setSelectedKey(selectedKeys[0] as string)
-      }
-      navigate(`apimanage/${node.id}`)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      ~(async () => {
+        if (node.isDir) {
+          return
+        }
+        if (!await navCheck()) {
+          return
+        }
+        navigate(`apimanage/${node.id}`)
+        if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
+          setSelectedKey(selectedKeys[0] as string)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      })()
     },
-    []
+    [navCheck]
   )
 
   function calcMiniStatus(nodeData: DirTreeNode) {
@@ -355,7 +361,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           />
           <div className={styles.headerConfig} />
           <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
+          <div className={styles.headerNewFile} onClick={() => navigate('/apimanage/new')} />
         </>
       }
     >
@@ -427,6 +433,24 @@ function findEmptyTitleNode(data: DirTreeNode[] | undefined): DirTreeNode | unde
   }
 
   inner(data)
+  return rv
+}
+
+function getNodeById(id: number, data: DirTreeNode[] | undefined): DirTreeNode | undefined {
+  let rv
+  const inner = (key: number, nodes: DirTreeNode[] | undefined) => {
+    if (!nodes) return undefined
+    nodes.find(x => {
+      if (x.id === id) {
+        rv = x
+        return x
+      } else {
+        return inner(key, x.children ?? undefined)
+      }
+    })
+  }
+
+  inner(id, data)
   return rv
 }
 

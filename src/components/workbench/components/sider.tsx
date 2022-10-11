@@ -14,12 +14,14 @@ export default function Header() {
             className={`${styles.tabs_tab} ${tab === 'api' ? styles.tabs_tab__active : ''}`}
             onClick={() => setTab('api')}
           >
+            <div className={styles.apiIcon} />
             API设计
           </div>
           <div
             className={`${styles.tabs_tab}  ${tab === 'data' ? styles.tabs_tab__active : ''}`}
             onClick={() => setTab('data')}
           >
+            <div className={styles.dataIcon} />
             数据建模
           </div>
         </div>

@@ -10,6 +10,7 @@
   width: 14px;
   height: 14px;
   background: url(/assets/workbench/header-dashboard.png) no-repeat center/contain;
+  cursor: pointer;
 }
 
 .logo {
@@ -18,6 +19,7 @@
   margin-left: 20px;
   margin-right: 20px;
   background: url(/assets/logo.png) no-repeat center/contain;
+  cursor: pointer;
 }
 
 .splitLine {
@@ -48,18 +50,21 @@
   align-items: center;
   justify-content: center;
   margin-left: 16px;
+  cursor: pointer;
 }
 
 .helpIcon{
   width: 14px;
   height: 14px;
   background: url(/assets/workbench/header-help.png) no-repeat center/contain;
+  cursor: pointer;
 }
 .configIcon {
   width: 14px;
   height: 14px;
   background: url(/assets/workbench/header-setting.png) no-repeat center/contain;
   margin-left: 16px;
+  cursor: pointer;
 }
 .avatar{
   @apply flex items-center

@@ -1,5 +1,5 @@
 import { Dropdown, Input, Menu, Popconfirm, Image } from 'antd'
-import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import IconFont from '@/components/iconfont'
@@ -7,6 +7,7 @@ import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonpanel'
 import { DatasourceResp } from '@/interfaces/datasource'
 import { StorageResp } from '@/interfaces/storage'
+import { WorkbenchContext, MenuName } from '@/lib/context/workbench-context'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panel-reducer'
 
@@ -113,14 +114,16 @@ const panelMap: { [key: string]: PanelConfig } = {
   },
 }
 
-export default function CommonPanel(props: { type: string }) {
+export default function CommonPanel(props: { type: MenuName }) {
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type])
   const navigate = useNavigate()
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
   const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
   const [datasource, dispatch] = useReducer(commonPanelReducer, [])
+  const { refreshMap, navCheck } = useContext(WorkbenchContext)
 
+  const refreshFlag = refreshMap[props.type]
   // 监听路由变化，从而标记当前页面
   // useEffect(() => {
   //   console.log(location)
@@ -128,7 +131,7 @@ export default function CommonPanel(props: { type: string }) {
   // 初始化列表
   useEffect(() => {
     panelConfig.request.getList(dispatch)
-  }, [props.type])
+  }, [props.type, refreshFlag])
 
   const dropDownMenu = (row: CommonPanelResp) => {
     const menuItems: Array<{ key: string; label: React.ReactNode }> = [
@@ -204,56 +207,69 @@ export default function CommonPanel(props: { type: string }) {
     panelConfig.request.getList(dispatch)
     setEditTarget(undefined)
   }
+
+  const handleItemNav = (itemPath: string) => {
+    void navCheck().then(flag => {
+      if (flag) {
+        navigate(itemPath)
+      }
+    })
+  }
+
   return (
     <SidePanel title={panelConfig.title} onAdd={() => navigate(panelConfig.newItem)}>
       <div className={styles.container}>
         {datasource.map(item => {
           const itemPath = panelConfig.openItem(item.id)
-          return <div
-            className={`${styles.row} ${item.switch ? styles.rowDisable : ''} ${itemPath === location.pathname ? styles.active : ''}`}
-            key={item.id}
-            onClick={() => navigate(itemPath)}
-          >
-            <div className={styles.icon}>
-              <Image
-                width={12}
-                height={12}
-                preview={false}
-                alt={item.name}
-                src={`/assets/workbench/panel-item-${item.icon}.png`}
-              />
-            </div>
-            {editTarget?.id === item.id ? (
-              <Input
-                onBlur={() => setEditTarget(undefined)}
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onPressEnter={e => void handleItemEdit(e.target.value)}
-                onKeyUp={(e: React.KeyboardEvent) => {
-                  e.key == 'Escape' && setEditTarget(undefined)
-                }}
-                className="text-sm font-normal leading-4 h-5 w-5/7"
-                defaultValue={editTarget.name}
-                autoFocus
-                placeholder="请输入外部数据源名"
-              />
-            ) : (
-              <div className={styles.title}>{item.name}</div>
-            )}
-            <div className={styles.tip}>{item.tip}</div>
-            <Dropdown
-              overlay={dropDownMenu(item)}
-              trigger={['click']}
-              open={dropDownId === item.id}
-              onOpenChange={flag => {
-                setDropDownId(flag ? item.id : undefined)
-                console.log(dropDownId)
-              }}
-              placement="bottomRight"
+          return (
+            <div
+              className={`${styles.row} ${item.switch ? styles.rowDisable : ''} ${
+                itemPath === location.pathname ? styles.active : ''
+              }`}
+              key={item.id}
+              onClick={() => handleItemNav(itemPath)}
             >
-              <div className={styles.more} onClick={e => e.preventDefault()} />
-            </Dropdown>
-          </div>
+              <div className={styles.icon}>
+                <Image
+                  width={12}
+                  height={12}
+                  preview={false}
+                  alt={item.name}
+                  src={`/assets/workbench/panel-item-${item.icon}.png`}
+                />
+              </div>
+              {editTarget?.id === item.id ? (
+                <Input
+                  onBlur={() => setEditTarget(undefined)}
+                  // @ts-ignore
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                  onPressEnter={e => void handleItemEdit(e.target.value)}
+                  onKeyUp={(e: React.KeyboardEvent) => {
+                    e.key == 'Escape' && setEditTarget(undefined)
+                  }}
+                  className="text-sm font-normal leading-4 h-5 w-5/7"
+                  defaultValue={editTarget.name}
+                  autoFocus
+                  placeholder="请输入外部数据源名"
+                />
+              ) : (
+                <div className={styles.title}>{item.name}</div>
+              )}
+              <div className={styles.tip}>{item.tip}</div>
+              <Dropdown
+                overlay={dropDownMenu(item)}
+                trigger={['click']}
+                open={dropDownId === item.id}
+                onOpenChange={flag => {
+                  setDropDownId(flag ? item.id : undefined)
+                  console.log(dropDownId)
+                }}
+                placement="bottomRight"
+              >
+                <div className={styles.more} onClick={e => e.preventDefault()} />
+              </Dropdown>
+            </div>
+          )
         })}
       </div>
     </SidePanel>
