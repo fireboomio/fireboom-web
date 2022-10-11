@@ -1,7 +1,7 @@
 import { Divider, Layout as ALayout, Menu, Image } from 'antd'
 import { Footer } from 'antd/lib/layout/layout'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
@@ -270,9 +270,7 @@ export default function Layout(props: PropsWithChildren) {
       </Sider>
 
       <ALayout className="site-layout" style={{ height: '100vh' }}>
-        <Content className="bg-white">
-          {props.children}
-        </Content>
+        <Content className="bg-white">{props.children}</Content>
         {showWindow ? (
           <Window style={windowStyle} toggleWindow={() => setShowWindow(!showWindow)} />
         ) : (

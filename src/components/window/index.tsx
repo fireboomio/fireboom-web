@@ -1,4 +1,5 @@
 import { Image } from 'antd'
+import { Resizable } from 're-resizable'
 import { CSSProperties, useEffect, useState } from 'react'
 
 import { LogMessage } from '@/interfaces/window'
@@ -85,11 +86,18 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
 
   return (
     <div
-      className="absolute bottom-36px h-348px max-h-348px bg-[#fff] z-200 px-7 py-5 border"
-      style={style}
+      className="absolute bottom-36px min-h-80px bg-[#fff] z-200 px-7 py-5  border-gray-500/50"
+      style={{ borderTop: '1px solid #EFEFEFFF', ...style }}
     >
-      <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
-      {tabActiveKey === '0' ? <Log log={log} /> : <></>}
+      <Resizable
+        className="flex flex-col h-full"
+        defaultSize={{ width: '100%', height: 348 }}
+        minWidth="100%"
+        maxWidth="100%"
+      >
+        <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
+        {tabActiveKey === '0' ? <Log log={log} /> : <></>}
+      </Resizable>
     </div>
   )
 }
