@@ -10,7 +10,6 @@ import {
   Switch,
   Tabs,
   Collapse,
-  Table,
   Tag,
   message,
   Modal,
@@ -55,6 +54,7 @@ interface DataType {
   val: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const columns: ColumnsType<DataType> = [
   {
     dataIndex: 'key',
@@ -309,10 +309,7 @@ export default function Rest({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <Button
-                className="btn-light-border w-16 ml-4"
-                onClick={() => setTestVisible(true)}
-              >
+              <Button className="btn-light-border w-16 ml-4" onClick={() => setTestVisible(true)}>
                 测试
               </Button>
               <Button
@@ -325,16 +322,13 @@ export default function Rest({ content, type }: Props) {
           </div>
 
           <div className="flex justify-center mb-8">
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-              className={styles['descriptions-box']}
-            >
+            <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
               <Descriptions.Item
                 label={
                   <>
-                    <span className={styles['label-style']}>名称 <FormToolTip title="test" /></span>
+                    <span className={styles['label-style']}>
+                      名称 <FormToolTip title="test" />
+                    </span>
                   </>
                 }
                 className="justify-start"
@@ -344,7 +338,10 @@ export default function Rest({ content, type }: Props) {
               <Descriptions.Item
                 label={
                   <>
-                    <span className={styles['label-style']}>Rest 端点<FormToolTip title="test" /></span>
+                    <span className={styles['label-style']}>
+                      Rest 端点
+                      <FormToolTip title="test" />
+                    </span>
                   </>
                 }
                 className="justify-start"
@@ -354,12 +351,21 @@ export default function Rest({ content, type }: Props) {
               <Descriptions.Item
                 label={
                   <>
-                    <span className={styles['label-style']}>指定OAS<FormToolTip title="test" /></span>
+                    <span className={styles['label-style']}>
+                      指定OAS
+                      <FormToolTip title="test" />
+                    </span>
                   </>
                 }
               >
                 <div className="flex items-center">
-                  <Image src="/assets/upload-file.png" width={14} height={14} alt="文件" preview={false}/>
+                  <Image
+                    src="/assets/upload-file.png"
+                    width={14}
+                    height={14}
+                    alt="文件"
+                    preview={false}
+                  />
                   <span className="text-11px text-[#909399] ml-2">{config.filePath}</span>
                 </div>
               </Descriptions.Item>
@@ -383,10 +389,10 @@ export default function Rest({ content, type }: Props) {
                         key={key}
                         label={
                           <div>
-                        <span className={styles['label-style']}>
-                          {key}
-                          <FormToolTip title="test" />
-                        </span>
+                            <span className={styles['label-style']}>
+                              {key}
+                              <FormToolTip title="test" />
+                            </span>
                           </div>
                         }
                         className="justify-start"
@@ -404,7 +410,10 @@ export default function Rest({ content, type }: Props) {
               <TabPane
                 tab={
                   <>
-                    <span className={styles['label-style']}>授权<FormToolTip title="test" /></span>
+                    <span className={styles['label-style']}>
+                      授权
+                      <FormToolTip title="test" />
+                    </span>
                   </>
                 }
                 key="2"
@@ -449,11 +458,7 @@ export default function Rest({ content, type }: Props) {
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
           >
             <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
-              <Descriptions
-                bordered
-                column={1}
-                size="small"
-              >
+              <Descriptions bordered column={1} size="small">
                 <Descriptions.Item
                   label={
                     <>
@@ -512,7 +517,6 @@ export default function Rest({ content, type }: Props) {
                 </span>
               </>
             )}
-
           </div>
 
           <div className="py-6 rounded-xl mb-4">
@@ -610,7 +614,7 @@ export default function Rest({ content, type }: Props) {
                     return false
                   }}
                   onRemove={onRemoveFile}
-                 />
+                />
               </Form.Item>
 
               <div className="tabs-form">
@@ -641,21 +645,21 @@ export default function Rest({ content, type }: Props) {
                                 >
                                   <Select onChange={onValueChange}>
                                     <Option value="0">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
-                                  {renderIcon('0')}
-                                </span>
+                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                        {renderIcon('0')}
+                                      </span>
                                       值
                                     </Option>
                                     <Option value="1">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
-                                  {renderIcon('1')}
-                                </span>
+                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                        {renderIcon('1')}
+                                      </span>
                                       环境变量
                                     </Option>
                                     <Option value="2">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
-                                  {renderIcon('2')}
-                                </span>
+                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                        {renderIcon('2')}
+                                      </span>
                                       转发自客户端
                                     </Option>
                                   </Select>
@@ -800,7 +804,10 @@ export default function Rest({ content, type }: Props) {
                   <Form.Item
                     label={
                       <>
-                        <span className={styles['label-style']}>是否状态联合<FormToolTip title="test" /></span>
+                        <span className={styles['label-style']}>
+                          是否状态联合
+                          <FormToolTip title="test" />
+                        </span>
                       </>
                     }
                     name="statusCodeUnions"
