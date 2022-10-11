@@ -1,17 +1,19 @@
 /*
  * https://github.com/graphql/graphiql/issues/118
  */
+import { GraphiQL } from 'graphiql'
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
-import { GraphiQL, GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
+// eslint-disable-next-line import/order
+import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
 import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
-import FlowChart from '@/components/charts/FlowChart'
+// import FlowChart from '@/components/charts/FlowChart'
 
-import GraphiQLExplorer from './components/GraphiqlExplorer'
+// import GraphiQLExplorer from './components/GraphiqlExplorer'
 
 // import styles from './index.module.scss'
 
@@ -107,35 +109,34 @@ export default function App({ url, data, onSave }: Props) {
       </Helmet>
 
       <div className="flex h-full">
-        <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
+        {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
         <GraphiqlExplorer1 schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
-        {/* <GraphiQL
-        fetcher={fetcher}
-        schema={schema}
-        query={query}
-        ref={x => (ref.current = x)}
-        onEditQuery={setQuery}
-      >
-        <GraphiQL.Toolbar>
-          <GraphiQL.Button
-            onClick={() => ref.current?.ref?.props.prettify()}
-            label="Prettify"
-            title="Prettify Query (Shift-Ctrl-P)"
-          />
-          <GraphiQL.Button
-            onClick={() => ref.current?.ref?.props.merge()}
-            label="Merge"
-            title="Merge Query (Shift-Ctrl-M)"
-          />
-          <GraphiQL.Button
-            onClick={() => ref.current?.ref?.props.historyContext?.toggle()}
-            label="History"
-            title="Show History"
-          />
-          <GraphiQL.Button onClick={save} label="Save" title="Save" />
-        </GraphiQL.Toolbar>
-      </GraphiQL> */}
-        <div className="flex-1">123</div>
+        <GraphiQL
+          fetcher={fetcher}
+          schema={schema}
+          query={query}
+          ref={x => (ref.current = x)}
+          onEditQuery={setQuery}
+        >
+          <GraphiQL.Toolbar>
+            <GraphiQL.Button
+              onClick={() => ref.current?.ref?.props.prettify()}
+              label="Prettify"
+              title="Prettify Query (Shift-Ctrl-P)"
+            />
+            <GraphiQL.Button
+              onClick={() => ref.current?.ref?.props.merge()}
+              label="Merge"
+              title="Merge Query (Shift-Ctrl-M)"
+            />
+            <GraphiQL.Button
+              onClick={() => ref.current?.ref?.props.historyContext?.toggle()}
+              label="History"
+              title="Show History"
+            />
+            <GraphiQL.Button onClick={save} label="Save" title="Save" />
+          </GraphiQL.Toolbar>
+        </GraphiQL>
         {/* <FlowChart /> */}
       </div>
     </>
