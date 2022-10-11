@@ -1,7 +1,7 @@
 /*
  * https://github.com/graphql/graphiql/issues/118
  */
-import { GraphiQL } from 'graphiql'
+
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
 // eslint-disable-next-line import/order
@@ -10,6 +10,8 @@ import 'graphiql/graphiql.css'
 
 import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
+
+import { GraphiQL } from './components/GraphiQL'
 
 // import FlowChart from '@/components/charts/FlowChart'
 
@@ -58,7 +60,7 @@ export default function App({ url, data, onSave }: Props) {
   const [schema, setSchema] = useState<GraphQLSchema>()
   const [query, setQuery] = useState<string | undefined>(data ?? DEFAULT_QUERY)
 
-  const ref = useRef<GraphiQL | null>()
+  // const ref = useRef<GraphiQL | null>()
 
   useEffect(() => {
     fetcher({
@@ -97,10 +99,10 @@ export default function App({ url, data, onSave }: Props) {
       })
   }
 
-  function save() {
-    const content = ref.current?.props.query as string
-    return onSave(content)
-  }
+  // function save() {
+  //   const content = ref.current?.props.query as string
+  //   return onSave(content)
+  // }
 
   return (
     <>
@@ -115,10 +117,10 @@ export default function App({ url, data, onSave }: Props) {
           fetcher={fetcher}
           schema={schema}
           query={query}
-          ref={x => (ref.current = x)}
+          // ref={x => (ref.current = x)}
           onEditQuery={setQuery}
         >
-          <GraphiQL.Toolbar>
+          {/* <GraphiQL.Toolbar>
             <GraphiQL.Button
               onClick={() => ref.current?.ref?.props.prettify()}
               label="Prettify"
@@ -135,7 +137,7 @@ export default function App({ url, data, onSave }: Props) {
               title="Show History"
             />
             <GraphiQL.Button onClick={save} label="Save" title="Save" />
-          </GraphiQL.Toolbar>
+          </GraphiQL.Toolbar> */}
         </GraphiQL>
         {/* <FlowChart /> */}
       </div>
