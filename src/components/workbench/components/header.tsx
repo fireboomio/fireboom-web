@@ -11,11 +11,11 @@ export default function Header(props: { onToggleSider: () => void }) {
       <div className={styles.dashboardIcon} onClick={() => props.onToggleSider()} />
       <div className={styles.logo} onClick={() => navigate('/')} />
       <div className={styles.splitLine} />
-      <div className={styles.title}>测试标题</div>
+      <div className={styles.title}>后台管理系统</div>
       <div className={styles.titleIcon} />
       <div className="flex-1" />
       <div className={styles.headBtn}>
-        <image />
+        <img src="" alt="ddd"/>
       </div>
       <div className={styles.headBtn}>
         <image />

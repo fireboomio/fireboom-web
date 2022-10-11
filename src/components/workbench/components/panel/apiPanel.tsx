@@ -106,7 +106,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
           setSelectedKey(selectedKeys[0] as string)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
       })()
     },
     [navCheck]
@@ -136,7 +135,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
     const { parent, curr } = getNodeFamily(selectedKey, treeData)
 
-    const node = {
+    const node: DirTreeNode = {
       title: '',
       baseDir: curr?.currDir ?? '',
       isDir: action === '创建目录' ? true : false,

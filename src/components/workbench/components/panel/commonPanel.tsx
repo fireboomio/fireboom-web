@@ -124,10 +124,6 @@ export default function CommonPanel(props: { type: MenuName }) {
   const { refreshMap, navCheck } = useContext(WorkbenchContext)
 
   const refreshFlag = refreshMap[props.type]
-  // 监听路由变化，从而标记当前页面
-  // useEffect(() => {
-  //   console.log(location)
-  // }, [location])
   // 初始化列表
   useEffect(() => {
     panelConfig.request.getList(dispatch)
