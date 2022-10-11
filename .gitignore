@@ -29,3 +29,5 @@ yarn-error.log*
 
 # local history
 .history
+
+dist/
