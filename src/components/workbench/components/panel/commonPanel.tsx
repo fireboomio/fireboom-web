@@ -4,12 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom'
 
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
-import { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonpanel'
+import { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import { DatasourceResp } from '@/interfaces/datasource'
 import { StorageResp } from '@/interfaces/storage'
-import { WorkbenchContext, MenuName } from '@/lib/context/workbench-context'
+import { WorkbenchContext, MenuName } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import commonPanelReducer from '@/lib/reducers/panel-reducer'
+import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.scss'
 

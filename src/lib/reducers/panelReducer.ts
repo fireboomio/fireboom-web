@@ -1,4 +1,4 @@
-import type { CommonPanelResp, CommonPanelAction } from '@/interfaces/commonpanel'
+import type { CommonPanelResp, CommonPanelAction } from '@/interfaces/commonPanel'
 
 export default function commonPanelReducer(commonPanel: CommonPanelResp[], action: CommonPanelAction) {
   switch (action.type) {

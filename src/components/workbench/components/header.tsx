@@ -15,7 +15,7 @@ export default function Header(props: { onToggleSider: () => void }) {
       <div className={styles.titleIcon} />
       <div className="flex-1" />
       <div className={styles.headBtn}>
-        <img src="" alt="ddd"/>
+        <img src="/assets/setting.png" alt="ddd"/>
       </div>
       <div className={styles.headBtn}>
         <image />

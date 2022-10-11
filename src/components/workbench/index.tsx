@@ -10,7 +10,7 @@ import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import { Info } from '@/interfaces/common'
 import { DOMAIN } from '@/lib/common'
-import { WorkbenchContext, RefreshMap, MenuName } from '@/lib/context/workbench-context'
+import { WorkbenchContext, RefreshMap, MenuName } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import Header from './components/header'
