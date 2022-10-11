@@ -29,6 +29,7 @@
     "immer": "^9.0.15",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",

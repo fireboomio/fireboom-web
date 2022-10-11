@@ -25,15 +25,13 @@ const Log: React.FC<Props> = ({ log }) => {
   }, [content])
 
   useEffect(() => {
-    const displayLog = log.filter(x => {
-      return `${x.logType}` === selectedKey
-    })
+    const displayLog = log.filter(x => x.logType.toString() === selectedKey)
     setContent(displayLog.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
   }, [selectedKey, log])
 
   return (
-    <div className="flex w-full h-[calc(306px_-_28px)]">
-      <pre className="w-9/10 h-full overflow-auto">
+    <div className="flex flex-1 w-full overflow-hidden">
+      <pre className="w-9/10 h-full overflow-auto mb-0">
         {content}
         <div ref={logRef} />
       </pre>

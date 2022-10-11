@@ -35,6 +35,7 @@ specifiers:
   lodash: ^4.17.21
   moment: ^2.29.4
   monaco-editor: ^0.33.0
+  re-resizable: ^6.9.9
   react: ^18.2.0
   react-dom: ^18.2.0
   react-draggable: ^4.4.5
@@ -77,6 +78,7 @@ dependencies:
   immer: registry.npmmirror.com/immer/9.0.15
   lodash: registry.npmmirror.com/lodash/4.17.21
   moment: registry.npmmirror.com/moment/2.29.4
+  re-resizable: registry.npmmirror.com/re-resizable/6.9.9_biqbaboplfbrettd7655fr4n2y
   react: registry.npmmirror.com/react/18.2.0
   react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
   react-draggable: registry.npmmirror.com/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y
@@ -5955,7 +5957,7 @@ packages:
     dependencies:
       htmlparser2: registry.npmmirror.com/htmlparser2/3.10.1
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
     dev: true
 
   registry.npmmirror.com/postcss-jsx/0.36.4_j55xdkkcxc32kvnyvx3y7casfm:
@@ -5969,7 +5971,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.19.0
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5993,7 +5995,7 @@ packages:
       postcss-syntax: '>=0.36.0'
     dependencies:
       postcss: registry.npmmirror.com/postcss/7.0.39
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
       remark: registry.npmmirror.com/remark/10.0.1
       unist-util-find-all-after: registry.npmmirror.com/unist-util-find-all-after/1.0.5
     dev: true
@@ -6115,7 +6117,7 @@ packages:
       postcss: registry.npmmirror.com/postcss/8.4.16
     dev: true
 
-  registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16:
+  registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq:
     resolution: {integrity: sha512-nBRg/i7E3SOHWxF3PpF5WnJM/jQ1YpY9000OaVXlAQj6Zp/kIqJxEDWIZ67tAd7NLuk7zqN4yqe9nc0oNAOs1w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/postcss-syntax/-/postcss-syntax-0.36.2.tgz}
     id: registry.npmmirror.com/postcss-syntax/0.36.2
     name: postcss-syntax
@@ -6139,7 +6141,12 @@ packages:
       postcss-scss:
         optional: true
     dependencies:
-      postcss: registry.npmmirror.com/postcss/8.4.16
+      postcss: registry.npmmirror.com/postcss/7.0.39
+      postcss-html: registry.npmmirror.com/postcss-html/0.36.0_j55xdkkcxc32kvnyvx3y7casfm
+      postcss-jsx: registry.npmmirror.com/postcss-jsx/0.36.4_j55xdkkcxc32kvnyvx3y7casfm
+      postcss-less: registry.npmmirror.com/postcss-less/3.1.4
+      postcss-markdown: registry.npmmirror.com/postcss-markdown/0.36.0_j55xdkkcxc32kvnyvx3y7casfm
+      postcss-scss: registry.npmmirror.com/postcss-scss/2.1.1
     dev: true
 
   registry.npmmirror.com/postcss-value-parser/3.3.1:
@@ -6865,6 +6872,19 @@ packages:
       classnames: registry.npmmirror.com/classnames/2.3.2
       rc-resize-observer: registry.npmmirror.com/rc-resize-observer/1.2.0_biqbaboplfbrettd7655fr4n2y
       rc-util: registry.npmmirror.com/rc-util/5.24.2_biqbaboplfbrettd7655fr4n2y
+      react: registry.npmmirror.com/react/18.2.0
+      react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
+    dev: false
+
+  registry.npmmirror.com/re-resizable/6.9.9_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-l+MBlKZffv/SicxDySKEEh42hR6m5bAHfNu3Tvxks2c4Ah+ldnWjfnVRwxo/nxF27SsUsxDS0raAzFuJNKABXA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/re-resizable/-/re-resizable-6.9.9.tgz}
+    id: registry.npmmirror.com/re-resizable/6.9.9
+    name: re-resizable
+    version: 6.9.9
+    peerDependencies:
+      react: ^16.13.1 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
+    dependencies:
       react: registry.npmmirror.com/react/18.2.0
       react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
     dev: false
@@ -8023,7 +8043,7 @@ packages:
       postcss-sass: registry.npmmirror.com/postcss-sass/0.3.5
       postcss-scss: registry.npmmirror.com/postcss-scss/2.1.1
       postcss-selector-parser: registry.npmmirror.com/postcss-selector-parser/3.1.2
-      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_postcss@8.4.16
+      postcss-syntax: registry.npmmirror.com/postcss-syntax/0.36.2_sbwcdikydvvxbbxnj56wt2n5dq
       postcss-value-parser: registry.npmmirror.com/postcss-value-parser/3.3.1
       resolve-from: registry.npmmirror.com/resolve-from/4.0.0
       signal-exit: registry.npmmirror.com/signal-exit/3.0.7
