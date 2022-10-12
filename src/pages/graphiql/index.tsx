@@ -81,6 +81,7 @@ export default function App({ url, data, onSave }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
     return fetch(url ?? '/app/main/graphql', {
+    // return fetch('https://graphql-weather-api.herokuapp.com/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -119,6 +120,7 @@ export default function App({ url, data, onSave }: Props) {
           query={query}
           // ref={x => (ref.current = x)}
           onEditQuery={setQuery}
+          defaultEditorToolsVisibility={false}
         >
           {/* <GraphiQL.Toolbar>
             <GraphiQL.Button

@@ -27,6 +27,7 @@ module.exports = {
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'import'],
   ignorePatterns: ['.eslintrc.js', '.next/', 'out/'],
   rules: {
+    '@next/next/no-img-element': 'off',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {
