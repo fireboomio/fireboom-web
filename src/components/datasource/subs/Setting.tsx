@@ -1,6 +1,11 @@
 import Editor from '@monaco-editor/react'
 import { Descriptions, Select, Switch, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { useContext, useEffect } from 'react'
+
+import { DMFResp } from '@/interfaces/datasource'
+import { DatasourceCurrDBContext } from '@/lib/context/datasource-context'
+import requests from '@/lib/fetchers'
 
 const { Option } = Select
 
@@ -70,6 +75,7 @@ const columns: ColumnsType<DataType> = [
     render: () => <Switch className="w-8 h-2" />,
   },
 ]
+
 const data: DataType[] = [
   {
     key: '1',
@@ -90,6 +96,14 @@ const data: DataType[] = [
 ]
 
 const Setting: React.FC<Props> = props => {
+  const { currDBId } = useContext(DatasourceCurrDBContext)
+
+  useEffect(() => {
+    void requests
+      .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`)
+      .then(x => console.log(x.models))
+  }, [currDBId])
+
   return (
     <div className="flex">
       <Descriptions
@@ -108,6 +122,7 @@ const Setting: React.FC<Props> = props => {
           />
         </Descriptions.Item>
       </Descriptions>
+
       <Descriptions
         bordered
         layout="vertical"
