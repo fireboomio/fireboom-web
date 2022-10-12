@@ -1,11 +1,14 @@
 import { Button, Form, Input, message, Switch } from 'antd'
 import { useContext, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
-import { StorageSwitchContext, StorageDispatchContext } from '@/lib/context/storage-context'
+import { StorageSwitchContext } from '@/lib/context/storage-context'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
+
 
 interface Props {
   content?: StorageResp
@@ -13,7 +16,8 @@ interface Props {
 
 export default function StorageForm({ content }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
-  const dispatch = useContext(StorageDispatchContext)
+  const navigate = useNavigate()
+  const { onRefreshMenu } = useContext(WorkbenchContext)
 
   const config = useMemo(() => content?.config, [content])
 
@@ -28,11 +32,8 @@ export default function StorageForm({ content }: Props) {
     } else {
       resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
     }
-    const storageBucket = await requests.get<unknown, Array<StorageResp>>('/storageBucket ')
-    dispatch({
-      type: 'fetched',
-      data: storageBucket,
-    })
+    navigate(`/workbench/storage/${resp.id}`)
+    onRefreshMenu('storage')
     handleSwitch('detail', resp.id)
   }
 

@@ -111,7 +111,7 @@ const panelMap: { [key: string]: PanelConfig } = {
             _row: { name: '' },
             id: 0,
             tip: '前往>',
-            openInNewPage: '/workbench/auth/user-manage',
+            openInNewPage: '/auth/user-manage',
           })
           dispatch({
             type: 'fetched',
