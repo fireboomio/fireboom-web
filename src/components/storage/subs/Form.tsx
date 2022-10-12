@@ -32,7 +32,7 @@ export default function StorageForm({ content }: Props) {
     } else {
       resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
     }
-    navigate(`/workbench/storage/${resp.id}`)
+    navigate(`/workbench/storage/${resp.id}`, { replace: true })
     onRefreshMenu('storage')
     handleSwitch('detail', resp.id)
   }

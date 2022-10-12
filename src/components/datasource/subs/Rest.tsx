@@ -106,7 +106,7 @@ interface OptionT {
   value: string
 }
 export default function Rest({ content, type }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
   const [isEyeShow, setIsEyeShow] = useImmer(false)
@@ -156,8 +156,9 @@ export default function Rest({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-          dispatch({ type: 'fetched', data: res })
+        handleSave({
+          ...content,
+          switch: isChecked == true ? 0 : 1,
         })
       })
   }
@@ -237,26 +238,22 @@ export default function Rest({ content, type }: Props) {
     }
 
     //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
+    let newContent: DatasourceResp
     if (content.name == '') {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
-    } else
-      await requests.put('/dataSource', {
+      newContent = content
+    } else{
+      newContent = {
         ...content,
         config: newValues,
         name: values.apiNameSpace,
-      })
-
-    void requests
-      .get<unknown, DatasourceResp[]>('/dataSource')
-      .then(res => {
-        dispatch({ type: 'fetched', data: res })
-      })
-      .then(() => {
-        handleToggleDesigner('detail', content.id)
-      })
+      } as DatasourceResp
+      await requests.put('/dataSource', newContent)
+    }
+    handleSave(newContent)
   }
 
   //表单上传失败回调

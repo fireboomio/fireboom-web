@@ -41,7 +41,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   // 监听location变化，及时清空选中状态
   useEffect(() => {
-    if (location.pathname !== `/apimanage/${selectedNode?.id || ' '}`) {
+    if (location.pathname !== `/workbench/apimanage/${selectedNode?.id || ' '}`) {
       setSelectedKey('')
     }
   }, [location])
@@ -106,7 +106,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (!await navCheck()) {
           return
         }
-        navigate(`/workbench/apimanage/${node.id}`)
+        navigate(`/workbench/apimanage/${node.id}`, { replace: true })
         if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
           setSelectedKey(selectedKeys[0] as string)
         }
@@ -245,6 +245,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
+      if (`/workbench/apimanage/${node.id}` === location.pathname) {
+        navigate('/workbench/apimanage/new')
+      }
     })
   }
   const titleRender = (nodeData: DirTreeNode) => {

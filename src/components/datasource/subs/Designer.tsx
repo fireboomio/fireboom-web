@@ -29,7 +29,7 @@ const data = [
 
 export default function Designer() {
   const dispatch = useContext(DatasourceDispatchContext)
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const { handleToggleDesigner, handleCreate } = useContext(DatasourceToggleContext)
 
   function handleClick(sourceType: number, dbType: string) {
     const data = {
@@ -39,8 +39,7 @@ export default function Designer() {
       sourceType: sourceType,
       switch: 0,
     } as DatasourceResp
-    dispatch({ type: 'added', data: data })
-    handleToggleDesigner('form', data.id, sourceType)
+    handleCreate(data)
   }
 
   return (

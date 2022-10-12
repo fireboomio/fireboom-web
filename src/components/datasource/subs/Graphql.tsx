@@ -24,7 +24,6 @@ import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceToggleContext,
-  DatasourceDispatchContext,
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
@@ -67,8 +66,7 @@ const renderIcon = (kind: string) => (
 
 export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const dispatch = useContext(DatasourceDispatchContext)
+  const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [rulesObj, setRulesObj] = useImmer({})
   const [deleteFlag, setDeleteFlag] = useImmer(false)
@@ -127,25 +125,23 @@ export default function Graphql({ content, type }: Props) {
       } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
     }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
+    let newContent: DatasourceResp
     if (content.name == '') {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
-    } else
-      await requests.put('/dataSource', {
+      newContent = content
+    } else {
+      newContent = {
         ...content,
         config: newValues,
         name: values.apiNameSpace,
-      })
-    void requests
-      .get<unknown, DatasourceResp[]>('/dataSource')
-      .then(res => {
-        dispatch({ type: 'fetched', data: res })
-      })
-      .then(() => {
-        handleToggleDesigner('detail', content.id)
-      })
+      } as DatasourceResp
+      await requests.put('/dataSource', newContent)
+    }
+
+    handleSave(newContent)
   }
 
   //表单提交失败回调
@@ -200,8 +196,9 @@ export default function Graphql({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-          dispatch({ type: 'fetched', data: res })
+        handleSave({
+          ...content,
+          switch: isChecked == true ? 0 : 1,
         })
       })
   }
