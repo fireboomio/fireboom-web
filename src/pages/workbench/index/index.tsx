@@ -119,7 +119,7 @@ export default function Home() {
       <Helmet>
         <title>FireBoom</title>
         <meta name="description" content="FireBoom" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/public/favicon.ico" />
       </Helmet>
 
       <div className="flex flex-col h-full">

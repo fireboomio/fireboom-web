@@ -11,7 +11,7 @@ import { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/graphiql'
+import GraphiQLApp from '@/pages/workbench/graphiql'
 
 import styles from './apiPanel.module.scss'
 
@@ -106,7 +106,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (!await navCheck()) {
           return
         }
-        navigate(`apimanage/${node.id}`)
+        navigate(`/workbench/apimanage/${node.id}`)
         if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
           setSelectedKey(selectedKeys[0] as string)
         }
@@ -368,7 +368,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           />
           <div className={styles.headerConfig} />
           <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          <div className={styles.headerNewFile} onClick={() => navigate('/apimanage/new')} />
+          <div className={styles.headerNewFile} onClick={() => navigate('/workbench/apimanage/new')} />
         </>
       }
     >

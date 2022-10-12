@@ -28,7 +28,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
-import GraphiQLApp from '../../../pages/graphiql'
+import GraphiQLApp from '../../../pages/workbench/graphiql'
 import styles from './Graphql.module.scss'
 
 interface Props {

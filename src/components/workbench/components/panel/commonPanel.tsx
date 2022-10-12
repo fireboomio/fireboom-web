@@ -32,8 +32,8 @@ interface PanelConfig {
 const panelMap: { [key: string]: PanelConfig } = {
   dataSource: {
     title: '数据源',
-    openItem: id => `/dataSource/${id}`,
-    newItem: '/dataSource/new',
+    openItem: id => `/workbench/dataSource/${id}`,
+    newItem: '/workbench/dataSource/new',
     request: {
       getList: dispatch => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
@@ -65,8 +65,8 @@ const panelMap: { [key: string]: PanelConfig } = {
   },
   storage: {
     title: '文件存储',
-    openItem: id => `/storage/${id}`,
-    newItem: '/storage/new',
+    openItem: id => `/workbench/storage/${id}`,
+    newItem: '/workbench/storage/new',
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
@@ -87,14 +87,14 @@ const panelMap: { [key: string]: PanelConfig } = {
       {
         icon: 'icon-wenjian1',
         name: '查看',
-        menuPath: id => `/storage/${id}`,
+        menuPath: id => `/workbench/storage/${id}`,
       },
     ],
   },
   auth: {
     title: '身份验证',
-    openItem: id => `/auth/${id}`,
-    newItem: '/auth/new',
+    openItem: id => `/workbench/auth/${id}`,
+    newItem: '/workbench/auth/new',
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
@@ -111,7 +111,7 @@ const panelMap: { [key: string]: PanelConfig } = {
             _row: { name: '' },
             id: 0,
             tip: '前往>',
-            openInNewPage: '/auth/user-manage',
+            openInNewPage: '/workbench/auth/user-manage',
           })
           dispatch({
             type: 'fetched',

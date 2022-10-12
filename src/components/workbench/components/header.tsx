@@ -14,7 +14,7 @@ export default function Header(props: { onToggleSider: () => void }) {
   return (
     <div className={styles.header}>
       <div className={styles.dashboardIcon} onClick={() => props.onToggleSider()} />
-      <div className={styles.logo} onClick={() => navigate('/')} />
+      <div className={styles.logo} onClick={() => navigate('/workbench')} />
       <div className={styles.splitLine} />
       <div className={styles.title}>后台管理系统</div>
       <div className={styles.titleIcon} />
@@ -41,8 +41,8 @@ export default function Header(props: { onToggleSider: () => void }) {
       {/*</div>*/}
       <div className={styles.splitLine} style={{ margin: '0 26px' }} />
 
-      <div className={styles.helpIcon} onClick={() => navigate('/help')} />
-      <div className={styles.configIcon} onClick={() => navigate('/setting')} />
+      <div className={styles.helpIcon} onClick={() => navigate('/workbench/help')} />
+      <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
       <div className={styles.avatar}>
         <Image width={20} height={20} preview={false} alt="avatar" src="/assets/total-user.png" />
       </div>

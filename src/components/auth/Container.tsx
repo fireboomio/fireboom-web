@@ -14,9 +14,7 @@ import styles from './Common.module.scss'
 import Connector from './connector'
 import ConnectorDetails from './connectorDetails'
 import Experience from './experience'
-import AuthCheck from './subs/Check'
 import AuthDB from './subs/DB'
-import AuthEdit from './subs/Edit'
 import AuthOutLine from './subs/OutLine'
 import AuthRole from './subs/Role'
 import AuthUser from './subs/User'
@@ -65,9 +63,7 @@ const listMenu = (
 )
 
 export default function AuthContainer({
-  content,
   showTopType,
-  showBottomType,
   handleTopToggleDesigner,
 }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
@@ -130,25 +126,6 @@ export default function AuthContainer({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showTopType])
-
-  useEffect(() => {
-    if (content) {
-      switch (showBottomType) {
-        case 'data':
-          setTitle('身份验证')
-          setViewer(<AuthCheck content={content} />)
-          break
-        case 'edit':
-          setTitle('身份验证')
-          setViewer(<AuthEdit content={content} />)
-          break
-        default:
-          setViewer(<></>)
-          break
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showBottomType, content])
 
   function resetPasswd() {
     setVisible(true)

@@ -47,7 +47,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/graphiql'
+import GraphiQLApp from '@/pages/workbench/graphiql'
 
 import styles from './index.module.scss'
 
@@ -602,7 +602,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="导出">
-                        <a href="/api/v1/operateApi/json" download="oas.json">
+                        <a href="/workbench/api/v1/operateApi/json" download="oas.json">
                           <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
                         </a>
                       </Tooltip>
@@ -610,7 +610,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="下载SDK">
-                        <a href="/api/v1/operateApi/sdk" download="sdk">
+                        <a href="/workbench/api/v1/operateApi/sdk" download="sdk">
                           <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
                         </a>
                       </Tooltip>
