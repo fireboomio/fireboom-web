@@ -38,6 +38,7 @@ export interface TableSource {
 }
 
 export interface ParameterT {
+  key: string
   name: string
   position: string
   type: string
