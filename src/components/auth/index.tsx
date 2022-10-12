@@ -1,4 +1,5 @@
+import AuthConfigContainer from './ConfigContainer'
 import AuthContainer from './Container'
 import AuthPannel from './Pannel'
 
-export { AuthContainer, AuthPannel }
+export { AuthContainer, AuthConfigContainer, AuthPannel }

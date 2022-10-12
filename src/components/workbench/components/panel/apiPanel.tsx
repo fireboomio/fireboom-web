@@ -29,6 +29,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [query, setQuery] = useState<string>()
   const [isBlur, setIsBlur] = useState(false)
+  const [panelOpened, setPanelOpened] = useState(false)
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
     return getNodeByKey(currEditingKey, treeData)
@@ -46,6 +47,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [location])
 
   useEffect(() => {
+    if (!panelOpened) {
+      return
+    }
     getFetcher<OperationResp[]>('/operateApi')
       // .then(x => {
       //   console.log('tree', convertToTree(x))
@@ -65,7 +69,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       .catch((err: Error) => {
         throw err
       })
-  }, [refreshFlag, refreshMap.api])
+  }, [panelOpened, refreshFlag, refreshMap.api])
 
   useEffect(() => {
     if (currEditingNode) {
@@ -342,6 +346,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     <SidePanel
       title="API管理"
       {...props}
+      onOpen={flag => {
+        setPanelOpened(flag)
+        props.onOpen && props.onOpen(flag)
+      }}
       action={
         <>
           <div className={styles.headerFilter} />

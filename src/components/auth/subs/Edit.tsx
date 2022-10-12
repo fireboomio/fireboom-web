@@ -15,6 +15,7 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 interface Props {
   content: AuthProvResp
+  onChange: (content:AuthProvResp)=>void
 }
 
 interface Config {
@@ -30,7 +31,7 @@ const options = [
   { label: '基于Token', value: 'tokenBased' },
 ]
 
-export default function AuthMainEdit({ content }: Props) {
+export default function AuthMainEdit({ content, onChange }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
@@ -62,7 +63,7 @@ export default function AuthMainEdit({ content }: Props) {
     void requests
       .get<unknown, AuthProvResp[]>('/auth')
       .then(res => {
-        dispatch({ type: 'fetched', data: res })
+        onChange(res.filter(row => row.id === content.id)[0])
       })
       .then(() => {
         handleBottomToggleDesigner('data', content.id)

@@ -24,6 +24,7 @@ import { Key } from 'antd/lib/table/interface'
 import { OperationDefinitionNode, parse } from 'graphql'
 import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error404 from '@/components/ErrorPage/404'
@@ -46,9 +47,10 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
+import GraphiQLApp from '@/pages/graphiql'
 
-import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
+
 
 type ApiManageProps = {
   //
@@ -176,6 +178,7 @@ function createNode(node: DirTreeNode, value: string, content: string) {
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
+  console.log(888)
   const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   const [selectedKey, setSelectedKey] = useState<string>('')
@@ -201,6 +204,11 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [showType, setShowType] = useImmer<ShowType>('detail')
   const [currDBId, setCurrDBId] = useImmer<number | null | undefined>(null)
   const [isColl, setIsColl] = useImmer(true)
+
+  // 路由参数
+  const { id } = useParams()
+  console.log(id)
+
 
   const style = useMemo(() => {
     return isColl
@@ -483,7 +491,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                 cancelText="取消"
                 placement="right"
               >
-                <a href="#" onClick={e => e.stopPropagation()}>
+                <a href="@/pages/apimanage/[id]/[id]#" onClick={e => e.stopPropagation()}>
                   <IconFont type="icon-shanchu" />
                   <span className="ml-1.5">删除</span>
                 </a>

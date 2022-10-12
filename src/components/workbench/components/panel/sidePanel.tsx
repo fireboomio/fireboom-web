@@ -8,20 +8,28 @@ export interface SidePanelProps {
   children?: React.ReactNode
   defaultOpen?: boolean
   onAdd?: () => void
+  onOpen?: (flag: boolean) => void
 }
 
 export default function SidePanel(props: SidePanelProps) {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    setOpen(!!props.defaultOpen)
-  }, [])
+    if (props.defaultOpen) {
+      handelOpen(true)
+    }
+  }, [props.defaultOpen])
+
+  const handelOpen = (flag: boolean) => {
+    setOpen(flag)
+    props.onOpen && props.onOpen(flag)
+  }
 
   return (
     <div className={`${styles.container} ${open ? styles.active : ''}`}>
       <div
         className={`${styles.header} ${open ? styles.headerOpen : ''}`}
-        onClick={_ => setOpen(!open)}
+        onClick={_ => handelOpen(!open)}
       >
         <div className={styles.arrow} />
         <div className={styles.title}>{props.title}</div>

@@ -21,7 +21,7 @@ interface Config {
 export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-
+console.log('===',content)
   const config = content.config as unknown as Config
 
   const sid = useMemo(() => {

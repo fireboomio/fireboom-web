@@ -98,13 +98,24 @@ const panelMap: { [key: string]: PanelConfig } = {
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
+          const rows: Array<CommonPanelResp> = res.map(row => {
+            const icon = 'other'
+            const tip = 'openid'
+            return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
+          })
+          rows.unshift({
+            disableMenu: true,
+            switch: 0,
+            icon: 'other',
+            name: '默认认证器',
+            _row: { name: '' },
+            id: 0,
+            tip: '前往>',
+            openInNewPage: '/auth/user-manage',
+          })
           dispatch({
             type: 'fetched',
-            data: res.map(row => {
-              const icon = 'other'
-              const tip = ''
-              return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
-            }),
+            data: rows,
           })
         })
       },
@@ -114,7 +125,7 @@ const panelMap: { [key: string]: PanelConfig } = {
   },
 }
 
-export default function CommonPanel(props: { type: MenuName }) {
+export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type])
   const navigate = useNavigate()
   const location = useLocation()
@@ -122,12 +133,16 @@ export default function CommonPanel(props: { type: MenuName }) {
   const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
   const [datasource, dispatch] = useReducer(commonPanelReducer, [])
   const { refreshMap, navCheck } = useContext(WorkbenchContext)
+  const [panelOpened, setPanelOpened] = useState(false)
 
   const refreshFlag = refreshMap[props.type]
   // 初始化列表
   useEffect(() => {
+    if (!panelOpened) {
+      return
+    }
     panelConfig.request.getList(dispatch)
-  }, [props.type, refreshFlag])
+  }, [props.type, refreshFlag, panelOpened])
 
   const dropDownMenu = (row: CommonPanelResp) => {
     const menuItems: Array<{ key: string; label: React.ReactNode }> = [
@@ -204,7 +219,12 @@ export default function CommonPanel(props: { type: MenuName }) {
     setEditTarget(undefined)
   }
 
-  const handleItemNav = (itemPath: string) => {
+  const handleItemNav = (item: CommonPanelResp) => {
+    if (item.openInNewPage) {
+      window.open(item.openInNewPage)
+      return
+    }
+    const itemPath = panelConfig.openItem(item.id)
     void navCheck().then(flag => {
       if (flag) {
         navigate(itemPath)
@@ -213,7 +233,14 @@ export default function CommonPanel(props: { type: MenuName }) {
   }
 
   return (
-    <SidePanel title={panelConfig.title} onAdd={() => navigate(panelConfig.newItem)}>
+    <SidePanel
+      title={panelConfig.title}
+      onAdd={() => navigate(panelConfig.newItem)}
+      onOpen={(flag: boolean) => {
+        setPanelOpened(flag)
+      }}
+      defaultOpen={props.defaultOpen}
+    >
       <div className={styles.container}>
         {datasource.map(item => {
           const itemPath = panelConfig.openItem(item.id)
@@ -223,7 +250,7 @@ export default function CommonPanel(props: { type: MenuName }) {
                 itemPath === location.pathname ? styles.active : ''
               }`}
               key={item.id}
-              onClick={() => handleItemNav(itemPath)}
+              onClick={() => handleItemNav(item)}
             >
               <div className={styles.icon}>
                 <Image
@@ -252,18 +279,20 @@ export default function CommonPanel(props: { type: MenuName }) {
                 <div className={styles.title}>{item.name}</div>
               )}
               <div className={styles.tip}>{item.tip}</div>
-              <Dropdown
-                overlay={dropDownMenu(item)}
-                trigger={['click']}
-                open={dropDownId === item.id}
-                onOpenChange={flag => {
-                  setDropDownId(flag ? item.id : undefined)
-                  console.log(dropDownId)
-                }}
-                placement="bottomRight"
-              >
-                <div className={styles.more} onClick={e => e.preventDefault()} />
-              </Dropdown>
+              {!item.disableMenu && (
+                <Dropdown
+                  overlay={dropDownMenu(item)}
+                  trigger={['click']}
+                  open={dropDownId === item.id}
+                  onOpenChange={flag => {
+                    setDropDownId(flag ? item.id : undefined)
+                    console.log(dropDownId)
+                  }}
+                  placement="bottomRight"
+                >
+                  <div className={styles.more} onClick={e => e.preventDefault()} />
+                </Dropdown>
+              )}
             </div>
           )
         })}
