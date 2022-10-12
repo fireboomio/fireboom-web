@@ -11,7 +11,7 @@ import { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/workbench/graphiql'
+import GraphiQLApp from '@/pages/graphiql'
 
 import styles from './apiPanel.module.scss'
 

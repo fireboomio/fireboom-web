@@ -47,7 +47,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/workbench/graphiql'
+import GraphiQLApp from '@/pages/graphiql'
 
 import styles from './index.module.scss'
 
@@ -178,7 +178,6 @@ function createNode(node: DirTreeNode, value: string, content: string) {
 }
 
 const ApiManage: FC<ApiManageProps> = () => {
-  console.log(888)
   const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   const [selectedKey, setSelectedKey] = useState<string>('')
@@ -207,8 +206,6 @@ const ApiManage: FC<ApiManageProps> = () => {
 
   // 路由参数
   const { id } = useParams()
-  console.log(id)
-
 
   const style = useMemo(() => {
     return isColl
@@ -491,7 +488,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                 cancelText="取消"
                 placement="right"
               >
-                <a href="@/pages/apimanage/[id]/[id]#" onClick={e => e.stopPropagation()}>
+                <a href="#" onClick={e => e.stopPropagation()}>
                   <IconFont type="icon-shanchu" />
                   <span className="ml-1.5">删除</span>
                 </a>
@@ -602,7 +599,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="导出">
-                        <a href="/workbench/api/v1/operateApi/json" download="oas.json">
+                        <a href="/api/v1/operateApi/json" download="oas.json">
                           <IconFont type="icon-neisheng" style={{ fontSize: '18px' }} />
                         </a>
                       </Tooltip>
@@ -610,7 +607,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                         <IconFont type="icon-biaodanshejiqi" style={{ fontSize: '20px' }} />
                       </Tooltip>
                       <Tooltip className="cursor-pointer" placement="top" title="下载SDK">
-                        <a href="/workbench/api/v1/operateApi/sdk" download="sdk">
+                        <a href="/api/v1/operateApi/sdk" download="sdk">
                           <IconFont type="icon-xiazaiSDK" style={{ fontSize: '20px' }} />
                         </a>
                       </Tooltip>
