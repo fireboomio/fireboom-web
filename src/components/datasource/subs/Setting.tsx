@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react'
-import { Descriptions, Select, Switch, Table } from 'antd'
+import { Select, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useContext, useEffect } from 'react'
 
@@ -18,7 +18,10 @@ interface DataType {
   isOpen: boolean
 }
 
-interface Props {}
+interface Props {
+  schemaExtension: string
+  replaceJSON: string
+}
 
 const columns: ColumnsType<DataType> = [
   {
@@ -37,42 +40,42 @@ const columns: ColumnsType<DataType> = [
     title: '字段',
     dataIndex: 'field',
     key: 'field',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="jack">Jack</Option>
-        <Option value="table">table</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
+    // render: () => (
+    //   <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+    //     <Option value="jack">Jack</Option>
+    //     <Option value="table">table</Option>
+    //     <Option value="Yiminghe">yiminghe</Option>
+    //   </Select>
+    // ),
   },
   {
     title: '响应类型',
     dataIndex: 'resType',
     key: 'resType',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="table">table</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
+    // render: () => (
+    //   <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+    //     <Option value="table">table</Option>
+    //     <Option value="lucy">Lucy</Option>
+    //     <Option value="Yiminghe">yiminghe</Option>
+    //   </Select>
+    // ),
   },
   {
     title: '输入类型',
     key: 'inputType',
     dataIndex: 'inputType',
-    render: () => (
-      <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-        <Option value="table">table</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
-      </Select>
-    ),
+    // render: () => (
+    //   <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
+    //     <Option value="table">table</Option>
+    //     <Option value="lucy">Lucy</Option>
+    //     <Option value="Yiminghe">yiminghe</Option>
+    //   </Select>
+    // ),
   },
   {
     title: '是否开启',
     key: 'isOpen',
-    render: () => <Switch className="w-8 h-2" />,
+    // render: () => <Switch className="w-8 h-2" />,
   },
 ]
 
@@ -105,35 +108,16 @@ const Setting: React.FC<Props> = props => {
   }, [currDBId])
 
   return (
-    <div className="flex">
-      <Descriptions
-        bordered
-        layout="vertical"
-        size="small"
-        className="w-3/8 mr-10"
-        labelStyle={{ width: '30%' }}
-      >
-        <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
-          <Editor
-            height="90vh"
-            defaultLanguage="typescript"
-            defaultValue="// some comment"
-            className="h-425px py-4"
-          />
-        </Descriptions.Item>
-      </Descriptions>
+    <div className="flex gap-6 h-[calc(100vh_-_190px)]">
+      <div className="w-5/11 ">
+        <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">自定义类型</div>
+        <Editor defaultLanguage="typescript" defaultValue="// some comment" />
+      </div>
 
-      <Descriptions
-        bordered
-        layout="vertical"
-        size="small"
-        className="w-5/8"
-        labelStyle={{ width: '30%' }}
-      >
-        <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
-          <Table size="small" columns={columns} dataSource={data} pagination={false} />
-        </Descriptions.Item>
-      </Descriptions>
+      <div className="w-6/11">
+        <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
+        <Table size="small" columns={columns} dataSource={data} pagination={false} />
+      </div>
     </div>
   )
 }
