@@ -13,11 +13,9 @@ console.log(routes)
 
 export default function App() {
   return (
-    <Workbench>
       <Suspense fallback={<></>}>
         {useRoutes(routes)}
       </Suspense>
-    </Workbench>
   )
 }
 

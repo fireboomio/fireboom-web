@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import {  useLocation } from 'react-router-dom'
 
 import ApiPanel from './panel/apiPanel'
 import CommonPanel from './panel/commonPanel'
@@ -6,6 +7,7 @@ import styles from './sider.module.scss'
 
 export default function Header() {
   const [tab, setTab] = useState<string>('api')
+  const location = useLocation()
   return (
     <div className="flex flex-col h-full">
       <div className={styles.tabs}>
@@ -28,10 +30,10 @@ export default function Header() {
       </div>
 
       <div className={styles.panels}>
-        <ApiPanel defaultOpen />
-        <CommonPanel type="dataSource" />
-        <CommonPanel type="auth" />
-        <CommonPanel type="storage" />
+        <ApiPanel defaultOpen={location.pathname.startsWith('/apimanage/')}/>
+        <CommonPanel type="dataSource"  defaultOpen={location.pathname.startsWith('/dataSource/')}/>
+        <CommonPanel type="auth"  defaultOpen={location.pathname.startsWith('/auth/')}/>
+        <CommonPanel type="storage"  defaultOpen={location.pathname.startsWith('/storage/')}/>
       </div>
     </div>
   )

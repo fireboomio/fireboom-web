@@ -24,6 +24,7 @@ import { Key } from 'antd/lib/table/interface'
 import { OperationDefinitionNode, parse } from 'graphql'
 import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error404 from '@/components/ErrorPage/404'
@@ -46,9 +47,10 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
+import GraphiQLApp from '@/pages/graphiql'
 
-import GraphiQLApp from '../graphiql'
 import styles from './index.module.scss'
+
 
 type ApiManageProps = {
   //
@@ -201,6 +203,9 @@ const ApiManage: FC<ApiManageProps> = () => {
   const [showType, setShowType] = useImmer<ShowType>('detail')
   const [currDBId, setCurrDBId] = useImmer<number | null | undefined>(null)
   const [isColl, setIsColl] = useImmer(true)
+
+  // 路由参数
+  const { id } = useParams()
 
   const style = useMemo(() => {
     return isColl
