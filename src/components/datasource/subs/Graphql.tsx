@@ -759,7 +759,7 @@ export default function Graphql({ content, type }: Props) {
         width={'90vw'}
       >
         {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-        {/*<GraphiQLApp url={config.url as string} data={''} onSave={() => {}} />*/}
+        {/* <GraphiQLApp url={config.url as string} data={''} onSave={() => {}} /> */}
       </Modal>
     </>
   )

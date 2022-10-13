@@ -385,9 +385,9 @@ export default function DB({ content, type }: Props) {
               <Button className={'btn-light-border'} onClick={() => testLink('bottomLeft')}>
                 <span>测试链接</span>
               </Button>
-              <Button className={'btn-light-border w-16 ml-4'}>
+              {/* <Button className={'btn-light-border w-16 ml-4'}>
                 <span>设计</span>
-              </Button>
+              </Button> */}
               <Button
                 className={'btn-light-full  ml-4'}
                 onClick={() => handleToggleDesigner('form', content.id)}
