@@ -9,7 +9,6 @@ import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceToggleContext,
-  DatasourceDispatchContext,
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -128,8 +127,7 @@ const ipReg =
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
 export default function DB({ content, type }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const dispatch = useContext(DatasourceDispatchContext)
+  const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
@@ -285,8 +283,9 @@ export default function DB({ content, type }: Props) {
         switch: isChecked == true ? 0 : 1,
       })
       .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-          dispatch({ type: 'fetched', data: res })
+        handleSave({
+          ...content,
+          switch: isChecked == true ? 0 : 1,
         })
       })
   }
@@ -296,26 +295,22 @@ export default function DB({ content, type }: Props) {
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
+    let newContent: DatasourceResp
     if (content.name == '') {
       const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
+      newContent = content
     } else {
-      await requests.put('/dataSource', {
+      newContent = {
         ...content,
         config: newValues,
         name: values.apiNamespace,
-      })
+      } as DatasourceResp
+      await requests.put('/dataSource', newContent)
     }
-    void requests
-      .get<unknown, DatasourceResp[]>('/dataSource')
-      .then(res => {
-        dispatch({ type: 'fetched', data: res })
-      })
-      .then(() => {
-        handleToggleDesigner('detail', content.id)
-      })
+    handleSave(newContent)
   }
 
   const onFinishFailed = (errorInfo: object) => {

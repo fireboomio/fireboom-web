@@ -1,41 +1,31 @@
-import { Row } from 'antd'
-import { useEffect, useMemo, useReducer } from 'react'
+import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import { StoragePannel, StorageContainer } from '@/components/storage'
+import { StorageContainer } from '@/components/storage'
 import type { StorageResp } from '@/interfaces/storage'
-import {
-  StorageContext,
-  StorageDispatchContext,
-  StorageCurrFileContext,
-  StorageSwitchContext,
-} from '@/lib/context/storage-context'
+import { StorageSwitchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
-import storageReducer from '@/lib/reducers/storage-reducer'
 
-import styles from './index.module.scss'
 
 export default function FileStorage() {
-  const [bucketList, dispatch] = useReducer(storageReducer, [])
-  const [currId, setCurrId] = useImmer<number | undefined>(undefined)
+  const { id } = useParams()
   const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('explorer')
+  const [content, setContent] = useState<StorageResp>()
 
   useEffect(() => {
-    if (!currId) setCurrId(bucketList.at(0)?.id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketList])
+    if (id === 'new') {
+      setShowType('form')
+      setContent(undefined)
+      return
+    }
+    void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
+      setContent(data.filter(item => item.id === Number(id))[0])
+    })
+  }, [id, setShowType])
 
-  useEffect(() => {
-    void requests
-      .get<unknown, StorageResp[]>('/storageBucket')
-      .then(data => dispatch({ type: 'fetched', data }))
-  }, [])
-
-  const content = useMemo(() => bucketList.find(b => b.id === currId), [currId, bucketList])
-
-  function handleSwitch(value: 'explorer' | 'form' | 'detail', id: number | undefined) {
-    setCurrId(id)
+  function handleSwitch(value: 'explorer' | 'form' | 'detail', _id: number | undefined) {
     setShowType(value)
   }
 
@@ -44,25 +34,9 @@ export default function FileStorage() {
       <Helmet>
         <title>FireBoom - 文件存储</title>
       </Helmet>
-      <StorageContext.Provider value={bucketList}>
-        <StorageDispatchContext.Provider value={dispatch}>
-          <StorageCurrFileContext.Provider value={{ currId, setCurrId }}>
-            <StorageSwitchContext.Provider value={{ handleSwitch }}>
-              <Row className="h-[calc(100vh_-_36px)]">
-                <div className={`flex-1 ${styles['col-left']}`}>
-                  <StoragePannel />
-                </div>
-
-                <div className={styles.divider} />
-
-                <div className="flex-1">
-                  <StorageContainer showType={showType} content={content} />
-                </div>
-              </Row>
-            </StorageSwitchContext.Provider>
-          </StorageCurrFileContext.Provider>
-        </StorageDispatchContext.Provider>
-      </StorageContext.Provider>
+      <StorageSwitchContext.Provider value={{ handleSwitch }}>
+        <StorageContainer showType={showType} content={content} />
+      </StorageSwitchContext.Provider>
     </>
   )
 }

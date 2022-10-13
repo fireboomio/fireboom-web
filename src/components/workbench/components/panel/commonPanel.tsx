@@ -111,7 +111,7 @@ const panelMap: { [key: string]: PanelConfig } = {
             _row: { name: '' },
             id: 0,
             tip: '前往>',
-            openInNewPage: '/workbench/auth/user-manage',
+            openInNewPage: '/auth/user-manage',
           })
           dispatch({
             type: 'fetched',
@@ -207,6 +207,14 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     await panelConfig.request.delItem(id)
     panelConfig.request.getList(dispatch)
     setDropDownId(undefined)
+    // 当被删除对象是当前打开的页面时，需要跳转离开
+    if (panelConfig.openItem(id) === location.pathname) {
+      // 找到首个不是在新窗口中打开页面的项目
+      const index = datasource.findIndex(item => !item.openInNewPage)
+      if (index >= 0) {
+        handleItemNav(datasource[index])
+      }
+    }
   }
   const handleItemEdit = async (value: string) => {
     const row = editTarget?._row
@@ -280,18 +288,20 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               )}
               <div className={styles.tip}>{item.tip}</div>
               {!item.disableMenu && (
-                <Dropdown
-                  overlay={dropDownMenu(item)}
-                  trigger={['click']}
-                  open={dropDownId === item.id}
-                  onOpenChange={flag => {
-                    setDropDownId(flag ? item.id : undefined)
-                    console.log(dropDownId)
-                  }}
-                  placement="bottomRight"
-                >
-                  <div className={styles.more} onClick={e => e.preventDefault()} />
-                </Dropdown>
+                <div onClick={e => e.stopPropagation()}>
+                  <Dropdown
+                    overlay={dropDownMenu(item)}
+                    trigger={['click']}
+                    open={dropDownId === item.id}
+                    onOpenChange={flag => {
+                      setDropDownId(flag ? item.id : undefined)
+                      console.log(dropDownId)
+                    }}
+                    placement="bottomRight"
+                  >
+                    <div className={styles.more} onClick={e => e.preventDefault()} />
+                  </Dropdown>
+                </div>
               )}
             </div>
           )

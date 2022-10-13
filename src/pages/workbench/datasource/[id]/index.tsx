@@ -1,55 +1,49 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Row } from 'antd'
-import { useEffect, useReducer } from 'react'
+import { useContext, useEffect, useReducer, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
+import { DatasourceContainer } from '@/components/datasource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
-  DatasourceContext,
   DatasourceDispatchContext,
-  DatasourceCurrDBContext,
   DatasourceToggleContext,
 } from '@/lib/context/datasource-context'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 import styles from './index.module.scss'
 
 export default function Datasource() {
+  const navigate = useNavigate()
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
+
+  const [content, setContent] = useState<DatasourceResp>()
+  const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
-  const [currDBId, setCurrDBId] = useImmer(null as number | null | undefined)
-
   useEffect(() => {
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-      dispatch({
-        type: 'fetched',
-        data: res,
-      })
-      setCurrDBId(res.filter(item => item.sourceType == 1).at(0)?.id)
-    })
-  }, [])
-
-  const handleClickItem = (datasourceItem: DatasourceResp) => {
-    if (datasourceItem.name == '') {
-      setShowType('form')
-    } else {
-      setShowType('detail')
+    if (id === 'new') {
+      setContent(undefined)
+      return
     }
-    setCurrDBId(datasourceItem.id)
-  }
+    setShowType('detail')
+    void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
+      setContent(res.filter(x => x.id === Number(id))[0])
+    })
+  }, [id])
+
 
   const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
     setShowType(type)
     //新增的item点击取消逻辑 // 0 会显示一个空页面
-    if (id && id < 0) {
-      setCurrDBId(datasource.filter(item => item.sourceType == sourceType).at(0)?.id || 0)
-    } else setCurrDBId(id)
+    // if (id && id < 0) {
+    //   setCurrDBId(datasource.filter(item => item.sourceType == sourceType).at(0)?.id || 0)
+    // } else setCurrDBId(id)
   }
-
-  const content = datasource.find(b => b.id === currDBId) as DatasourceResp
 
   // if (error) return <div>failed to load</div>
   if (!datasource) return <div>loading...</div>
@@ -61,22 +55,29 @@ export default function Datasource() {
       <Helmet>
         <title>FireBoom - 数据来源</title>
       </Helmet>
-      <DatasourceContext.Provider value={datasource}>
-        <DatasourceDispatchContext.Provider value={dispatch}>
-          <DatasourceCurrDBContext.Provider value={{ currDBId, setCurrDBId }}>
-            <DatasourceToggleContext.Provider value={{ handleToggleDesigner }}>
-              <Row className="h-screen">
-                <Col span={5} className={styles['col-left']}>
-                  <DatasourcePannel onClickItem={handleClickItem} />
-                </Col>
-                <Col span={19}>
-                  <DatasourceContainer showType={showType} content={content} />
-                </Col>
-              </Row>
-            </DatasourceToggleContext.Provider>
-          </DatasourceCurrDBContext.Provider>
-        </DatasourceDispatchContext.Provider>
-      </DatasourceContext.Provider>
+      <DatasourceDispatchContext.Provider value={dispatch}>
+        <DatasourceToggleContext.Provider
+          value={{
+            handleToggleDesigner,
+            handleSave: content => {
+              onRefreshMenu('dataSource')
+              setContent(content)
+              setShowType('detail')
+              navigate(`/workbench/dataSource/${content.id}`, { replace: true })
+            },
+            handleCreate: content => {
+              setShowType('form')
+              setContent(content)
+            },
+          }}
+        >
+          <Row className="h-screen">
+            <Col span={24}>
+              <DatasourceContainer showType={showType} content={content} />
+            </Col>
+          </Row>
+        </DatasourceToggleContext.Provider>
+      </DatasourceDispatchContext.Provider>
     </>
   )
 }

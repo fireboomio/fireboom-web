@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function Custom({ content }: Props) {
-  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const { handleSave } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(content.name == '')
   const [code, setCode] = useImmer('')
@@ -58,7 +58,6 @@ export default function Custom({ content }: Props) {
     if (value == '') {
       return
     }
-
     if (content.name == '') {
       const req = {
         ...content,
@@ -68,23 +67,20 @@ export default function Custom({ content }: Props) {
       Reflect.deleteProperty(req, 'id')
       void requests.post<unknown, number>('/dataSource', req).then(res => {
         content.id = res
+        handleSave(content)
       })
     } else {
-      void requests.put('/dataSource', {
+      const newContent = {
         ...content,
         config: { ...config, apiNamespace: value, serverName: value },
         name: value,
-      })
+      }
+      void requests
+        .put(`/dataSource/${content.id}`, newContent)
+        .then(() => {
+          handleSave(newContent)
+        })
     }
-
-    void requests
-      .get<unknown, DatasourceResp[]>('/dataSource')
-      .then(res => {
-        dispatch({ type: 'fetched', data: res })
-      })
-      .then(() => {
-        handleToggleDesigner('detail', content.id)
-      })
 
     setIsEditing(false)
   }

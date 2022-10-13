@@ -100,7 +100,15 @@ export default function Index(props: PropsWithChildren) {
 
   return (
     <WorkbenchContext.Provider
-      value={{ refreshMap, onRefreshMenu: handleRefreshMenu, editFlag, markEdit, navCheck }}
+      value={{
+        refreshMap,
+        onRefreshMenu: handleRefreshMenu,
+        editFlag,
+        markEdit,
+        navCheck,
+        setFullscreen: setHideSider,
+        isFullscreen: hideSider,
+      }}
     >
       <ALayout className="h-100vh">
         <AHeader className={styles.header}>
