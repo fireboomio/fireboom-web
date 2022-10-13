@@ -75,7 +75,7 @@ export default function Designer() {
       switch: 0,
     } as DatasourceResp
 
-    if (name.startsWith('example-')) {
+    if (name.startsWith('example_')) {
       // @ts-ignore
       data = examples.find(x => x.name === name)
     }

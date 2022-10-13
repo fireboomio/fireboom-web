@@ -124,7 +124,7 @@ export default function Graphql({ content, type }: Props) {
     }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
-    if (content.name == '' || content.name.startsWith('example-')) {
+    if (content.name == '' || content.name.startsWith('example_')) {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)

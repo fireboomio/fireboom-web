@@ -294,7 +294,7 @@ export default function DB({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
     let newContent: DatasourceResp
-    if (content.name == '' || content.name.startsWith('example-')) {
+    if (content.name == '' || content.name.startsWith('example_')) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)

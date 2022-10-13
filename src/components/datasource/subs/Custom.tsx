@@ -61,7 +61,7 @@ export default function Custom({ content }: Props) {
       return
     }
 
-    if (content.name == '' || content.name.startsWith('example-')) {
+    if (content.name == '' || content.name.startsWith('example_')) {
       const req = {
         ...content,
         config: { apiNamespace: value, serverName: value, schema: '' },
