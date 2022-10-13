@@ -559,7 +559,7 @@ export default function DB({ content, type }: Props) {
                 className={'btn-cancel'}
                 onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
               >
-                重置
+                取消
               </Button>
             </div>
           </div>
