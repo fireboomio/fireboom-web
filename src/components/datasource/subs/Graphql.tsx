@@ -22,9 +22,7 @@ import FormToolTip from '@/components/common/FormTooltip'
 import Uploader from '@/components/common/Uploader'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import {
-  DatasourceToggleContext,
-} from '@/lib/context/datasource-context'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 // import GraphiQLApp from '../../../pages/graphiql'
@@ -126,7 +124,7 @@ export default function Graphql({ content, type }: Props) {
     }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
-    if (content.name == '') {
+    if (content.name == '' || content.name.startsWith('example-')) {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)

@@ -7,9 +7,7 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import {
-  DatasourceToggleContext,
-} from '@/lib/context/datasource-context'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
@@ -296,7 +294,7 @@ export default function DB({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
     let newContent: DatasourceResp
-    if (content.name == '') {
+    if (content.name == '' || content.name.startsWith('example-')) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
