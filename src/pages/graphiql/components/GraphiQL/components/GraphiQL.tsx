@@ -25,11 +25,14 @@ import { Tabs } from 'antd'
 import { OperationDefinitionNode } from 'graphql'
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 
+
 import fullscreenIcon from '../assets/fullscreen.svg'
 import { parseSchemaAST } from '../utils'
 import ArgumentsEditor from './ArgumentsEditor'
 import { emptyStorage } from './EmptyStorage'
+import ErrorViewer from './ErrorViewer'
 import ExecuteButton from './ExecuteButton'
+import ResponseViewer from './ResponseViewer'
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10)
 
@@ -166,7 +169,6 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
   }
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
-  const isHeadersEditorEnabled = props.isHeadersEditorEnabled ?? true
   const { setTheme } = useTheme()
 
   const editorContext = useEditorContext({ nonNull: true })
@@ -177,21 +179,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   });
 
   // const prettify = usePrettifyEditors()
-  const [activeSecondaryEditor, setActiveSecondaryEditor] = useState<'variables' | 'headers'>(
-    () => {
-      if (
-        props.defaultEditorToolsVisibility === 'variables' ||
-        props.defaultEditorToolsVisibility === 'headers'
-      ) {
-        return props.defaultEditorToolsVisibility
-      }
-      return !editorContext.initialVariables &&
-        editorContext.initialHeaders &&
-        isHeadersEditorEnabled
-        ? 'headers'
-        : 'variables'
-    }
-  )
 
   const toggleExecute = () => {
     if (isFetching) {
@@ -250,7 +237,10 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
             <ArgumentsEditor arguments={argumentList} onRemoveDirective={() => {}} />
           </Tabs.TabPane>
           <Tabs.TabPane tab="响应" key="response">
-            <ArgumentsEditor arguments={argumentList} onRemoveDirective={() => {}} />
+            <ResponseViewer resp={{}} />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="错误" key="error">
+            <ErrorViewer error={{}} />
           </Tabs.TabPane>
         </Tabs>
       </section>

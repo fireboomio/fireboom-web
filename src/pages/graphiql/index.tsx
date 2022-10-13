@@ -8,12 +8,13 @@ import GraphiqlExplorer1 from 'graphiql-explorer'
 import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+
+import FlowChart from '@/components/charts/FlowChart'
 
 import { GraphiQL } from './components/GraphiQL'
 
-// import FlowChart from '@/components/charts/FlowChart'
 
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 
@@ -141,7 +142,7 @@ export default function App({ url, data, onSave }: Props) {
             <GraphiQL.Button onClick={save} label="Save" title="Save" />
           </GraphiQL.Toolbar> */}
         </GraphiQL>
-        {/* <FlowChart /> */}
+        <FlowChart />
       </div>
     </>
   )
