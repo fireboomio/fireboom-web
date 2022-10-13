@@ -54,10 +54,10 @@ export default defineConfig({
         find: '@antv/x6',
         replacement: '@antv/x6/dist/x6.js',
       },
-     {
-        find: '@antv/x6-react-shape',
-        replacement: '@antv/x6-react-shape/dist/x6-react-shape.js',
-      }
+    //  {
+    //     find: '@antv/x6-react-shape',
+    //     replacement: '@antv/x6-react-shape/dist/x6-react-shape.js',
+    //   }
     ]
   },
   plugins: [
@@ -79,7 +79,7 @@ export default defineConfig({
       dirs: 'src/pages'
     })
   ],
-  optimizeDeps: {
-    exclude: ['@antv/x6-react-shape']
-  }
+  // optimizeDeps: {
+  //   exclude: ['@antv/x6-react-shape']
+  // }
 })

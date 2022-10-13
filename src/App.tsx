@@ -8,9 +8,6 @@ import Workbench from './components/workbench'
 
 import routes from '~react-pages'
 
-// eslint-disable-next-line no-console
-console.log(routes)
-
 export default function App() {
   return (
       <Suspense fallback={<></>}>
