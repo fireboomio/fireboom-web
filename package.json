@@ -69,7 +69,7 @@
     "stylelint-scss": "^4.3.0",
     "toolkit": "link:@types/@graphiql/toolkit",
     "typescript": "^4.8.3",
-    "vite": "^3.1.4",
+    "vite": "^3.1.7",
     "vite-plugin-imp": "^2.3.0",
     "vite-plugin-pages": "^0.26.0",
     "vite-plugin-windicss": "^1.8.8",

@@ -9,6 +9,7 @@
  */
 
 import {
+  // ResponseEditor,
   GraphiQLProvider,
   type GraphiQLProviderProps,
   QueryEditor,
@@ -18,21 +19,19 @@ import {
   type UseResponseEditorArgs,
   type UseVariableEditorArgs,
   type WriteableEditorProps,
-  useExecutionContext,
-  useTheme
+  useTheme,
 } from '@graphiql/react'
 import { Tabs } from 'antd'
-import { OperationDefinitionNode } from 'graphql'
+import { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
-
 
 import fullscreenIcon from '../assets/fullscreen.svg'
 import { parseSchemaAST } from '../utils'
 import ArgumentsEditor from './ArgumentsEditor'
-import { emptyStorage } from './EmptyStorage'
-import ErrorViewer from './ErrorViewer'
 import ExecuteButton from './ExecuteButton'
+import ResponseWrapper, { useResponse } from './ResponseContext'
 import ResponseViewer from './ResponseViewer'
+import { emptyStorage } from './emptyStorage'
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10)
 
@@ -172,23 +171,14 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
 
   const editorContext = useEditorContext({ nonNull: true })
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { isFetching, run, stop } = useExecutionContext({
-    nonNull: true,
-    caller: ExecuteButton,
-  });
 
   // const prettify = usePrettifyEditors()
 
-  const toggleExecute = () => {
-    if (isFetching) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      stop();
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      run();
-    }
-  }
+  // editorContext.setResponseEditor({
+  //   setValue(v) {
+  //     console.log(v)
+  //   }
+  // })
 
   const schemaAST = useMemo(() => {
     try {
@@ -205,13 +195,13 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 
   useEffect(() => {
     setTheme('light')
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div data-testid="graphiql-container" className="graphiql-container">
       <div className="graphiql-toolbar">
-        <ExecuteButton className="cursor-pointer mr-6" onClick={toggleExecute} />
+        <ExecuteButton className="cursor-pointer mr-6" />
         <button className="graphiql-toolbar-btn">@角色</button>
         <button className="graphiql-toolbar-btn">@内部</button>
         <div className="graphiql-toolbar-divider" />
@@ -219,7 +209,13 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         <button className="graphiql-toolbar-btn">响应转换</button>
         <button className="graphiql-toolbar-btn">跨源关联</button>
         <span className="graphiql-toolbar-sequence-chart">时序图</span>
-        <img className="graphiql-toolbar-fullscreen" src={fullscreenIcon} width="10" height="10" alt="toggle fullscreen" />
+        <img
+          className="graphiql-toolbar-fullscreen"
+          src={fullscreenIcon}
+          width="10"
+          height="10"
+          alt="toggle fullscreen"
+        />
       </div>
       <QueryEditor
         editorTheme={props.editorTheme}
@@ -229,21 +225,50 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         onEdit={props.onEditQuery}
         readOnly={props.readOnly}
       />
-      <section
-        className="graphiql-editor-tool"
-      >
-        <Tabs defaultActiveKey="arguments">
-          <Tabs.TabPane tab="输入" key="arguments">
-            <ArgumentsEditor arguments={argumentList} onRemoveDirective={() => {}} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="响应" key="response">
-            <ResponseViewer resp={{}} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="错误" key="error">
-            <ErrorViewer error={{}} />
-          </Tabs.TabPane>
-        </Tabs>
+      {/* editor必须，先给隐藏起来 */}
+      {/* <div className="h-100 w-100">
+        <ResponseEditor
+          editorTheme={props.editorTheme}
+          responseTooltip={props.responseTooltip}
+          keyMap={props.keyMap}
+        />
+      </div> */}
+      <section className="graphiql-editor-tool">
+        <ResponseWrapper>
+          <GraphiInputAndResponse argumentList={argumentList} />
+        </ResponseWrapper>
       </section>
     </div>
+  )
+}
+
+interface GraphiInputAndResponseProps {
+  argumentList: ReadonlyArray<VariableDefinitionNode>
+}
+
+const GraphiInputAndResponse = ({ argumentList }: GraphiInputAndResponseProps) => {
+  const [activeKey, setActiveKey] = useState('arguments')
+
+  const { response } = useResponse()
+
+  useEffect(() => {
+    if (response) {
+      setActiveKey('response')
+    }
+  }, [response])
+
+  return (
+    <Tabs
+      activeKey={activeKey}
+      onChange={v => setActiveKey(v)}
+      items={[
+        {
+          label: '输入',
+          key: 'arguments',
+          children: <ArgumentsEditor arguments={argumentList} onRemoveDirective={() => {}} />,
+        },
+        { label: '响应', key: 'response', children: <ResponseViewer /> },
+      ]}
+    />
   )
 }

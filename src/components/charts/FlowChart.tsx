@@ -886,7 +886,7 @@ const FlowChart = (props: FlowChartProps) => {
     ).addToGraph(graph)
   }, [])
 
-  return <div className="h-full w-102.5" ref={containerRef} />
+  return <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
 }
 
 export default FlowChart
