@@ -5,6 +5,7 @@ import styles from './sidePanel.module.scss'
 export interface SidePanelProps {
   title: string
   action?: React.ReactNode
+  hideAdd?: boolean
   children?: React.ReactNode
   defaultOpen?: boolean
   onAdd?: () => void
@@ -34,7 +35,8 @@ export default function SidePanel(props: SidePanelProps) {
         <div className={styles.arrow} />
         <div className={styles.title}>{props.title}</div>
         <div className={styles.action} onClick={e => e.stopPropagation()}>
-          {props.action ? props.action : <div className={styles.add} onClick={props.onAdd} />}
+          {props.action ? props.action : null}
+          {props.hideAdd ? null : <div className={styles.add} onClick={props.onAdd} />}
         </div>
       </div>
       <div className={`${open ? '' : 'hidden'} ${styles.content}`}>{props.children}</div>

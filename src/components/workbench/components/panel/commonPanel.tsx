@@ -13,6 +13,8 @@ import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.scss'
 
+import Icon from '/assets/workbench/panel-add.png'
+
 interface PanelConfig {
   title: string
   openItem: (id: number) => string
@@ -27,6 +29,7 @@ interface PanelConfig {
     name: string
     menuPath: (id: number) => string
   }>
+  navAction?: Array<{ icon: string; path: string }>
 }
 
 const panelMap: { [key: string]: PanelConfig } = {
@@ -65,7 +68,7 @@ const panelMap: { [key: string]: PanelConfig } = {
   },
   storage: {
     title: '文件存储',
-    openItem: id => `/workbench/storage/${id}`,
+    openItem: id => `/workbench/storage/${id}/manage`,
     newItem: '/workbench/storage/new',
     request: {
       getList: dispatch => {
@@ -95,6 +98,7 @@ const panelMap: { [key: string]: PanelConfig } = {
     title: '身份验证',
     openItem: id => `/workbench/auth/${id}`,
     newItem: '/workbench/auth/new',
+    navAction: [{ icon: Icon, path: '/workbench/auth/role' }],
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
@@ -248,6 +252,15 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         setPanelOpened(flag)
       }}
       defaultOpen={props.defaultOpen}
+      action={
+        <>
+          {panelConfig.navAction?.map(item => (
+            <div className="flex mr-1.5" key={item.path}>
+              <img width={13} height={13} src={item.icon} onClick={() => navigate(item.path)} />
+            </div>
+          ))}
+        </>
+      }
     >
       <div className={styles.container}>
         {datasource.map(item => {

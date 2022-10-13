@@ -554,7 +554,7 @@ export default function DB({ content, type }: Props) {
               </Form.Item>
             </Form>
             <div className="flex  items-center justify-end w-36">
-              <Button disabled={disabled} className={'btn-save mr-4'} onClick={() => form.submit()}>
+              <Button className={'btn-save mr-4'} onClick={() => form.submit()}>
                 {content.name == '' ? '创建' : '保存'}
               </Button>
               <Button

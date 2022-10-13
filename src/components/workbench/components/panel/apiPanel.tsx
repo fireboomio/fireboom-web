@@ -348,6 +348,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   return (
     <SidePanel
       title="API管理"
+      hideAdd
       {...props}
       onOpen={flag => {
         setPanelOpened(flag)

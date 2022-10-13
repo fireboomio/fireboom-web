@@ -3,6 +3,8 @@ import { Descriptions, Input, Switch, Button, message } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import IdeContainer from '@/components/Ide'
+import { hookPath } from '@/components/auth/subs/Role'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
@@ -151,6 +153,7 @@ export default function Custom({ content }: Props) {
           主要用于日志等副作用操作
         </span>
       </div>
+      <IdeContainer hookPath={''} defaultLanguage="typescript" onChange={console.log} />
       <Editor
         height="90vh"
         defaultLanguage="typescript"
