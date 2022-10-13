@@ -14,6 +14,8 @@ interface WorkbenchContextType {
   editFlag: boolean // 当前页面是否有未保存的内容
   markEdit: (flag: boolean) => void // 编辑标记
   navCheck: () => Promise<boolean> // 跳转前检查是否有编辑内容，如果有则提示
+  setFullscreen: (flag: boolean) => void // 设置全屏模式
+  isFullscreen: boolean // 当前是否全屏模式
 }
 
 /**

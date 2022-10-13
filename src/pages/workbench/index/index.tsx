@@ -123,26 +123,6 @@ export default function Home() {
       </Helmet>
 
       <div className="flex flex-col h-full">
-        <div className="flex my-5.5 mx-6 items-center justify-end">
-          <div className="border cursor-pointer py-1 px-3 invisible">
-            <IconFont type="icon-rizhi1" />
-            <span className="ml-2">日志</span>
-          </div>
-
-          <AvatarBox
-            className="cursor-pointer ml-9"
-            name="bbbbbbbbbbbbb"
-            logo="https://api.multiavatar.com/Binx Bond.svg"
-            onClick={handleAvatarClick}
-          />
-
-          {/* <div className="ml-8">
-            <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-            <IconFont type="icon-wendang" className="ml-4 text-[22px]" onClick={handleIconClick} />
-            <IconFont type="icon-bangzhu" className="ml-4 text-[22px]" onClick={handleIconClick} />
-          </div> */}
-        </div>
-
         <div className="flex-1 min-h-0">
           <div className={styles.bodyContainer}>
             <div className={styles.centerContainer}>
