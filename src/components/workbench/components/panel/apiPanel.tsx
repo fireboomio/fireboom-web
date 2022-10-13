@@ -4,6 +4,7 @@ import { OperationDefinitionNode, parse } from 'graphql/index'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
+import ApiConfig from '@/components/apiConfig'
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
@@ -14,6 +15,7 @@ import { isEmpty, isUpperCase } from '@/lib/utils'
 // import GraphiQLApp from '@/pages/graphiql'
 
 import styles from './apiPanel.module.scss'
+
 
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
@@ -370,9 +372,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 })
             }}
           />
-          <div className={styles.headerConfig} />
+          <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
           <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          <div className={styles.headerNewFile} onClick={() => navigate('/workbench/apimanage/new')} />
+          <div
+            className={styles.headerNewFile}
+            onClick={() => navigate('/workbench/apimanage/new')}
+          />
         </>
       }
     >
@@ -392,26 +397,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           onSelect={handleSelectTreeNode}
         />
       </div>
-      {/* <Modal
-        title="GraphiQL"
+      <Modal
+        title="全局设置"
         open={isModalVisible}
         onOk={() => {
-          setCurrEditingKey(null)
-          setAction(null)
           setIsModalVisible(false)
         }}
         onCancel={() => {
-          setCurrEditingKey(null)
-          setAction(null)
           setIsModalVisible(false)
         }}
         footer={null}
         centered
-        bodyStyle={{ height: '90vh' }}
-        width={'90vw'}
       >
-        <GraphiQLApp data={query} onSave={handleSaveGql} />
-      </Modal> */}
+        <ApiConfig onClose={() => setIsModalVisible(false)} />
+      </Modal>
     </SidePanel>
   )
 }

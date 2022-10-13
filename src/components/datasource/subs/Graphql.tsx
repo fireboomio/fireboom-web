@@ -27,7 +27,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
-import GraphiQLApp from '../../../pages/graphiql'
+// import GraphiQLApp from '../../../pages/graphiql'
 import styles from './Graphql.module.scss'
 
 interface Props {
@@ -761,7 +761,7 @@ export default function Graphql({ content, type }: Props) {
         width={'90vw'}
       >
         {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-        <GraphiQLApp url={config.url as string} data={''} onSave={() => {}} />
+        {/*<GraphiQLApp url={config.url as string} data={''} onSave={() => {}} />*/}
       </Modal>
     </>
   )
