@@ -90,6 +90,7 @@
 }
 
 .graphiql-container .graphiql-editor-tool .ant-tabs-content-holder {
+  min-height: 120px;
   padding: 0 12px;
 }
 

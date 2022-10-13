@@ -11,16 +11,18 @@ interface ArgumentInputProps {
 }
 
 const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
-
   switch (argument.type) {
     case 'Int':
-      return <InputNumber value={value as number} onChange={e => onChange?.(e)} />
+      return (
+        <InputNumber className="text-xs" value={value as number} onChange={e => onChange?.(e)} />
+      )
     case 'String':
-      return <Input value={value as string} onChange={e => onChange?.(e)} />
-    
+      return <Input className="text-xs" value={value as string} onChange={e => onChange?.(e.target.value)} />
+
     default:
-      console.log(argument.type)
-      return <>123</>
+      return (
+        <Input.TextArea className="text-xs" value={value as string} onChange={e => onChange?.(e.target.value)} />
+      )
   }
 }
 
