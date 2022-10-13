@@ -11,12 +11,12 @@ import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
+import IdeContainer from '@/components/Ide'
 import RcTab from '@/components/rc-tab'
 import { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.scss'
-
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
 interface RoleProvResp {
@@ -32,7 +32,10 @@ interface TabT {
 }
 
 const { TabPane } = Tabs
-
+export const hookPath:{[key:string]: string} = {
+  postAuthentication: 'auth/postAuthentication',
+  mutatingPostAuthentication: 'auth/mutatingPostPreResolve',
+}
 export default function AuthRole() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
@@ -261,14 +264,8 @@ export default function AuthRole() {
                 <Switch onClick={toggleSwitch} checked={currHook?.hookSwitch} />
               </div>
             </div>
-            <Editor
-              height="90vh"
-              defaultLanguage="typescript"
-              defaultValue="// some comment"
-              value={currHook?.content}
-              onChange={value => handleEditorChange(value)}
-              className={`mt-4 ${styles.monaco}`}
-            />
+
+            <IdeContainer hookPath={hookPath[activeKey]} defaultLanguage="typescript" onChange={console.log} />
           </div>
         </TabPane>
       </Tabs>

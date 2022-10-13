@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
 import { AuthPannel } from '@/components/auth'
+import AuthContainer from '@/components/auth/Container'
 import AuthUser from '@/components/auth/subs/User'
 import { AuthListType, AuthProvResp, MenuType } from '@/interfaces/auth'
 
