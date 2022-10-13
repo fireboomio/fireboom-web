@@ -11,7 +11,7 @@ import { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/graphiql'
+// import GraphiQLApp from '@/pages/graphiql'
 
 import styles from './apiPanel.module.scss'
 
@@ -209,37 +209,37 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     setIsModalVisible(true)
   }
 
-  const handleSaveGql = (query: string) => {
-    if (action === '创建文件') {
-      if (!currEditingNode) return
+  // const handleSaveGql = (query: string) => {
+  //   if (action === '创建文件') {
+  //     if (!currEditingNode) return
 
-      void createNode(currEditingNode, inputValue, query)
-        .then(() => {
-          setCurrEditingKey(null)
-          setRefreshFlag(!refreshFlag)
-          void message.success('保存成功')
-        })
-        .catch(_ => {
-          return
-        })
+  //     void createNode(currEditingNode, inputValue, query)
+  //       .then(() => {
+  //         setCurrEditingKey(null)
+  //         setRefreshFlag(!refreshFlag)
+  //         void message.success('保存成功')
+  //       })
+  //       .catch(_ => {
+  //         return
+  //       })
 
-      // setAction(null)
-      // setRefreshFlag(!refreshFlag)
-    } else if (action === '编辑') {
-      const op = parse(query, { noLocation: true }).definitions[0] as OperationDefinitionNode
+  //     // setAction(null)
+  //     // setRefreshFlag(!refreshFlag)
+  //   } else if (action === '编辑') {
+  //     const op = parse(query, { noLocation: true }).definitions[0] as OperationDefinitionNode
 
-      if (!selectedNode) return
-      void requests
-        .put(`/operateApi/content/${selectedNode.id}`, {
-          content: query,
-          operationType: op.operation,
-        })
-        .then(() => void message.success('保存成功'))
-        .then(() => setRefreshFlag(!refreshFlag))
-    }
-    setAction(null)
-    setIsModalVisible(false)
-  }
+  //     if (!selectedNode) return
+  //     void requests
+  //       .put(`/operateApi/content/${selectedNode.id}`, {
+  //         content: query,
+  //         operationType: op.operation,
+  //       })
+  //       .then(() => void message.success('保存成功'))
+  //       .then(() => setRefreshFlag(!refreshFlag))
+  //   }
+  //   setAction(null)
+  //   setIsModalVisible(false)
+  // }
 
   const handleDelete = (node: DirTreeNode) => {
     void deleteNode(node).then(() => {
@@ -391,7 +391,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           onSelect={handleSelectTreeNode}
         />
       </div>
-      <Modal
+      {/* <Modal
         title="GraphiQL"
         open={isModalVisible}
         onOk={() => {
@@ -410,7 +410,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         width={'90vw'}
       >
         <GraphiQLApp data={query} onSave={handleSaveGql} />
-      </Modal>
+      </Modal> */}
     </SidePanel>
   )
 }

@@ -1,7 +1,7 @@
 import type { Edge, Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
 // eslint-disable-next-line import/no-unassigned-import
-import '@antv/x6-react-shape'
+import '@antv/x6-react-shape/dist/x6-react-shape.js'
 import { useEffect, useRef } from 'react'
 
 import { ActionGroup } from './ActionGroup'
