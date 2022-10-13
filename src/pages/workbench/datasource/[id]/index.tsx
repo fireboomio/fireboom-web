@@ -26,6 +26,14 @@ export default function Datasource() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
   useEffect(() => {
+    // 当前状态为新建中且已选择数据源类型
+    if (id === 'create') {
+      if (!content) {
+        navigate('/workbench/dataSource/new', { replace: true })
+      }
+      return
+    }
+    // 当前状态为新建中且未选择数据源类型
     if (id === 'new') {
       setContent(undefined)
       return
@@ -38,11 +46,12 @@ export default function Datasource() {
 
 
   const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
-    setShowType(type)
-    //新增的item点击取消逻辑 // 0 会显示一个空页面
-    // if (id && id < 0) {
-    //   setCurrDBId(datasource.filter(item => item.sourceType == sourceType).at(0)?.id || 0)
-    // } else setCurrDBId(id)
+    //新增的item点击取消逻辑
+    if (location.pathname === '/workbench/dataSource/create') {
+      navigate('/workbench/dataSource/new', { replace: true })
+    } else {
+      setShowType(type)
+    }
   }
 
   // if (error) return <div>failed to load</div>
@@ -68,6 +77,7 @@ export default function Datasource() {
             handleCreate: content => {
               setShowType('form')
               setContent(content)
+              navigate('/workbench/dataSource/create', { replace: true })
             },
           }}
         >

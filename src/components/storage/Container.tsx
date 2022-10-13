@@ -33,9 +33,7 @@ export default function StorageContainer({ content, showType }: Props) {
           <IconFont type="icon-bangzhu" style={{ fontSize: '18px' }} />
         </div>
       </div>
-      {showType === 'explorer' ? (
-        <StorageExplorer bucketId={content?.id} />
-      ) : showType === 'detail' ? (
+      {showType === 'detail' ? (
         <StorageDetail content={content} />
       ) : showType === 'form' ? (
         <StorageForm content={content} />

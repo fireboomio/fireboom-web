@@ -4,14 +4,14 @@ import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import { StorageContainer } from '@/components/storage'
+import StorageExplorer from '@/components/storage/subs/Explorer'
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
-
 export default function FileStorage() {
   const { id } = useParams()
-  const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('detail')
+  const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('explorer')
   const [content, setContent] = useState<StorageResp>()
 
   useEffect(() => {
@@ -30,13 +30,8 @@ export default function FileStorage() {
   }
 
   return (
-    <>
-      <Helmet>
-        <title>FireBoom - 文件存储</title>
-      </Helmet>
-      <StorageSwitchContext.Provider value={{ handleSwitch }}>
-        <StorageContainer showType={showType} content={content} />
-      </StorageSwitchContext.Provider>
-    </>
+    <div className="p-3">
+      <StorageExplorer bucketId={content?.id} />
+    </div>
   )
 }

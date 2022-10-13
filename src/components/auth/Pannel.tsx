@@ -43,7 +43,6 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
   const dispatch = useContext(AuthDispatchContext)
   const [activeKey, setActiveKey] = useImmer<string[]>([])
   const [selectedType, setSelectedType] = useImmer('userManage')
-
   // const getNextId = () => Math.max(...FSList.map((b) => b.id)) + 1
   function addTable() {
     const data = {
@@ -80,9 +79,10 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
 
       {typeList.map(x => {
         return x.type === 'title' ? (
-          <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px">{x.name}</h2>
+          <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px" key={x.name}>{x.name}</h2>
         ) : (
           <div
+            key={x.name}
             className={`pl-8 py-2.5 cursor-pointer hover:bg-[#F8F8F9] ${
               x.type === selectedType ? 'bg-[#F8F8F9]' : ''
             }`}
@@ -95,22 +95,6 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
           </div>
         )
       })}
-
-      <div className="mt-3 absolute w-full bottom-1 h-50" style={{ overflow: 'auto' }}>
-        <Collapse
-          ghost
-          bordered
-          activeKey={activeKey}
-          onChange={keys => setActiveKey(keys as string[])}
-        >
-          <Panel header="其他供应商" key={'1'} extra={genExtra()}>
-            {authList.map(authItem => {
-              if (authItem.name != '')
-                return <AuthItem key={authItem.id} authItem={authItem} onClickItem={onClickItem} />
-            })}
-          </Panel>
-        </Collapse>
-      </div>
     </div>
   )
 }
