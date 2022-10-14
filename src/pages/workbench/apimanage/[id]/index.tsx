@@ -1,29 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable import/order */
 /*
  * https://github.com/graphql/graphiql/issues/118
  */
 
-// @ts-ignore
-import GraphiqlExplorer1 from 'graphiql-explorer'
-import { GraphQLSchema, buildClientSchema, getIntrospectionQuery, IntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
+// @ts-ignore
+import GraphiqlExplorer1 from 'graphiql-explorer'
+import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
+import { buildClientSchema, getIntrospectionQuery } from 'graphql'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 
 import FlowChart from '@/components/charts/FlowChart'
-
-import { GraphiQL } from './components/GraphiQL'
-
-// import GraphiQLExplorer from './components/GraphiqlExplorer'
-
-import styles from './index.module.less'
-import APIHeader from './components/APIHeader'
-import { APIContext, useAPIManager } from './hooks'
 import requests from '@/lib/fetchers'
-import { useParams } from 'react-router-dom'
+
+import APIHeader from './components/APIHeader'
+import { GraphiQL } from './components/GraphiQL'
+import { APIContext, useAPIManager } from './hooks'
+// import GraphiQLExplorer from './components/GraphiqlExplorer'
+import styles from './index.module.less'
 
 const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
@@ -101,7 +97,6 @@ export default function APIEditorProvider() {
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function fetcher(params: Record<string, unknown>): Promise<any> {
     try {
       // const res = await fetch(url ?? '/app/main/graphql', {
@@ -109,11 +104,10 @@ export default function APIEditorProvider() {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(params),
+        body: JSON.stringify(params)
       }).then(resp => resp.json())
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       setSchema(buildClientSchema(res.data as IntrospectionQuery))
     } catch (error) {
       console.error(error)
@@ -121,12 +115,9 @@ export default function APIEditorProvider() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     void requests.get(`/operateApi/${params.id}`).then(resp => {
       return setAPIDesc(resp)
     })
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetcher({ query: getIntrospectionQuery() })
   }, [])
 
@@ -137,7 +128,7 @@ export default function APIEditorProvider() {
         query,
         setQuery,
         schema,
-        fetcher,
+        fetcher
       }}
     >
       <APIEditorContainer />

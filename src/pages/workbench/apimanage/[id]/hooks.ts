@@ -1,6 +1,6 @@
-import { GraphQLSchema } from 'graphql'
-import { createContext, useContext } from 'react'
 import { type SchemaContextProviderProps } from '@graphiql/react'
+import type { GraphQLSchema } from 'graphql'
+import { createContext, useContext } from 'react'
 
 interface APIState {
   apiDesc: any
@@ -20,6 +20,5 @@ export const APIContext = createContext<APIState>({
 })
 
 export function useAPIManager() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return useContext<APIState>(APIContext)
 }

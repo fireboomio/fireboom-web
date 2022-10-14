@@ -1,3 +1,5 @@
-node_modules/
-public/
-dist/
+**/*.{js?(x),ts?(x)}
+**/*.min.css
+public
+dist
+node_modules
