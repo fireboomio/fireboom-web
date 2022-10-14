@@ -9,7 +9,9 @@ interface APIHeaderProps {
 
 const APIHeader = ({}: /** */ APIHeaderProps) => {
   return (
-    <div className="bg-white flex flex-shrink-0 h-10 px-3 items-center">
+    <div className="bg-white flex flex-shrink-0 h-10 px-3 items-center" style={{
+      borderBottom: '1px solid rgba(95,98,105,0.1)'
+    }}>
       <Breadcrumb separator=">">
         <Breadcrumb.Item>github</Breadcrumb.Item>
         <Breadcrumb.Item>workflow</Breadcrumb.Item>

@@ -111,7 +111,7 @@ export default function App({ url, data, onSave }: Props) {
       <Helmet>
         <title>GraphiQL</title>
       </Helmet>
-      <div className="flex flex-col h-full">
+      <div className="bg-white flex flex-col h-full">
         <APIHeader />
         <div className={styles.wrapper}>
           {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}

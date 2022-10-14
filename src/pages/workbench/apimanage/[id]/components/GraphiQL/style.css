@@ -73,6 +73,7 @@
 }
 
 .graphiql-container .graphiql-editor {
+  position: relative;
   flex: 1;
   height: auto;
 }
