@@ -7,9 +7,7 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import {
-  DatasourceToggleContext,
-} from '@/lib/context/datasource-context'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.scss'
@@ -296,7 +294,7 @@ export default function DB({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
     let newContent: DatasourceResp
-    if (content.name == '') {
+    if (content.name == '' || content.name.startsWith('example_')) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
@@ -387,9 +385,9 @@ export default function DB({ content, type }: Props) {
               <Button className={'btn-light-border'} onClick={() => testLink('bottomLeft')}>
                 <span>测试链接</span>
               </Button>
-              <Button className={'btn-light-border w-16 ml-4'}>
+              {/* <Button className={'btn-light-border w-16 ml-4'}>
                 <span>设计</span>
-              </Button>
+              </Button> */}
               <Button
                 className={'btn-light-full  ml-4'}
                 onClick={() => handleToggleDesigner('form', content.id)}
@@ -561,7 +559,7 @@ export default function DB({ content, type }: Props) {
                 className={'btn-cancel'}
                 onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
               >
-                重置
+                取消
               </Button>
             </div>
           </div>

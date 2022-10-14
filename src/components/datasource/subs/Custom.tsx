@@ -60,7 +60,8 @@ export default function Custom({ content }: Props) {
     if (value == '') {
       return
     }
-    if (content.name == '') {
+
+    if (content.name == '' || content.name.startsWith('example_')) {
       const req = {
         ...content,
         config: { apiNamespace: value, serverName: value, schema: '' },
@@ -77,11 +78,9 @@ export default function Custom({ content }: Props) {
         config: { ...config, apiNamespace: value, serverName: value },
         name: value,
       }
-      void requests
-        .put(`/dataSource/${content.id}`, newContent)
-        .then(() => {
-          handleSave(newContent)
-        })
+      void requests.put(`/dataSource/${content.id}`, newContent).then(() => {
+        handleSave(newContent)
+      })
     }
 
     setIsEditing(false)
@@ -116,12 +115,7 @@ export default function Custom({ content }: Props) {
       </div>
 
       <div className="flex justify-center">
-        <Descriptions
-          bordered
-          column={1}
-          size="small"
-          className="w-full mt-4"
-        >
+        <Descriptions bordered column={1} size="small" className="w-full mt-4">
           <Descriptions.Item label="连接名" className="h-12">
             <>
               {isEditing ? (
