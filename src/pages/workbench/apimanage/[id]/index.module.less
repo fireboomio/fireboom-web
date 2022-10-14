@@ -1,0 +1,20 @@
+.wrapper {
+  @apply flex flex-1 items-stretch overflow-hidden;
+
+  :global {
+    .docExplorerWrap {
+      width: 258px !important;
+      min-width: 258px !important;
+    }
+
+    .doc-explorer-title-bar {
+      display: none;
+    }
+
+    .graphiql-explorer-root {
+      > div:first-child {
+        overflow: auto !important;
+      }
+    }
+  }
+}

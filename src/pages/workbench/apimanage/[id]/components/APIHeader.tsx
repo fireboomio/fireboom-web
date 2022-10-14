@@ -1,0 +1,37 @@
+import { EditFilled, SaveOutlined } from '@ant-design/icons'
+import { Breadcrumb, Switch } from 'antd'
+
+import styles from './APIHeader.module.less'
+import { CopyOutlined, FlashFilled, LinkOutlined } from './icons'
+interface APIHeaderProps {
+  //
+}
+
+const APIHeader = ({}: /** */ APIHeaderProps) => {
+  return (
+    <div className="bg-white flex flex-shrink-0 h-10 px-3 items-center" style={{
+      borderBottom: '1px solid rgba(95,98,105,0.1)'
+    }}>
+      <Breadcrumb separator=">">
+        <Breadcrumb.Item>github</Breadcrumb.Item>
+        <Breadcrumb.Item>workflow</Breadcrumb.Item>
+        <Breadcrumb.Item>userform</Breadcrumb.Item>
+      </Breadcrumb>
+      <EditFilled className="text-xs ml-1" />
+      <div className="flex text-[rgba(175,176,180,0.6)] items-center">
+        <span className="text-xs ml-1">-已保存</span>
+        <div className="ml-11" />
+        <div className="text-sm relative">
+          POST
+          <FlashFilled className="h-1.5 top-0.5 -right-1 text-[#3AE375] w-1.5 absolute" />
+        </div>
+        <CopyOutlined className="ml-3 text-[#6F6F6F]" />
+        <LinkOutlined className="ml-2 text-[#6F6F6F]" />
+      </div>
+      <button className={styles.save}><SaveOutlined className="mr-1 !text-primary" />储存</button>
+      <Switch className={styles.enable} checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+    </div>
+  )
+}
+
+export default APIHeader

@@ -1,10 +1,10 @@
+/* eslint-disable import/order */
 /*
  * https://github.com/graphql/graphiql/issues/118
  */
 
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
-// eslint-disable-next-line import/order
 import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
@@ -15,10 +15,10 @@ import FlowChart from '@/components/charts/FlowChart'
 
 import { GraphiQL } from './components/GraphiQL'
 
-
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 
-// import styles from './index.module.scss'
+import styles from './index.module.less'
+import APIHeader from './components/APIHeader'
 
 const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
@@ -81,8 +81,8 @@ export default function App({ url, data, onSave }: Props) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
-    return fetch(url ?? '/app/main/graphql', {
-    // return fetch('https://graphql-weather-api.herokuapp.com/', {
+    // return fetch(url ?? '/app/main/graphql', {
+    return fetch('https://graphql-weather-api.herokuapp.com/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -111,19 +111,27 @@ export default function App({ url, data, onSave }: Props) {
       <Helmet>
         <title>GraphiQL</title>
       </Helmet>
-
-      <div className="flex h-full">
-        {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
-        <GraphiqlExplorer1 schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} />
-        <GraphiQL
-          fetcher={fetcher}
-          schema={schema}
-          query={query}
-          // ref={x => (ref.current = x)}
-          onEditQuery={setQuery}
-          defaultEditorToolsVisibility={false}
-        />
-        <FlowChart />
+      <div className="bg-white flex flex-col h-full">
+        <APIHeader />
+        <div className={styles.wrapper}>
+          {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
+          <GraphiqlExplorer1
+            style={{ width: '258px !important' }}
+            schema={schema}
+            query={query}
+            explorerIsOpen={true}
+            onEdit={setQuery}
+          />
+          <GraphiQL
+            fetcher={fetcher}
+            schema={schema}
+            query={query}
+            // ref={x => (ref.current = x)}
+            onEditQuery={setQuery}
+            defaultEditorToolsVisibility={false}
+          />
+          <FlowChart />
+        </div>
       </div>
     </>
   )
