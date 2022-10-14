@@ -1,10 +1,10 @@
 import Editor from '@monaco-editor/react'
 import { Select, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { DMFResp } from '@/interfaces/datasource'
-import { DatasourceCurrDBContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 const { Option } = Select
@@ -18,10 +18,10 @@ interface DataType {
   isOpen: boolean
 }
 
-interface Props {
-  schemaExtension: string
-  replaceJSON: string
-}
+// interface Props {
+//   // schemaExtension: string
+//   // replaceJSON: string
+// }
 
 const columns: ColumnsType<DataType> = [
   {
@@ -98,13 +98,13 @@ const data: DataType[] = [
   },
 ]
 
-const Setting: React.FC<Props> = props => {
-  const { currDBId } = useContext(DatasourceCurrDBContext)
+const Setting: React.FC = () => {
+  const { id: currDBId } = useParams()
 
   useEffect(() => {
     void requests
       .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`)
-      .then(x => console.log(x.models))
+      .then(x => console.log('mm', x.models))
   }, [currDBId])
 
   return (
