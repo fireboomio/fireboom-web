@@ -4,7 +4,7 @@ import React from 'react'
 import { Connector as ConnectorType } from '@/interfaces/connector'
 
 import ConnectorItem from './ConnectorItem'
-import styles from './ConnectorModal.module.scss'
+import styles from './ConnectorModal.module.less'
 interface Props {
   title: string
   handleModelOk: () => void

@@ -7,7 +7,7 @@ import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
 import { ModelingDispatchContext } from '@/lib/context'
 import requests from '@/lib/fetchers'
 
-import styles from './model-pannel.module.scss'
+import styles from './model-pannel.module.less'
 import ModelEntityList from './subs/model-entity-list'
 
 interface Props {

@@ -8,7 +8,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
-import styles from './Designer.module.scss'
+import styles from './Designer.module.less'
 
 const initData = [
   {

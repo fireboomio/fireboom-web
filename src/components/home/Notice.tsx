@@ -4,7 +4,7 @@ import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
 
-import styles from './home.module.scss'
+import styles from './home.module.less'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
@@ -51,7 +51,7 @@ export function Notice({ handleToggleDesigner }: Props) {
           </div>
         ))}
       </div>
-      <div className={styles.guideEntry} onClick={handleClick}/>
+      <div className={styles.guideEntry} onClick={handleClick} />
     </div>
   )
 }

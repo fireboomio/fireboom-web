@@ -10,7 +10,7 @@ import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import styles from './DB.module.scss'
+import styles from './DB.module.less'
 import Setting from './Setting'
 interface Props {
   content: DatasourceResp

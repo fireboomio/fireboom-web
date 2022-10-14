@@ -1,19 +1,20 @@
-import { Dropdown, Input, Menu, Popconfirm, Image } from 'antd'
-import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Dropdown, Image, Input, Menu, Popconfirm } from 'antd'
+import type React from 'react'
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
+import Icon from '/assets/workbench/panel-add.png'
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
-import { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
-import { DatasourceResp } from '@/interfaces/datasource'
-import { StorageResp } from '@/interfaces/storage'
-import { WorkbenchContext, MenuName } from '@/lib/context/workbenchContext'
+import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
+import type { DatasourceResp } from '@/interfaces/datasource'
+import type { StorageResp } from '@/interfaces/storage'
+import type { MenuName } from '@/lib/context/workbenchContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
 
-import styles from './commonPanel.module.scss'
-
-import Icon from '/assets/workbench/panel-add.png'
+import styles from './commonPanel.module.less'
 
 interface PanelConfig {
   title: string
@@ -32,7 +33,7 @@ interface PanelConfig {
   navAction?: Array<{ icon: string; path: string }>
 }
 
-const panelMap: { [key: string]: PanelConfig } = {
+const panelMap: Record<string, PanelConfig> = {
   dataSource: {
     title: '数据源',
     openItem: id => `/workbench/dataSource/${id}`,
@@ -58,13 +59,13 @@ const panelMap: { [key: string]: PanelConfig } = {
                   break
               }
               return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
-            }),
+            })
           })
         })
       },
       editItem: async row => await requests.put('/dataSource', row),
-      delItem: async id => await requests.delete(`/dataSource/${id}`),
-    },
+      delItem: async id => await requests.delete(`/dataSource/${id}`)
+    }
   },
   storage: {
     title: '文件存储',
@@ -79,20 +80,20 @@ const panelMap: { [key: string]: PanelConfig } = {
               const icon = 'other'
               const tip = ''
               return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
-            }),
+            })
           })
         })
       },
       editItem: async row => await requests.put('/storageBucket', row),
-      delItem: async id => await requests.delete(`/storageBucket/${id}`),
+      delItem: async id => await requests.delete(`/storageBucket/${id}`)
     },
     navMenu: [
       {
         icon: 'icon-wenjian1',
         name: '查看',
-        menuPath: id => `/workbench/storage/${id}`,
-      },
-    ],
+        menuPath: id => `/workbench/storage/${id}`
+      }
+    ]
   },
   auth: {
     title: '身份验证',
@@ -115,18 +116,18 @@ const panelMap: { [key: string]: PanelConfig } = {
             _row: { name: '' },
             id: 0,
             tip: '前往>',
-            openInNewPage: '/auth/user-manage',
+            openInNewPage: '/auth/user-manage'
           })
           dispatch({
             type: 'fetched',
-            data: rows,
+            data: rows
           })
         })
       },
       editItem: async row => await requests.put('/auth', row),
-      delItem: async id => await requests.delete(`/auth/${id}`),
-    },
-  },
+      delItem: async id => await requests.delete(`/auth/${id}`)
+    }
+  }
 }
 
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
@@ -157,7 +158,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             <IconFont type="icon-zhongmingming" />
             <span className="ml-1.5">重命名</span>
           </div>
-        ),
+        )
       },
       {
         key: 'delete',
@@ -176,8 +177,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               <span className="ml-1.5">删除</span>
             </div>
           </Popconfirm>
-        ),
-      },
+        )
+      }
     ]
     if (panelConfig.navMenu) {
       menuItems.unshift(
@@ -188,7 +189,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               <IconFont type={item.icon} />
               <span className="ml-1.5">{item.name}</span>
             </div>
-          ),
+          )
         }))
       )
     }

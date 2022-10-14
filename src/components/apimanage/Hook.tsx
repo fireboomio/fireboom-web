@@ -9,7 +9,7 @@ import { DirTreeNode, HookName, HookResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty } from '@/lib/utils'
 
-import styles from './Hook.module.scss'
+import styles from './Hook.module.less'
 
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 

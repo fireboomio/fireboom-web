@@ -6,26 +6,26 @@ import { useImmer } from 'use-immer'
 
 import { AuthContainer, AuthPannel } from '@/components/auth'
 import type { AuthListType, AuthProvResp, MenuType, User } from '@/interfaces/auth'
+import type { ConnectorContextType } from '@/lib/context/auth-context'
 import {
   AuthContext,
   AuthCurrContext,
   AuthDispatchContext,
   AuthToggleContext,
   AuthUserCurrContext,
-  ConnectorContext,
-  ConnectorContextType,
+  ConnectorContext
 } from '@/lib/context/auth-context'
 import { getFetcher } from '@/lib/fetchers'
 import authReducer from '@/lib/reducers/auth-reducer'
 import connectorReducer from '@/lib/reducers/connector-reducer'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 export default function Authentication() {
   const [authProvList, dispatch] = useReducer(authReducer, [])
   const [connector, connectorDispatch] = useReducer(connectorReducer, {
     currentConnector: null,
-    connectors: [],
+    connectors: []
   })
   const [showBottomType, setShowBottomType] = useImmer('data')
   const [showTopType, setShowTopType] = useImmer<MenuType>('userManage')
@@ -35,10 +35,10 @@ export default function Authentication() {
   const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
   useEffect(() => {
     data &&
-    dispatch({
-      type: 'fetched',
-      data,
-    })
+      dispatch({
+        type: 'fetched',
+        data
+      })
   }, [data])
 
   // TODO: add

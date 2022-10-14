@@ -5,52 +5,53 @@ import {
   FileOutlined,
   FolderOpenOutlined,
   FolderOutlined,
-  MoreOutlined,
+  MoreOutlined
 } from '@ant-design/icons'
 import {
-  Modal,
-  Tooltip,
+  Button,
   Divider,
-  Tree,
   Dropdown,
+  Input,
   Menu,
   message,
-  Input,
+  Modal,
   Popconfirm,
   Switch,
-  Button,
+  Tooltip,
+  Tree
 } from 'antd'
-import { Key } from 'antd/lib/table/interface'
-import { OperationDefinitionNode, parse } from 'graphql'
-import { FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react'
+import type { Key } from 'antd/lib/table/interface'
+import type { OperationDefinitionNode } from 'graphql'
+import { parse } from 'graphql'
+import type { FC } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import Error404 from '@/components/ErrorPage/404'
-import Error50x from '@/components/ErrorPage/50x'
 import Detail from '@/components/apimanage/Detail'
 import Hook from '@/components/apimanage/Hook'
 import Mock from '@/components/apimanage/Mock'
 import Setting from '@/components/apimanage/Setting'
-import { DatasourcePannel, DatasourceContainer } from '@/components/datasource'
+import { DatasourceContainer, DatasourcePannel } from '@/components/datasource'
+import Error50x from '@/components/ErrorPage/50x'
+import Error404 from '@/components/ErrorPage/404'
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceContext,
-  DatasourceDispatchContext,
   DatasourceCurrDBContext,
-  DatasourceToggleContext,
+  DatasourceDispatchContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
+
 // import GraphiQLApp from '@/pages/graphiql'
-
-import styles from './index.module.scss'
-
+import styles from './index.module.less'
 
 type ApiManageProps = {
   //
@@ -62,7 +63,7 @@ const tabs = [
   { title: '详情', key: '0' },
   { title: 'Mock', key: '1' },
   { title: '钩子', key: '2' },
-  { title: '设置', key: '3' },
+  { title: '设置', key: '3' }
   // { title: '调用', key: '4' },
 ]
 
@@ -74,7 +75,7 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
     title: x.path.split('/')[x.path.split('/').length - 1],
     baseDir: x.path.split('/').slice(0, -1).join('/'),
     currDir: x.isDir ? x.path : x.path.split('/').slice(0, -1).join('/'),
-    children: convertToTree(x.children, `${lv}-${idx}`),
+    children: convertToTree(x.children, `${lv}-${idx}`)
   }))
 }
 
@@ -143,12 +144,12 @@ function renameNode(node: DirTreeNode, value: string) {
   if (node.isDir) {
     return requests.put('/operateApi/dir', {
       oldPath: `${node.path}`,
-      newPath: `${node.baseDir}/${value}`,
+      newPath: `${node.baseDir}/${value}`
     })
   } else {
     return requests.put(`/operateApi/${node.id}`, {
       ...node,
-      path: `${node.baseDir}/${value}`,
+      path: `${node.baseDir}/${value}`
     })
   }
 }
@@ -164,7 +165,7 @@ function deleteNode(node: DirTreeNode) {
 function createNode(node: DirTreeNode, value: string, content: string) {
   if (node.isDir) {
     return requests.post('/operateApi/dir', {
-      path: `${node.baseDir}/${value}`,
+      path: `${node.baseDir}/${value}`
     })
   } else {
     const op = parse(content, { noLocation: true }).definitions[0] as OperationDefinitionNode
@@ -172,7 +173,7 @@ function createNode(node: DirTreeNode, value: string, content: string) {
     return requests.post('/operateApi', {
       path: `${node.baseDir}/${value}`,
       content: content,
-      operationType: op.operation,
+      operationType: op.operation
     })
   }
 }
@@ -219,7 +220,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       .then(res => {
         dispatch({
           type: 'fetched',
-          data: res,
+          data: res
         })
         setCurrDBId(res.filter(item => item.sourceType == 1).at(0)?.id)
       })
@@ -345,7 +346,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       title: '',
       baseDir: curr?.currDir ?? '',
       isDir: action === '创建目录' ? true : false,
-      key: Date.now().toString(),
+      key: Date.now().toString()
     } as DirTreeNode
 
     if (curr?.children === null) curr.children = []
@@ -397,7 +398,7 @@ const ApiManage: FC<ApiManageProps> = () => {
       void requests
         .put(`/operateApi/content/${selectedNode.id}`, {
           content: query,
-          operationType: op.operation,
+          operationType: op.operation
         })
         .then(() => void message.success('保存成功'))
         .then(() => setRefreshFlag(!refreshFlag))
@@ -462,7 +463,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                 <IconFont type="icon-zhongmingming" />
                 <span className="ml-1.5">重命名</span>
               </div>
-            ),
+            )
           },
           {
             key: '1',
@@ -476,7 +477,7 @@ const ApiManage: FC<ApiManageProps> = () => {
                 <IconFont type="icon-chakan" />
                 <span className="ml-1.5">编辑</span>
               </div>
-            ),
+            )
           },
           {
             key: '2',
@@ -493,8 +494,8 @@ const ApiManage: FC<ApiManageProps> = () => {
                   <span className="ml-1.5">删除</span>
                 </a>
               </Popconfirm>
-            ),
-          },
+            )
+          }
         ]}
       />
     )

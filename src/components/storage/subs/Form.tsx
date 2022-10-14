@@ -7,7 +7,7 @@ import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 
 interface Props {

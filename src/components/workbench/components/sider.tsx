@@ -1,9 +1,9 @@
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
-import {  useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import ApiPanel from './panel/apiPanel'
 import CommonPanel from './panel/commonPanel'
-import styles from './sider.module.scss'
+import styles from './sider.module.less'
 
 export default function Header() {
   const [tab, setTab] = useState<string>('api')
@@ -30,10 +30,16 @@ export default function Header() {
       </div>
 
       <div className={styles.panels}>
-        <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')}/>
-        <CommonPanel type="dataSource"  defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}/>
-        <CommonPanel type="auth"  defaultOpen={location.pathname.startsWith('/workbench/auth/')}/>
-        <CommonPanel type="storage"  defaultOpen={location.pathname.startsWith('/workbench/storage/')}/>
+        <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
+        <CommonPanel
+          type="dataSource"
+          defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}
+        />
+        <CommonPanel type="auth" defaultOpen={location.pathname.startsWith('/workbench/auth/')} />
+        <CommonPanel
+          type="storage"
+          defaultOpen={location.pathname.startsWith('/workbench/storage/')}
+        />
       </div>
     </div>
   )

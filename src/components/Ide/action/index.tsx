@@ -4,8 +4,8 @@ import type { EditorProps } from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd';
 import { FC, useRef } from 'react';
 
-import styles from './../subs.module.scss'
-import ideStyles from './index.module.scss'
+import styles from './../subs.module.less'
+import ideStyles from './index.module.less'
 
 
 interface Props {

@@ -16,7 +16,7 @@ import RcTab from '@/components/rc-tab'
 import { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 
 interface RoleProvResp {

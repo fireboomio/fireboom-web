@@ -33,7 +33,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import styles from './Rest.module.scss'
+import styles from './Rest.module.less'
 
 interface Props {
   content: DatasourceResp

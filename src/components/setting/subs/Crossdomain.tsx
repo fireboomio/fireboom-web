@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { PlusOutlined } from '@ant-design/icons'
-import { Form, Input, Button, Select, Switch, Divider } from 'antd'
+import { Button, Divider, Form, Input, Select, Switch } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface CorsConfiguration {
   allowedOrigins: Array<string>
@@ -21,8 +21,8 @@ interface CorsConfiguration {
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 }
 
 export default function SettingCrossdomain() {
@@ -35,7 +35,7 @@ export default function SettingCrossdomain() {
     async (key: string, value: string | Array<string> | boolean | number) => {
       await requests.post('/global', {
         key: key,
-        val: value,
+        val: value
       })
     },
     []
@@ -59,23 +59,23 @@ export default function SettingCrossdomain() {
               maxAge: corsConfig.maxAge,
               allowedHeaders: corsConfig.allowedHeaders.join(','),
               exposedHeaders: corsConfig.exposedHeaders.join(','),
-              allowCredentials: corsConfig.allowCredentials,
+              allowCredentials: corsConfig.allowCredentials
             }}
             labelAlign="left"
             labelCol={{
               xs: { span: 3 },
-              sm: { span: 3 },
+              sm: { span: 3 }
             }}
             wrapperCol={{
               xs: { span: 10 },
-              sm: { span: 9 },
+              sm: { span: 9 }
             }}
           >
             <Form.Item
               label="允许域名"
               wrapperCol={{
                 xs: { span: 20 },
-                sm: { span: 20 },
+                sm: { span: 20 }
               }}
             >
               <Form.List name="allowedOrigins" initialValue={corsConfig.allowedOrigins}>
@@ -90,8 +90,8 @@ export default function SettingCrossdomain() {
                           rules={[
                             {
                               pattern: urlReg,
-                              message: '请填写规范域名',
-                            },
+                              message: '请填写规范域名'
+                            }
                           ]}
                         >
                           <div>
@@ -127,7 +127,7 @@ export default function SettingCrossdomain() {
                                     key: 'allowedOrigins',
                                     val: (
                                       form.getFieldValue('allowedOrigins') as Array<string>
-                                    ).filter((_, i) => i != index),
+                                    ).filter((_, i) => i != index)
                                   })
                                   .then(() => {
                                     remove(index)
@@ -233,8 +233,8 @@ export default function SettingCrossdomain() {
                           return Promise.resolve()
                         }
                       }
-                    },
-                  },
+                    }
+                  }
                 ]}
               >
                 <Input

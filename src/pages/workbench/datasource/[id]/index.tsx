@@ -9,13 +9,13 @@ import { DatasourceContainer } from '@/components/datasource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
-  DatasourceToggleContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 export default function Datasource() {
   const navigate = useNavigate()
@@ -43,7 +43,6 @@ export default function Datasource() {
       setContent(res.filter(x => x.id === Number(id))[0])
     })
   }, [id])
-
 
   const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
     //新增的item点击取消逻辑
@@ -78,7 +77,7 @@ export default function Datasource() {
               setShowType('form')
               setContent(content)
               navigate('/workbench/dataSource/create', { replace: true })
-            },
+            }
           }}
         >
           <Row className="h-screen">

@@ -18,7 +18,7 @@ import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-par
 import { isEmpty } from '@/lib/utils'
 
 import Error404 from '../ErrorPage/404'
-import styles from './Detail.module.scss'
+import styles from './Detail.module.less'
 
 const { Option } = Select
 

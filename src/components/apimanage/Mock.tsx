@@ -6,7 +6,7 @@ import { FC, useEffect, useState } from 'react'
 import { DirTreeNode, MockResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import styles from './Mock.module.scss'
+import styles from './Mock.module.less'
 
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 

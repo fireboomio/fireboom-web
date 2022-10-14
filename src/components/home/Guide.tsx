@@ -1,6 +1,6 @@
 import { Image } from 'antd'
 
-import styles from './home.module.scss'
+import styles from './home.module.less'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
@@ -20,8 +20,8 @@ export function Guide({ handleToggleDesigner }: Props) {
       subTasks: [
         { title: '连接数据库', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
         { title: '连接REST API', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-        { title: '连接GraphQL API', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-      ],
+        { title: '连接GraphQL API', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' }
+      ]
     },
     {
       blockName: 'OSS存储',
@@ -31,8 +31,8 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         { title: '设置存储提供商', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-        { title: '上传一个文件', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-      ],
+        { title: '上传一个文件', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+      ]
     },
     {
       blockName: '身份验证',
@@ -42,8 +42,8 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         { title: '设置身份提供商', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-        { title: '注册账户并登录', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-      ],
+        { title: '注册账户并登录', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+      ]
     },
     {
       blockName: '对外API',
@@ -53,9 +53,9 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         { title: '可视化编写接口', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-        { title: '下载接口SDK', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-      ],
-    },
+        { title: '下载接口SDK', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+      ]
+    }
   ]
 
   let nextColor = 'transparent'
@@ -102,8 +102,8 @@ export function Guide({ handleToggleDesigner }: Props) {
             {task.subTasks.map((sub, j) => (
               <div className={styles.item} key={sub.title}>
                 <div className={[styles.icon, styles[`icon${sub.state || 0}`]].join(' ')}>
-                  <div className={styles.lineUp} style={{ background: sub.lineUp }}/>
-                  <div className={styles.lineDown} style={{ background: sub.lineDown }}/>
+                  <div className={styles.lineUp} style={{ background: sub.lineUp }} />
+                  <div className={styles.lineDown} style={{ background: sub.lineDown }} />
                 </div>
                 <div className={styles.info}>
                   <div className={styles.title}>{`${i + 1}.${j + 1} ${sub.title}`}</div>

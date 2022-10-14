@@ -9,7 +9,7 @@ import { Experience as ExperienceType } from '@/interfaces/experience'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
 import { upsertExperience } from '@/lib/service/experience'
 
-import styles from './ExperienceSetting.module.scss'
+import styles from './ExperienceSetting.module.less'
 import SocialContactTransfer from './SocialContactTransfer'
 
 const { Option } = Select

@@ -9,7 +9,7 @@ import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext, AuthDispatchContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
 

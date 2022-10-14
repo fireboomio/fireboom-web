@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
 import type { Depend } from '../index'
-import ideStyles from './index.module.scss'
+import ideStyles from './index.module.less'
 
 
 export interface DebounceSelectProps<ValueType = any>

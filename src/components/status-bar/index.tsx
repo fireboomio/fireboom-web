@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Image } from 'antd'
 
-import { ErrorInfo } from '@/interfaces/common'
+import type { ErrorInfo } from '@/interfaces/common'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 interface Props {
   className?: string
@@ -23,7 +23,7 @@ const StatusBar: React.FC<Props> = ({
   errorInfo,
   engineStatus,
   hookStatus,
-  toggleWindow,
+  toggleWindow
 }) => {
   return (
     <div className={className}>
@@ -40,11 +40,23 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span onClick={toggleWindow} className="cursor-pointer flex items-center">
             <span className={styles.errLabel}>
-              <Image height={13} width={13} src="/assets/workbench/footer-error.png" alt="错误" preview={false} />
+              <Image
+                height={13}
+                width={13}
+                src="/assets/workbench/footer-error.png"
+                alt="错误"
+                preview={false}
+              />
               <span className="ml-2">{errorInfo?.errTotal ?? 0}</span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
-              <Image height={13} width={13} src="/assets/workbench/footer-warning.png" alt="警告" preview={false} />
+              <Image
+                height={13}
+                width={13}
+                src="/assets/workbench/footer-warning.png"
+                alt="警告"
+                preview={false}
+              />
               <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
             </span>
           </span>

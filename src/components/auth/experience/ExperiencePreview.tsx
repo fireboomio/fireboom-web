@@ -1,7 +1,7 @@
 import { Image, Select, Tabs } from 'antd'
 import React from 'react'
 
-import styles from './ExperiencePreview.module.scss'
+import styles from './ExperiencePreview.module.less'
 
 const { Option } = Select
 const { TabPane } = Tabs

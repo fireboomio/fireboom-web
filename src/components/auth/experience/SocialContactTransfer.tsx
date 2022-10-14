@@ -8,7 +8,7 @@ import { Transfer, Image } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 import { GroupedSocialItemType } from './ExperienceSetting'
-import styles from './SocialContactTransfer.module.scss'
+import styles from './SocialContactTransfer.module.less'
 interface Props {
   data: GroupedSocialItemType[]
   selectedData: string[]

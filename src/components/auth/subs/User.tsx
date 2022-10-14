@@ -9,7 +9,7 @@ import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void

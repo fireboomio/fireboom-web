@@ -1,12 +1,12 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Form, Input, Switch, Button, Divider } from 'antd'
+import { Button, Divider, Form, Input, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface SecurConfig {
   enableGraphQLEndpoint: boolean
@@ -16,8 +16,8 @@ interface SecurConfig {
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 }
 
 function AuthMainSetting() {
@@ -44,18 +44,18 @@ function AuthMainSetting() {
             labelAlign="left"
             labelCol={{
               xs: { span: 4 },
-              sm: { span: 4 },
+              sm: { span: 4 }
             }}
             wrapperCol={{
               xs: { span: 10 },
-              sm: { span: 9 },
+              sm: { span: 9 }
             }}
           >
             <Form.Item
               label="配置重定向URL"
               wrapperCol={{
                 xs: { span: 20 },
-                sm: { span: 20 },
+                sm: { span: 20 }
               }}
             >
               <Form.List name="redirectURLs">
@@ -70,8 +70,8 @@ function AuthMainSetting() {
                           rules={[
                             {
                               pattern: urlReg,
-                              message: '请填写规范域名',
-                            },
+                              message: '请填写规范域名'
+                            }
                           ]}
                         >
                           <div>
@@ -85,7 +85,7 @@ function AuthMainSetting() {
                                   .post('/auth/redirectUrl', {
                                     redirectURLs: form.getFieldValue(
                                       'redirectURLs'
-                                    ) as Array<string>,
+                                    ) as Array<string>
                                   })
                                   .then(() => {
                                     setRefreshFlag(!refreshFlag)
@@ -96,7 +96,7 @@ function AuthMainSetting() {
                                   .post('/auth/redirectUrl', {
                                     redirectURLs: form.getFieldValue(
                                       'redirectURLs'
-                                    ) as Array<string>,
+                                    ) as Array<string>
                                   })
                                   .then(() => {
                                     setRefreshFlag(!refreshFlag)
@@ -111,7 +111,7 @@ function AuthMainSetting() {
                                   .post('/auth/redirectUrl', {
                                     redirectURLs: (
                                       form.getFieldValue('redirectURLs') as Array<string>
-                                    ).filter((_, i) => i != index),
+                                    ).filter((_, i) => i != index)
                                   })
                                   .then(() => {
                                     remove(index)
@@ -156,7 +156,7 @@ export default function SettingMainSecurity() {
     void requests
       .post('/global', {
         key: 'enableGraphQLEndpoint',
-        val: 0,
+        val: 0
       })
       .then(() => {
         setRefreshFlag(!refreshFlag)
@@ -166,7 +166,7 @@ export default function SettingMainSecurity() {
   const postRequest = async (key: string, value: string | Array<string> | number | boolean) => {
     await requests.post('/global', {
       key: key,
-      val: value,
+      val: value
     })
   }
 
@@ -194,17 +194,17 @@ export default function SettingMainSecurity() {
             name="dynamic_form_item"
             initialValues={{
               allowedHosts: securConfig?.allowedHosts,
-              enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint,
+              enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint
             }}
             onFinish={onFinish}
             labelAlign="left"
             labelCol={{
               xs: { span: 4 },
-              sm: { span: 4 },
+              sm: { span: 4 }
             }}
             wrapperCol={{
               xs: { span: 10 },
-              sm: { span: 9 },
+              sm: { span: 9 }
             }}
           >
             <Form.Item label="GraphQL端点：">
@@ -234,7 +234,7 @@ export default function SettingMainSecurity() {
               label="允许域名"
               wrapperCol={{
                 xs: { span: 2 },
-                sm: { span: 20 },
+                sm: { span: 20 }
               }}
             >
               <Form.List name="allowedHosts">
@@ -249,8 +249,8 @@ export default function SettingMainSecurity() {
                           rules={[
                             {
                               pattern: urlReg,
-                              message: '请填写规范域名',
-                            },
+                              message: '请填写规范域名'
+                            }
                           ]}
                         >
                           <div className="">
@@ -289,7 +289,7 @@ export default function SettingMainSecurity() {
                                     key: 'allowedHosts',
                                     val: (
                                       form.getFieldValue('allowedHosts') as Array<string>
-                                    ).filter((_, i) => i != index),
+                                    ).filter((_, i) => i != index)
                                   })
                                   .then(() => {
                                     remove(index)

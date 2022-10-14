@@ -1,9 +1,9 @@
-import { Button, Form, message, InputNumber, Switch } from 'antd'
+import { Button, Form, InputNumber, message, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 
 import requests from '@/lib/fetchers'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 interface Props {
   id?: number
   onClose: () => void
@@ -42,7 +42,7 @@ export default function Index(props: Props) {
       .put<unknown, any>('/operateApi/setting', {
         ...values,
         settingType: props.id ? 1 : 2,
-        id: props.id || 0,
+        id: props.id || 0
       })
       .then(() => {
         message.success('保存成功')

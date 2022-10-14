@@ -8,7 +8,7 @@ import requests from '@/lib/fetchers'
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderDeploy from '../assets/header-deploy.png'
 import HeaderPreview from '../assets/header-preview.png'
-import styles from './header.module.scss'
+import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void }) {
   const navigate = useNavigate()

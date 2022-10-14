@@ -12,7 +12,7 @@ import IdeActionContainer from './action/index'
 import IdeCodeContainer from './code/index';
 import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
-import ideStyles from './ide.module.scss'
+import ideStyles from './ide.module.less'
 
 
 export const hookPath = {

@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import type { Entity } from '@/interfaces/modeling'
 import { ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
 
-import styles from '../model-pannel.module.scss'
+import styles from '../model-pannel.module.less'
 
 interface Props {
   entity: Entity

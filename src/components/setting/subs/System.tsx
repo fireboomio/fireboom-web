@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import type { RadioChangeEvent } from 'antd'
-import { Descriptions, Divider, Radio, Switch, Input } from 'antd'
+import { Descriptions, Divider, Input, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
@@ -10,7 +10,7 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 dayjs.extend(duration)
 
 interface systemConfig {
@@ -95,7 +95,7 @@ export default function SettingMainVersion() {
                 width: '15%',
                 borderRight: 'none',
                 borderBottom: 'none',
-                color: 'gray',
+                color: 'gray'
               }}
             >
               <Descriptions.Item label="运行时长:">
@@ -164,7 +164,7 @@ export default function SettingMainVersion() {
                     void requests
                       .post('/setting', {
                         key: 'debugSwitch',
-                        val: value,
+                        val: value
                       })
                       .then(() => {
                         setRefreshFlag(!refreshFlag)
@@ -201,7 +201,7 @@ export default function SettingMainVersion() {
                       void requests
                         .post('/setting', {
                           key: 'forcedJumpSwitch',
-                          val: value,
+                          val: value
                         })
                         .then(() => {
                           setRefreshFlag(!refreshFlag)

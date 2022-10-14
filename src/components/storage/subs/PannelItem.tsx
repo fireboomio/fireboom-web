@@ -13,7 +13,7 @@ import {
 } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
-import styles from '../Pannel.module.scss'
+import styles from '../Pannel.module.less'
 
 interface Props {
   bucket: StorageResp

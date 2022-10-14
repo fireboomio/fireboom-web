@@ -1,16 +1,17 @@
-import { Divider, Layout as ALayout, Menu, Image } from 'antd'
+import { Divider, Image, Layout as ALayout, Menu } from 'antd'
 import { Footer } from 'antd/lib/layout/layout'
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import type { PropsWithChildren } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
-import { Info } from '@/interfaces/common'
+import type { Info } from '@/interfaces/common'
 import { DOMAIN } from '@/lib/common'
 import requests from '@/lib/fetchers'
 
-import styles from './layout.module.scss'
+import styles from './layout.module.less'
 
 const { Sider, Content } = ALayout
 
@@ -37,7 +38,7 @@ const menus: MenuT[] = [
     ),
     link: '/',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/home.svg" alt="主页" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/home.svg" alt="主页" preview={false} />
   },
   {
     title: '数据建模',
@@ -54,7 +55,7 @@ const menus: MenuT[] = [
     ),
     link: '/modeling',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/modeling.svg" alt="数据建模" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/modeling.svg" alt="数据建模" preview={false} />
   },
   {
     title: '认证鉴权',
@@ -65,7 +66,7 @@ const menus: MenuT[] = [
     ),
     link: '/auth',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/auth.svg" alt="认证鉴权" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/auth.svg" alt="认证鉴权" preview={false} />
   },
   {
     title: '文件存储',
@@ -82,7 +83,7 @@ const menus: MenuT[] = [
     ),
     link: '/storage',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/storage.svg" alt="文件存储" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/storage.svg" alt="文件存储" preview={false} />
   },
   // {
   //   title: '数据来源',
@@ -100,7 +101,7 @@ const menus: MenuT[] = [
     ),
     link: '/apimanage',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/api.svg" alt="API 管理" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/api.svg" alt="API 管理" preview={false} />
   },
   {
     title: 'GraphQL',
@@ -117,7 +118,7 @@ const menus: MenuT[] = [
     ),
     link: '/graphiql',
     position: 'top',
-    svg: <Image height={26} width={26} src="/assets/graphiql.svg" alt="GraphQL" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/graphiql.svg" alt="GraphQL" preview={false} />
   },
   {
     title: '帮助',
@@ -128,7 +129,7 @@ const menus: MenuT[] = [
     ),
     link: '/help',
     position: 'bottom',
-    svg: <Image height={26} width={26} src="/assets/help.svg" alt="帮助" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/help.svg" alt="帮助" preview={false} />
   },
   {
     title: '支持',
@@ -139,7 +140,7 @@ const menus: MenuT[] = [
     ),
     link: '/support',
     position: 'bottom',
-    svg: <Image height={26} width={26} src="/assets/support.svg" alt="支持" preview={false} />,
+    svg: <Image height={26} width={26} src="/assets/support.svg" alt="支持" preview={false} />
   },
   {
     title: '设置',
@@ -150,8 +151,8 @@ const menus: MenuT[] = [
     ),
     link: '/setting',
     position: 'bottom',
-    svg: <Image height={26} width={26} src="/assets/setting.png" alt="设置" preview={false} />,
-  },
+    svg: <Image height={26} width={26} src="/assets/setting.png" alt="设置" preview={false} />
+  }
 ]
 
 export default function Layout(props: PropsWithChildren) {
@@ -175,7 +176,7 @@ export default function Layout(props: PropsWithChildren) {
         .map(m => ({
           key: m.link,
           icon: m.link === pathname ? m.svg : m.icon,
-          label: <Link to={m.link}>{m.title}</Link>,
+          label: <Link to={m.link}>{m.title}</Link>
         })),
     [pathname]
   )
@@ -187,7 +188,7 @@ export default function Layout(props: PropsWithChildren) {
         .map(m => ({
           key: m.link,
           icon: m.icon,
-          label: <Link to={m.link}>{m.title}</Link>,
+          label: <Link to={m.link}>{m.title}</Link>
         })),
     []
   )
