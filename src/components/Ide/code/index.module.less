@@ -1,12 +1,12 @@
-$code-container-base-height: 53vh;
+@code-container-base-height: 53vh;
 // 1980基准与更高基准下, 容器高度的增长值
-$code-container-height-increase: 20vh;
+@code-container-height-increase: 20vh;
 
 .code-container :global {
     position: relative;
-    height: calc($code-container-base-height + $code-container-height-increase);
+    height: calc(@code-container-base-height + @code-container-height-increase);
     @media (max-width: 1980px) {
-        height: $code-container-base-height;
+        height: @code-container-base-height;
     }
     .show-more {
         position: absolute;
@@ -27,22 +27,22 @@ $code-container-height-increase: 20vh;
 
 // 全屏状态下, action未打开的高度
 .code-container-full-screen {
-    height: calc($code-container-base-height + $code-container-height-increase + 15vh);
+    height: calc(@code-container-base-height + @code-container-height-increase + 15vh);
     @media (max-width: 1980px) {
-        height: calc($code-container-base-height + $code-container-height-increase + 10vh);
+        height: calc(@code-container-base-height + @code-container-height-increase + 10vh);
     }
 }
 // 如果当前expand-action为打开状态, 高度要减去expand-action的高度
 .code-container-expand-action {
-    height: calc($code-container-base-height + 6vh);
+    height: calc(@code-container-base-height + 6vh);
     @media (max-width: 1980px) {
-        height: calc($code-container-base-height - 24vh);
+        height: calc(@code-container-base-height - 24vh);
     }
     // 查看是否存在code-container-full-screen
     &.code-container-full-screen {
-        height: calc($code-container-base-height + $code-container-height-increase);
+        height: calc(@code-container-base-height + @code-container-height-increase);
         @media (max-width: 1980px) {
-            height: calc($code-container-base-height + 10vh)
+            height: calc(@code-container-base-height + 10vh)
         }
     }
 }
