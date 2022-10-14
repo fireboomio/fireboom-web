@@ -4,7 +4,7 @@ import { useContext } from 'react'
 
 import { StorageContext, StorageSwitchContext } from '@/lib/context/storage-context'
 
-import styles from './Pannel.module.scss'
+import styles from './Pannel.module.less'
 import StoragePannelItem from './subs/PannelItem'
 
 export default function StoragePannel() {

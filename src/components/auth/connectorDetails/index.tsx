@@ -13,7 +13,7 @@ import { ConnectorContext } from '@/lib/context/auth-context'
 import { deleteConnector, upsertConnector } from '@/lib/service/connector'
 
 import ConnectorModal from '../connector/ConnectorModal'
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
-import styles from './sidePanel.module.scss'
+import styles from './sidePanel.module.less'
 
 export interface SidePanelProps {
   title: string

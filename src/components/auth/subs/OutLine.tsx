@@ -4,7 +4,7 @@ import ReactECharts from 'echarts-for-react'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 
-import styles from '@/components/auth/subs/outLine.module.scss'
+import styles from '@/components/auth/subs/outLine.module.less'
 import requests from '@/lib/fetchers'
 
 interface NewUser {

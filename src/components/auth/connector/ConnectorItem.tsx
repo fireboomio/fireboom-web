@@ -4,7 +4,7 @@ import React from 'react'
 
 import { Connector } from '@/interfaces/connector'
 
-import styles from './ConnectorItem.module.scss'
+import styles from './ConnectorItem.module.less'
 export interface Props {
   onItemClickHandle: (data: Connector) => void
   data: Connector

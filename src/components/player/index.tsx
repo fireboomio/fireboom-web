@@ -1,10 +1,10 @@
-import { message, Image } from 'antd'
+import { Image, message } from 'antd'
 import Draggable from 'react-draggable'
 
-import { EngineStatus } from '@/interfaces/common'
+import type { EngineStatus } from '@/interfaces/common'
 import requests from '@/lib/fetchers'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 interface Props {
   className?: string

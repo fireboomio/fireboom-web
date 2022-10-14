@@ -6,7 +6,7 @@ import type { Entity } from '@/interfaces/modeling'
 import { ModelingContext, ModelingDispatchContext } from '@/lib/context'
 
 import ModelEntityItem from './model-entity-item'
-import styles from './model-entity-list.module.scss'
+import styles from './model-entity-list.module.less'
 
 interface Props {
   onClickEntity: (entity: Entity) => void

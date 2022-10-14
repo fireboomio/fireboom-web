@@ -9,7 +9,7 @@ import { EMAIL, SMS } from '@/lib/constant'
 import { ConnectorContext } from '@/lib/context/auth-context'
 
 import ConnectorModal from './ConnectorModal'
-import styles from './MessageAndEmailConnector.module.scss'
+import styles from './MessageAndEmailConnector.module.less'
 
 interface Props {
   handleTopToggleDesigner: (authType: AuthListType) => void

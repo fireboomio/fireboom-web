@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import IconFont from '@/components/iconfont'
 import type { SettingType } from '@/interfaces/setting'
 
-import styles from './Pannel.module.scss'
+import styles from './Pannel.module.less'
 import SettingItem from './subs/PannelItem'
 
 interface Props {
@@ -14,22 +14,22 @@ const settingTypeList: SettingType[] = [
   {
     name: '外观',
     type: 'colorTheme',
-    icon: <IconFont type="icon-waiguan" />,
+    icon: <IconFont type="icon-waiguan" />
   },
   {
     name: '系统',
     type: 'system',
-    icon: <IconFont type="icon-xitong" />,
+    icon: <IconFont type="icon-xitong" />
   },
   {
     name: '安全',
     type: 'secure',
-    icon: <IconFont type="icon-anquan" />,
+    icon: <IconFont type="icon-anquan" />
   },
   {
     name: '跨域',
     type: 'cors',
-    icon: <IconFont type="icon-kuayu" />,
+    icon: <IconFont type="icon-kuayu" />
   },
   // {
   //   name: 'API Token',
@@ -39,13 +39,13 @@ const settingTypeList: SettingType[] = [
   {
     name: '环境变量',
     type: 'path',
-    icon: <IconFont type="icon-huanjingbianliang" />,
+    icon: <IconFont type="icon-huanjingbianliang" />
   },
   {
     name: '版本',
     type: 'version',
-    icon: <IconFont type="icon-banben" />,
-  },
+    icon: <IconFont type="icon-banben" />
+  }
 ]
 
 export default function SettingPannel({ handleToggleDesigner }: Props) {

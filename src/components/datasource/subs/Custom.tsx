@@ -13,7 +13,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
-import styles from './Custom.module.scss'
+import styles from './Custom.module.less'
 
 export interface Config {
   apiNamespace: string

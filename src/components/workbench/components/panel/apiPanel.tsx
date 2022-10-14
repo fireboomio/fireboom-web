@@ -14,7 +14,7 @@ import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
 // import GraphiQLApp from '@/pages/graphiql'
 
-import styles from './apiPanel.module.scss'
+import styles from './apiPanel.module.less'
 
 
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null

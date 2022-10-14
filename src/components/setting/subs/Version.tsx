@@ -2,10 +2,10 @@ import { Descriptions, Divider } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { VersionConfig } from '@/interfaces/setting'
+import type { VersionConfig } from '@/interfaces/setting'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 export default function SettingMainVersion() {
   const [verConfig, setVerConfig] = useImmer({} as VersionConfig)
@@ -32,7 +32,7 @@ export default function SettingMainVersion() {
               backgroundColor: 'white',
               width: '15%',
               borderRight: 'none',
-              borderBottom: 'none',
+              borderBottom: 'none'
             }}
           >
             <Descriptions.Item label="版本">

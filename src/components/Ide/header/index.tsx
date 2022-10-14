@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 
 import { AutoSaveStatus } from './../index'
 import type { AutoSavePayload } from './../index'
-import ideStyles from './index.module.scss'
+import ideStyles from './index.module.less'
 
 
 interface Props {

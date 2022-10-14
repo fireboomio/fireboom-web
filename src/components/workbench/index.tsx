@@ -1,21 +1,23 @@
 import { Layout as ALayout, Modal } from 'antd'
-import { PropsWithChildren, useEffect, useState, useCallback } from 'react'
+import type { PropsWithChildren } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
+
 // import {wi} from 'react-router-dom'
 // import { Router } from 'react-router-dom'
 // Route.LifeR
-
 import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
-import { Info } from '@/interfaces/common'
+import type { Info } from '@/interfaces/common'
 import { DOMAIN } from '@/lib/common'
-import { WorkbenchContext, RefreshMap, MenuName } from '@/lib/context/workbenchContext'
+import type { MenuName, RefreshMap } from '@/lib/context/workbenchContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import Header from './components/header'
 import Sider from './components/sider'
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
@@ -37,7 +39,7 @@ export default function Index(props: PropsWithChildren) {
     api: false,
     auth: false,
     dataSource: false,
-    storage: false,
+    storage: false
   })
 
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function Index(props: PropsWithChildren) {
           setEditFlag(false)
           resolve(true)
         },
-        onCancel: () => resolve(false),
+        onCancel: () => resolve(false)
       })
     })
   }, [editFlag])
@@ -107,7 +109,7 @@ export default function Index(props: PropsWithChildren) {
         markEdit,
         navCheck,
         setFullscreen: setHideSider,
-        isFullscreen: hideSider,
+        isFullscreen: hideSider
       }}
     >
       <ALayout className="h-100vh">

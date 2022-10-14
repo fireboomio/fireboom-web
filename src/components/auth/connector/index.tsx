@@ -10,7 +10,7 @@ import { useFetchConnector } from '@/lib/service/connector'
 
 import MessageAndEmailConnector from './MessageAndEmailConnector'
 import SocialContactConnector from './SocialContactConnector'
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 const { TabPane } = Tabs
 

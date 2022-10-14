@@ -29,7 +29,7 @@ import { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
-import styles from './Explorer.module.scss'
+import styles from './Explorer.module.less'
 
 interface Props {
   bucketId?: number

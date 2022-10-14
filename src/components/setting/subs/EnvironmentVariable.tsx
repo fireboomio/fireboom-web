@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Table, Descriptions, Modal, Form, Input, Divider, Popconfirm } from 'antd'
+import { Descriptions, Divider, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface DataType {
   createTime: string
@@ -20,9 +20,7 @@ interface DataType {
   proEnv?: string
 }
 
-interface FromValues {
-  [key: string]: number | string | boolean
-}
+type FromValues = Record<string, number | string | boolean>
 
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
@@ -97,13 +95,13 @@ export default function SettingMainEnvironmentVariable() {
       title: '变量名',
       dataIndex: 'key',
       key: 'key',
-      width: 200,
+      width: 200
     },
     {
       title: '开发环境',
       dataIndex: 'devEnv',
       key: 'devEnv',
-      width: 200,
+      width: 200
     },
     {
       title: '生产环境',
@@ -144,7 +142,7 @@ export default function SettingMainEnvironmentVariable() {
             />
           </div>
         )
-      },
+      }
     },
 
     {
@@ -179,8 +177,8 @@ export default function SettingMainEnvironmentVariable() {
             <IconFont type="icon-shanchu" onClick={e => e.stopPropagation()} />
           </Popconfirm>
         </div>
-      ),
-    },
+      )
+    }
   ]
 
   return (
@@ -212,13 +210,13 @@ export default function SettingMainEnvironmentVariable() {
           bodyStyle={{
             width: '549px',
             height: '200px',
-            margin: '10px auto',
+            margin: '10px auto'
           }}
           open={isVariableVisible}
           onOk={() => setIsVariableVisible(false)}
           onCancel={() => setIsVariableVisible(false)}
           okButtonProps={{
-            disabled: disabled,
+            disabled: disabled
           }}
           okText={
             <span
@@ -256,7 +254,7 @@ export default function SettingMainEnvironmentVariable() {
                 { required: true, message: '名称不能为空' },
                 {
                   pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                  message: '以字母或下划线开头，只能由数字、字母、下划线组成',
+                  message: '以字母或下划线开头，只能由数字、字母、下划线组成'
                 },
                 {
                   validator: (rule, value) => {
@@ -266,8 +264,8 @@ export default function SettingMainEnvironmentVariable() {
                     } else {
                       return Promise.resolve()
                     }
-                  },
-                },
+                  }
+                }
               ]}
             >
               <Input />
@@ -277,7 +275,7 @@ export default function SettingMainEnvironmentVariable() {
               name="devEnv"
               rules={[
                 { required: true, message: '开发环境不能为空' },
-                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' },
+                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }
               ]}
             >
               <Input />
@@ -287,7 +285,7 @@ export default function SettingMainEnvironmentVariable() {
               name="proEnv"
               rules={[
                 { required: true, message: '生产环境不能为空' },
-                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' },
+                { pattern: /^\w{1,256}$/g, message: '请输入长度不大于256的非空值' }
               ]}
             >
               <Input />
@@ -315,7 +313,7 @@ export default function SettingMainEnvironmentVariable() {
               backgroundColor: 'white',
               width: '30%',
               borderRight: 'none',
-              borderBottom: 'none',
+              borderBottom: 'none'
             }}
           >
             <Descriptions.Item label={system[0]?.key ? system[0]?.key : 'FIREBOOM_ADMINZ_SECR'}>

@@ -69,7 +69,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "less": "^4.1.3",
-    "sass": "^1.54.9",
     "toolkit": "link:@types/@graphiql/toolkit",
     "typescript": "^4.8.3",
     "vite": "^3.1.7",

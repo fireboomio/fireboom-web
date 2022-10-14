@@ -12,7 +12,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
-import styles from './PannelItem.module.scss'
+import styles from './PannelItem.module.less'
 
 interface Props {
   datasourceItem: DatasourceResp

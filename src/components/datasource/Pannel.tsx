@@ -9,7 +9,7 @@ import {
   DatasourceToggleContext,
 } from '@/lib/context/datasource-context'
 
-import styles from './Pannel.module.scss'
+import styles from './Pannel.module.less'
 import DatasourceItem from './subs/PannelItem'
 
 interface Props {

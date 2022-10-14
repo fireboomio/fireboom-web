@@ -1,7 +1,7 @@
 import { Divider } from 'antd'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 type TabItem = {
   title: string

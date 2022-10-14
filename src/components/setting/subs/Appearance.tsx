@@ -1,6 +1,6 @@
-import { Image, Divider } from 'antd'
+import { Divider, Image } from 'antd'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 export default function SettingMainAppearance() {
   return (

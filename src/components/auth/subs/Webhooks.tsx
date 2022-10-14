@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 // import requests from '@/lib/fetchers'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface hooksProvResp {
   id: number

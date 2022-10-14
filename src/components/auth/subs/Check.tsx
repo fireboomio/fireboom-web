@@ -10,7 +10,7 @@ import type { AuthProvResp } from '@/interfaces/auth'
 import { DOMAIN, HOST } from '@/lib/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 interface Props {
   content: AuthProvResp
 }

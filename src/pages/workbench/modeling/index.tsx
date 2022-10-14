@@ -11,7 +11,7 @@
 // import requests, { getFetcher } from '@/lib/fetchers'
 // import modelingReducer from '@/lib/reducers/modeling-reducer'
 
-// import styles from './index.module.scss'
+// import styles from './index.module.less'
 
 // type ShowTypeT = 'data' | 'model' | 'enum'
 

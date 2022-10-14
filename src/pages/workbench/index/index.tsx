@@ -9,7 +9,7 @@ import { Notice } from '@/components/home/Notice'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 interface HomeApi {
   liveQueryTotal: number
@@ -49,25 +49,25 @@ const initialValues = {
     liveQueryTotal: 0,
     mutationsTotal: 0,
     queryTotal: 0,
-    subscriptionsTotal: 0,
+    subscriptionsTotal: 0
   },
   homeAuth: {
     authTotal: 0,
     todayInsertUser: 0,
-    totalUser: 0,
+    totalUser: 0
   },
   homeDataSource: {
     CustomerTotal: 0,
     GraphqlTotal: 0,
     RestTotal: 0,
     dbTotal: 0,
-    dbTotal2: 0,
+    dbTotal2: 0
   },
   homeOss: {
     ossTotal: 0,
     totalMemory: '',
-    useMemory: '',
-  },
+    useMemory: ''
+  }
 }
 
 export default function Home() {
@@ -119,7 +119,6 @@ export default function Home() {
       <Helmet>
         <title>FireBoom</title>
         <meta name="description" content="FireBoom" />
-        <link rel="icon" href="/public/favicon.ico" />
       </Helmet>
 
       <div className="flex flex-col h-full">
@@ -270,7 +269,7 @@ export default function Home() {
                       style={{
                         width:
                           String(((Number(useMemory) || 0) / (Number(totalMemory) || 1)) * 100) +
-                          '%',
+                          '%'
                       }}
                     />
                   </div>

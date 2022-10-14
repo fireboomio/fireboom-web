@@ -2,7 +2,7 @@ import { useImmer } from 'use-immer'
 
 import type { SettingType } from '@/interfaces/setting'
 
-import styles from './subs.module.scss'
+import styles from './subs.module.less'
 
 interface Props {
   handleToggleDesigner: (settingType: SettingType) => void

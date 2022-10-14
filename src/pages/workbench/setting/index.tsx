@@ -2,10 +2,10 @@ import { Col, Row } from 'antd'
 import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
-import { SettingPannel, SettingContainer } from '@/components/setting'
+import { SettingContainer, SettingPannel } from '@/components/setting'
 import type { SettingType } from '@/interfaces/setting'
 
-import styles from './index.module.scss'
+import styles from './index.module.less'
 
 export default function Setting() {
   const [showType, setShowType] = useImmer('data')
