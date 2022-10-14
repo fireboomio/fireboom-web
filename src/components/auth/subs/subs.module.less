@@ -303,3 +303,87 @@
 //     color: rgba(175, 176, 180, 0.5);
 //   }
 // }
+
+
+.pillTab {
+  height: 36px;
+  background: #f0f1f4;
+  border-radius: 4px;
+  align-self: flex-start;
+  :global{
+    .ant-tabs-ink-bar{
+      display: none;
+    }
+    .ant-tabs-nav-list{
+      height: 36px;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      padding: 0 6px;
+    }
+    .ant-tabs-tab{
+      margin: 0;
+      width: 97px;
+      height: 26px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #787D8B;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .ant-tabs-tab-active{
+      background: white;
+      box-shadow: 0px 1px 4px 0px rgba(211,211,222,0.84);
+      .ant-tabs-tab-btn{
+        color: #333 !important;
+      }
+    }
+  }
+
+  .tab {
+
+    &__active {
+      color: #333;
+      font-weight: 500;
+      background: white;
+      box-shadow: 0px 1px 4px 0px rgba(211, 211, 222, 0.84);
+
+      .apiIcon {
+        width: 12px;
+        height: 10px;
+        margin-right: 7px;
+        background: url(/assets/workbench/sider-api-active.png) no-repeat center/contain !important;
+      }
+
+      .dataIcon {
+        width: 12px;
+        height: 10px;
+        margin-right: 7px;
+        background: url(/assets/workbench/sider-data-active.png) no-repeat center/contain !important;
+      }
+    }
+  }
+
+  .apiIcon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    background: url(/assets/workbench/sider-api.png) no-repeat center/contain;
+  }
+
+  .dataIcon {
+    width: 14px;
+    height: 15px;
+    margin-right: 6px;
+    background: url(/assets/workbench/sider-data.png) no-repeat center/contain;
+  }
+}
+
+.tabContent{
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid rgba(95,98,105,0.1);
+  padding: 16px;
+}
