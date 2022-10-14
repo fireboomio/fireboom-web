@@ -47,7 +47,7 @@ import {
 import requests, { getFetcher } from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 import { isEmpty, isUpperCase } from '@/lib/utils'
-import GraphiQLApp from '@/pages/graphiql'
+// import GraphiQLApp from '@/pages/graphiql'
 
 import styles from './index.module.scss'
 
@@ -769,7 +769,7 @@ const ApiManage: FC<ApiManageProps> = () => {
         bodyStyle={{ height: '90vh' }}
         width={'90vw'}
       >
-        <GraphiQLApp data={query} onSave={handleSaveGql} />
+        {/*<GraphiQLApp data={query} onSave={handleSaveGql} />*/}
       </Modal>
     </>
   )
