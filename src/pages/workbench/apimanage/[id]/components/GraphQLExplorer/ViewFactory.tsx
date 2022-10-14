@@ -15,22 +15,32 @@ import {
   isUnionType,
 } from 'graphql'
 
+import { arraySort, convertGraphiQLFieldMapToArray } from '../utils'
 import BaseView from './BaseView'
 import FieldView from './FieldView'
-import { arraySort, convertGraphiQLFieldMapToArray } from './utils'
 
-export function MultipleFieldViews({ map, sort = true } : { map: GraphQLFieldMap<any, any> | undefined, sort?: boolean }) {
+export function MultipleFieldViews({
+  map,
+  sort = true,
+}: {
+  map: GraphQLFieldMap<any, any> | undefined
+  sort?: boolean
+}) {
   let arr = convertGraphiQLFieldMapToArray(map)
   if (sort) {
     arr = arraySort(arr)
   }
-  return <>{arr.map(field => {
-    return <FieldView key={field.name} field={field} />
-  })}</>
+  return (
+    <>
+      {arr.map(field => {
+        return <FieldView key={field.name} field={field} />
+      })}
+    </>
+  )
 }
 
 export function ObjectViews({ obj }: { obj: GraphQLObjectType }) {
-  return <MultipleFieldViews map={obj.getFields() } />
+  return <MultipleFieldViews map={obj.getFields()} />
 }
 
 export function InputObjectViews({ obj }: { obj: GraphQLInputObjectType }) {
@@ -38,10 +48,8 @@ export function InputObjectViews({ obj }: { obj: GraphQLInputObjectType }) {
   return <>InputObjectViews</>
 }
 
-export function ScalarViews({ obj, checked }: { obj: GraphQLScalarType, checked: boolean }) {
-  return (
-    <BaseView name={obj.name} color="blue" selectable />
-  )
+export function ScalarViews({ obj, checked }: { obj: GraphQLScalarType; checked: boolean }) {
+  return <BaseView name={obj.name} color="blue" selectable />
 }
 
 export function NonNullViews({ obj }: { obj: GraphQLNonNull<GraphQLNullableType> }) {

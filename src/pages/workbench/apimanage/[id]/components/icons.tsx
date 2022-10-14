@@ -1,4 +1,4 @@
-import { SVGAttributes } from 'react'
+import type { SVGAttributes } from 'react'
 
 export const FilterIcon = (props: SVGAttributes<SVGSVGElement>) => {
   return (
@@ -107,18 +107,13 @@ export const LinkOutlined = (props: SVGAttributes<SVGSVGElement>) => {
 
 export const FlashFilled = (props: SVGAttributes<SVGSVGElement>) => {
   return (
-    <svg
-      {...props}
-      width="8px"
-      height="8px"
-      viewBox="0 0 8 8"
-    >
+    <svg {...props} width="8px" height="8px" viewBox="0 0 8 8">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <path
           d="M6.97101016,3.30839499 C6.92839638,3.22659007 6.8449487,3.17100435 6.7495246,3.16086024 L4.28214722,2.89529769 L4.28214722,0.269179155 C4.2825151,0.148250551 4.19777084,0.0420241305 4.0751865,0.00975515812 C3.95260215,-0.0225138143 3.82245894,0.0271458538 3.7573534,0.131032987 L1.04027573,4.4363652 C0.990899969,4.51415626 0.986667761,4.61072446 1.02898983,4.6938804 C1.07160361,4.77568532 1.1550513,4.83127104 1.2504754,4.84141515 L3.71785279,5.10831892 L3.71785279,7.731755 C3.71793063,7.87987196 3.84420665,8 4,8 C4.09734079,8 4.19044937,7.9517159 4.24123586,7.86990117 L6.95972427,3.56591018 C7.00910003,3.48677791 7.01333224,3.39020971 6.97101016,3.30839499 L6.97101016,3.30839499 Z"
           fill="currentColor"
           fillRule="nonzero"
-         />
+        />
       </g>
     </svg>
   )

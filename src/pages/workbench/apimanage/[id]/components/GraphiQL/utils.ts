@@ -1,4 +1,5 @@
-import {  DocumentNode, parse, print } from 'graphql'
+import type { DocumentNode } from 'graphql'
+import { parse, print } from 'graphql'
 
 export function parseSchemaAST(query: string) {
   return parse(query, { noLocation: true })

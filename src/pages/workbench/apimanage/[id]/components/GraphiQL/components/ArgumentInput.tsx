@@ -1,6 +1,6 @@
 import { Input, InputNumber } from 'antd'
 
-import { ParameterT } from '@/interfaces/apimanage'
+import type { ParameterT } from '@/interfaces/apimanage'
 
 export type InputValueType = string | number | object
 
@@ -17,11 +17,21 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
         <InputNumber className="text-xs" value={value as number} onChange={e => onChange?.(e)} />
       )
     case 'String':
-      return <Input className="text-xs" value={value as string} onChange={e => onChange?.(e.target.value)} />
+      return (
+        <Input
+          className="text-xs"
+          value={value as string}
+          onChange={e => onChange?.(e.target.value)}
+        />
+      )
 
     default:
       return (
-        <Input.TextArea className="text-xs" value={value as string} onChange={e => onChange?.(e.target.value)} />
+        <Input.TextArea
+          className="text-xs"
+          value={value as string}
+          onChange={e => onChange?.(e.target.value)}
+        />
       )
   }
 }

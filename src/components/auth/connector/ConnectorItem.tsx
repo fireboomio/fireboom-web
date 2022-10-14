@@ -1,5 +1,5 @@
 import { Image } from 'antd'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import React from 'react'
 
 import { Connector } from '@/interfaces/connector'
@@ -14,7 +14,7 @@ export interface Props {
 const ConnectorItem: React.FC<Props> = ({ data, onItemClickHandle, currentSelectedId }) => {
   return (
     <div
-      className={classNames({
+      className={clsx({
         [styles['connector-item-wrapper']]: true,
         [styles['connector-item-wrapper-selected']]: currentSelectedId === data.id,
         [styles['connector-item-wrapper-unselected']]: currentSelectedId !== data.id,

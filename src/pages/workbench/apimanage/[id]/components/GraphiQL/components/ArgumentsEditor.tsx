@@ -1,13 +1,14 @@
 import { CloseCircleOutlined } from '@ant-design/icons'
 import { useEditorContext } from '@graphiql/react'
 import { Tooltip } from 'antd'
-import { VariableDefinitionNode } from 'graphql'
+import type { VariableDefinitionNode } from 'graphql'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { parseParameters } from '@/lib/gql-parser'
 
 import requiredIcon from '../assets/required.svg'
-import ArgumentInput, { InputValueType } from './ArgumentInput'
+import type { InputValueType } from './ArgumentInput'
+import ArgumentInput from './ArgumentInput'
 
 interface ArgumentsEditorProps {
   arguments: ReadonlyArray<VariableDefinitionNode>
@@ -72,9 +73,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       },
       setValue() {
         /** */
-      },
+      }
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsed])
 
   return (

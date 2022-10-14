@@ -1,5 +1,5 @@
 import { useExecutionContext } from '@graphiql/react'
-import { ImgHTMLAttributes } from 'react'
+import type { ImgHTMLAttributes } from 'react'
 
 import RunIcon from '../assets/run.svg'
 
@@ -9,7 +9,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { isFetching, run, stop } = useExecutionContext({
     nonNull: true,
-    caller: ExecuteButton,
+    caller: ExecuteButton
   })
 
   const toggleExecute = () => {
@@ -27,7 +27,10 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
       <img {...props} src={RunIcon} width="28" height="28" alt="run" onClick={toggleExecute} />
 
       {isFetching && (
-        <svg className="h-7 text-white top-0 right-0 bottom-0 left-0 w-7 z-2 absolute" viewBox="0 0 24 24">
+        <svg
+          className="h-7 text-white top-0 right-0 bottom-0 left-0 w-7 z-2 absolute"
+          viewBox="0 0 24 24"
+        >
           <path
             fill="none"
             stroke="currentColor"

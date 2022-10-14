@@ -1,5 +1,5 @@
-import { GraphQLFieldMap } from 'graphql'
-import { CSSProperties } from 'react'
+import type { GraphQLFieldMap } from 'graphql'
+import type { CSSProperties } from 'react'
 
 export function convertGraphiQLFieldMapToArray(map: undefined | GraphQLFieldMap<any, any>) {
   return map ? Object.keys(map).map(key => map[key]) : []
@@ -12,5 +12,5 @@ export function arraySort<T extends SortableItem>(array: T[]): T[] {
 
 export const checkboxStyle: CSSProperties = {
   marginLeft: '-3px',
-  marginRight: '3px',
+  marginRight: '3px'
 }
