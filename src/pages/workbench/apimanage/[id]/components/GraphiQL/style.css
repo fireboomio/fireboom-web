@@ -72,6 +72,11 @@
   cursor: pointer;
 }
 
+.graphiql-container .graphiql-editor {
+  flex: 1;
+  height: auto;
+}
+
 /* The query editor */
 .graphiql-container .graphiql-query-editor-wrapper {
   display: flex;
