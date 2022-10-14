@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable import/order */
 /*
  * https://github.com/graphql/graphiql/issues/118
@@ -5,7 +7,7 @@
 
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
-import { GraphQLSchema, buildClientSchema, getIntrospectionQuery } from 'graphql'
+import { GraphQLSchema, buildClientSchema, getIntrospectionQuery, IntrospectionQuery } from 'graphql'
 import 'graphiql/graphiql.css'
 
 import { useEffect, useState } from 'react'
@@ -19,7 +21,7 @@ import { GraphiQL } from './components/GraphiQL'
 
 import styles from './index.module.less'
 import APIHeader from './components/APIHeader'
-import { APIContext } from './hooks'
+import { APIContext, useAPIManager } from './hooks'
 import requests from '@/lib/fetchers'
 import { useParams } from 'react-router-dom'
 
@@ -56,43 +58,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 `
 
 export function APIEditorContainer() {
-  const [schema, setSchema] = useState<GraphQLSchema>()
-  const [query, setQuery] = useState<string | undefined>(DEFAULT_QUERY)
-
-  useEffect(() => {
-    fetcher({
-      query: getIntrospectionQuery(),
-    })
-      // @ts-ignore
-      .then((result: Record<string, unknown>) => setSchema(buildClientSchema(result.data)))
-      .catch((err: Error) => {
-        throw err
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function fetcher(params: Record<string, unknown>): Promise<any> {
-    // return fetch(url ?? '/app/main/graphql', {
-    return fetch('https://graphql-weather-api.herokuapp.com/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params),
-    })
-      .then(function (response) {
-        return response.text()
-      })
-      .then(function (responseBody) {
-        return JSON.parse(responseBody) as unknown
-      })
-      .catch((err: Error) => {
-        throw err
-      })
-  }
-
+  const { fetcher, query, schema, setQuery } = useAPIManager()
   // function save() {
   //   const content = ref.current?.props.query as string
   //   return onSave(content)
@@ -132,15 +98,48 @@ export function APIEditorContainer() {
 export default function APIEditorProvider() {
   const [apiDesc, setAPIDesc] = useState()
   const params = useParams()
+  const [schema, setSchema] = useState<GraphQLSchema | null>(null)
+  const [query, setQuery] = useState<string>(DEFAULT_QUERY)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function fetcher(params: Record<string, unknown>): Promise<any> {
+    try {
+      // const res = await fetch(url ?? '/app/main/graphql', {
+      const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      }).then(resp => resp.json())
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      setSchema(buildClientSchema(res.data as IntrospectionQuery))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     void requests.get(`/operateApi/${params.id}`).then(resp => {
       return setAPIDesc(resp)
     })
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    fetcher({ query: getIntrospectionQuery() })
   }, [])
 
   return (
-    <APIContext.Provider value={apiDesc}>
+    <APIContext.Provider
+      value={{
+        apiDesc,
+        query,
+        setQuery,
+        schema,
+        fetcher,
+      }}
+    >
       <APIEditorContainer />
     </APIContext.Provider>
   )

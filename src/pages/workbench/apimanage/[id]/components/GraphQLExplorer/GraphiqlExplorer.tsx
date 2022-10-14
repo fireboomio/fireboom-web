@@ -1,4 +1,4 @@
-import { GraphQLField, GraphQLSchema } from 'graphql'
+import { GraphQLSchema } from 'graphql'
 import { useMemo, useState } from 'react'
 
 import ExplorerFilter from './ExplorerFilter'

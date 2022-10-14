@@ -1,8 +1,8 @@
 import { type CheckboxOptionType, Radio, Select } from 'antd'
 import { useState } from 'react'
 
+import { FilterIcon } from '../icons'
 import styles from './filter.module.less'
-import { FilterIcon } from './icons'
 
 interface ExplorerFilterProps {
   filters: ReadonlyArray<CheckboxOptionType>

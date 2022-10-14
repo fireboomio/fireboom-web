@@ -1,14 +1,9 @@
-import {
-  GraphQLField,
-  isNonNullType,
-  isObjectType,
-  isScalarType,
-} from 'graphql'
+import { GraphQLField, isNonNullType, isObjectType, isScalarType } from 'graphql'
 
+import { arraySort } from '../utils'
 import ArgView from './ArgView'
 import BaseView from './BaseView'
 import { CommonViews } from './ViewFactory'
-import { arraySort } from './utils'
 
 interface FieldViewProps {
   field: GraphQLField<any, any>
@@ -25,9 +20,8 @@ const FieldView = ({ field }: FieldViewProps) => {
         selectable={selectable}
         expandedChildren={
           <>
-            {'args' in field && arraySort([...field.args]).map(arg => (
-              <ArgView arg={arg} key={arg.name} />
-            ))}
+            {'args' in field &&
+              arraySort([...field.args]).map(arg => <ArgView arg={arg} key={arg.name} />)}
             <CommonViews obj={field.type} />
           </>
         }

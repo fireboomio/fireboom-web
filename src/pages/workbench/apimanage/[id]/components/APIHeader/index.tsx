@@ -1,13 +1,10 @@
 import { EditFilled, SaveOutlined } from '@ant-design/icons'
 import { Breadcrumb, Switch } from 'antd'
 
-import styles from './APIHeader.module.less'
-import { CopyOutlined, FlashFilled, LinkOutlined } from './icons'
-interface APIHeaderProps {
-  //
-}
+import { CopyOutlined, FlashFilled, LinkOutlined } from '../icons'
+import styles from './index.module.less'
 
-const APIHeader = ({}: /** */ APIHeaderProps) => {
+const APIHeader = () => {
   return (
     <div className="bg-white flex flex-shrink-0 h-10 px-3 items-center" style={{
       borderBottom: '1px solid rgba(95,98,105,0.1)'
