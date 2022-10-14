@@ -2,7 +2,10 @@ import type { Edge, Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
 // eslint-disable-next-line import/no-unassigned-import
 import '@antv/x6-react-shape/dist/x6-react-shape.js'
+import { Modal } from 'antd'
 import { useEffect, useRef } from 'react'
+
+import IdeContainer from '@/components/Ide'
 
 import { ActionGroup } from './ActionGroup'
 import StatusDirective from './StatusDirective'
@@ -40,9 +43,12 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
+const showIde = function (path: string) {
+  Modal.info({ width: '90vw', okText: '关闭', content: <IdeContainer hookPath={path} defaultLanguage="typescript" /> })
+}
+
 const FlowChart = (props: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     // 初始化画布
     const graph = new Graph({
@@ -684,7 +690,9 @@ const FlowChart = (props: FlowChartProps) => {
           shape: 'react-shape',
           width: 114,
           height: 20,
-          component: <StatusDirective status={'On'} label="onRequest" />,
+          component: (
+            <StatusDirective status={'On'} label="onRequest" onDoubleClick={() => showIde('global/onRequest')} />
+          ),
           x: 290,
           y: 64,
         },
@@ -877,7 +885,13 @@ const FlowChart = (props: FlowChartProps) => {
           shape: 'react-shape',
           width: 114,
           height: 20,
-          component: <StatusDirective status={'Off'} label="onResponse" />,
+          component: (
+            <StatusDirective
+              status={'Off'}
+              label="onResponse"
+              onDoubleClick={() => showIde('global/onResponse')}
+            />
+          ),
           x: 290,
           y: 582,
         },

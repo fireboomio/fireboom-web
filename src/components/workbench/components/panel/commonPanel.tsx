@@ -16,6 +16,8 @@ import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.less'
 
+import RoleIcon from '/assets/workbench/panel-role.png'
+
 interface PanelConfig {
   title: string
   openItem: (id: number) => string
@@ -99,7 +101,7 @@ const panelMap: Record<string, PanelConfig> = {
     title: '身份验证',
     openItem: id => `/workbench/auth/${id}`,
     newItem: '/workbench/auth/new',
-    navAction: [{ icon: Icon, path: '/workbench/auth/role' }],
+    navAction: [{ icon: RoleIcon, path: '/workbench/auth/role' }],
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
@@ -257,7 +259,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         <>
           {panelConfig.navAction?.map(item => (
             <div className="flex mr-1.5" key={item.path}>
-              <img width={13} height={13} src={item.icon} onClick={() => navigate(item.path)} />
+              <img width={19} height={19} src={item.icon} onClick={() => navigate(item.path)} />
             </div>
           ))}
         </>

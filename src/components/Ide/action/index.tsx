@@ -4,18 +4,22 @@ import type { EditorProps } from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd';
 import { FC, useRef } from 'react';
 
+
+import { RunHookResponse } from '..';
 import styles from './../subs.module.less'
 import ideStyles from './index.module.less'
 
 
 interface Props {
+    // 输出日志列表
+    runResult: RunHookResponse,
     expandAction: boolean
     editorOptions: EditorProps['options']
     // 点击调试按钮
     onClickDebug: (code: { [key: string]: any }) => void
 }
 
-type EditorInputContainerProps = Props;
+type EditorInputContainerProps = Omit<Props, 'runResult'>;
 
 export const EditorInputContainer: FC<EditorInputContainerProps> = (props) => {
     const editorRef = useRef<any>(null);
@@ -65,7 +69,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = (props) => {
     )
 }
 
-type EditorOutPutContainerProps = Pick<Props, 'expandAction'>;
+type EditorOutPutContainerProps = Pick<Props, 'expandAction' | 'runResult'>;
 
 export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = (props) => {
     return <div className={`${ideStyles['output-container']}`}>
@@ -76,19 +80,27 @@ export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = (props) => 
         {/* 控制台输出 */}
         {
             props.expandAction && <div className="output">
-                <div className="output-item">
-                    {'>'} 2021-08-12 19:20:00
-                </div>
+                {/* 循环loglist二维数组 */}
+                {
+                    props.runResult.logs.map((item, index) => {
+                        return <div className="output-item" key={index}>
+                            {'>'} {item.join(' ')}
+                        </div>
+                    }).concat(
+                        <div className="output-item" key={props.runResult.logs.length}>
+                            {'> 函数执行结果:'} {JSON.stringify(props.runResult.result)}
+                        </div>)
+                }
             </div>
         }
     </div>
 }
 
 
-const IdeActionContainer: FC<Props> = ({ expandAction, editorOptions, onClickDebug }) => {
+const IdeActionContainer: FC<Props> = ({ runResult, expandAction, editorOptions, onClickDebug }) => {
     return <div className={`${ideStyles['ide-action']} flex`}>
         <EditorInputContainer onClickDebug={onClickDebug} expandAction={expandAction} editorOptions={editorOptions} />
-        <EditorOutPutContainer expandAction={expandAction} />
+        <EditorOutPutContainer runResult={runResult} expandAction={expandAction} />
     </div>
 }
 

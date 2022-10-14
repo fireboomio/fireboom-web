@@ -43,7 +43,7 @@ export const saveHookDepend = (path: string, depend: Record<string, string>[]) =
 }
 
 // 运行hook
-export const runHook = (
+export const runHook = <R>(
   path: string,
   params: {
     depend: Record<string, string>[]
@@ -52,7 +52,7 @@ export const runHook = (
     scriptType: string
   }
 ) => {
-  return requests.post('/hook/input', {
+  return requests.post<any, R>('/hook/run', {
     path,
     depend: params.depend,
     input: params.input,
