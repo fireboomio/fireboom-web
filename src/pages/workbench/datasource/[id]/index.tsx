@@ -15,8 +15,6 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
-import styles from './index.module.less'
-
 export default function Datasource() {
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)

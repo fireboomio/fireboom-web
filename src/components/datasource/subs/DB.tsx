@@ -45,9 +45,26 @@ const ipReg =
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
+const bbb = `
+type MessagePayload {
+  extra: String!
+}
+input MessagePayloadInput {
+  extra: String!
+}
+`
+const jjj = [
+  {
+    entityName: 'messages',
+    fieldName: 'payload',
+    responseTypeReplacement: 'MessagePayload',
+    inputTypeReplacement: 'MessagePayloadInput',
+  },
+]
+
 export default function DB({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
-  const [disabled, setDisabled] = useImmer(false)
+  const [_disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
   const config = content.config as Config
@@ -487,7 +504,7 @@ export default function DB({ content, type }: Props) {
         </div>
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
-        <Setting />
+        <Setting schemaExtension={bbb} replaceJSON={jjj} />
       )}
     </>
   )

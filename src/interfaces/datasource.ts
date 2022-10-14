@@ -67,3 +67,10 @@ export interface TypeField {
   InputType: string
   isActive: boolean
 }
+
+export interface ReplaceJSON {
+  entityName: string
+  fieldName: string
+  responseTypeReplacement: string
+  inputTypeReplacement: string
+}
