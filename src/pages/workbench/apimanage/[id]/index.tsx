@@ -19,6 +19,9 @@ import { GraphiQL } from './components/GraphiQL'
 
 import styles from './index.module.less'
 import APIHeader from './components/APIHeader'
+import { APIContext } from './hooks'
+import requests from '@/lib/fetchers'
+import { useParams } from 'react-router-dom'
 
 const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
@@ -52,16 +55,9 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
 `
 
-interface Props {
-  url?: string
-  data?: string
-  onSave: (query: string) => void
-}
-export default function App({ url, data, onSave }: Props) {
+export function APIEditorContainer() {
   const [schema, setSchema] = useState<GraphQLSchema>()
-  const [query, setQuery] = useState<string | undefined>(data ?? DEFAULT_QUERY)
-
-  // const ref = useRef<GraphiQL | null>()
+  const [query, setQuery] = useState<string | undefined>(DEFAULT_QUERY)
 
   useEffect(() => {
     fetcher({
@@ -74,10 +70,6 @@ export default function App({ url, data, onSave }: Props) {
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    setQuery(data)
-  }, [data])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function fetcher(params: Record<string, unknown>): Promise<any> {
@@ -134,5 +126,22 @@ export default function App({ url, data, onSave }: Props) {
         </div>
       </div>
     </>
+  )
+}
+
+export default function APIEditorProvider() {
+  const [apiDesc, setAPIDesc] = useState()
+  const params = useParams()
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    void requests.get(`/operateApi/${params.id}`).then(resp => {
+      return setAPIDesc(resp)
+    })
+  }, [])
+
+  return (
+    <APIContext.Provider value={apiDesc}>
+      <APIEditorContainer />
+    </APIContext.Provider>
   )
 }
