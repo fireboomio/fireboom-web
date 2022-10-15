@@ -1,5 +1,5 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
-import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
+import { Button, Descriptions, Form, Input, notification, Radio, Select, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -17,13 +17,9 @@ interface Props {
   type: ShowType
 }
 
-interface Config {
-  [key: string]: string
-}
+type Config = Record<string, string>
 
-interface FromValues {
-  [key: string]: number | string | boolean
-}
+type FromValues = Record<string, number | string | boolean>
 
 interface Props {
   content: DatasourceResp
@@ -55,11 +51,17 @@ input MessagePayloadInput {
 `
 const jjj = [
   {
-    entityName: 'messages',
-    fieldName: 'payload',
+    entityName: 'Class',
+    fieldName: 'txt',
     responseTypeReplacement: 'MessagePayload',
-    inputTypeReplacement: 'MessagePayloadInput',
+    inputTypeReplacement: 'MessagePayloadInput'
   },
+  {
+    entityName: 'Student',
+    fieldName: 'name',
+    responseTypeReplacement: 'MessagePayload',
+    inputTypeReplacement: 'MessagePayloadInput'
+  }
 ]
 
 export default function DB({ content, type }: Props) {
@@ -139,7 +141,7 @@ export default function DB({ content, type }: Props) {
         name="host"
         rules={[
           { required: true, message: '主机名不能为空' },
-          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' },
+          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -151,8 +153,8 @@ export default function DB({ content, type }: Props) {
           { required: true, message: '数据库名不能为空' },
           {
             pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-          },
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+          }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -162,7 +164,7 @@ export default function DB({ content, type }: Props) {
         name="port"
         rules={[
           { required: true, message: '端口号不能为空' },
-          { pattern: port, message: '端口范围为0-9999' },
+          { pattern: port, message: '端口范围为0-9999' }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -174,8 +176,8 @@ export default function DB({ content, type }: Props) {
           { required: true, message: '用户名不能为空' },
           {
             pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-          },
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+          }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -185,7 +187,7 @@ export default function DB({ content, type }: Props) {
         name="password"
         rules={[
           { required: true, message: '密码不能为空' },
-          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' },
+          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' }
         ]}
       >
         <Input.Password placeholder="请输入..." />
@@ -216,12 +218,12 @@ export default function DB({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 0 : 1,
+        switch: isChecked == true ? 0 : 1
       })
       .then(() => {
         handleSave({
           ...content,
-          switch: isChecked == true ? 0 : 1,
+          switch: isChecked == true ? 0 : 1
         })
       })
   }
@@ -242,7 +244,7 @@ export default function DB({ content, type }: Props) {
       newContent = {
         ...content,
         config: newValues,
-        name: values.apiNamespace,
+        name: values.apiNamespace
       } as DatasourceResp
       await requests.put('/dataSource', newContent)
     }
@@ -265,7 +267,7 @@ export default function DB({ content, type }: Props) {
       .post('/checkDBConn', {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: { sourceType: content.sourceType, config: config },
+        data: { sourceType: content.sourceType, config: config }
       })
       .then(x => console.log(x))
 
@@ -277,7 +279,7 @@ export default function DB({ content, type }: Props) {
           描述性语句描述性语句描述性语句
         </div>
       ),
-      placement,
+      placement
     })
   }
 
@@ -439,8 +441,8 @@ export default function DB({ content, type }: Props) {
                 databaseUrl: {
                   kind:
                     (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
-                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val,
-                },
+                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val
+                }
               }}
             >
               <Form.Item
@@ -450,8 +452,8 @@ export default function DB({ content, type }: Props) {
                   { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-                  },
+                    message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                  }
                 ]}
               >
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />

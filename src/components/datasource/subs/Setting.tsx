@@ -5,7 +5,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
+import type { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 
 interface OptionT {
@@ -22,6 +22,11 @@ interface DataType {
   isOpen: boolean
 }
 
+interface Model {
+  name: string
+  fields: Array<{ name: string; title: string }>
+}
+
 interface Props {
   schemaExtension: string
   replaceJSON: ReplaceJSON[]
@@ -30,6 +35,7 @@ interface Props {
 const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
   const { id: currDBId } = useParams()
   const [data, setData] = useState<DataType[]>([])
+  const [model, setModel] = useState<Model[]>([])
   const [tableOpts, setTableOpts] = useState<OptionT[]>([])
 
   const columns: ColumnsType<DataType> = [
@@ -39,7 +45,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
       key: 'table',
       render: (table: string) => (
         <Select defaultValue={table} style={{ width: 120 }} bordered={false} options={tableOpts} />
-      ),
+      )
     },
     { title: '字段', dataIndex: 'field', key: 'field' },
     { title: '响应类型', dataIndex: 'resType', key: 'resType' },
@@ -48,8 +54,8 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
       title: '是否开启',
       dataIndex: 'isOpen',
       key: 'isOpen',
-      render: (isOpen: boolean) => <Switch className="w-8 h-2" checked={isOpen} />,
-    },
+      render: (isOpen: boolean) => <Switch className="w-8 h-2" checked={isOpen} />
+    }
   ]
 
   useEffect(() => {
@@ -60,7 +66,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
         field: x.fieldName,
         resType: x.responseTypeReplacement,
         inputType: x.inputTypeReplacement,
-        isOpen: true,
+        isOpen: true
       }))
     )
   }, [replaceJSON])
@@ -69,15 +75,24 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
     void requests
       .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`)
       .then(x => {
-        console.log('mm', x.models)
-        return x
+        const model = x.models.map(m => ({
+          name: m.name,
+          fields: m.fields.map(f => ({ name: f.name, title: f.title }))
+        }))
+        setModel(model)
+        return model
       })
-      .then(x => setTableOpts(x.models.map(m => ({ label: m.name, value: m.name }))))
+      .then(x => setTableOpts(x.map(m => ({ label: m.name, value: m.name }))))
   }, [currDBId])
+
+  function makeField(x: DataType) {
+    const fields = model.find(m => m.name === x.table)?.fields
+    return fields?.map(x => ({ label: x.name, name: x.name }))
+  }
 
   return (
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
-      <div className="w-5/11 ">
+      <div className="w-5/11">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">自定义类型</div>
         <Editor language="graphql" value={schemaExtension} />
       </div>
@@ -85,6 +100,42 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
       <div className="w-6/11">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
         <Table size="small" columns={columns} dataSource={data} pagination={false} />
+
+        <table className="w-full">
+          <tr>
+            <th>表</th>
+            <th>字段</th>
+            <th>响应类型</th>
+            <th>输入类型</th>
+            <th>是否开启</th>
+          </tr>
+          {data.map((x, idx) => (
+            <tr key={idx}>
+              <td>
+                <Select
+                  defaultValue={x.table}
+                  style={{ width: 120 }}
+                  bordered={true}
+                  options={tableOpts}
+                  value={x.table}
+                />
+              </td>
+              <td>
+                <Select
+                  defaultValue={x.field}
+                  style={{ width: 120 }}
+                  bordered={true}
+                  options={makeField(x)}
+                />
+              </td>
+              <td>{x.resType}</td>
+              <td>{x.inputType}</td>
+              <td>
+                <Switch className="w-8 h-2" checked={x.isOpen} />
+              </td>
+            </tr>
+          ))}
+        </table>
       </div>
     </div>
   )
