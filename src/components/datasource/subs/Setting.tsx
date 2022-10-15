@@ -2,6 +2,7 @@
 import Editor from '@monaco-editor/react'
 import { Select, Switch, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -37,6 +38,8 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
   const [data, setData] = useState<DataType[]>([])
   const [model, setModel] = useState<Model[]>([])
   const [tableOpts, setTableOpts] = useState<OptionT[]>([])
+  const [inputOpts, setInputOpts] = useState<OptionT[]>([])
+  const [outOpts, setOutOpts] = useState<OptionT[]>([])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -70,6 +73,21 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
       }))
     )
   }, [replaceJSON])
+
+  useEffect(() => {
+    if (!schemaExtension) return
+
+    const ops = parse(schemaExtension, { noLocation: true }).definitions
+    const inputOpts = ops
+      .filter(op => op.kind === 'InputObjectTypeDefinition')
+      .map(x => ({ label: x.name.value, value: x.name.value }))
+    setInputOpts(inputOpts)
+
+    const outOpts = ops
+      .filter(op => op.kind === 'ObjectTypeDefinition')
+      .map(x => ({ label: x.name.value, value: x.name.value }))
+    setOutOpts(outOpts)
+  }, [schemaExtension])
 
   useEffect(() => {
     void requests
@@ -128,8 +146,22 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
                   options={makeField(x)}
                 />
               </td>
-              <td>{x.resType}</td>
-              <td>{x.inputType}</td>
+              <td>
+                <Select
+                  defaultValue={x.resType}
+                  style={{ width: 120 }}
+                  bordered={true}
+                  options={outOpts}
+                />
+              </td>
+              <td>
+                <Select
+                  defaultValue={x.inputType}
+                  style={{ width: 120 }}
+                  bordered={true}
+                  options={inputOpts}
+                />
+              </td>
               <td>
                 <Switch className="w-8 h-2" checked={x.isOpen} />
               </td>
