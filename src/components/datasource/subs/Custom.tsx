@@ -106,11 +106,6 @@ export default function Custom({ content }: Props) {
             onChange={connectSwitchOnChange}
             className={styles['switch-check-btn']}
           />
-          <div className="">
-            <Button className={`${styles['edit-btn']} ml-4`} onClick={save}>
-              <span>保存</span>
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -147,15 +142,7 @@ export default function Custom({ content }: Props) {
           主要用于日志等副作用操作
         </span>
       </div>
-      <IdeContainer hookPath={''} defaultLanguage="typescript" onChange={console.log} />
-      <Editor
-        height="90vh"
-        defaultLanguage="typescript"
-        defaultValue="// some comment"
-        className={`mt-4 ${styles.monaco}`}
-        value={code}
-        onChange={value => setCode(value ?? '')}
-      />
+      {content.name ? <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" /> : ''}
     </>
   )
 }

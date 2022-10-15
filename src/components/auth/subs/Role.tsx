@@ -8,7 +8,17 @@ import {
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useEffect, useMemo, useState } from 'react'
+import {
+  ComponentProps,
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactFragment,
+  ReactPortal,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
@@ -32,7 +42,7 @@ interface TabT {
 }
 
 const { TabPane } = Tabs
-export const hookPath:{[key:string]: string} = {
+export const hookPath: { [key: string]: string } = {
   postAuthentication: 'auth/postAuthentication',
   mutatingPostAuthentication: 'auth/mutatingPostPreResolve',
 }
@@ -154,8 +164,13 @@ export default function AuthRole() {
 
   return (
     <>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="角色管理" key="1">
+      <Tabs
+        defaultActiveKey="1"
+        renderTabBar={(props, DefaultTabBar) => {
+          return <DefaultTabBar className={styles.pillTab} {...props} />
+        }}
+      >
+        <TabPane tab="角色管理" key="role" className={styles.tabContent}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-base text-gray">角色管理</span>
             <Button
@@ -236,7 +251,7 @@ export default function AuthRole() {
             )}
           </div>
         </TabPane>
-        <TabPane tab="身份鉴权" key="2">
+        <TabPane tab="身份鉴权" key="auto" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
@@ -265,7 +280,11 @@ export default function AuthRole() {
               </div>
             </div>
 
-            <IdeContainer hookPath={hookPath[activeKey]} defaultLanguage="typescript" onChange={console.log} />
+            <IdeContainer
+              hookPath={hookPath[activeKey]}
+              defaultLanguage="typescript"
+              onChange={console.log}
+            />
           </div>
         </TabPane>
       </Tabs>

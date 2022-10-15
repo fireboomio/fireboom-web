@@ -1,12 +1,16 @@
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
 import type { EditorProps, OnMount } from '@swordjs/monaco-editor-react'
+import { loader } from '@swordjs/monaco-editor-react';
 import { Button } from 'antd';
 import { debounce } from 'lodash';
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 import { saveHookDepend, saveHookInput, saveHookScript, updateHookSwitch, getHook, runHook } from '@/lib/service/hook'
+
+loader.config({ paths: { vs: 'https://unpkg.com/monaco-editor/min/vs' } });
+
 
 import IdeActionContainer from './action/index'
 import IdeCodeContainer from './code/index';
@@ -33,6 +37,7 @@ export const hookPath = {
 export type Depend = { [key: string]: string }
 export type Input = { [key: string]: any }
 export type HookInfo = { script: string, scriptType: string, type: string, path: string, depend: Depend[] | null, input: Input | null, switch: boolean };
+export type RunHookResponse = { logs: any[][], result: any }
 
 // 保存的4种状态
 export enum AutoSaveStatus {
@@ -80,6 +85,9 @@ interface Props {
  * @return {*}
  */
 const IdeContainer: FC<Props> = props => {
+  useEffect(()=>{
+    console.log('====ide init')
+  },[])
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<NodeJS.Timeout | null>(null);
   const handle = useFullScreenHandle();
@@ -87,6 +95,10 @@ const IdeContainer: FC<Props> = props => {
   const [editor, setEditor] = useState<any>();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [monaco, setMonaco] = useState<any>();
+  // depend
+  const [depend, setDepend] = useState<Depend[]>([]);
+  // 运行结果
+  const [runResult, setRunResult] = useState<RunHookResponse>({ logs: [] , result: '' });
   const typingsRef = useRef<any>(null);
   // hook详情
   const [hookInfo, setHookInfo] = useState<HookInfo>();
@@ -196,6 +208,7 @@ const IdeContainer: FC<Props> = props => {
     // 保存依赖
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await saveHookDepend(props.hookPath, dependList)
+    setDepend(dependList);
   }
 
   // dependchange回调
@@ -240,6 +253,14 @@ const IdeContainer: FC<Props> = props => {
   const handleDebug = async (json: Input) => {
     // 保存input内容
     void await saveHookInput(props.hookPath, json)
+    const result = await runHook<RunHookResponse>(props.hookPath, {
+      depend,
+      script: lastScript ?? '',
+      scriptType: 'typescript',
+      input: json
+    })
+    // result为json
+    setRunResult(result)
   }
 
   return (
@@ -268,7 +289,7 @@ const IdeContainer: FC<Props> = props => {
             {/* 依赖列表是否收起 */}
             {smallDepend ? <Button onClick={() => {
               setSmallDepend(false)
-            }} className="mt-2 ml-2" size="small" shape="circle" icon={<DoubleRightOutlined color='#ADADAD' />} /> : <IdeDependList {...{
+            }} className="mt-2 ml-2" size="small" shape="circle" icon={<DoubleRightOutlined color="#ADADAD" />} /> : <IdeDependList {...{
               dependList: hookInfo?.depend || [],
               onFold: dependFold,
               onDependChange: dependChange,
@@ -292,7 +313,7 @@ const IdeContainer: FC<Props> = props => {
                 }
               }} />
               {/* 输入和输出区 */}
-              <IdeActionContainer onClickDebug={handleDebug} expandAction={expandAction} editorOptions={editorOptions} />
+              <IdeActionContainer runResult={runResult} onClickDebug={handleDebug} expandAction={expandAction} editorOptions={editorOptions} />
             </div>
           </div>
         </>
