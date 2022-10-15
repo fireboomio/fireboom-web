@@ -178,15 +178,7 @@ export default function SettingMainSecurity() {
   }, [refreshFlag])
 
   return (
-    <>
-      <Divider className={styles['divider-line']} />
-      {/* <button
-        onClick={() => {
-          form.submit()
-        }}
-      >
-        提交
-      </button> */}
+    <div className="pl-11 pt-4 bg-white h-full">
       {securConfig.allowedHosts ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
@@ -320,6 +312,6 @@ export default function SettingMainSecurity() {
         </div>
       ) : null}
       <AuthMainSetting />
-    </>
+    </div>
   )
 }

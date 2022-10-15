@@ -4,6 +4,7 @@ import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import Icon from '/assets/workbench/panel-add.png'
+import RoleIcon from '/assets/workbench/panel-role.png'
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
@@ -15,8 +16,6 @@ import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.less'
-
-import RoleIcon from '/assets/workbench/panel-role.png'
 
 interface PanelConfig {
   title: string
@@ -112,7 +111,7 @@ const panelMap: Record<string, PanelConfig> = {
           })
           rows.unshift({
             disableMenu: true,
-            switch: 0,
+            switch: 1,
             icon: 'other',
             name: '默认认证器',
             _row: { name: '' },
@@ -270,7 +269,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           const itemPath = panelConfig.openItem(item.id)
           return (
             <div
-              className={`${styles.row} ${item.switch ? styles.rowDisable : ''} ${
+              className={`${styles.row} ${!item.switch ? styles.rowDisable : ''} ${
                 itemPath === location.pathname ? styles.active : ''
               }`}
               key={item.id}

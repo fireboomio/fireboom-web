@@ -21,34 +21,28 @@ export default function SettingMainVersion() {
 
   return (
     <>
-      <div>
-        <Divider className={styles['divider-line']} />
-        <div className="flex justify-center mb-8 ml-5">
-          <Descriptions
-            column={1}
-            size="small"
-            className={styles['descriptions-box']}
-            labelStyle={{
-              backgroundColor: 'white',
-              width: '15%',
-              borderRight: 'none',
-              borderBottom: 'none'
-            }}
-          >
-            <Descriptions.Item label="版本">
-              <div className="flex items-center">
-                {verConfig.versionNum ? (
-                  <div>{verConfig.versionNum}</div>
-                ) : (
-                  <div className="w-50px h-22px"> </div>
-                )}
-                <div className={styles['check-info']}>查看更新日志</div>
-              </div>
-            </Descriptions.Item>
-            <Descriptions.Item label="prisma版本">{verConfig.prismaVersion}</Descriptions.Item>
-            <Descriptions.Item label="版权">{verConfig.copyright}</Descriptions.Item>
-          </Descriptions>
-        </div>
+      <div className="pl-15 pt-6 bg-white h-full">
+        <Descriptions
+          column={1}
+          size="small"
+          className={styles['descriptions-box']}
+          labelStyle={{
+            width: '15%'
+          }}
+        >
+          <Descriptions.Item label="版本">
+            <div className="flex items-center">
+              {verConfig.versionNum ? (
+                <div>{verConfig.versionNum}</div>
+              ) : (
+                <div className="w-50px h-22px"> </div>
+              )}
+              <div className={styles['check-info']}>查看更新日志</div>
+            </div>
+          </Descriptions.Item>
+          <Descriptions.Item label="prisma版本">{verConfig.prismaVersion}</Descriptions.Item>
+          <Descriptions.Item label="版权">{verConfig.copyright}</Descriptions.Item>
+        </Descriptions>
       </div>
     </>
   )

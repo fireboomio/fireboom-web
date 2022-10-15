@@ -9,7 +9,6 @@ import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 
-
 interface Props {
   content?: StorageResp
 }
@@ -43,28 +42,11 @@ export default function StorageForm({ content }: Props) {
 
   return (
     <>
-      <div className="pb-2 flex items-center justify-between border-gray border-b">
-        <div>
-          <span className="text-base leading-5 font-bold">设置</span>
-        </div>
-        <div className="flex justify-center items-center">
-          <Button
-            className={styles['center-btn']}
-            onClick={() => handleSwitch('detail', content?.id)}
-          >
-            <span>取消</span>
-          </Button>
-          <Button className={styles['save-btn']} onClick={() => form.submit()}>
-            <span>保存</span>
-          </Button>
-        </div>
-      </div>
-
-      <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
+      <div className={`${styles['form-contain']}`}>
         <Form
           form={form}
           name="basic"
-          labelCol={{ span: 3 }}
+          labelCol={{ span: 4 }}
           wrapperCol={{ span: 11 }}
           onFinish={values => void onFinish(values as StorageConfig)}
           onFinishFailed={onFinishFailed}
@@ -99,6 +81,22 @@ export default function StorageForm({ content }: Props) {
             valuePropName="checked"
           >
             <Switch className={styles['switch-set-btn']} size="small" />
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+            <Button
+              className={'btn-save'}
+              onClick={() => {
+                form.submit()
+              }}
+            >
+              保存
+            </Button>
+            <Button
+              className={'btn-cancel ml-4'}
+              onClick={() => handleSwitch('detail', content?.id)}
+            >
+              <span>取消</span>
+            </Button>
           </Form.Item>
         </Form>
       </div>

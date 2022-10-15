@@ -1,7 +1,12 @@
 import { CaretRightOutlined } from '@ant-design/icons'
+import { Button, Switch } from 'antd'
+import { useContext } from 'react'
 
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
+import { StorageSwitchContext } from '@/lib/context/storage-context'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import requests from '@/lib/fetchers'
 
 import StorageDetail from './subs/Detail'
 import StorageExplorer from './subs/Explorer'
@@ -13,33 +18,53 @@ interface Props {
 }
 
 export default function StorageContainer({ content, showType }: Props) {
+  const { onRefreshMenu } = useContext(WorkbenchContext)
+  const { handleSwitch } = useContext(StorageSwitchContext)
+  const handleToggleBucket = async () => {
+    if (!content) {
+      return
+    }
+    content.switch ^= 1
+    if (content) {
+      void (await requests.put('/storageBucket ', content))
+    }
+    onRefreshMenu('storage')
+    handleSwitch('detail', content?.id)
+  }
   return (
-    <div className="pl-6 pr-10 mt-6">
-      <div className="flex justify-start items-center mb-5 ">
-        <span className="text-lg flex-grow font-bold">
-          <span className="font-bold text-18px">存储</span>
+    <div className="pt-3 px-3 h-full">
+      <div className="rounded-4px h-full bg-white pl-8">
+        <div className="flex items-center justify-between h-16">
+          <span className="font-medium text-base text-default">
+            {showType === 'form' ? '编辑' : '查看'}
+          </span>
           {showType === 'form' ? (
-            <>
-              <CaretRightOutlined />
-              存储配置
-            </>
+            ''
           ) : (
-            <></>
+            <div className="pr-3 pt-3">
+              <Switch
+                checked={content?.switch === 1}
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+                onChange={handleToggleBucket}
+              />
+              <Button
+                className={'btn-light-full  ml-8'}
+                onClick={() => handleSwitch('form', content?.id)}
+              >
+                编辑
+              </Button>
+            </div>
           )}
-        </span>
-        <div className="space-x-4">
-          <IconFont type="icon-lianxi" style={{ fontSize: '18px' }} />
-          <IconFont type="icon-wenjian1" style={{ fontSize: '18px' }} />
-          <IconFont type="icon-bangzhu" style={{ fontSize: '18px' }} />
         </div>
+        {showType === 'detail' ? (
+          <StorageDetail content={content} />
+        ) : showType === 'form' ? (
+          <StorageForm content={content} />
+        ) : (
+          ''
+        )}
       </div>
-      {showType === 'detail' ? (
-        <StorageDetail content={content} />
-      ) : showType === 'form' ? (
-        <StorageForm content={content} />
-      ) : (
-        ''
-      )}
     </div>
   )
 }
