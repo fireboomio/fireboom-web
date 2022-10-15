@@ -25,3 +25,5 @@ export interface Info {
 export interface WithClassNames {
   classNames?: string
 }
+
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
