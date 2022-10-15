@@ -176,12 +176,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 
   // const prettify = usePrettifyEditors()
 
-  // editorContext.setResponseEditor({
-  //   setValue(v) {
-  //     console.log(v)
-  //   }
-  // })
-
   const schemaAST = useMemo(() => {
     try {
       return parseSchemaAST(editorContext.tabs[0].query || '')
