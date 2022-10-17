@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { PlusCircleFilled } from '@ant-design/icons'
 import Editor from '@monaco-editor/react'
 import { Button, Select, Switch } from 'antd'
 import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
@@ -188,82 +189,86 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
           </Button>
         </div>
 
-        <Button onClick={add}>添加</Button>
-
-        <table className="w-full bg-[#FFFFFFFF]">
-          <thead className="leading-38px bg-[#5F62690D]">
-            <tr className="">
-              <th>表</th>
-              <th>字段</th>
-              <th>响应类型</th>
-              <th>输入类型</th>
-              <th>是否开启</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((x, idx) => (
-              <tr
-                key={idx}
-                onMouseEnter={() => setHoverIdx(idx)}
-                onMouseLeave={() => setHoverIdx(null)}
-                className={hoverIdx === idx ? 'bg-[#F8F8F9FF]' : ''}
-              >
-                <td>
-                  <Select
-                    defaultValue={x.table}
-                    style={{ width: 120 }}
-                    bordered={true}
-                    options={tableOpts}
-                    value={x.table}
-                    onChange={val => handleTableChange(val, x)}
-                  />
-                </td>
-                <td>
-                  <Select
-                    defaultValue=""
-                    style={{ width: 120 }}
-                    bordered={true}
-                    options={makeField(x)}
-                    value={x.field}
-                    onChange={val => handleFieldChange(val, x)}
-                  />
-                </td>
-                <td>
-                  <Select
-                    defaultValue=""
-                    style={{ width: 120 }}
-                    bordered={true}
-                    options={outOpts}
-                    value={x.resType}
-                    onChange={val => handleOutChange(val, x)}
-                  />
-                </td>
-                <td>
-                  <Select
-                    defaultValue=""
-                    style={{ width: 120 }}
-                    bordered={true}
-                    options={inputOpts}
-                    value={x.inputType}
-                    onChange={val => handleInputChange(val, x)}
-                  />
-                </td>
-                <td>
-                  <Switch className="w-8 h-2" checked={x.isOpen} />
-                </td>
-                <td>
-                  <IconFont
-                    className={`cursor-pointer ${hoverIdx === idx ? 'visible' : 'invisible'}`}
-                    style={{ color: '#F21212FF' }}
-                    type="icon-shanchu"
-                    onClick={() => handleDelete(x)}
-                  />
-                </td>
+        <div className="relative">
+          <PlusCircleFilled
+            onClick={add}
+            className="absolute -right-1.5 -top-1.5 z-2 cursor-pointer !text-[#649FFF]"
+          />
+          <table className="w-full bg-[#FFFFFFFF]">
+            <thead className="leading-38px bg-[#5F62690D]">
+              <tr className="">
+                <th>表</th>
+                <th>字段</th>
+                <th>响应类型</th>
+                <th>输入类型</th>
+                <th>是否开启</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((x, idx) => (
+                <tr
+                  key={idx}
+                  onMouseEnter={() => setHoverIdx(idx)}
+                  onMouseLeave={() => setHoverIdx(null)}
+                  className={hoverIdx === idx ? 'bg-[#F8F8F9FF]' : ''}
+                >
+                  <td>
+                    <Select
+                      defaultValue={x.table}
+                      style={{ width: 120 }}
+                      bordered={true}
+                      options={tableOpts}
+                      value={x.table}
+                      onChange={val => handleTableChange(val, x)}
+                    />
+                  </td>
+                  <td>
+                    <Select
+                      defaultValue=""
+                      style={{ width: 120 }}
+                      bordered={true}
+                      options={makeField(x)}
+                      value={x.field}
+                      onChange={val => handleFieldChange(val, x)}
+                    />
+                  </td>
+                  <td>
+                    <Select
+                      defaultValue=""
+                      style={{ width: 120 }}
+                      bordered={true}
+                      options={outOpts}
+                      value={x.resType}
+                      onChange={val => handleOutChange(val, x)}
+                    />
+                  </td>
+                  <td>
+                    <Select
+                      defaultValue=""
+                      style={{ width: 120 }}
+                      bordered={true}
+                      options={inputOpts}
+                      value={x.inputType}
+                      onChange={val => handleInputChange(val, x)}
+                    />
+                  </td>
+                  <td>
+                    <Switch className="w-8 h-2" checked={x.isOpen} />
+                  </td>
+                  <td>
+                    <IconFont
+                      className={`cursor-pointer ${hoverIdx === idx ? 'visible' : 'invisible'}`}
+                      style={{ color: '#F21212FF' }}
+                      type="icon-shanchu"
+                      onClick={() => handleDelete(x)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
