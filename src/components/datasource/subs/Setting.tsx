@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
 import Editor from '@monaco-editor/react'
-import { Button, Select, Switch, Table } from 'antd'
+import { Button, Select, Switch } from 'antd'
 import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 
@@ -43,6 +44,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   const [inputOpts, setInputOpts] = useState<OptionT[]>([])
   const [outOpts, setOutOpts] = useState<OptionT[]>([])
   const [schemaExtension, setSchemaExtension] = useState(initSchema)
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null)
 
   useEffect(() => {
     setData(
@@ -143,11 +145,19 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
     void requests.put('/dataSource', payload)
   }
 
+  function handleDelete(item: DataType) {
+    setData(draft => draft.filter(x => x.id !== item.id))
+  }
+
   return (
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
       <div className="w-2/5">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">自定义类型</div>
-        <Editor language="graphql" value={schemaExtension} onChange={x => setSchemaExtension(x)} />
+        <Editor
+          language="graphql"
+          value={schemaExtension}
+          onChange={x => setSchemaExtension(x ?? '')}
+        />
       </div>
 
       <div className="w-3/5">
@@ -155,60 +165,76 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
 
         <Button onClick={save}>保存</Button>
         <table className="w-full">
-          <tr>
-            <th>表</th>
-            <th>字段</th>
-            <th>响应类型</th>
-            <th>输入类型</th>
-            <th>是否开启</th>
-          </tr>
-          {data.map((x, idx) => (
-            <tr key={idx}>
-              <td>
-                <Select
-                  defaultValue={x.table}
-                  style={{ width: 120 }}
-                  bordered={true}
-                  options={tableOpts}
-                  value={x.table}
-                  onChange={val => handleTableChange(val, x)}
-                />
-              </td>
-              <td>
-                <Select
-                  defaultValue=""
-                  style={{ width: 120 }}
-                  bordered={true}
-                  options={makeField(x)}
-                  value={x.field}
-                  onChange={val => handleFieldChange(val, x)}
-                />
-              </td>
-              <td>
-                <Select
-                  defaultValue=""
-                  style={{ width: 120 }}
-                  bordered={true}
-                  options={outOpts}
-                  value={x.resType}
-                  onChange={val => handleOutChange(val, x)}
-                />
-              </td>
-              <td>
-                <Select
-                  defaultValue=""
-                  style={{ width: 120 }}
-                  bordered={true}
-                  options={inputOpts}
-                  value={x.inputType}
-                  onChange={val => handleInputChange(val, x)}
-                />
-              </td>
-              <td>
-                <Switch className="w-8 h-2" checked={x.isOpen} />
-              </td>
+          <thead>
+            <tr>
+              <th>表</th>
+              <th>字段</th>
+              <th>响应类型</th>
+              <th>输入类型</th>
+              <th>是否开启</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {data.map((x, idx) => (
+              <tr
+                key={idx}
+                onMouseEnter={() => setHoverIdx(idx)}
+                onMouseLeave={() => setHoverIdx(null)}
+              >
+                <td>
+                  <Select
+                    defaultValue={x.table}
+                    style={{ width: 120 }}
+                    bordered={true}
+                    options={tableOpts}
+                    value={x.table}
+                    onChange={val => handleTableChange(val, x)}
+                  />
+                </td>
+                <td>
+                  <Select
+                    defaultValue=""
+                    style={{ width: 120 }}
+                    bordered={true}
+                    options={makeField(x)}
+                    value={x.field}
+                    onChange={val => handleFieldChange(val, x)}
+                  />
+                </td>
+                <td>
+                  <Select
+                    defaultValue=""
+                    style={{ width: 120 }}
+                    bordered={true}
+                    options={outOpts}
+                    value={x.resType}
+                    onChange={val => handleOutChange(val, x)}
+                  />
+                </td>
+                <td>
+                  <Select
+                    defaultValue=""
+                    style={{ width: 120 }}
+                    bordered={true}
+                    options={inputOpts}
+                    value={x.inputType}
+                    onChange={val => handleInputChange(val, x)}
+                  />
+                </td>
+                <td>
+                  <Switch className="w-8 h-2" checked={x.isOpen} />
+                </td>
+                <td>
+                  <IconFont
+                    className={`cursor-pointer ${hoverIdx === idx ? 'visible' : 'invisible'}`}
+                    style={{ color: '#F21212FF' }}
+                    type="icon-shanchu"
+                    onClick={() => handleDelete(x)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
