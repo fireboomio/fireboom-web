@@ -8,7 +8,7 @@ import { useRef, useState } from 'react'
 
 import type { RunHookResponse } from '..'
 import styles from './../subs.module.less'
-import ideStyles from './index.module.scss'
+import ideStyles from './index.module.less'
 
 interface Props {
   // 输出日志列表

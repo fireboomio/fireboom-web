@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import { StorageContainer } from '@/components/storage'
 import StorageExplorer from '@/components/storage/subs/Explorer'
 import type { StorageResp } from '@/interfaces/storage'
-import { StorageSwitchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
 export default function FileStorage() {
@@ -30,7 +27,7 @@ export default function FileStorage() {
   }
 
   return (
-    <div className="p-3">
+    <div className="h-full">
       <StorageExplorer bucketId={content?.id} />
     </div>
   )

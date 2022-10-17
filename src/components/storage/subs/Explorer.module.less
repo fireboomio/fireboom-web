@@ -1,7 +1,50 @@
+.container {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  margin: 12px 12px 0 12px;
+  border-radius: 4px;
+  background: white;
+  overflow: hidden;
+}
+.cascadeContainer {
+  position: relative;
+  height: 100%;
+  flex: 1 1 0;
+  min-width: 0;
+  //align-items: stretch;
+  //justify-content: stretch;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > div:not(.fileDetail) {
+    height: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+    position: static !important;
+    width: auto !important;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    & > div {
+      height: 100%;
+    }
+  }
+}
 .casader-select :global {
   z-index: 101;
   box-shadow: none;
-
+  position: static !important;
+  width: fit-content;
+  height: 100%;
   .ant-cascader-menu-item {
     background-color: white;
 
@@ -16,16 +59,84 @@
   }
 
   .ant-cascader-menus {
-    max-width: calc(100vw - 800px);
-
-    // height: 100%;
+    height: 100%;
     overflow-x: auto;
     overflow-y: hidden;
   }
 
   .ant-cascader-menu {
-    min-width: 232px;
-    max-width: 270px;
     height: 100%;
+    padding: 16px;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .ant-cascader-menu-item {
+    padding-left: 10px;
+    width: 188px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    color: #333;
+    &:hover {
+      font-weight: 400;
+    }
+  }
+  .ant-cascader-menu-item-active {
+    font-weight: 500 !important;
+    background: rgba(95, 98, 105, 0.05);
+    border-radius: 4px;
+    .isLeaf {
+      color: #e92e5e;
+    }
+  }
+}
+
+.fileDetail {
+  flex: 0 0 auto;
+  height: 100%;
+  width: 406px;
+  padding: 16px;
+  border-left: 1px solid rgba(95, 98, 105, 0.1);
+}
+
+.fileDetailBody {
+  background: #fbfbfc;
+  border-radius: 8px;
+  padding: 20px 16px;
+  .header {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 24px;
+  }
+}
+.collapse {
+  :global {
+    .ant-collapse-header-text {
+      color: #787d8b;
+      line-height: 17px;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+    .ant-collapse-header {
+      margin-top: 12px;
+    }
+    .ant-collapse-content-box {
+      border-top: 1px solid rgba(95, 98, 105, 0.1);
+    }
+    p {
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #333333;
+      line-height: 20px;
+    }
   }
 }

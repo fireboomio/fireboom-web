@@ -6,7 +6,6 @@ import { useImmer } from 'use-immer'
 // import {wi} from 'react-router-dom'
 // import { Router } from 'react-router-dom'
 // Route.LifeR
-import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
@@ -126,7 +125,7 @@ export default function Index(props: PropsWithChildren) {
             <Sider />
           </ASider>
           <ALayout className="relative">
-            <AContent>{props.children}</AContent>
+            <AContent className="bg-[#FBFBFB]">{props.children}</AContent>
             {showWindow ? (
               <Window
                 style={{ left: 0, right: 0, bottom: 0 }}

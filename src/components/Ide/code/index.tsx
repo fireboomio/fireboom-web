@@ -4,7 +4,7 @@ import Editor from '@swordjs/monaco-editor-react'
 import type { FC } from 'react'
 
 import styles from './../subs.module.less'
-import ideStyles from './index.module.scss'
+import ideStyles from './index.module.less'
 
 interface Props {
   value?: string

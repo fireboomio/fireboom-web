@@ -1,34 +1,33 @@
 import {
-  SearchOutlined,
-  BarsOutlined,
-  SyncOutlined,
+  AppstoreOutlined,
   ArrowDownOutlined,
   ArrowUpOutlined,
-  AppstoreOutlined,
-  FileImageOutlined,
+  BarsOutlined,
+  SearchOutlined,
+  SyncOutlined
 } from '@ant-design/icons'
 import {
   Breadcrumb,
-  Dropdown,
-  Menu,
   Button,
-  Tooltip,
-  Upload,
-  Divider,
   Cascader,
-  Drawer,
   Collapse,
+  Divider,
+  Dropdown,
   Input,
+  Menu,
   message,
+  Tooltip,
+  Upload
 } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
-import { FileT } from '@/interfaces/storage'
+import type { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
+import iconFold from './../assets/icon-fold.svg'
+import iconPic from './../assets/icon-pic.svg'
 import styles from './Explorer.module.less'
 
 interface Props {
@@ -54,6 +53,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
   const [breads, setBreads] = useImmer<string[]>(['/'])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
+  const containerEle = useRef<HTMLDivElement>(null)
 
   const uploadPath = useMemo(() => {
     const rv = target?.isLeaf
@@ -72,13 +72,19 @@ export default function StorageExplorer({ bucketId }: Props) {
           .map(x => ({
             label: (
               <>
-                <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
-                <span className="ml-2">{x.name}</span>
+                <span>
+                  {x.isDir ? (
+                    <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+                  ) : (
+                    <img src={iconPic} alt="图片" className="w-3.5 h-3.5" />
+                  )}
+                </span>
+                <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
               </>
             ),
             value: x.name,
             isLeaf: !x.isDir,
-            ...x,
+            ...x
           }))
           .filter(x => x.name !== '')
       )
@@ -106,7 +112,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               <AppstoreOutlined className="mr-2" />
               <span>视图</span>
             </div>
-          ),
+          )
         },
         {
           key: '1',
@@ -115,8 +121,8 @@ export default function StorageExplorer({ bucketId }: Props) {
               <BarsOutlined className="mr-2" />
               <span>列表</span>
             </div>
-          ),
-        },
+          )
+        }
       ]}
     />
   )
@@ -133,20 +139,20 @@ export default function StorageExplorer({ bucketId }: Props) {
                 {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
               </span>
             </div>
-          ),
+          )
         },
         {
           key: '1',
-          label: <div>按文件大小</div>,
+          label: <div>按文件大小</div>
         },
         {
           key: '2',
-          label: <div>按创建时间</div>,
+          label: <div>按创建时间</div>
         },
         {
           key: '3',
-          label: <div>按修改时间</div>,
-        },
+          label: <div>按修改时间</div>
+        }
       ]}
     />
   )
@@ -169,20 +175,26 @@ export default function StorageExplorer({ bucketId }: Props) {
     if (targetOption.isLeaf) return
 
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` },
+      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` }
     })
 
     const fileOpts = files
       .map(x => ({
         label: (
           <>
-            <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
-            <span className="ml-2">{x.name}</span>
+            <span>
+              {x.isDir ? (
+                <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+              ) : (
+                <img src={iconPic} alt="图片" className="w-3.5 h-3.5" />
+              )}
+            </span>
+            <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
           </>
         ),
         value: x.name,
         isLeaf: !x.isDir,
-        ...x,
+        ...x
       }))
       .filter(x => x.value !== targetOption.value)
 
@@ -203,12 +215,14 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   return (
-    <>
-      <div className="border-gray border-b flex mb-8 pb-8px items-center justify-between">
+    <div className="h-full flex flex-col">
+      <div className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0">
         <Breadcrumb separator=">">
           {breads.map((x, idx) => (
             <Breadcrumb.Item key={idx}>
-              <span className="text-red-500/80">{x}</span>
+              <span className={idx === breads.length - 1 ? 'text-default' : 'text-[#E92E5E]'}>
+                {x}
+              </span>
             </Breadcrumb.Item>
           ))}
         </Breadcrumb>
@@ -231,7 +245,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               className="mr-4"
             />
           )}
-          <Divider type="vertical" className="h-5 mr-5" />
+          <Divider type="vertical" className="!h-3 !mr-5" />
           <Button
             onClick={() => setRefreshFlag(!refreshFlag)}
             icon={<SyncOutlined />}
@@ -257,73 +271,89 @@ export default function StorageExplorer({ bucketId }: Props) {
             showUploadList={false}
             // onChange={() => setRefreshFlag(!refreshFlag)}
           >
-            <Button className="mr-2">上传</Button>
+            <Button>上传</Button>
           </Upload>
         </div>
       </div>
 
-      <Cascader
-        open
-        options={options}
-        // @ts-ignore
-        loadData={x => void loadData(x)}
-        // @ts-ignore
-        onChange={onChange}
-        changeOnSelect
-        dropdownClassName={`${styles['casader-select']} flex mb-8`}
-      >
-        <div />
-      </Cascader>
-
-      <Drawer
-        title={target?.name}
-        placement="right"
-        onClose={() => setVisible(false)}
-        visible={visible}
-        mask={false}
-        width={315}
-        maskClosable={true}
-      >
-        <Collapse
-          defaultActiveKey={['1', '2']}
-          bordered={false}
-          expandIconPosition="end"
-          ghost={true}
-          className={styles['collapse-style']}
+      {containerEle.current ? (
+        <Cascader
+          getPopupContainer={() => containerEle.current!}
+          open
+          options={options}
+          // @ts-ignore
+          loadData={x => void loadData(x)}
+          // @ts-ignore
+          onChange={onChange}
+          changeOnSelect
+          dropdownClassName={`${styles['casader-select']} flex mb-8`}
         >
-          <Panel header="基本信息" key="1">
-            <p>类型：{target?.mime ?? '未知'}</p>
-            <p>大小：{formatBytes(target?.size)}</p>
-            <p>创建于：{target?.createTime ?? ''}</p>
-            <p>修改于：{target?.updateTime ?? ''}</p>
-          </Panel>
-          <Panel header="预览" key="2">
-            {isImage(target?.mime) ? (
-              <>
-                <div
-                  className={`${styles['panel-style']} flex-col justify-center items-center flex`}
-                >
-                  <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+          <div />
+        </Cascader>
+      ) : null}
+
+      <div className={styles.container}>
+        <div ref={containerEle} className={styles.cascadeContainer} />
+        {visible ? (
+          <div className={styles.fileDetail}>
+            <div className={styles.fileDetailBody}>
+              <div className={styles.header}>
+                {target?.isLeaf ? (
+                  <img src={iconPic} alt="图片" className="w-3.5 h-3.5 mr-2" />
+                ) : (
+                  <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5 mr-2" />
+                )}
+                {target?.name}
+              </div>
+              <Collapse
+                defaultActiveKey={['1', '2']}
+                bordered={false}
+                expandIconPosition="end"
+                ghost={true}
+                className={styles.collapse}
+              >
+                <Panel header="基本信息" key="1">
+                  <p>类型：{target?.mime ?? '未知'}</p>
+                  <p>大小：{formatBytes(target?.size)}</p>
+                  <p>创建于：{target?.createTime ?? ''}</p>
+                  <p>修改于：{target?.updateTime ?? ''}</p>
+                </Panel>
+                <Panel header="预览" key="2">
+                  {isImage(target?.mime) ? (
+                    <>
+                      <div
+                        className={`${styles['panel-style']} flex-col justify-center items-center flex`}
+                      >
+                        <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      className="m-auto block"
+                      width={200}
+                      height={200}
+                      src={'/assets/logo.png'}
+                      alt={target?.value}
+                    />
+                  )}
+                </Panel>
+                <div className="flex flex-col">
+                  <Button className="m-1.5">下载</Button>
+                  <Button
+                    onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
+                    className="m-1.5"
+                  >
+                    复制URL
+                  </Button>
+                  <Button onClick={deleteFile} className="m-1.5">
+                    <span className="text-[#F21212]">删除</span>
+                  </Button>
                 </div>
-              </>
-            ) : (
-              <img width={200} height={200} src={'/assets/logo.png'} alt={target?.value} />
-            )}
-          </Panel>
-          <div className="flex flex-col">
-            <Button className="m-1.5">下载</Button>
-            <Button
-              onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
-              className="m-1.5"
-            >
-              复制URL
-            </Button>
-            <Button onClick={deleteFile} className="m-1.5">
-              删除
-            </Button>
+              </Collapse>
+            </div>
           </div>
-        </Collapse>
-      </Drawer>
-    </>
+        ) : null}
+      </div>
+    </div>
   )
 }
