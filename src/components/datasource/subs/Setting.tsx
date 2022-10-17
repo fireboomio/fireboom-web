@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import Editor from '@monaco-editor/react'
 import { Button, Select, Switch, Table } from 'antd'
+import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -43,29 +44,6 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   const [outOpts, setOutOpts] = useState<OptionT[]>([])
   const [schemaExtension, setSchemaExtension] = useState(initSchema)
 
-  console.log('ddd', data)
-  console.log('mmm', content)
-
-  // const columns: ColumnsType<DataType> = [
-  //   {
-  //     title: '表',
-  //     dataIndex: 'table',
-  //     key: 'table',
-  //     render: (table: string) => (
-  //       <Select defaultValue={table} style={{ width: 120 }} bordered={false} options={tableOpts} />
-  //     )
-  //   },
-  //   { title: '字段', dataIndex: 'field', key: 'field' },
-  //   { title: '响应类型', dataIndex: 'resType', key: 'resType' },
-  //   { title: '输入类型', dataIndex: 'inputType', key: 'inputType' },
-  //   {
-  //     title: '是否开启',
-  //     dataIndex: 'isOpen',
-  //     key: 'isOpen',
-  //     render: (isOpen: boolean) => <Switch className="w-8 h-2" checked={isOpen} />
-  //   }
-  // ]
-
   useEffect(() => {
     setData(
       replaceJSON.map((x, idx) => ({
@@ -87,12 +65,18 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
       const ops = parse(schemaExtension, { noLocation: true }).definitions
       const inputOpts = ops
         .filter(op => op.kind === 'InputObjectTypeDefinition')
-        .map(x => ({ label: x.name.value, value: x.name.value }))
+        .map(x => ({
+          label: (x as InputObjectTypeDefinitionNode).name.value,
+          value: (x as InputObjectTypeDefinitionNode).name.value
+        }))
       setInputOpts(inputOpts)
 
       const outOpts = ops
         .filter(op => op.kind === 'ObjectTypeDefinition')
-        .map(x => ({ label: x.name.value, value: x.name.value }))
+        .map(x => ({
+          label: (x as ObjectTypeDefinitionNode).name.value,
+          value: (x as ObjectTypeDefinitionNode).name.value
+        }))
       setOutOpts(outOpts)
     } catch (error) {
       return
@@ -161,14 +145,13 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
 
   return (
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
-      <div className="w-5/11">
+      <div className="w-2/5">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">自定义类型</div>
         <Editor language="graphql" value={schemaExtension} onChange={x => setSchemaExtension(x)} />
       </div>
 
-      <div className="w-6/11">
+      <div className="w-3/5">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
-        {/* <Table size="small" columns={columns} dataSource={data} pagination={false} /> */}
 
         <Button onClick={save}>保存</Button>
         <table className="w-full">
