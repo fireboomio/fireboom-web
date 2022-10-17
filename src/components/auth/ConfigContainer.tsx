@@ -24,7 +24,7 @@ export default function AuthConfigContainer() {
         id: 0,
         name: '',
         authSupplier: 'openid',
-        switchState: [],
+        switchState: []
       })
       return
     }
@@ -46,8 +46,8 @@ export default function AuthConfigContainer() {
   }
 
   return (
-    <>
-      <div className={'pl-6 pr-6 pt-6'}>
+    <div className="pt-4 px-4 h-full">
+      <div className={' bg-white rounded-4px px-8 pt-3 h-full'}>
         <AuthToggleContext.Provider
           value={{ handleBottomToggleDesigner: () => setEditFlag(!editFlag) }}
         >
@@ -62,6 +62,6 @@ export default function AuthConfigContainer() {
           )}
         </AuthToggleContext.Provider>
       </div>
-    </>
+    </div>
   )
 }

@@ -1,33 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  InfoCircleOutlined,
-  PlayCircleOutlined,
-  PlusCircleOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons'
-import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
+import { loader } from '@monaco-editor/react'
+import { Button, Form, Input, Modal, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import {
-  ComponentProps,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactFragment,
-  ReactPortal,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
 import RcTab from '@/components/rc-tab'
-import { HookName, HookResp } from '@/interfaces/auth'
+import type { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
-loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface RoleProvResp {
   id: number
@@ -42,9 +27,9 @@ interface TabT {
 }
 
 const { TabPane } = Tabs
-export const hookPath: { [key: string]: string } = {
+export const hookPath: Record<string, string> = {
   postAuthentication: 'auth/postAuthentication',
-  mutatingPostAuthentication: 'auth/mutatingPostPreResolve',
+  mutatingPostAuthentication: 'auth/mutatingPostPreResolve'
 }
 export default function AuthRole() {
   const [form] = Form.useForm()
@@ -82,17 +67,17 @@ export default function AuthRole() {
     {
       title: '角色',
       dataIndex: 'code',
-      key: 'code',
+      key: 'code'
     },
     {
       title: '角色描述',
       dataIndex: 'remark',
-      key: 'remark',
+      key: 'remark'
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
-      key: 'create_time',
+      key: 'create_time'
     },
     {
       title: '操作',
@@ -107,8 +92,8 @@ export default function AuthRole() {
         >
           删除
         </span>
-      ),
-    },
+      )
+    }
   ]
 
   // 身份鉴权相关
@@ -138,7 +123,7 @@ export default function AuthRole() {
     void requests.post('/auth/hooks', {
       hookName: activeKey,
       content: currHook?.content,
-      hookSwitch: currHook?.hookSwitch,
+      hookSwitch: currHook?.hookSwitch
     })
     setRefreshFlag(!refreshFlag)
   }
@@ -157,7 +142,7 @@ export default function AuthRole() {
     void requests.post('/auth/hooks', {
       hookName: activeKey,
       hookSwitch: !currHook?.hookSwitch,
-      content: currHook?.content,
+      content: currHook?.content
     })
     setRefreshFlag(!refreshFlag)
   }
@@ -255,32 +240,8 @@ export default function AuthRole() {
           <div>
             {/* @ts-ignore */}
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-            <div className="flex justify-between items-center">
-              <div className={styles['auth-head']}>
-                <InfoCircleOutlined />
-                <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
-              </div>
-              <div className={`${styles['auth-btn']} flex items-center mr-2`}>
-                <Button type="text" icon={<PlayCircleOutlined />}>
-                  测试
-                </Button>
-                <Button type="text" icon={<PlusCircleOutlined />}>
-                  添加
-                </Button>
-                <Button type="text" icon={<UnorderedListOutlined />}>
-                  管理
-                </Button>
-                <Button type="text" icon={<PlayCircleOutlined />}>
-                  选择
-                </Button>
-                <div className="text-[#E92E5E] cursor-pointer" onClick={save}>
-                  <span className="leading-20px ml-1">保存</span>
-                </div>
-                <Switch onClick={toggleSwitch} checked={currHook?.hookSwitch} />
-              </div>
-            </div>
-
             <IdeContainer
+              key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}
               defaultLanguage="typescript"
               onChange={console.log}

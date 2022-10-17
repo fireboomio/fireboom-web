@@ -1,19 +1,20 @@
-import Editor from '@monaco-editor/react'
-import { Descriptions, Input, Switch, Button, message } from 'antd'
+import { loader } from '@monaco-editor/react'
+import { Descriptions, Input, message, Switch } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import IdeContainer from '@/components/Ide'
-import { hookPath } from '@/components/auth/subs/Role'
 import IconFont from '@/components/iconfont'
+import IdeContainer from '@/components/Ide'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
-  DatasourceToggleContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
 import styles from './Custom.module.less'
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export interface Config {
   apiNamespace: string
@@ -47,7 +48,7 @@ export default function Custom({ content }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 0 : 1,
+        switch: isChecked == true ? 0 : 1
       })
       .then(() => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
@@ -65,7 +66,7 @@ export default function Custom({ content }: Props) {
       const req = {
         ...content,
         config: { apiNamespace: value, serverName: value, schema: '' },
-        name: value,
+        name: value
       }
       Reflect.deleteProperty(req, 'id')
       void requests.post<unknown, number>('/dataSource', req).then(res => {
@@ -76,7 +77,7 @@ export default function Custom({ content }: Props) {
       const newContent = {
         ...content,
         config: { ...config, apiNamespace: value, serverName: value },
-        name: value,
+        name: value
       }
       void requests.put(`/dataSource/${content.id}`, newContent).then(() => {
         handleSave(newContent)
@@ -142,7 +143,11 @@ export default function Custom({ content }: Props) {
           主要用于日志等副作用操作
         </span>
       </div>
-      {content.name ? <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" /> : ''}
+      {content.name ? (
+        <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" />
+      ) : (
+        ''
+      )}
     </>
   )
 }

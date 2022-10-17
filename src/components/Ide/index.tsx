@@ -9,14 +9,14 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 import { saveHookDepend, saveHookInput, saveHookScript, updateHookSwitch, getHook, runHook } from '@/lib/service/hook'
 
-loader.config({ paths: { vs: 'https://unpkg.com/monaco-editor/min/vs' } });
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } });
 
 
 import IdeActionContainer from './action/index'
 import IdeCodeContainer from './code/index';
 import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
-import ideStyles from './ide.module.less'
+import ideStyles from './ide.module.scss'
 
 
 export const hookPath = {
@@ -85,9 +85,7 @@ interface Props {
  * @return {*}
  */
 const IdeContainer: FC<Props> = props => {
-  useEffect(()=>{
-    console.log('====ide init')
-  },[])
+  const defaultRunResult = { logs: [], result: '' };
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<NodeJS.Timeout | null>(null);
   const handle = useFullScreenHandle();
@@ -98,7 +96,7 @@ const IdeContainer: FC<Props> = props => {
   // depend
   const [depend, setDepend] = useState<Depend[]>([]);
   // 运行结果
-  const [runResult, setRunResult] = useState<RunHookResponse>({ logs: [] , result: '' });
+  const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult);
   const typingsRef = useRef<any>(null);
   // hook详情
   const [hookInfo, setHookInfo] = useState<HookInfo>();
@@ -140,7 +138,24 @@ const IdeContainer: FC<Props> = props => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [editor, monaco])
+
+  // 内置本地声明文件
+  useEffect(() => {
+    if (editor && monaco) {
+      // const libSource = [
+      //   'declare class Facts {',
+      //   '    /**',
+      //   '     * Returns the next fact',
+      //   '     */',
+      //   '    static next():string',
+      //   '}'
+      // ].join('\n');
+      // const libUri = 'ts:filename/facts.d.ts';
+      // monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
+      // monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
+    }
+  }, [editor, monaco])
 
   useEffect(() => {
     if (editor && monaco) {
@@ -191,6 +206,7 @@ const IdeContainer: FC<Props> = props => {
       type,
       status: AutoSaveStatus.SAVEING
     })
+    console.log(editor)
     // 保存脚本内容
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     void saveHookScript(props.hookPath, editor.getValue()).then(() => {
@@ -228,7 +244,12 @@ const IdeContainer: FC<Props> = props => {
 
   // 代码改变回调
   const codeChange = (value?: string) => {
-    // console.log(lastScript)
+    if (hookInfo) {
+      setHookInfo({
+        ...hookInfo,
+        script: value ?? ''
+      })
+    }
     // 和上一次的脚本内容进行比对
     if (lastScript !== value) {
       if (![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(savePayload.status ?? AutoSaveStatus.LOADED)) {
@@ -261,6 +282,7 @@ const IdeContainer: FC<Props> = props => {
     })
     // result为json
     setRunResult(result)
+    return result;
   }
 
   return (
@@ -289,7 +311,7 @@ const IdeContainer: FC<Props> = props => {
             {/* 依赖列表是否收起 */}
             {smallDepend ? <Button onClick={() => {
               setSmallDepend(false)
-            }} className="mt-2 ml-2" size="small" shape="circle" icon={<DoubleRightOutlined color="#ADADAD" />} /> : <IdeDependList {...{
+            }} className="mt-2 ml-2" size="small" shape="circle" icon={<DoubleRightOutlined color='#ADADAD' />} /> : <IdeDependList {...{
               dependList: hookInfo?.depend || [],
               onFold: dependFold,
               onDependChange: dependChange,
@@ -313,7 +335,12 @@ const IdeContainer: FC<Props> = props => {
                 }
               }} />
               {/* 输入和输出区 */}
-              <IdeActionContainer runResult={runResult} onClickDebug={handleDebug} expandAction={expandAction} editorOptions={editorOptions} />
+              <IdeActionContainer onClickDebug={async (json) => {
+                return await handleDebug(json);
+              }}
+                onClickClearLog={() => {
+                  setRunResult(defaultRunResult);
+                }} runResult={runResult} expandAction={expandAction} editorOptions={editorOptions} />
             </div>
           </div>
         </>

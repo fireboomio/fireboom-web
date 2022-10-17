@@ -1,0 +1,43 @@
+.ide-action :global {
+    border-top: 1px solid #efefef;
+    padding: 21px 0 21px 0;
+    .expand-action {
+        height: 24vh;
+    }
+}
+
+.input-container :global {
+    position: relative;
+    width: 50%;
+    padding: 0 18px 0 14px;
+    border-right: 1px solid #efefef;
+    .title {
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 16px;
+    }
+    .debug {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+.output-container :global {
+    width: 50%;
+    padding: 0 18px 0 14px;
+    .title {
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 16px;
+    }
+    .output {
+        overflow-y: auto;
+        height: 170px;
+        .output-item {
+            font-size: 14px;
+            color: #5f6269;
+            line-height: 24px;
+        }
+    }
+}
