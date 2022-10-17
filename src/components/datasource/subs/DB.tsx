@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -17,7 +17,7 @@ interface Props {
   type: ShowType
 }
 
-type Config = Record<string, string>
+type Config = Record<string, string | any[]>
 
 type FromValues = Record<string, number | string | boolean>
 
@@ -40,36 +40,6 @@ const ipReg =
 //   // eslint-disable-next-line no-useless-escape
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
-
-const bbb = `
-type MessagePayload {
-  extra: String!
-}
-type Payload {
-  extra: String!
-}
-
-input MessagePayloadInput {
-  extra: String!
-}
-input BBee {
-  extra: String!
-}
-`
-const jjj = [
-  {
-    entityName: 'Class',
-    fieldName: 'txt',
-    responseTypeReplacement: 'MessagePayload',
-    inputTypeReplacement: 'MessagePayloadInput'
-  },
-  {
-    entityName: 'Student',
-    fieldName: 'name',
-    responseTypeReplacement: 'MessagePayload',
-    inputTypeReplacement: 'MessagePayloadInput'
-  }
-]
 
 export default function DB({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
@@ -513,7 +483,11 @@ export default function DB({ content, type }: Props) {
         </div>
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
-        <Setting content={content} initSchema={bbb} replaceJSON={jjj} />
+        <Setting
+          content={content}
+          initSchema={config.schemaExtension as string}
+          replaceJSON={config.replaceJSONTypeFieldConfiguration as ReplaceJSON[]}
+        />
       )}
     </>
   )

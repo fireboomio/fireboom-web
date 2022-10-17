@@ -157,7 +157,6 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
         schemaExtension: schemaExtension
       }
     }
-    console.log('pp', payload)
     void requests.put('/dataSource', payload)
   }
 
@@ -168,11 +167,14 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   return (
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
       <div className="w-2/5">
-        <div className={styles['head']}>自定义类型</div>
+        <div className={`${styles['head']}`}>
+          <span>自定义类型</span>
+        </div>
         <Editor
           language="graphql"
           value={schemaExtension}
           onChange={x => setSchemaExtension(x ?? '')}
+          className="py-3"
         />
       </div>
 
@@ -181,6 +183,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
           <span>字段类型映射</span>
 
           <Button
+            size="small"
             className={`${styles['btn']} flex items-center justify-evenly cursor-pointer`}
             onClick={save}
           >
@@ -189,12 +192,12 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
           </Button>
         </div>
 
-        <div className="relative">
+        <div className="relative py-3 px-3.5 bg-[#FFFFFF]">
           <PlusCircleFilled
             onClick={add}
-            className="absolute -right-1.5 -top-1.5 z-2 cursor-pointer !text-[#649FFF]"
+            className="absolute right-2 top-1 z-2 cursor-pointer !text-[#649FFF]"
           />
-          <table className="w-full bg-[#FFFFFFFF]">
+          <table className="w-full bg-[#FFFFFFFF] disable-common-select">
             <thead className="leading-38px bg-[#5F62690D]">
               <tr className="">
                 <th>表</th>
@@ -211,13 +214,14 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                   key={idx}
                   onMouseEnter={() => setHoverIdx(idx)}
                   onMouseLeave={() => setHoverIdx(null)}
-                  className={hoverIdx === idx ? 'bg-[#F8F8F9FF]' : ''}
+                  className={`${hoverIdx === idx ? 'bg-[#F8F8F9FF]' : ''} h-45px`}
                 >
                   <td>
                     <Select
+                      className="disable-common-select"
                       defaultValue={x.table}
                       style={{ width: 120 }}
-                      bordered={true}
+                      bordered={false}
                       options={tableOpts}
                       value={x.table}
                       onChange={val => handleTableChange(val, x)}
@@ -225,9 +229,10 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                   </td>
                   <td>
                     <Select
+                      className="disable-common-select"
                       defaultValue=""
                       style={{ width: 120 }}
-                      bordered={true}
+                      bordered={false}
                       options={makeField(x)}
                       value={x.field}
                       onChange={val => handleFieldChange(val, x)}
@@ -235,9 +240,10 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                   </td>
                   <td>
                     <Select
+                      className="disable-common-select"
                       defaultValue=""
                       style={{ width: 120 }}
-                      bordered={true}
+                      bordered={false}
                       options={outOpts}
                       value={x.resType}
                       onChange={val => handleOutChange(val, x)}
@@ -245,9 +251,10 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                   </td>
                   <td>
                     <Select
+                      className="disable-common-select"
                       defaultValue=""
                       style={{ width: 120 }}
-                      bordered={true}
+                      bordered={false}
                       options={inputOpts}
                       value={x.inputType}
                       onChange={val => handleInputChange(val, x)}
