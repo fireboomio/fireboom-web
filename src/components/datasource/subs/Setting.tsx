@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import type { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
+import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 
 interface OptionT {
@@ -31,9 +31,10 @@ interface Model {
 interface Props {
   initSchema: string
   replaceJSON: ReplaceJSON[]
+  content: DatasourceResp
 }
 
-const Setting: React.FC<Props> = ({ replaceJSON, initSchema }) => {
+const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   const { id: currDBId } = useParams()
   const [data, setData] = useImmer<DataType[]>([])
   const [model, setModel] = useState<Model[]>([])
@@ -43,7 +44,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema }) => {
   const [schemaExtension, setSchemaExtension] = useState(initSchema)
 
   console.log('ddd', data)
-  console.log('mmm', model)
+  console.log('mmm', content)
 
   // const columns: ColumnsType<DataType> = [
   //   {
@@ -145,8 +146,17 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema }) => {
     })
   }
 
-  function save(e) {
-    console.log(data)
+  function save() {
+    const payload = {
+      ...content,
+      config: {
+        ...content.config,
+        replaceJSONTypeFieldConfiguration: data,
+        schemaExtension: schemaExtension
+      }
+    }
+    console.log('pp', payload)
+    void requests.put('/dataSource', payload)
   }
 
   return (

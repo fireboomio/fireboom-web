@@ -513,7 +513,7 @@ export default function DB({ content, type }: Props) {
         </div>
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
-        <Setting initSchema={bbb} replaceJSON={jjj} />
+        <Setting content={content} initSchema={bbb} replaceJSON={jjj} />
       )}
     </>
   )
