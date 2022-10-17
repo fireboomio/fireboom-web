@@ -5,6 +5,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useImmer } from 'use-immer'
 
 import type { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -15,7 +16,7 @@ interface OptionT {
 }
 
 interface DataType {
-  key: string
+  id: string
   table: string
   field: string
   resType: string
@@ -35,36 +36,39 @@ interface Props {
 
 const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
   const { id: currDBId } = useParams()
-  const [data, setData] = useState<DataType[]>([])
+  const [data, setData] = useImmer<DataType[]>([])
   const [model, setModel] = useState<Model[]>([])
   const [tableOpts, setTableOpts] = useState<OptionT[]>([])
   const [inputOpts, setInputOpts] = useState<OptionT[]>([])
   const [outOpts, setOutOpts] = useState<OptionT[]>([])
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: '表',
-      dataIndex: 'table',
-      key: 'table',
-      render: (table: string) => (
-        <Select defaultValue={table} style={{ width: 120 }} bordered={false} options={tableOpts} />
-      )
-    },
-    { title: '字段', dataIndex: 'field', key: 'field' },
-    { title: '响应类型', dataIndex: 'resType', key: 'resType' },
-    { title: '输入类型', dataIndex: 'inputType', key: 'inputType' },
-    {
-      title: '是否开启',
-      dataIndex: 'isOpen',
-      key: 'isOpen',
-      render: (isOpen: boolean) => <Switch className="w-8 h-2" checked={isOpen} />
-    }
-  ]
+  console.log('ddd', data)
+  console.log('mmm', model)
+
+  // const columns: ColumnsType<DataType> = [
+  //   {
+  //     title: '表',
+  //     dataIndex: 'table',
+  //     key: 'table',
+  //     render: (table: string) => (
+  //       <Select defaultValue={table} style={{ width: 120 }} bordered={false} options={tableOpts} />
+  //     )
+  //   },
+  //   { title: '字段', dataIndex: 'field', key: 'field' },
+  //   { title: '响应类型', dataIndex: 'resType', key: 'resType' },
+  //   { title: '输入类型', dataIndex: 'inputType', key: 'inputType' },
+  //   {
+  //     title: '是否开启',
+  //     dataIndex: 'isOpen',
+  //     key: 'isOpen',
+  //     render: (isOpen: boolean) => <Switch className="w-8 h-2" checked={isOpen} />
+  //   }
+  // ]
 
   useEffect(() => {
     setData(
       replaceJSON.map((x, idx) => ({
-        key: idx.toString(),
+        id: idx.toString(),
         table: x.entityName,
         field: x.fieldName,
         resType: x.responseTypeReplacement,
@@ -72,6 +76,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
         isOpen: true
       }))
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replaceJSON])
 
   useEffect(() => {
@@ -105,7 +110,35 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
 
   function makeField(x: DataType) {
     const fields = model.find(m => m.name === x.table)?.fields
-    return fields?.map(x => ({ label: x.name, name: x.name }))
+    return fields?.map(x => ({ label: x.name, value: x.name }))
+  }
+
+  function handleTableChange(val: string, item: DataType) {
+    setData(draft => {
+      const one = draft.find(x => x.id === item.id)
+      one!.table = val
+    })
+  }
+
+  function handleFieldChange(val: string, item: DataType) {
+    setData(draft => {
+      const one = draft.find(x => x.id === item.id)
+      one!.field = val
+    })
+  }
+
+  function handleInputChange(val: string, item: DataType) {
+    setData(draft => {
+      const one = draft.find(x => x.id === item.id)
+      one!.inputType = val
+    })
+  }
+
+  function handleOutChange(val: string, item: DataType) {
+    setData(draft => {
+      const one = draft.find(x => x.id === item.id)
+      one!.resType = val
+    })
   }
 
   return (
@@ -117,7 +150,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
 
       <div className="w-6/11">
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
-        <Table size="small" columns={columns} dataSource={data} pagination={false} />
+        {/* <Table size="small" columns={columns} dataSource={data} pagination={false} /> */}
 
         <table className="w-full">
           <tr>
@@ -136,30 +169,37 @@ const Setting: React.FC<Props> = ({ replaceJSON, schemaExtension }) => {
                   bordered={true}
                   options={tableOpts}
                   value={x.table}
+                  onChange={val => handleTableChange(val, x)}
                 />
               </td>
               <td>
                 <Select
-                  defaultValue={x.field}
+                  defaultValue=""
                   style={{ width: 120 }}
                   bordered={true}
                   options={makeField(x)}
+                  value={x.field}
+                  onChange={val => handleFieldChange(val, x)}
                 />
               </td>
               <td>
                 <Select
-                  defaultValue={x.resType}
+                  defaultValue=""
                   style={{ width: 120 }}
                   bordered={true}
                   options={outOpts}
+                  value={x.resType}
+                  onChange={val => handleOutChange(val, x)}
                 />
               </td>
               <td>
                 <Select
-                  defaultValue={x.inputType}
+                  defaultValue=""
                   style={{ width: 120 }}
                   bordered={true}
                   options={inputOpts}
+                  value={x.inputType}
+                  onChange={val => handleInputChange(val, x)}
                 />
               </td>
               <td>

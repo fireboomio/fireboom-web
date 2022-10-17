@@ -45,7 +45,14 @@ const bbb = `
 type MessagePayload {
   extra: String!
 }
+type Payload {
+  extra: String!
+}
+
 input MessagePayloadInput {
+  extra: String!
+}
+input BBee {
   extra: String!
 }
 `
