@@ -1,7 +1,7 @@
 import { EditFilled, SaveOutlined } from '@ant-design/icons'
 import { Breadcrumb, Switch } from 'antd'
 
-import { CopyOutlined, FlashFilled, LinkOutlined } from '../icons'
+import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = () => {
@@ -29,7 +29,7 @@ const APIHeader = () => {
         <LinkOutlined className="ml-2 text-[#6F6F6F]" />
       </div>
       <button className={styles.save}>
-        <SaveOutlined className="mr-1 !text-primary" />
+        <SaveFilled className={styles.saveIcon} />
         储存
       </button>
       <Switch
