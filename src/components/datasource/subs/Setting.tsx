@@ -132,6 +132,19 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
     })
   }
 
+  function add() {
+    setData(draft =>
+      draft.concat({
+        id: Date.now().toString(),
+        table: '',
+        field: '',
+        resType: '',
+        inputType: '',
+        isOpen: true
+      })
+    )
+  }
+
   function save() {
     const payload = {
       ...content,
@@ -164,6 +177,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
         <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
 
         <Button onClick={save}>保存</Button>
+        <Button onClick={add}>添加</Button>
         <table className="w-full">
           <thead>
             <tr>
