@@ -1,11 +1,12 @@
-import { CloseOutlined, DeleteFilled, PlusCircleFilled } from '@ant-design/icons'
-import { Checkbox, Dropdown, Empty, Radio } from 'antd'
+import { CloseOutlined } from '@ant-design/icons'
+import { Checkbox, Dropdown, Radio } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 
 import type { Role } from '@/interfaces/user'
 import requests from '@/lib/fetchers'
 
+import { CircleRemoveOutlined, PlusCircleFilled } from '../../../icons'
 import styles from './index.module.less'
 
 interface RBACPopupProps {
@@ -51,7 +52,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
 
   useEffect(() => {
     requests.get('/role').then(res => {
-      setRoles(res.data.result as Role[])
+      setRoles(res as unknown as Role[])
     })
   }, [])
 
@@ -67,6 +68,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
             { label: 'denyMatchAll', value: 'denyMatchAll' },
             { label: 'denyMatchAny', value: 'denyMatchAny' }
           ]}
+          size="small"
           onChange={e => setRule(e.target.value)}
         />
       </div>
@@ -91,7 +93,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
           </div>
         )}
         <div className="flex mt-2 items-center justify-end">
-          <DeleteFilled className="!text-[rgba(95,98,105,0.1)]" onClick={clearSelected} />
+          <CircleRemoveOutlined className="cursor-pointer" onClick={clearSelected} />
           <Dropdown
             trigger={['click']}
             placement="bottomLeft"
@@ -125,7 +127,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
               </div>
             }
           >
-            <PlusCircleFilled className="ml-2 !text-[#116DF8]" />
+            <PlusCircleFilled className="cursor-pointer ml-2" />
           </Dropdown>
         </div>
       </div>
