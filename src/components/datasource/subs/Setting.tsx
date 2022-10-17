@@ -11,6 +11,8 @@ import IconFont from '@/components/iconfont'
 import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 
+import styles from './Setting.module.less'
+
 interface OptionT {
   label: string
   value: string
@@ -165,7 +167,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   return (
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
       <div className="w-2/5">
-        <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">自定义类型</div>
+        <div className={styles['head']}>自定义类型</div>
         <Editor
           language="graphql"
           value={schemaExtension}
@@ -174,18 +176,29 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
       </div>
 
       <div className="w-3/5">
-        <div className="mb-1.5 py-1.5 pl-3 bg-[#F8F8F8] font-medium">字段类型映射</div>
+        <div className={`${styles['head']} !pr-3 flex items-center justify-between`}>
+          <span>字段类型映射</span>
 
-        <Button onClick={save}>保存</Button>
+          <Button
+            className={`${styles['btn']} flex items-center justify-evenly cursor-pointer`}
+            onClick={save}
+          >
+            <IconFont type="icon-baocun" style={{ color: '#5F6269' }} />
+            <span className="text-sm">保存</span>
+          </Button>
+        </div>
+
         <Button onClick={add}>添加</Button>
-        <table className="w-full">
-          <thead>
-            <tr>
+
+        <table className="w-full bg-[#FFFFFFFF]">
+          <thead className="leading-38px bg-[#5F62690D]">
+            <tr className="">
               <th>表</th>
               <th>字段</th>
               <th>响应类型</th>
               <th>输入类型</th>
               <th>是否开启</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -194,6 +207,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                 key={idx}
                 onMouseEnter={() => setHoverIdx(idx)}
                 onMouseLeave={() => setHoverIdx(null)}
+                className={hoverIdx === idx ? 'bg-[#F8F8F9FF]' : ''}
               >
                 <td>
                   <Select
