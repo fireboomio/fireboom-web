@@ -1,9 +1,7 @@
-import { CaretRightOutlined } from '@ant-design/icons'
 import type React from 'react'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '../iconfont'
 import SettingMainAppearance from './subs/Appearance'
 import SettingMainCrossdomain from './subs/Crossdomain'
 import SettingMainEnvironmentVariable from './subs/EnvironmentVariable'
@@ -59,5 +57,5 @@ export default function SettingContainer({ showType }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showType])
 
-  return viewer
+  return <>{viewer}</>
 }

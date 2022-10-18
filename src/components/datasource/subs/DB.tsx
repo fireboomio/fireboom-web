@@ -1,5 +1,4 @@
-import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
-import { Button, Descriptions, Form, Input, notification, Radio, Select, Switch } from 'antd'
+import { Button, Descriptions, Form, Input, notification, Radio, Select } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -12,6 +11,7 @@ import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.less'
 import Setting from './Setting'
+
 interface Props {
   content: DatasourceResp
   type: ShowType
@@ -275,6 +275,10 @@ export default function DB({ content, type }: Props) {
     }
   }
 
+  const handleTest = () => {
+    // TODO 测试接口
+  }
+
   return (
     <>
       {/* { (() => { your code })() }  useFormWarning的解决方案
@@ -283,43 +287,15 @@ export default function DB({ content, type }: Props) {
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
-          <div className="pb-9px flex items-center justify-between border-gray border-b ">
-            <div>
-              <IconFont type="icon-shujuyuantubiao1" />
-              <span className="ml-2 text-[14px]">
-                {content.name} <span className="text-[#AFB0B4] text-[12px]">main</span>
-              </span>
-            </div>
-            <div className="flex items-center">
-              <Switch
-                checked={content.switch == 0 ? true : false}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
-                onChange={connectSwitchOnChange}
-                className="mr-10 w-15"
-                style={{ marginRight: '30px' }}
-              />
-              <Button className={'btn-light-border'} onClick={() => testLink('bottomLeft')}>
-                <span>测试链接</span>
-              </Button>
-              {/* <Button className={'btn-light-border w-16 ml-4'}>
-                <span>设计</span>
-              </Button> */}
-              <Button
-                className={'btn-light-full  ml-4'}
-                onClick={() => handleToggleDesigner('form', content.id)}
-              >
-                <span>编辑</span>
-              </Button>
+          <div className="py-10px flex justify-end">
+            <div
+              className="h-22px bg-[#F9F9F9] rounded-2px text-[#E92E5E] w-21 flex items-center justify-center cursor-pointer"
+              onClick={() => handleToggleDesigner('setting', content.id)}
+            >
+              更多设置
             </div>
           </div>
-          <div
-            className={`${styles['db-check-setting']} float-right mt-2 cursor-pointer`}
-            onClick={() => handleToggleDesigner('setting', content.id)}
-          >
-            <span className="w-14 h-5">更多设置</span> <RightOutlined />
-          </div>
-          <div className={'mt-8'}>
+          <div>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
@@ -377,27 +353,12 @@ export default function DB({ content, type }: Props) {
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         <div>
-          <div className="pb-8px flex items-center justify-between border-gray border-b ">
-            {content.name == '' ? (
-              <div>
-                <IconFont type="icon-shujuyuantubiao1" />
-                <span className="ml-3">创建数据源</span>
-              </div>
-            ) : (
-              <div>
-                <IconFont type="icon-shujuyuantubiao1" />
-                <span className="ml-2">{content.name}</span>
-                <span className="ml-2 text-xs text-gray-500/80">main</span>
-              </div>
-            )}
-          </div>
-
           <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
             <Form
               form={form}
               style={{ width: '90%' }}
               name="basic"
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 4 }}
               wrapperCol={{ span: 12 }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               onFinish={values => void onFinish(values)}
@@ -458,27 +419,26 @@ export default function DB({ content, type }: Props) {
                 </Radio.Group>
               </Form.Item>
               {viewerForm}
-              <Form.Item label=" ">
+              <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                 <Button
-                  className={styles['connect-edit-btn']}
-                  onClick={() => testLink('bottomLeft')}
+                  className="btn-cancel"
+                  onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
                 >
-                  <RightSquareOutlined />
-                  <span>测试链接</span>
+                  <span>取消</span>
+                </Button>
+                <Button className="btn-test ml-4" onClick={() => testLink('bottomLeft')}>
+                  测试
+                </Button>
+                <Button
+                  className="btn-save ml-4"
+                  onClick={() => {
+                    form.submit()
+                  }}
+                >
+                  保存
                 </Button>
               </Form.Item>
             </Form>
-            <div className="flex  items-center justify-end w-36">
-              <Button className={'btn-save mr-4'} onClick={() => form.submit()}>
-                {content.name == '' ? '创建' : '保存'}
-              </Button>
-              <Button
-                className={'btn-cancel'}
-                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
-              >
-                取消
-              </Button>
-            </div>
           </div>
         </div>
       ) : (

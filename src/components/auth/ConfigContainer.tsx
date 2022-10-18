@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -46,8 +47,24 @@ export default function AuthConfigContainer() {
   }
 
   return (
-    <div className="pt-4 px-4 h-full">
-      <div className={' bg-white rounded-4px px-8 pt-3 h-full'}>
+    <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
+      {' '}
+      <div className="h-54px flex-0 bg-white flex items-center pl-11">
+        <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
+        {content?.name}
+        <div className="flex-1"></div>
+        {!editFlag ? (
+          <>
+            <Button className={'btn-test  mr-4'} onClick={() => setEditFlag(true)}>
+              测试
+            </Button>
+            <Button className={'btn-save  mr-11'} onClick={() => setEditFlag(true)}>
+              编辑
+            </Button>
+          </>
+        ) : null}
+      </div>
+      <div className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white pl-8 mx-3 mt-3">
         <AuthToggleContext.Provider
           value={{ handleBottomToggleDesigner: () => setEditFlag(!editFlag) }}
         >

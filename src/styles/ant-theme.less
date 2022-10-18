@@ -6,8 +6,13 @@
   .ant-form-item-label {
     //margin-right: 70px;
     //padding-right: 10px;
+    padding-right: 32px;
     > label {
+      color: #333;
       font-size: 14px;
+      &:after {
+        display: none;
+      }
     }
   }
 
@@ -34,23 +39,24 @@
 
   // input
   .ant-input-number-group-addon {
-    border-color: #f2f4f8 !important;
+    border-color: #f8f9fd !important;
     background: white !important;
     border-radius: 4px;
   }
   .ant-input,
-  .ant-input-number {
-    border-color: #f2f4f8 !important;
-    background: #f2f4f8 !important;
+  .ant-input-number,
+  .ant-input-password {
+    background: #f8f9fd !important;
+    border-color: #f8f9fd !important;
     border-radius: 4px;
   }
   .ant-input-affix-wrapper {
-    background: #f2f4f8 !important;
+    background: #f8f9fd !important;
   }
   // select
-  .ant-select .ant-select-selector {
-    border-color: #f2f4f8 !important;
-    background: #f2f4f8 !important;
+  .ant-select:not(.disable-common-select) .ant-select-selector {
+    border-color: #f8f9fd !important;
+    background: #f8f9fd !important;
   }
 
   .tabs-form {
@@ -85,23 +91,23 @@
     align-items: stretch;
   }
   .ant-descriptions-bordered .ant-descriptions-view {
-    border-color: #dcdfe6;
-    border-radius: 6px;
+    border-color: rgba(95, 98, 105, 0.1);
+    border-radius: 4px;
     overflow: hidden;
     .ant-descriptions-item-label {
-      width: 150px;
-      text-align: right;
-      padding-right: 47px;
+      width: 200px;
+      text-align: left;
       background: white;
       font-size: 12px;
-      border-color: #dcdfe6 !important;
+      border-color: transparent !important;
+      padding-left: 20px;
     }
     .ant-descriptions-row {
-      border-color: #dcdfe6 !important;
+      border-color: rgba(95, 98, 105, 0.1);
     }
     .ant-descriptions-item-content {
-      padding-left: 38px;
-      color: #222;
+      padding-left: 0;
+      color: #333;
       font-size: 12px;
     }
   }
@@ -135,16 +141,48 @@
     }
   }
   // 保存按钮
-  .btn-save {
-    background: #ff5e5e;
+  .btn-save,
+  .btn-save:hover,
+  .btn-save:active {
+    border: none;
     color: white;
-    border-color: #ff5e5e;
+    min-width: 76px;
+    background: linear-gradient(36deg, #ffae72 0%, #ff5e5e 100%);
+    border-radius: 4px;
   }
   // 取消按钮
-  .btn-cancel {
-    background: #f0f0f0;
-    color: #adadad;
-    border-color: #f0f0f0;
+  .btn-cancel,
+  .btn-cancel:hover,
+  .btn-cancel:active {
+    border: none;
+    color: rgba(153, 153, 153, 0.6);
+    min-width: 76px;
+    background: rgba(95, 98, 105, 0.05);
+    border-radius: 4px;
+  }
+
+  // 取消按钮
+  .btn-test,
+  .btn-test:hover,
+  .btn-test:active {
+    color: #333;
+    min-width: 76px;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 94, 94, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    &:before {
+      display: block;
+      position: static;
+      content: ' ';
+      width: 12px;
+      height: 12px;
+      background: url(/assets/icon-test.svg);
+      margin-right: 6px;
+      opacity: 1;
+    }
   }
 
   // collapse

@@ -22,10 +22,12 @@ export default defineConfig({
       },
       '^/api/v1': {
         target: 'http://8.142.115.204:9123',
+        // target: 'http://192.168.166.143:9123',
         changeOrigin: true
       },
       '^/app': {
         target: 'http://8.142.115.204:9991',
+        // target: 'http://192.168.166.143:9123',
         changeOrigin: true
       }
     }

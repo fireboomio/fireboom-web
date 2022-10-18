@@ -1,14 +1,10 @@
-import { Col, Row } from 'antd'
+import { Col } from 'antd'
 import { useContext, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
-import IconSetting from '/assets/workbench/header-setting.png'
 import { SettingContainer, SettingPannel } from '@/components/setting'
 import type { SettingType } from '@/interfaces/setting'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-
-import styles from './index.module.less'
 
 export default function Setting() {
   const { setFullscreen } = useContext(WorkbenchContext)
@@ -31,7 +27,7 @@ export default function Setting() {
         className="flex-0 h-56px bg-white flex items-center pl-8"
         style={{ border: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <img alt="设置" src={IconSetting} className="w-4 h-4 mr-2" />
+        <img alt="设置" src="/assets/workbench/header-setting.png" className="w-4 h-4 mr-2" />
         <span className="text-default font-medium">设置</span>
       </div>
       <div className="flex flex-1">

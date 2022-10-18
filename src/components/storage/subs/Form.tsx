@@ -40,6 +40,10 @@ export default function StorageForm({ content }: Props) {
     void message.error('保存失败！')
   }
 
+  const handleTest = () => {
+    // TODO 测试接口
+  }
+
   return (
     <>
       <div className={`${styles['form-contain']}`}>
@@ -52,7 +56,6 @@ export default function StorageForm({ content }: Props) {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
-          labelAlign="left"
           className="ml-3"
           initialValues={{ ...config }}
         >
@@ -83,19 +86,19 @@ export default function StorageForm({ content }: Props) {
             <Switch className={styles['switch-set-btn']} size="small" />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+            <Button className="btn-cancel" onClick={() => handleSwitch('detail', content?.id)}>
+              <span>取消</span>
+            </Button>
+            <Button className="btn-test ml-4" onClick={() => handleTest()}>
+              测试
+            </Button>
             <Button
-              className={'btn-save'}
+              className="btn-save ml-4"
               onClick={() => {
                 form.submit()
               }}
             >
               保存
-            </Button>
-            <Button
-              className={'btn-cancel ml-4'}
-              onClick={() => handleSwitch('detail', content?.id)}
-            >
-              <span>取消</span>
             </Button>
           </Form.Item>
         </Form>

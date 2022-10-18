@@ -3,8 +3,6 @@ import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import Icon from '/assets/workbench/panel-add.png'
-import RoleIcon from '/assets/workbench/panel-role.png'
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
@@ -100,7 +98,7 @@ const panelMap: Record<string, PanelConfig> = {
     title: '身份验证',
     openItem: id => `/workbench/auth/${id}`,
     newItem: '/workbench/auth/new',
-    navAction: [{ icon: RoleIcon, path: '/workbench/auth/role' }],
+    navAction: [{ icon: '/assets/workbench/panel-role.png', path: '/workbench/auth/role' }],
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
