@@ -50,6 +50,8 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null)
 
   useEffect(() => {
+    if (!replaceJSON) return
+
     setData(
       replaceJSON.map((x, idx) => ({
         id: idx.toString(),
