@@ -1,5 +1,5 @@
 import { type SchemaContextProviderProps } from '@graphiql/react'
-import type { GraphQLSchema } from 'graphql'
+import type { DocumentNode, GraphQLSchema } from 'graphql'
 import { createContext, useContext } from 'react'
 
 interface APIState {
@@ -8,6 +8,7 @@ interface APIState {
   query: string
   setQuery: (v: string) => void
   fetcher: SchemaContextProviderProps['fetcher']
+  schemaAST?: DocumentNode
 }
 
 export const APIContext = createContext<APIState>({

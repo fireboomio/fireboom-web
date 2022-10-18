@@ -8,7 +8,8 @@ export default defineConfig({
   theme: {
     extend: {
       colors: {
-        primary: '#E92E5E'
+        primary: '#E92E5E',
+        default: '#333'
       }
     }
   }

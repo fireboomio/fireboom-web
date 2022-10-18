@@ -8,7 +8,7 @@ import 'graphiql/graphiql.css'
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery } from 'graphql'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ import requests from '@/lib/fetchers'
 
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
+import { parseSchemaAST } from './components/GraphiQL/utils'
 import { APIContext, useAPIManager } from './hooks'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import styles from './index.module.less'
@@ -97,29 +98,46 @@ export default function APIEditorProvider() {
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
 
-  async function fetcher(params: Record<string, unknown>): Promise<any> {
+  useCallback(() => {}, [])
+
+  const fetcher = useCallback(
+    async (rec: Record<string, unknown>) => {
+      try {
+        // const res = await fetch(`/model/graphql/${params.id}`, {
+        const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(rec)
+        }).then(resp => resp.json())
+        setSchema(buildClientSchema(res.data as IntrospectionQuery))
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [params.id]
+  )
+
+  const schemaAST = useMemo(() => {
     try {
-      // const res = await fetch(url ?? '/app/main/graphql', {
-      const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
-      }).then(resp => resp.json())
-      setSchema(buildClientSchema(res.data as IntrospectionQuery))
+      return parseSchemaAST(query)
     } catch (error) {
-      console.error(error)
+      //
     }
-  }
+  }, [query])
 
   useEffect(() => {
     void requests.get(`/operateApi/${params.id}`).then(resp => {
-      return setAPIDesc(resp)
+      // @ts-ignore
+      setAPIDesc(resp)
+      // @ts-ignore
+      setQuery(resp.content)
     })
     fetcher({ query: getIntrospectionQuery() })
-  }, [])
+  }, [params.id])
 
   return (
     <APIContext.Provider
@@ -128,7 +146,8 @@ export default function APIEditorProvider() {
         query,
         setQuery,
         schema,
-        fetcher
+        fetcher,
+        schemaAST
       }}
     >
       <APIEditorContainer />
