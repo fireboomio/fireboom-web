@@ -1,15 +1,15 @@
 import { MoreOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { StorageResp } from '@/interfaces/storage'
 import {
-  StorageDispatchContext,
   StorageCurrFileContext,
-  StorageSwitchContext,
+  StorageDispatchContext,
+  StorageSwitchContext
 } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
@@ -78,7 +78,7 @@ export default function StoragePannelItem({ bucket }: Props) {
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
-          ),
+          )
         },
         {
           key: '1',
@@ -87,7 +87,7 @@ export default function StoragePannelItem({ bucket }: Props) {
               <IconFont type="icon-chakan" />
               <span className="ml-1.5">查看</span>
             </div>
-          ),
+          )
         },
         {
           key: '2',
@@ -96,7 +96,7 @@ export default function StoragePannelItem({ bucket }: Props) {
               <IconFont type="icon-bianji-da" />
               <span className="ml-1.5">配置</span>
             </div>
-          ),
+          )
         },
         {
           key: '3',
@@ -116,8 +116,8 @@ export default function StoragePannelItem({ bucket }: Props) {
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
-          ),
-        },
+          )
+        }
       ]}
     />
   )

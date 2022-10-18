@@ -1,21 +1,22 @@
 import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tree } from 'antd'
-import { Key } from 'antd/lib/table/interface'
-import { OperationDefinitionNode, parse } from 'graphql/index'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import type { Key } from 'antd/lib/table/interface'
+import type { OperationDefinitionNode } from 'graphql/index'
+import { parse } from 'graphql/index'
+import type React from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
 import IconFont from '@/components/iconfont'
-import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
-import { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
+import SidePanel from '@/components/workbench/components/panel/sidePanel'
+import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
+
 // import GraphiQLApp from '@/pages/graphiql'
-
 import styles from './apiPanel.module.less'
-
 
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
@@ -105,7 +106,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (node.isDir) {
           return
         }
-        if (!await navCheck()) {
+        if (!(await navCheck())) {
           return
         }
         navigate(`/workbench/apimanage/${node.id}`, { replace: true })
@@ -145,7 +146,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       title: '',
       baseDir: curr?.currDir ?? '',
       isDir: action === '创建目录' ? true : false,
-      key: Date.now().toString(),
+      key: Date.now().toString()
     } as DirTreeNode
 
     if (curr?.children === null) curr.children = []
@@ -277,7 +278,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             <IconFont type="icon-zhongmingming" />
             <span className="ml-1.5">重命名</span>
           </div>
-        ),
+        )
       },
       {
         key: 'edit',
@@ -291,7 +292,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             <IconFont type="icon-chakan" />
             <span className="ml-1.5">编辑</span>
           </div>
-        ),
+        )
       },
       {
         key: 'delete',
@@ -308,8 +309,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               <span className="ml-1.5">删除</span>
             </a>
           </Popconfirm>
-        ),
-      },
+        )
+      }
     ]
     if (nodeData.isDir) {
       menuItems = menuItems.filter(x => x.key !== 'edit')
@@ -423,7 +424,7 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
     title: x.path.split('/')[x.path.split('/').length - 1],
     baseDir: x.path.split('/').slice(0, -1).join('/'),
     currDir: x.isDir ? x.path : x.path.split('/').slice(0, -1).join('/'),
-    children: convertToTree(x.children, `${lv}-${idx}`),
+    children: convertToTree(x.children, `${lv}-${idx}`)
   }))
 }
 
@@ -487,12 +488,12 @@ function renameNode(node: DirTreeNode, value: string) {
   if (node.isDir) {
     return requests.put('/operateApi/dir', {
       oldPath: `${node.path}`,
-      newPath: `${node.baseDir}/${value}`,
+      newPath: `${node.baseDir}/${value}`
     })
   } else {
     return requests.put(`/operateApi/${node.id}`, {
       ...node,
-      path: `${node.baseDir}/${value}`,
+      path: `${node.baseDir}/${value}`
     })
   }
 }
@@ -531,7 +532,7 @@ function deleteNode(node: DirTreeNode) {
 function createNode(node: DirTreeNode, value: string, content: string) {
   if (node.isDir) {
     return requests.post('/operateApi/dir', {
-      path: `${node.baseDir}/${value}`,
+      path: `${node.baseDir}/${value}`
     })
   } else {
     const op = parse(content, { noLocation: true }).definitions[0] as OperationDefinitionNode
@@ -539,7 +540,7 @@ function createNode(node: DirTreeNode, value: string, content: string) {
     return requests.post('/operateApi', {
       path: `${node.baseDir}/${value}`,
       content: content,
-      operationType: op.operation,
+      operationType: op.operation
     })
   }
 }

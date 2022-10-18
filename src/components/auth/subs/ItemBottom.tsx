@@ -1,12 +1,12 @@
-import { MoreOutlined, GithubOutlined, BarsOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Popconfirm } from 'antd'
+import { BarsOutlined, GithubOutlined, MoreOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthDispatchContext, AuthCurrContext, AuthToggleContext } from '@/lib/context/auth-context'
+import { AuthCurrContext, AuthDispatchContext, AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
 import styles from '../Common.module.less'
@@ -16,9 +16,7 @@ interface Props {
   onClickItem: (authItem: AuthProvResp) => void
 }
 
-interface Config {
-  [key: string]: string
-}
+type Config = Record<string, string>
 
 export default function AuthItem({ authItem, onClickItem }: Props) {
   const [isEditing, setIsEditing] = useImmer(authItem.name == '')
@@ -43,12 +41,12 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
       await requests.put('/auth', {
         ...authItem,
         name: value,
-        config: { ...config, id: value },
+        config: { ...config, id: value }
       })
       void requests.get<unknown, AuthProvResp[]>('/auth').then(res => {
         dispatch({
           type: 'fetched',
-          data: res,
+          data: res
         })
       })
     }
@@ -80,7 +78,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
-          ),
+          )
         },
         {
           key: '2',
@@ -89,7 +87,7 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
               <IconFont type="icon-bianji" />
               <span className="ml-1.5">配置</span>
             </div>
-          ),
+          )
         },
         {
           key: '3',
@@ -109,8 +107,8 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
-          ),
-        },
+          )
+        }
       ]}
     />
   )

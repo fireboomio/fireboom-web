@@ -1,9 +1,10 @@
 import { CaretRightOutlined, LockOutlined, PoweroffOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu, Image, Modal, Form, Input } from 'antd'
-import React, { useContext, useEffect } from 'react'
+import { Button, Dropdown, Form, Image, Input, Menu, Modal } from 'antd'
+import type React from 'react'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { AuthProvResp, AuthListType } from '@/interfaces/auth'
+import type { AuthListType, AuthProvResp } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
@@ -38,7 +39,7 @@ const listMenu = (
             <LockOutlined className="mr-2" />
             <span>锁定账号</span>
           </>
-        ),
+        )
       },
       {
         key: '1',
@@ -47,7 +48,7 @@ const listMenu = (
             <IconFont type="icon-shanchu" className="mr-2" />
             <span>删除账号</span>
           </>
-        ),
+        )
       },
       {
         key: '2',
@@ -56,16 +57,13 @@ const listMenu = (
             <PoweroffOutlined className="mr-2" />
             <span>强制下线</span>
           </>
-        ),
-      },
+        )
+      }
     ]}
   />
 )
 
-export default function AuthContainer({
-  showTopType,
-  handleTopToggleDesigner,
-}: Props) {
+export default function AuthContainer({ showTopType, handleTopToggleDesigner }: Props) {
   const [viewer, setViewer] = useImmer<React.ReactNode>('')
   const [title, setTitle] = useImmer<React.ReactNode>('')
   const { authUserCurr } = useContext(AuthUserCurrContext)

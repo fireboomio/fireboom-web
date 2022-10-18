@@ -1,7 +1,8 @@
-import { createContext, Dispatch } from 'react'
-import * as useImmer from 'use-immer'
+import type { Dispatch } from 'react'
+import { createContext } from 'react'
+import type * as useImmer from 'use-immer'
 
-import type { StorageResp, StorageAction } from '@/interfaces/storage'
+import type { StorageAction, StorageResp } from '@/interfaces/storage'
 
 interface StorageCurrFileContextT {
   currId?: number

@@ -10,13 +10,13 @@
  *  LICENSE file in the root directory of this source tree.
  */
 import { useEditorContext, useExecutionContext } from '@graphiql/react'
-import { OperationDefinitionNode } from 'graphql'
+import type { OperationDefinitionNode } from 'graphql'
 import { useState } from 'react'
 
 export function ExecuteButton() {
   const { queryEditor, setOperationName } = useEditorContext({ nonNull: true })
   const { isFetching, operationName, run, stop } = useExecutionContext({
-    nonNull: true,
+    nonNull: true
   })
   const [optionsOpen, setOptionsOpen] = useState(false)
   const [highlight, setHighlight] = useState<OperationDefinitionNode | null>(null)

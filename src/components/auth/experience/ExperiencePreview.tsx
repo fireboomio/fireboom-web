@@ -1,5 +1,5 @@
 import { Image, Select, Tabs } from 'antd'
-import React from 'react'
+import type React from 'react'
 
 import styles from './ExperiencePreview.module.less'
 

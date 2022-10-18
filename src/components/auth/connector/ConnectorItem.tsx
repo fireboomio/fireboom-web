@@ -1,8 +1,8 @@
 import { Image } from 'antd'
 import clsx from 'clsx'
-import React from 'react'
+import type React from 'react'
 
-import { Connector } from '@/interfaces/connector'
+import type { Connector } from '@/interfaces/connector'
 
 import styles from './ConnectorItem.module.less'
 export interface Props {
@@ -19,7 +19,7 @@ const ConnectorItem: React.FC<Props> = ({ data, onItemClickHandle, currentSelect
         [styles['connector-item-wrapper-selected']]: currentSelectedId === data.id,
         [styles['connector-item-wrapper-unselected']]: currentSelectedId !== data.id,
         [styles['connector-item-wrapper-enabled']]: data.enabled,
-        [styles['connector-item-wrapper-unenabled']]: !data.enabled,
+        [styles['connector-item-wrapper-unenabled']]: !data.enabled
       })}
       onClick={() => onItemClickHandle(data)}
     >

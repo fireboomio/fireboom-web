@@ -1,4 +1,4 @@
-import { Divider, Card, Row, Col, Tooltip, DatePicker, Image } from 'antd'
+import { Card, Col, DatePicker, Divider, Image, Row, Tooltip } from 'antd'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import moment from 'moment'
@@ -34,7 +34,7 @@ export default function AuthOutLine() {
   useEffect(() => {
     void requests
       .get<unknown, ActiveUser>('/auth/home/active/', {
-        params: { endDate: chartDate?.format('YYYY-MM-DD') },
+        params: { endDate: chartDate?.format('YYYY-MM-DD') }
       })
       .then(result => {
         setActiveUser(result)
@@ -53,21 +53,21 @@ export default function AuthOutLine() {
           top: '25',
           left: '40',
           right: '30',
-          bottom: '30',
+          bottom: '30'
         },
         lineStyle: {
-          color: 'rgba(24, 40, 168, 1)',
+          color: 'rgba(24, 40, 168, 1)'
         },
         xAxis: {
           data: activeUser?.thirtyActive.map(x => x.dataString),
           axisTick: { show: false },
           axisLabel: { color: 'rgba(95, 98, 105, 0.6)' },
-          axisLine: { lineStyle: { color: 'rgba(95,98,105,0.1)' } },
+          axisLine: { lineStyle: { color: 'rgba(95,98,105,0.1)' } }
         },
         yAxis: {
           axisLabel: { color: 'rgba(95, 98, 105, 0.6)' },
           axisLine: { lineStyle: { color: 'rgba(95,98,105,0.1)' }, show: true },
-          splitLine: { show: false },
+          splitLine: { show: false }
         },
         series: [
           {
@@ -84,21 +84,21 @@ export default function AuthOutLine() {
                   [
                     {
                       offset: 0,
-                      color: 'rgba(24, 40, 168, 0.3)',
+                      color: 'rgba(24, 40, 168, 0.3)'
                     },
                     {
                       offset: 1,
-                      color: 'rgba(0, 156, 255, 0)',
-                    },
+                      color: 'rgba(0, 156, 255, 0)'
+                    }
                   ],
                   false
-                ),
-              },
+                )
+              }
             },
             data: activeUser?.thirtyActive.map(x => x.count),
-            type: 'line',
-          },
-        ],
+            type: 'line'
+          }
+        ]
       }
     : null
 
@@ -108,7 +108,7 @@ export default function AuthOutLine() {
     tooltip,
     count,
     upCount,
-    icon,
+    icon
   }: {
     title: string
     tooltip: string
@@ -168,7 +168,7 @@ export default function AuthOutLine() {
               tooltip: '总用户',
               count: newUser?.totalUser,
               upCount: 0,
-              icon: '/assets/total-user.png',
+              icon: '/assets/total-user.png'
             })}
           </Col>
           <Col span={8}>
@@ -177,7 +177,7 @@ export default function AuthOutLine() {
               tooltip: '今日注册到你应用上到新用户数',
               count: newUser?.todayInsertUser.count,
               upCount: newUser?.todayInsertUser.upCount,
-              icon: '/assets/today-user.png',
+              icon: '/assets/today-user.png'
             })}
           </Col>
           <Col span={8}>
@@ -186,7 +186,7 @@ export default function AuthOutLine() {
               tooltip: '最近7日注册到你应用上到新用户数',
               count: newUser?.sevenDayUser.count,
               upCount: newUser?.sevenDayUser.upCount,
-              icon: '/assets/week-user.png',
+              icon: '/assets/week-user.png'
             })}
           </Col>
         </Row>
@@ -234,7 +234,7 @@ export default function AuthOutLine() {
               title: '周活用户',
               tooltip: '最近7日登录过你的应用到独立用户数',
               count: activeUser?.weekActive.count,
-              upCount: activeUser?.weekActive.upCount,
+              upCount: activeUser?.weekActive.upCount
             })}
           </Col>
           <Col span={8}>
@@ -242,7 +242,7 @@ export default function AuthOutLine() {
               title: '月活用户',
               tooltip: '最近30日登录过你的应用到独立用户数',
               count: activeUser?.monthActive.count,
-              upCount: activeUser?.monthActive.upCount,
+              upCount: activeUser?.monthActive.upCount
             })}
           </Col>
         </Row>

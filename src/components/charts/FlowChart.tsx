@@ -1,23 +1,23 @@
-import type { Edge, Node } from '@antv/x6'
-import { Graph } from '@antv/x6'
 // eslint-disable-next-line import/no-unassigned-import
 import '@antv/x6-react-shape/dist/x6-react-shape.js'
+
+import type { Edge, Node } from '@antv/x6'
+import { Graph } from '@antv/x6'
 import { Modal } from 'antd'
 import { useEffect, useRef } from 'react'
 
 import IdeContainer from '@/components/Ide'
 
 import { ActionGroup } from './ActionGroup'
-import StatusDirective from './StatusDirective'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
 import hookImg from './assets/hook.png'
 import routerImg from './assets/router.png'
+import StatusDirective from './StatusDirective'
 
 interface FlowChartProps {
   //
 }
-
 
 const CANVAS_PADDING = 20
 const CANVAS_WIDTH = 410
@@ -44,7 +44,11 @@ const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
 const showIde = function (path: string) {
-  Modal.info({ width: '90vw', okText: '关闭', content: <IdeContainer hookPath={path} defaultLanguage="typescript" /> })
+  Modal.info({
+    width: '90vw',
+    okText: '关闭',
+    content: <IdeContainer hookPath={path} defaultLanguage="typescript" />
+  })
 }
 
 const FlowChart = (props: FlowChartProps) => {
@@ -59,7 +63,7 @@ const FlowChart = (props: FlowChartProps) => {
         zoomAtMousePosition: true,
         modifiers: 'ctrl',
         minScale: 0.5,
-        maxScale: 3,
+        maxScale: 3
       },
       interacting: {
         nodeMovable: false,
@@ -67,17 +71,17 @@ const FlowChart = (props: FlowChartProps) => {
         edgeLabelMovable: false,
         arrowheadMovable: false,
         vertexMovable: false,
-        useEdgeTools: false,
+        useEdgeTools: false
       },
       background: {
         color: '#F8F9FD',
         image: gridImg,
         size: {
           width: 22,
-          height: 22,
+          height: 22
         },
-        repeat: 'repeat',
-      },
+        repeat: 'repeat'
+      }
     })
 
     // 起止
@@ -93,13 +97,13 @@ const FlowChart = (props: FlowChartProps) => {
             stroke: 'rgba(95, 98, 105, 0.6)',
             fill: '#F3F9FD',
             rx: 14,
-            ry: 14,
+            ry: 14
           },
           text: {
             fontSize: 14,
-            fill: '#333333',
-          },
-        },
+            fill: '#333333'
+          }
+        }
       },
       true
     )
@@ -113,10 +117,10 @@ const FlowChart = (props: FlowChartProps) => {
           targetMarker: {
             name: 'block',
             width: 3,
-            height: 4,
-          },
-        },
-      },
+            height: 4
+          }
+        }
+      }
     })
 
     // 拒绝流程里的箭头
@@ -127,10 +131,10 @@ const FlowChart = (props: FlowChartProps) => {
           targetMarker: {
             name: 'block',
             width: 3,
-            height: 4,
-          },
-        },
-      },
+            height: 4
+          }
+        }
+      }
     })
 
     // 决策判断
@@ -145,13 +149,13 @@ const FlowChart = (props: FlowChartProps) => {
             strokeWidth: 0.5,
             stroke: '#F2B241',
             fill: '#ffffff',
-            refPoints: '0,10 10,0 20,10 10,20',
+            refPoints: '0,10 10,0 20,10 10,20'
           },
           text: {
             fontSize: 14,
-            fill: '#F3B13F',
-          },
-        },
+            fill: '#F3B13F'
+          }
+        }
       },
       true
     )
@@ -169,13 +173,13 @@ const FlowChart = (props: FlowChartProps) => {
             stroke: 'rgba(95, 98, 105, 0.6)',
             fill: '#ffffff',
             rx: 4,
-            ry: 4,
+            ry: 4
           },
           text: {
             fontSize: 14,
-            fill: '#333333',
-          },
-        },
+            fill: '#333333'
+          }
+        }
       },
       true
     )
@@ -195,25 +199,25 @@ const FlowChart = (props: FlowChartProps) => {
               attrs: { x1: '100%', y1: '100%', x2: '0%', y2: '0%' },
               stops: [
                 { offset: '0%', color: '#FF9378' },
-                { offset: '100%', color: '#E13D5B' },
-              ],
+                { offset: '100%', color: '#E13D5B' }
+              ]
             },
             fill: {
               type: 'linearGradient',
               attrs: { x1: '100%', y1: '0%', x2: '0%', y2: '100%' },
               stops: [
                 { offset: '0%', color: '#FFF3F8' },
-                { offset: '100%', color: '#FFDBDD' },
-              ],
+                { offset: '100%', color: '#FFDBDD' }
+              ]
             },
             rx: 4,
-            ry: 4,
+            ry: 4
           },
           text: {
             fontSize: 14,
-            fill: '#E92E5E',
-          },
-        },
+            fill: '#E92E5E'
+          }
+        }
       },
       true
     )
@@ -237,11 +241,11 @@ const FlowChart = (props: FlowChartProps) => {
               color: 'rgba(202,83,206,0.33)',
               dx: 0,
               dy: 2,
-              blur: 7,
-            },
-          },
-        },
-      },
+              blur: 7
+            }
+          }
+        }
+      }
     })
 
     // API钩子
@@ -263,11 +267,11 @@ const FlowChart = (props: FlowChartProps) => {
               color: 'rgba(56,110,252,0.23)',
               dx: 0,
               dy: 2,
-              blur: 4,
-            },
-          },
-        },
-      },
+              blur: 4
+            }
+          }
+        }
+      }
     })
 
     // 自定义流程标签
@@ -280,13 +284,13 @@ const FlowChart = (props: FlowChartProps) => {
           strokeWidth: 0.3,
           stroke: 'rgba(175, 176, 180, 0.6)',
           rx: 7,
-          ry: 7,
+          ry: 7
         },
         text: {
           fontSize: 12,
-          fill: '#6f6f6f',
-        },
-      },
+          fill: '#6f6f6f'
+        }
+      }
     })
 
     // 路由器
@@ -308,11 +312,11 @@ const FlowChart = (props: FlowChartProps) => {
               color: 'rgba(69, 211, 142, 0.4)',
               dx: 0,
               dy: 3,
-              blur: 6,
-            },
-          },
-        },
-      },
+              blur: 6
+            }
+          }
+        }
+      }
     })
 
     // 异常流程
@@ -321,17 +325,17 @@ const FlowChart = (props: FlowChartProps) => {
         name: 'oneSide',
         args: {
           side: 'left',
-          padding: 128,
-        },
+          padding: 128
+        }
       },
       attrs: {
         line: {
           stroke: '#787D8B',
           strokeWidth: 0.5,
           strokeDasharray: '3 3',
-          targetMarker: '',
-        },
-      },
+          targetMarker: ''
+        }
+      }
     })
 
     // 可交互的指令
@@ -347,8 +351,8 @@ const FlowChart = (props: FlowChartProps) => {
             attrs: { x1: '0', y1: '0%', x2: '100%', y2: '100%' },
             stops: [
               { offset: '0%', color: '#7CD4FC' },
-              { offset: '100%', color: '#478FFF' },
-            ],
+              { offset: '100%', color: '#478FFF' }
+            ]
           },
           stroke: '',
           filter: {
@@ -357,15 +361,15 @@ const FlowChart = (props: FlowChartProps) => {
               color: 'rgba(105,187,253,0.43)',
               dx: 0,
               dy: 2,
-              blur: 3,
-            },
-          },
+              blur: 3
+            }
+          }
         },
         text: {
           fontSize: 12,
-          fill: '#fff',
-        },
-      },
+          fill: '#fff'
+        }
+      }
     })
 
     // 指令
@@ -379,13 +383,13 @@ const FlowChart = (props: FlowChartProps) => {
           rx: 8,
           ry: 8,
           fill: '#A4BEE1',
-          stroke: '',
+          stroke: ''
         },
         text: {
           fontSize: 12,
-          fill: '#fff',
-        },
-      },
+          fill: '#fff'
+        }
+      }
     })
 
     // 开始请求
@@ -394,7 +398,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'terminal',
       label: '开始请求',
       x: TERMINAL_X,
-      y,
+      y
     })
 
     // 请求拦截
@@ -402,7 +406,7 @@ const FlowChart = (props: FlowChartProps) => {
     const globalPreHookMetadata: Node.Metadata = {
       shape: 'globalHook',
       x: HOOK_X,
-      y,
+      y
     }
 
     // 登录校验
@@ -411,7 +415,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'decision',
       label: '登录校验?',
       x: DECISION_X,
-      y,
+      y
     })
 
     // yes
@@ -422,7 +426,7 @@ const FlowChart = (props: FlowChartProps) => {
       width: LABEL_WIDTH,
       height: LABEL_HEIGHT,
       x: LABEL_X,
-      y,
+      y
     })
 
     // 授权校验
@@ -431,7 +435,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'decision',
       label: '授权校验?',
       x: DECISION_X,
-      y,
+      y
     })
 
     // yes
@@ -442,7 +446,7 @@ const FlowChart = (props: FlowChartProps) => {
       width: LABEL_WIDTH,
       height: LABEL_HEIGHT,
       x: LABEL_X,
-      y,
+      y
     })
 
     // 入参校验
@@ -451,7 +455,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'decision',
       label: '入参校验?',
       x: DECISION_X,
-      y,
+      y
     })
 
     // yes
@@ -462,7 +466,7 @@ const FlowChart = (props: FlowChartProps) => {
       width: LABEL_WIDTH,
       height: LABEL_HEIGHT,
       x: LABEL_X,
-      y,
+      y
     })
 
     // 参数注入
@@ -471,7 +475,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'process',
       label: '参数注入',
       x: PROCESS_X,
-      y,
+      y
     })
 
     // 路由器
@@ -479,7 +483,7 @@ const FlowChart = (props: FlowChartProps) => {
     const routerSwitch = graph.createNode({
       shape: 'router',
       x: (CANVAS_WIDTH - 24) / 2,
-      y,
+      y
     })
 
     // 执行前钩子
@@ -487,7 +491,7 @@ const FlowChart = (props: FlowChartProps) => {
     const preHookMetadata: Node.Metadata = {
       shape: 'hook',
       x: HOOK_X,
-      y,
+      y
     }
 
     // 执行
@@ -496,7 +500,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'operation',
       label: '执行\n(Operation)',
       x: OPERATION_X,
-      y,
+      y
     })
 
     // 响应转换
@@ -505,7 +509,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'process',
       label: '响应转换',
       x: PROCESS_X,
-      y,
+      y
     })
 
     // 响应后置钩子
@@ -513,7 +517,7 @@ const FlowChart = (props: FlowChartProps) => {
     const postHookMetadata: Node.Metadata = {
       shape: 'hook',
       x: HOOK_X,
-      y,
+      y
     }
 
     // 全局后置钩子
@@ -521,7 +525,7 @@ const FlowChart = (props: FlowChartProps) => {
     const globalPostHookMetadata: Node.Metadata = {
       shape: 'globalHook',
       x: HOOK_X,
-      y,
+      y
     }
 
     // 发送响应到客户端
@@ -532,7 +536,7 @@ const FlowChart = (props: FlowChartProps) => {
       width: 144,
       height: PROCESS_HEIGHT,
       x: PROCESS_X - (144 - PROCESS_WIDTH) / 2,
-      y,
+      y
     })
 
     // 结束
@@ -541,7 +545,7 @@ const FlowChart = (props: FlowChartProps) => {
       shape: 'terminal',
       label: '结束',
       x: TERMINAL_X,
-      y,
+      y
     })
 
     const nodes = [
@@ -561,7 +565,7 @@ const FlowChart = (props: FlowChartProps) => {
       // postHook,
       // globalPostHook,
       sendResponse,
-      end,
+      end
     ]
 
     graph.addNodes(nodes)
@@ -576,7 +580,7 @@ const FlowChart = (props: FlowChartProps) => {
       operation,
       responseTransform,
       sendResponse,
-      end,
+      end
     ]
 
     // 主流程
@@ -586,7 +590,7 @@ const FlowChart = (props: FlowChartProps) => {
           arr.push({
             shape: 'flowline',
             source: node,
-            target: flowNodes[index + 1],
+            target: flowNodes[index + 1]
           })
         }
         return arr
@@ -597,7 +601,7 @@ const FlowChart = (props: FlowChartProps) => {
     graph.addEdge({
       shape: 'reject',
       source: loggedValidation,
-      target: end,
+      target: end
     })
     graph.addNode({
       shape: 'flowLabel',
@@ -605,19 +609,19 @@ const FlowChart = (props: FlowChartProps) => {
       width: 24,
       height: LABEL_HEIGHT,
       x: 80,
-      y: 111,
+      y: 111
     })
     graph.addEdge({
       shape: 'rejectArrow',
       source: { x: 64, y: 119 },
-      target: { x: 60, y: 119 },
+      target: { x: 60, y: 119 }
     })
     // 避免边重叠
     graph.addEdge({
       shape: 'reject',
       source: authValidation,
       router: 'normal',
-      target: { x: 20, y: 198 },
+      target: { x: 20, y: 198 }
     })
     graph.addNode({
       shape: 'flowLabel',
@@ -625,19 +629,19 @@ const FlowChart = (props: FlowChartProps) => {
       width: 24,
       height: LABEL_HEIGHT,
       x: 80,
-      y: 191,
+      y: 191
     })
     graph.addEdge({
       shape: 'rejectArrow',
       source: { x: 64, y: 198 },
-      target: { x: 60, y: 198 },
+      target: { x: 60, y: 198 }
     })
     // 避免边重叠
     graph.addEdge({
       shape: 'reject',
       source: requestValidation,
       router: 'normal',
-      target: { x: 20, y: 277 },
+      target: { x: 20, y: 277 }
     })
     graph.addNode({
       shape: 'flowLabel',
@@ -645,12 +649,12 @@ const FlowChart = (props: FlowChartProps) => {
       width: 24,
       height: LABEL_HEIGHT,
       x: 80,
-      y: 270,
+      y: 270
     })
     graph.addEdge({
       shape: 'rejectArrow',
       source: { x: 64, y: 277 },
-      target: { x: 60, y: 277 },
+      target: { x: 60, y: 277 }
     })
 
     // mock
@@ -660,14 +664,14 @@ const FlowChart = (props: FlowChartProps) => {
       target: sendResponse,
       router: {
         args: {
-          padding: 60,
-        },
-      },
+          padding: 60
+        }
+      }
     })
     graph.addEdge({
       shape: 'rejectArrow',
       source: { x: 100, y: 382 },
-      target: { x: 96, y: 382 },
+      target: { x: 96, y: 382 }
     })
     // mockResolve
     graph.addNode({
@@ -678,8 +682,8 @@ const FlowChart = (props: FlowChartProps) => {
       x: 30,
       y: 451,
       attrs: {
-        body: { rx: 10, ry: 10 },
-      },
+        body: { rx: 10, ry: 10 }
+      }
     })
 
     // 全局请求前置指令
@@ -691,11 +695,15 @@ const FlowChart = (props: FlowChartProps) => {
           width: 114,
           height: 20,
           component: (
-            <StatusDirective status={'On'} label="onRequest" onDoubleClick={() => showIde('global/onRequest')} />
+            <StatusDirective
+              status={'On'}
+              label="onRequest"
+              onDoubleClick={() => showIde('global/onRequest')}
+            />
           ),
           x: 290,
-          y: 64,
-        },
+          y: 64
+        }
       ],
       'arrow'
     ).addToGraph(graph)
@@ -706,7 +714,7 @@ const FlowChart = (props: FlowChartProps) => {
         shape: 'directiveTrigger',
         label: '1',
         x: 258,
-        y: 112,
+        y: 112
       },
       [
         {
@@ -715,8 +723,8 @@ const FlowChart = (props: FlowChartProps) => {
           width: 84,
           height: 16,
           x: 290,
-          y: 110,
-        },
+          y: 110
+        }
       ],
       'linear'
     ).addToGraph(graph)
@@ -727,7 +735,7 @@ const FlowChart = (props: FlowChartProps) => {
         shape: 'directiveTrigger',
         label: '1',
         x: 258,
-        y: 193,
+        y: 193
       },
       [
         {
@@ -736,8 +744,8 @@ const FlowChart = (props: FlowChartProps) => {
           width: 64,
           height: 16,
           x: 300,
-          y: 191,
-        },
+          y: 191
+        }
       ],
       'linear'
     ).addToGraph(graph)
@@ -748,7 +756,7 @@ const FlowChart = (props: FlowChartProps) => {
         shape: 'directiveTrigger',
         label: '1',
         x: 258,
-        y: 272,
+        y: 272
       },
       [
         {
@@ -757,8 +765,8 @@ const FlowChart = (props: FlowChartProps) => {
           width: 88,
           height: 16,
           x: 290,
-          y: 270,
-        },
+          y: 270
+        }
       ],
       'linear'
     ).addToGraph(graph)
@@ -769,7 +777,7 @@ const FlowChart = (props: FlowChartProps) => {
         shape: 'directiveTrigger',
         label: '3',
         x: 258,
-        y: 341,
+        y: 341
       },
       [
         {
@@ -778,7 +786,7 @@ const FlowChart = (props: FlowChartProps) => {
           width: 128,
           height: 16,
           x: 280,
-          y: 300,
+          y: 300
         },
         {
           shape: 'directive',
@@ -786,7 +794,7 @@ const FlowChart = (props: FlowChartProps) => {
           width: 110,
           height: 16,
           x: 290,
-          y: 322,
+          y: 322
         },
         {
           shape: 'directive',
@@ -794,8 +802,8 @@ const FlowChart = (props: FlowChartProps) => {
           width: 110,
           height: 16,
           x: 290,
-          y: 344,
-        },
+          y: 344
+        }
       ],
       'linear'
     ).addToGraph(graph)
@@ -810,7 +818,7 @@ const FlowChart = (props: FlowChartProps) => {
           height: 20,
           component: <StatusDirective status={'Off'} label="preResolve" />,
           x: 290,
-          y: 370,
+          y: 370
         },
         {
           shape: 'react-shape',
@@ -818,7 +826,7 @@ const FlowChart = (props: FlowChartProps) => {
           height: 20,
           component: <StatusDirective status={'Off'} label="mutatingPreResolve" />,
           x: 280,
-          y: 396,
+          y: 396
         },
         {
           shape: 'react-shape',
@@ -826,8 +834,8 @@ const FlowChart = (props: FlowChartProps) => {
           height: 20,
           component: <StatusDirective status={'On'} label="customResolve" />,
           x: 290,
-          y: 422,
-        },
+          y: 422
+        }
       ],
       'arrow'
     ).addToGraph(graph)
@@ -838,7 +846,7 @@ const FlowChart = (props: FlowChartProps) => {
         shape: 'directiveTrigger',
         label: '1',
         x: 258,
-        y: 507,
+        y: 507
       },
       [
         {
@@ -847,8 +855,8 @@ const FlowChart = (props: FlowChartProps) => {
           width: 82,
           height: 16,
           x: 290,
-          y: 505,
-        },
+          y: 505
+        }
       ],
       'linear'
     ).addToGraph(graph)
@@ -863,7 +871,7 @@ const FlowChart = (props: FlowChartProps) => {
           height: 20,
           component: <StatusDirective status={'On'} label="postResolve" />,
           x: 290,
-          y: 528,
+          y: 528
         },
         {
           shape: 'react-shape',
@@ -871,8 +879,8 @@ const FlowChart = (props: FlowChartProps) => {
           height: 20,
           component: <StatusDirective status={'On'} label="mutatingPostResolve" />,
           x: 280,
-          y: 554,
-        },
+          y: 554
+        }
       ],
       'arrow'
     ).addToGraph(graph)
@@ -893,8 +901,8 @@ const FlowChart = (props: FlowChartProps) => {
             />
           ),
           x: 290,
-          y: 582,
-        },
+          y: 582
+        }
       ],
       'arrow'
     ).addToGraph(graph)

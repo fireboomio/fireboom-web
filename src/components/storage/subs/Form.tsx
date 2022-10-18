@@ -9,7 +9,6 @@ import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 
-
 interface Props {
   content?: StorageResp
 }

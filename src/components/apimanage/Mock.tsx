@@ -1,9 +1,10 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
 import { Switch } from 'antd'
-import { FC, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
 
-import { DirTreeNode, MockResp } from '@/interfaces/apimanage'
+import type { DirTreeNode, MockResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './Mock.module.less'
@@ -39,7 +40,7 @@ const Mock: FC<MockProps> = ({ node }) => {
 
     setMock({
       content: value,
-      mockSwitch: mock?.mockSwitch ?? false,
+      mockSwitch: mock?.mockSwitch ?? false
     })
   }
 
@@ -48,7 +49,7 @@ const Mock: FC<MockProps> = ({ node }) => {
     void requests
       .put(`/operateApi/mock/${node.id}`, {
         mockSwitch: mock?.mockSwitch,
-        content: mock?.content,
+        content: mock?.content
       })
       .then(() => setRefreshFlag(!refreshFlag))
   }
@@ -58,7 +59,7 @@ const Mock: FC<MockProps> = ({ node }) => {
     void requests
       .put(`/operateApi/mock/${node.id}`, {
         mockSwitch: !mock?.mockSwitch,
-        content: mock?.content,
+        content: mock?.content
       })
       .then(() => setRefreshFlag(!refreshFlag))
   }

@@ -1,4 +1,5 @@
-import { GraphQLField, isNonNullType, isObjectType, isScalarType } from 'graphql'
+import type { GraphQLField } from 'graphql'
+import { isNonNullType, isObjectType, isScalarType } from 'graphql'
 
 import { arraySort } from '../utils'
 import ArgView from './ArgView'

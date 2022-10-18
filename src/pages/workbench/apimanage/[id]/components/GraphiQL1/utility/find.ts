@@ -5,13 +5,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-export default function find<T>(
-  list: Array<T>,
-  predicate: (item: T) => boolean,
-): T | void {
+export default function find<T>(list: Array<T>, predicate: (item: T) => boolean): T | void {
   for (let i = 0; i < list.length; i++) {
     if (predicate(list[i])) {
-      return list[i];
+      return list[i]
     }
   }
 }

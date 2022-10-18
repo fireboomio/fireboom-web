@@ -8,7 +8,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import { useResponseEditor, UseResponseEditorArgs } from '@graphiql/react'
+import type { UseResponseEditorArgs } from '@graphiql/react'
+import { useResponseEditor } from '@graphiql/react'
 
 /**
  * ResultViewer

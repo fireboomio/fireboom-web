@@ -38,7 +38,7 @@ export default function AuthDB() {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         label: x.name,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        value: x.id.toString(),
+        value: x.id.toString()
       }))
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       setOptions(opts)

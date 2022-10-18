@@ -7,7 +7,8 @@
  *  This source code is licensed under the MIT license found in the
  *  LICENSE file in the root directory of this source tree.
  */
-import { useVariableEditor, UseVariableEditorArgs } from '@graphiql/react'
+import type { UseVariableEditorArgs } from '@graphiql/react'
+import { useVariableEditor } from '@graphiql/react'
 
 type VariableEditorProps = UseVariableEditorArgs & {
   active?: boolean
@@ -28,7 +29,7 @@ export function VariableEditor({ active, ...hookArgs }: VariableEditorProps) {
       // causes one of the editors' gutters to break otherwise.
       style={{
         position: active ? 'relative' : 'absolute',
-        visibility: active ? 'visible' : 'hidden',
+        visibility: active ? 'visible' : 'hidden'
       }}
       ref={ref}
     />

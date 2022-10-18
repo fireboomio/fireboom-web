@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react'
+import type React from 'react'
 
 /**
  * TODO: extract with other components to @graphiql/react

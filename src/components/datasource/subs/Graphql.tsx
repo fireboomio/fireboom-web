@@ -1,25 +1,25 @@
 import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Button,
-  Switch,
-  Descriptions,
-  Collapse,
-  Form,
-  Input,
   Checkbox,
-  Space,
-  Select,
-  Tag,
-  Modal,
+  Collapse,
+  Descriptions,
+  Form,
   Image,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Switch,
+  Tag
 } from 'antd'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import Error50x from '@/components/ErrorPage/50x'
 import FormToolTip from '@/components/common/FormTooltip'
 import Uploader from '@/components/common/Uploader'
+import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -32,9 +32,7 @@ interface Props {
   content: DatasourceResp
   type: ShowType
 }
-interface Config {
-  [key: string]: string | undefined | number
-}
+type Config = Record<string, string | undefined | number>
 
 interface DataType {
   key: string
@@ -42,9 +40,7 @@ interface DataType {
   val: string
 }
 
-interface FromValues {
-  [key: string]: string | undefined | number | Array<DataType>
-}
+type FromValues = Record<string, string | undefined | number | Array<DataType>>
 
 const renderIcon = (kind: string) => (
   <Image
@@ -56,7 +52,7 @@ const renderIcon = (kind: string) => (
       {
         0: '/assets/header-value.png',
         1: '/assets/header-env.png',
-        2: '/assets/header-relay.png',
+        2: '/assets/header-relay.png'
       }[kind]
     }
   />
@@ -100,16 +96,16 @@ export default function Graphql({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: fileId },
+          data: { id: fileId }
         })
       }
       newValues.loadSchemaFromString = (await requests({
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data'
         },
         method: 'post',
         url: '/dataSource/import',
-        data: { file: file },
+        data: { file: file }
       })) as unknown as string
     } else {
       //如果删除文件则将config中的filePath置空
@@ -117,7 +113,7 @@ export default function Graphql({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: fileId },
+          data: { id: fileId }
         })
         newValues.loadSchemaFromString = undefined
       } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
@@ -134,7 +130,7 @@ export default function Graphql({ content, type }: Props) {
       newContent = {
         ...content,
         config: newValues,
-        name: values.apiNameSpace,
+        name: values.apiNameSpace
       } as DatasourceResp
       await requests.put('/dataSource', newContent)
     }
@@ -161,7 +157,7 @@ export default function Graphql({ content, type }: Props) {
         setIsValue(true)
         setRulesObj({
           pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-          message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+          message: '以字母或下划线开头，只能由字母、下划线和数字组成'
         })
         return
       default:
@@ -174,7 +170,7 @@ export default function Graphql({ content, type }: Props) {
   const handleChange = (_value: string) => {
     setRulesObj({
       pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-      message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+      message: '以字母或下划线开头，只能由字母、下划线和数字组成'
     })
   }
 
@@ -191,12 +187,12 @@ export default function Graphql({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 0 : 1,
+        switch: isChecked == true ? 0 : 1
       })
       .then(() => {
         handleSave({
           ...content,
-          switch: isChecked == true ? 0 : 1,
+          switch: isChecked == true ? 0 : 1
         })
       })
   }
@@ -306,7 +302,7 @@ export default function Graphql({ content, type }: Props) {
               column={1}
               size="small"
               labelStyle={{
-                width: 190,
+                width: 190
               }}
             >
               {((config?.headers as unknown as DataType[]) ?? []).map(
@@ -349,7 +345,7 @@ export default function Graphql({ content, type }: Props) {
                   column={1}
                   size="small"
                   labelStyle={{
-                    width: 190,
+                    width: 190
                   }}
                 >
                   <Descriptions.Item
@@ -449,7 +445,7 @@ export default function Graphql({ content, type }: Props) {
                 customIntScalars: config.defineInt,
                 skipRenameRootFields: config.exceptRename,
                 headers: config.headers || [{ kind: '0' }],
-                agreement: config.loadSchemaFromString !== undefined ? true : false,
+                agreement: config.loadSchemaFromString !== undefined ? true : false
               }}
             >
               <Form.Item
@@ -468,8 +464,8 @@ export default function Graphql({ content, type }: Props) {
                   { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-                  },
+                    message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                  }
                 ]}
               >
                 <Input placeholder="请输入..." />
@@ -489,8 +485,8 @@ export default function Graphql({ content, type }: Props) {
                 rules={[
                   {
                     pattern: urlReg,
-                    message: '请填写规范域名',
-                  },
+                    message: '请填写规范域名'
+                  }
                 ]}
                 style={{ marginBottom: '20px' }}
                 name="url"
@@ -530,8 +526,8 @@ export default function Graphql({ content, type }: Props) {
                         ? [
                             {
                               name: config.loadSchemaFromString as unknown as string,
-                              uid: config.loadSchemaFromString as unknown as string,
-                            },
+                              uid: config.loadSchemaFromString as unknown as string
+                            }
                           ]
                         : []
                     }

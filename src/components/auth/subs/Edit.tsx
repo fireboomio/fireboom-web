@@ -1,12 +1,13 @@
 /* eslint-disable camelcase */
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Divider, Form, Input, Radio, Checkbox } from 'antd'
-import { useContext, ReactNode } from 'react'
+import { Button, Checkbox, Divider, Form, Input, Radio } from 'antd'
+import type { ReactNode } from 'react'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthToggleContext, AuthDispatchContext } from '@/lib/context/auth-context'
+import { AuthDispatchContext, AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
@@ -15,20 +16,16 @@ loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.
 
 interface Props {
   content: AuthProvResp
-  onChange: (content:AuthProvResp)=>void
+  onChange: (content: AuthProvResp) => void
 }
 
-interface Config {
-  [key: string]: ReactNode
-}
+type Config = Record<string, ReactNode>
 
-interface FromValues {
-  [key: string]: number | string | readonly string[] | undefined
-}
+type FromValues = Record<string, number | string | readonly string[] | undefined>
 
 const options = [
   { label: '基于Cookie', value: 'cookieBased' },
-  { label: '基于Token', value: 'tokenBased' },
+  { label: '基于Token', value: 'tokenBased' }
 ]
 
 export default function AuthMainEdit({ content, onChange }: Props) {
@@ -57,7 +54,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
     } else {
       await requests.put('/auth', {
         ...newContent,
-        config: newValues,
+        config: newValues
       })
     }
     void requests
@@ -94,7 +91,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
         issuer: config.issuer,
         jwks: config.jwks,
         jwksJSON: config.jwksJSON,
-        switchState: content.switchState,
+        switchState: content.switchState
       }
     : {
         id: '',
@@ -103,7 +100,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
         issuer: '',
         jwks: 0,
         jwksJSON: '',
-        switchState: [],
+        switchState: []
       }
 
   return (
@@ -170,8 +167,8 @@ export default function AuthMainEdit({ content, onChange }: Props) {
               { required: true, message: '供应商ID不能为空' },
               {
                 pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线',
-              },
+                message: '只允许包含字母，数字，下划线'
+              }
             ]}
           >
             <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
@@ -183,8 +180,8 @@ export default function AuthMainEdit({ content, onChange }: Props) {
               { required: true, message: 'App ID不能为空' },
               {
                 pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线',
-              },
+                message: '只允许包含字母，数字，下划线'
+              }
             ]}
           >
             <Input placeholder="请输入..." />
@@ -196,8 +193,8 @@ export default function AuthMainEdit({ content, onChange }: Props) {
               { required: true, message: 'App Secret不能为空' },
               {
                 pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线',
-              },
+                message: '只允许包含字母，数字，下划线'
+              }
             ]}
           >
             <Input.Password placeholder="请输入..." />
@@ -209,8 +206,8 @@ export default function AuthMainEdit({ content, onChange }: Props) {
               { required: true, message: 'Issuer不能为空' },
               {
                 pattern: /^https?:\/\/[.\w\d/]+$/,
-                message: '只允许输入链接',
-              },
+                message: '只允许输入链接'
+              }
             ]}
           >
             <Input placeholder="请输入..." value={inputValue} />

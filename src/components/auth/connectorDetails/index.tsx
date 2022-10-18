@@ -1,13 +1,14 @@
 import { CopyOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import { Image, Badge, Button, Popover } from 'antd'
+import { Badge, Button, Image, Popover } from 'antd'
 import copy from 'copy-to-clipboard'
-import React, { useContext, useEffect, useState } from 'react'
+import type React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import JSONInput from 'react-json-editor-ajrm'
 // @ts-ignore
 import locale from 'react-json-editor-ajrm/locale/zh-cn'
 
-import { AuthListType } from '@/interfaces/auth'
-import { Connector as ConnectorType } from '@/interfaces/connector'
+import type { AuthListType } from '@/interfaces/auth'
+import type { Connector as ConnectorType } from '@/interfaces/connector'
 import { ConnectorTitleEnum, ConnectorTypeEnum, SMS, SOCIAL } from '@/lib/constant'
 import { ConnectorContext } from '@/lib/context/auth-context'
 import { deleteConnector, upsertConnector } from '@/lib/service/connector'
@@ -28,7 +29,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const {
     connector: { currentConnector, connectors },
-    connectorDispatch,
+    connectorDispatch
   } = useContext(ConnectorContext)
   const [json, setJson] = useState(currentConnector.config || {})
   const [_plainText, setPlainText] = useState(currentConnector.configTemplate || {})
@@ -53,7 +54,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
     const res = await upsertConnector({
       id: currentConnector.id,
       enable: true,
-      config: json,
+      config: json
     })
     if (res) {
       handleTopToggleDesigner({ name: '连接器', type: 'connect' })
@@ -66,7 +67,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
     const currentSelected = connectors.find(item => item.id === currentSelectedId)
     connectorDispatch({
       type: 'setCurrentConnector',
-      payload: currentSelected,
+      payload: currentSelected
     })
   }
 
@@ -169,7 +170,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
           <JSONInput
             colors={{
               background: '#FFF',
-              default: '#000',
+              default: '#000'
             }}
             width="100%"
             onChange={onJSONChangeHandle}

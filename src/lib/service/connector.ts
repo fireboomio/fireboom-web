@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { Connector } from '@/interfaces/connector'
+import type { Connector } from '@/interfaces/connector'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 export const useFetchConnector = () => {

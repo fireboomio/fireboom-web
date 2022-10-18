@@ -21,17 +21,17 @@ export default function ModelPannel({
   sourceOptions,
   onChangeSource,
   onClickEntity,
-  onToggleDesigner,
+  onToggleDesigner
 }: Props) {
   const dispatch = useContext(ModelingDispatchContext)
 
   useEffect(() => {
     requests
       .get<unknown, SchemaResp>(`/schemas/${sourceOptions[0].id}`)
-      .then((res) =>
+      .then(res =>
         dispatch({
           type: 'fetched',
-          data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx })),
+          data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx }))
         })
       )
       .catch((err: Error) => {
@@ -40,13 +40,13 @@ export default function ModelPannel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const schOpts = sourceOptions.map((s) => ({
+  const schOpts = sourceOptions.map(s => ({
     label: (
       <>
         <AppleOutlined /> {s.name}
       </>
     ),
-    value: `${s.id}`,
+    value: `${s.id}`
   }))
 
   return (

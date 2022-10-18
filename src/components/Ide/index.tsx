@@ -1,23 +1,29 @@
-import { DoubleRightOutlined } from '@ant-design/icons';
+import { DoubleRightOutlined } from '@ant-design/icons'
 import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
 import type { EditorProps, OnMount } from '@swordjs/monaco-editor-react'
-import { loader } from '@swordjs/monaco-editor-react';
-import { Button } from 'antd';
-import { debounce } from 'lodash';
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import { loader } from '@swordjs/monaco-editor-react'
+import { Button } from 'antd'
+import { debounce } from 'lodash'
+import type { FC } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 
-import { saveHookDepend, saveHookInput, saveHookScript, updateHookSwitch, getHook, runHook } from '@/lib/service/hook'
-
-loader.config({ paths: { vs: 'https://unpkg.com/monaco-editor/min/vs' } });
-
+import {
+  getHook,
+  runHook,
+  saveHookDepend,
+  saveHookInput,
+  saveHookScript,
+  updateHookSwitch
+} from '@/lib/service/hook'
 
 import IdeActionContainer from './action/index'
-import IdeCodeContainer from './code/index';
+import IdeCodeContainer from './code/index'
 import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
 import ideStyles from './ide.module.less'
 
+loader.config({ paths: { vs: 'https://unpkg.com/monaco-editor/min/vs' } })
 
 export const hookPath = {
   OperationPreResolve: (api: string) => `operations/${api}/preResolve`,
@@ -33,11 +39,18 @@ export const hookPath = {
   GlobalOnResponse: 'global/onResponse'
 }
 
-
-export type Depend = { [key: string]: string }
-export type Input = { [key: string]: any }
-export type HookInfo = { script: string, scriptType: string, type: string, path: string, depend: Depend[] | null, input: Input | null, switch: boolean };
-export type RunHookResponse = { logs: any[][], result: any }
+export type Depend = Record<string, string>
+export type Input = Record<string, any>
+export type HookInfo = {
+  script: string
+  scriptType: string
+  type: string
+  path: string
+  depend: Depend[] | null
+  input: Input | null
+  switch: boolean
+}
+export type RunHookResponse = { logs: any[][]; result: any }
 
 // 保存的4种状态
 export enum AutoSaveStatus {
@@ -50,7 +63,7 @@ export enum AutoSaveStatus {
 // 保存的payload类型
 export type AutoSavePayload = {
   // 是主动还是被动
-  type: 'active' | 'passive',
+  type: 'active' | 'passive'
   // 保存状态
   status: AutoSaveStatus | null
 }
@@ -63,20 +76,18 @@ export const editorOptions: EditorProps['options'] = {
   scrollbar: {
     vertical: 'hidden',
     horizontal: 'hidden',
-    handleMouseWheel: false,
+    handleMouseWheel: false
   }
 }
 
-
 // 实时保存代码的延迟时间
-const SAVE_DELAY = 1000;
+const SAVE_DELAY = 1000
 
 interface Props {
-  hookPath: string,
+  hookPath: string
   defaultLanguage?: string
   onChange?: (value?: string) => void
 }
-
 
 /**
  *
@@ -85,23 +96,23 @@ interface Props {
  * @return {*}
  */
 const IdeContainer: FC<Props> = props => {
-  useEffect(()=>{
+  useEffect(() => {
     console.log('====ide init')
-  },[])
+  }, [])
   // 防止主动保存和被动保存冲突的timer
-  const saveTimer = useRef<NodeJS.Timeout | null>(null);
-  const handle = useFullScreenHandle();
+  const saveTimer = useRef<NodeJS.Timeout | null>(null)
+  const handle = useFullScreenHandle()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const [editor, setEditor] = useState<any>();
+  const [editor, setEditor] = useState<any>()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const [monaco, setMonaco] = useState<any>();
+  const [monaco, setMonaco] = useState<any>()
   // depend
-  const [depend, setDepend] = useState<Depend[]>([]);
+  const [depend, setDepend] = useState<Depend[]>([])
   // 运行结果
-  const [runResult, setRunResult] = useState<RunHookResponse>({ logs: [] , result: '' });
-  const typingsRef = useRef<any>(null);
+  const [runResult, setRunResult] = useState<RunHookResponse>({ logs: [], result: '' })
+  const typingsRef = useRef<any>(null)
   // hook详情
-  const [hookInfo, setHookInfo] = useState<HookInfo>();
+  const [hookInfo, setHookInfo] = useState<HookInfo>()
   // 是否展开输入和输出区域
   const [expandAction, setExpandAction] = useState(false)
   // 是否全屏显示
@@ -111,7 +122,7 @@ const IdeContainer: FC<Props> = props => {
   const [savePayload, setPayload] = useState<AutoSavePayload>({
     type: 'passive',
     status: null
-  });
+  })
   // 保存上一次的脚本内容
   const [lastScript, setLastScript] = useState<string>()
 
@@ -123,7 +134,7 @@ const IdeContainer: FC<Props> = props => {
         type: 'passive',
         status: AutoSaveStatus.LOADED
       })
-      setHookInfo(data);
+      setHookInfo(data)
     })
   }, [])
 
@@ -133,7 +144,7 @@ const IdeContainer: FC<Props> = props => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         // 执行主动保存
         handleSave('active')
-        e.preventDefault();
+        e.preventDefault()
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -157,9 +168,9 @@ const IdeContainer: FC<Props> = props => {
         monaco: monaco,
         onlySpecifiedPackages: true,
         preloadPackages: true,
-        versions: depend,
+        versions: depend
       }).then(t => {
-        typingsRef.current = t;
+        typingsRef.current = t
       })
     }
   }, [editor, monaco, hookInfo?.depend])
@@ -169,7 +180,6 @@ const IdeContainer: FC<Props> = props => {
       // 将lastScript设置为当前的脚本内容
       setLastScript(hookInfo?.script)
     }
-
   }, [hookInfo?.script])
 
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
@@ -178,28 +188,31 @@ const IdeContainer: FC<Props> = props => {
   }
 
   // 保存内容(依赖和脚本)
-  const handleSave = useCallback(debounce((type: AutoSavePayload['type'] = 'passive') => {
-    // 如果正在保存中，不再重复保存
-    if (savePayload.status === AutoSaveStatus.SAVEING) {
-      return
-    }
-    if (type === 'active' && saveTimer.current) {
-      clearTimeout(saveTimer.current)
-      saveTimer.current = null
-    }
-    setPayload({
-      type,
-      status: AutoSaveStatus.SAVEING
-    })
-    // 保存脚本内容
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    void saveHookScript(props.hookPath, editor.getValue()).then(() => {
+  const handleSave = useCallback(
+    debounce((type: AutoSavePayload['type'] = 'passive') => {
+      // 如果正在保存中，不再重复保存
+      if (savePayload.status === AutoSaveStatus.SAVEING) {
+        return
+      }
+      if (type === 'active' && saveTimer.current) {
+        clearTimeout(saveTimer.current)
+        saveTimer.current = null
+      }
       setPayload({
         type,
-        status: AutoSaveStatus.SAVED
+        status: AutoSaveStatus.SAVEING
       })
-    })
-  }, 1000), [editor])
+      // 保存脚本内容
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      void saveHookScript(props.hookPath, editor.getValue()).then(() => {
+        setPayload({
+          type,
+          status: AutoSaveStatus.SAVED
+        })
+      })
+    }, 1000),
+    [editor]
+  )
 
   // depend变更时，保存依赖
   const handleDependChange = async (depend: Depend) => {
@@ -208,7 +221,7 @@ const IdeContainer: FC<Props> = props => {
     // 保存依赖
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await saveHookDepend(props.hookPath, dependList)
-    setDepend(dependList);
+    setDepend(dependList)
   }
 
   // dependchange回调
@@ -217,7 +230,7 @@ const IdeContainer: FC<Props> = props => {
     if (typingsRef.current) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       typingsRef.current.setVersions(depend)
-      void handleDependChange(depend);
+      void handleDependChange(depend)
     }
   }
 
@@ -231,14 +244,18 @@ const IdeContainer: FC<Props> = props => {
     // console.log(lastScript)
     // 和上一次的脚本内容进行比对
     if (lastScript !== value) {
-      if (![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(savePayload.status ?? AutoSaveStatus.LOADED)) {
+      if (
+        ![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(
+          savePayload.status ?? AutoSaveStatus.LOADED
+        )
+      ) {
         setPayload({
           type: 'passive',
           status: AutoSaveStatus.EDIT
         })
         saveTimer.current = setTimeout(() => {
           handleSave('passive')
-        }, SAVE_DELAY);
+        }, SAVE_DELAY)
       }
       setLastScript(value)
     }
@@ -252,7 +269,7 @@ const IdeContainer: FC<Props> = props => {
   // 处理点击调试按钮
   const handleDebug = async (json: Input) => {
     // 保存input内容
-    void await saveHookInput(props.hookPath, json)
+    void (await saveHookInput(props.hookPath, json))
     const result = await runHook<RunHookResponse>(props.hookPath, {
       depend,
       script: lastScript ?? '',
@@ -265,61 +282,87 @@ const IdeContainer: FC<Props> = props => {
 
   return (
     <div className={`${ideStyles['ide-container']}`}>
-      <FullScreen handle={handle} className={`${ideStyles['fullscreen']}`} onChange={(state) => {
-        if (!state) {
-          setFullScreen(false);
-        }
-      }}>
+      <FullScreen
+        handle={handle}
+        className={`${ideStyles['fullscreen']}`}
+        onChange={state => {
+          if (!state) {
+            setFullScreen(false)
+          }
+        }}
+      >
         <>
           {/* 头部 */}
-          <IdeHeaderContainer {...{
-            savePayload,
-            fullScreen,
-            disabled: hookInfo?.switch === false,
-            onSave: () => { handleSave('active') },
-            onToggleHook: async (value) => {
-              await updateHookSwitch(props.hookPath, value)
-            },
-            onFullScreen: () => {
-              setFullScreen(!fullScreen)
-              handle.active ? void handle.exit() : void handle.enter()
-            }
-          }} />
+          <IdeHeaderContainer
+            {...{
+              savePayload,
+              fullScreen,
+              disabled: hookInfo?.switch === false,
+              onSave: () => {
+                handleSave('active')
+              },
+              onToggleHook: async value => {
+                await updateHookSwitch(props.hookPath, value)
+              },
+              onFullScreen: () => {
+                setFullScreen(!fullScreen)
+                handle.active ? void handle.exit() : void handle.enter()
+              }
+            }}
+          />
           <div className="flex justify-start" style={{ height: fullScreen ? '100vh' : 'auto' }}>
             {/* 依赖列表是否收起 */}
-            {smallDepend ? <Button onClick={() => {
-              setSmallDepend(false)
-            }} className="mt-2 ml-2" size="small" shape="circle" icon={<DoubleRightOutlined color="#ADADAD" />} /> : <IdeDependList {...{
-              dependList: hookInfo?.depend || [],
-              onFold: dependFold,
-              onDependChange: dependChange,
-              onDependDelete: dependRemove
-            }} />}
+            {smallDepend ? (
+              <Button
+                onClick={() => {
+                  setSmallDepend(false)
+                }}
+                className="mt-2 ml-2"
+                size="small"
+                shape="circle"
+                icon={<DoubleRightOutlined color="#ADADAD" />}
+              />
+            ) : (
+              <IdeDependList
+                {...{
+                  dependList: hookInfo?.depend || [],
+                  onFold: dependFold,
+                  onDependChange: dependChange,
+                  onDependDelete: dependRemove
+                }}
+              />
+            )}
             <div className={`${ideStyles['code-wrapper']} ${smallDepend ? 'flex-1' : ''}`}>
               {/* 编辑器 */}
-              <IdeCodeContainer {...{
-                defaultLanguage: props.defaultLanguage,
-                value: hookInfo?.script,
-                expandAction,
-                fullScreen,
-                editorOptions,
-                onChange: (value) => {
-                  codeChange(value);
-                  props.onChange?.()
-                },
-                onMount: handleEditorMount,
-                onClickExpandAction: () => {
-                  setExpandAction(!expandAction)
-                }
-              }} />
+              <IdeCodeContainer
+                {...{
+                  defaultLanguage: props.defaultLanguage,
+                  value: hookInfo?.script,
+                  expandAction,
+                  fullScreen,
+                  editorOptions,
+                  onChange: value => {
+                    codeChange(value)
+                    props.onChange?.()
+                  },
+                  onMount: handleEditorMount,
+                  onClickExpandAction: () => {
+                    setExpandAction(!expandAction)
+                  }
+                }}
+              />
               {/* 输入和输出区 */}
-              <IdeActionContainer runResult={runResult} onClickDebug={handleDebug} expandAction={expandAction} editorOptions={editorOptions} />
+              <IdeActionContainer
+                runResult={runResult}
+                onClickDebug={handleDebug}
+                expandAction={expandAction}
+                editorOptions={editorOptions}
+              />
             </div>
           </div>
         </>
       </FullScreen>
     </div>
-
   )
 }
 

@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { Experience } from '@/interfaces/experience'
+import type { Experience } from '@/interfaces/experience'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 export const useFetchExperience = () => {

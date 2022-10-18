@@ -1,4 +1,4 @@
-import { GraphQLSchema } from 'graphql'
+import type { GraphQLSchema } from 'graphql'
 import { useMemo, useState } from 'react'
 
 import ExplorerFilter from './ExplorerFilter'
@@ -8,7 +8,7 @@ const filters = [
   { label: '全部', value: '' },
   { label: '查询', value: 'query' },
   { label: '变更', value: 'mutation' },
-  { label: '订阅', value: 'subscription' },
+  { label: '订阅', value: 'subscription' }
 ] as const
 
 const values = filters.map(item => item.value)
@@ -35,7 +35,7 @@ const GraphiqlExplorer = ({ schema, onSelect }: GraphiqlExplorerProps) => {
     return {
       ...schema?.getQueryType()?.getFields(),
       ...schema?.getMutationType()?.getFields(),
-      ...schema?.getSubscriptionType()?.getFields(),
+      ...schema?.getSubscriptionType()?.getFields()
     }
   }, [schema, selected])
 
@@ -51,7 +51,7 @@ const GraphiqlExplorer = ({ schema, onSelect }: GraphiqlExplorerProps) => {
         <div
           className="flex-1 text-xs p-2 over-x-auto overflow-y-auto select-none"
           style={{
-            fontFamily: 'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace',
+            fontFamily: 'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace'
           }}
         >
           <MultipleFieldViews map={visibleFields} sort />

@@ -1,6 +1,9 @@
-import type { CommonPanelResp, CommonPanelAction } from '@/interfaces/commonPanel'
+import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 
-export default function commonPanelReducer(commonPanel: CommonPanelResp[], action: CommonPanelAction) {
+export default function commonPanelReducer(
+  commonPanel: CommonPanelResp[],
+  action: CommonPanelAction
+) {
   switch (action.type) {
     case 'fetched': {
       return action.data

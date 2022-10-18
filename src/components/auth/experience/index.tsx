@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import type React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import type { SWRResponse } from 'swr'
 
 import RcTab from '@/components/rc-tab'
-import { AuthListType } from '@/interfaces/auth'
-import { Connector } from '@/interfaces/connector'
-import { BrandType, Experience as ExperienceType, OtherType } from '@/interfaces/experience'
+import type { AuthListType } from '@/interfaces/auth'
+import type { Connector } from '@/interfaces/connector'
+import type { BrandType, Experience as ExperienceType, OtherType } from '@/interfaces/experience'
 import { ConnectorContext } from '@/lib/context/auth-context'
 import { getFetcher } from '@/lib/fetchers'
 import { useFetchConnector } from '@/lib/service/connector'
@@ -22,7 +23,7 @@ interface Props {
 const tabs = [
   { title: '品牌', key: '0' },
   { title: '登录方式', key: '1' },
-  { title: '其他', key: '2' },
+  { title: '其他', key: '2' }
 ]
 
 const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
@@ -55,7 +56,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         logo: x.branding.logoUrl,
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        slogan: x.branding.slogan,
+        slogan: x.branding.slogan
       })
     })
   }, [refreshFlag])
@@ -68,7 +69,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         enabled: x.enabled,
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        contractUrl: x.contentUrl,
+        contractUrl: x.contentUrl
       })
     })
   }, [refreshFlag])
