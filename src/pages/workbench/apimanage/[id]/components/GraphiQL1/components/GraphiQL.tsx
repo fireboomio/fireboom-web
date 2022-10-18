@@ -11,6 +11,16 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
+import type {
+  EditorContextType,
+  KeyMap,
+  // ExplorerContextType,
+  // HistoryContextType,
+  ResponseTooltipType,
+  SchemaContextType,
+  StorageContextType,
+  TabsState
+} from '@graphiql/react'
 import {
   EditorContextProvider,
   ExecutionContextProvider,
@@ -27,39 +37,27 @@ import {
   // useMergeQuery,
   usePrettifyEditors,
   useSchemaContext,
-  useStorageContext,
+  useStorageContext
 } from '@graphiql/react'
-import type {
-  EditorContextType,
-  // ExplorerContextType,
-  // HistoryContextType,
-  ResponseTooltipType,
-  SchemaContextType,
-  StorageContextType,
-  TabsState,
-  KeyMap,
-} from '@graphiql/react'
-// @ts-ignore
-import { formatError, formatResult } from '@graphiql/toolkit'
 // @ts-ignore
 import type { Fetcher, GetDefaultFieldNamesFn } from '@graphiql/toolkit'
-import {
-  GraphQLSchema,
-  ValidationRule,
-  FragmentDefinitionNode,
+// @ts-ignore
+import { formatError, formatResult } from '@graphiql/toolkit'
+import type {
   DocumentNode,
+  FragmentDefinitionNode,
+  GraphQLSchema,
   IntrospectionQuery,
+  ValidationRule
 } from 'graphql'
-import React, {
-  version,
+import type {
+  ForwardRefExoticComponent,
   // ComponentType,
   PropsWithChildren,
   ReactNode,
-  forwardRef,
-  ForwardRefExoticComponent,
-  RefAttributes,
-  Component,
+  RefAttributes
 } from 'react'
+import React, { Component, forwardRef, version } from 'react'
 
 // import find from '../utility/find'
 import { ExecuteButton } from './ExecuteButton'
@@ -79,7 +77,7 @@ if (majorVersion < 16) {
     [
       'GraphiQL 0.18.0 and after is not compatible with React 15 or below.',
       'If you are using a CDN source (jsdelivr, unpkg, etc), follow this example:',
-      'https://github.com/graphql/graphiql/blob/master/examples/graphiql-cdn/index.html#L49',
+      'https://github.com/graphql/graphiql/blob/master/examples/graphiql-cdn/index.html#L49'
     ].join('\n')
   )
 }
@@ -536,10 +534,10 @@ const GraphiQLConsumeContexts = forwardRef<GraphiQLWithContext, GraphiQLWithCont
     // const copy = useCopyQuery({ onCopyQuery: props.onCopyQuery })
     // const merge = useMergeQuery()
     const prettify = usePrettifyEditors()
-    
+
     const editorResize = useDragResize({
       direction: 'horizontal',
-      storageKey: 'editorFlex',
+      storageKey: 'editorFlex'
     })
     const secondaryEditorResize = useDragResize({
       defaultSizeRelation: 3,
@@ -557,7 +555,7 @@ const GraphiQLConsumeContexts = forwardRef<GraphiQLWithContext, GraphiQLWithCont
         return editorContext.initialVariables || editorContext.initialHeaders ? undefined : 'second'
       })(),
       sizeThresholdSecond: 60,
-      storageKey: 'secondaryEditorFlex',
+      storageKey: 'secondaryEditorFlex'
     })
 
     return (
@@ -664,7 +662,7 @@ class GraphiQLWithContext extends React.Component<GraphiQLWithContextConsumerPro
             {this.props.tabs ? (
               <Tabs
                 tabsProps={{
-                  'aria-label': 'Select active operation',
+                  'aria-label': 'Select active operation'
                 }}
               >
                 {this.props.editorContext.tabs.map((tab, index) => (
@@ -685,7 +683,7 @@ class GraphiQLWithContext extends React.Component<GraphiQLWithContextConsumerPro
                     }}
                     tabProps={{
                       'aria-controls': 'sessionWrap',
-                      id: `session-tab-${index}`,
+                      id: `session-tab-${index}`
                     }}
                   />
                 ))}
@@ -733,7 +731,7 @@ class GraphiQLWithContext extends React.Component<GraphiQLWithContextConsumerPro
                           }
                           this.setState(
                             {
-                              activeSecondaryEditor: 'variable',
+                              activeSecondaryEditor: 'variable'
                             },
                             () => {
                               this.props.editorContext.variableEditor?.refresh()
@@ -746,7 +744,7 @@ class GraphiQLWithContext extends React.Component<GraphiQLWithContextConsumerPro
                       {headerEditorEnabled && (
                         <div
                           style={{
-                            marginLeft: '20px',
+                            marginLeft: '20px'
                           }}
                           className={`variable-editor-title-text${
                             this.state.activeSecondaryEditor === 'header' ? ' active' : ''
@@ -757,7 +755,7 @@ class GraphiQLWithContext extends React.Component<GraphiQLWithContextConsumerPro
                             }
                             this.setState(
                               {
-                                activeSecondaryEditor: 'header',
+                                activeSecondaryEditor: 'header'
                               },
                               () => {
                                 this.props.editorContext.headerEditor?.refresh()

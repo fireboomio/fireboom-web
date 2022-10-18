@@ -1,35 +1,35 @@
 import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import type { RadioChangeEvent } from 'antd'
 import {
-  Descriptions,
-  Space,
   Button,
-  Form,
-  Input,
-  Select,
-  Radio,
-  Switch,
-  Tabs,
   Collapse,
-  Tag,
+  Descriptions,
+  Form,
+  Image,
+  Input,
   message,
   Modal,
-  Image,
+  Radio,
+  Select,
+  Space,
+  Switch,
+  Tabs,
+  Tag
 } from 'antd'
-import type { RadioChangeEvent } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import Error50x from '@/components/ErrorPage/50x'
 import FormToolTip from '@/components/common/FormTooltip'
 import Uploader from '@/components/common/Uploader'
+import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DOMAIN } from '@/lib/common'
 import {
   DatasourceDispatchContext,
-  DatasourceToggleContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -40,13 +40,9 @@ interface Props {
   type: ShowType
 }
 
-interface Config {
-  [key: string]: string | undefined | number
-}
+type Config = Record<string, string | undefined | number>
 
-interface FromValues {
-  [key: string]: string | undefined | number | Array<DataType>
-}
+type FromValues = Record<string, string | undefined | number | Array<DataType>>
 
 interface DataType {
   key: string
@@ -59,7 +55,7 @@ const columns: ColumnsType<DataType> = [
   {
     dataIndex: 'key',
     width: '30%',
-    render: (_, { key }) => <span className="pl-1">{key}</span>,
+    render: (_, { key }) => <span className="pl-1">{key}</span>
   },
   {
     dataIndex: 'val',
@@ -75,8 +71,8 @@ const columns: ColumnsType<DataType> = [
         )}
         <span className="ml-2">{val}</span>
       </div>
-    ),
-  },
+    )
+  }
 ]
 
 const renderIcon = (kind: string) => (
@@ -89,7 +85,7 @@ const renderIcon = (kind: string) => (
       {
         0: '/assets/header-value.png',
         1: '/assets/header-env.png',
-        2: '/assets/header-relay.png',
+        2: '/assets/header-relay.png'
       }[kind]
     }
   />
@@ -153,12 +149,12 @@ export default function Rest({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 0 : 1,
+        switch: isChecked == true ? 0 : 1
       })
       .then(() => {
         handleSave({
           ...content,
-          switch: isChecked == true ? 0 : 1,
+          switch: isChecked == true ? 0 : 1
         })
       })
   }
@@ -181,7 +177,7 @@ export default function Rest({ content, type }: Props) {
         setIsValue(true)
         setRulesObj({
           pattern: /^\w{1,128}$/g,
-          message: '请输入长度不大于128的非空值',
+          message: '请输入长度不大于128的非空值'
         })
         return
       case '1':
@@ -192,7 +188,7 @@ export default function Rest({ content, type }: Props) {
         setIsValue(true)
         setRulesObj({
           pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-          message: '以字母或下划线开头，只能由字母、下划线和数字组成',
+          message: '以字母或下划线开头，只能由字母、下划线和数字组成'
         })
         return
       default:
@@ -214,16 +210,16 @@ export default function Rest({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: fileId },
+          data: { id: fileId }
         })
       }
       newValues.filePath = (await requests({
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data'
         },
         method: 'post',
         url: '/dataSource/import',
-        data: { file: file },
+        data: { file: file }
       })) as unknown as string
     } else {
       //如果删除文件则将config中的filePath置空
@@ -231,7 +227,7 @@ export default function Rest({ content, type }: Props) {
         await requests({
           method: 'post',
           url: '/dataSource/removeFile',
-          data: { id: fileId },
+          data: { id: fileId }
         })
         newValues.filePath = undefined
       } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
@@ -249,7 +245,7 @@ export default function Rest({ content, type }: Props) {
       newContent = {
         ...content,
         config: newValues,
-        name: values.apiNameSpace,
+        name: values.apiNameSpace
       } as DatasourceResp
       await requests.put('/dataSource', newContent)
     }
@@ -377,7 +373,7 @@ export default function Rest({ content, type }: Props) {
                   column={1}
                   size="small"
                   labelStyle={{
-                    width: 190,
+                    width: 190
                   }}
                 >
                   {((config?.headers as unknown as DataType[]) ?? []).map(
@@ -533,7 +529,7 @@ export default function Rest({ content, type }: Props) {
                 baseUrl: config.baseUrl,
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret || { kind: '0' },
+                secret: config.secret || { kind: '0' }
               }}
             >
               <Form.Item
@@ -547,8 +543,8 @@ export default function Rest({ content, type }: Props) {
                   { required: true, message: '请输入命名空间' },
                   {
                     pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-                    message: '以字母或下划线开头，只能由字母、下划线和数字组成',
-                  },
+                    message: '以字母或下划线开头，只能由字母、下划线和数字组成'
+                  }
                 ]}
                 name="apiNameSpace"
                 colon={false}
@@ -566,8 +562,8 @@ export default function Rest({ content, type }: Props) {
                 rules={[
                   {
                     pattern: /^https?:\/\/[.\w\d/]+$/g,
-                    message: '只允许输入链接',
-                  },
+                    message: '只允许输入链接'
+                  }
                 ]}
                 name="baseUrl"
                 colon={false}
@@ -595,8 +591,8 @@ export default function Rest({ content, type }: Props) {
                       ? [
                           {
                             name: config.filePath as unknown as string,
-                            uid: config.filePath as unknown as string,
-                          },
+                            uid: config.filePath as unknown as string
+                          }
                         ]
                       : []
                   }
@@ -620,7 +616,7 @@ export default function Rest({ content, type }: Props) {
                     <Form.Item
                       wrapperCol={{
                         xs: { span: 24 },
-                        sm: { span: 24 },
+                        sm: { span: 24 }
                       }}
                     >
                       <Form.List name="headers">

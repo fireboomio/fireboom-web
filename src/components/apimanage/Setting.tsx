@@ -1,7 +1,8 @@
 import { Divider, Form, Input, Switch } from 'antd'
-import { FC, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { DirTreeNode, SettingResp } from '@/interfaces/apimanage'
+import type { DirTreeNode, SettingResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import IconFont from '../iconfont'
@@ -49,7 +50,7 @@ const Setting: FC<SettingProps> = ({ node }) => {
         : 0,
       liveQueryPollingIntervalSeconds: values.liveQueryPollingIntervalSeconds
         ? +values.liveQueryPollingIntervalSeconds
-        : 0,
+        : 0
     }
     setSetting(payload)
 

@@ -10,11 +10,16 @@ export const getDependList = async (keys: string) => {
 }
 
 export const getDependVersions = async (keys: string) => {
-  const data = await axios.get<any, { data: { versions: string[], version: string } }>(`${CDN}/${keys}`)
-    // 处理data为select的label和value格式
-    // 倒序且筛选前100条
-    return {
-      list: data.data.versions.reverse().slice(0, 100).map(item => ({ label: item, value: item })),
-      latest: data.data.version
-    }
+  const data = await axios.get<any, { data: { versions: string[]; version: string } }>(
+    `${CDN}/${keys}`
+  )
+  // 处理data为select的label和value格式
+  // 倒序且筛选前100条
+  return {
+    list: data.data.versions
+      .reverse()
+      .slice(0, 100)
+      .map(item => ({ label: item, value: item })),
+    latest: data.data.version
+  }
 }

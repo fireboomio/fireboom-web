@@ -1,5 +1,6 @@
 import { Divider } from 'antd'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import type { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+import { useCallback, useState } from 'react'
 
 import styles from './index.module.less'
 

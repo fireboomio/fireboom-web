@@ -1,4 +1,4 @@
-import { Tooltip, Image } from 'antd'
+import { Image, Tooltip } from 'antd'
 
 interface Props {
   title: string
@@ -25,14 +25,9 @@ const FormToolTip = (props: Props) => {
             transform: 'translateY(-50%)',
             fontSize: 0,
             maxWidth: 'initial'
-          }}>
-          <Image
-            width={10}
-            height={10}
-            alt="提示"
-            preview={false}
-            src="/assets/warning.png"
-          />
+          }}
+        >
+          <Image width={10} height={10} alt="提示" preview={false} src="/assets/warning.png" />
         </div>
       </Tooltip>
     </div>

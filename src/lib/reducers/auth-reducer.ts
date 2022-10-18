@@ -1,4 +1,4 @@
-import type { AuthProvResp, AuthAction } from '@/interfaces/auth'
+import type { AuthAction, AuthProvResp } from '@/interfaces/auth'
 
 export default function AuthReducer(authList: AuthProvResp[], action: AuthAction) {
   switch (action.type) {

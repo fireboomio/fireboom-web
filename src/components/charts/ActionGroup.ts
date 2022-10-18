@@ -1,4 +1,4 @@
-import { Edge, Graph, Node } from '@antv/x6'
+import type { Edge, Graph, Node } from '@antv/x6'
 
 export class ActionGroup {
   _trigger: Node.Metadata
@@ -24,20 +24,20 @@ export class ActionGroup {
             attrs: {
               circle: {
                 r: 1,
-                style: { visibility: 'hidden' },
-              },
-            },
-          },
+                style: { visibility: 'hidden' }
+              }
+            }
+          }
         },
         items: [
           {
             id: 'right',
-            group: 'right',
-          },
-        ],
-      },
+            group: 'right'
+          }
+        ]
+      }
     })
-    this.references = this._references.map((ref) =>
+    this.references = this._references.map(ref =>
       graph.createNode({
         ...ref,
         ports: {
@@ -47,52 +47,52 @@ export class ActionGroup {
               attrs: {
                 circle: {
                   r: 1,
-                  style: { visibility: 'hidden' },
-                },
-              },
-            },
+                  style: { visibility: 'hidden' }
+                }
+              }
+            }
           },
           items: [
             {
               id: 'left',
-              group: 'left',
-            },
-          ],
-        },
+              group: 'left'
+            }
+          ]
+        }
       })
     )
     graph.addNode(this.trigger)
     graph.addNodes(this.references)
     this.edges =
       this.linkType === 'linear'
-        ? this.references.map<Edge>((ref) => {
+        ? this.references.map<Edge>(ref => {
             return graph.createEdge({
               source: {
                 cell: this.trigger,
-                port: 'right',
+                port: 'right'
               },
               target: {
                 cell: ref,
-                port: 'left',
+                port: 'left'
               },
               attrs: {
                 line: {
                   stroke: '#529DFF',
                   strokeWidth: 1,
-                  targetMarker: '',
-                },
-              },
+                  targetMarker: ''
+                }
+              }
             })
           })
-        : this.references.map<Edge>((ref) => {
+        : this.references.map<Edge>(ref => {
             return graph.createEdge({
               source: {
                 cell: this.trigger,
-                port: 'right',
+                port: 'right'
               },
               target: {
                 cell: ref,
-                port: 'left',
+                port: 'left'
               },
               connector: 'smooth',
               attrs: {
@@ -102,18 +102,18 @@ export class ActionGroup {
                     attrs: { x1: '0%', y1: '0%', x2: '100%', y2: '0%' },
                     stops: [
                       { offset: '0%', color: '#CF4BFF' },
-                      { offset: '100%', color: '#478FFF' },
-                    ],
+                      { offset: '100%', color: '#478FFF' }
+                    ]
                   },
                   strokeWidth: 2,
                   targetMarker: {
                     name: 'block',
                     fill: '#478FFF',
                     width: 9,
-                    height: 12,
-                  },
-                },
-              },
+                    height: 12
+                  }
+                }
+              }
             })
           })
     graph.addEdges(this.edges)
@@ -121,11 +121,11 @@ export class ActionGroup {
       if (cell === this.trigger) {
         if (this.references.length) {
           if (this.references[0].isVisible()) {
-            this.references.forEach((r) => r.hide())
-            this.edges.forEach((e) => e.hide())
+            this.references.forEach(r => r.hide())
+            this.edges.forEach(e => e.hide())
           } else {
-            this.references.forEach((r) => r.show())
-            this.edges.forEach((e) => e.show())
+            this.references.forEach(r => r.show())
+            this.edges.forEach(e => e.show())
           }
         }
       }

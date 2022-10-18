@@ -2,7 +2,7 @@ import type { Enumerator } from '@mrleebo/prisma-ast'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Enum } from '@/interfaces/modeling'
+import type { Enum } from '@/interfaces/modeling'
 
 import ModelDesignerColumnName from './designer-column-name'
 
@@ -12,11 +12,11 @@ interface Props {
 
 export default function ModelDesignerEnum({ enumEntity }: Props) {
   const [fields, setFields] = useImmer<Enumerator[]>(
-    enumEntity.enumerators.filter((e) => e.type === 'enumerator') as Enumerator[]
+    enumEntity.enumerators.filter(e => e.type === 'enumerator') as Enumerator[]
   )
 
   useEffect(
-    () => setFields(enumEntity.enumerators.filter((e) => e.type === 'enumerator') as Enumerator[]),
+    () => setFields(enumEntity.enumerators.filter(e => e.type === 'enumerator') as Enumerator[]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [enumEntity]
   )

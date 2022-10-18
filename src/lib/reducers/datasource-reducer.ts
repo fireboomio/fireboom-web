@@ -1,4 +1,4 @@
-import type { DatasourceResp, DatasourceAction } from '@/interfaces/datasource'
+import type { DatasourceAction, DatasourceResp } from '@/interfaces/datasource'
 
 export default function datasourceReducer(datasource: DatasourceResp[], action: DatasourceAction) {
   switch (action.type) {

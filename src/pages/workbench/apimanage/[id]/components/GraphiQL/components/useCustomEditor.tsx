@@ -17,7 +17,7 @@ export default function useCustomEditor(initialValue?: string) {
       },
       setValue(v: string) {
         codeVal.current = v
-      },
+      }
     }
   }, [])
   return { editorRef }

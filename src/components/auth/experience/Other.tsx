@@ -2,7 +2,7 @@ import { Button, Form, Input, message, Switch } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 import Error50x from '@/components/ErrorPage/50x'
-import { OtherType } from '@/interfaces/experience'
+import type { OtherType } from '@/interfaces/experience'
 import requests from '@/lib/fetchers'
 
 interface Props {
@@ -24,7 +24,7 @@ const Other: React.FC<Props> = ({ data }) => {
     void requests
       .post('/auth/otherConfig', {
         enabled: values?.enabled,
-        contentUrl: values?.enabled ? values?.contractUrl : '',
+        contentUrl: values?.enabled ? values?.contractUrl : ''
       })
       .then(() => message.success('更新成功'))
   }

@@ -1,11 +1,12 @@
 import { message } from 'antd'
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosResponse } from 'axios'
+import axios from 'axios'
 
-import { Result } from '@/interfaces/common'
+import type { Result } from '@/interfaces/common'
 
 const requests = axios.create({
   baseURL: '/api/v1',
-  timeout: 5000,
+  timeout: 5000
 })
 
 requests.interceptors.response.use(

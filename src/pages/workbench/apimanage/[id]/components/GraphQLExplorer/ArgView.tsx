@@ -1,11 +1,11 @@
+import type { GraphQLArgument } from 'graphql'
 import {
-  GraphQLArgument,
   GraphQLInputObjectType,
   isEnumType,
   isInputObjectType,
   isListType,
   isObjectType,
-  isScalarType,
+  isScalarType
 } from 'graphql'
 import { useState } from 'react'
 

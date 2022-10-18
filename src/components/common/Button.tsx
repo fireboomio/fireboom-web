@@ -1,7 +1,7 @@
 // TODO:
 /* eslint-disable react/prop-types */
 import { Button } from 'antd'
-import { ButtonProps } from 'antd/lib/button'
+import type { ButtonProps } from 'antd/lib/button'
 
 // interface Props {
 //   children: React.ReactNode

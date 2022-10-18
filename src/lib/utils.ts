@@ -24,4 +24,4 @@ const formatBytes = (bytes: number | undefined, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export { isEmpty, capitalize, formatBytes, isUpperCase }
+export { capitalize, formatBytes, isEmpty, isUpperCase }

@@ -3,4 +3,4 @@ import ModelERD from './model-erd'
 import ModelPannel from './model-pannel'
 import ModelPreview from './model-preview'
 
-export { ModelContainer, ModelPannel, ModelPreview, ModelERD }
+export { ModelContainer, ModelERD, ModelPannel, ModelPreview }

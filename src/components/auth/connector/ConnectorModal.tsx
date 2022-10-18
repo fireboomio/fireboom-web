@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd'
-import React from 'react'
+import type React from 'react'
 
-import { Connector as ConnectorType } from '@/interfaces/connector'
+import type { Connector as ConnectorType } from '@/interfaces/connector'
 
 import ConnectorItem from './ConnectorItem'
 import styles from './ConnectorModal.module.less'
@@ -22,7 +22,7 @@ const ConnectorModal: React.FC<Props> = ({
   handleModelCancel,
   data,
   onItemClickHandle,
-  currentSelectedId,
+  currentSelectedId
 }) => {
   return (
     <Modal
@@ -31,7 +31,7 @@ const ConnectorModal: React.FC<Props> = ({
       footer={[
         <Button className={styles['next-button']} key="next" onClick={handleModelOk}>
           下一步
-        </Button>,
+        </Button>
       ]}
       open={isModalVisible}
       onOk={handleModelOk}

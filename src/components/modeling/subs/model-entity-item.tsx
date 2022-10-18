@@ -1,11 +1,11 @@
 import { AppleOutlined, GithubOutlined, MoreOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Entity } from '@/interfaces/modeling'
-import { ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
+import { ModelingCurrEntityContext, ModelingDispatchContext } from '@/lib/context'
 
 import styles from '../model-pannel.module.less'
 
@@ -71,7 +71,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
               <AppleOutlined />
               <span className="ml-1.5">重命名</span>
             </div>
-          ),
+          )
         },
         {
           key: '2',
@@ -80,7 +80,7 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
               <AppleOutlined />
               <span className="ml-1.5">编辑</span>
             </div>
-          ),
+          )
         },
         {
           key: '3',
@@ -100,8 +100,8 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
-          ),
-        },
+          )
+        }
       ]}
     />
   )

@@ -1,10 +1,5 @@
-
-import { AuthConfigContainer  } from '@/components/auth'
-
+import { AuthConfigContainer } from '@/components/auth'
 
 export default function Authentication() {
-
-  return (
-    <AuthConfigContainer />
-  )
+  return <AuthConfigContainer />
 }

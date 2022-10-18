@@ -1,4 +1,4 @@
-import type { Block as BlockT, Model as ModelT, Enum as EnumT } from '@mrleebo/prisma-ast'
+import type { Block as BlockT, Enum as EnumT, Model as ModelT } from '@mrleebo/prisma-ast'
 
 export interface DBSourceResp {
   id: number

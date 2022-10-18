@@ -17,8 +17,8 @@ export default function ModelEntityList({ onClickEntity, onToggleDesigner }: Pro
   const blocks = useContext(ModelingContext)
   const dispatch = useContext(ModelingDispatchContext)
 
-  const entities = blocks.filter((b) => ['enum', 'model'].includes(b.type)) as Entity[]
-  const getNextId = () => Math.max(...blocks.map((b) => b.id)) + 1
+  const entities = blocks.filter(b => ['enum', 'model'].includes(b.type)) as Entity[]
+  const getNextId = () => Math.max(...blocks.map(b => b.id)) + 1
 
   function addModel() {
     const data = { id: getNextId(), name: '', type: 'model', properties: [] } as Entity
@@ -36,13 +36,13 @@ export default function ModelEntityList({ onClickEntity, onToggleDesigner }: Pro
         {
           key: '1',
           label: <span onClick={addModel}>模型</span>,
-          icon: <AppleOutlined />,
+          icon: <AppleOutlined />
         },
         {
           key: '2',
           label: <span onClick={addEnum}>枚举</span>,
-          icon: <AppleOutlined />,
-        },
+          icon: <AppleOutlined />
+        }
       ]}
     />
   )
@@ -62,7 +62,7 @@ export default function ModelEntityList({ onClickEntity, onToggleDesigner }: Pro
       </div>
 
       <div className="mt-3">
-        {entities.map((entity) => (
+        {entities.map(entity => (
           <ModelEntityItem
             key={entity.id}
             entity={entity}

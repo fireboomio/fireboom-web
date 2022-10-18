@@ -1,11 +1,12 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, message, Select, Switch } from 'antd'
 import groupBy from 'lodash/groupBy'
-import React, { useEffect } from 'react'
+import type React from 'react'
+import { useEffect } from 'react'
 
-import { AuthListType } from '@/interfaces/auth'
-import { Connector } from '@/interfaces/connector'
-import { Experience as ExperienceType } from '@/interfaces/experience'
+import type { AuthListType } from '@/interfaces/auth'
+import type { Connector } from '@/interfaces/connector'
+import type { Experience as ExperienceType } from '@/interfaces/experience'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
 import { upsertExperience } from '@/lib/service/experience'
 
@@ -30,9 +31,7 @@ export interface GroupedSocialItemType {
   title?: string
 }
 
-interface GroupedSocialDataType {
-  [index: string]: Connector[]
-}
+type GroupedSocialDataType = Record<string, Connector[]>
 
 interface LoginFormType {
   mainLoginMethod: string
@@ -47,7 +46,7 @@ interface LoginFormType {
 const ExperienceSetting: React.FC<Props> = ({
   data,
   connectorsData = [],
-  handleTopToggleDesigner,
+  handleTopToggleDesigner
 }) => {
   const primaryLogin = data?.signInMethods
     ? // @ts-ignore
@@ -65,7 +64,7 @@ const ExperienceSetting: React.FC<Props> = ({
     username: originalUsername && originalUsername !== 'disabled',
     email: originalEmail && originalEmail !== 'disabled',
     sms: originalSMS && originalSMS !== 'disabled',
-    social: originalSocial && originalSocial !== 'disabled',
+    social: originalSocial && originalSocial !== 'disabled'
   }
   const SMSData = connectorsData.filter(item => item.types === SMS)
   const emailData = connectorsData.filter(item => item.types === EMAIL)
@@ -79,7 +78,7 @@ const ExperienceSetting: React.FC<Props> = ({
       name: newItem[0].name,
       platform: newItem.map(n => n.platform),
       logo: newItem[0].logo,
-      list: newItem,
+      list: newItem
     }
   }) as GroupedSocialItemType[]
   const isSMSInUse = SMSData.some(item => item.enabled)
@@ -115,8 +114,8 @@ const ExperienceSetting: React.FC<Props> = ({
         sms,
         email,
         social,
-        username: username,
-      },
+        username: username
+      }
     }
     void upsertExperience(args).then(() => message.success('保存成功'))
   }

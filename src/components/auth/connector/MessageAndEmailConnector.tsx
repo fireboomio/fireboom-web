@@ -1,10 +1,11 @@
 import { MailOutlined, MobileOutlined } from '@ant-design/icons'
-import { Badge, Button, Table, Image } from 'antd'
+import { Badge, Button, Image, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useContext, useState } from 'react'
+import type React from 'react'
+import { useContext, useState } from 'react'
 
-import { AuthListType } from '@/interfaces/auth'
-import { Connector as ConnectorType } from '@/interfaces/connector'
+import type { AuthListType } from '@/interfaces/auth'
+import type { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS } from '@/lib/constant'
 import { ConnectorContext } from '@/lib/context/auth-context'
 
@@ -81,11 +82,11 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
             )}
           </div>
         )
-      },
+      }
     },
     {
       title: '类型',
-      dataIndex: 'name',
+      dataIndex: 'name'
     },
     {
       title: '登录体验',
@@ -98,8 +99,8 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
             <Badge color="#AFB0B4" text="未使用" />
           </span>
         )
-      },
-    },
+      }
+    }
   ]
 
   const tableData: DataType[] = [
@@ -107,14 +108,14 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
       key: SMS,
       name: '短信连接器',
       types: SMS,
-      experience: isSMSInUse,
+      experience: isSMSInUse
     },
     {
       key: EMAIL,
       name: '邮件链接器',
       types: EMAIL,
-      experience: isEmailInUse,
-    },
+      experience: isEmailInUse
+    }
   ]
 
   const handleConfig = (types: string) => () => {
@@ -128,7 +129,7 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
     const currentSelected = data.find(item => item.id === currentSelectedId)
     connectorDispatch({
       type: 'setCurrentConnector',
-      payload: currentSelected || undefined,
+      payload: currentSelected || undefined
     })
   }
 
@@ -154,7 +155,7 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
     const currentSelected = data.find(item => item.id === value.id)
     connectorDispatch({
       type: 'setCurrentConnector',
-      payload: currentSelected,
+      payload: currentSelected
     })
   }
 
@@ -164,11 +165,11 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
       <div className={styles.tableWrapper}>
         <Table
           onHeaderRow={() => ({
-            className: styles.headerWidth,
+            className: styles.headerWidth
           })}
           onRow={record => ({
             className: styles.tableItemWidth,
-            onClick: handleRowClick(record as unknown as ConnectorType),
+            onClick: handleRowClick(record as unknown as ConnectorType)
           })}
           pagination={false}
           columns={columns as DataType[]}

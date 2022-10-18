@@ -264,11 +264,11 @@ export default function StorageExplorer({ bucketId }: Props) {
 
   const createFold = () => {}
 
-  const renderPreview = (file?: FileT) => {
+  const renderPreview = (file?: Option) => {
     if (!file) {
       return null
     }
-    const type = fileType(file.name)
+    const type = fileType(file?.name ?? '')
     if (type === 'pic') {
       return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
     } else if (type === 'video') {

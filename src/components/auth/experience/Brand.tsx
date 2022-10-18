@@ -2,7 +2,7 @@ import { Button, Form, Input, message } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Error404 from '@/components/ErrorPage/404'
-import { BrandType } from '@/interfaces/experience'
+import type { BrandType } from '@/interfaces/experience'
 import requests from '@/lib/fetchers'
 
 interface Props {
@@ -24,12 +24,12 @@ const Brand: React.FC<Props> = ({ data }) => {
       .post('/auth/brand', {
         branding: {
           logoUrl: values?.logo,
-          slogan: values?.slogan,
+          slogan: values?.slogan
         },
         color: {
           isDarkModeEnabled: values?.darkMode,
-          primaryColor: values?.color,
-        },
+          primaryColor: values?.color
+        }
       })
       .then(() => message.success('保存成功'))
   }

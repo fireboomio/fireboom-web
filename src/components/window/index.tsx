@@ -1,8 +1,9 @@
 import { Image } from 'antd'
 import { Resizable } from 're-resizable'
-import { CSSProperties, useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
 
-import { LogMessage } from '@/interfaces/window'
+import type { LogMessage } from '@/interfaces/window'
 import { DOMAIN } from '@/lib/common'
 
 import RcTab from '../rc-tab'
@@ -10,7 +11,7 @@ import Log from './Log'
 
 const tabs = [
   { title: '终端', key: '0' },
-  { title: '问题', key: '1' },
+  { title: '问题', key: '1' }
 ]
 interface Props {
   style: CSSProperties

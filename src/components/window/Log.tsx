@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from 'react'
 
-import { LogMessage } from '@/interfaces/window'
+import type { LogMessage } from '@/interfaces/window'
 
 type Props = {
   log: LogMessage[]
@@ -9,7 +9,7 @@ type Props = {
 
 const tabs = [
   { key: '1', name: '核心日志' },
-  { key: '2', name: '钩子日志' },
+  { key: '2', name: '钩子日志' }
 ]
 
 // eslint-disable-next-line react/prop-types

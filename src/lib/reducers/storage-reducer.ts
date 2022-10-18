@@ -1,4 +1,4 @@
-import type { StorageResp, StorageAction } from '@/interfaces/storage'
+import type { StorageAction, StorageResp } from '@/interfaces/storage'
 
 export default function storageReducer(bucketList: StorageResp[], action: StorageAction) {
   switch (action.type) {

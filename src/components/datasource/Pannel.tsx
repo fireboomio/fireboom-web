@@ -6,7 +6,7 @@ import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceContext,
   DatasourceDispatchContext,
-  DatasourceToggleContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 
 import styles from './Pannel.module.less'
@@ -48,7 +48,7 @@ export default function DatasourcePannel({ onClickItem }: Props) {
       name: '',
       config: {},
       sourceType: datasourceType,
-      switch: 0,
+      switch: 0
     } as DatasourceResp
     dispatch({ type: 'added', data: data })
     onClickItem(data)
