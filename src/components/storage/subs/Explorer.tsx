@@ -118,10 +118,17 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   useEffect(loadRoot, [bucketId])
-
+  const firstUpdate = useRef(true)
   useEffect(() => {
-    if (!target) return
-    void loadData([{ ...target }])
+    if (firstUpdate.current) {
+      firstUpdate.current = false
+      return
+    }
+    if (target) {
+      void loadData([{ ...target }])
+    } else {
+      void loadRoot()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshFlag])
 
@@ -272,7 +279,7 @@ export default function StorageExplorer({ bucketId }: Props) {
     if (type === 'pic') {
       return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
     } else if (type === 'video') {
-      return <video width={200} height={200} src={target?.url ?? ''} />
+      return <video controls width={200} height={200} src={target?.url ?? ''} />
     } else {
       return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
     }
@@ -331,9 +338,10 @@ export default function StorageExplorer({ bucketId }: Props) {
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
+              console.log(info.file.status, '***')
               if (info.file.status === 'success' || info.file.status === 'done') {
+                console.log('doRefresh')
                 setRefreshFlag(!refreshFlag)
-                console.log(info.file.status)
               }
             }}
           >
@@ -394,23 +402,11 @@ export default function StorageExplorer({ bucketId }: Props) {
                   <p>修改于：{target?.updateTime ?? ''}</p>
                 </Panel>
                 <Panel header="预览" key="2">
-                  {isImage(target?.mime) ? (
-                    <>
-                      <div
-                        className={`${styles['panel-style']} flex-col justify-center items-center flex`}
-                      >
-                        {renderPreview(target)}
-                      </div>
-                    </>
-                  ) : (
-                    <img
-                      className="m-auto block"
-                      width={200}
-                      height={200}
-                      src={'/assets/logo.png'}
-                      alt={target?.value}
-                    />
-                  )}
+                  <div
+                    className={`${styles['panel-style']} flex-col justify-center items-center flex`}
+                  >
+                    {renderPreview(target)}
+                  </div>
                 </Panel>
                 <div className="flex flex-col">
                   <Button className="m-1.5">下载</Button>
