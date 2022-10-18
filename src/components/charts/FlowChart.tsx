@@ -906,6 +906,10 @@ const FlowChart = (props: FlowChartProps) => {
       ],
       'arrow'
     ).addToGraph(graph)
+
+    return () => {
+      graph.dispose()
+    }
   }, [])
 
   return <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
