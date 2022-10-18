@@ -1,12 +1,12 @@
 import { RightOutlined, RightSquareOutlined } from '@ant-design/icons'
-import { Button, Form, Switch, Descriptions, Input, Select, Radio, notification } from 'antd'
+import { Button, Descriptions, Form, Input, notification, Radio, Select, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -17,104 +17,21 @@ interface Props {
   type: ShowType
 }
 
-interface Config {
-  [key: string]: string
-}
-interface FromValues {
-  [key: string]: number | string | boolean
-}
+type Config = Record<string, string | any[]>
+
+type FromValues = Record<string, number | string | boolean>
 
 interface Props {
   content: DatasourceResp
 }
-// interface DataType {
-//   key: string
-//   table: string
-//   field: string
-//   resType: string
-//   inputType: string
-//   isOpen: boolean
-// }
 
 interface OptionT {
   label: string
   value: string
 }
 
-// const columns: ColumnsType<DataType> = [
-//   {
-//     title: '表',
-//     dataIndex: 'table',
-//     key: 'table',
-//     render: () => (
-//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-//         <Option value="table">table</Option>
-//         <Option value="lucy">Lucy</Option>
-//         <Option value="Yiminghe">yiminghe</Option>
-//       </Select>
-//     ),
-//   },
-//   {
-//     title: '字段',
-//     dataIndex: 'field',
-//     key: 'field',
-//     render: () => (
-//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-//         <Option value="jack">Jack</Option>
-//         <Option value="table">table</Option>
-//         <Option value="Yiminghe">yiminghe</Option>
-//       </Select>
-//     ),
-//   },
-//   {
-//     title: '响应类型',
-//     dataIndex: 'resType',
-//     key: 'resType',
-//     render: () => (
-//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-//         <Option value="table">table</Option>
-//         <Option value="lucy">Lucy</Option>
-//         <Option value="Yiminghe">yiminghe</Option>
-//       </Select>
-//     ),
-//   },
-//   {
-//     title: '输入类型',
-//     key: 'inputType',
-//     dataIndex: 'inputType',
-//     render: () => (
-//       <Select defaultValue="table" style={{ width: 120 }} bordered={false}>
-//         <Option value="table">table</Option>
-//         <Option value="lucy">Lucy</Option>
-//         <Option value="Yiminghe">yiminghe</Option>
-//       </Select>
-//     ),
-//   },
-//   {
-//     title: '是否开启',
-//     key: 'isOpen',
-//     render: () => <Switch className="w-8 h-2" />,
-//   },
-// ]
-// const data: DataType[] = [
-//   {
-//     key: '1',
-//     table: 'John Brown',
-//     field: '123',
-//     resType: 'New York No. 1 ',
-//     inputType: '222',
-//     isOpen: true,
-//   },
-//   {
-//     key: '2',
-//     table: 'John Brown',
-//     field: '123',
-//     resType: 'New York No. 1 ',
-//     inputType: '222',
-//     isOpen: false,
-//   },
-// ]
 const { Option } = Select
+
 const port = /^(([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5]))$/
 const domainReg = /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$/
 const ipReg =
@@ -126,7 +43,7 @@ const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@
 
 export default function DB({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
-  const [disabled, setDisabled] = useImmer(false)
+  const [_disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
   const config = content.config as Config
@@ -201,7 +118,7 @@ export default function DB({ content, type }: Props) {
         name="host"
         rules={[
           { required: true, message: '主机名不能为空' },
-          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' },
+          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -213,8 +130,8 @@ export default function DB({ content, type }: Props) {
           { required: true, message: '数据库名不能为空' },
           {
             pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-          },
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+          }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -224,7 +141,7 @@ export default function DB({ content, type }: Props) {
         name="port"
         rules={[
           { required: true, message: '端口号不能为空' },
-          { pattern: port, message: '端口范围为0-9999' },
+          { pattern: port, message: '端口范围为0-9999' }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -236,8 +153,8 @@ export default function DB({ content, type }: Props) {
           { required: true, message: '用户名不能为空' },
           {
             pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-          },
+            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+          }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -247,7 +164,7 @@ export default function DB({ content, type }: Props) {
         name="password"
         rules={[
           { required: true, message: '密码不能为空' },
-          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' },
+          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' }
         ]}
       >
         <Input.Password placeholder="请输入..." />
@@ -278,12 +195,12 @@ export default function DB({ content, type }: Props) {
     void requests
       .put('/dataSource', {
         ...content,
-        switch: isChecked == true ? 0 : 1,
+        switch: isChecked == true ? 0 : 1
       })
       .then(() => {
         handleSave({
           ...content,
-          switch: isChecked == true ? 0 : 1,
+          switch: isChecked == true ? 0 : 1
         })
       })
   }
@@ -304,7 +221,7 @@ export default function DB({ content, type }: Props) {
       newContent = {
         ...content,
         config: newValues,
-        name: values.apiNamespace,
+        name: values.apiNamespace
       } as DatasourceResp
       await requests.put('/dataSource', newContent)
     }
@@ -327,7 +244,7 @@ export default function DB({ content, type }: Props) {
       .post('/checkDBConn', {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: { sourceType: content.sourceType, config: config },
+        data: { sourceType: content.sourceType, config: config }
       })
       .then(x => console.log(x))
 
@@ -339,7 +256,7 @@ export default function DB({ content, type }: Props) {
           描述性语句描述性语句描述性语句
         </div>
       ),
-      placement,
+      placement
     })
   }
 
@@ -501,8 +418,8 @@ export default function DB({ content, type }: Props) {
                 databaseUrl: {
                   kind:
                     (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
-                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val,
-                },
+                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val
+                }
               }}
             >
               <Form.Item
@@ -512,8 +429,8 @@ export default function DB({ content, type }: Props) {
                   { required: true, message: '名称不能为空' },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: '以字母或下划线开头，只能由数字、字母、下划线组成',
-                  },
+                    message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                  }
                 ]}
               >
                 <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
@@ -566,39 +483,11 @@ export default function DB({ content, type }: Props) {
         </div>
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
-        //设置页面———————————————————————————————————————————————————————————————————————————————————
-        // <div className="flex">
-        //   <Descriptions
-        //     bordered
-        //     layout="vertical"
-        //     size="small"
-        //     className="w-3/8 mr-10"
-        //     labelStyle={{ width: '30%' }}
-        //   >
-        //     <Descriptions.Item label="自定义类型" contentStyle={{ padding: '0' }}>
-        //       <Editor
-        //         height="90vh"
-        //         defaultLanguage="typescript"
-        //         defaultValue="// some comment"
-        //         className={`${styles.monaco}`}
-        //       />
-        //     </Descriptions.Item>
-        //   </Descriptions>
-        //   <Descriptions
-        //     bordered
-        //     layout="vertical"
-        //     size="small"
-        //     className="w-5/8"
-        //     labelStyle={{ width: '30%' }}
-        //   >
-        //     <Descriptions.Item label="字段类型映射" contentStyle={{ padding: '0' }}>
-        //       <div className={`${styles['db-setting-table']}`}>
-        //         <Table columns={columns} dataSource={data} pagination={false} />
-        //       </div>
-        //     </Descriptions.Item>
-        //   </Descriptions>
-        // </div>
-        <Setting />
+        <Setting
+          content={content}
+          initSchema={config.schemaExtension as string}
+          replaceJSON={config.replaceJSONTypeFieldConfiguration as ReplaceJSON[]}
+        />
       )}
     </>
   )

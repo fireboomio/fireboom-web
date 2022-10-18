@@ -47,10 +47,11 @@ body {
     background: #F2F4F8 !important;
   }
   // select
-  .ant-select .ant-select-selector{
-    border-color: #F2F4F8 !important;
-    background: #F2F4F8 !important;
-  }
+  :not(.disable-common-select).ant-select .ant-select-selector{
+      border-color: #F2F4F8 !important;
+      background: #F2F4F8 !important;
+    }
+
 
 
   .tabs-form{

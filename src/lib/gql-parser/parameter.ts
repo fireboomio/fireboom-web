@@ -1,20 +1,20 @@
-import {
-  VariableDefinitionNode,
-  ConstDirectiveNode,
+import type {
   ConstArgumentNode,
-  Kind,
+  ConstDirectiveNode,
   DirectiveNode,
+  VariableDefinitionNode
 } from 'graphql'
+import { Kind } from 'graphql'
 
-import { ParameterT, ArgumentT } from '@/interfaces/apimanage'
+import type { ArgumentT, ParameterT } from '@/interfaces/apimanage'
 
 import { isEmpty } from '../utils'
 import { parseType } from './request'
 
 export const parseRbac = (directives: readonly DirectiveNode[] | undefined) => {
   const dirs = parseDirective(directives as readonly ConstDirectiveNode[])
-  const dir = dirs?.find((x) => x.name === 'rbac')
-  return dir?.args.map((x) => ({ key: x.name, value: x.value })).at(0)
+  const dir = dirs?.find(x => x.name === 'rbac')
+  return dir?.args.map(x => ({ key: x.name, value: x.value })).at(0)
 }
 
 // 从 variableDefinition 字段解析参数
@@ -32,7 +32,7 @@ export const parseParameters = (
       position: 'path',
       type: type,
       isRequired: isRequired,
-      directives: parseDirective(x.directives),
+      directives: parseDirective(x.directives)
     }
   })
 }
@@ -40,13 +40,13 @@ export const parseParameters = (
 const parseDirective = (directives: readonly ConstDirectiveNode[] | undefined) => {
   if (!directives) return undefined
 
-  return directives.map((x) => {
+  return directives.map(x => {
     const args = parseArgument(x.arguments)
 
     return {
       name: x.name.value,
       args: args,
-      payload: args.map((x) => x.rendered),
+      payload: args.map(x => x.rendered)
     }
   })
 }
@@ -55,7 +55,7 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
   if (isEmpty(argNodes)) return []
 
   // @ts-ignore
-  return argNodes.map((x) => {
+  return argNodes.map(x => {
     let val
     switch (x.value.kind) {
       case Kind.INT:
@@ -65,7 +65,7 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
         val = x.value.value
         break
       case Kind.LIST:
-        val = x.value.values.map((x) => {
+        val = x.value.values.map(x => {
           if (x.kind === Kind.ENUM) return x.value
         })
         break
@@ -85,7 +85,7 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
         break
       case Kind.LIST:
         rendered = `${x.value.values
-          .map((x) => {
+          .map(x => {
             if (x.kind === Kind.ENUM) return x.value
           })
           .join(', ')}`
@@ -97,7 +97,7 @@ const parseArgument = (argNodes: readonly ConstArgumentNode[] | undefined): Argu
     return {
       name: x.name.value,
       value: val,
-      rendered: rendered,
+      rendered: rendered
     }
   })
 }

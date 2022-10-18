@@ -1,14 +1,14 @@
-import {
+import type {
   DefinitionNode,
-  OperationDefinitionNode,
   FieldDefinitionNode,
-  ScalarTypeDefinitionNode,
-  TypeNode,
   FieldNode,
   NameNode,
+  OperationDefinitionNode,
+  ScalarTypeDefinitionNode,
+  TypeNode
 } from 'graphql'
 
-import { FieldType, TableSource } from '@/interfaces/apimanage'
+import type { FieldType, TableSource } from '@/interfaces/apimanage'
 
 import { GQL_BASE_SCALAR } from '../common'
 import { capitalize } from '../utils'
@@ -51,24 +51,24 @@ const parseGql = (
   if (!node.selectionSet) return undefined
 
   const allScalar = schema
-    .filter((x) => x.kind === 'ScalarTypeDefinition')
-    .map((x) => (x as ScalarTypeDefinitionNode).name.value)
+    .filter(x => x.kind === 'ScalarTypeDefinition')
+    .map(x => (x as ScalarTypeDefinitionNode).name.value)
     .concat(GQL_BASE_SCALAR)
 
   const subNodes = node.selectionSet.selections as FieldNode[]
   return subNodes.map((subNode, idx) => {
     const fields = // @ts-ignore
-      schema.find((x) => (x.name as NameNode).value === type).fields as FieldDefinitionNode[]
+      schema.find(x => (x.name as NameNode).value === type).fields as FieldDefinitionNode[]
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const field = fields.find((x) => x.name.value === subNode.name.value)!.type
+    const field = fields.find(x => x.name.value === subNode.name.value)!.type
     const fieldType = parseType(field, allScalar)
 
     return {
       key: `${lv}-${idx}`,
       fieldName: subNode.name.value,
       fieldType: fieldType,
-      directiveNames: node.directives?.map((x) => x.name.value),
-      children: parseGql(schema, subNode, fieldType.type, `${lv}-${idx}`),
+      directiveNames: node.directives?.map(x => x.name.value),
+      children: parseGql(schema, subNode, fieldType.type, `${lv}-${idx}`)
     }
   })
 }
