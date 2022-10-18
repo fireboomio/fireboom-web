@@ -57,7 +57,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
         field: x.fieldName,
         resType: x.responseTypeReplacement,
         inputType: x.inputTypeReplacement,
-        isOpen: true
+        isOpen: x?.isOpen || false
       }))
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,6 +135,13 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
     })
   }
 
+  function handleOpenChange(val: boolean, item: DataType) {
+    setData(draft => {
+      const one = draft.find(x => x.id === item.id)
+      one!.isOpen = val
+    })
+  }
+
   function add() {
     setData(draft =>
       draft.concat({
@@ -174,7 +181,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
           language="graphql"
           value={schemaExtension}
           onChange={x => setSchemaExtension(x ?? '')}
-          className="py-3"
+          // className="py-3"
         />
       </div>
 
@@ -261,7 +268,11 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                     />
                   </td>
                   <td>
-                    <Switch className="w-8 h-2" checked={x.isOpen} />
+                    <Switch
+                      className="w-8 h-2"
+                      checked={x.isOpen}
+                      onChange={val => handleOpenChange(val, x)}
+                    />
                   </td>
                   <td>
                     <IconFont

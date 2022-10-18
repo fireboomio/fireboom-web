@@ -71,4 +71,5 @@ export interface ReplaceJSON {
   fieldName: string
   responseTypeReplacement: string
   inputTypeReplacement: string
+  isOpen?: boolean
 }
