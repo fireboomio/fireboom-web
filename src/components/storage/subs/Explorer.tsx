@@ -48,20 +48,24 @@ const { Panel } = Collapse
 function sortFile(a: FileT, b: FileT) {
   return (a.isDir ? 1 : 2) - (b.isDir ? 1 : 2)
 }
-
-function fileIcon(fileName: string): string {
+function fileType(fileName: string): 'pic' | 'video' | 'doc' {
   const fileType = fileName.split('.')?.pop()?.toLowerCase() || ''
   if (
     ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'ico', 'webp', 'tif', 'pcx', 'tga'].includes(
       fileType
     )
   ) {
-    return iconPic
+    return 'pic'
   } else if (['mp4', 'avi', '3gp', 'rmvb', 'wmv', 'mov', 'mkv'].includes(fileType)) {
-    return iconVideo
+    return 'video'
   } else {
-    return iconDoc
+    return 'doc'
   }
+}
+const FILE_ICON = {
+  pic: iconPic,
+  video: iconVideo,
+  doc: iconDoc
 }
 
 export default function StorageExplorer({ bucketId }: Props) {
@@ -97,7 +101,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   {x.isDir ? (
                     <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
                   ) : (
-                    <img src={fileIcon(x.name)} alt="图片" className="w-3.5 h-3.5" />
+                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
                   )}
                 </span>
                 <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
@@ -196,16 +200,18 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   const loadData = async (selectedOptions: Option[]) => {
-    console.log('**', selectedOptions)
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
     setTarget({ ...targetOption })
 
     let path = targetOption.name ?? ''
 
-    console.log(path, targetOption)
     if (targetOption.isLeaf) {
-      path = path.replace(/\/[^/]+$/, '')
+      if (path.includes('/')) {
+        path = path.replace(/\/[^/]+$/, '')
+      } else {
+        path = ''
+      }
     }
 
     if (!path) {
@@ -219,7 +225,7 @@ export default function StorageExplorer({ bucketId }: Props) {
 
     const fileOpts = files
       .sort(sortFile)
-      .filter(x => x.name !== targetOption.value)
+      .filter(x => x.name !== targetOption.name)
       .map(x => ({
         label: (
           <>
@@ -227,7 +233,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               {x.isDir ? (
                 <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
               ) : (
-                <img src={fileIcon(x.name)} alt="图片" className="w-3.5 h-3.5" />
+                <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
               )}
             </span>
             <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
@@ -257,6 +263,20 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   const createFold = () => {}
+
+  const renderPreview = (file?: FileT) => {
+    if (!file) {
+      return null
+    }
+    const type = fileType(file.name)
+    if (type === 'pic') {
+      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+    } else if (type === 'video') {
+      return <video width={200} height={200} src={target?.url ?? ''} />
+    } else {
+      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+    }
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -310,7 +330,12 @@ export default function StorageExplorer({ bucketId }: Props) {
             action="/api/v1/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
-            onChange={() => setRefreshFlag(!refreshFlag)}
+            onChange={info => {
+              if (info.file.status === 'success' || info.file.status === 'done') {
+                setRefreshFlag(!refreshFlag)
+                console.log(info.file.status)
+              }
+            }}
           >
             <Button size="small" className="!h-7 !rounded-2px mr-4">
               上传
@@ -345,7 +370,11 @@ export default function StorageExplorer({ bucketId }: Props) {
             <div className={styles.fileDetailBody}>
               <div className={styles.header}>
                 {target?.isLeaf ? (
-                  <img src={fileIcon(target?.name ?? '')} alt="图片" className="w-3.5 h-3.5 mr-2" />
+                  <img
+                    src={FILE_ICON[fileType(FILE_ICON[fileType(target?.name ?? '')])]}
+                    alt="图片"
+                    className="w-3.5 h-3.5 mr-2"
+                  />
                 ) : (
                   <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5 mr-2" />
                 )}
@@ -370,7 +399,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                       <div
                         className={`${styles['panel-style']} flex-col justify-center items-center flex`}
                       >
-                        <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+                        {renderPreview(target)}
                       </div>
                     </>
                   ) : (
@@ -402,32 +431,4 @@ export default function StorageExplorer({ bucketId }: Props) {
       </div>
     </div>
   )
-}
-
-function sort(list) {
-  let count = 0
-  while (1) {
-    count++
-    const result = new Array(list.length).fill(null)
-    list.forEach(x => {
-      result[(Math.random() * list.length) | 0] = x
-    })
-    let errFlag = false
-    for (let i = 0; i < result.length - 1; i++) {
-      if (result[i] === null) {
-        errFlag = true
-      }
-      if (result[i] > result[i + 1]) {
-        errFlag = true
-      }
-    }
-    if (result[result.length - 1] === null) {
-      errFlag = true
-    }
-    if (errFlag) {
-      continue
-    }
-    console.log(`排序完成，执行${count}次`)
-    return result
-  }
 }
