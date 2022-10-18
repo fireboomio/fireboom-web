@@ -1,12 +1,10 @@
-import { CloseOutlined } from '@ant-design/icons'
 import { Checkbox, Dropdown, Radio } from 'antd'
-import clsx from 'clsx'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { Role } from '@/interfaces/user'
 import requests from '@/lib/fetchers'
 
-import { CircleRemoveOutlined, PlusCircleFilled } from '../../../icons'
+import { CircleCloseOutlined, CircleRemoveOutlined, PlusCircleFilled } from '../../../icons'
 import styles from './index.module.less'
 
 interface RBACPopupProps {
@@ -24,9 +22,12 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
 
   const onAllCheckChange = () => {
     if (selected.length !== roles.length) {
-      setSelected(roles.map(r => r.code))
+      const allValue = roles.map(r => r.code)
+      setSelected(allValue)
+      onChange?.({ rule, value: allValue })
     } else {
       setSelected([])
+      onChange?.({ rule, value: [] })
     }
   }
 
@@ -38,16 +39,24 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
       clone.splice(clone.indexOf(role), 1)
     }
     setSelected(clone)
+    onChange?.({ rule, value: clone })
   }
 
   const removeSelected = (index: number) => {
     const clone = [...selected]
     clone.splice(index, 1)
     setSelected(clone)
+    onChange?.({ rule, value: clone })
   }
 
   const clearSelected = () => {
     setSelected([])
+    onChange?.({ rule, value: [] })
+  }
+
+  const onSetRule = (v: string) => {
+    setRule(v)
+    onChange?.({ rule: v, value: selected })
   }
 
   useEffect(() => {
@@ -57,7 +66,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
   }, [])
 
   return (
-    <div className={clsx('bg-white rounded', styles.wrapper)}>
+    <div className="bg-white rounded shadow">
       <div className="bg-[rgba(95,98,105,0.05)] py-2.5 px-3">
         <Radio.Group
           className={styles.radioGroup}
@@ -69,7 +78,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
             { label: 'denyMatchAny', value: 'denyMatchAny' }
           ]}
           size="small"
-          onChange={e => setRule(e.target.value)}
+          onChange={e => onSetRule(e.target.value)}
         />
       </div>
       <div className="py-2.5 px-3">
@@ -80,7 +89,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
               className="border-solid border rounded-sm flex border-[rgba(175,176,180,0.4)] h-6.5 text-sm px-2 items-center"
             >
               {role}
-              <CloseOutlined
+              <CircleCloseOutlined
                 className="cursor-pointer text-xs ml-1.5 text-[#5F6269]"
                 onClick={() => removeSelected(index)}
               />

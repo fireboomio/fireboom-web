@@ -170,7 +170,8 @@
 .graphiql-container .arguments-editor .arguments-directive {
   display: inline-flex;
   align-items: center;
-  width: 60px;
+  /* width: 60px; */
+  max-width: 45%;
   height: 24px;
   margin: 2px 4px 0;
   padding: 0 4px;
@@ -198,9 +199,13 @@
 
 .graphiql-container .arguments-editor .arguments-directive-remove {
   margin-left: 4px;
-  color: rgb(95 98 105 / 60%);
-  font-size: 11px;
+  font-size: 0;
   cursor: pointer;
+}
+
+.graphiql-container .arguments-editor .arguments-directive-remove > svg {
+  font-size: 11px;
+  color: rgb(95 98 105 / 60%);
 }
 
 /* Generic spin animation */
