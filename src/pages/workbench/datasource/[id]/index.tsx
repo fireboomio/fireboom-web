@@ -15,8 +15,6 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
-import styles from './index.module.less'
-
 export default function Datasource() {
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -25,6 +23,7 @@ export default function Datasource() {
   const [content, setContent] = useState<DatasourceResp>()
   const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
+
   useEffect(() => {
     // 当前状态为新建中且已选择数据源类型
     if (id === 'create') {
@@ -44,7 +43,7 @@ export default function Datasource() {
     })
   }, [id])
 
-  const handleToggleDesigner = (type: ShowType, id?: number, sourceType?: number) => {
+  const handleToggleDesigner = (type: ShowType, _id?: number, _sourceType?: number) => {
     //新增的item点击取消逻辑
     if (location.pathname === '/workbench/dataSource/create') {
       navigate('/workbench/dataSource/new', { replace: true })
