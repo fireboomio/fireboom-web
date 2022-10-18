@@ -94,6 +94,12 @@
       color: #e92e5e;
     }
   }
+  .ant-cascader-menu-item-content {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .fileDetail {
@@ -139,4 +145,26 @@
       line-height: 20px;
     }
   }
+}
+.bread,
+.leafBread {
+  font-size: 14px;
+  &:not(:first-child)::before {
+    content: '>';
+    margin: 0 6px;
+    color: #333;
+  }
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bread {
+  color: #e92e5e;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.leafBread {
+  color: #333;
+  flex: 1 1 0;
+  min-width: 0;
 }

@@ -85,6 +85,8 @@ const SAVE_DELAY = 1000
 
 interface Props {
   hookPath: string
+  defaultCode?: string
+  defaultInput?: string
   defaultLanguage?: string
   onChange?: (value?: string) => void
 }
@@ -132,6 +134,10 @@ const IdeContainer: FC<Props> = props => {
         type: 'passive',
         status: AutoSaveStatus.LOADED
       })
+      // 如果data中的script为空, 就用defaultCode
+      if (data.script === '' || data.script === null) {
+        data.script = props.defaultCode || ''
+      }
       setHookInfo(data)
     })
   }, [])
@@ -217,7 +223,6 @@ const IdeContainer: FC<Props> = props => {
         type,
         status: AutoSaveStatus.SAVEING
       })
-      console.log(editor)
       // 保存脚本内容
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       void saveHookScript(props.hookPath, editor.getValue()).then(() => {
@@ -375,6 +380,7 @@ const IdeContainer: FC<Props> = props => {
               />
               {/* 输入和输出区 */}
               <IdeActionContainer
+                defaultInputValue={props.defaultInput}
                 onClickDebug={async json => {
                   return await handleDebug(json)
                 }}

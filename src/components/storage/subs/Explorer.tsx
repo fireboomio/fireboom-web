@@ -7,7 +7,6 @@ import {
   SyncOutlined
 } from '@ant-design/icons'
 import {
-  Breadcrumb,
   Button,
   Cascader,
   Collapse,
@@ -26,8 +25,10 @@ import type { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
+import iconDoc from './../assets/icon-doc.svg'
 import iconFold from './../assets/icon-fold.svg'
 import iconPic from './../assets/icon-pic.svg'
+import iconVideo from './../assets/icon-video.svg'
 import styles from './Explorer.module.less'
 
 interface Props {
@@ -44,6 +45,25 @@ type Option = Partial<FileT> & {
 
 const { Panel } = Collapse
 
+function sortFile(a: FileT, b: FileT) {
+  return (a.isDir ? 1 : 2) - (b.isDir ? 1 : 2)
+}
+
+function fileIcon(fileName: string): string {
+  const fileType = fileName.split('.')?.pop()?.toLowerCase() || ''
+  if (
+    ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'ico', 'webp', 'tif', 'pcx', 'tga'].includes(
+      fileType
+    )
+  ) {
+    return iconPic
+  } else if (['mp4', 'avi', '3gp', 'rmvb', 'wmv', 'mov', 'mkv'].includes(fileType)) {
+    return iconVideo
+  } else {
+    return iconDoc
+  }
+}
+
 export default function StorageExplorer({ bucketId }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
@@ -51,7 +71,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
-  const [breads, setBreads] = useImmer<string[]>(['/'])
+  const [breads, setBreads] = useImmer<Array<{ value: string; isLeaf: boolean }>>([])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
   const containerEle = useRef<HTMLDivElement>(null)
 
@@ -62,13 +82,14 @@ export default function StorageExplorer({ bucketId }: Props) {
     return rv
   }, [target])
 
-  useEffect(() => {
+  const loadRoot = () => {
     if (!bucketId) return
 
     void requests
       .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
       .then(res =>
         res
+          .sort(sortFile)
           .map(x => ({
             label: (
               <>
@@ -76,7 +97,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   {x.isDir ? (
                     <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
                   ) : (
-                    <img src={iconPic} alt="图片" className="w-3.5 h-3.5" />
+                    <img src={fileIcon(x.name)} alt="图片" className="w-3.5 h-3.5" />
                   )}
                 </span>
                 <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
@@ -90,7 +111,9 @@ export default function StorageExplorer({ bucketId }: Props) {
       )
       .then(res => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketId])
+  }
+
+  useEffect(loadRoot, [bucketId])
 
   useEffect(() => {
     if (!target) return
@@ -158,7 +181,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   )
 
   const onChange = (value: string[], selectedOptions: Option[]) => {
-    setBreads((value.at(-1) ?? '').split('/'))
+    setBreads(
+      selectedOptions.map(item => ({
+        value: item.isLeaf ? item.value : item.value.replace(/\/$/, ''),
+        isLeaf: !!item.isLeaf
+      }))
+    )
     setVisible(false)
     const targetOption = selectedOptions[selectedOptions.length - 1]
     if (targetOption.isLeaf) {
@@ -168,17 +196,30 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   const loadData = async (selectedOptions: Option[]) => {
+    console.log('**', selectedOptions)
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
     setTarget({ ...targetOption })
 
-    if (targetOption.isLeaf) return
+    let path = targetOption.name ?? ''
+
+    console.log(path, targetOption)
+    if (targetOption.isLeaf) {
+      path = path.replace(/\/[^/]+$/, '')
+    }
+
+    if (!path) {
+      loadRoot()
+      return
+    }
 
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` }
+      params: { bucketID: bucketId, filePrefix: `${path}` }
     })
 
     const fileOpts = files
+      .sort(sortFile)
+      .filter(x => x.name !== targetOption.value)
       .map(x => ({
         label: (
           <>
@@ -186,17 +227,18 @@ export default function StorageExplorer({ bucketId }: Props) {
               {x.isDir ? (
                 <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
               ) : (
-                <img src={iconPic} alt="图片" className="w-3.5 h-3.5" />
+                <img src={fileIcon(x.name)} alt="图片" className="w-3.5 h-3.5" />
               )}
             </span>
-            <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
+            <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
+              {x.name.replace(targetOption.value, '')}
+            </span>
           </>
         ),
-        value: x.name,
+        value: x.name.replace(targetOption.value, ''),
         isLeaf: !x.isDir,
         ...x
       }))
-      .filter(x => x.value !== targetOption.value)
 
     targetOption.children = fileOpts
     targetOption.loading = false
@@ -214,19 +256,19 @@ export default function StorageExplorer({ bucketId }: Props) {
       .then(() => void message.success('删除成功'))
   }
 
+  const createFold = () => {}
+
   return (
     <div className="h-full flex flex-col">
       <div className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0">
-        <Breadcrumb separator=">">
+        <div className="flex flex-1 min-w-0">
           {breads.map((x, idx) => (
-            <Breadcrumb.Item key={idx}>
-              <span className={idx === breads.length - 1 ? 'text-default' : 'text-[#E92E5E]'}>
-                {x}
-              </span>
-            </Breadcrumb.Item>
+            <div key={x.value} className={x.isLeaf ? styles.leafBread : styles.bread}>
+              {x.value}
+            </div>
           ))}
-        </Breadcrumb>
-        <div className="flex justify-center items-center">
+        </div>
+        <div className="flex flex-0 justify-center items-center">
           {isSerach ? (
             <Tooltip title="serach">
               <Button
@@ -249,30 +291,34 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Button
             onClick={() => setRefreshFlag(!refreshFlag)}
             icon={<SyncOutlined />}
-            className="mr-2"
+            className="mr-2 !p-1 !border-0"
           >
             刷新
           </Button>
-          <Dropdown overlay={listMenu} placement="bottom">
-            <Button icon={<BarsOutlined />} className="mr-2">
-              列表
-            </Button>
-          </Dropdown>
+          {/*<Dropdown overlay={listMenu} placement="bottom">*/}
+          {/*  <Button icon={<BarsOutlined />} className="mr-2">*/}
+          {/*    列表*/}
+          {/*  </Button>*/}
+          {/*</Dropdown>*/}
           <Dropdown overlay={orderMenu} placement="bottom">
-            <Button icon={<BarsOutlined />} className="mr-4">
+            <Button icon={<BarsOutlined />} className="mr-2 !p-1 !border-0">
               排序
             </Button>
           </Dropdown>
-          <Divider type="vertical" className="h-5 mr-5" />
+          <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
-            // className={`${styles['upload']}`}
             action="/api/v1/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
-            // onChange={() => setRefreshFlag(!refreshFlag)}
+            onChange={() => setRefreshFlag(!refreshFlag)}
           >
-            <Button>上传</Button>
+            <Button size="small" className="!h-7 !rounded-2px mr-4">
+              上传
+            </Button>
           </Upload>
+          <Button size="small" className="!h-7 !rounded-2px" onClick={createFold}>
+            文件夹
+          </Button>
         </div>
       </div>
 
@@ -299,7 +345,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             <div className={styles.fileDetailBody}>
               <div className={styles.header}>
                 {target?.isLeaf ? (
-                  <img src={iconPic} alt="图片" className="w-3.5 h-3.5 mr-2" />
+                  <img src={fileIcon(target?.name ?? '')} alt="图片" className="w-3.5 h-3.5 mr-2" />
                 ) : (
                   <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5 mr-2" />
                 )}
@@ -356,4 +402,32 @@ export default function StorageExplorer({ bucketId }: Props) {
       </div>
     </div>
   )
+}
+
+function sort(list) {
+  let count = 0
+  while (1) {
+    count++
+    const result = new Array(list.length).fill(null)
+    list.forEach(x => {
+      result[(Math.random() * list.length) | 0] = x
+    })
+    let errFlag = false
+    for (let i = 0; i < result.length - 1; i++) {
+      if (result[i] === null) {
+        errFlag = true
+      }
+      if (result[i] > result[i + 1]) {
+        errFlag = true
+      }
+    }
+    if (result[result.length - 1] === null) {
+      errFlag = true
+    }
+    if (errFlag) {
+      continue
+    }
+    console.log(`排序完成，执行${count}次`)
+    return result
+  }
 }

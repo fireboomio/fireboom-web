@@ -11,6 +11,8 @@ import styles from './../subs.module.less'
 import ideStyles from './index.module.less'
 
 interface Props {
+  // 默认inputvalue
+  defaultInputValue?: string
   // 输出日志列表
   runResult: RunHookResponse
   expandAction: boolean
@@ -21,7 +23,10 @@ interface Props {
   onClickClearLog: () => void
 }
 
-type EditorInputContainerProps = Pick<Props, 'onClickDebug' | 'expandAction' | 'editorOptions'>
+type EditorInputContainerProps = Pick<
+  Props,
+  'onClickDebug' | 'expandAction' | 'editorOptions' | 'defaultInputValue'
+>
 
 export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   const editorRef = useRef<any>(null)
@@ -45,6 +50,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
       } catch (error) {}
       // 不是json格式
       void message.warning('脚本内容不是json格式')
+      setLoading(false)
     }
   }
   return (
@@ -60,7 +66,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
           <Editor
             language="json"
             height="80%"
-            defaultValue="{}"
+            defaultValue={props.defaultInputValue}
             onMount={monacoEditor => {
               editorRef.current = monacoEditor
               monacoEditor.updateOptions({ minimap: { enabled: false } })
@@ -133,6 +139,7 @@ export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = props => {
 }
 
 const IdeActionContainer: FC<Props> = ({
+  defaultInputValue,
   runResult,
   expandAction,
   editorOptions,
@@ -142,6 +149,7 @@ const IdeActionContainer: FC<Props> = ({
   return (
     <div className={`${ideStyles['ide-action']} flex`}>
       <EditorInputContainer
+        defaultInputValue={defaultInputValue}
         onClickDebug={onClickDebug}
         expandAction={expandAction}
         editorOptions={editorOptions}
