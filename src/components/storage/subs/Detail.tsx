@@ -1,5 +1,5 @@
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
-import { Button, Switch, Descriptions, Divider } from 'antd'
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { Button, Descriptions, Divider, Switch } from 'antd'
 import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -56,7 +56,7 @@ export default function StorageDetail({ content }: Props) {
             backgroundColor: 'white',
             width: '30%',
             borderRight: 'none',
-            borderBottom: 'none',
+            borderBottom: 'none'
           }}
         >
           <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>

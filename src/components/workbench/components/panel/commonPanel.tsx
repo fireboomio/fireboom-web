@@ -4,6 +4,7 @@ import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import Icon from '/assets/workbench/panel-add.png'
+import RoleIcon from '/assets/workbench/panel-role.png'
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
@@ -15,8 +16,6 @@ import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.less'
-
-import RoleIcon from '/assets/workbench/panel-role.png'
 
 interface PanelConfig {
   title: string

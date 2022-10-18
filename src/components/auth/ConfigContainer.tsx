@@ -24,7 +24,7 @@ export default function AuthConfigContainer() {
         id: 0,
         name: '',
         authSupplier: 'openid',
-        switchState: [],
+        switchState: []
       })
       return
     }

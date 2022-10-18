@@ -1,11 +1,11 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Select, Col, Row, DatePicker } from 'antd'
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import { User } from '@/interfaces/auth'
+import type { User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -51,8 +51,8 @@ export default function AuthUserDetails() {
         >
           撤销角色
         </span>
-      ),
-    },
+      )
+    }
   ]
 
   const handleDeleteRole = (id: number) => {

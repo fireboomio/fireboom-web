@@ -1,31 +1,31 @@
 import {
-  SearchOutlined,
-  BarsOutlined,
-  SyncOutlined,
+  AppstoreOutlined,
   ArrowDownOutlined,
   ArrowUpOutlined,
-  AppstoreOutlined,
+  BarsOutlined,
   FileImageOutlined,
+  SearchOutlined,
+  SyncOutlined
 } from '@ant-design/icons'
 import {
   Breadcrumb,
-  Dropdown,
-  Menu,
   Button,
-  Tooltip,
-  Upload,
-  Divider,
   Cascader,
-  Drawer,
   Collapse,
+  Divider,
+  Drawer,
+  Dropdown,
   Input,
+  Menu,
   message,
+  Tooltip,
+  Upload
 } from 'antd'
 import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import { FileT } from '@/interfaces/storage'
+import type { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
@@ -78,7 +78,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             ),
             value: x.name,
             isLeaf: !x.isDir,
-            ...x,
+            ...x
           }))
           .filter(x => x.name !== '')
       )
@@ -106,7 +106,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               <AppstoreOutlined className="mr-2" />
               <span>视图</span>
             </div>
-          ),
+          )
         },
         {
           key: '1',
@@ -115,8 +115,8 @@ export default function StorageExplorer({ bucketId }: Props) {
               <BarsOutlined className="mr-2" />
               <span>列表</span>
             </div>
-          ),
-        },
+          )
+        }
       ]}
     />
   )
@@ -133,20 +133,20 @@ export default function StorageExplorer({ bucketId }: Props) {
                 {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
               </span>
             </div>
-          ),
+          )
         },
         {
           key: '1',
-          label: <div>按文件大小</div>,
+          label: <div>按文件大小</div>
         },
         {
           key: '2',
-          label: <div>按创建时间</div>,
+          label: <div>按创建时间</div>
         },
         {
           key: '3',
-          label: <div>按修改时间</div>,
-        },
+          label: <div>按修改时间</div>
+        }
       ]}
     />
   )
@@ -169,7 +169,7 @@ export default function StorageExplorer({ bucketId }: Props) {
     if (targetOption.isLeaf) return
 
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` },
+      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` }
     })
 
     const fileOpts = files
@@ -182,7 +182,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         ),
         value: x.name,
         isLeaf: !x.isDir,
-        ...x,
+        ...x
       }))
       .filter(x => x.value !== targetOption.value)
 

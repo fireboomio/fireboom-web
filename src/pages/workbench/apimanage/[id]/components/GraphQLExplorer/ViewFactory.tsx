@@ -1,18 +1,20 @@
-import {
+import type {
   GraphQLFieldMap,
   GraphQLInputObjectType,
   GraphQLNonNull,
   GraphQLNullableType,
   GraphQLObjectType,
   GraphQLScalarType,
-  GraphQLType,
+  GraphQLType
+} from 'graphql'
+import {
   isEnumType,
   isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
   isScalarType,
-  isUnionType,
+  isUnionType
 } from 'graphql'
 
 import { arraySort, convertGraphiQLFieldMapToArray } from '../utils'
@@ -21,7 +23,7 @@ import FieldView from './FieldView'
 
 export function MultipleFieldViews({
   map,
-  sort = true,
+  sort = true
 }: {
   map: GraphQLFieldMap<any, any> | undefined
   sort?: boolean

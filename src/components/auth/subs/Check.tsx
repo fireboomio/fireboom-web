@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { Descriptions, Button } from 'antd'
-import { ReactNode, useContext, useMemo } from 'react'
+import { Button, Descriptions } from 'antd'
+import type { ReactNode } from 'react'
+import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
@@ -14,14 +15,12 @@ import styles from './subs.module.less'
 interface Props {
   content: AuthProvResp
 }
-interface Config {
-  [key: string]: ReactNode
-}
+type Config = Record<string, ReactNode>
 
 export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-console.log('===',content)
+  console.log('===', content)
   const config = content.config as unknown as Config
 
   const sid = useMemo(() => {
@@ -72,7 +71,7 @@ console.log('===',content)
             backgroundColor: 'white',
             width: '30%',
             borderRight: 'none',
-            borderBottom: 'none',
+            borderBottom: 'none'
           }}
         >
           <Descriptions.Item label="供应商ID">

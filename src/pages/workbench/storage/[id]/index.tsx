@@ -8,7 +8,6 @@ import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
 
-
 export default function FileStorage() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('detail')

@@ -1,5 +1,6 @@
 import { CaretRightOutlined } from '@ant-design/icons'
-import React, { useEffect } from 'react'
+import type React from 'react'
+import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '../iconfont'

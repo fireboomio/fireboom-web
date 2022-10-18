@@ -8,7 +8,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import { useQueryEditor, UseQueryEditorArgs } from '@graphiql/react'
+import type { UseQueryEditorArgs } from '@graphiql/react'
+import { useQueryEditor } from '@graphiql/react'
 
 /**
  * QueryEditor

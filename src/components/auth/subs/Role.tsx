@@ -3,10 +3,10 @@ import {
   InfoCircleOutlined,
   PlayCircleOutlined,
   PlusCircleOutlined,
-  UnorderedListOutlined,
+  UnorderedListOutlined
 } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Table, Modal, Form, Input, Tabs, Switch } from 'antd'
+import { Button, Form, Input, Modal, Switch, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import {
   ComponentProps,
@@ -17,13 +17,13 @@ import {
   ReactPortal,
   useEffect,
   useMemo,
-  useState,
+  useState
 } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
 import RcTab from '@/components/rc-tab'
-import { HookName, HookResp } from '@/interfaces/auth'
+import type { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
@@ -42,9 +42,9 @@ interface TabT {
 }
 
 const { TabPane } = Tabs
-export const hookPath: { [key: string]: string } = {
+export const hookPath: Record<string, string> = {
   postAuthentication: 'auth/postAuthentication',
-  mutatingPostAuthentication: 'auth/mutatingPostPreResolve',
+  mutatingPostAuthentication: 'auth/mutatingPostPreResolve'
 }
 export default function AuthRole() {
   const [form] = Form.useForm()
@@ -82,17 +82,17 @@ export default function AuthRole() {
     {
       title: '角色',
       dataIndex: 'code',
-      key: 'code',
+      key: 'code'
     },
     {
       title: '角色描述',
       dataIndex: 'remark',
-      key: 'remark',
+      key: 'remark'
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
-      key: 'create_time',
+      key: 'create_time'
     },
     {
       title: '操作',
@@ -107,8 +107,8 @@ export default function AuthRole() {
         >
           删除
         </span>
-      ),
-    },
+      )
+    }
   ]
 
   // 身份鉴权相关
@@ -138,7 +138,7 @@ export default function AuthRole() {
     void requests.post('/auth/hooks', {
       hookName: activeKey,
       content: currHook?.content,
-      hookSwitch: currHook?.hookSwitch,
+      hookSwitch: currHook?.hookSwitch
     })
     setRefreshFlag(!refreshFlag)
   }
@@ -157,7 +157,7 @@ export default function AuthRole() {
     void requests.post('/auth/hooks', {
       hookName: activeKey,
       hookSwitch: !currHook?.hookSwitch,
-      content: currHook?.content,
+      content: currHook?.content
     })
     setRefreshFlag(!refreshFlag)
   }

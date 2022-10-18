@@ -1,11 +1,10 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, Table, Modal, Form, Input, Switch, Radio, Checkbox, Tag } from 'antd'
+import { Button, Checkbox, Form, Input, Modal, Radio, Switch, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 // import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 // import requests from '@/lib/fetchers'
-
 import styles from './subs.module.less'
 
 interface hooksProvResp {
@@ -24,7 +23,7 @@ const data: hooksProvResp[] = [
     name: 'Alean',
     triggerEvents: ['修改密码', '创建用户'],
     status: '正常',
-    createTime: '2022-06-27 15:47:14',
+    createTime: '2022-06-27 15:47:14'
   },
   {
     id: 2,
@@ -32,8 +31,8 @@ const data: hooksProvResp[] = [
     name: 'Alean',
     triggerEvents: ['修改密码', '创建用户'],
     status: '正常',
-    createTime: '2022-06-27 15:47:14',
-  },
+    createTime: '2022-06-27 15:47:14'
+  }
 ]
 
 const options = [
@@ -45,7 +44,7 @@ const options = [
   { label: '删除用户', value: 'Orange' },
   { label: '用户被取消归档', value: 'Apple' },
   { label: '用户被锁定', value: 'Pear' },
-  { label: '用户社交账号绑定', value: 'Orange' },
+  { label: '用户社交账号绑定', value: 'Orange' }
 ]
 
 export default function AuthMainRole() {
@@ -58,7 +57,7 @@ export default function AuthMainRole() {
     setHooksData(
       hooksData.concat({
         ...values,
-        key: hooksData.length + 1,
+        key: hooksData.length + 1
       })
     )
   }
@@ -71,7 +70,7 @@ export default function AuthMainRole() {
     {
       title: '名称',
       dataIndex: 'name',
-      key: 'name',
+      key: 'name'
     },
     {
       title: '触发事件',
@@ -87,7 +86,7 @@ export default function AuthMainRole() {
             )
           })}
         </>
-      ),
+      )
     },
     {
       title: '状态',
@@ -101,12 +100,12 @@ export default function AuthMainRole() {
           checkedChildren="开"
           unCheckedChildren="关"
         />
-      ),
+      )
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
-      key: 'create_time',
+      key: 'create_time'
     },
     {
       title: '操作',
@@ -120,8 +119,8 @@ export default function AuthMainRole() {
         >
           查看详情
         </span>
-      ),
-    },
+      )
+    }
   ]
 
   return (

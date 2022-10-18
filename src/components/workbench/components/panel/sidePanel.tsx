@@ -1,4 +1,5 @@
-import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import type React from 'react'
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import styles from './sidePanel.module.less'
 

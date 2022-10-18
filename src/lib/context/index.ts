@@ -1,7 +1,7 @@
 import {
   ModelingContext,
-  ModelingDispatchContext,
   ModelingCurrEntityContext,
+  ModelingDispatchContext
 } from './modeling-context'
 
-export { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext }
+export { ModelingContext, ModelingCurrEntityContext, ModelingDispatchContext }

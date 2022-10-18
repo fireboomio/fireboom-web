@@ -2,12 +2,13 @@ import {
   MinusCircleOutlined,
   MobileOutlined,
   OneToOneOutlined,
-  PlusCircleOutlined,
+  PlusCircleOutlined
 } from '@ant-design/icons'
-import { Transfer, Image } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { Image, Transfer } from 'antd'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 
-import { GroupedSocialItemType } from './ExperienceSetting'
+import type { GroupedSocialItemType } from './ExperienceSetting'
 import styles from './SocialContactTransfer.module.less'
 interface Props {
   data: GroupedSocialItemType[]
@@ -23,7 +24,7 @@ const SocialContactTransfer: React.FC<Props> = ({ data, selectedData, onChange }
     title: item.name,
     platform: item.platform,
     list: item.list,
-    logo: item.logo,
+    logo: item.logo
   }))
 
   useEffect(() => {
@@ -74,7 +75,7 @@ const SocialContactTransfer: React.FC<Props> = ({ data, selectedData, onChange }
 
     return {
       label: customLabel,
-      value: item.title as string,
+      value: item.title as string
     }
   }
   return (
@@ -86,13 +87,13 @@ const SocialContactTransfer: React.FC<Props> = ({ data, selectedData, onChange }
           </div>,
           <div style={{ color: '#5F6269' }} key="2">
             已添加
-          </div>,
+          </div>
         ]}
         operationStyle={{
-          display: 'none',
+          display: 'none'
         }}
         listStyle={{
-          border: '1px solid rgba(0,0,0,0.1)',
+          border: '1px solid rgba(0,0,0,0.1)'
         }}
         selectedKeys={selectedKeys}
         showSelectAll={false}

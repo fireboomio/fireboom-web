@@ -1,14 +1,14 @@
-import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import type { MenuProps } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
-  DatasourceDispatchContext,
   DatasourceCurrDBContext,
-  DatasourceToggleContext,
+  DatasourceDispatchContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
@@ -19,9 +19,7 @@ interface Props {
   onClickItem: (dsItem: DatasourceResp) => void
 }
 
-interface Config {
-  [key: string]: string
-}
+type Config = Record<string, string>
 
 export default function PannelItem({ datasourceItem, onClickItem }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
@@ -47,12 +45,12 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
       await requests.put('/dataSource', {
         ...datasourceItem,
         name: value,
-        config: { ...config, apiNameSpace: value },
+        config: { ...config, apiNameSpace: value }
       })
       void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
         dispatch({
           type: 'fetched',
-          data: res,
+          data: res
         })
       })
     }
@@ -84,7 +82,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
               <IconFont type="icon-zhongmingming" />
               <span className="ml-1.5">重命名</span>
             </div>
-          ),
+          )
         },
         {
           key: '2',
@@ -93,7 +91,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
               <IconFont type="icon-bianji" />
               <span className="ml-1.5">编辑</span>
             </div>
-          ),
+          )
         },
         {
           key: '3',
@@ -113,8 +111,8 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
-          ),
-        },
+          )
+        }
       ]}
     />
   )

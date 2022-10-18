@@ -1,7 +1,8 @@
 import { ExportOutlined } from '@ant-design/icons'
-import { Input, Button, Modal, Form, Table, Divider, Switch, Tabs, Popconfirm, Badge } from 'antd'
+import { Badge, Button, Divider, Form, Input, Modal, Popconfirm, Switch, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import React, { useContext, useEffect, useState } from 'react'
+import type React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -25,7 +26,7 @@ const tabItems = [
       <Form.Item label="用户名" name="name" rules={[{ required: true, message: '用户名不为空!' }]}>
         <Input />
       </Form.Item>
-    ),
+    )
   },
   {
     label: '手机号',
@@ -38,7 +39,7 @@ const tabItems = [
       >
         <Input />
       </Form.Item>
-    ),
+    )
   },
   {
     label: '邮箱',
@@ -47,8 +48,8 @@ const tabItems = [
       <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '邮箱不能为空!' }]}>
         <Input />
       </Form.Item>
-    ),
-  },
+    )
+  }
 ]
 
 export default function AuthUser({ handleTopToggleDesigner }: Props) {
@@ -89,7 +90,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
             <IconFont type="icon-lock" className="text-[10px] mr-1" />
             <span>锁定</span>
           </div>
-        ),
+        )
     },
     { title: '最后登入时间', dataIndex: 'lastLoginTime', key: 'lastLoginTime' },
     {
@@ -130,8 +131,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               </a>
             </Popconfirm>
           </>
-        ) : null,
-    },
+        ) : null
+    }
   ]
 
   const handleDelete = (keys: React.Key[]) => {
@@ -154,7 +155,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys)
-    },
+    }
   }
 
   const hasSelected = selectedRowKeys.length > 0
@@ -164,7 +165,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     showQuickJumper: false,
     pageSize: 10,
     current: currPage,
-    onChange: (current: number) => changePage(current),
+    onChange: (current: number) => changePage(current)
   }
 
   function changePage(current: number) {
@@ -232,7 +233,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         rowKey={record => record.id}
         rowClassName="cursor-pointer"
         onRow={rcd => ({
-          onClick: () => handleRowClick(rcd),
+          onClick: () => handleRowClick(rcd)
         })}
         pagination={paginationProps}
       />
@@ -323,8 +324,8 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
                     return Promise.resolve()
                   }
                   return Promise.reject(new Error('密码不一致!'))
-                },
-              }),
+                }
+              })
             ]}
           >
             <Input.Password />

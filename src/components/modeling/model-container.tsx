@@ -2,7 +2,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 import { useContext, useMemo } from 'react'
 
-import { Entity, Enum, Model } from '@/interfaces/modeling'
+import type { Entity, Enum, Model } from '@/interfaces/modeling'
 import { ModelingContext } from '@/lib/context'
 
 import ModelDesignerEnum from './subs/model-designer-enum'
@@ -17,7 +17,7 @@ export default function ModelContainer({ showType, currEntityId }: Props) {
   const blocks = useContext(ModelingContext)
 
   const entity = useMemo(
-    () => blocks.find((b) => b.id === currEntityId) as Entity,
+    () => blocks.find(b => b.id === currEntityId) as Entity,
     [blocks, currEntityId]
   )
 

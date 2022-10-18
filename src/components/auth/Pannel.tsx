@@ -19,7 +19,7 @@ const { Panel } = Collapse
 
 const initSettingPage: AuthListType = {
   name: '用户管理',
-  type: 'userManage',
+  type: 'userManage'
 }
 
 const typeList: AuthListType[] = [
@@ -35,7 +35,7 @@ const typeList: AuthListType[] = [
   // { name: 'webhooks', type: 'webhooks' },
 
   { name: '设置', type: 'title' },
-  { name: '数据库', type: 'db' },
+  { name: '数据库', type: 'db' }
 ]
 
 export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Props) {
@@ -50,7 +50,7 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
       name: '',
       authSupplier: 'openid',
       switchState: [],
-      config: '2',
+      config: '2'
     } as unknown as AuthProvResp
     dispatch({ type: 'added', data: data })
     onClickItem(data)
@@ -79,7 +79,9 @@ export default function AuthPannel({ onClickItem, handleTopToggleDesigner }: Pro
 
       {typeList.map(x => {
         return x.type === 'title' ? (
-          <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px" key={x.name}>{x.name}</h2>
+          <h2 className="ml-6 mt-3.5 text-[#AFB0B4] text-12px" key={x.name}>
+            {x.name}
+          </h2>
         ) : (
           <div
             key={x.name}

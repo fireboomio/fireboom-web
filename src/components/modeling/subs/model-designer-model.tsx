@@ -3,10 +3,10 @@
 
 import type { Attribute, Field, Func, ModelAttribute } from '@mrleebo/prisma-ast'
 import { Input, Modal } from 'antd'
-import { useEffect, useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { Model } from '@/interfaces/modeling'
+import type { Model } from '@/interfaces/modeling'
 import { PRISMA_BASE_TYPES } from '@/lib/common'
 
 import ModelDesignerColumnName from './designer-column-name'

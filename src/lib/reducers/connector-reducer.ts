@@ -1,4 +1,4 @@
-import { ConnectorAction, ConnectorState } from '@/interfaces/connector'
+import type { ConnectorAction, ConnectorState } from '@/interfaces/connector'
 
 export default function connectorReducer(
   data: ConnectorState | object = {},
@@ -8,13 +8,13 @@ export default function connectorReducer(
     case 'setCurrentConnector': {
       return {
         ...data,
-        currentConnector: action.payload,
+        currentConnector: action.payload
       }
     }
     case 'fetchConnector': {
       return {
         ...data,
-        connectors: action.payload,
+        connectors: action.payload
       }
     }
 

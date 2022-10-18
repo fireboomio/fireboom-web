@@ -1,9 +1,10 @@
-import { createContext, Dispatch } from 'react'
-import * as useImmer from 'use-immer'
+import type { Dispatch } from 'react'
+import { createContext } from 'react'
+import type * as useImmer from 'use-immer'
 
-import type { AuthProvResp, AuthAction, User } from '@/interfaces/auth'
-import { Action } from '@/interfaces/common'
-import { Connector } from '@/interfaces/connector'
+import type { AuthAction, AuthProvResp, User } from '@/interfaces/auth'
+import type { Action } from '@/interfaces/common'
+import type { Connector } from '@/interfaces/connector'
 
 interface AuthCurrContextT {
   currAuthProvItemId: number | null | undefined

@@ -6,9 +6,12 @@ import styles from './index.module.less'
 
 const APIHeader = () => {
   return (
-    <div className="bg-white flex flex-shrink-0 h-10 px-3 items-center" style={{
-      borderBottom: '1px solid rgba(95,98,105,0.1)'
-    }}>
+    <div
+      className="bg-white flex flex-shrink-0 h-10 px-3 items-center"
+      style={{
+        borderBottom: '1px solid rgba(95,98,105,0.1)'
+      }}
+    >
       <Breadcrumb separator=">">
         <Breadcrumb.Item>github</Breadcrumb.Item>
         <Breadcrumb.Item>workflow</Breadcrumb.Item>
@@ -25,8 +28,16 @@ const APIHeader = () => {
         <CopyOutlined className="ml-3 text-[#6F6F6F]" />
         <LinkOutlined className="ml-2 text-[#6F6F6F]" />
       </div>
-      <button className={styles.save}><SaveOutlined className="mr-1 !text-primary" />储存</button>
-      <Switch className={styles.enable} checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+      <button className={styles.save}>
+        <SaveOutlined className="mr-1 !text-primary" />
+        储存
+      </button>
+      <Switch
+        className={styles.enable}
+        checkedChildren="开启"
+        unCheckedChildren="关闭"
+        defaultChecked
+      />
     </div>
   )
 }

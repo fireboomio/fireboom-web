@@ -1,11 +1,12 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
 import { Switch } from 'antd'
-import { FC, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import RcTab from '@/components/rc-tab'
-import { DirTreeNode, HookName, HookResp } from '@/interfaces/apimanage'
+import type { DirTreeNode, HookName, HookResp } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty } from '@/lib/utils'
 
@@ -74,7 +75,7 @@ const defaults = {
 // export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphResponse) {
 //   console.log('onOriginRequest', request.headers)
 //   return request
-// }`,
+// }`
 }
 
 const Hook: FC<HookProps> = ({ node }) => {
@@ -113,7 +114,7 @@ const Hook: FC<HookProps> = ({ node }) => {
     void requests.put(url, {
       hookName: activeKey,
       content: currHook?.content,
-      hookSwitch: currHook?.hookSwitch,
+      hookSwitch: currHook?.hookSwitch
     })
     setRefreshFlag(!refreshFlag)
   }
@@ -134,7 +135,7 @@ const Hook: FC<HookProps> = ({ node }) => {
     void requests.put(url, {
       hookName: activeKey,
       hookSwitch: !currHook?.hookSwitch,
-      content: currHook?.content,
+      content: currHook?.content
     })
     setRefreshFlag(!refreshFlag)
   }

@@ -1,20 +1,22 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Badge, Input, message, Select, Table } from 'antd'
-import { print, parse, DefinitionNode, OperationDefinitionNode } from 'graphql'
-import { FC, useEffect, useState } from 'react'
+import type { DefinitionNode, OperationDefinitionNode } from 'graphql'
+import { parse, print } from 'graphql'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
 import * as _ from 'shades'
 
 import IconFont from '@/components/iconfont'
 import RcTab from '@/components/rc-tab'
-import {
-  FieldType,
-  TableSource,
-  ParameterT,
-  OperationResp,
+import type {
   DirTreeNode,
+  FieldType,
+  OperationResp,
+  ParameterT,
+  TableSource
 } from '@/interfaces/apimanage'
 import requests, { getFetcher } from '@/lib/fetchers'
-import { makePayload, parseParameters, parseGql, parseRbac } from '@/lib/gql-parser'
+import { makePayload, parseGql, parseParameters, parseRbac } from '@/lib/gql-parser'
 import { isEmpty } from '@/lib/utils'
 
 import Error404 from '../ErrorPage/404'
@@ -39,13 +41,13 @@ interface RoleT {
 
 const tabs = [
   { title: '请求参数', key: '0' },
-  { title: '注入参数', key: '1' },
+  { title: '注入参数', key: '1' }
 ]
 
 const columns = [
   {
     title: '字段名称',
-    dataIndex: 'fieldName',
+    dataIndex: 'fieldName'
   },
   {
     title: '字段类型',
@@ -64,8 +66,8 @@ const columns = [
           </span>
         )}
       </div>
-    ),
-  },
+    )
+  }
 ]
 
 const reqColumns = [
@@ -74,20 +76,20 @@ const reqColumns = [
   { title: '类型', dataIndex: 'type' },
   { title: '必须', dataIndex: 'isRequired', render: (x: boolean) => <div>{x ? '是' : '否'}</div> },
   { title: 'jsonSchema', dataIndex: 'jsonSchema' },
-  { title: '备注', dataIndex: 'remark' },
+  { title: '备注', dataIndex: 'remark' }
 ]
 
 const injectColumns = [
   { title: '参数名', dataIndex: 'name' },
   { title: '类型', dataIndex: 'type' },
-  { title: '来源', dataIndex: 'source' },
+  { title: '来源', dataIndex: 'source' }
 ]
 
 const roleKeys = [
   { key: 'requireMatchAll', label: 'requireMatchAll' },
   { key: 'requireMatchAny', label: 'requireMatchAny' },
   { key: 'denyMatchAll', label: 'denyMatchAll' },
-  { key: 'denyMatchAny', label: 'denyMatchAny' },
+  { key: 'denyMatchAny', label: 'denyMatchAny' }
 ]
 
 const Detail: FC<DetailProps> = ({ nodeId }) => {
@@ -147,7 +149,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       .then(res =>
         res.map(x => ({
           key: x.code,
-          label: x.code,
+          label: x.code
         }))
       )
       .then(res => setOpts(res))
@@ -188,7 +190,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
         remark: x.directives
           .filter(x => !['jsonSchema'].includes(x.name))
           .map(x => makePayload(x.name, x.args))
-          .join(', '),
+          .join(', ')
       }
     })
   }
@@ -208,7 +210,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       'fromClaim',
       'injectCurrentDateTime',
       'injectEnvironmentVariable',
-      'injectGeneratedUUID',
+      'injectGeneratedUUID'
     ]
     return ds
       .filter(x => x.directiveNames.length !== 0)
@@ -248,9 +250,9 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
         {
           kind: 'Argument',
           name: { kind: 'Name', value: '' },
-          value: { kind: 'ListValue', values: [] },
-        },
-      ],
+          value: { kind: 'ListValue', values: [] }
+        }
+      ]
     }
 
     if (isEmpty(obj.directives)) {
@@ -296,7 +298,7 @@ const Detail: FC<DetailProps> = ({ nodeId }) => {
       const payload = print(ast)
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       void requests.put<unknown, DirTreeNode>(`/operateApi/content/${node!.id}`, {
-        content: payload,
+        content: payload
       })
     }
   }

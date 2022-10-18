@@ -11,6 +11,16 @@
  * GraphiQL
  */
 
+/**
+ * Legacy exports
+ */
+import { onHasCompletion as _onHasCompletion } from '@graphiql/react'
+import {
+  fillLeafs as _fillLeafs,
+  getSelectedOperationName as _getSelectedOperationName,
+  mergeAst as _mergeAst
+} from '@graphiql/toolkit'
+
 import { GraphiQL } from './components/GraphiQL'
 export { GraphiQL }
 export default GraphiQL
@@ -19,7 +29,6 @@ export default GraphiQL
  * Definitions
  */
 export type { GraphiQLProps } from './components/GraphiQL'
-
 export type {
   Fetcher,
   FetcherOpts,
@@ -28,7 +37,7 @@ export type {
   FetcherReturnType,
   Observable,
   Storage,
-  SyncFetcherResult,
+  SyncFetcherResult
 } from '@graphiql/toolkit'
 /**
  * Components
@@ -40,20 +49,10 @@ export { VariableEditor } from './components/VariableEditor'
 /**
  * Toolbar
  */
-export { ToolbarMenu, ToolbarMenuItem } from './components/ToolbarMenu'
 export { ToolbarButton } from './components/ToolbarButton'
 export { ToolbarGroup } from './components/ToolbarGroup'
+export { ToolbarMenu, ToolbarMenuItem } from './components/ToolbarMenu'
 export { ToolbarSelect, ToolbarSelectOption } from './components/ToolbarSelect'
-
-/**
- * Legacy exports
- */
-import { onHasCompletion as _onHasCompletion } from '@graphiql/react'
-import {
-  fillLeafs as _fillLeafs,
-  getSelectedOperationName as _getSelectedOperationName,
-  mergeAst as _mergeAst,
-} from '@graphiql/toolkit'
 
 export const onHasCompletion: typeof _onHasCompletion = function onHasCompletion(...args) {
   console.warn(

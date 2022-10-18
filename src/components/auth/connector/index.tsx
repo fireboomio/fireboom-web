@@ -1,16 +1,17 @@
 import { Tabs } from 'antd'
-import React, { useContext, useEffect } from 'react'
+import type React from 'react'
+import { useContext, useEffect } from 'react'
 import type { SWRResponse } from 'swr'
 
-import { AuthListType } from '@/interfaces/auth'
-import { Connector as ConnectorType } from '@/interfaces/connector'
+import type { AuthListType } from '@/interfaces/auth'
+import type { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
 import { ConnectorContext } from '@/lib/context/auth-context'
 import { useFetchConnector } from '@/lib/service/connector'
 
+import styles from './index.module.less'
 import MessageAndEmailConnector from './MessageAndEmailConnector'
 import SocialContactConnector from './SocialContactConnector'
-import styles from './index.module.less'
 
 const { TabPane } = Tabs
 

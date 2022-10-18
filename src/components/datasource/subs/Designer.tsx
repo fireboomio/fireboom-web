@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
-import { DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
-  DatasourceToggleContext,
+  DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
@@ -15,19 +15,19 @@ const initData = [
     name: 'API',
     items: [
       { name: 'REST API', logo: 'icon-shujuyuantubiao3', sourceType: 2 },
-      { name: 'GraphQL API', logo: 'icon-QLweixuanzhong1', sourceType: 3 },
-    ],
+      { name: 'GraphQL API', logo: 'icon-QLweixuanzhong1', sourceType: 3 }
+    ]
   },
   {
     name: '数据库',
     items: [
       { name: 'PostgreSQL', logo: 'icon-shujuyuantubiao2', sourceType: 1, dbType: 'postgresql' },
-      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'mysql' },
+      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'mysql' }
       // { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'sqlite' },
       // { name: 'MongoDB', logo: 'icon-shujuyuantubiao4', sourceType: 1, dbType: 'mongodb' },
-    ],
+    ]
   },
-  { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] },
+  { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] }
 ]
 
 export default function Designer() {
@@ -56,7 +56,7 @@ export default function Designer() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             sourceType: x.config.sourceType,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            dbType: x.config.config.dbType,
+            dbType: x.config.config.dbType
           }
         })
       )
@@ -72,7 +72,7 @@ export default function Designer() {
       name: '',
       config: { dbType: dbType },
       sourceType: sourceType,
-      switch: 0,
+      switch: 0
     } as DatasourceResp
 
     if (name.startsWith('example_')) {
