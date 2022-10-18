@@ -3,7 +3,6 @@
   .ant-image {
     width: 100px;
     height: 70px;
-    margin: 24px 36px 10px 0;
     border-radius: 2px;
   }
 }
@@ -12,7 +11,7 @@
 .item-label {
   height: 16px;
   color: #000;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
 }
@@ -210,7 +209,29 @@
     opacity: 0.5;
   }
 }
-.divider-line {
-  margin: 28px 0 16px;
-  border: 1px solid rgba(95, 98, 105, 0.1);
+
+.envTable {
+  :global {
+    .ant-table{
+      border-radius: 2px;
+      border: 1px solid rgba(95,98,105,0.1);
+    }
+    th {
+      background: white !important;
+      border: none !important;
+      &:before{
+        display: none;
+      }
+      line-height: 40px !important;
+      padding: 0 16px !important;
+      color: #787D8B !important;
+    }
+    td{
+      border-bottom: none !important;
+      border-top: 1px solid rgba(95,98,105,0.1) !important;
+      line-height: 40px !important;
+      padding: 0 16px !important;
+      color: rgba(0,0,0,0.65) !important;
+    }
+  }
 }

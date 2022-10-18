@@ -410,7 +410,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         footer={null}
         centered
       >
-        <ApiConfig onClose={() => setIsModalVisible(false)} />
+        <ApiConfig type="global" onClose={() => setIsModalVisible(false)} />
       </Modal>
     </SidePanel>
   )

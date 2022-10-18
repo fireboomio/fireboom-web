@@ -3,17 +3,14 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BarsOutlined,
-  FileImageOutlined,
   SearchOutlined,
   SyncOutlined
 } from '@ant-design/icons'
 import {
-  Breadcrumb,
   Button,
   Cascader,
   Collapse,
   Divider,
-  Drawer,
   Dropdown,
   Input,
   Menu,
@@ -21,14 +18,17 @@ import {
   Tooltip,
   Upload
 } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
 import type { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
+import iconDoc from './../assets/icon-doc.svg'
+import iconFold from './../assets/icon-fold.svg'
+import iconPic from './../assets/icon-pic.svg'
+import iconVideo from './../assets/icon-video.svg'
 import styles from './Explorer.module.less'
 
 interface Props {
@@ -45,6 +45,29 @@ type Option = Partial<FileT> & {
 
 const { Panel } = Collapse
 
+function sortFile(a: FileT, b: FileT) {
+  return (a.isDir ? 1 : 2) - (b.isDir ? 1 : 2)
+}
+function fileType(fileName: string): 'pic' | 'video' | 'doc' {
+  const fileType = fileName.split('.')?.pop()?.toLowerCase() || ''
+  if (
+    ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'ico', 'webp', 'tif', 'pcx', 'tga'].includes(
+      fileType
+    )
+  ) {
+    return 'pic'
+  } else if (['mp4', 'avi', '3gp', 'rmvb', 'wmv', 'mov', 'mkv'].includes(fileType)) {
+    return 'video'
+  } else {
+    return 'doc'
+  }
+}
+const FILE_ICON = {
+  pic: iconPic,
+  video: iconVideo,
+  doc: iconDoc
+}
+
 export default function StorageExplorer({ bucketId }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
@@ -52,8 +75,9 @@ export default function StorageExplorer({ bucketId }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
-  const [breads, setBreads] = useImmer<string[]>(['/'])
+  const [breads, setBreads] = useImmer<Array<{ value: string; isLeaf: boolean }>>([])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
+  const containerEle = useRef<HTMLDivElement>(null)
 
   const uploadPath = useMemo(() => {
     const rv = target?.isLeaf
@@ -62,18 +86,25 @@ export default function StorageExplorer({ bucketId }: Props) {
     return rv
   }, [target])
 
-  useEffect(() => {
+  const loadRoot = () => {
     if (!bucketId) return
 
     void requests
       .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
       .then(res =>
         res
+          .sort(sortFile)
           .map(x => ({
             label: (
               <>
-                <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
-                <span className="ml-2">{x.name}</span>
+                <span>
+                  {x.isDir ? (
+                    <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+                  ) : (
+                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
+                  )}
+                </span>
+                <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
               </>
             ),
             value: x.name,
@@ -84,7 +115,9 @@ export default function StorageExplorer({ bucketId }: Props) {
       )
       .then(res => setOptions(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketId])
+  }
+
+  useEffect(loadRoot, [bucketId])
 
   useEffect(() => {
     if (!target) return
@@ -152,7 +185,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   )
 
   const onChange = (value: string[], selectedOptions: Option[]) => {
-    setBreads((value.at(-1) ?? '').split('/'))
+    setBreads(
+      selectedOptions.map(item => ({
+        value: item.isLeaf ? item.value : item.value.replace(/\/$/, ''),
+        isLeaf: !!item.isLeaf
+      }))
+    )
     setVisible(false)
     const targetOption = selectedOptions[selectedOptions.length - 1]
     if (targetOption.isLeaf) {
@@ -166,25 +204,47 @@ export default function StorageExplorer({ bucketId }: Props) {
     targetOption.loading = true
     setTarget({ ...targetOption })
 
-    if (targetOption.isLeaf) return
+    let path = targetOption.name ?? ''
+
+    if (targetOption.isLeaf) {
+      if (path.includes('/')) {
+        path = path.replace(/\/[^/]+$/, '')
+      } else {
+        path = ''
+      }
+    }
+
+    if (!path) {
+      loadRoot()
+      return
+    }
 
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-      params: { bucketID: bucketId, filePrefix: `${targetOption.value}` }
+      params: { bucketID: bucketId, filePrefix: `${path}` }
     })
 
     const fileOpts = files
+      .sort(sortFile)
+      .filter(x => x.name !== targetOption.name)
       .map(x => ({
         label: (
           <>
-            <span>{x.isDir ? <IconFont type="icon-wenjianjia" /> : <FileImageOutlined />}</span>
-            <span className="ml-2">{x.name}</span>
+            <span>
+              {x.isDir ? (
+                <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+              ) : (
+                <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
+              )}
+            </span>
+            <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
+              {x.name.replace(targetOption.value, '')}
+            </span>
           </>
         ),
-        value: x.name,
+        value: x.name.replace(targetOption.value, ''),
         isLeaf: !x.isDir,
         ...x
       }))
-      .filter(x => x.value !== targetOption.value)
 
     targetOption.children = fileOpts
     targetOption.loading = false
@@ -202,17 +262,33 @@ export default function StorageExplorer({ bucketId }: Props) {
       .then(() => void message.success('删除成功'))
   }
 
+  const createFold = () => {}
+
+  const renderPreview = (file?: Option) => {
+    if (!file) {
+      return null
+    }
+    const type = fileType(file?.name ?? '')
+    if (type === 'pic') {
+      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+    } else if (type === 'video') {
+      return <video width={200} height={200} src={target?.url ?? ''} />
+    } else {
+      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+    }
+  }
+
   return (
-    <>
-      <div className="border-gray border-b flex mb-8 pb-8px items-center justify-between">
-        <Breadcrumb separator=">">
+    <div className="h-full flex flex-col">
+      <div className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0">
+        <div className="flex flex-1 min-w-0">
           {breads.map((x, idx) => (
-            <Breadcrumb.Item key={idx}>
-              <span className="text-red-500/80">{x}</span>
-            </Breadcrumb.Item>
+            <div key={x.value} className={x.isLeaf ? styles.leafBread : styles.bread}>
+              {x.value}
+            </div>
           ))}
-        </Breadcrumb>
-        <div className="flex justify-center items-center">
+        </div>
+        <div className="flex flex-0 justify-center items-center">
           {isSerach ? (
             <Tooltip title="serach">
               <Button
@@ -231,99 +307,128 @@ export default function StorageExplorer({ bucketId }: Props) {
               className="mr-4"
             />
           )}
-          <Divider type="vertical" className="h-5 mr-5" />
+          <Divider type="vertical" className="!h-3 !mr-5" />
           <Button
             onClick={() => setRefreshFlag(!refreshFlag)}
             icon={<SyncOutlined />}
-            className="mr-2"
+            className="mr-2 !p-1 !border-0"
           >
             刷新
           </Button>
-          <Dropdown overlay={listMenu} placement="bottom">
-            <Button icon={<BarsOutlined />} className="mr-2">
-              列表
-            </Button>
-          </Dropdown>
+          {/*<Dropdown overlay={listMenu} placement="bottom">*/}
+          {/*  <Button icon={<BarsOutlined />} className="mr-2">*/}
+          {/*    列表*/}
+          {/*  </Button>*/}
+          {/*</Dropdown>*/}
           <Dropdown overlay={orderMenu} placement="bottom">
-            <Button icon={<BarsOutlined />} className="mr-4">
+            <Button icon={<BarsOutlined />} className="mr-2 !p-1 !border-0">
               排序
             </Button>
           </Dropdown>
-          <Divider type="vertical" className="h-5 mr-5" />
+          <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
-            // className={`${styles['upload']}`}
             action="/api/v1/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
-            // onChange={() => setRefreshFlag(!refreshFlag)}
+            onChange={info => {
+              if (info.file.status === 'success' || info.file.status === 'done') {
+                setRefreshFlag(!refreshFlag)
+                console.log(info.file.status)
+              }
+            }}
           >
-            <Button className="mr-2">上传</Button>
+            <Button size="small" className="!h-7 !rounded-2px mr-4">
+              上传
+            </Button>
           </Upload>
+          <Button size="small" className="!h-7 !rounded-2px" onClick={createFold}>
+            文件夹
+          </Button>
         </div>
       </div>
 
-      <Cascader
-        open
-        options={options}
-        // @ts-ignore
-        loadData={x => void loadData(x)}
-        // @ts-ignore
-        onChange={onChange}
-        changeOnSelect
-        dropdownClassName={`${styles['casader-select']} flex mb-8`}
-      >
-        <div />
-      </Cascader>
-
-      <Drawer
-        title={target?.name}
-        placement="right"
-        onClose={() => setVisible(false)}
-        visible={visible}
-        mask={false}
-        width={315}
-        maskClosable={true}
-      >
-        <Collapse
-          defaultActiveKey={['1', '2']}
-          bordered={false}
-          expandIconPosition="end"
-          ghost={true}
-          className={styles['collapse-style']}
+      {containerEle.current ? (
+        <Cascader
+          getPopupContainer={() => containerEle.current!}
+          open
+          options={options}
+          // @ts-ignore
+          loadData={x => void loadData(x)}
+          // @ts-ignore
+          onChange={onChange}
+          changeOnSelect
+          dropdownClassName={`${styles['casader-select']} flex mb-8`}
         >
-          <Panel header="基本信息" key="1">
-            <p>类型：{target?.mime ?? '未知'}</p>
-            <p>大小：{formatBytes(target?.size)}</p>
-            <p>创建于：{target?.createTime ?? ''}</p>
-            <p>修改于：{target?.updateTime ?? ''}</p>
-          </Panel>
-          <Panel header="预览" key="2">
-            {isImage(target?.mime) ? (
-              <>
-                <div
-                  className={`${styles['panel-style']} flex-col justify-center items-center flex`}
-                >
-                  <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+          <div />
+        </Cascader>
+      ) : null}
+
+      <div className={styles.container}>
+        <div ref={containerEle} className={styles.cascadeContainer} />
+        {visible ? (
+          <div className={styles.fileDetail}>
+            <div className={styles.fileDetailBody}>
+              <div className={styles.header}>
+                {target?.isLeaf ? (
+                  <img
+                    src={FILE_ICON[fileType(FILE_ICON[fileType(target?.name ?? '')])]}
+                    alt="图片"
+                    className="w-3.5 h-3.5 mr-2"
+                  />
+                ) : (
+                  <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5 mr-2" />
+                )}
+                {target?.name}
+              </div>
+              <Collapse
+                defaultActiveKey={['1', '2']}
+                bordered={false}
+                expandIconPosition="end"
+                ghost={true}
+                className={styles.collapse}
+              >
+                <Panel header="基本信息" key="1">
+                  <p>类型：{target?.mime ?? '未知'}</p>
+                  <p>大小：{formatBytes(target?.size)}</p>
+                  <p>创建于：{target?.createTime ?? ''}</p>
+                  <p>修改于：{target?.updateTime ?? ''}</p>
+                </Panel>
+                <Panel header="预览" key="2">
+                  {isImage(target?.mime) ? (
+                    <>
+                      <div
+                        className={`${styles['panel-style']} flex-col justify-center items-center flex`}
+                      >
+                        {renderPreview(target)}
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      className="m-auto block"
+                      width={200}
+                      height={200}
+                      src={'/assets/logo.png'}
+                      alt={target?.value}
+                    />
+                  )}
+                </Panel>
+                <div className="flex flex-col">
+                  <Button className="m-1.5">下载</Button>
+                  <Button
+                    onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
+                    className="m-1.5"
+                  >
+                    复制URL
+                  </Button>
+                  <Button onClick={deleteFile} className="m-1.5">
+                    <span className="text-[#F21212]">删除</span>
+                  </Button>
                 </div>
-              </>
-            ) : (
-              <img width={200} height={200} src={'/assets/logo.png'} alt={target?.value} />
-            )}
-          </Panel>
-          <div className="flex flex-col">
-            <Button className="m-1.5">下载</Button>
-            <Button
-              onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
-              className="m-1.5"
-            >
-              复制URL
-            </Button>
-            <Button onClick={deleteFile} className="m-1.5">
-              删除
-            </Button>
+              </Collapse>
+            </div>
           </div>
-        </Collapse>
-      </Drawer>
-    </>
+        ) : null}
+      </div>
+    </div>
   )
 }

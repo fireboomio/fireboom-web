@@ -12,7 +12,7 @@ import { isEmpty } from '@/lib/utils'
 
 import styles from './Hook.module.less'
 
-loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 type HookProps = { node?: DirTreeNode }
 

@@ -183,15 +183,14 @@ export default function SettingMainEnvironmentVariable() {
 
   return (
     <>
-      <div>
-        <Divider className={styles['divider-line']} />
-        <div className="flex justify-between border-gray border-b">
+      <div className="px-8 bg-white h-full pt-7">
+        <div className="flex justify-between">
           <div className="mt-0">
             <span>环境变量</span>
           </div>
-          <button className={`${styles['save-btn']} mb-4`} onClick={showModal}>
+          <button className={`btn-save mb-4 border-none font-14px`} onClick={showModal}>
             <span
-              className="h-7.5"
+              className="h-7"
               onClick={() => {
                 form.setFieldsValue({ key: '', devEnv: '', proEnv: '' })
                 setIsVariableVisible(true)
@@ -210,7 +209,7 @@ export default function SettingMainEnvironmentVariable() {
           bodyStyle={{
             width: '549px',
             height: '200px',
-            margin: '10px auto'
+            margin: '12px auto'
           }}
           open={isVariableVisible}
           onOk={() => setIsVariableVisible(false)}
@@ -297,7 +296,7 @@ export default function SettingMainEnvironmentVariable() {
           dataSource={environmentConfig}
           rowKey={record => record.key}
           pagination={false}
-          className="mb-3 "
+          className={'mb-3 ' + styles.envTable}
         />
         <div className="border-gray border-b">
           <div>

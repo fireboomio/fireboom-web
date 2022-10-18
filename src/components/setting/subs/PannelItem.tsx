@@ -1,4 +1,4 @@
-import { useImmer } from 'use-immer'
+import clsx from 'clsx'
 
 import type { SettingType } from '@/interfaces/setting'
 
@@ -7,22 +7,22 @@ import styles from './subs.module.less'
 interface Props {
   handleToggleDesigner: (settingType: SettingType) => void
   settingType: SettingType
+  active: boolean
 }
 
-export default function SettingItem({ handleToggleDesigner, settingType }: Props) {
-  const [isHovering, setIsHovering] = useImmer(false)
+export default function SettingItem({ handleToggleDesigner, settingType, active }: Props) {
+  // const [isHovering, setIsHovering] = useImmer(false)
 
   return (
     <div
-      className="flex justify-start items-center py-2.5 pl-3 cursor-pointer"
-      style={isHovering ? { background: '#F8F8F9' } : {}}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      className={clsx('flex pl-4 h-9 items-center mb-1 cursor-pointer', {
+        'bg-[rgba(95,98,105,0.1)] rounded-4px': active
+      })}
       onClick={() => {
         handleToggleDesigner(settingType)
       }}
     >
-      <div className="ml-2px mr-3 text-[16px]">{settingType.icon}</div>
+      <div className="mr-4 text-[16px]">{settingType.icon}</div>
       <div className={styles['item-label']}>{settingType.name}</div>
     </div>
   )

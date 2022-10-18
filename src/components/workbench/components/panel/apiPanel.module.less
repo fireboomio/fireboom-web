@@ -1,21 +1,25 @@
-.headerFilter,.headerConfig,.headerRefresh,.headerNewFold,.headerNewFile{
-  width: 14px;
-  height: 14px;
-  margin-left: 8px;
+.headerFilter,
+.headerConfig,
+.headerRefresh,
+.headerNewFold,
+.headerNewFile {
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
 }
-.headerFilter{
+.headerFilter {
   background: url(/assets/workbench/header-filter.png) no-repeat center/contain;
 }
-.headerRefresh{
+.headerRefresh {
   background: url(/assets/workbench/header-refresh.png) no-repeat center/contain;
 }
-.headerConfig{
+.headerConfig {
   background: url(/assets/workbench/header-config.png) no-repeat center/contain;
 }
-.headerNewFold{
+.headerNewFold {
   background: url(/assets/workbench/header-new-fold.png) no-repeat center/contain;
 }
-.headerNewFile{
+.headerNewFile {
   background: url(/assets/workbench/header-new-file.png) no-repeat center/contain;
 }
 
@@ -53,14 +57,15 @@
         display: none;
       }
 
-      transition: transform .3s;
+      transition: transform 0.3s;
     }
 
     .ant-tree-switcher_close .ant-tree-switcher-icon {
       transform: rotate(-90deg);
     }
 
-    .ant-tree-switcher, .ant-tree-switcher-noop {
+    .ant-tree-switcher,
+    .ant-tree-switcher-noop {
       width: 12px !important;
     }
 
@@ -69,7 +74,12 @@
     }
 
     .ant-tree-treenode-selected {
-      background: linear-gradient(270deg, rgba(255, 255, 255, 0.07) 0%, rgba(253, 240, 241, 0.08) 27%, rgba(238, 98, 108, 0.11) 100%) !important;
+      background: linear-gradient(
+        270deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(253, 240, 241, 0.08) 27%,
+        rgba(238, 98, 108, 0.11) 100%
+      ) !important;
       border-radius: 4px;
 
       &::before {
@@ -80,12 +90,16 @@
         width: 2px;
         top: 0;
         bottom: 0;
-        background: #EE626c;
+        background: #ee626c;
       }
     }
 
     .ant-tree-treenode:hover {
-      background: linear-gradient(270deg, rgba(255, 255, 255, 0.07) 0%, rgba(238, 98, 108, 0.05) 100%);
+      background: linear-gradient(
+        270deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(238, 98, 108, 0.05) 100%
+      );
       border-radius: 4px;
     }
   }
@@ -103,7 +117,7 @@
       }
     }
     &.treeItemFile {
-      .icon{
+      .icon {
         position: relative;
         background: url(/assets/ant-tree/file.png) no-repeat center/contain;
 
@@ -118,12 +132,12 @@
         background: url(/assets/ant-tree/file-err.png) no-repeat center/contain;
       }
       .title {
-        color: #F21212;
+        color: #f21212;
       }
     }
 
     &.treeItemDisable {
-      .icon{
+      .icon {
         position: relative;
         background: url(/assets/ant-tree/file-disable.png) no-repeat center/contain;
 
@@ -177,19 +191,19 @@
         border-radius: 4px;
         font-size: 20px;
         font-weight: 400;
-        color: #F21212;
+        color: #f21212;
         text-align: center;
-        transform: scale(.5);
+        transform: scale(0.5);
       }
     }
-    &:hover .more{
+    &:hover .more {
       display: block;
       width: 12px;
       height: 12px;
       margin-left: 8px;
       background: url(/assets/workbench/icon-menu.png) no-repeat center/contain;
     }
-    .more{
+    .more {
       display: none;
     }
   }

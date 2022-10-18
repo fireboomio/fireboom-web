@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { Button } from 'antd'
+import { useContext, useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 
-import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
+  const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const handleIconClick = () => {
     console.log('aaa')
   }
@@ -45,36 +47,41 @@ export default function DatasourceContainer({ content, showType }: Props) {
       <div className="pl-6 mt-6 mr-6">
         <div className="flex justify-start items-center  mb-24px">
           <span className="text-base flex-grow font-bold text-[18px]">外部数据源 / 选择数据源</span>
-          <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-          <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
-          <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
         </div>
         <Designer />
       </div>
     )
 
   return (
-    <div className="pl-6 mt-6 mr-6">
-      <div className="flex justify-start items-center  mb-24px">
-        <span className="text-base flex-grow font-bold text-[18px]">
-          外部数据源 / {content && title}
-        </span>
-        <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-        <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
-        <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
+    <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
+      {' '}
+      <div className="h-54px flex-0 bg-white flex items-center pl-11">
+        <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
+        {content?.name}
+        <div className="flex-1"></div>
+        {showType === 'detail' ? (
+          <>
+            <Button className={'btn-test  mr-4'}>设计</Button>
+            <Button className={'btn-test  mr-4'}>测试</Button>
+            <Button className={'btn-save  mr-11'} onClick={() => handleToggleDesigner('form')}>
+              编辑
+            </Button>
+          </>
+        ) : null}
       </div>
-
-      {content.sourceType === 1 ? (
-        <DB content={content} type={showType} />
-      ) : content.sourceType === 2 ? (
-        <Rest content={content} type={showType} />
-      ) : content.sourceType === 3 ? (
-        <Graphql content={content} type={showType} />
-      ) : content.sourceType === 4 ? (
-        <Custom content={content} />
-      ) : (
-        <></>
-      )}
+      <div className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white px-8 mx-3 mt-3">
+        {content.sourceType === 1 ? (
+          <DB content={content} type={showType} />
+        ) : content.sourceType === 2 ? (
+          <Rest content={content} type={showType} />
+        ) : content.sourceType === 3 ? (
+          <Graphql content={content} type={showType} />
+        ) : content.sourceType === 4 ? (
+          <Custom content={content} />
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   )
 }

@@ -22,7 +22,7 @@ export default function FileStorage() {
     void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
       setContent(data.filter(item => item.id === Number(id))[0])
     })
-  }, [id, setShowType])
+  }, [id, showType])
 
   function handleSwitch(value: 'explorer' | 'form' | 'detail', _id: number | undefined) {
     setShowType(value)

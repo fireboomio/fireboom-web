@@ -1,9 +1,7 @@
-import { CaretRightOutlined } from '@ant-design/icons'
 import type React from 'react'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '../iconfont'
 import SettingMainAppearance from './subs/Appearance'
 import SettingMainCrossdomain from './subs/Crossdomain'
 import SettingMainEnvironmentVariable from './subs/EnvironmentVariable'
@@ -59,21 +57,5 @@ export default function SettingContainer({ showType }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showType])
 
-  return (
-    <div className="pl-6 pr-10 mt-6">
-      <div className="flex justify-start items-center mb-5 ">
-        <span className="text-lg flex-grow font-bold">
-          设置{' '}
-          <span className="text-base flex-grow font-bold text-gray">
-            {' '}
-            <CaretRightOutlined /> {title}
-          </span>
-        </span>
-        <IconFont type="icon-lianxi" className="text-[22px]" onClick={handleIconClick} />
-        <IconFont type="icon-wenjian1" className="text-[22px] ml-4" onClick={handleIconClick} />
-        <IconFont type="icon-bangzhu" className="text-[22px] ml-4" onClick={handleIconClick} />
-      </div>
-      {viewer}
-    </div>
-  )
+  return <>{viewer}</>
 }

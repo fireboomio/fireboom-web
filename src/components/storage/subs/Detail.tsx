@@ -13,52 +13,14 @@ interface Props {
 }
 
 export default function StorageDetail({ content }: Props) {
-  const { handleSwitch } = useContext(StorageSwitchContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
   const config = useMemo(() => content?.config, [content?.config])
 
-  const handleToggleBucket = () => {
-    console.log('switch change')
-  }
-
   return (
     <>
-      <div className="pb-2 flex items-center justify-between border-gray border-b">
-        <div>
-          <span className="text-base leading-5 font-bold">设置</span>
-        </div>
-        <div className="flex justify-center items-center">
-          <Switch
-            defaultChecked={content?.switch == 0 ? false : true}
-            checkedChildren="开启"
-            unCheckedChildren="关闭"
-            onChange={handleToggleBucket}
-            className={styles['switch-check-btn']}
-          />
-          <Divider type="vertical" />
-          <Button
-            className={`${styles['save-btn']}  ml-4`}
-            onClick={() => handleSwitch('form', content?.id)}
-          >
-            <span>编辑</span>
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <Descriptions
-          bordered
-          column={1}
-          size="small"
-          labelStyle={{
-            color: '#5F6269',
-            backgroundColor: 'white',
-            width: '30%',
-            borderRight: 'none',
-            borderBottom: 'none'
-          }}
-        >
+      <div className="pr-110px">
+        <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>
           <Descriptions.Item label="服务地址">{config?.endpoint}</Descriptions.Item>
           <Descriptions.Item label="APP ID">{config?.accessKeyID} </Descriptions.Item>

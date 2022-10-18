@@ -118,8 +118,8 @@ const IdeHeaderContainer: FC<Props> = props => {
         <div className="flex items-center">
           <div className="name">脚本语言</div>
           <div className="ml-2">
-            <Select defaultValue="javascript">
-              <Select.Option value="javascript">JavaScript</Select.Option>
+            <Select defaultValue="TypeScript">
+              <Select.Option value="TypeScript">TypeScript</Select.Option>
             </Select>
           </div>
           <div className="ml-3 cursor-pointer">

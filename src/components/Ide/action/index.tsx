@@ -2,42 +2,56 @@ import { BugOutlined, DeleteOutlined, RedoOutlined } from '@ant-design/icons'
 import type { EditorProps } from '@swordjs/monaco-editor-react'
 import Editor from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd'
+import { debounce } from 'lodash'
 import type { FC } from 'react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import type { RunHookResponse } from '..'
 import styles from './../subs.module.less'
 import ideStyles from './index.module.less'
 
 interface Props {
+  // 默认inputvalue
+  defaultInputValue?: string
   // 输出日志列表
   runResult: RunHookResponse
   expandAction: boolean
   editorOptions: EditorProps['options']
   // 点击调试按钮
-  onClickDebug: (code: Record<string, any>) => void
+  onClickDebug: (code: Record<string, any>) => Promise<RunHookResponse>
+  // 清空调试日志
+  onClickClearLog: () => void
 }
 
-type EditorInputContainerProps = Omit<Props, 'runResult'>
+type EditorInputContainerProps = Pick<
+  Props,
+  'onClickDebug' | 'expandAction' | 'editorOptions' | 'defaultInputValue'
+>
 
 export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   const editorRef = useRef<any>(null)
-
+  // debug运行中loading
+  const [loading, setLoading] = useState<boolean>(false)
   // 点击调试按钮
-  const onClickDebug = () => {
-    // 获取脚本内容, 查看是否是json格式
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const code: string = editorRef.current.getValue().replace(/\s/g, '')
-      const parseCode = JSON.parse(code) as Record<string, any>
-      if (typeof parseCode === 'object') {
-        props.onClickDebug(parseCode)
-      }
-      return
-      // eslint-disable-next-line no-empty
-    } catch (error) {}
-    // 不是json格式
-    void message.warning('脚本内容不是json格式')
+  const onClickDebug = async () => {
+    if (!loading) {
+      // 获取脚本内容, 查看是否是json格式
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        const code: string = editorRef.current.getValue().replace(/\s/g, '')
+        const parseCode = JSON.parse(code) as Record<string, any>
+        if (typeof parseCode === 'object') {
+          setLoading(true)
+          await props.onClickDebug(parseCode)
+          setLoading(false)
+        }
+        return
+        // eslint-disable-next-line no-empty
+      } catch (error) {}
+      // 不是json格式
+      void message.warning('脚本内容不是json格式')
+      setLoading(false)
+    }
   }
   return (
     <div className={`${ideStyles['input-container']}`}>
@@ -52,7 +66,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
           <Editor
             language="json"
             height="80%"
-            defaultValue="{}"
+            defaultValue={props.defaultInputValue}
             onMount={monacoEditor => {
               editorRef.current = monacoEditor
               monacoEditor.updateOptions({ minimap: { enabled: false } })
@@ -64,7 +78,8 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
           />
           <div className="debug">
             <Button
-              onClick={onClickDebug}
+              onClick={debounce(onClickDebug, 1000, { leading: true })}
+              loading={loading}
               icon={<BugOutlined />}
               type="primary"
               style={{ boxShadow: '0px 5px 4px 0px rgba(255,209,209,0.3)', borderRadius: '5px' }}
@@ -79,15 +94,25 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   )
 }
 
-type EditorOutPutContainerProps = Pick<Props, 'expandAction' | 'runResult'>
+type EditorOutPutContainerProps = Pick<Props, 'expandAction' | 'runResult' | 'onClickClearLog'>
 
 export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = props => {
+  // 点击清空按钮
+  const handleClickClearLog = () => {
+    void message.success('已清空调试结果')
+    props.onClickClearLog()
+  }
   return (
     <div className={`${ideStyles['output-container']}`}>
       <div className="flex justify-between">
         <div className="title">输出</div>
         {props.expandAction && (
-          <DeleteOutlined color="#C0C4CE" size={20} className="cursor-pointer mt-2" />
+          <DeleteOutlined
+            onClick={debounce(handleClickClearLog, 1000, { leading: true })}
+            color="#C0C4CE"
+            size={20}
+            className="cursor-pointer mt-2"
+          />
         )}
       </div>
       {/* 控制台输出 */}
@@ -114,19 +139,26 @@ export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = props => {
 }
 
 const IdeActionContainer: FC<Props> = ({
+  defaultInputValue,
   runResult,
   expandAction,
   editorOptions,
-  onClickDebug
+  onClickDebug,
+  onClickClearLog
 }) => {
   return (
     <div className={`${ideStyles['ide-action']} flex`}>
       <EditorInputContainer
+        defaultInputValue={defaultInputValue}
         onClickDebug={onClickDebug}
         expandAction={expandAction}
         editorOptions={editorOptions}
       />
-      <EditorOutPutContainer runResult={runResult} expandAction={expandAction} />
+      <EditorOutPutContainer
+        onClickClearLog={onClickClearLog}
+        runResult={runResult}
+        expandAction={expandAction}
+      />
     </div>
   )
 }

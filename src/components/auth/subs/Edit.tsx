@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Checkbox, Divider, Form, Input, Radio } from 'antd'
+import { Button, Checkbox, Form, Input, Radio } from 'antd'
 import type { ReactNode } from 'react'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
@@ -12,7 +12,7 @@ import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 
-loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface Props {
   content: AuthProvResp
@@ -103,44 +103,12 @@ export default function AuthMainEdit({ content, onChange }: Props) {
         switchState: []
       }
 
+  const handleTest = () => {
+    // TODO 测试接口
+  }
+
   return (
     <>
-      <div className="pb-3 flex items-center justify-between border-gray border-b">
-        {content.name == '' ? (
-          <div className="h-7">
-            <span className="ml-2 font-bold">
-              系统默认 <span className="text-xs text-gray-500/80">openid</span>
-            </span>
-          </div>
-        ) : (
-          <div className="h-7">
-            <span className="ml-2 font-bold">
-              {content.name}
-              <span className="text-xs text-gray-500/80">{content.authSupplier}</span>
-            </span>
-          </div>
-        )}
-        <div className="flex justify-center items-center">
-          <Divider type="vertical" />
-          <Button
-            className={styles['center-btn']}
-            onClick={() => {
-              handleBottomToggleDesigner('data', content.id)
-            }}
-          >
-            <span>取消</span>
-          </Button>
-          <Button
-            disabled={disabled}
-            className={styles['save-btn']}
-            onClick={() => {
-              form.submit()
-            }}
-          >
-            {content.name == '' ? '创建' : '保存'}
-          </Button>
-        </div>
-      </div>
       <div className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}>
         <span className=" w-19 h-5 float-right">{/* 前往管理 <RightOutlined /> */}</span>
       </div>
@@ -149,7 +117,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
           form={form}
           style={{ width: '90%' }}
           name="basic"
-          labelCol={{ span: 3 }}
+          labelCol={{ span: 4 }}
           wrapperCol={{ span: 11 }}
           onFinish={values => {
             void onFinish(values)
@@ -157,7 +125,6 @@ export default function AuthMainEdit({ content, onChange }: Props) {
           onValuesChange={onValuesChange}
           autoComplete="new-password"
           validateTrigger="onBlur"
-          labelAlign="left"
           initialValues={initialValues}
         >
           <Form.Item
@@ -227,9 +194,8 @@ export default function AuthMainEdit({ content, onChange }: Props) {
             </Radio.Group>
           </Form.Item>
           {isRadioShow ? (
-            <Form.Item label="jwksJSON" name="jwksJSON">
+            <Form.Item label="jwksJSON" name="jwksJSON" className="mb-5" wrapperCol={20}>
               <Editor
-                height="20vh"
                 defaultLanguage="typescript"
                 defaultValue="// some comment"
                 className={styles['monaco-edit']}
@@ -249,6 +215,26 @@ export default function AuthMainEdit({ content, onChange }: Props) {
           </Form.Item>
           <Form.Item label="是否开启" name="switchState">
             <Checkbox.Group options={options} />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+            <Button
+              className="btn-cancel"
+              onClick={() => handleBottomToggleDesigner('data', content.id)}
+            >
+              <span>取消</span>
+            </Button>
+            <Button className="btn-test ml-4" onClick={() => handleTest()}>
+              测试
+            </Button>
+            <Button
+              className="btn-save ml-4"
+              onClick={() => {
+                form.submit()
+              }}
+            >
+              保存
+            </Button>
           </Form.Item>
         </Form>
       </div>

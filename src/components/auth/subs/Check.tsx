@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { Button, Descriptions } from 'antd'
+import { Descriptions } from 'antd'
 import type { ReactNode } from 'react'
 import { useContext, useMemo } from 'react'
 import { useImmer } from 'use-immer'
@@ -11,7 +11,6 @@ import type { AuthProvResp } from '@/interfaces/auth'
 import { DOMAIN, HOST } from '@/lib/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
-import styles from './subs.module.less'
 interface Props {
   content: AuthProvResp
 }
@@ -46,34 +45,8 @@ export default function AuthMainCheck({ content }: Props) {
 
   return (
     <>
-      <div className="pb-3 flex items-center justify-between border-gray border-b">
-        <div className="h-7">
-          <span className="ml-2 text-sm font-bold">
-            {content.name} <span className="text-xs text-gray-500/80">{content.authSupplier}</span>
-          </span>
-        </div>
-        <Button
-          className={`${styles['save-btn']}  ml-4`}
-          onClick={() => {
-            handleBottomToggleDesigner('edit', content.id)
-          }}
-        >
-          <span>编辑</span>
-        </Button>
-      </div>
       <div className="mt-8">
-        <Descriptions
-          bordered
-          column={1}
-          size="small"
-          labelStyle={{
-            color: '#5F6269',
-            backgroundColor: 'white',
-            width: '30%',
-            borderRight: 'none',
-            borderBottom: 'none'
-          }}
-        >
+        <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="供应商ID">
             <a href={sid}>{config.id}</a>
           </Descriptions.Item>

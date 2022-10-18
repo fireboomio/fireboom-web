@@ -4,14 +4,16 @@
 
 import 'graphiql/graphiql.css'
 
+import { Tabs } from 'antd'
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery } from 'graphql'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
+import ApiConfig from '@/components/apiConfig'
 import FlowChart from '@/components/charts/FlowChart'
 import requests from '@/lib/fetchers'
 
@@ -53,13 +55,12 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 #
 `
 
-export function APIEditorContainer() {
+export function APIEditorContainer({ id }: { id: string | undefined }) {
   const { fetcher, query, schema, setQuery } = useAPIManager()
   // function save() {
   //   const content = ref.current?.props.query as string
   //   return onSave(content)
   // }
-
   return (
     <>
       <Helmet>
@@ -84,7 +85,20 @@ export function APIEditorContainer() {
             onEditQuery={setQuery}
             defaultEditorToolsVisibility={false}
           />
-          <FlowChart />
+          <div>
+            <Tabs
+              className="h-full bg-[#F8F9FD]"
+              centered
+              items={[
+                { label: '概览', key: '1', children: <FlowChart /> },
+                {
+                  label: '设置',
+                  key: '2',
+                  children: id ? <ApiConfig type="panel" id={Number(id)} /> : null
+                }
+              ]}
+            />
+          </div>
         </div>
       </div>
     </>
@@ -131,7 +145,7 @@ export default function APIEditorProvider() {
         fetcher
       }}
     >
-      <APIEditorContainer />
+      <APIEditorContainer id={params.id} />
     </APIContext.Provider>
   )
 }

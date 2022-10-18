@@ -8,6 +8,7 @@ import SettingItem from './subs/PannelItem'
 
 interface Props {
   handleToggleDesigner: (settingType: SettingType) => void
+  showType: string
 }
 
 const settingTypeList: SettingType[] = [
@@ -48,27 +49,22 @@ const settingTypeList: SettingType[] = [
   }
 ]
 
-export default function SettingPannel({ handleToggleDesigner }: Props) {
+export default function SettingPannel({ handleToggleDesigner, showType }: Props) {
   useEffect(() => {
     handleToggleDesigner(settingTypeList[0])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <>
-      <div className="border-gray border-b ">
-        <div className={`${styles.title} text-lg font-bold mt-6 ml-4 mb-8`}>设置</div>
-      </div>
-
-      <div className="mt-3">
-        {settingTypeList.map(settingType => (
-          <SettingItem
-            key={settingType.type}
-            handleToggleDesigner={handleToggleDesigner}
-            settingType={settingType}
-          />
-        ))}
-      </div>
-    </>
+    <div className="bg-[#f8f8f8] h-full pt-5.5 px-4">
+      {settingTypeList.map(settingType => (
+        <SettingItem
+          active={showType === settingType.type}
+          key={settingType.type}
+          handleToggleDesigner={handleToggleDesigner}
+          settingType={settingType}
+        />
+      ))}
+    </div>
   )
 }

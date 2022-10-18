@@ -23,7 +23,7 @@ import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
 import ideStyles from './ide.module.less'
 
-loader.config({ paths: { vs: 'https://unpkg.com/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export const hookPath = {
   OperationPreResolve: (api: string) => `operations/${api}/preResolve`,
@@ -85,6 +85,8 @@ const SAVE_DELAY = 1000
 
 interface Props {
   hookPath: string
+  defaultCode?: string
+  defaultInput?: string
   defaultLanguage?: string
   onChange?: (value?: string) => void
 }
@@ -96,9 +98,7 @@ interface Props {
  * @return {*}
  */
 const IdeContainer: FC<Props> = props => {
-  useEffect(() => {
-    console.log('====ide init')
-  }, [])
+  const defaultRunResult = { logs: [], result: '' }
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<NodeJS.Timeout | null>(null)
   const handle = useFullScreenHandle()
@@ -109,7 +109,7 @@ const IdeContainer: FC<Props> = props => {
   // depend
   const [depend, setDepend] = useState<Depend[]>([])
   // 运行结果
-  const [runResult, setRunResult] = useState<RunHookResponse>({ logs: [], result: '' })
+  const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
   const typingsRef = useRef<any>(null)
   // hook详情
   const [hookInfo, setHookInfo] = useState<HookInfo>()
@@ -134,6 +134,10 @@ const IdeContainer: FC<Props> = props => {
         type: 'passive',
         status: AutoSaveStatus.LOADED
       })
+      // 如果data中的script为空, 就用defaultCode
+      if (data.script === '' || data.script === null) {
+        data.script = props.defaultCode || ''
+      }
       setHookInfo(data)
     })
   }, [])
@@ -151,7 +155,24 @@ const IdeContainer: FC<Props> = props => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [editor, monaco])
+
+  // 内置本地声明文件
+  useEffect(() => {
+    if (editor && monaco) {
+      // const libSource = [
+      //   'declare class Facts {',
+      //   '    /**',
+      //   '     * Returns the next fact',
+      //   '     */',
+      //   '    static next():string',
+      //   '}'
+      // ].join('\n');
+      // const libUri = 'ts:filename/facts.d.ts';
+      // monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
+      // monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
+    }
+  }, [editor, monaco])
 
   useEffect(() => {
     if (editor && monaco) {
@@ -241,7 +262,12 @@ const IdeContainer: FC<Props> = props => {
 
   // 代码改变回调
   const codeChange = (value?: string) => {
-    // console.log(lastScript)
+    if (hookInfo) {
+      setHookInfo({
+        ...hookInfo,
+        script: value ?? ''
+      })
+    }
     // 和上一次的脚本内容进行比对
     if (lastScript !== value) {
       if (
@@ -278,6 +304,7 @@ const IdeContainer: FC<Props> = props => {
     })
     // result为json
     setRunResult(result)
+    return result
   }
 
   return (
@@ -353,8 +380,14 @@ const IdeContainer: FC<Props> = props => {
               />
               {/* 输入和输出区 */}
               <IdeActionContainer
+                defaultInputValue={props.defaultInput}
+                onClickDebug={async json => {
+                  return await handleDebug(json)
+                }}
+                onClickClearLog={() => {
+                  setRunResult(defaultRunResult)
+                }}
                 runResult={runResult}
-                onClickDebug={handleDebug}
                 expandAction={expandAction}
                 editorOptions={editorOptions}
               />

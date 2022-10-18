@@ -1,9 +1,8 @@
-import Editor from '@monaco-editor/react'
-import { Button, Descriptions, Input, message, Switch } from 'antd'
+import { loader } from '@monaco-editor/react'
+import { Descriptions, Input, message, Switch } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { hookPath } from '@/components/auth/subs/Role'
 import IconFont from '@/components/iconfont'
 import IdeContainer from '@/components/Ide'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -14,6 +13,8 @@ import {
 import requests from '@/lib/fetchers'
 
 import styles from './Custom.module.less'
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export interface Config {
   apiNamespace: string

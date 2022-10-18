@@ -1,24 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  InfoCircleOutlined,
-  PlayCircleOutlined,
-  PlusCircleOutlined,
-  UnorderedListOutlined
-} from '@ant-design/icons'
-import Editor, { loader } from '@monaco-editor/react'
-import { Button, Form, Input, Modal, Switch, Table, Tabs } from 'antd'
+import { loader } from '@monaco-editor/react'
+import { Button, Form, Input, Modal, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import {
-  ComponentProps,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactFragment,
-  ReactPortal,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
@@ -27,7 +11,8 @@ import type { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
-loader.config({ paths: { vs: 'https://cdn.bootcdn.net/ajax/libs/monaco-editor/0.33.0/min/vs' } })
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface RoleProvResp {
   id: number
@@ -255,32 +240,8 @@ export default function AuthRole() {
           <div>
             {/* @ts-ignore */}
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
-            <div className="flex justify-between items-center">
-              <div className={styles['auth-head']}>
-                <InfoCircleOutlined />
-                <span>根据各种提供器选择逻辑，获取当前用户的角色</span>
-              </div>
-              <div className={`${styles['auth-btn']} flex items-center mr-2`}>
-                <Button type="text" icon={<PlayCircleOutlined />}>
-                  测试
-                </Button>
-                <Button type="text" icon={<PlusCircleOutlined />}>
-                  添加
-                </Button>
-                <Button type="text" icon={<UnorderedListOutlined />}>
-                  管理
-                </Button>
-                <Button type="text" icon={<PlayCircleOutlined />}>
-                  选择
-                </Button>
-                <div className="text-[#E92E5E] cursor-pointer" onClick={save}>
-                  <span className="leading-20px ml-1">保存</span>
-                </div>
-                <Switch onClick={toggleSwitch} checked={currHook?.hookSwitch} />
-              </div>
-            </div>
-
             <IdeContainer
+              key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}
               defaultLanguage="typescript"
               onChange={console.log}

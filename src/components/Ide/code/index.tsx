@@ -1,7 +1,6 @@
 import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import type { EditorProps } from '@swordjs/monaco-editor-react'
 import Editor from '@swordjs/monaco-editor-react'
-import { debounce } from 'lodash'
 import type { FC } from 'react'
 
 import styles from './../subs.module.less'
@@ -27,17 +26,18 @@ const IdeCodeContainer: FC<Props> = props => {
     >
       <Editor
         language={props.defaultLanguage ?? 'typescript'}
-        defaultValue={props.value}
-        onChange={debounce(value => {
+        value={props.value}
+        onChange={value => {
           if (props.onChange) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             props.onChange(value)
           }
-        }, 1000)}
+        }}
         options={{
           ...props.editorOptions
         }}
         onMount={props.onMount}
+        keepCurrentModel={true}
         className={`mt-4 ${styles.monaco}`}
       />
       {/* 是否展开输入和输出区域 */}

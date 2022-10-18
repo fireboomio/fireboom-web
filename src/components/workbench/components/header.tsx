@@ -1,4 +1,4 @@
-import { Image, message, Modal } from 'antd'
+import { message, Modal } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -57,7 +57,7 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles.helpIcon} onClick={() => navigate('/workbench/help')} />
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
         <div className={styles.avatar}>
-          <Image width={20} height={20} preview={false} alt="avatar" src="/assets/total-user.png" />
+          <img className="w-5 h-5" alt="avatar" src="/assets/total-user.png" />
         </div>
       </div>
 

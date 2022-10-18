@@ -22,10 +22,12 @@ export default defineConfig({
       },
       '^/api/v1': {
         target: 'http://8.142.115.204:9123',
+        // target: 'http://192.168.166.143:9123',
         changeOrigin: true
       },
       '^/app': {
         target: 'http://8.142.115.204:9991',
+        // target: 'http://192.168.166.143:9123',
         changeOrigin: true
       }
     }
@@ -33,7 +35,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       sass: {
-        includePaths: [path.join(__dirname, 'src/styles')],
+        includePaths: [path.join(__dirname, 'src/styles')]
       },
       less: {
         // globalVars: {},
@@ -46,18 +48,19 @@ export default defineConfig({
   },
   resolve: {
     alias: [
+      { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
       {
         find: '@',
         replacement: path.resolve(__dirname, './src')
       },
       {
         find: '@antv/x6',
-        replacement: '@antv/x6/dist/x6.js',
-      },
-    //  {
-    //     find: '@antv/x6-react-shape',
-    //     replacement: '@antv/x6-react-shape/dist/x6-react-shape.js',
-    //   }
+        replacement: '@antv/x6/dist/x6.js'
+      }
+      //  {
+      //     find: '@antv/x6-react-shape',
+      //     replacement: '@antv/x6-react-shape/dist/x6-react-shape.js',
+      //   }
     ]
   },
   plugins: [
@@ -78,7 +81,7 @@ export default defineConfig({
       importMode: 'async',
       dirs: 'src/pages'
     })
-  ],
+  ]
   // optimizeDeps: {
   //   exclude: ['@antv/x6-react-shape']
   // }
