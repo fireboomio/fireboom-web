@@ -112,13 +112,11 @@ export default function APIEditorProvider() {
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
 
-  useCallback(() => {}, [])
-
   const fetcher = useCallback(
     async (rec: Record<string, unknown>) => {
       try {
-        // const res = await fetch(`/model/graphql/${params.id}`, {
-        const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
+        // const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
+        const res = await fetch('/app/main/graphql', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -127,6 +125,7 @@ export default function APIEditorProvider() {
           body: JSON.stringify(rec)
         }).then(resp => resp.json())
         setSchema(buildClientSchema(res.data as IntrospectionQuery))
+        return res
       } catch (error) {
         console.error(error)
       }
@@ -151,7 +150,7 @@ export default function APIEditorProvider() {
       setQuery(resp.content)
     })
     fetcher({ query: getIntrospectionQuery() })
-  }, [params.id])
+  }, [fetcher, params.id])
 
   return (
     <APIContext.Provider

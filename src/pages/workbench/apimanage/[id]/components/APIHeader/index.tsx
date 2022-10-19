@@ -1,10 +1,14 @@
-import { EditFilled, SaveOutlined } from '@ant-design/icons'
-import { Breadcrumb, Switch } from 'antd'
+import { EditFilled } from '@ant-design/icons'
+import { Breadcrumb, Input, Switch } from 'antd'
+import { useState } from 'react'
 
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = () => {
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [name, setName] = useState('')
+
   return (
     <div
       className="bg-white flex flex-shrink-0 h-10 px-3 items-center"
@@ -15,7 +19,24 @@ const APIHeader = () => {
       <Breadcrumb separator=">">
         <Breadcrumb.Item>github</Breadcrumb.Item>
         <Breadcrumb.Item>workflow</Breadcrumb.Item>
-        <Breadcrumb.Item>userform</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {isEditingName ? (
+            <Input
+              className={styles.nameInput}
+              value={name}
+              autoFocus
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => {
+                console.log(e.code)
+                if (e.code === '') {
+                  //
+                }
+              }}
+            />
+          ) : (
+            'useForm'
+          )}
+        </Breadcrumb.Item>
       </Breadcrumb>
       <EditFilled className="text-xs ml-1" />
       <div className="flex text-[rgba(175,176,180,0.6)] items-center">

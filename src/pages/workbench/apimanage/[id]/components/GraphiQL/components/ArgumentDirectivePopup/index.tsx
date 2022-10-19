@@ -21,9 +21,10 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
               <DirectiveDescription
                 name="@fromClaim"
                 title="从用户信息中提取参数作为输入值"
-                code={`$userId: String! @fromClaim(name: USERID)
-$name: String! @fromClaim(name: NAME)
-$email: String! @fromClaim(name: EMAIL)`}
+                code={`query myQuery ($userId: String! @fromClaim(name: USERID)
+  $name: String! @fromClaim(name: NAME)
+  $email: String! @fromClaim(name: EMAIL)
+) {}`}
               />
             )
           },
@@ -34,7 +35,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@jsonSchema"
                 title="入参校验，用于入参校验"
-                code={`$message: String!
+                code={`query myQuery ($message: String!
   @jsonSchema(
     title: "Message"
     description: "Describe the message"
@@ -52,7 +53,7 @@ $email: String! @fromClaim(name: EMAIL)`}
     multipleOf: 1
     uniqueItems: true
   )
-)`}
+) {}`}
               />
             )
           },
@@ -63,7 +64,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@hooksVariable"
                 title="hooks 函数参数，仅用于自定义 hooks 中"
-                code={`$filter: String! @hooksVariable`}
+                code={`query myQuery ($filter: String! @hooksVariable) {}`}
               />
             )
           },
@@ -74,7 +75,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@injectGeneratedUUID"
                 title="自动注入 UUID，用户无需传参"
-                code={`$id: String! @injectGeneratedUUID`}
+                code={`query myQuery ($id: String! @injectGeneratedUUID) {}`}
               />
             )
           },
@@ -85,7 +86,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@injectCurrentDatetime"
                 title="自动注入当前时间，用户无需传参"
-                code={`$updatedAt: DateTime! @injectCurrentDateTime(format: UnixDate)`}
+                code={`query myQuery ($updatedAt: DateTime! @injectCurrentDateTime(format: UnixDate)) {}`}
               />
             )
           },
@@ -96,7 +97,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@injectEnvironmentVariable"
                 title="自动注入环境变量的值，用户无需传参"
-                code={`$applicationID: String! @injectEnvironmentVariable(name: "AUTH_APP_ID")`}
+                code={`query myQuery ($applicationID: String! @injectEnvironmentVariable(name: "AUTH_APP_ID")) {}`}
               />
             )
           },
@@ -107,7 +108,7 @@ $email: String! @fromClaim(name: EMAIL)`}
               <DirectiveDescription
                 name="@internal"
                 title="内部变量，标记某个字段为内部变量，方便后续查询语句中使用"
-                code={`query ($code: ID!, $capitalAlias: String! @internal) {
+                code={`query myQuery ($code: ID!, $capitalAlias: String! @internal) {
   country: countries_country(code: $code) {
     code
     name
