@@ -34,7 +34,7 @@ export default function AuthUserDetails() {
   }
 
   useEffect(() => {
-    void getFetcher<RoleProvResp[]>(`/oauth/role/${authUserCurr.id}`).then(x => setRoleData(x))
+    void getFetcher<RoleProvResp[]>(`/oauth/${authUserCurr.id}`).then(x => setRoleData(x))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUserCurr.id, refreshFlag])
 
@@ -173,7 +173,7 @@ export default function AuthUserDetails() {
         </div>
         <Editor
           height="90vh"
-          defaultLanguage="typescript"
+          defaultLanguage="json"
           defaultValue=""
           value={JSON.stringify(authUserCurr, null, 2)}
           className={`mt-4 ${styles.monaco}`}

@@ -73,7 +73,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }
 
   const columns: ColumnsType<User> = [
-    { title: '用户', dataIndex: 'name', key: 'name' },
+    { title: '用户', dataIndex: 'userName', key: 'userName' },
     { title: '手机号', dataIndex: 'mobile', key: 'mobile' },
     { title: '邮箱', dataIndex: 'email', key: 'email' },
     {
@@ -169,9 +169,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   }
 
   function changePage(current: number) {
-    void getFetcher<OAuthResp>('/oauth', { currPage: current }).then(res =>
+    console.log(current)
+    void getFetcher<OAuthResp>('/oauth', { currPage: current, pageSize: 10 }).then(res => {
+      console.log(res)
       setUserData(res.userList)
-    )
+    })
   }
 
   function search(value: string) {
@@ -315,7 +317,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
           </Form.Item>
           <Form.Item
             label="确认密码"
-            name="confirmPassword"
+            name="rePassword"
             rules={[
               { required: true, message: '请再次输入密码!' },
               ({ getFieldValue }) => ({
