@@ -1,7 +1,5 @@
 import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tree } from 'antd'
 import type { Key } from 'antd/lib/table/interface'
-import type { OperationDefinitionNode } from 'graphql/index'
-import { parse } from 'graphql/index'
 import type React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -30,7 +28,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [inputValue, setInputValue] = useState('')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [query, setQuery] = useState<string>()
+  // const [query, setQuery] = useState<string>()
   const [isBlur, setIsBlur] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false)
   const currEditingNode = useMemo(() => {
@@ -44,7 +42,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   // 监听location变化，及时清空选中状态
   useEffect(() => {
-    if (location.pathname !== `/workbench/apimanage/${selectedNode?.id || ' '}`) {
+    if (
+      location.pathname !== '/workbench/apimanage' &&
+      location.pathname !== `/workbench/apimanage/${selectedNode?.id || ' '}`
+    ) {
       setSelectedKey('')
     }
   }, [location])
@@ -93,25 +94,28 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisible, isBlur])
 
-  useEffect(() => {
-    if (action === '编辑' && selectedKey) {
-      handleEdit()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKey, action])
+  // useEffect(() => {
+  //   if (action === '编辑' && selectedKey) {
+  //     handleEdit()
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedKey, action])
 
   const handleSelectTreeNode = useCallback(
     (selectedKeys: Key[], { node }: { node: DirTreeNode }) => {
-      ~(async () => {
-        if (node.isDir) {
-          return
-        }
+      ;(async () => {
         if (!(await navCheck())) {
           return
         }
-        navigate(`/workbench/apimanage/${node.id}`, { replace: true })
+        if (node.isDir) {
+          navigate(`/workbench/apimanage`, { replace: true })
+        } else {
+          navigate(`/workbench/apimanage/${node.id}`, { replace: true })
+        }
         if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
           setSelectedKey(selectedKeys[0] as string)
+        } else {
+          setSelectedKey('')
         }
       })()
     },
@@ -180,7 +184,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         })
         break
       case '创建目录':
-        void createNode(currEditingNode, inputValue, '').then(() => {
+        void createNode(currEditingNode, inputValue).then(() => {
           setCurrEditingKey(null)
           setRefreshFlag(!refreshFlag)
         })
@@ -193,9 +197,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         } else if (!isUpperCase(inputValue.at(0))) {
           void message.warn('文件名必须以大写字母开头！')
         } else {
+          handleSaveGql()
           currEditingNode.title = inputValue
-          setQuery('')
-          setIsModalVisible(true)
+          // setQuery('')
+          // setIsModalVisible(true)
         }
         break
       default:
@@ -203,46 +208,38 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }
 
-  function handleEdit() {
-    if (!selectedNode?.path) return
-
-    void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
-      setQuery(res.content)
-    })
-    setIsModalVisible(true)
-  }
-
-  // const handleSaveGql = (query: string) => {
-  //   if (action === '创建文件') {
-  //     if (!currEditingNode) return
-
-  //     void createNode(currEditingNode, inputValue, query)
-  //       .then(() => {
-  //         setCurrEditingKey(null)
-  //         setRefreshFlag(!refreshFlag)
-  //         void message.success('保存成功')
-  //       })
-  //       .catch(_ => {
-  //         return
-  //       })
-
-  //     // setAction(null)
-  //     // setRefreshFlag(!refreshFlag)
-  //   } else if (action === '编辑') {
-  //     const op = parse(query, { noLocation: true }).definitions[0] as OperationDefinitionNode
-
-  //     if (!selectedNode) return
-  //     void requests
-  //       .put(`/operateApi/content/${selectedNode.id}`, {
-  //         content: query,
-  //         operationType: op.operation,
-  //       })
-  //       .then(() => void message.success('保存成功'))
-  //       .then(() => setRefreshFlag(!refreshFlag))
-  //   }
-  //   setAction(null)
-  //   setIsModalVisible(false)
+  // function handleEdit() {
+  //   if (!selectedNode?.path) return
+  //
+  //   void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
+  //     setQuery(res.content)
+  //   })
+  //   setIsModalVisible(true)
   // }
+
+  const handleSaveGql = () => {
+    if (action === '创建文件') {
+      if (!currEditingNode) return
+
+      void createApi(currEditingNode, inputValue)
+        .then(result => {
+          if (result?.id) {
+            navigate(`/workbench/apimanage/${result?.id}`)
+          }
+          setCurrEditingKey(null)
+          setRefreshFlag(!refreshFlag)
+          // void message.success('保存成功')
+        })
+        .catch(_ => {
+          return
+        })
+
+      // setAction(null)
+      // setRefreshFlag(!refreshFlag)
+    }
+    setAction(null)
+    // setIsModalVisible(false)
+  }
 
   const handleDelete = (node: DirTreeNode) => {
     void deleteNode(node).then(() => {
@@ -277,20 +274,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           >
             <IconFont type="icon-zhongmingming" />
             <span className="ml-1.5">重命名</span>
-          </div>
-        )
-      },
-      {
-        key: 'edit',
-        label: (
-          <div
-            onClick={() => {
-              setAction('编辑')
-              setSelectedKey(nodeData.key)
-            }}
-          >
-            <IconFont type="icon-chakan" />
-            <span className="ml-1.5">编辑</span>
           </div>
         )
       },
@@ -375,10 +358,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           />
           <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
           <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          <div
-            className={styles.headerNewFile}
-            onClick={() => navigate('/workbench/apimanage/new')}
-          />
+          <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
         </>
       }
     >
@@ -529,18 +509,14 @@ function deleteNode(node: DirTreeNode) {
   }
 }
 
-function createNode(node: DirTreeNode, value: string, content: string) {
-  if (node.isDir) {
-    return requests.post('/operateApi/dir', {
-      path: `${node.baseDir}/${value}`
-    })
-  } else {
-    const op = parse(content, { noLocation: true }).definitions[0] as OperationDefinitionNode
+function createNode(node: DirTreeNode, value: string) {
+  return requests.post('/operateApi/dir', {
+    path: `${node.baseDir}/${value}`
+  })
+}
 
-    return requests.post('/operateApi', {
-      path: `${node.baseDir}/${value}`,
-      content: content,
-      operationType: op.operation
-    })
-  }
+function createApi(node: DirTreeNode, value: string) {
+  return requests.post<unknown, { id: number }>('/operateApi', {
+    path: `${node.baseDir}/${value}`
+  })
 }
