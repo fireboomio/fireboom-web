@@ -1,4 +1,9 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+  CaretRightOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SettingOutlined
+} from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import {
   Button,
@@ -13,6 +18,7 @@ import {
   Select,
   Space,
   Switch,
+  Table,
   Tabs,
   Tag
 } from 'antd'
@@ -33,6 +39,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
+import FileList from './FileList'
 import styles from './Rest.module.less'
 
 interface Props {
@@ -101,6 +108,7 @@ interface OptionT {
   label: string
   value: string
 }
+
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -116,6 +124,8 @@ export default function Rest({ content, type }: Props) {
 
   const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
   const [envVal, setEnvVal] = useImmer('')
+
+  const [visible, setVisible] = useImmer(false)
 
   useEffect(() => {
     form.resetFields()
@@ -280,8 +290,38 @@ export default function Rest({ content, type }: Props) {
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
+
   return (
     <>
+      <Modal
+        title={null}
+        footer={null}
+        open={visible}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        width={800}
+      >
+        {/* <div className="h-125 overflow-auto"> */}
+        <div className="flex justify-between mb-3">
+          <Input
+            // size="small"
+            style={{ height: 26 }}
+            className="max-w-328px h-26px"
+            addonBefore={
+              <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
+            }
+            value="static/upload/oas"
+          />
+          <div className="w-12 h-6 flex items-center justify-center cursor-pointer m-auto mr-3">
+            <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
+          </div>
+          <Input addonBefore={<SearchOutlined />} style={{ width: 228, height: 26 }} />
+        </div>
+
+        <FileList />
+        {/* </div> */}
+      </Modal>
+
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
@@ -583,7 +623,14 @@ export default function Rest({ content, type }: Props) {
                 style={{ marginBottom: '20px' }}
                 getValueFromEvent={normFile}
               >
-                <Uploader
+                <Input
+                  placeholder="请输入..."
+                  onClick={() => setVisible(true)}
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                  suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+                  readOnly
+                />
+                {/* <Uploader
                   defaultFileList={
                     (config.filePath as string)
                       ? [
@@ -605,7 +652,7 @@ export default function Rest({ content, type }: Props) {
                     return false
                   }}
                   onRemove={onRemoveFile}
-                />
+                /> */}
               </Form.Item>
 
               <div className="tabs-form">
