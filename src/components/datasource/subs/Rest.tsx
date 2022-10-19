@@ -561,7 +561,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 rules={[
                   {
-                    pattern: /^https?:\/\/[.\w\d/]+$/g,
+                    pattern: /^https?:\/\/[:.\w\d/]+$/g,
                     message: '只允许输入链接'
                   }
                 ]}
