@@ -1,8 +1,10 @@
-import { Button } from 'antd'
+import { Button, Switch } from 'antd'
 import { useContext, useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import requests from '@/lib/fetchers'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -17,6 +19,7 @@ interface Props {
 
 export default function DatasourceContainer({ content, showType }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   const handleIconClick = () => {
     console.log('aaa')
   }
@@ -52,6 +55,16 @@ export default function DatasourceContainer({ content, showType }: Props) {
       </div>
     )
 
+  const toggleOpen = async () => {
+    if (!content) {
+      return
+    }
+    content.switch ^= 1
+    if (content) {
+      void (await requests.put('/dataSource', content))
+    }
+    onRefreshMenu('storage')
+  }
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       {' '}
@@ -61,7 +74,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            <Button className={'btn-test  mr-4'}>设计</Button>
+            <Switch
+              checked={content?.switch === 1}
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+              onChange={toggleOpen}
+            />
+            <Button className={'btn-test ml-4 mr-4'}>设计</Button>
             <Button className={'btn-test  mr-4'}>测试</Button>
             <Button className={'btn-save  mr-11'} onClick={() => handleToggleDesigner('form')}>
               编辑
