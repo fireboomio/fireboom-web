@@ -1,0 +1,64 @@
+.wrapper {
+  box-shadow: 0px 2px 14px 0px rgba(115,122,139,0.1);
+}
+
+.radioGroup {
+  :global {
+    .ant-radio-inner {
+      @apply h-3 w-3;
+    }
+    .ant-radio {
+      top: 0.14em;
+    }
+  }
+}
+
+@checkbox-color: #41CE88;
+.checkbox {
+  &:hover {
+    :global {
+      .ant-checkbox-inner {
+        border-color: @checkbox-color;
+      }
+    }
+  }
+  :global {
+    .ant-checkbox {
+      top: 0.14em;
+      &:hover {
+        .ant-checkbox-inner {
+          border-color: @checkbox-color;
+        }
+      }
+      &-inner {
+        @apply h-3 w-3;
+      }
+      &-indeterminate {
+        .ant-checkbox-inner {
+          &::after {
+            background-color: @checkbox-color;
+          }
+        }
+      }
+      &-checked {
+        &::after {
+          border-color: @checkbox-color;
+        }
+        .ant-checkbox-inner {
+          background-color: @checkbox-color;
+          border-color: @checkbox-color;
+          &::after {
+            border-width: 1px;
+            width: 5px;
+            height: 8.5px;
+          }
+        }
+      }
+      &-input {
+        &:focus + .ant-checkbox-inner {
+          border-color: @checkbox-color;
+        }
+      }
+    }
+  }
+}

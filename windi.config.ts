@@ -9,7 +9,7 @@ export default defineConfig({
     extend: {
       colors: {
         primary: '#E92E5E',
-        default: '#333',
+        default: '#333'
       }
     }
   }
