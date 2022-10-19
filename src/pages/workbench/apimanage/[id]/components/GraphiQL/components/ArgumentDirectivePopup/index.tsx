@@ -1,13 +1,17 @@
 import { Tabs } from 'antd'
+import type { ConstDirectiveNode } from 'graphql'
+import { Kind } from 'graphql'
 
+import CustomLabel from './CustomLabel'
 import DirectiveDescription from './DirectiveDescription'
 import styles from './index.module.less'
 
 interface ArgumentDirectivePopupProps {
   initialValue?: string
+  onInject?: (name: string, val: ConstDirectiveNode) => void
 }
 
-const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) => {
+const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePopupProps) => {
   return (
     <div className="bg-white rounded flex shadow">
       <Tabs
@@ -15,7 +19,24 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
         tabPosition="left"
         items={[
           {
-            label: '@fromClaim',
+            label: (
+              <CustomLabel
+                label="@fromClaim"
+                onInject={() =>
+                  onInject?.('fromClaim', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'fromClaim' },
+                    arguments: [
+                      {
+                        kind: Kind.ARGUMENT,
+                        name: { kind: Kind.NAME, value: 'name' },
+                        value: { kind: Kind.ENUM, value: 'REPLACE_ME' }
+                      }
+                    ]
+                  })
+                }
+              />
+            ),
             key: 'fromClaim',
             children: (
               <DirectiveDescription
@@ -29,7 +50,24 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@jsonSchema',
+            label: (
+              <CustomLabel
+                label="@jsonSchema"
+                onInject={() =>
+                  onInject?.('jsonSchema', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'jsonSchema' },
+                    arguments: [
+                      {
+                        kind: Kind.ARGUMENT,
+                        name: { kind: Kind.NAME, value: 'pattern' },
+                        value: { kind: Kind.ENUM, value: '"REPLACE_ME"' }
+                      }
+                    ]
+                  })
+                }
+              />
+            ),
             key: 'jsonSchema',
             children: (
               <DirectiveDescription
@@ -58,7 +96,18 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@hooksVariable',
+            label: (
+              <CustomLabel
+                label="@hooksVariable"
+                // onInject={() => onInject?.('@hooksVariable')}
+                onInject={() =>
+                  onInject?.('hooksVariable', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'hooksVariable' }
+                  })
+                }
+              />
+            ),
             key: 'hooksVariable',
             children: (
               <DirectiveDescription
@@ -69,7 +118,17 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@injectGeneratedUUID',
+            label: (
+              <CustomLabel
+                label="@injectGeneratedUUID"
+                onInject={() =>
+                  onInject?.('injectGeneratedUUID', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'injectGeneratedUUID' }
+                  })
+                }
+              />
+            ),
             key: 'injectGeneratedUUID',
             children: (
               <DirectiveDescription
@@ -80,7 +139,24 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@injectCurrentDatetime',
+            label: (
+              <CustomLabel
+                label="@injectCurrentDatetime"
+                onInject={() =>
+                  onInject?.('injectCurrentDateTime', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'injectCurrentDateTime' },
+                    arguments: [
+                      {
+                        kind: Kind.ARGUMENT,
+                        name: { kind: Kind.NAME, value: 'format' },
+                        value: { kind: Kind.ENUM, value: 'UnixDate' }
+                      }
+                    ]
+                  })
+                }
+              />
+            ),
             key: 'injectCurrentDatetime',
             children: (
               <DirectiveDescription
@@ -91,7 +167,24 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@injectEnvironmentVariable',
+            label: (
+              <CustomLabel
+                label="@injectEnvironmentVariable"
+                onInject={() =>
+                  onInject?.('injectEnvironmentVariable', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'injectEnvironmentVariable' },
+                    arguments: [
+                      {
+                        kind: Kind.ARGUMENT,
+                        name: { kind: Kind.NAME, value: 'name' },
+                        value: { kind: Kind.ENUM, value: '"REPLACE_ME"' }
+                      }
+                    ]
+                  })
+                }
+              />
+            ),
             key: 'injectEnvironmentVariable',
             children: (
               <DirectiveDescription
@@ -102,7 +195,17 @@ const ArgumentDirectivePopup = ({ initialValue }: ArgumentDirectivePopupProps) =
             )
           },
           {
-            label: '@internal',
+            label: (
+              <CustomLabel
+                label="@internal"
+                onInject={() =>
+                  onInject?.('internal', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'internal' }
+                  })
+                }
+              />
+            ),
             key: 'internal',
             children: (
               <DirectiveDescription

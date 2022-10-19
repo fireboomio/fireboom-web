@@ -1,6 +1,7 @@
 import { useEditorContext } from '@graphiql/react'
 import { Dropdown, message } from 'antd'
 import type {
+  ConstDirectiveNode,
   DefinitionNode,
   DirectiveNode,
   DocumentNode,
@@ -24,7 +25,7 @@ const GraphiQLToolbar = () => {
   const editorContext = useEditorContext({ nonNull: true })
 
   const checkInject = (
-    callback: (directives: DirectiveNode[], definitionNode: DefinitionNode) => void
+    callback: (directives: DirectiveNode[], definitionNode: OperationDefinitionNode) => void
   ) => {
     if (!query) {
       message.error('请先创建查询语句')
@@ -107,20 +108,67 @@ const GraphiQLToolbar = () => {
     }
   }
 
-  const injectArgument = () => {
-    if (editorContext.queryEditor) {
-      const editor = editorContext.queryEditor
-      const cursor = editor.getCursor()
-      const doc = editor.getDoc()
-      const line = doc.children[0].lines[cursor.line]
-      const state = line.stateAfter.prevState
-      console.log(state)
-      window.editor = editor
-      // TODO
+  // 获取鼠标周边的变量
+  const getCursorSurroundedVariable = (text: string, index: number) => {
+    if (text) {
+      let startIndex = Math.max(index - 1, 0)
+      let endIndex = index
+      while (startIndex > 0 && ![',', '('].includes(text[startIndex])) {
+        startIndex--
+      }
+      if (startIndex > 0) startIndex++
+      startIndex = Math.max(startIndex, 0)
+      while (endIndex < text.length - 1 && ![',', ')'].includes(text[endIndex])) {
+        endIndex++
+      }
+      endIndex = Math.min(endIndex, text.length - 1)
+      return text.substring(startIndex, endIndex).match(/\$([\da-zA-Z_]+)/)?.[1]
     }
+    return null
   }
 
-  const lookup = (state: any, definitionNode: DefinitionNode) => {
+  const injectArgument = (name: string, val: ConstDirectiveNode) => {
+    checkInject((directives, definitionNode) => {
+      if (editorContext.queryEditor) {
+        const editor = editorContext.queryEditor
+        const cursor = editor.getCursor()
+        const doc = editor.getDoc()
+        const line = doc.children[0].lines[cursor.line]
+        let state = line.stateAfter
+        while (
+          ['Directive', 'VariableDefinition', 'VariableDefinitions', 'SelectionSet'].includes(
+            state.kind
+          )
+        ) {
+          state = state.prevState
+        }
+        if (['Query', 'Mutation', 'Subscription'].includes(state.kind)) {
+          const variable = getCursorSurroundedVariable(line.text, cursor.ch as number)
+          if (!variable) {
+            return message.warn('请选择正确的参数节点')
+          }
+          const varDef = definitionNode.variableDefinitions!.find(
+            v => v.variable.name.value === variable
+          )
+          if (varDef) {
+            // @ts-ignore
+            varDef.directives = varDef.directives ?? []
+            if (varDef.directives?.some(dir => dir.name.value === name)) {
+              message.warn('指令已存在')
+            } else {
+              // @ts-ignore
+              varDef.directives!.push(val)
+              setQuery(printSchemaAST(schemaAST!))
+            }
+          }
+        } else {
+          message.warn('请选择正确的参数节点')
+        }
+      }
+    })
+  }
+
+  const lookupNode = (state: any, definitionNode: DefinitionNode) => {
     const states = [state]
     let _state = state
     // 向上查找
@@ -157,7 +205,7 @@ const GraphiQLToolbar = () => {
       const state = getEditState()
       if (state) {
         if (state.kind === 'SelectionSet' || state.kind === 'Field') {
-          const _node = lookup(state, definitionNode)
+          const _node = lookupNode(state, definitionNode)
           // TODO 还要判断是否是标量
           if (_node && _node.kind === 'Field') {
             const node = _node as FieldNode
@@ -198,7 +246,7 @@ const GraphiQLToolbar = () => {
         @内部
       </button>
       <div className="graphiql-toolbar-divider" />
-      <Dropdown overlay={<ArgumentDirectivePopup />} trigger={['click']}>
+      <Dropdown overlay={<ArgumentDirectivePopup onInject={injectArgument} />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">入参指令</button>
       </Dropdown>
       <button className="graphiql-toolbar-btn" onClick={injectTransform}>

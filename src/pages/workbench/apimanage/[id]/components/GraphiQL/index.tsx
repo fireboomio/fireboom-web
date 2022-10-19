@@ -173,18 +173,9 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-
-  const editorContext = useEditorContext({ nonNull: true })
+  const { schemaAST } = useAPIManager()
 
   // const prettify = usePrettifyEditors()
-
-  const schemaAST = useMemo(() => {
-    try {
-      return parseSchemaAST(editorContext.tabs[0].query || '')
-    } catch (error) {
-      //
-    }
-  }, [editorContext.tabs])
 
   const argumentList = useMemo(() => {
     const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined

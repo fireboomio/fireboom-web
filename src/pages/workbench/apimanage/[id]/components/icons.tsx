@@ -208,3 +208,37 @@ export const PlusCircleFilled = (props: SVGAttributes<SVGSVGElement>) => {
     </svg>
   )
 }
+
+export const LocationOutlined = (props: SVGAttributes<SVGSVGElement>) => {
+  return (
+    <svg {...props} width="12px" height="12px" viewBox="0 0 12 12">
+      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+        <polygon points="-3.14234171e-13 4.54638621e-14 12 4.54638621e-14 12 12 -3.14234171e-13 12" />
+        <g transform="translate(0.369788, 0.497935)">
+          <circle fill="currentColor" cx="5.5" cy="5.33080939" r="1" />
+          <circle stroke="currentColor" strokeWidth="0.5" cx="5.5" cy="5.33080939" r="4.11429779" />
+          <line x1="5.5" y1="0" x2="5.5" y2="2.27140443" stroke="currentColor" strokeWidth="0.5" />
+          <line x1="5.5" y1="8.72859557" x2="5.5" y2="11" stroke="currentColor" strokeWidth="0.5" />
+          <line
+            x1="9.86429779"
+            y1="4.36429779"
+            x2="9.86429779"
+            y2="6.63570221"
+            stroke="currentColor"
+            strokeWidth="0.5"
+            transform="translate(9.864298, 5.500000) rotate(-90.000000) translate(-9.864298, -5.500000) "
+          />
+          <line
+            x1="1.13570221"
+            y1="4.36429779"
+            x2="1.13570221"
+            y2="6.63570221"
+            stroke="currentColor"
+            strokeWidth="0.5"
+            transform="translate(1.135702, 5.500000) rotate(-90.000000) translate(-1.135702, -5.500000) "
+          />
+        </g>
+      </g>
+    </svg>
+  )
+}
