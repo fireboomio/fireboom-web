@@ -28,7 +28,7 @@ export default function FileStorage() {
 
   return (
     <div className="h-full">
-      <StorageExplorer bucketId={content?.id} />
+      <StorageExplorer bucketId={content?.id} key={content?.id} />
     </div>
   )
 }

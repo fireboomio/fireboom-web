@@ -255,8 +255,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       action={
         <>
           {panelConfig.navAction?.map(item => (
-            <div className="flex mr-1.5" key={item.path}>
-              <img width={19} height={19} src={item.icon} onClick={() => navigate(item.path)} />
+            <div className="flex mr-1.5" key={item.path} onClick={() => navigate(item.path)}>
+              <img width={19} height={19} src={item.icon} alt="头像" />
             </div>
           ))}
         </>
