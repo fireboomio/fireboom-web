@@ -63,7 +63,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     if (content) {
       void (await requests.put('/dataSource', content))
     }
-    onRefreshMenu('storage')
+    onRefreshMenu('dataSource')
   }
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
