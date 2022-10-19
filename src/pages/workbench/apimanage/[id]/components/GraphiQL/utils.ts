@@ -2,7 +2,7 @@ import type { DocumentNode } from 'graphql'
 import { parse, print } from 'graphql'
 
 export function parseSchemaAST(query: string) {
-  return parse(query)
+  return parse(query, { noLocation: true })
 }
 
 export function printSchemaAST(node: DocumentNode) {

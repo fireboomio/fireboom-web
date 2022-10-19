@@ -1,6 +1,14 @@
 import { useEditorContext } from '@graphiql/react'
 import { Dropdown, message } from 'antd'
-import type { DirectiveNode, SelectionSetNode } from 'graphql'
+import type {
+  DefinitionNode,
+  DirectiveNode,
+  DocumentNode,
+  FieldNode,
+  OperationDefinitionNode,
+  SelectionNode,
+  SelectionSetNode
+} from 'graphql'
 import { Kind } from 'graphql'
 
 import { useAPIManager } from '../../../hooks'
@@ -16,17 +24,14 @@ const GraphiQLToolbar = () => {
   const editorContext = useEditorContext({ nonNull: true })
 
   const checkInject = (
-    callback: (directives: DirectiveNode[], selectionSet: SelectionSetNode) => void
+    callback: (directives: DirectiveNode[], definitionNode: DefinitionNode) => void
   ) => {
     if (!query) {
       message.error('请先创建查询语句')
     }
     if (schemaAST) {
       if (schemaAST.definitions[0]?.kind === Kind.OPERATION_DEFINITION) {
-        callback(
-          schemaAST.definitions[0]!.directives as DirectiveNode[],
-          schemaAST.definitions[0]!.selectionSet
-        )
+        callback(schemaAST.definitions[0]!.directives as DirectiveNode[], schemaAST.definitions[0]!)
       }
     }
   }
@@ -115,32 +120,71 @@ const GraphiQLToolbar = () => {
     }
   }
 
-  const lookup = (state: any, selectionSet: SelectionSetNode) => {
+  const lookup = (state: any, definitionNode: DefinitionNode) => {
     const states = [state]
     let _state = state
     // 向上查找
     while (_state.prevState) {
-      if (_state.kind.toLowerCase() !== 'query') {
+      if (!['Query', 'Mutation', 'Subscription'].includes(_state.kind)) {
         _state = _state.prevState
         states.unshift(_state)
       } else {
         break
       }
     }
-    // 从上往下查找
-    if (selectionSet.kind === Kind.SELECTION_SET) {
-      // selectionSet.selections.find(sel => sel.)
+    // 最后一个如果是 SelectionSet 则认为是在对象那一行
+    if (states[states.length - 1].kind === 'SelectionSet') {
+      states.pop()
     }
+    // 从上往下查找
+    let node: any = definitionNode
+    for (const s of states) {
+      if (s.kind === 'SelectionSet') {
+        node = (node as OperationDefinitionNode)['selectionSet']
+      } else if (s.kind === 'Selection') {
+        node = (node as SelectionSetNode)['selections']
+      } else if (s.kind === 'Field') {
+        node = (node as FieldNode[]).find(item => item.name.value === s.name)
+      } else if (s.kind === 'AliasedField') {
+        node = (node as FieldNode[]).find(item => item.alias && item.name.value === s.name)
+      }
+    }
+    return node
   }
 
   const injectTransform = () => {
-    checkInject((directives, selectionSet) => {
+    checkInject((directives, definitionNode) => {
       const state = getEditState()
       if (state) {
         if (state.kind === 'SelectionSet' || state.kind === 'Field') {
-          //
+          const _node = lookup(state, definitionNode)
+          // TODO 还要判断是否是标量
+          if (_node && _node.kind === 'Field') {
+            const node = _node as FieldNode
+            // @ts-ignore
+            node.directives = node.directives ?? []
+            if (
+              !node.directives!.find(
+                dir => dir.kind === Kind.DIRECTIVE && dir.name.value === 'transform'
+              )
+            ) {
+              ;(node.directives as DirectiveNode[]).push({
+                kind: Kind.DIRECTIVE,
+                name: { kind: Kind.NAME, value: 'transform' },
+                arguments: [
+                  {
+                    kind: Kind.ARGUMENT,
+                    name: { kind: Kind.NAME, value: 'get' },
+                    value: { kind: Kind.STRING, value: 'REPLACE_ME', block: false }
+                  }
+                ]
+              })
+            }
+            return setQuery(printSchemaAST(schemaAST!))
+          }
         }
       }
+      message.warn('请选择合适的插入节点')
     })
   }
 
