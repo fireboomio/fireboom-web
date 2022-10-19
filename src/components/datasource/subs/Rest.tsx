@@ -159,9 +159,7 @@ export default function Rest({ content, type }: Props) {
       })
   }
 
-  if (!content) {
-    return <Error50x />
-  }
+  if (!content) return <Error50x />
 
   const config = content.config as Config
 
@@ -320,7 +318,7 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      名称 <FormToolTip title="test" />
+                      名称 <FormToolTip title="名称" />
                     </span>
                   </>
                 }
@@ -333,7 +331,7 @@ export default function Rest({ content, type }: Props) {
                   <>
                     <span className={styles['label-style']}>
                       Rest 端点
-                      <FormToolTip title="test" />
+                      <FormToolTip title="Rest 端点" />
                     </span>
                   </>
                 }
@@ -345,8 +343,8 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      指定OAS
-                      <FormToolTip title="test" />
+                      指定 OAS
+                      <FormToolTip title="指定OAS" />
                     </span>
                   </>
                 }
@@ -384,7 +382,7 @@ export default function Rest({ content, type }: Props) {
                           <div>
                             <span className={styles['label-style']}>
                               {key}
-                              <FormToolTip title="test" />
+                              <FormToolTip title={key} />
                             </span>
                           </div>
                         }
@@ -405,7 +403,7 @@ export default function Rest({ content, type }: Props) {
                   <>
                     <span className={styles['label-style']}>
                       授权
-                      <FormToolTip title="test" />
+                      <FormToolTip title="授权" />
                     </span>
                   </>
                 }
@@ -536,7 +534,7 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span>命名空间</span>
-                    <FormToolTip title="test" />
+                    <FormToolTip title="命名空间" />
                   </>
                 }
                 rules={[
@@ -556,7 +554,7 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span>Rest 端点</span>
-                    <FormToolTip title="test" />
+                    <FormToolTip title="Rest 端点" />
                   </>
                 }
                 rules={[
@@ -575,8 +573,8 @@ export default function Rest({ content, type }: Props) {
                 rules={[{ required: true, message: '请上传 OAS 文件' }]}
                 label={
                   <>
-                    <span>指定OAS:</span>
-                    <FormToolTip title="test" />
+                    <span>指定 OAS:</span>
+                    <FormToolTip title="指定OAS" />
                   </>
                 }
                 colon={false}
@@ -799,7 +797,7 @@ export default function Rest({ content, type }: Props) {
                       <>
                         <span className={styles['label-style']}>
                           是否状态联合
-                          <FormToolTip title="test" />
+                          <FormToolTip title="是否状态联合" />
                         </span>
                       </>
                     }
