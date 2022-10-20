@@ -49,6 +49,18 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
     dispatch(updateCurrentEntityIdAction(entity.id))
   }
+
+  console.log('provider', {
+    state,
+    dispatch,
+    panel: {
+      handleToggleDesigner,
+      handleClickEntity,
+      handleChangeSource,
+      setShowType,
+      dataSources
+    }
+  })
   return (
     <PrismaSchemaContext.Provider
       value={{

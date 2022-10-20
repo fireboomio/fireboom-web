@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
 import ModelPannel from '@/pages/workbench/modeling/components/pannel'
@@ -11,13 +11,16 @@ import styles from './sider.module.less'
 export default function Header() {
   const [tab, setTab] = useState<string>('')
   const location = useLocation()
+  const navigate = useNavigate()
   useEffect(() => {
     const tab = location.pathname.startsWith('/workbench/modeling') ? 'data' : 'api'
     setTab(tab)
   }, [location.pathname])
-  const {
-    panel: { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources }
-  } = useContext(PrismaSchemaContext)
+  const { panel } = useContext(PrismaSchemaContext)
+  const ctx = useContext(PrismaSchemaContext)
+  const { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources } =
+    panel || {}
+  console.log('====', tab, ctx)
 
   return (
     <div className="flex flex-col h-full">
@@ -25,14 +28,20 @@ export default function Header() {
         <div className={styles.tabs_inner}>
           <div
             className={`${styles.tabs_tab} ${tab === 'api' ? styles.tabs_tab__active : ''}`}
-            onClick={() => setTab('api')}
+            onClick={() => {
+              setTab('api')
+              navigate('/workbench')
+            }}
           >
             <div className={styles.apiIcon} />
             API设计
           </div>
           <div
             className={`${styles.tabs_tab}  ${tab === 'data' ? styles.tabs_tab__active : ''}`}
-            onClick={() => setTab('data')}
+            onClick={() => {
+              setTab('data')
+              navigate('/workbench/modeling')
+            }}
           >
             <div className={styles.dataIcon} />
             数据建模
@@ -54,7 +63,7 @@ export default function Header() {
           />
         </div>
       ) : null}
-      {tab === 'data' ? (
+      {tab === 'data' && panel ? (
         <ModelPannel
           setShowType={setShowType}
           changeToER={() => setShowType('erDiagram')}

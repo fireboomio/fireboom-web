@@ -140,7 +140,7 @@ export default function Index(props: PropsWithChildren) {
     </ALayout>
   )
   const location = useLocation()
-  if (location.pathname.startsWith('/workbench/modeling/')) {
+  if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
     return <ModelingWrapper>{body}</ModelingWrapper>
   } else {
     return (
