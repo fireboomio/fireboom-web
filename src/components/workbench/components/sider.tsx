@@ -29,18 +29,22 @@ export default function Header() {
         </div>
       </div>
 
-      <div className={styles.panels}>
-        <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
-        <CommonPanel
-          type="dataSource"
-          defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}
-        />
-        <CommonPanel type="auth" defaultOpen={location.pathname.startsWith('/workbench/auth/')} />
-        <CommonPanel
-          type="storage"
-          defaultOpen={location.pathname.startsWith('/workbench/storage/')}
-        />
-      </div>
+      {tab === 'api' ? (
+        <div className={styles.panels}>
+          <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
+          <CommonPanel
+            type="dataSource"
+            defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}
+          />
+          <CommonPanel type="auth" defaultOpen={location.pathname.startsWith('/workbench/auth/')} />
+          <CommonPanel
+            type="storage"
+            defaultOpen={location.pathname.startsWith('/workbench/storage/')}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }

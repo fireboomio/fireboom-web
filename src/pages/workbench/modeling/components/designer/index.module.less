@@ -1,0 +1,64 @@
+.parent-content {
+  display: flex;
+
+  :global {
+    & .ant-select.ant-select-multiple {
+      width: 100%;
+      min-width: 54px;
+    }
+  }
+}
+
+.to-choose {
+  color: rgb(175 176 180 / 50%);
+}
+
+.parent-select {
+  position: relative;
+
+  .child-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    :global {
+      & .ant-select.ant-select-single {
+        width: 135px;
+        min-width: 54px;
+        opacity: 0;
+      }
+    }
+  }
+}
+
+.select-content {
+  display: inline-flex;
+  align-items: center;
+  max-width: 105px;
+  overflow: hidden;
+}
+
+.manual-parent-content {
+  display: flex;
+
+  :global {
+    & .ant-select.ant-select-single {
+      width: 135px;
+      min-width: 54px;
+      opacity: 0;
+    }
+  }
+}
+
+.save-btn {
+  color: #fff;
+  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+}

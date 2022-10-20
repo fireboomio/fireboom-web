@@ -1,88 +1,125 @@
-// import { getSchema } from '@mrleebo/prisma-ast'
-// import { Col, Row } from 'antd'
-// import { useEffect, useReducer } from 'react'
-// import { Helmet } from 'react-helmet'
-// import useSWR from 'swr'
-// import { useImmer } from 'use-immer'
+import { Col, Empty, Row } from 'antd'
+import { useEffect, useReducer } from 'react'
+import { Helmet } from 'react-helmet'
+import useSWR from 'swr'
+import { useImmer } from 'use-immer'
 
-// import { ModelPannel, ModelContainer } from '@/components/modeling'
-// import type { DBSourceResp, Entity, SchemaResp } from '@/interfaces/modeling'
-// import { ModelingContext, ModelingDispatchContext, ModelingCurrEntityContext } from '@/lib/context'
-// import requests, { getFetcher } from '@/lib/fetchers'
-// import modelingReducer from '@/lib/reducers/modeling-reducer'
+import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
+import {
+  updateCurrentEntityIdAction,
+  updatePreviewFiltersAction
+} from '@/lib/actions/PrismaSchemaActions'
+import { fetchDBSources } from '@/lib/clients/fireBoomAPIOperator'
+import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
+import {
+  emptyPrismaSchemaContextState,
+  PrismaSchemaContext
+} from '@/lib/context/prismaSchemaContext'
+import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers'
+import modelingReducer from '@/lib/reducers/modelingReducers'
 
-// import styles from './index.module.less'
+import DesignerContainer from './components/designer'
+import ErDiagram from './components/erdiagram'
+import ModelPannel from './components/pannel'
+import PreviewContainer from './components/preview'
+import styles from './index.module.less'
 
-// type ShowTypeT = 'data' | 'model' | 'enum'
+const Modeling = () => {
+  const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
+  const [showType, setShowType] = useImmer<ModelingShowTypeT>('preview')
+  const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
 
-export default function Modeling() {
-  // const [blocks, dispatch] = useReducer(modelingReducer, [])
-  // const [currEntityId, setCurrEntityId] = useImmer<number | null>(null)
-  // const [showType, setShowType] = useImmer<ShowTypeT>('data')
+  const { data, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
 
-  // useEffect(() => {
-  //   const entities = blocks.filter(b => ['model', 'enum'].includes(b.type)) as Entity[]
-  //   setCurrEntityId(entities.at(0)?.id ?? null)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [blocks])
+  useEffect(() => {
+    setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])
+  }, [data, setDataSources])
 
-  // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  // const { data: sources, error } = useSWR('/sources', getFetcher)
+  useEffect(() => {
+    if (dataSources.length > 0) {
+      fetchAndSaveToPrismaSchemaContext(dataSources[0].id, dispatch, dataSources)
+    }
+  }, [dataSources])
 
-  // if (error) return <div>failed to load</div>
-  // if (!sources) return <div>loading...</div>
+  const handleChangeSource = (dbSourceId: number) => {
+    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)
+    setShowType('preview')
+  }
 
-  // function handleChangeSource(value: string) {
-  //   requests
-  //     .get<unknown, SchemaResp>(`/schemas/${value}`)
-  //     .then(res =>
-  //       dispatch({
-  //         type: 'fetched',
-  //         data: getSchema(res.body).list.map((item, idx) => ({ ...item, id: idx })),
-  //       })
-  //     )
-  //     .catch((err: Error) => {
-  //       throw err
-  //     })
-  // }
+  const handleClickEntity = (entity: Entity) => {
+    setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
+    dispatch(updateCurrentEntityIdAction(entity.id))
+    dispatch(updatePreviewFiltersAction([]))
+  }
 
-  // function handleClickEntity(entity: Entity) {
-  //   setShowType('data')
-  //   setCurrEntityId(entity.id)
-  // }
+  const handleToggleDesigner = (entity: Entity) => {
+    setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
+    dispatch(updateCurrentEntityIdAction(entity.id))
+  }
 
-  // function handleToggleDesigner(entity: Entity) {
-  //   setShowType(entity.type)
-  //   setCurrEntityId(entity.id)
-  // }
+  if (error) return <Empty className="pt-20" description="数据加载失败！" />
+  if (!dataSources) return <Empty className="pt-20" description="无可用数据源列表！" />
 
   return (
     <>
-      {/* <Helmet>
+      <Helmet>
         <title>FireBoom - 数据建模</title>
       </Helmet>
 
-      <ModelingContext.Provider value={blocks}>
-        <ModelingDispatchContext.Provider value={dispatch}>
-          <ModelingCurrEntityContext.Provider
-            value={{ currEntityId: currEntityId, setCurrEntityId: setCurrEntityId }}
-          >
-            <Row className="h-screen">
-              <Col span={5} className={styles['col-left']}>
-                <ModelPannel
-                  sourceOptions={sources as DBSourceResp[]}
-                  onChangeSource={handleChangeSource}
-                  onClickEntity={handleClickEntity}
-                  onToggleDesigner={handleToggleDesigner}
-                />
-              </Col>
-              <Col span={19}>
-                <ModelContainer showType={showType} currEntityId={currEntityId} />
-              </Col>
-            </Row>
-          </ModelingCurrEntityContext.Provider>
-        </ModelingDispatchContext.Provider>
-      </ModelingContext.Provider> */}
+      <PrismaSchemaContext.Provider value={{ state, dispatch }}>
+        <Row className="h-screen">
+          <Col span={5} className={styles['col-left']}>
+            <ModelPannel
+              setShowType={setShowType}
+              changeToER={() => setShowType('erDiagram')}
+              addNewModel={() => setShowType('newModel')}
+              addNewEnum={() => setShowType('newEnum')}
+              sourceOptions={dataSources}
+              onChangeSource={dbSourceId => handleChangeSource(dbSourceId)}
+              onClickEntity={handleClickEntity}
+              onToggleDesigner={handleToggleDesigner}
+            />
+          </Col>
+          <Col span={19}>
+            {showType === 'preview' && <PreviewContainer />}
+            {showType === 'editModel' && (
+              <DesignerContainer
+                editType={'edit'}
+                type={'model'}
+                setShowType={setShowType}
+                showType={showType}
+              />
+            )}
+            {showType === 'editEnum' && (
+              <DesignerContainer
+                editType={'edit'}
+                type={'enum'}
+                setShowType={setShowType}
+                showType={showType}
+              />
+            )}
+            {showType === 'newModel' && (
+              <DesignerContainer
+                editType={'add'}
+                type={'model'}
+                setShowType={setShowType}
+                showType={showType}
+              />
+            )}
+            {showType === 'newEnum' && (
+              <DesignerContainer
+                editType={'add'}
+                type={'enum'}
+                setShowType={setShowType}
+                showType={showType}
+              />
+            )}
+            {showType === 'erDiagram' && <ErDiagram />}
+          </Col>
+        </Row>
+      </PrismaSchemaContext.Provider>
     </>
   )
 }
+
+export default Modeling
