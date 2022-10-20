@@ -34,7 +34,6 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [dataSources])
 
   const handleChangeSource = (dbSourceId: number) => {
-    console.log(dbSourceId)
     fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)
     setShowType('preview')
   }
@@ -50,17 +49,17 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     dispatch(updateCurrentEntityIdAction(entity.id))
   }
 
-  console.log('provider', {
-    state,
-    dispatch,
-    panel: {
-      handleToggleDesigner,
-      handleClickEntity,
-      handleChangeSource,
-      setShowType,
-      dataSources
-    }
-  })
+  // console.log('provider', {
+  //   state,
+  //   dispatch,
+  //   panel: {
+  //     handleToggleDesigner,
+  //     handleClickEntity,
+  //     handleChangeSource,
+  //     setShowType,
+  //     dataSources
+  //   }
+  // })
   return (
     <PrismaSchemaContext.Provider
       value={{
