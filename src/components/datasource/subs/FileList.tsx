@@ -21,13 +21,18 @@ const columns: ColumnsType<TableType> = [
   { title: '', dataIndex: '', key: '' }
 ]
 
-export default function FileList() {
+interface Props {
+  setUploadPath: (value: string) => void
+  setVisible: (value: boolean) => void
+  basePath: string
+}
+
+export default function FileList({ setUploadPath, setVisible, basePath }: Props) {
   const [data, setData] = useState<TableType[]>([])
   // const [path, setPath] = useState<string>('')
 
   useEffect(() => {
     void requests.get<unknown, { path: string; files: TableType[] }>('/file/1').then(x => {
-      console.log(x)
       // setPath(x.path)
       setData(x.files)
     })
@@ -43,7 +48,8 @@ export default function FileList() {
         onRow={rcd => {
           return {
             onClick: event => {
-              console.log(rcd)
+              setUploadPath(`${basePath}/${rcd.name}`)
+              setVisible(false)
             },
             onDoubleClick: event => {},
             onContextMenu: event => {},

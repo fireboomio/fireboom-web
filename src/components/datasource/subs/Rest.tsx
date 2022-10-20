@@ -1,9 +1,4 @@
-import {
-  CaretRightOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SettingOutlined
-} from '@ant-design/icons'
+import { CaretRightOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import {
   Button,
@@ -18,17 +13,15 @@ import {
   Select,
   Space,
   Switch,
-  Table,
   Tabs,
   Tag
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import Uploader from '@/components/common/Uploader'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
@@ -109,6 +102,8 @@ interface OptionT {
   value: string
 }
 
+const BASEPATH = '/static/upload/oas'
+
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -126,6 +121,8 @@ export default function Rest({ content, type }: Props) {
   const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
+
+  const [uploadPath, setUploadPath] = useState(BASEPATH)
 
   useEffect(() => {
     form.resetFields()
@@ -310,7 +307,7 @@ export default function Rest({ content, type }: Props) {
             addonBefore={
               <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
             }
-            value="static/upload/oas"
+            value="/static/upload/oas"
           />
           <div className="w-12 h-6 flex items-center justify-center cursor-pointer m-auto mr-3">
             <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
@@ -318,7 +315,7 @@ export default function Rest({ content, type }: Props) {
           <Input addonBefore={<SearchOutlined />} style={{ width: 228, height: 26 }} />
         </div>
 
-        <FileList />
+        <FileList basePath={BASEPATH} setUploadPath={setUploadPath} setVisible={setVisible} />
         {/* </div> */}
       </Modal>
 
@@ -629,6 +626,7 @@ export default function Rest({ content, type }: Props) {
                   // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   suffix={<a onClick={() => setVisible(true)}>浏览</a>}
                   readOnly
+                  value={uploadPath}
                 />
                 {/* <Uploader
                   defaultFileList={
