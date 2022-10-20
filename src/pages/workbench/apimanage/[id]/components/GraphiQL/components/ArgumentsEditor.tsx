@@ -1,4 +1,3 @@
-import { CloseCircleOutlined } from '@ant-design/icons'
 import { useEditorContext } from '@graphiql/react'
 import { Tooltip } from 'antd'
 import type { VariableDefinitionNode } from 'graphql'
@@ -6,13 +5,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { parseParameters } from '@/lib/gql-parser'
 
+import { CircleCloseOutlined } from '../../icons'
 import requiredIcon from '../assets/required.svg'
 import type { InputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'
 
 interface ArgumentsEditorProps {
   arguments: ReadonlyArray<VariableDefinitionNode>
-  onRemoveDirective: (directiveName: string) => void
+  onRemoveDirective: (argumentIndex: number, directiveIndex: number) => void
 }
 
 const ArgumentsEditor = (props: ArgumentsEditorProps) => {
@@ -105,11 +105,16 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                 )}
               </td>
               <td>
-                {arg.directives?.map(directive => {
+                {arg.directives?.map((directive, dIndex) => {
                   return (
                     <div key={directive.name} className="arguments-directive">
                       <span>{directive.name}</span>
-                      <CloseCircleOutlined className="arguments-directive-remove" />
+                      <span
+                        className="arguments-directive-remove"
+                        onClick={() => props.onRemoveDirective?.(index, dIndex)}
+                      >
+                        <CircleCloseOutlined />
+                      </span>
                     </div>
                   )
                 })}

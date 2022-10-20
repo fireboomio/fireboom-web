@@ -24,16 +24,18 @@ import {
   useTheme
 } from '@graphiql/react'
 import { Tabs } from 'antd'
-import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
+import type { DirectiveNode, OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
+import { Kind } from 'graphql'
 import type { ReactNode } from 'react'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import { useAPIManager } from '../../hooks'
 import ArgumentsEditor from './components/ArgumentsEditor'
 import { emptyStorage } from './components/emptyStorage'
 import GraphiQLToolbar from './components/GraphiQLToolbar'
 import ResponseWrapper, { useResponse } from './components/ResponseContext'
 import ResponseViewer from './components/ResponseViewer'
-import { parseSchemaAST } from './utils'
+import { parseSchemaAST, printSchemaAST } from './utils'
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10)
 
@@ -171,24 +173,9 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-
-  const editorContext = useEditorContext({ nonNull: true })
+  const { schemaAST } = useAPIManager()
 
   // const prettify = usePrettifyEditors()
-
-  // editorContext.setResponseEditor({
-  //   setValue(v) {
-  //     console.log(v)
-  //   }
-  // })
-
-  const schemaAST = useMemo(() => {
-    try {
-      return parseSchemaAST(editorContext.tabs[0].query || '')
-    } catch (error) {
-      //
-    }
-  }, [editorContext.tabs])
 
   const argumentList = useMemo(() => {
     const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
@@ -237,6 +224,14 @@ const GraphiInputAndResponse = ({ argumentList }: GraphiInputAndResponseProps) =
 
   const { response } = useResponse()
 
+  const { setQuery, schemaAST } = useAPIManager()
+
+  const onRemoveDirective = (argumentIndex: number, directiveIndex: number) => {
+    // @ts-ignore
+    schemaAST.definitions[0].variableDefinitions[argumentIndex].directives.splice(directiveIndex, 1)
+    setQuery(printSchemaAST(schemaAST!))
+  }
+
   useEffect(() => {
     if (response) {
       setActiveKey('response')
@@ -251,7 +246,9 @@ const GraphiInputAndResponse = ({ argumentList }: GraphiInputAndResponseProps) =
         {
           label: '输入',
           key: 'arguments',
-          children: <ArgumentsEditor arguments={argumentList} onRemoveDirective={() => {}} />
+          children: (
+            <ArgumentsEditor arguments={argumentList} onRemoveDirective={onRemoveDirective} />
+          )
         },
         { label: '响应', key: 'response', children: <ResponseViewer /> }
       ]}
