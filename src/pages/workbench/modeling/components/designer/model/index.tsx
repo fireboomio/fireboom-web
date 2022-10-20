@@ -376,9 +376,9 @@ const ModelDesigner = ({
         <Col span={2}>
           <div className="ml-auto flex flex-row justify-end items-center">
             <Popover
-              visible={morePopoverEditingFieldName === field.name}
+              open={morePopoverEditingFieldName === field.name}
               trigger="click"
-              onVisibleChange={visible =>
+              onOpenChange={visible =>
                 setMorePopoverEditingFieldName(visible ? field.name : undefined)
               }
               content={
@@ -399,9 +399,9 @@ const ModelDesigner = ({
             <Divider type="vertical" />
 
             <Popover
-              visible={questionPopoverEditingFieldName === field.name}
+              open={questionPopoverEditingFieldName === field.name}
               trigger="click"
-              onVisibleChange={visible =>
+              onOpenChange={visible =>
                 setQuestionPopoverEditingFieldName(visible ? field.name : undefined)
               }
               content={

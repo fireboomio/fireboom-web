@@ -153,8 +153,8 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
         overlay={MenuContainer}
         trigger={['click']}
         placement="bottomRight"
-        visible={visible}
-        onVisibleChange={v => {
+        open={visible}
+        onOpenChange={v => {
           setVisible(v)
           leaveItem(v)
         }}
