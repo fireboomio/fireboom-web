@@ -33,9 +33,12 @@ export default function AuthUserDetails() {
   const onFinish = (values: User) => {
     void requests.put(`/oauth/${id}`, { ...values })
   }
+  const onAddRole = ({ code: string }) => {
+    // console.log(values)
+  }
 
   useEffect(() => {
-    // void getFetcher<RoleProvResp[]>(`/oauth/${id}`).then(x => setRoleData(x))
+    void getFetcher<RoleProvResp[]>(`/oauth/role/${id}`).then(x => setRoleData(x))
     void getFetcher<User>(`/oauth/${id}`).then(x => {
       x.birthday = ''
       setAuthUserCurr(x)
@@ -218,7 +221,7 @@ export default function AuthUserDetails() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             onFinish={values => {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              void onFinish(values)
+              void onAddRole(values)
             }}
             autoComplete="off"
             labelAlign="left"

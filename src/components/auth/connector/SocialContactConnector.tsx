@@ -2,16 +2,15 @@ import { MobileOutlined, OneToOneOutlined } from '@ant-design/icons'
 import { Badge, Button, Image, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type React from 'react'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import type { AuthListType } from '@/interfaces/auth'
 import type { Connector as ConnectorType } from '@/interfaces/connector'
-import { ConnectorContext } from '@/lib/context/auth-context'
 
 import ConnectorModal from './ConnectorModal'
 import styles from './SocialContactConnector.module.less'
+
 interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
   data: ConnectorType[] | undefined
 }
 interface DataType {
@@ -23,10 +22,11 @@ interface DataType {
   platform: string
 }
 
-const SocialContactConnector: React.FC<Props> = ({ data = [], handleTopToggleDesigner }) => {
+const SocialContactConnector: React.FC<Props> = ({ data = [] }) => {
+  const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [currentSelectedId, setCurrentSelectedId] = useState('')
-  const { connectorDispatch } = useContext(ConnectorContext)
+  // const { connectorDispatch } = useContext(ConnectorContext)
 
   const renderLogo = (platform: string) => {
     switch (platform) {
@@ -109,21 +109,21 @@ const SocialContactConnector: React.FC<Props> = ({ data = [], handleTopToggleDes
 
   const handleModelOk = () => {
     setIsModalVisible(false)
-    handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
+    navigate('/auth/connectDetails')
     const currentSelected = data.find(item => item.id === currentSelectedId)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected
-    })
+    // connectorDispatch({
+    //   type: 'setCurrentConnector',
+    //   payload: currentSelected
+    // })
   }
 
   const handleRowClick = (value: DataType) => () => {
-    handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
+    navigate('/auth/connectDetails')
     const currentSelected = data.find(item => item.id === value.key)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected
-    })
+    // connectorDispatch({
+    //   type: 'setCurrentConnector',
+    //   payload: currentSelected
+    // })
   }
 
   return (

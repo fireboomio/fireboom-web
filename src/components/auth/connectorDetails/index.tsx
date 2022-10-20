@@ -2,15 +2,14 @@ import { CopyOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import { Badge, Button, Image, Popover } from 'antd'
 import copy from 'copy-to-clipboard'
 import type React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import JSONInput from 'react-json-editor-ajrm'
 // @ts-ignore
 import locale from 'react-json-editor-ajrm/locale/zh-cn'
 
 import type { AuthListType } from '@/interfaces/auth'
-import type { Connector as ConnectorType } from '@/interfaces/connector'
+import type { Connector, Connector as ConnectorType } from '@/interfaces/connector'
 import { ConnectorTitleEnum, ConnectorTypeEnum, SMS, SOCIAL } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context/auth-context'
 import { deleteConnector, upsertConnector } from '@/lib/service/connector'
 
 import ConnectorModal from '../connector/ConnectorModal'
@@ -27,10 +26,12 @@ interface JSONInputType {
 
 const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const {
-    connector: { currentConnector, connectors },
-    connectorDispatch
-  } = useContext(ConnectorContext)
+  // const {
+  //   connector: { currentConnector, connectors },
+  //   connectorDispatch
+  // } = useContext(ConnectorContext)
+  const [currentConnector, setCurrentConnector] = useState<Connector>()
+  const [connectors, setConnectors] = useState<Connector[]>()
   const [json, setJson] = useState(currentConnector.config || {})
   const [_plainText, setPlainText] = useState(currentConnector.configTemplate || {})
   const [currentSelectedId, setCurrentSelectedId] = useState('')
@@ -65,10 +66,10 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
     setIsModalVisible(false)
     handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
     const currentSelected = connectors.find(item => item.id === currentSelectedId)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected
-    })
+    // connectorDispatch({
+    //   type: 'setCurrentConnector',
+    //   payload: currentSelected
+    // })
   }
 
   const handleModelCancel = () => {

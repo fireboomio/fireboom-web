@@ -1,12 +1,10 @@
 import { Tabs } from 'antd'
 import type React from 'react'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import type { SWRResponse } from 'swr'
 
-import type { AuthListType } from '@/interfaces/auth'
 import type { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context/auth-context'
 import { useFetchConnector } from '@/lib/service/connector'
 
 import styles from './index.module.less'
@@ -15,19 +13,15 @@ import SocialContactConnector from './SocialContactConnector'
 
 const { TabPane } = Tabs
 
-interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
-}
-
-const Connector: React.FC<Props> = ({ handleTopToggleDesigner }) => {
+const Connector: React.FC<Props> = () => {
   const res: SWRResponse<ConnectorType[], Error> = useFetchConnector()
   const { data } = res
-  const { connectorDispatch } = useContext(ConnectorContext)
+  // const { connectorDispatch } = useContext(ConnectorContext)
   const SMSAndEmailData = data && data.filter(item => item.types === SMS || item.types === EMAIL)
   const SocialData = data && data.filter(item => item.types === SOCIAL)
 
   useEffect(() => {
-    connectorDispatch({ type: 'fetchConnector', payload: data || [] })
+    // connectorDispatch({ type: 'fetchConnector', payload: data || [] })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
@@ -38,16 +32,10 @@ const Connector: React.FC<Props> = ({ handleTopToggleDesigner }) => {
       <div className={styles.tabStyle}>
         <Tabs defaultActiveKey="messageAndEmail">
           <TabPane tab="短信和邮件连接器" key={SMS}>
-            <MessageAndEmailConnector
-              data={SMSAndEmailData}
-              handleTopToggleDesigner={handleTopToggleDesigner}
-            />
+            <MessageAndEmailConnector data={SMSAndEmailData} />
           </TabPane>
           <TabPane tab="社交连接器" key={SOCIAL}>
-            <SocialContactConnector
-              data={SocialData}
-              handleTopToggleDesigner={handleTopToggleDesigner}
-            />
+            <SocialContactConnector data={SocialData} />
           </TabPane>
         </Tabs>
       </div>

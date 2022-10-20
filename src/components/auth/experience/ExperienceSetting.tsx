@@ -3,8 +3,8 @@ import { Button, Checkbox, Form, message, Select, Switch } from 'antd'
 import groupBy from 'lodash/groupBy'
 import type React from 'react'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import type { AuthListType } from '@/interfaces/auth'
 import type { Connector } from '@/interfaces/connector'
 import type { Experience as ExperienceType } from '@/interfaces/experience'
 import { EMAIL, SMS, SOCIAL } from '@/lib/constant'
@@ -18,7 +18,6 @@ const { Option } = Select
 interface Props {
   data: ExperienceType
   connectorsData: Connector[] | undefined
-  handleTopToggleDesigner: (authType: AuthListType) => void
 }
 
 export interface GroupedSocialItemType {
@@ -43,11 +42,8 @@ interface LoginFormType {
   socialValue: string[] | undefined
 }
 
-const ExperienceSetting: React.FC<Props> = ({
-  data,
-  connectorsData = [],
-  handleTopToggleDesigner
-}) => {
+const ExperienceSetting: React.FC<Props> = ({ data, connectorsData = [] }) => {
+  const navigate = useNavigate()
   const primaryLogin = data?.signInMethods
     ? // @ts-ignore
       Object.keys(data.signInMethods).find(i => data.signInMethods[i] === 'primary')
@@ -125,7 +121,7 @@ const ExperienceSetting: React.FC<Props> = ({
   }
 
   const goToConnector = () => {
-    handleTopToggleDesigner({ name: '连接器', type: 'connect' })
+    navigate('/auth/connect')
   }
 
   const displayUnConfigHint = (name: string) => {

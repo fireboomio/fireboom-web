@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { DOMAIN, HOST } from '@/lib/common'
+import { HOST } from '@/lib/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
@@ -23,7 +23,9 @@ export default function AuthMainCheck({ content }: Props) {
   const config = content.config as unknown as Config
 
   const sid = useMemo(() => {
-    return `${HOST}/api/main/auth/cookie/callback/${config.id as string}?redirect_uri=${DOMAIN}/`
+    return `${HOST}/app/main/auth/cookie/authorize/${config.id}?redirect_uri=${encodeURIComponent(
+      'http://8.142.115.204:9123'
+    )}/`
   }, [config.id])
 
   const handleToggleSecret = () => {
