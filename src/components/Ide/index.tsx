@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DoubleRightOutlined } from '@ant-design/icons'
 import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
-import type { EditorProps, OnMount } from '@swordjs/monaco-editor-react'
+import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-react'
 import { loader } from '@swordjs/monaco-editor-react'
 import { Button } from 'antd'
 import { debounce } from 'lodash'
@@ -10,6 +11,7 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 
 import {
   getHook,
+  getTypes,
   runHook,
   saveHookDepend,
   saveHookInput,
@@ -106,8 +108,6 @@ const IdeContainer: FC<Props> = props => {
   const [editor, setEditor] = useState<any>()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [monaco, setMonaco] = useState<any>()
-  // depend
-  const [depend, setDepend] = useState<Depend[]>([])
   // 运行结果
   const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
   const typingsRef = useRef<any>(null)
@@ -123,8 +123,6 @@ const IdeContainer: FC<Props> = props => {
     type: 'passive',
     status: null
   })
-  // 保存上一次的脚本内容
-  const [lastScript, setLastScript] = useState<string>()
 
   // 获取hook信息
   useEffect(() => {
@@ -157,23 +155,6 @@ const IdeContainer: FC<Props> = props => {
     }
   }, [editor, monaco])
 
-  // 内置本地声明文件
-  useEffect(() => {
-    if (editor && monaco) {
-      // const libSource = [
-      //   'declare class Facts {',
-      //   '    /**',
-      //   '     * Returns the next fact',
-      //   '     */',
-      //   '    static next():string',
-      //   '}'
-      // ].join('\n');
-      // const libUri = 'ts:filename/facts.d.ts';
-      // monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
-      // monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
-    }
-  }, [editor, monaco])
-
   useEffect(() => {
     if (editor && monaco) {
       // depend数组转换为对象
@@ -196,12 +177,25 @@ const IdeContainer: FC<Props> = props => {
     }
   }, [editor, monaco, hookInfo?.depend])
 
-  useEffect(() => {
-    if (hookInfo?.script) {
-      // 将lastScript设置为当前的脚本内容
-      setLastScript(hookInfo?.script)
-    }
-  }, [hookInfo?.script])
+  const handleEditorBeforeMount: BeforeMount = monaco => {
+    void getTypes<Record<string, string>>().then(res => {
+      // 循环types
+      Object.keys(res).forEach(key => {
+        const libUri = `inmemory://model${key.replace(/^\./, '')}`
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
+      })
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(
+        'export declare function add(a: number, b: number): number',
+        'inmemory://model/index.d.ts'
+      )
+
+      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: false,
+        noSyntaxValidation: false
+      })
+    })
+  }
 
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
@@ -242,7 +236,12 @@ const IdeContainer: FC<Props> = props => {
     // 保存依赖
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await saveHookDepend(props.hookPath, dependList)
-    setDepend(dependList)
+    if (hookInfo) {
+      setHookInfo({
+        ...hookInfo,
+        depend: dependList
+      })
+    }
   }
 
   // dependchange回调
@@ -262,28 +261,25 @@ const IdeContainer: FC<Props> = props => {
 
   // 代码改变回调
   const codeChange = (value?: string) => {
+    if (hookInfo?.script === value) return
     if (hookInfo) {
       setHookInfo({
         ...hookInfo,
         script: value ?? ''
       })
     }
-    // 和上一次的脚本内容进行比对
-    if (lastScript !== value) {
-      if (
-        ![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(
-          savePayload.status ?? AutoSaveStatus.LOADED
-        )
-      ) {
-        setPayload({
-          type: 'passive',
-          status: AutoSaveStatus.EDIT
-        })
-        saveTimer.current = setTimeout(() => {
-          handleSave('passive')
-        }, SAVE_DELAY)
-      }
-      setLastScript(value)
+    if (
+      ![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(
+        savePayload.status ?? AutoSaveStatus.LOADED
+      )
+    ) {
+      setPayload({
+        type: 'passive',
+        status: AutoSaveStatus.EDIT
+      })
+      saveTimer.current = setTimeout(() => {
+        handleSave('passive')
+      }, SAVE_DELAY)
     }
   }
 
@@ -297,8 +293,8 @@ const IdeContainer: FC<Props> = props => {
     // 保存input内容
     void (await saveHookInput(props.hookPath, json))
     const result = await runHook<RunHookResponse>(props.hookPath, {
-      depend,
-      script: lastScript ?? '',
+      depend: hookInfo?.depend ?? [],
+      script: hookInfo?.script ?? '',
       scriptType: 'typescript',
       input: json
     })
@@ -372,6 +368,7 @@ const IdeContainer: FC<Props> = props => {
                     codeChange(value)
                     props.onChange?.()
                   },
+                  onBeforeMount: handleEditorBeforeMount,
                   onMount: handleEditorMount,
                   onClickExpandAction: () => {
                     setExpandAction(!expandAction)

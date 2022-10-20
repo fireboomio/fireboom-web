@@ -1,4 +1,4 @@
-import { Card, Col, DatePicker, Divider, Image, Row, Tooltip } from 'antd'
+import { Card, Col, DatePicker, Image, Row, Tooltip } from 'antd'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import moment from 'moment'
@@ -159,7 +159,6 @@ export default function AuthOutLine() {
 
   return (
     <div className={styles.container}>
-      <Divider style={{ margin: '10px 0 24px' }} />
       <div>
         <Row gutter={28}>
           <Col span={8}>

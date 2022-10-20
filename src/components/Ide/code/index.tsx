@@ -12,6 +12,7 @@ interface Props {
   expandAction: boolean
   fullScreen: boolean
   editorOptions: EditorProps['options']
+  onBeforeMount: EditorProps['beforeMount']
   onMount: EditorProps['onMount']
   onChange?: (value?: string) => void
   onClickExpandAction: () => void
@@ -36,6 +37,7 @@ const IdeCodeContainer: FC<Props> = props => {
         options={{
           ...props.editorOptions
         }}
+        beforeMount={props.onBeforeMount}
         onMount={props.onMount}
         keepCurrentModel={true}
         className={`mt-4 ${styles.monaco}`}

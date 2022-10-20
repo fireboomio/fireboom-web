@@ -1,4 +1,4 @@
-import { Dropdown, Image, Input, Menu, Popconfirm } from 'antd'
+import { Dropdown, Image, Input, Menu, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -29,7 +29,7 @@ interface PanelConfig {
     name: string
     menuPath: (id: number) => string
   }>
-  navAction?: Array<{ icon: string; path: string }>
+  navAction?: Array<{ icon: string; path: string; tooltip: string }>
 }
 
 const panelMap: Record<string, PanelConfig> = {
@@ -98,7 +98,13 @@ const panelMap: Record<string, PanelConfig> = {
     title: '身份验证',
     openItem: id => `/workbench/auth/${id}`,
     newItem: '/workbench/auth/new',
-    navAction: [{ icon: '/assets/workbench/panel-role.png', path: '/workbench/auth/role' }],
+    navAction: [
+      {
+        icon: '/assets/workbench/panel-role.png',
+        path: '/workbench/auth/role',
+        tooltip: '权限管理'
+      }
+    ],
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
@@ -255,9 +261,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       action={
         <>
           {panelConfig.navAction?.map(item => (
-            <div className="flex mr-1.5" key={item.path} onClick={() => navigate(item.path)}>
-              <img width={19} height={19} src={item.icon} alt="头像" />
-            </div>
+            <Tooltip title={item.tooltip}>
+              <div className="flex mr-1.5" key={item.path} onClick={() => navigate(item.path)}>
+                <img width={19} height={19} src={item.icon} alt="头像" />
+              </div>{' '}
+            </Tooltip>
           ))}
         </>
       }

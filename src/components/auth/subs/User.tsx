@@ -3,18 +3,15 @@ import { Badge, Button, Divider, Form, Input, Modal, Popconfirm, Switch, Table, 
 import type { ColumnsType } from 'antd/es/table'
 import type React from 'react'
 import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
+import type { OAuthResp, User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
-
-interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
-}
 
 const { Search } = Input
 
@@ -52,7 +49,8 @@ const tabItems = [
   }
 ]
 
-export default function AuthUser({ handleTopToggleDesigner }: Props) {
+export default function AuthUser() {
+  const navigate = useNavigate()
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
   const [userData, setUserData] = useImmer<User[]>([])
@@ -191,8 +189,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     //   pathname: '/auth/user-manage/[id]',
     //   query: { id: 1 },
     // })
-    setAuthUserCurr(rcd)
-    handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
+    navigate(`/auth/userDetail/${rcd.id}`)
   }
 
   return (

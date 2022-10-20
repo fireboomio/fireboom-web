@@ -56,6 +56,7 @@ export interface User {
   metaData: Record<string, string | number | boolean>
   mobile: string
   name: string
+  postalCode: string
   nickName: string
   status: UNLOCK | LOCK
   lastLoginTime: string

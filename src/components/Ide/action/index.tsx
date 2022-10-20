@@ -36,20 +36,18 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   const onClickDebug = async () => {
     if (!loading) {
       // 获取脚本内容, 查看是否是json格式
+      let parseCode
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         const code: string = editorRef.current.getValue().replace(/\s/g, '')
-        const parseCode = JSON.parse(code) as Record<string, any>
-        if (typeof parseCode === 'object') {
-          setLoading(true)
-          await props.onClickDebug(parseCode)
-          setLoading(false)
-        }
+        parseCode = JSON.parse(code) as Record<string, any>
+      } catch (error) {
+        // 不是json格式
+        void message.warning('脚本内容不是json格式')
         return
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
-      // 不是json格式
-      void message.warning('脚本内容不是json格式')
+      }
+      setLoading(true)
+      await props.onClickDebug(parseCode ?? {})
       setLoading(false)
     }
   }
