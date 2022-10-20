@@ -71,7 +71,8 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
           handleClickEntity,
           handleChangeSource,
           setShowType,
-          dataSources
+          dataSources,
+          showType
         }
       }}
     >

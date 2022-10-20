@@ -1,13 +1,16 @@
 import { Col, Empty, Row } from 'antd'
-import { useReducer } from 'react'
+import { useContext, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import type { DBSourceResp, ModelingShowTypeT } from '@/interfaces/modeling'
+import type { DBSourceResp } from '@/interfaces/modeling'
 import { fetchDBSources } from '@/lib/clients/fireBoomAPIOperator'
 import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
-import { emptyPrismaSchemaContextState } from '@/lib/context/prismaSchemaContext'
+import {
+  emptyPrismaSchemaContextState,
+  PrismaSchemaContext
+} from '@/lib/context/prismaSchemaContext'
 import modelingReducer from '@/lib/reducers/modelingReducers'
 
 import DesignerContainer from './components/designer'
@@ -16,8 +19,11 @@ import PreviewContainer from './components/preview'
 
 const Modeling = () => {
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
-  const [showType, setShowType] = useImmer<ModelingShowTypeT>('preview')
   const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
+
+  const {
+    panel: { showType, setShowType }
+  } = useContext(PrismaSchemaContext)
 
   const { data: _, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
 
