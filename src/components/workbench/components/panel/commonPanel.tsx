@@ -121,7 +121,7 @@ const panelMap: Record<string, PanelConfig> = {
             _row: { name: '' },
             id: 0,
             tip: '前往>',
-            openInNewPage: '/auth/user-manage'
+            openInNewPage: '/auth/userManage'
           })
           dispatch({
             type: 'fetched',

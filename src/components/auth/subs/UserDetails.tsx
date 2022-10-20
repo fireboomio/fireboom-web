@@ -2,7 +2,7 @@ import Editor, { loader } from '@monaco-editor/react'
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
@@ -29,6 +29,7 @@ export default function AuthUserDetails() {
   const [authUserCurr, setAuthUserCurr] = useState<User>()
   const [refreshFlag, setRefreshFlag] = useImmer(false)
   const { id } = useParams()
+  const navigate = useNavigate()
 
   const onFinish = (values: User) => {
     void requests.put(`/oauth/${id}`, { ...values })
@@ -40,6 +41,7 @@ export default function AuthUserDetails() {
   useEffect(() => {
     void getFetcher<RoleProvResp[]>(`/oauth/role/${id}`).then(x => setRoleData(x))
     void getFetcher<User>(`/oauth/${id}`).then(x => {
+      // console.log(JSON.stringify())
       x.birthday = ''
       setAuthUserCurr(x)
     })
@@ -95,7 +97,7 @@ export default function AuthUserDetails() {
         >
           <Row>
             <Col span={8}>
-              <Form.Item label="用户名" name="name">
+              <Form.Item label="用户名" name="userName">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -156,8 +158,8 @@ export default function AuthUserDetails() {
             <Col span={24} style={{ textAlign: 'center' }}>
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
-                  <span className="text-sm text-gray" onClick={() => form.resetFields()}>
-                    重置
+                  <span className="text-sm text-gray" onClick={() => navigate(-1)}>
+                    返回
                   </span>
                 </Button>
                 <Button className={`${styles['save-btn']} ml-4`} htmlType="submit">

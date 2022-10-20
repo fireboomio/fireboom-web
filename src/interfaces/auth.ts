@@ -46,8 +46,8 @@ export interface HookResp {
 
 export type HookName = 'postAuthentication' | 'mutatingPostAuthenti'
 
-type UNLOCK = true
-type LOCK = false
+type UNLOCK = 1
+type LOCK = 0
 
 export interface User {
   id: string
@@ -68,6 +68,6 @@ export interface User {
 export interface OAuthResp {
   currPage: number
   pageSize: number
-  totalPage: number
+  totalSize: number
   userList: User[]
 }
