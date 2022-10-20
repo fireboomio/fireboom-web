@@ -1,6 +1,7 @@
 import { Layout as ALayout, Modal } from 'antd'
 import type { PropsWithChildren } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 // import {wi} from 'react-router-dom'
@@ -13,6 +14,7 @@ import { DOMAIN } from '@/lib/common'
 import type { MenuName, RefreshMap } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
 import Header from './components/header'
 import Sider from './components/sider'
@@ -99,55 +101,63 @@ export default function Index(props: PropsWithChildren) {
     })
   }, [editFlag])
 
-  return (
-    <WorkbenchContext.Provider
-      value={{
-        refreshMap,
-        onRefreshMenu: handleRefreshMenu,
-        editFlag,
-        markEdit,
-        navCheck,
-        setFullscreen: setHideSider,
-        isFullscreen: hideSider
-        // treeNode: []
-      }}
-    >
-      <ALayout className="h-100vh">
-        <AHeader className={styles.header}>
-          <Header onToggleSider={() => setHideSider(!hideSider)} />
-        </AHeader>
-        <ALayout>
-          <ASider
-            width={230}
-            style={{ marginLeft: hideSider ? -230 : 0 }}
-            theme="light"
-            className={styles.sider}
-          >
-            <Sider />
-          </ASider>
-          <ALayout className="relative">
-            <AContent className="bg-[#FBFBFB]">{props.children}</AContent>
-            {showWindow ? (
-              <Window
-                style={{ left: 0, right: 0, bottom: 0 }}
-                toggleWindow={() => setShowWindow(!showWindow)}
-              />
-            ) : (
-              <></>
-            )}
-          </ALayout>
+  const body = (
+    <ALayout className="h-100vh">
+      <AHeader className={styles.header}>
+        <Header onToggleSider={() => setHideSider(!hideSider)} />
+      </AHeader>
+      <ALayout>
+        <ASider
+          width={230}
+          style={{ marginLeft: hideSider ? -230 : 0 }}
+          theme="light"
+          className={styles.sider}
+        >
+          <Sider />
+        </ASider>
+        <ALayout className="relative">
+          <AContent className="bg-[#FBFBFB]">{props.children}</AContent>
+          {showWindow ? (
+            <Window
+              style={{ left: 0, right: 0, bottom: 0 }}
+              toggleWindow={() => setShowWindow(!showWindow)}
+            />
+          ) : (
+            <></>
+          )}
         </ALayout>
-        <AFooter className={styles.footer}>
-          <StatusBar
-            version={version}
-            env={env}
-            errorInfo={info?.errorInfo}
-            engineStatus={info?.engineStatus}
-            hookStatus={info?.hookStatus}
-            toggleWindow={() => setShowWindow(!showWindow)}
-          />
-        </AFooter>
       </ALayout>
-    </WorkbenchContext.Provider>
+      <AFooter className={styles.footer}>
+        <StatusBar
+          version={version}
+          env={env}
+          errorInfo={info?.errorInfo}
+          engineStatus={info?.engineStatus}
+          hookStatus={info?.hookStatus}
+          toggleWindow={() => setShowWindow(!showWindow)}
+        />
+      </AFooter>
+    </ALayout>
   )
+  const location = useLocation()
+  if (location.pathname.startsWith('/workbench/modeling/')) {
+    return <ModelingWrapper>{body}</ModelingWrapper>
+  } else {
+    return (
+      <WorkbenchContext.Provider
+        value={{
+          refreshMap,
+          onRefreshMenu: handleRefreshMenu,
+          editFlag,
+          markEdit,
+          navCheck,
+          setFullscreen: setHideSider,
+          isFullscreen: hideSider
+          // treeNode: []
+        }}
+      >
+        {body}
+      </WorkbenchContext.Provider>
+    )
+  }
 }

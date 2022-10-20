@@ -7,10 +7,7 @@ import { useImmer } from 'use-immer'
 import type { DBSourceResp, ModelingShowTypeT } from '@/interfaces/modeling'
 import { fetchDBSources } from '@/lib/clients/fireBoomAPIOperator'
 import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
-import {
-  emptyPrismaSchemaContextState,
-  PrismaSchemaContext
-} from '@/lib/context/prismaSchemaContext'
+import { emptyPrismaSchemaContextState } from '@/lib/context/prismaSchemaContext'
 import modelingReducer from '@/lib/reducers/modelingReducers'
 
 import DesignerContainer from './components/designer'
@@ -59,9 +56,8 @@ const Modeling = () => {
         <title>FireBoom - 数据建模</title>
       </Helmet>
 
-      <PrismaSchemaContext.Provider value={{ state, dispatch }}>
-        <Row className="h-screen">
-          {/* <Col span={5} className={styles['col-left']}>
+      <Row className="h-screen">
+        {/* <Col span={5} className={styles['col-left']}>
             <ModelPannel
               setShowType={setShowType}
               changeToER={() => setShowType('erDiagram')}
@@ -73,44 +69,43 @@ const Modeling = () => {
               onToggleDesigner={handleToggleDesigner}
             />
           </Col> */}
-          <Col span={24}>
-            {showType === 'preview' && <PreviewContainer />}
-            {showType === 'editModel' && (
-              <DesignerContainer
-                editType={'edit'}
-                type={'model'}
-                setShowType={setShowType}
-                showType={showType}
-              />
-            )}
-            {showType === 'editEnum' && (
-              <DesignerContainer
-                editType={'edit'}
-                type={'enum'}
-                setShowType={setShowType}
-                showType={showType}
-              />
-            )}
-            {showType === 'newModel' && (
-              <DesignerContainer
-                editType={'add'}
-                type={'model'}
-                setShowType={setShowType}
-                showType={showType}
-              />
-            )}
-            {showType === 'newEnum' && (
-              <DesignerContainer
-                editType={'add'}
-                type={'enum'}
-                setShowType={setShowType}
-                showType={showType}
-              />
-            )}
-            {showType === 'erDiagram' && <ErDiagram />}
-          </Col>
-        </Row>
-      </PrismaSchemaContext.Provider>
+        <Col span={24}>
+          {showType === 'preview' && <PreviewContainer />}
+          {showType === 'editModel' && (
+            <DesignerContainer
+              editType={'edit'}
+              type={'model'}
+              setShowType={setShowType}
+              showType={showType}
+            />
+          )}
+          {showType === 'editEnum' && (
+            <DesignerContainer
+              editType={'edit'}
+              type={'enum'}
+              setShowType={setShowType}
+              showType={showType}
+            />
+          )}
+          {showType === 'newModel' && (
+            <DesignerContainer
+              editType={'add'}
+              type={'model'}
+              setShowType={setShowType}
+              showType={showType}
+            />
+          )}
+          {showType === 'newEnum' && (
+            <DesignerContainer
+              editType={'add'}
+              type={'enum'}
+              setShowType={setShowType}
+              showType={showType}
+            />
+          )}
+          {showType === 'erDiagram' && <ErDiagram />}
+        </Col>
+      </Row>
     </>
   )
 }

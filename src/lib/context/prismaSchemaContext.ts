@@ -41,6 +41,7 @@ export const emptyPrismaSchemaContextState: PrismaSchemaContextContainer = {
 
 export type PrismaSchemaContextContainer = BasicContextContainer & {
   state: PrismaSchemaContextState
+  panel: any
 }
 
 export const PrismaSchemaContext = createContext<PrismaSchemaContextContainer>(
