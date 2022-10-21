@@ -20,6 +20,7 @@ import requests from '@/lib/fetchers'
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
 import { parseSchemaAST } from './components/GraphiQL/utils'
+import type { APIDesc } from './hooks'
 import { APIContext, useAPIManager } from './hooks'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import styles from './index.module.less'
@@ -107,15 +108,15 @@ export function APIEditorContainer({ id }: { id: string | undefined }) {
 }
 
 export default function APIEditorProvider() {
-  const [apiDesc, setAPIDesc] = useState()
+  const [apiDesc, setAPIDesc] = useState<APIDesc>()
   const params = useParams()
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
+  const [saved, setSaved] = useState(true)
 
   const fetcher = useCallback(
     async (rec: Record<string, unknown>) => {
       try {
-        // const res = await fetch('https://graphql-weather-api.herokuapp.com/', {
         const res = await fetch('/app/main/graphql', {
           method: 'POST',
           headers: {
@@ -124,7 +125,6 @@ export default function APIEditorProvider() {
           },
           body: JSON.stringify(rec)
         }).then(resp => resp.json())
-        setSchema(buildClientSchema(res.data as IntrospectionQuery))
         return res
       } catch (error) {
         console.error(error)
@@ -142,15 +142,54 @@ export default function APIEditorProvider() {
     }
   }, [query])
 
-  useEffect(() => {
-    void requests.get(`/operateApi/${params.id}`).then(resp => {
-      // @ts-ignore
-      setAPIDesc(resp)
-      // @ts-ignore
-      setQuery(resp.content)
+  const updateAPI = (newAPI: Partial<APIDesc>) => {
+    return requests.put(`/operateApi/${params.id}`, newAPI).then(resp => {
+      if (resp) {
+        // @ts-ignore
+        setAPIDesc({ ...(apiDesc ?? {}), ...newAPI })
+      }
     })
-    fetcher({ query: getIntrospectionQuery() })
-  }, [fetcher, params.id])
+  }
+
+  const updateContent = (content: string) => {
+    return requests.put(`/operateApi/content/${params.id}`, { content }).then(resp => {
+      if (resp) {
+        setQuery(content ?? '')
+        // @ts-ignore
+        setAPIDesc({ ...(apiDesc ?? {}), content })
+        setSaved(true)
+      }
+    })
+  }
+
+  const refreshAPI = useCallback(async () => {
+    const [api, setting] = await Promise.all([
+      requests.get(`/operateApi/${params.id}`),
+      requests.get(`/operateApi/setting/${params.id}`, { params: { settingType: 1 } })
+    ])
+    // @ts-ignore
+    setAPIDesc({ ...api, setting })
+    // @ts-ignore
+    setQuery(api.content)
+  }, [params.id])
+
+  useEffect(() => {
+    refreshAPI()
+    // 获取 graphql 集合
+    fetch('/app/main/graphql', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query: getIntrospectionQuery() })
+    })
+      .then(resp => resp.json())
+      .then(res => {
+        setSchema(buildClientSchema(res.data as IntrospectionQuery))
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <APIContext.Provider
@@ -160,7 +199,12 @@ export default function APIEditorProvider() {
         setQuery,
         schema,
         fetcher,
-        schemaAST
+        schemaAST,
+        updateAPI,
+        updateContent,
+        refreshAPI,
+        saved,
+        setSaved
       }}
     >
       <APIEditorContainer id={params.id} />

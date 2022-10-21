@@ -7,20 +7,32 @@
   box-shadow: 0 2px 4px 0 rgb(204 192 195 / 46%);
 }
 
-.enable {
+.enableBtn {
   @apply h-6 ml-3;
 
   width: 68px;
+  background: linear-gradient(118deg, #e2e2e2 0%, #a6a6a6 100%);
+}
+
+.enableBtnEnabled {
   background: linear-gradient(90deg, #40cd88 0%, #58e9a1 100%);
-  box-shadow: 0 2px 4px 0 #d7fdea;
+      box-shadow: 0 2px 4px 0 #d7fdea;
 }
 
 .saveIcon {
-  @apply mr-1;
+  @apply cursor-pointer mr-1;
   filter: drop-shadow(0px 1px 3px #FF4B4C);
 }
 
 .nameInput {
+  @apply border-primary;
+  padding-left: 0;
+  padding-right: 4px;
   background: none !important;
-  border: none !important;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  line-height: 1;
+  width: 100px;
+  box-shadow: none !important;
 }

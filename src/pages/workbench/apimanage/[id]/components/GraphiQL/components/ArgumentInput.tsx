@@ -1,8 +1,8 @@
-import { Input, InputNumber } from 'antd'
+import { Checkbox, Input, InputNumber } from 'antd'
 
 import type { ParameterT } from '@/interfaces/apimanage'
 
-export type InputValueType = string | number | object
+export type InputValueType = string | number | boolean | object
 
 interface ArgumentInputProps {
   argument: ParameterT
@@ -24,7 +24,16 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
           onChange={e => onChange?.(e.target.value)}
         />
       )
-
+    case 'Boolean':
+      return (
+        <Checkbox
+          className="text-xs"
+          checked={value as boolean}
+          onChange={e => {
+            onChange?.(e.target.checked)
+          }}
+        />
+      )
     default:
       return (
         <Input.TextArea
