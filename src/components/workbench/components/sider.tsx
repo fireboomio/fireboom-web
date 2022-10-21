@@ -17,10 +17,9 @@ export default function Header() {
     setTab(tab)
   }, [location.pathname])
   const { panel } = useContext(PrismaSchemaContext)
-  const ctx = useContext(PrismaSchemaContext)
+  // const ctx = useContext(PrismaSchemaContext)
   const { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources } =
     panel || {}
-  console.log('====', tab, ctx)
 
   return (
     <div className="flex flex-col h-full">
