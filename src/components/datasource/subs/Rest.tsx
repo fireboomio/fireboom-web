@@ -252,7 +252,12 @@ export default function Rest({ content, type }: Props) {
         onCancel={() => setVisible(false)}
         width={920}
       >
-        <FileList basePath={BASEPATH} setUploadPath={setUploadPath} setVisible={setVisible} />
+        <FileList
+          basePath={BASEPATH}
+          setUploadPath={setUploadPath}
+          setVisible={setVisible}
+          upType={1}
+        />
       </Modal>
 
       {type === 'detail' ? (

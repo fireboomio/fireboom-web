@@ -30,9 +30,10 @@ interface Props {
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
   basePath: string
+  upType: number
 }
 
-export default function FileList({ setUploadPath, setVisible, basePath }: Props) {
+export default function FileList({ setUploadPath, setVisible, basePath, upType }: Props) {
   const [data, setData] = useState<TableType[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
 
@@ -40,8 +41,11 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
     name: 'file',
     action: '/api/v1/file/uploadFile',
     fileList: [],
-    data: { type: 1 },
+    data: { type: upType },
     onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList)
+      }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} 上传成功`)
         setRefreshFlag(!refreshFlag)
@@ -52,12 +56,17 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
   }
 
   useEffect(() => {
-    void requests.get<unknown, { path: string; files: TableType[] }>('/file/1').then(x => {
+    void requests.get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`).then(x => {
       setData(
         x.files.map(f => ({
           ...f,
           icon: (
             <IconFont
+              onClick={e => {
+                e.stopPropagation()
+                rmFile(f.name)
+                setRefreshFlag(!refreshFlag)
+              }}
               type="icon-shanchu"
               className="cursor-pointer"
               style={{ fontSize: '16px', color: '#f6595b' }}
@@ -67,6 +76,12 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
       )
     })
   }, [refreshFlag])
+
+  function rmFile(fname: string) {
+    void requests
+      .delete('/file/removeFile', { data: { name: fname, type: `${upType}` } })
+      .then(x => console.log(x))
+  }
 
   return (
     <>
