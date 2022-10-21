@@ -205,37 +205,6 @@ export default function Rest({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { filePath: uploadPath, ...values }
-    // const index = (config.filePath as string)?.lastIndexOf('/')
-
-    //如果进行上传文件操作
-    // if (file.uid) {
-    //   //如果存在已经上传文件 先删除先前文件
-    //   if (config.filePath) {
-    //     await requests({
-    //       method: 'post',
-    //       url: '/dataSource/removeFile',
-    //       data: { id: fileId }
-    //     })
-    //   }
-    //   newValues.filePath = (await requests({
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     },
-    //     method: 'post',
-    //     url: '/dataSource/import',
-    //     data: { file: file }
-    //   })) as unknown as string
-    // } else {
-    //   //如果删除文件则将config中的filePath置空
-    //   if (deleteFlag) {
-    //     await requests({
-    //       method: 'post',
-    //       url: '/dataSource/removeFile',
-    //       data: { id: fileId }
-    //     })
-    //     newValues.filePath = undefined
-    //   } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
-    // }
 
     //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
@@ -297,25 +266,7 @@ export default function Rest({ content, type }: Props) {
         onCancel={() => setVisible(false)}
         width={800}
       >
-        {/* <div className="h-125 overflow-auto"> */}
-        <div className="flex justify-between mb-3">
-          <Input
-            // size="small"
-            style={{ height: 26 }}
-            className="max-w-328px h-26px"
-            addonBefore={
-              <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
-            }
-            defaultValue={BASEPATH}
-          />
-          <div className="w-12 h-6 flex items-center justify-center cursor-pointer m-auto mr-3">
-            <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
-          </div>
-          <Input addonBefore={<SearchOutlined />} style={{ width: 228, height: 26 }} />
-        </div>
-
         <FileList basePath={BASEPATH} setUploadPath={setUploadPath} setVisible={setVisible} />
-        {/* </div> */}
       </Modal>
 
       {type === 'detail' ? (
