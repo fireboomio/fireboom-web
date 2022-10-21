@@ -198,14 +198,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         onEdit={props.onEditQuery}
         readOnly={props.readOnly}
       />
-      {/* editor必须，先给隐藏起来 */}
-      {/* <div className="h-100 w-100">
-        <ResponseEditor
-          editorTheme={props.editorTheme}
-          responseTooltip={props.responseTooltip}
-          keyMap={props.keyMap}
-        />
-      </div> */}
       <section className="graphiql-editor-tool">
         <ResponseWrapper>
           <GraphiInputAndResponse argumentList={argumentList} />

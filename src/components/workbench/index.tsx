@@ -50,7 +50,7 @@ export default function Index(props: PropsWithChildren) {
     })
   }, [])
   useEffect(() => {
-    void fetch(`${DOMAIN}/api/v1/wdg/state`).then(res => {
+    void fetch(`/api/v1/wdg/state`).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
 
