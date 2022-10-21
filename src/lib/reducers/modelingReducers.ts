@@ -17,7 +17,7 @@ import {
   UPDATE_PREVIEW_FILTERS_ACTION
 } from '@/lib/actions/PrismaSchemaActions'
 import { buildPrismaTableApolloClientByDataSourceId } from '@/lib/clients/PrismaTableApolloClient'
-import type { PrismaSchemaContextState } from '@/lib/context/prismaSchemaContext'
+import type { PrismaSchemaContextState } from '@/lib/context/PrismaSchemaContext'
 
 const getFirstEntityId = (blocks: Block[]) => {
   return (blocks.filter(p => ['model', 'enum'].includes(p.type)).at(0) as Entity)?.id ?? 0

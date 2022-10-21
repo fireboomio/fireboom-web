@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import type { Entity } from '@/interfaces/modeling'
-import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 
 type EntitiesContext = {
   entities: Entity[]

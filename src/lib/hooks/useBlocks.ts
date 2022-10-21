@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import type { Block } from '@/interfaces/modeling'
 import { updateBlocksAction } from '@/lib/actions/PrismaSchemaActions'
 import { migratePrismaSchema } from '@/lib/clients/fireBoomAPIOperator'
-import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 
 import { refetchPrismaSchema } from '../helpers/ModelingHelpers'

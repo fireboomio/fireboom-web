@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
 import { updatePreviewFiltersAction } from '@/lib/actions/PrismaSchemaActions'
-import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 
 type PreviewFiltersContext = {
   previewFilters: FilterState[]

@@ -13,9 +13,9 @@ import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
 import {
   emptyPrismaSchemaContextState,
   PrismaSchemaContext
-} from '@/lib/context/prismaSchemaContext'
+} from '@/lib/context/PrismaSchemaContext'
 import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers'
-import modelingReducer from '@/lib/reducers/modelingReducers'
+import modelingReducer from '@/lib/reducers/ModelingReducers'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)

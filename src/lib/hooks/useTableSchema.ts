@@ -4,7 +4,7 @@ import { useContext } from 'react'
 
 import { saveGqlSchemaAction } from '@/lib/actions/PrismaSchemaActions'
 import { fetchPrismaDMF } from '@/lib/clients/fireBoomAPIOperator'
-import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 
 interface TableSchemaType {
   schema: Schema

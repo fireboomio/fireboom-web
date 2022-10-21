@@ -10,8 +10,8 @@ import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
 import {
   emptyPrismaSchemaContextState,
   PrismaSchemaContext
-} from '@/lib/context/prismaSchemaContext'
-import modelingReducer from '@/lib/reducers/modelingReducers'
+} from '@/lib/context/PrismaSchemaContext'
+import modelingReducer from '@/lib/reducers/ModelingReducers'
 
 import DesignerContainer from './components/designer'
 import ErDiagram from './components/erdiagram'
