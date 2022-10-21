@@ -564,7 +564,8 @@ export default function Rest({ content, type }: Props) {
                 baseUrl: config.baseUrl,
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret || { kind: '0' }
+                secret: config.secret || { kind: '0' },
+                filePath: BASEPATH
               }}
             >
               <Form.Item
@@ -594,12 +595,7 @@ export default function Rest({ content, type }: Props) {
                     <FormToolTip title="Rest 端点" />
                   </>
                 }
-                rules={[
-                  {
-                    pattern: /^https?:\/\/[:.\w\d/]+$/g,
-                    message: '只允许输入链接'
-                  }
-                ]}
+                rules={[{ pattern: /^https?:\/\/[:.\w\d/]+$/g, message: '只允许输入链接' }]}
                 name="baseUrl"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -616,9 +612,9 @@ export default function Rest({ content, type }: Props) {
                 }
                 colon={false}
                 name="filePath"
-                valuePropName="fileList"
+                valuePropName="filePath"
                 style={{ marginBottom: '20px' }}
-                getValueFromEvent={normFile}
+                // getValueFromEvent={normFile}
               >
                 <Input
                   placeholder="请输入..."
