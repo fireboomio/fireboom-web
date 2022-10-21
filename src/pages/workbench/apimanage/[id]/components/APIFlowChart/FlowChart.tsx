@@ -16,7 +16,25 @@ import routerImg from './assets/router.png'
 import StatusDirective from './StatusDirective'
 
 interface FlowChartProps {
-  //
+  globalHookState: {
+    onRequest: boolean
+    onResponse: boolean
+  }
+  hookState: {
+    preResolve: boolean
+    mutatingPreResolve: boolean
+    customResolve: boolean
+    postResolve: boolean
+    mutatingPostResolve: boolean
+  }
+  directiveState: {
+    fromClaim: boolean
+    rbac: boolean
+    jsonSchema: boolean
+    injectGeneratedUUID: boolean
+    injectCurrentDatetime: boolean
+    injectEnvironmentVariable: boolean
+  }
 }
 
 const CANVAS_PADDING = 20

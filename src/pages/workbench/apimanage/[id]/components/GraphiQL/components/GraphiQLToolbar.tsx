@@ -4,10 +4,8 @@ import type {
   ConstDirectiveNode,
   DefinitionNode,
   DirectiveNode,
-  DocumentNode,
   FieldNode,
   OperationDefinitionNode,
-  SelectionNode,
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
