@@ -13,13 +13,12 @@ import SocialContactConnector from './SocialContactConnector'
 
 const { TabPane } = Tabs
 
-const Connector: React.FC<Props> = () => {
+const Connector: React.FC = () => {
   const res: SWRResponse<ConnectorType[], Error> = useFetchConnector()
   const { data } = res
   // const { connectorDispatch } = useContext(ConnectorContext)
   const SMSAndEmailData = data && data.filter(item => item.types === SMS || item.types === EMAIL)
   const SocialData = data && data.filter(item => item.types === SOCIAL)
-
   useEffect(() => {
     // connectorDispatch({ type: 'fetchConnector', payload: data || [] })
     // eslint-disable-next-line react-hooks/exhaustive-deps

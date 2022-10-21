@@ -3,12 +3,11 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions } from 'antd'
 import type { ReactNode } from 'react'
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { HOST } from '@/lib/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
@@ -21,12 +20,6 @@ export default function AuthMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   console.log('===', content)
   const config = content.config as unknown as Config
-
-  const sid = useMemo(() => {
-    return `${HOST}/app/main/auth/cookie/authorize/${config.id}?redirect_uri=${encodeURIComponent(
-      'http://8.142.115.204:9123'
-    )}/`
-  }, [config.id])
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
@@ -50,7 +43,7 @@ export default function AuthMainCheck({ content }: Props) {
       <div className="mt-8">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="供应商ID">
-            <a href={sid}>{config.id}</a>
+            <a href={config.pointer as string}>{config.id}</a>
           </Descriptions.Item>
           <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
           <Descriptions.Item label="App Secret">

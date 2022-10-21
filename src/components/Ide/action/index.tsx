@@ -80,8 +80,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
               loading={loading}
               icon={<BugOutlined />}
               type="primary"
-              style={{ boxShadow: '0px 5px 4px 0px rgba(255,209,209,0.3)', borderRadius: '5px' }}
-              danger
+              className={ideStyles['save-btn']}
             >
               调试
             </Button>

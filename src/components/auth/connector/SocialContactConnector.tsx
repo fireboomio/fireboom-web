@@ -109,8 +109,7 @@ const SocialContactConnector: React.FC<Props> = ({ data = [] }) => {
 
   const handleModelOk = () => {
     setIsModalVisible(false)
-    navigate('/auth/connectDetails')
-    const currentSelected = data.find(item => item.id === currentSelectedId)
+    navigate(`/auth/connectDetails/${currentSelectedId}`)
     // connectorDispatch({
     //   type: 'setCurrentConnector',
     //   payload: currentSelected
@@ -118,8 +117,7 @@ const SocialContactConnector: React.FC<Props> = ({ data = [] }) => {
   }
 
   const handleRowClick = (value: DataType) => () => {
-    navigate('/auth/connectDetails')
-    const currentSelected = data.find(item => item.id === value.key)
+    navigate(`/auth/connectDetails/${value.key}`)
     // connectorDispatch({
     //   type: 'setCurrentConnector',
     //   payload: currentSelected

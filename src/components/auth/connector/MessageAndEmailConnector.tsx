@@ -124,8 +124,7 @@ const MessageAndEmailConnector: React.FC<Props> = ({ data = [] }) => {
 
   const handleModelOk = () => {
     setIsModalVisible(false)
-    navigate('/auth/connectDetails')
-    const currentSelected = data.find(item => item.id === currentSelectedId)
+    navigate(`/auth/connectDetails/${currentSelectedId}`)
     // connectorDispatch({
     //   type: 'setCurrentConnector',
     //   payload: currentSelected || undefined
@@ -150,8 +149,7 @@ const MessageAndEmailConnector: React.FC<Props> = ({ data = [] }) => {
     if (!value) {
       return false
     }
-    navigate('/auth/connectDetails')
-    const currentSelected = data.find(item => item.id === value.id)
+    navigate(`/auth/connectDetails/${value.id}`)
     // connectorDispatch({
     //   type: 'setCurrentConnector',
     //   payload: currentSelected
