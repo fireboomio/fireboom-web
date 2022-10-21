@@ -231,25 +231,11 @@ export default function Rest({ content, type }: Props) {
     throw errorInfo
   }
 
-  //文件上传过程钩子
-  const normFile = (e: UploadProps) => {
-    if (Array.isArray(e)) {
-      return e
-    }
-    return e?.fileList
-  }
-
   //单选框改变，表单变化回调
   const onChangeRadio = (e: RadioChangeEvent) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     setValue(e.target.value)
     setIsRadioShow(!isRadioShow)
-  }
-
-  //文件移除回调
-  const onRemoveFile = () => {
-    setDeleteFlag(true)
-    setFile({} as unknown as UploadFile)
   }
 
   const { TabPane } = Tabs
@@ -264,7 +250,7 @@ export default function Rest({ content, type }: Props) {
         open={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
-        width={800}
+        width={920}
       >
         <FileList basePath={BASEPATH} setUploadPath={setUploadPath} setVisible={setVisible} />
       </Modal>

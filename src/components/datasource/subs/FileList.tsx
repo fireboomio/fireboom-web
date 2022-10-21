@@ -4,7 +4,10 @@ import { Image, Input, message, Table, Upload } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 
+import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
+
+import styles from './FileList.module.less'
 
 interface TableType {
   name: string
@@ -16,11 +19,11 @@ interface TableType {
 
 const columns: ColumnsType<TableType> = [
   { title: '文件名', dataIndex: 'name', key: 'name' },
-  { title: '大小', dataIndex: 'size', key: 'size' },
-  { title: '修改时间', dataIndex: 'modifyTime', key: 'address' },
-  { title: '权限', dataIndex: 'permission', key: 'permission' },
-  { title: '所有者', dataIndex: 'owner', key: 'owner' },
-  { title: '', dataIndex: '', key: '' }
+  { title: '大小', dataIndex: 'size', key: 'size', width: 100 },
+  { title: '修改时间', dataIndex: 'modifyTime', key: 'modifyTime', width: 180 },
+  { title: '权限', dataIndex: 'permission', key: 'permission', width: 80 },
+  { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
+  { title: '', dataIndex: 'icon', key: 'icon', width: 50 }
 ]
 
 interface Props {
@@ -39,9 +42,6 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
     fileList: [],
     data: { type: 1 },
     onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
-      }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} 上传成功`)
         setRefreshFlag(!refreshFlag)
@@ -53,8 +53,18 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
 
   useEffect(() => {
     void requests.get<unknown, { path: string; files: TableType[] }>('/file/1').then(x => {
-      // setPath(x.path)
-      setData(x.files)
+      setData(
+        x.files.map(f => ({
+          ...f,
+          icon: (
+            <IconFont
+              type="icon-shanchu"
+              className="cursor-pointer"
+              style={{ fontSize: '16px', color: '#f6595b' }}
+            />
+          )
+        }))
+      )
     })
   }, [refreshFlag])
 
@@ -80,6 +90,7 @@ export default function FileList({ setUploadPath, setVisible, basePath }: Props)
       </div>
 
       <Table
+        className={styles.table}
         columns={columns}
         dataSource={data}
         pagination={false}

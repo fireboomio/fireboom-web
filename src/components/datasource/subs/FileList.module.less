@@ -1,0 +1,14 @@
+.table :global {
+  .ant-table-row {
+    .ant-table-cell:last-child * {
+      opacity: 0;
+      visibility: hidden;
+    }
+    &:hover {
+      .ant-table-cell:last-child * {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+}
