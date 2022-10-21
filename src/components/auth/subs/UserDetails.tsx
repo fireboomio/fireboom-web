@@ -1,12 +1,12 @@
 import Editor, { loader } from '@monaco-editor/react'
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useContext, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
 import type { User } from '@/interfaces/auth'
-import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
@@ -26,17 +26,30 @@ export default function AuthUserDetails() {
   const [form] = Form.useForm()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer<RoleProvResp[]>([])
-  const { authUserCurr, setAuthUserCurr } = useContext(AuthUserCurrContext)
+  const [authUserCurr, setAuthUserCurr] = useState<User>()
   const [refreshFlag, setRefreshFlag] = useImmer(false)
+  const { id } = useParams()
+  const navigate = useNavigate()
 
   const onFinish = (values: User) => {
-    void requests.put(`/oauth/${authUserCurr.id}`, { values })
+    void requests.put(`/oauth/${id}`, { ...values })
+  }
+  const onAddRole = ({ code: string }) => {
+    // console.log(values)
   }
 
   useEffect(() => {
-    void getFetcher<RoleProvResp[]>(`/oauth/${authUserCurr.id}`).then(x => setRoleData(x))
+    void getFetcher<RoleProvResp[]>(`/oauth/role/${id}`).then(x => setRoleData(x))
+    void getFetcher<User>(`/oauth/${id}`).then(x => {
+      // console.log(JSON.stringify())
+      x.birthday = ''
+      setAuthUserCurr(x)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUserCurr.id, refreshFlag])
+  }, [id, refreshFlag])
+  if (!authUserCurr) {
+    return <div />
+  }
 
   const columns: ColumnsType<RoleProvResp> = [
     { title: '角色', dataIndex: 'code', key: 'code' },
@@ -84,7 +97,7 @@ export default function AuthUserDetails() {
         >
           <Row>
             <Col span={8}>
-              <Form.Item label="用户名" name="name">
+              <Form.Item label="用户名" name="userName">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -94,18 +107,14 @@ export default function AuthUserDetails() {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="姓名"
-                name="metaData.realname"
-                initialValue={authUserCurr.metaData?.realname}
-              >
+              <Form.Item label="姓名" name="realname" initialValue={authUserCurr?.realname}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={8}>
-              <Form.Item label="性别" name="metaData.gender">
+              <Form.Item label="性别" name="gender">
                 <Select placeholder="请输入">
                   <Select.Option value="男">男</Select.Option>
                   <Select.Option value="女">女</Select.Option>
@@ -113,7 +122,7 @@ export default function AuthUserDetails() {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="生日" name="metaData.birthday">
+              <Form.Item label="生日" name="birthday">
                 {/* <Space direction="vertical"> */}
                 <DatePicker placeholder="请输入" />
                 {/* </Space> */}
@@ -135,16 +144,12 @@ export default function AuthUserDetails() {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="邮政编码"
-                name="metaData.postCode"
-                initialValue={authUserCurr.metaData?.postCode}
-              >
+              <Form.Item label="邮政编码" name="postCode" initialValue={authUserCurr?.postalCode}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="原系统ID" name="metaData.originID">
+              <Form.Item label="原系统ID" name="originID">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -153,8 +158,8 @@ export default function AuthUserDetails() {
             <Col span={24} style={{ textAlign: 'center' }}>
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Button className={`${styles['connect-check-btn-common']} w-15 ml-4`}>
-                  <span className="text-sm text-gray" onClick={() => form.resetFields()}>
-                    重置
+                  <span className="text-sm text-gray" onClick={() => navigate(-1)}>
+                    返回
                   </span>
                 </Button>
                 <Button className={`${styles['save-btn']} ml-4`} htmlType="submit">
@@ -218,7 +223,7 @@ export default function AuthUserDetails() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             onFinish={values => {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              void onFinish(values)
+              void onAddRole(values)
             }}
             autoComplete="off"
             labelAlign="left"

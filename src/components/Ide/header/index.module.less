@@ -1,25 +1,26 @@
-.ide-container-header :global{
-    background-color: #f9f9f9;
-    padding: 10px 13px;
-    .ide-container-header-left {
-        width: 24%;
-        @media (max-width: 1980px) {
-            width: 34%;
-        }
-        .title {
-            color: #222222;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .save {
-            font-size: 14px;
-            color: #adadad;
-        }
+.ide-container-header :global {
+  background-color: #f9f9f9;
+  padding: 10px 13px;
+  .ide-container-header-left {
+    width: 24%;
+    @media (max-width: 1980px) {
+      width: 34%;
     }
-    .ide-container-header-right {
-        .name {
-            color: #adadad;
-            font-size: 14px;
-        }
+    .title {
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
     }
+    .save {
+      font-size: 14px;
+      color: #adadad;
+      opacity: 0.6;
+    }
+  }
+  .ide-container-header-right {
+    .name {
+      color: rgba(95, 98, 105, 0.6);
+      font-size: 14px;
+    }
+  }
 }

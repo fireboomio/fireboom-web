@@ -1,4 +1,4 @@
-export const SMS = 'SMS'
+export const SMS = 'Sms'
 export const SOCIAL = 'Social'
 export const EMAIL = 'Email'
 

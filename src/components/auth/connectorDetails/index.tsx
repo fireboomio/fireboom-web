@@ -2,43 +2,60 @@ import { CopyOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import { Badge, Button, Image, Popover } from 'antd'
 import copy from 'copy-to-clipboard'
 import type React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import JSONInput from 'react-json-editor-ajrm'
 // @ts-ignore
 import locale from 'react-json-editor-ajrm/locale/zh-cn'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import type { AuthListType } from '@/interfaces/auth'
-import type { Connector as ConnectorType } from '@/interfaces/connector'
+import type { Connector, Connector as ConnectorType } from '@/interfaces/connector'
 import { ConnectorTitleEnum, ConnectorTypeEnum, SMS, SOCIAL } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context/auth-context'
-import { deleteConnector, upsertConnector } from '@/lib/service/connector'
+import requests from '@/lib/fetchers'
 
 import ConnectorModal from '../connector/ConnectorModal'
 import styles from './index.module.less'
 
-interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
-}
-
 interface JSONInputType {
-  plainText: string
   jsObject: object
 }
 
-const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
+const ConnectorDetails: React.FC = () => {
+  const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const {
-    connector: { currentConnector, connectors },
-    connectorDispatch
-  } = useContext(ConnectorContext)
-  const [json, setJson] = useState(currentConnector.config || {})
-  const [_plainText, setPlainText] = useState(currentConnector.configTemplate || {})
+  const { id } = useParams()
+  const [currentConnector, setCurrentConnector] = useState<Connector>()
+  const [connectors, setConnectors] = useState<Connector[]>()
+  const [json, setJson] = useState<Object>()
   const [currentSelectedId, setCurrentSelectedId] = useState('')
-  const modalData = connectors.filter(item => item.types === currentConnector.types)
-
   useEffect(() => {
-    setJson(currentConnector.config)
-  }, [currentConnector])
+    void requests.get<unknown, Connector[]>('/auth/linker').then(res => {
+      const connect = res.find(x => x.id === id)
+      if (connect) {
+        setCurrentSelectedId(id || '')
+        setCurrentConnector(connect)
+        setConnectors(res)
+        if (connect.enabled) {
+          // 已启用状态则优先使用现有config
+          setJson(connect.config || JSON.parse(connect.configTemplate))
+        } else {
+          // 未启用状态直接使用模板数据，以避免脏数据导致无法展示模板
+          setJson(JSON.parse(connect.configTemplate))
+        }
+      }
+    })
+  }, [id])
+  if (!currentConnector || !connectors) {
+    return <div />
+  }
+  const modalData = (connectors || []).filter(item => item.types === currentConnector.types)
+  // const {
+  //   connector: { currentConnector, connectors },
+  //   connectorDispatch
+  // } = useContext(ConnectorContext)
+
+  // useEffect(() => {
+  //   // setJson(currentConnector.config)
+  // }, [currentConnector])
 
   const onIdCopyHandle = (data: string) => () => {
     copy(data)
@@ -47,28 +64,22 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
 
   const onJSONChangeHandle = (e: JSONInputType) => {
     setJson(e.jsObject)
-    setPlainText(e.plainText)
   }
 
   const handleClick = async () => {
-    const res = await upsertConnector({
+    const res = await requests.post('/auth/linker', {
       id: currentConnector.id,
-      enable: true,
+      enabled: true,
       config: json
     })
     if (res) {
-      handleTopToggleDesigner({ name: '连接器', type: 'connect' })
+      navigate('/auth/connect')
     }
   }
 
   const handleModelOk = () => {
+    navigate(`/auth/connectDetails/${currentSelectedId}`)
     setIsModalVisible(false)
-    handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
-    const currentSelected = connectors.find(item => item.id === currentSelectedId)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected
-    })
   }
 
   const handleModelCancel = () => {
@@ -85,10 +96,12 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
     }
   }
   const handleDelete = async () => {
-    // FIXME:
-    const res: unknown = await deleteConnector(currentConnector.id, false)
+    const res = await requests.post('/auth/linker', {
+      id: currentConnector.id,
+      enabled: false
+    })
     if (res) {
-      handleTopToggleDesigner({ name: '连接器', type: 'connect' })
+      navigate('/auth/connect')
     }
   }
 
@@ -97,7 +110,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
   }
 
   const handleReturnConnector = () => {
-    handleTopToggleDesigner({ name: '连接器', type: 'connect' })
+    // handleTopToggleDesigner({ name: '连接器', type: 'connect' })
   }
 
   const moreContent = (
@@ -106,7 +119,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         <ReloadOutlined />
         更换{ConnectorTypeEnum[currentConnector.types]}
       </Button>
-      <Button type="text" onClick={void handleDelete}>
+      <Button type="text" onClick={handleDelete}>
         <DeleteOutlined />
         删除
       </Button>
@@ -149,7 +162,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         </div>
         <div className={styles.buttonGroup}>
           <Button>
-            <a target="_blank" href="http://www.baidu.com" rel="noreferrer">
+            <a target="_blank" rel="noreferrer">
               查看README
             </a>
           </Button>
@@ -190,7 +203,7 @@ const ConnectorDetails: React.FC<Props> = ({ handleTopToggleDesigner }) => {
             </div>
           </div>
         )}
-        <Button className={styles.saveButton} onClick={void handleClick}>
+        <Button className={styles.saveButton} onClick={() => handleClick()}>
           保存更改
         </Button>
       </div>

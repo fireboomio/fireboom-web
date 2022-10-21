@@ -1,12 +1,11 @@
 import type React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { SWRResponse } from 'swr'
 
 import RcTab from '@/components/rc-tab'
 import type { AuthListType } from '@/interfaces/auth'
 import type { Connector } from '@/interfaces/connector'
 import type { BrandType, Experience as ExperienceType, OtherType } from '@/interfaces/experience'
-import { ConnectorContext } from '@/lib/context/auth-context'
 import { getFetcher } from '@/lib/fetchers'
 import { useFetchConnector } from '@/lib/service/connector'
 import { useFetchExperience } from '@/lib/service/experience'
@@ -26,19 +25,19 @@ const tabs = [
   { title: '其他', key: '2' }
 ]
 
-const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
+const Experience: React.FC = () => {
   const experienceDataRes: SWRResponse<ExperienceType, Error> = useFetchExperience()
   const connectorsDataRes: SWRResponse<Connector[], Error> = useFetchConnector()
   const { data: experienceData } = experienceDataRes
   const { data: connectorsData } = connectorsDataRes
-  const { connectorDispatch } = useContext(ConnectorContext)
+  // const { connectorDispatch } = useContext(ConnectorContext)
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [brandData, setBrandData] = useState<BrandType>()
   const [otherData, setOtherData] = useState<OtherType>()
   const [refreshFlag, setRefreshFlag] = useState(false)
 
   useEffect(() => {
-    connectorDispatch({ type: 'fetchConnector', payload: connectorsData || [] })
+    // connectorDispatch({ type: 'fetchConnector', payload: connectorsData || [] })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectorsData])
 
@@ -91,11 +90,7 @@ const Experience: React.FC<Props> = ({ handleTopToggleDesigner }) => {
         ) : tabActiveKey === '1' ? (
           <>
             {experienceData && (
-              <ExperienceSetting
-                handleTopToggleDesigner={handleTopToggleDesigner}
-                data={experienceData}
-                connectorsData={connectorsData}
-              />
+              <ExperienceSetting data={experienceData} connectorsData={connectorsData} />
             )}
           </>
         ) : (

@@ -3,18 +3,15 @@ import { Badge, Button, Divider, Form, Input, Modal, Popconfirm, Switch, Table, 
 import type { ColumnsType } from 'antd/es/table'
 import type React from 'react'
 import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
-import type { AuthListType, OAuthResp, User } from '@/interfaces/auth'
+import type { OAuthResp, User } from '@/interfaces/auth'
 import { AuthUserCurrContext } from '@/lib/context/auth-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './subs.module.less'
-
-interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
-}
 
 const { Search } = Input
 
@@ -23,7 +20,11 @@ const tabItems = [
     label: '用户名',
     key: '1',
     children: (
-      <Form.Item label="用户名" name="name" rules={[{ required: true, message: '用户名不为空!' }]}>
+      <Form.Item
+        label="用户名"
+        name="userName"
+        rules={[{ required: true, message: '用户名不为空!' }]}
+      >
         <Input />
       </Form.Item>
     )
@@ -52,19 +53,22 @@ const tabItems = [
   }
 ]
 
-export default function AuthUser({ handleTopToggleDesigner }: Props) {
+export default function AuthUser() {
+  const navigate = useNavigate()
   const [form] = Form.useForm()
   const [userVisible, setUserVisible] = useImmer(false)
   const [userData, setUserData] = useImmer<User[]>([])
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [currPage, _setCurrPage] = useImmer(1)
+  const [total, setTotal] = useImmer(0)
   const [refreshFlag, setRefreshFlag] = useImmer(true)
   const { setAuthUserCurr } = useContext(AuthUserCurrContext)
 
   useEffect(() => {
-    void getFetcher<OAuthResp>('/oauth', { currPage: currPage }).then(res =>
+    void getFetcher<OAuthResp>('/oauth', { currPage: currPage, pageSize: 10 }).then(res => {
       setUserData(res.userList)
-    )
+      setTotal(res.totalSize)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshFlag])
 
@@ -80,7 +84,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
       title: '状态',
       key: 'status',
       render: (_, rcd) =>
-        !rcd.status ? (
+        rcd.status ? (
           <div>
             <Badge status="success" />
             正常
@@ -100,7 +104,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         userData.length >= 1 ? (
           <>
             <Popconfirm
-              title={!record.status ? '确定要锁定' : '确定要解锁'}
+              title={record.status ? '确定要锁定' : '确定要解锁'}
               okText="确定"
               cancelText="取消"
               onConfirm={e => {
@@ -111,7 +115,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
               // @ts-ignore
               onCancel={e => e.stopPropagation()}
             >
-              <a onClick={e => e.stopPropagation()}>{!record.status ? '锁定' : '解锁'}</a>
+              <a onClick={e => e.stopPropagation()}>{record.status ? '锁定' : '解锁'}</a>
             </Popconfirm>
 
             <Popconfirm
@@ -142,11 +146,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
   const toggleLock = (rcd: User | React.Key[]) => {
     if (Array.isArray(rcd)) {
       void requests
-        .put('/oauth/status', { ids: rcd, status: false })
+        .put('/oauth/status', { ids: rcd, status: 0 })
         .then(() => setRefreshFlag(!refreshFlag))
     } else {
       void requests
-        .put('/oauth/status', { ids: [rcd.id], status: !rcd.status })
+        .put('/oauth/status', { ids: [rcd.id], status: rcd.status ^ 1 })
         .then(() => setRefreshFlag(!refreshFlag))
     }
   }
@@ -160,19 +164,11 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
 
   const hasSelected = selectedRowKeys.length > 0
 
-  const paginationProps = {
-    showSizeChanger: false,
-    showQuickJumper: false,
-    pageSize: 10,
-    current: currPage,
-    onChange: (current: number) => changePage(current)
-  }
-
   function changePage(current: number) {
-    console.log(current)
     void getFetcher<OAuthResp>('/oauth', { currPage: current, pageSize: 10 }).then(res => {
-      console.log(res)
+      setTotal(res.totalSize)
       setUserData(res.userList)
+      _setCurrPage(res.currPage)
     })
   }
 
@@ -191,8 +187,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
     //   pathname: '/auth/user-manage/[id]',
     //   query: { id: 1 },
     // })
-    setAuthUserCurr(rcd)
-    handleTopToggleDesigner({ name: '用户详情', type: 'userDetails' })
+    navigate(`/auth/userDetail/${rcd.id}`)
   }
 
   return (
@@ -237,7 +232,7 @@ export default function AuthUser({ handleTopToggleDesigner }: Props) {
         onRow={rcd => ({
           onClick: () => handleRowClick(rcd)
         })}
-        pagination={paginationProps}
+        pagination={{ current: currPage, total, onChange: x => changePage(x) }}
       />
 
       {hasSelected ? (

@@ -1,15 +1,10 @@
-import {
-  CloudOutlined,
-  FullscreenExitOutlined,
-  FullscreenOutlined,
-  LoadingOutlined,
-  QuestionCircleOutlined,
-  SaveOutlined
-} from '@ant-design/icons'
+import { CloudOutlined, LoadingOutlined, SaveOutlined } from '@ant-design/icons'
 import { Button, Select, Switch } from 'antd'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
+import iconFullscreen from '../assets/fullscreen.svg'
+import iconHelp from '../assets/help.svg'
 import type { AutoSavePayload } from './../index'
 import { AutoSaveStatus } from './../index'
 import ideStyles from './index.module.less'
@@ -78,10 +73,10 @@ const IdeHeaderContainer: FC<Props> = props => {
       <div className="ide-container-header-left flex justify-start items-center">
         <div className="flex items-center">
           <div className="title">编辑脚本</div>
-          <QuestionCircleOutlined className="ml-2" color="#A7AAB2" />
+          <img src={iconHelp} alt="帮助" className="ml-1" />
         </div>
         {/* 已保存 */}
-        <div className="flex items-center ml-2" style={{ borderLeft: '1px solid #EBEBEB' }}>
+        <div className="flex items-center ml-3" style={{ borderLeft: '1px solid #EBEBEB' }}>
           <span className="save ml-2">{saveStatusText}</span>
           {props.savePayload.status !== null && <CloudOutlined className="ml-2" color="#ADADAD" />}
         </div>
@@ -103,7 +98,7 @@ const IdeHeaderContainer: FC<Props> = props => {
             保存
           </Button>
           {/* 开关 */}
-          <div className="switch flex items-center ml-10">
+          <div className="common-form flex items-center ml-10">
             {toggleLoading && <LoadingOutlined className="mr-5" />}
             <div>
               <Switch
@@ -123,10 +118,14 @@ const IdeHeaderContainer: FC<Props> = props => {
             </Select>
           </div>
           <div className="ml-3 cursor-pointer">
-            <QuestionCircleOutlined className="ml-2" color="#A7AAB2" />
+            <img src={iconHelp} alt="帮助" />
           </div>
           <div className="ml-3 cursor-pointer" onClick={() => props.onFullScreen()}>
-            {props.fullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+            {props.fullScreen ? (
+              <img src={iconFullscreen} alt="全屏" />
+            ) : (
+              <img src={iconFullscreen} alt="全屏" />
+            )}
           </div>
         </div>
       </div>

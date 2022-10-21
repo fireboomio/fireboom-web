@@ -2,18 +2,16 @@ import { MailOutlined, MobileOutlined } from '@ant-design/icons'
 import { Badge, Button, Image, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type React from 'react'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import type { AuthListType } from '@/interfaces/auth'
 import type { Connector as ConnectorType } from '@/interfaces/connector'
 import { EMAIL, SMS } from '@/lib/constant'
-import { ConnectorContext } from '@/lib/context/auth-context'
 
 import ConnectorModal from './ConnectorModal'
 import styles from './MessageAndEmailConnector.module.less'
 
 interface Props {
-  handleTopToggleDesigner: (authType: AuthListType) => void
   data: ConnectorType[] | undefined
 }
 
@@ -24,11 +22,12 @@ interface DataType {
   experience: boolean
 }
 
-const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, data = [] }) => {
+const MessageAndEmailConnector: React.FC<Props> = ({ data = [] }) => {
+  const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [currentSelectedId, setCurrentSelectedId] = useState('')
   const [selectedType, setSelectedType] = useState('')
-  const { connectorDispatch } = useContext(ConnectorContext)
+  // const { connectorDispatch } = useContext(ConnectorContext)
 
   const SMSData = data.filter(item => item.types === SMS)
   const emailData = data.filter(item => item.types === EMAIL)
@@ -125,12 +124,11 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
 
   const handleModelOk = () => {
     setIsModalVisible(false)
-    handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
-    const currentSelected = data.find(item => item.id === currentSelectedId)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected || undefined
-    })
+    navigate(`/auth/connectDetails/${currentSelectedId}`)
+    // connectorDispatch({
+    //   type: 'setCurrentConnector',
+    //   payload: currentSelected || undefined
+    // })
   }
 
   const handleModelCancel = () => {
@@ -151,12 +149,11 @@ const MessageAndEmailConnector: React.FC<Props> = ({ handleTopToggleDesigner, da
     if (!value) {
       return false
     }
-    handleTopToggleDesigner({ name: '连接器详情', type: 'connectDetails' })
-    const currentSelected = data.find(item => item.id === value.id)
-    connectorDispatch({
-      type: 'setCurrentConnector',
-      payload: currentSelected
-    })
+    navigate(`/auth/connectDetails/${value.id}`)
+    // connectorDispatch({
+    //   type: 'setCurrentConnector',
+    //   payload: currentSelected
+    // })
   }
 
   // @ts-ignore

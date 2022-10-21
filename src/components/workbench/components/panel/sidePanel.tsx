@@ -1,5 +1,6 @@
+import { Tooltip } from 'antd'
 import type React from 'react'
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import styles from './sidePanel.module.less'
 
@@ -37,7 +38,11 @@ export default function SidePanel(props: SidePanelProps) {
         <div className={styles.title}>{props.title}</div>
         <div className={styles.action} onClick={e => e.stopPropagation()}>
           {props.action ? props.action : null}
-          {props.hideAdd ? null : <div className={styles.add} onClick={props.onAdd} />}
+          {props.hideAdd ? null : (
+            <Tooltip title="筛选">
+              <div className={styles.add} onClick={props.onAdd} />
+            </Tooltip>
+          )}
         </div>
       </div>
       <div className={`${open ? '' : 'hidden'} ${styles.content}`}>{props.children}</div>
