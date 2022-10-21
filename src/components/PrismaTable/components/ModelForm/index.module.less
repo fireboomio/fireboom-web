@@ -1,0 +1,28 @@
+.add-btn {
+  color: #fff;
+  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+}
+
+.prisma-table-form-item {
+  :global {
+    .ant-form-item-label {
+      display: flex;
+      justify-content: flex-end;
+
+      label {
+        padding-right: 8px;
+        overflow: hidden;
+        white-space: normal;
+        text-align: right;
+        word-break: break-word;
+      }
+    }
+  }
+}
