@@ -145,10 +145,8 @@ export default function APIEditorProvider() {
 
   const updateAPI = (newAPI: Partial<APIDesc>) => {
     return requests.put(`/operateApi/${params.id}`, newAPI).then(resp => {
-      if (resp) {
-        // @ts-ignore
-        setAPIDesc({ ...(apiDesc ?? {}), ...newAPI })
-      }
+      // @ts-ignore
+      setAPIDesc({ ...(apiDesc ?? {}), ...newAPI })
     })
   }
 
