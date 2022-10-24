@@ -2,12 +2,12 @@ import statusOff from './assets/status-off.png'
 import statusOn from './assets/status-on.png'
 
 interface StatusDirectiveProps {
-  status: 'On' | 'Off'
+  enabled: boolean
   label: string
   onDoubleClick?: () => void
 }
 
-const StatusDirective = ({ status, label, onDoubleClick }: StatusDirectiveProps) => {
+const StatusDirective = ({ enabled, label, onDoubleClick }: StatusDirectiveProps) => {
   return (
     <div
       onDoubleClick={onDoubleClick}
@@ -23,12 +23,12 @@ const StatusDirective = ({ status, label, onDoubleClick }: StatusDirectiveProps)
         boxShadow: '0 2px 4px #F8F9FD',
         color: '#333',
         fontSize: '12px',
-        height: '20px',
-        lineHeight: '20px'
+        height: '20px'
+        // lineHeight: '20px'
       }}
     >
       <img
-        src={status === 'On' ? statusOn : statusOff}
+        src={enabled ? statusOn : statusOff}
         width="14"
         height="14"
         style={{ marginRight: '2px', verticalAlign: 'sub' }}
