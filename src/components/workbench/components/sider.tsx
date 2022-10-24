@@ -20,7 +20,6 @@ export default function Header() {
   const ctx = useContext(PrismaSchemaContext)
   const { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources } =
     panel || {}
-  console.log('====', tab, ctx)
 
   return (
     <div className="flex flex-col h-full">

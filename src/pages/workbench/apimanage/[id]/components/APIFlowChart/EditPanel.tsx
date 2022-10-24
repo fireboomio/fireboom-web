@@ -3,6 +3,9 @@ import { Drawer } from 'antd'
 import IdeContainer from '@/components/Ide'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/hooks'
 
+import backArrow from './assets/back-arrow.svg'
+import styles from './editPanel.module.less'
+
 const defaults = {
   preResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
 // import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
@@ -69,12 +72,23 @@ export default function EditPanel({ onClose, hookPath }: Props) {
   console.log(hookPath)
   return apiContainerRef ? (
     <Drawer
+      className={styles.drawer}
       width="100%"
       placement="right"
       onClose={onClose}
       open
       getContainer={() => apiContainerRef}
       style={{ position: 'absolute' }}
+      extra={
+        <div className="flex items-center">
+          <div className={styles.back} onClick={onClose}>
+            <img src={backArrow} alt="返回" className="mr-1" />
+            返回文件
+          </div>
+          <div className={styles.split} />
+          <div className={styles.title}>{hookPath}</div>
+        </div>
+      }
     >
       <IdeContainer hookPath={hookPath} defaultLanguage="typescript" />
     </Drawer>

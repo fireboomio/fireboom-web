@@ -1,4 +1,4 @@
-import { Descriptions, Divider } from 'antd'
+import { Descriptions } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -21,7 +21,7 @@ export default function SettingMainVersion() {
 
   return (
     <>
-      <div className="pl-15 pt-6 bg-white h-full">
+      <div className="pl-8 pt-6 bg-white h-full">
         <Descriptions
           column={1}
           size="small"

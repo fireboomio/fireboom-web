@@ -18,7 +18,6 @@ type Config = Record<string, ReactNode>
 export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-  console.log('===', content)
   const config = content.config as unknown as Config
   const point = content.point as string
 
@@ -38,7 +37,6 @@ export default function AuthMainCheck({ content }: Props) {
       : ''
 
   if (!content) return <Error50x />
-  console.log(config)
   return (
     <>
       <div className="mt-8">

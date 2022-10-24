@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Divider, Form, Input, Switch } from 'antd'
+import { Button, Form, Input, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -178,7 +178,7 @@ export default function SettingMainSecurity() {
   }, [refreshFlag])
 
   return (
-    <div className="pl-11 pt-4 bg-white h-full">
+    <div className="pl-8 pt-4 bg-white h-full">
       {securConfig.allowedHosts ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
