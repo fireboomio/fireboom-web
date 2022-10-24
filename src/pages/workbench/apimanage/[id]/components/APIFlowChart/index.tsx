@@ -10,16 +10,10 @@ const APIFlowChart = ({ id }: { id: string }) => {
   const params = useParams()
   const { apiDesc } = useAPIManager()
 
-  const [globalConfig, setGlobalConfig] = useState()
-
   useEffect(() => {
-    // requests
-    //   .get(`/operateApi/setting/${id}`, {
-    //     params: { settingType: 2 }
-    //   })
-    //   .then(resp => {
-    //     setGlobalConfig(resp.data)
-    //   })
+    requests.get(`/operateApi/hooks/${id}`).then(resp => {
+      console.log(resp)
+    })
   }, [id])
 
   return <FlowChart />

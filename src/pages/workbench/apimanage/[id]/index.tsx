@@ -176,6 +176,9 @@ export default function APIEditorProvider() {
 
   useEffect(() => {
     refreshAPI()
+  }, [refreshAPI])
+
+  useEffect(() => {
     // 获取 graphql 集合
     fetch('/app/main/graphql', {
       method: 'POST',
