@@ -1,4 +1,5 @@
 export interface AuthProvResp {
+  point: string
   id: number
   name: string
   authSupplier: string

@@ -31,7 +31,6 @@
     .DependRowPadding();
     .title {
       font-size: 14px;
-      font-weight: 500;
       color: #333;
     }
   }
@@ -41,6 +40,23 @@
     margin-bottom: 10px;
     .input {
       width: 90%;
+      .ant-select-selector {
+        border: none !important;
+        padding-left: 20px;
+        &::before {
+          position: absolute;
+          background: url(../assets/search.svg);
+          content: ' ';
+          width: 14px;
+          height: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          left: 8px;
+        }
+      }
+      .ant-select-selection-placeholder {
+        left: 30px;
+      }
     }
   }
   .list {
@@ -64,11 +80,11 @@
         .HoverItem();
       }
       .hover-area {
-        width: 30%;
+        margin-left: auto;
         display: none;
       }
       .show-select-version {
-        width: 30%;
+        margin-left: auto;
         display: flex;
       }
       .show-select-version-name {
