@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { PrismaSchemaContext } from '@/lib/context/prismaSchemaContext'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import ModelPannel from '@/pages/workbench/modeling/components/pannel'
 
 import ApiPanel from './panel/apiPanel'
