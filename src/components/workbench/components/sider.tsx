@@ -17,7 +17,7 @@ export default function Header() {
     setTab(tab)
   }, [location.pathname])
   const { panel } = useContext(PrismaSchemaContext)
-  const ctx = useContext(PrismaSchemaContext)
+  // const ctx = useContext(PrismaSchemaContext)
   const { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources } =
     panel || {}
 

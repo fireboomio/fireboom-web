@@ -20,12 +20,10 @@ import {
   // ResponseEditor,
   GraphiQLProvider,
   QueryEditor,
-  useEditorContext,
   useTheme
 } from '@graphiql/react'
 import { Tabs } from 'antd'
-import type { DirectiveNode, OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
-import { Kind } from 'graphql'
+import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import type { ReactNode } from 'react'
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -35,7 +33,7 @@ import { emptyStorage } from './components/emptyStorage'
 import GraphiQLToolbar from './components/GraphiQLToolbar'
 import ResponseWrapper, { useResponse } from './components/ResponseContext'
 import ResponseViewer from './components/ResponseViewer'
-import { parseSchemaAST, printSchemaAST } from './utils'
+import { printSchemaAST } from './utils'
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10)
 
