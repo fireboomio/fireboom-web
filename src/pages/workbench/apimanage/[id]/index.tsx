@@ -14,9 +14,9 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
-import FlowChart from '@/components/charts/FlowChart'
 import requests from '@/lib/fetchers'
 
+import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
 import { parseSchemaAST } from './components/GraphiQL/utils'
@@ -58,7 +58,8 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 `
 
 export function APIEditorContainer({ id }: { id: string | undefined }) {
-  const { fetcher, query, schema, setQuery } = useAPIManager()
+  const params = useParams()
+  const { apiDesc, fetcher, query, schema, setQuery } = useAPIManager()
   // function save() {
   //   const content = ref.current?.props.query as string
   //   return onSave(content)
@@ -92,7 +93,7 @@ export function APIEditorContainer({ id }: { id: string | undefined }) {
               className="h-full bg-[#F8F9FD]"
               centered
               items={[
-                { label: '概览', key: '1', children: <FlowChart /> },
+                { label: '概览', key: '1', children: <APIFlowChart id={params.id as string} /> },
                 {
                   label: '设置',
                   key: '2',
@@ -175,6 +176,9 @@ export default function APIEditorProvider() {
 
   useEffect(() => {
     refreshAPI()
+  }, [refreshAPI])
+
+  useEffect(() => {
     // 获取 graphql 集合
     fetch('/app/main/graphql', {
       method: 'POST',
