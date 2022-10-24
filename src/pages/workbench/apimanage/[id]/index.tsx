@@ -89,9 +89,9 @@ export function APIEditorContainer({ id }: { id: string | undefined }) {
             onEditQuery={setQuery}
             defaultEditorToolsVisibility={false}
           />
-          <div>
+          <div className="h-full flex-shrink-0 w-102">
             <Tabs
-              className="h-full bg-[#F8F9FD]"
+              className={styles.tabs}
               centered
               items={[
                 { label: '概览', key: '1', children: <APIFlowChart id={params.id as string} /> },
