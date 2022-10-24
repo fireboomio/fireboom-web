@@ -9,11 +9,12 @@ import { Tabs } from 'antd'
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery } from 'graphql'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import APIFlowChart from './components/APIFlowChart'
@@ -114,6 +115,7 @@ export default function APIEditorProvider() {
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
   const [saved, setSaved] = useState(true)
+  const workbenchCtx = useContext(WorkbenchContext)
 
   const fetcher = useCallback(
     async (rec: Record<string, unknown>) => {
@@ -145,10 +147,9 @@ export default function APIEditorProvider() {
 
   const updateAPI = (newAPI: Partial<APIDesc>) => {
     return requests.put(`/operateApi/${params.id}`, newAPI).then(resp => {
-      if (resp) {
-        // @ts-ignore
-        setAPIDesc({ ...(apiDesc ?? {}), ...newAPI })
-      }
+      // @ts-ignore
+      setAPIDesc({ ...(apiDesc ?? {}), ...newAPI })
+      workbenchCtx.onRefreshMenu('api')
     })
   }
 
@@ -159,6 +160,7 @@ export default function APIEditorProvider() {
         // @ts-ignore
         setAPIDesc({ ...(apiDesc ?? {}), content })
         setSaved(true)
+        workbenchCtx.onRefreshMenu('api')
       }
     })
   }
