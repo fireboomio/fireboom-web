@@ -20,6 +20,7 @@ export default function AuthMainCheck({ content }: Props) {
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   console.log('===', content)
   const config = content.config as unknown as Config
+  const point = content.point as string
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
@@ -37,13 +38,13 @@ export default function AuthMainCheck({ content }: Props) {
       : ''
 
   if (!content) return <Error50x />
-
+  console.log(config)
   return (
     <>
       <div className="mt-8">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="供应商ID">
-            <a href={config.pointer as string}>{config.id}</a>
+            <a href={point as string}>{config.id}</a>
           </Descriptions.Item>
           <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
           <Descriptions.Item label="App Secret">

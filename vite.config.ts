@@ -21,8 +21,8 @@ export default defineConfig({
         changeOrigin: true
       },
       '^/api/v1': {
-        target: 'http://120.26.62.151:9123',
-        // target: 'http://192.168.166.143:9123',
+        // target: 'http://120.26.62.151:9123',
+        target: 'http://192.168.166.143:9123',
         changeOrigin: true
       },
       '^/app': {
@@ -49,6 +49,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+      { find: 'os', replacement: 'rollup-plugin-node-polyfills/polyfills/os' },
       {
         find: '@',
         replacement: path.resolve(__dirname, './src')

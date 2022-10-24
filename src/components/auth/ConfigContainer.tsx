@@ -21,6 +21,7 @@ export default function AuthConfigContainer() {
     if (id === 'new') {
       setEditFlag(true)
       setContent({
+        point: '',
         config: {},
         id: 0,
         name: '',

@@ -1,8 +1,9 @@
-import { CloudOutlined, LoadingOutlined, SaveOutlined } from '@ant-design/icons'
+import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
 import { Button, Select, Switch } from 'antd'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
+import iconCloud from '../assets/cloud.svg'
 import iconFullscreen from '../assets/fullscreen.svg'
 import iconHelp from '../assets/help.svg'
 import type { AutoSavePayload } from './../index'
@@ -77,8 +78,8 @@ const IdeHeaderContainer: FC<Props> = props => {
         </div>
         {/* 已保存 */}
         <div className="flex items-center ml-3" style={{ borderLeft: '1px solid #EBEBEB' }}>
-          <span className="save ml-2">{saveStatusText}</span>
-          {props.savePayload.status !== null && <CloudOutlined className="ml-2" color="#ADADAD" />}
+          <span className="save ml-3">{saveStatusText}</span>
+          {props.savePayload.status !== null && <img src={iconCloud} alt="帮助" className="ml-1" />}
         </div>
       </div>
       <div className="ide-container-header-right flex justify-between flex-1">

@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
-  AlignRightOutlined,
   CaretDownOutlined,
   CloseOutlined,
-  DoubleLeftOutlined,
   LoadingOutlined,
   ReloadOutlined,
   UpOutlined
@@ -15,6 +13,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
+import iconDepend from '../assets/depend.svg'
+import iconDoubleLeft from '../assets/double-left.svg'
 import type { Depend } from '../index'
 import ideStyles from './index.module.less'
 
@@ -50,6 +50,7 @@ function DebounceSelect<
 
   return (
     <Select
+      className="test"
       labelInValue
       ref={selectRef}
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -96,7 +97,7 @@ const SearchDepend = (props: SearchDependProps) => {
         }}
         className="input"
       />
-      <AlignRightOutlined color="#5F6269" className="cursor-pointer" />
+      <img src={iconDepend} alt="依赖" />
     </div>
   )
 }
@@ -241,13 +242,14 @@ const DependList = (props: DependListProps) => {
     <div className={`${ideStyles['ide-container-depend-list']}`}>
       <div className="title-top flex justify-between items-center">
         <div className="title text-1xl select-none">全局依赖</div>
-        <DoubleLeftOutlined
-          color="#C0C4CE"
+        <span
           className="cursor-pointer"
           onClick={() => {
             props.onFold()
           }}
-        />
+        >
+          <img src={iconDoubleLeft} alt="折叠" />
+        </span>
       </div>
       {/* 搜索 */}
       <SearchDepend onAddDepend={addDepend} />
