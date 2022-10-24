@@ -250,12 +250,14 @@ export default function Rest({ content, type }: Props) {
   return (
     <>
       <Modal
+        className={styles['modal']}
         title={null}
         footer={null}
         open={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
+        // closable={false}
       >
         <FileList
           basePath={BASEPATH}

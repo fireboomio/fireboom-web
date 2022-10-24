@@ -86,3 +86,25 @@
     padding: 8px 8px;
   }
 }
+
+.modal :global {
+  .ant-modal-content {
+    border-radius: 20px;
+
+    .ant-modal-close {
+      top: 10px;
+      right: 10px;
+      &-x {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        border: 1px solid;
+        border-radius: 9px 9px;
+      }
+    }
+
+    .ant-modal-body {
+      padding: 32px;
+    }
+  }
+}

@@ -321,6 +321,7 @@ export default function DB({ content, type }: Props) {
   return (
     <>
       <Modal
+        className={styles['modal']}
         title={null}
         footer={null}
         open={visible}
