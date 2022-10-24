@@ -1,5 +1,5 @@
 import { useEditorContext } from '@graphiql/react'
-import { Tooltip } from 'antd'
+import { message, Tooltip } from 'antd'
 import type { VariableDefinitionNode } from 'graphql'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -66,7 +66,20 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       },
       getValue() {
         const obj = parsed.reduce<Record<string, any>>((obj, item, index) => {
-          obj[item.name] = valuesRef.current[index]
+          let val = valuesRef.current[index]
+          if (item.isRequired && (val === '' || val === undefined || val === null)) {
+            message.error(`字段 ${item.name} 的参数未提供`)
+            throw new Error(`字段 ${item.name} 的参数未提供`)
+          }
+          if (!['Int', 'String', 'Boolean'].includes(item.type)) {
+            try {
+              val = JSON.parse(val as string)
+            } catch (error) {
+              message.error(`字段 ${item.name} 的参数输入错误`)
+              throw new Error(`字段 ${item.name} 的参数输入错误`)
+            }
+          }
+          obj[item.name] = val
           return obj
         }, {})
         return JSON.stringify(obj)
