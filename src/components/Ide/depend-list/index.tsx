@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import {
-  CaretDownOutlined,
-  CloseOutlined,
-  LoadingOutlined,
-  ReloadOutlined,
-  UpOutlined
-} from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 import type { SelectProps } from 'antd'
 import { Select, Spin } from 'antd'
 import { debounce } from 'lodash'
@@ -13,8 +7,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
+import iconCross from '../assets/cross.svg'
 import iconDepend from '../assets/depend.svg'
 import iconDoubleLeft from '../assets/double-left.svg'
+import iconRefresh from '../assets/refresh.svg'
+import iconUpAndDown from '../assets/up-and-down.svg'
 import type { Depend } from '../index'
 import ideStyles from './index.module.less'
 
@@ -305,7 +302,7 @@ const DependList = (props: DependListProps) => {
                   )}
                   {versionLoading !== index && showSelectVersion === -1 && (
                     <div className="select-icon">
-                      <CaretDownOutlined color="#ADADAD;" />
+                      <img src={iconUpAndDown} alt="选择版本" />
                     </div>
                   )}
                 </div>
@@ -317,9 +314,11 @@ const DependList = (props: DependListProps) => {
                   showSelectVersion === index && 'show-select-version'
                 } flex justify-between`}
               >
-                <UpOutlined color="#ADADAD" />
-                <ReloadOutlined color="#ADADAD" />
-                <CloseOutlined color="#ADADAD" onClick={() => removeDepend(name)} />
+                {/*<img src={iconUpAndDown} alt="选择版本" />*/}
+                <img src={iconRefresh} alt="刷新" />
+                <span className="ml-2" onClick={() => removeDepend(name)}>
+                  <img src={iconCross} alt="移除" />
+                </span>
               </div>
             </div>
           )

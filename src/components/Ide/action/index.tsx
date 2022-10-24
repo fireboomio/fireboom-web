@@ -1,4 +1,3 @@
-import { BugOutlined, DeleteOutlined, RedoOutlined } from '@ant-design/icons'
 import type { EditorProps } from '@swordjs/monaco-editor-react'
 import Editor from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd'
@@ -7,6 +6,9 @@ import type { FC } from 'react'
 import { useRef, useState } from 'react'
 
 import type { RunHookResponse } from '..'
+import iconDebug from '../assets/debug.svg'
+import iconDelBtn from '../assets/del-btn.svg'
+import iconRefreshBtn from '../assets/refresh-btn.svg'
 import styles from './../subs.module.less'
 import ideStyles from './index.module.less'
 
@@ -53,11 +55,9 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   }
   return (
     <div className={`${ideStyles['input-container']}`}>
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-1">
         <div className="title">输入</div>
-        {props.expandAction && (
-          <RedoOutlined color="#C0C4CE" size={20} className="cursor-pointer mt-2" />
-        )}
+        {props.expandAction && <img src={iconRefreshBtn} alt="刷新" />}
       </div>
       {props.expandAction && (
         <>
@@ -78,7 +78,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
             <Button
               onClick={debounce(onClickDebug, 1000, { leading: true })}
               loading={loading}
-              icon={<BugOutlined />}
+              icon={<img src={iconDebug} alt="调试" className="mr-1" />}
               type="primary"
               className={ideStyles['save-btn']}
             >
@@ -101,15 +101,15 @@ export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = props => {
   }
   return (
     <div className={`${ideStyles['output-container']}`}>
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-1">
         <div className="title">输出</div>
         {props.expandAction && (
-          <DeleteOutlined
+          <span
+            className="cursor-pointer text-0px"
             onClick={debounce(handleClickClearLog, 1000, { leading: true })}
-            color="#C0C4CE"
-            size={20}
-            className="cursor-pointer mt-2"
-          />
+          >
+            {props.expandAction && <img src={iconDelBtn} alt="删除" />}
+          </span>
         )}
       </div>
       {/* 控制台输出 */}
