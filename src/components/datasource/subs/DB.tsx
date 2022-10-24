@@ -56,9 +56,14 @@ export default function DB({ content, type }: Props) {
   const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
-  const [uploadPath, setUploadPath] = useImmer(BASEPATH)
+  // const [uploadPath, setUploadPath] = useImmer(BASEPATH)
 
   const dbType = config.dbType
+
+  const setUploadPath = (v: string) => {
+    form.setFieldValue(['databaseUrl', 'val'], v)
+    form.setFieldValue(['databaseUrl', 'kind'], '0')
+  }
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -102,10 +107,8 @@ export default function DB({ content, type }: Props) {
           </>
         }
         colon={false}
-        name="filePath"
-        valuePropName="filePath"
+        name={['databaseUrl', 'val']}
         style={{ marginBottom: '20px' }}
-        // getValueFromEvent={normFile}
       >
         <Input
           placeholder="请输入..."
@@ -113,7 +116,6 @@ export default function DB({ content, type }: Props) {
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           suffix={<a onClick={() => setVisible(true)}>浏览</a>}
           readOnly
-          value={uploadPath}
         />
       </Form.Item>
     ) : (
@@ -242,7 +244,11 @@ export default function DB({ content, type }: Props) {
 
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
-    const newValues = { ...config, ...values, filePath: uploadPath }
+    delete values['filePath']
+    const newValues = { ...config, ...values }
+    if (newValues.databaseUrl.kind === undefined) {
+      newValues.databaseUrl.kind = '0'
+    }
     let newContent: DatasourceResp
     if (content.name == '' || content.name.startsWith('example_')) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
@@ -326,7 +332,7 @@ export default function DB({ content, type }: Props) {
           basePath={BASEPATH}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={1}
+          upType={2}
         />
       </Modal>
 
@@ -434,7 +440,7 @@ export default function DB({ content, type }: Props) {
                 port: config.port,
                 userName: config.userName,
                 password: config.password,
-                filePath: config.filePath || BASEPATH,
+                filePath: config.databaseUrl.val || '',
                 databaseUrl: {
                   kind:
                     (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',

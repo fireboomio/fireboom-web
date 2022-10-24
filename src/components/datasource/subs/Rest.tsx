@@ -122,7 +122,11 @@ export default function Rest({ content, type }: Props) {
 
   const [visible, setVisible] = useImmer(false)
 
-  const [uploadPath, setUploadPath] = useState(BASEPATH)
+  // const [uploadPath, setUploadPath] = useState(BASEPATH)
+
+  const setUploadPath = (v: string) => {
+    form.setFieldValue('filePath', v)
+  }
 
   useEffect(() => {
     form.resetFields()
@@ -204,7 +208,8 @@ export default function Rest({ content, type }: Props) {
   //表单上传成功回调
   const onFinish = async (values: FromValues) => {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    const newValues = { filePath: uploadPath, ...values }
+    const newValues = { ...values }
+    console.log(newValues)
 
     //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
@@ -506,7 +511,7 @@ export default function Rest({ content, type }: Props) {
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
-                filePath: config.filePath || BASEPATH
+                filePath: config.filePath || ''
               }}
             >
               <Form.Item
@@ -553,7 +558,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 colon={false}
                 name="filePath"
-                valuePropName="filePath"
+                // valuePropName="filePath"
                 style={{ marginBottom: '20px' }}
                 // getValueFromEvent={normFile}
               >
@@ -563,7 +568,7 @@ export default function Rest({ content, type }: Props) {
                   // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   suffix={<a onClick={() => setVisible(true)}>浏览</a>}
                   readOnly
-                  value={uploadPath}
+                  // value={uploadPath}
                 />
                 {/* <Uploader
                   defaultFileList={

@@ -93,7 +93,7 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          defaultValue={basePath}
+          defaultValue={''}
         />
         <Upload
           {...upProps}
@@ -113,7 +113,7 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
         onRow={rcd => {
           return {
             onClick: event => {
-              setUploadPath(`${basePath}/${rcd.name}`)
+              setUploadPath(`${rcd.name}`)
               setVisible(false)
             },
             onDoubleClick: event => {},
