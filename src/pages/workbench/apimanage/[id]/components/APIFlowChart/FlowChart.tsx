@@ -17,36 +17,44 @@ import StatusDirective from './StatusDirective'
 export interface FlowChartProps {
   globalHookState: {
     onRequest: {
+      name: string
       enable: boolean
       path: string
     }
     onResponse: {
+      name: string
       enable: boolean
       path: string
     }
   }
   hookState: {
     preResolve: {
+      name: string
       enable: boolean
       path: string
     }
     mutatingPreResolve: {
+      name: string
       enable: boolean
       path: string
     }
     customResolve: {
+      name: string
       enable: boolean
       path: string
     }
     postResolve: {
+      name: string
       enable: boolean
       path: string
     }
     mutatingPostResolve: {
+      name: string
       enable: boolean
       path: string
     }
     mockResolve: {
+      name: string
       enable: boolean
       path: string
     }
@@ -90,7 +98,7 @@ let isFirstRegister = true
 
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [hookPath, setHookPath] = useState<string>()
+  const [hook, setHook] = useState<{ name: string; path: string }>()
 
   useEffect(() => {
     // 初始化画布
@@ -472,7 +480,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
               <StatusDirective
                 enabled={globalHookState.onRequest.enable}
                 label="onRequest"
-                onDoubleClick={() => setHookPath(globalHookState.onRequest.path)}
+                onDoubleClick={() => setHook(globalHookState.onRequest)}
               />
             ),
             x: 290,
@@ -699,7 +707,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.preResolve.enable}
               label="preResolve"
-              onDoubleClick={() => setHookPath(hookState.preResolve.path)}
+              onDoubleClick={() => setHook(hookState.preResolve)}
             />
           ),
           x: 290,
@@ -713,7 +721,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.mutatingPreResolve.enable}
               label="mutatingPreResolve"
-              onDoubleClick={() => setHookPath(hookState.mutatingPreResolve.path)}
+              onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
             />
           ),
           x: 280,
@@ -727,7 +735,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.customResolve.enable}
               label="customResolve"
-              onDoubleClick={() => setHookPath(hookState.customResolve.path)}
+              onDoubleClick={() => setHook(hookState.customResolve)}
             />
           ),
           x: 290,
@@ -800,7 +808,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.postResolve.enable}
               label="postResolve"
-              onDoubleClick={() => setHookPath(hookState.postResolve.path)}
+              onDoubleClick={() => setHook(hookState.postResolve)}
             />
           ),
           x: 290,
@@ -814,7 +822,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.mutatingPostResolve.enable}
               label="mutatingPostResolve"
-              onDoubleClick={() => setHookPath(hookState.mutatingPostResolve.path)}
+              onDoubleClick={() => setHook(hookState.mutatingPostResolve)}
             />
           ),
           x: 280,
@@ -843,7 +851,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={globalHookState.onResponse.enable}
               label="onResponse"
-              onDoubleClick={() => setHookPath('global/onResponse')}
+              onDoubleClick={() => setHook(globalHookState.onResponse)}
             />
           ),
           x: 290,
@@ -990,7 +998,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
   return (
     <>
       <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
-      {hookPath ? <EditPanel hookPath={hookPath} onClose={() => setHookPath('')} /> : ''}
+      {hook ? <EditPanel hook={hook} onClose={() => setHook(null)} /> : ''}
     </>
   )
 }

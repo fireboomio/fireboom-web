@@ -65,11 +65,11 @@ const defaults = {
 
 interface Props {
   onClose: () => void
-  hookPath: string
+  hook: { name: string; path: string }
 }
-export default function EditPanel({ onClose, hookPath }: Props) {
+export default function EditPanel({ onClose, hook }: Props) {
   const { apiContainerRef } = useAPIManager()
-  console.log(hookPath)
+  console.log(hook)
   return apiContainerRef ? (
     <Drawer
       className={styles.drawer}
@@ -86,7 +86,7 @@ export default function EditPanel({ onClose, hookPath }: Props) {
             返回文件
           </div>
           <div className={styles.split} />
-          <div className={styles.title}>{hookPath}</div>
+          <div className={styles.title}>{hook.path}</div>
         </div>
       }
     >

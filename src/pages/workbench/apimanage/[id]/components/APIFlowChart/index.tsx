@@ -44,31 +44,45 @@ const APIFlowChart = ({ id }: { id: string }) => {
       // @ts-ignore
       const operationHooks = resp.operationHooks
       setGlobalState({
-        onRequest: { enable: globalHooks.onRequest.switch, path: globalHooks.onRequest.path },
-        onResponse: { enable: globalHooks.onResponse.switch, path: globalHooks.onResponse.path }
+        onRequest: {
+          name: 'onRequest',
+          enable: globalHooks.onRequest.switch,
+          path: globalHooks.onRequest.path
+        },
+        onResponse: {
+          name: 'onResponse',
+          enable: globalHooks.onResponse.switch,
+          path: globalHooks.onResponse.path
+        }
       })
       setHookState({
         customResolve: {
+          name: 'customResolve',
           enable: operationHooks.customResolve.switch,
           path: operationHooks.customResolve.path
         },
         mutatingPostResolve: {
+          name: 'mutatingPostResolve',
           enable: operationHooks.mutatingPostResolve.switch,
           path: operationHooks.mutatingPostResolve.path
         },
         mutatingPreResolve: {
+          name: 'mutatingPreResolve',
           enable: operationHooks.mutatingPreResolve.switch,
           path: operationHooks.mutatingPreResolve.path
         },
         postResolve: {
+          name: 'postResolve',
           enable: operationHooks.postResolve.switch,
           path: operationHooks.postResolve.path
         },
         preResolve: {
+          name: 'preResolve',
           enable: operationHooks.preResolve.switch,
           path: operationHooks.preResolve.path
         },
         mockResolve: {
+          name: 'mockResolve',
           enable: operationHooks.mockResolve.switch,
           path: operationHooks.mockResolve.path
         }
