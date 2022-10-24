@@ -9,7 +9,7 @@ import { Tabs } from 'antd'
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery } from 'graphql'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
@@ -116,6 +116,7 @@ export default function APIEditorProvider() {
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
   const [saved, setSaved] = useState(true)
   const workbenchCtx = useContext(WorkbenchContext)
+  const apiContainerRef = useRef<HTMLDivElement>(null)
 
   const fetcher = useCallback(
     async (rec: Record<string, unknown>) => {
@@ -200,6 +201,7 @@ export default function APIEditorProvider() {
   return (
     <APIContext.Provider
       value={{
+        apiContainerRef: apiContainerRef.current,
         apiDesc,
         query,
         setQuery,
@@ -213,7 +215,9 @@ export default function APIEditorProvider() {
         setSaved
       }}
     >
-      <APIEditorContainer id={params.id} />
+      <div className="h-full" ref={apiContainerRef}>
+        <APIEditorContainer id={params.id} />
+      </div>
     </APIContext.Provider>
   )
 }

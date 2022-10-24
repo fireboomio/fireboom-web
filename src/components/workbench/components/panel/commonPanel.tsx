@@ -190,7 +190,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         ...panelConfig.navMenu.map(item => ({
           key: item.name,
           label: (
-            <div onClick={() => navigate(item.menuPath(row.id))}>
+            <div key={row.id} onClick={() => navigate(item.menuPath(row.id))}>
               <IconFont type={item.icon} />
               <span className="ml-1.5">{item.name}</span>
             </div>
@@ -261,8 +261,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       action={
         <>
           {panelConfig.navAction?.map(item => (
-            <Tooltip title={item.tooltip}>
-              <div className="flex mr-1.5" key={item.path} onClick={() => navigate(item.path)}>
+            <Tooltip key={item.path} title={item.tooltip}>
+              <div className="flex mr-1.5" onClick={() => navigate(item.path)}>
                 <img width={19} height={19} src={item.icon} alt="头像" />
               </div>{' '}
             </Tooltip>

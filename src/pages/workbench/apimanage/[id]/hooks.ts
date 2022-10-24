@@ -27,6 +27,7 @@ export interface APIDesc {
 }
 
 interface APIState {
+  apiContainerRef: HTMLDivElement | null
   apiDesc?: APIDesc
   schema: GraphQLSchema | null
   query: string
