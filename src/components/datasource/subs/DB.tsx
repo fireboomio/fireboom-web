@@ -244,7 +244,6 @@ export default function DB({ content, type }: Props) {
 
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
-    delete values['filePath']
     const newValues = { ...config, ...values }
     if (newValues.databaseUrl.kind === undefined) {
       newValues.databaseUrl.kind = '0'
@@ -441,7 +440,6 @@ export default function DB({ content, type }: Props) {
                 port: config.port,
                 userName: config.userName,
                 password: config.password,
-                filePath: config.databaseUrl.val || '',
                 databaseUrl: {
                   kind:
                     (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
