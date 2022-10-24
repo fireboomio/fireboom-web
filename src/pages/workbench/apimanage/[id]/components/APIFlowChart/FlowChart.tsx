@@ -3,10 +3,9 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
 import type { Edge, Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
-import { Modal } from 'antd'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import IdeContainer from '@/components/Ide'
+import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -61,73 +60,10 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-const defaults = {
-  preResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default preResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  postResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default postResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  customResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default customResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  mutatingPreResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default mutatingPreResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  mutatingPostResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default mutatingPostResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  onRequest: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
-
-// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphRequest) {
-//   console.log('onOriginRequest', request.headers)
-//   return request
-// }`,
-  onResponse: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
-
-// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphResponse) {
-//   console.log('onOriginRequest', request.headers)
-//   return request
-// }`
-}
-
-const showIde = function (path: string) {
-  Modal.info({
-    width: '90vw',
-    okText: '关闭',
-    content: <IdeContainer hookPath={path} defaultLanguage="typescript" />
-  })
-}
-
 const FlowChart = (props: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [hookPath, setHookPath] = useState<string>()
+
   useEffect(() => {
     // 初始化画布
     const graph = new Graph({
@@ -773,7 +709,7 @@ const FlowChart = (props: FlowChartProps) => {
             <StatusDirective
               status={'On'}
               label="onRequest"
-              onDoubleClick={() => showIde('global/onRequest')}
+              onDoubleClick={() => setHookPath('global/onRequest')}
             />
           ),
           x: 290,
@@ -972,7 +908,7 @@ const FlowChart = (props: FlowChartProps) => {
             <StatusDirective
               status={'Off'}
               label="onResponse"
-              onDoubleClick={() => showIde('global/onResponse')}
+              onDoubleClick={() => setHookPath('global/onResponse')}
             />
           ),
           x: 290,
@@ -986,8 +922,12 @@ const FlowChart = (props: FlowChartProps) => {
       graph.dispose()
     }
   }, [])
-
-  return <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
+  return (
+    <>
+      <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef}></div>
+      {hookPath ? <EditPanel hookPath={hookPath} onClose={() => setHookPath('')} /> : ''}
+    </>
+  )
 }
 
 export default FlowChart

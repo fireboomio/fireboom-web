@@ -10,7 +10,6 @@ import { useImmer } from 'use-immer'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
-import { DOMAIN } from '@/lib/common'
 import type { MenuName, RefreshMap } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -102,7 +101,7 @@ export default function Index(props: PropsWithChildren) {
   }, [editFlag])
 
   const body = (
-    <ALayout className="h-100vh">
+    <ALayout className={`h-100vh ${styles.workbench}`}>
       <AHeader className={styles.header}>
         <Header onToggleSider={() => setHideSider(!hideSider)} />
       </AHeader>
