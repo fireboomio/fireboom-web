@@ -61,7 +61,10 @@ export default function Index(props: PropsWithChildren) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          void data.json().then(res => setInfo(res))
+          void data.json().then(res => {
+            setInfo(res)
+            console.log(res)
+          })
         } catch (error) {
           // eslint-disable-next-line no-console
           console.log(error)

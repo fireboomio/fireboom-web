@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import type { RadioChangeEvent } from 'antd'
-import { Descriptions, Divider, Input, Radio, Switch } from 'antd'
+import { Alert, Descriptions, Input, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
@@ -11,6 +11,7 @@ import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
+
 dayjs.extend(duration)
 
 interface systemConfig {
@@ -83,17 +84,13 @@ export default function SettingMainVersion() {
   return (
     <>
       {systemConfig.apiPort ? (
-        <div className="pl-8 pt-5.5 bg-white h-full">
+        <div className="pt-8 pl-8">
           <Descriptions
             colon={false}
             column={1}
             className={styles['descriptions-box']}
             labelStyle={{
-              width: 156,
-              borderRight: 'none',
-              borderBottom: 'none',
-              fontSize: 14,
-              color: '#333'
+              width: '15%'
             }}
           >
             <Descriptions.Item label="运行时长:">
@@ -143,6 +140,22 @@ export default function SettingMainVersion() {
                 }}
               />
             </Descriptions.Item>
+            <Descriptions.Item label="日志水平:">
+              <Radio.Group
+                value={systemConfig.logLevel}
+                onChange={e => {
+                  onChange(e, 'logLevel')
+                }}
+              >
+                <Radio value={'1'} className="mr-15 ">
+                  info
+                </Radio>
+                <Radio value={'2'} className="mr-15">
+                  debug
+                </Radio>
+                <Radio value={'3'}> error </Radio>
+              </Radio.Group>
+            </Descriptions.Item>
             <Descriptions.Item label="开发环境">
               <Radio.Group
                 value={systemConfig.devSwitch}
@@ -173,22 +186,6 @@ export default function SettingMainVersion() {
                 size="small"
               />
             </Descriptions.Item>
-            <Descriptions.Item label="日志水平:">
-              <Radio.Group
-                value={systemConfig.logLevel}
-                onChange={e => {
-                  onChange(e, 'logLevel')
-                }}
-              >
-                <Radio value={'1'} className="mr-15 ">
-                  info
-                </Radio>
-                <Radio value={'2'} className="mr-15">
-                  debug
-                </Radio>
-                <Radio value={'3'}> error </Radio>
-              </Radio.Group>
-            </Descriptions.Item>
             {!systemConfig.devSwitch ? (
               <Descriptions.Item label="强制跳转:">
                 <Switch
@@ -210,35 +207,16 @@ export default function SettingMainVersion() {
             ) : null}
           </Descriptions>
 
-          <div>
-            <button
-              className={styles['edit-btn']}
-              onClick={() => {
-                void requests.get('/wdg/reStart')
-              }}
-            >
-              <span>重启</span>
-            </button>
-            <button
-              className={styles['edit-btn']}
-              onClick={() => {
-                void requests.get('/wdg/start')
-              }}
-            >
-              <span>开始</span>
-            </button>
-            <button
-              className={styles['edit-btn']}
-              onClick={() => {
-                void requests.get('/wdg/close')
-              }}
-            >
-              <span>暂停</span>
-            </button>
-            <span className={styles.setTitle}>
-              <IconFont type="icon-zhuyi" className="text-[14px]" />
-              XXX已修改，请点击重启
-            </span>
+          <div className="w-2/3">
+            {/*<button*/}
+            {/*  className={styles['edit-btn']}*/}
+            {/*  onClick={() => {*/}
+            {/*    void requests.get('/wdg/reStart')*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <span>重启</span>*/}
+            {/*</button>*/}
+            <Alert message="修改设置后，请重新编译" type="warning" showIcon />
           </div>
         </div>
       ) : null}

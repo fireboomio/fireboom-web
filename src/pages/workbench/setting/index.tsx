@@ -30,11 +30,11 @@ export default function Setting() {
         <img alt="设置" src="/assets/workbench/header-setting.png" className="w-4 h-4 mr-2" />
         <span className="text-default font-medium">设置</span>
       </div>
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-0">
         <Col className="w-188px flex-0">
           <SettingPannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
         </Col>
-        <Col className="flex-1">
+        <Col className="flex-1 min-w-0 h-full overflow-y-auto bg-white">
           <SettingContainer showType={showType} />
         </Col>
       </div>

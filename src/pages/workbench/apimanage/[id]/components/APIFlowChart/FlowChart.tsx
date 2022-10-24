@@ -86,71 +86,6 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-const defaults = {
-  preResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default preResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  postResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default postResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  customResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default customResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  mutatingPreResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default mutatingPreResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  mutatingPostResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
-// import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
-// import type { Context } from "@wundergraph/sdk"
-
-// export default mutatingPostResolveHook(ctx: Context<User, InternalClient>) {
-//     console.log('hello')
-//     return
-// }`,
-  onRequest: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
-
-// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphRequest) {
-//   console.log('onOriginRequest', request.headers)
-//   return request
-// }`,
-  onResponse: `// import type {WunderGraphRequest,WunderGraphResponse, WunderGraphRequestContext} from "../../../wundergraph/node_modules/@wundergraph/sdk";
-// import type {User} from "../../../wundergraph/.wundergraph/generated/wundergraph.server";
-
-// export default async function (ctx: WunderGraphRequestContext<User>, request: WunderGraphResponse) {
-//   console.log('onOriginRequest', request.headers)
-//   return request
-// }`
-}
-
-const showIde = function (path: string) {
-  Modal.info({
-    width: '90vw',
-    okText: '关闭',
-    content: <IdeContainer hookPath={path} defaultLanguage="typescript" />
-  })
-}
-
 let isFirstRegister = true
 
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
@@ -537,7 +472,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
               <StatusDirective
                 enabled={globalHookState.onRequest.enable}
                 label="onRequest"
-                onDoubleClick={() => showIde(globalHookState.onRequest.path)}
+                onDoubleClick={() => setHookPath(globalHookState.onRequest.path)}
               />
             ),
             x: 290,
@@ -764,7 +699,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.preResolve.enable}
               label="preResolve"
-              onDoubleClick={() => showIde(hookState.preResolve.path)}
+              onDoubleClick={() => setHookPath(hookState.preResolve.path)}
             />
           ),
           x: 290,
@@ -778,7 +713,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.mutatingPreResolve.enable}
               label="mutatingPreResolve"
-              onDoubleClick={() => showIde(hookState.mutatingPreResolve.path)}
+              onDoubleClick={() => setHookPath(hookState.mutatingPreResolve.path)}
             />
           ),
           x: 280,
@@ -792,7 +727,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.customResolve.enable}
               label="customResolve"
-              onDoubleClick={() => showIde(hookState.customResolve.path)}
+              onDoubleClick={() => setHookPath(hookState.customResolve.path)}
             />
           ),
           x: 290,
@@ -865,7 +800,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.postResolve.enable}
               label="postResolve"
-              onDoubleClick={() => showIde(hookState.postResolve.path)}
+              onDoubleClick={() => setHookPath(hookState.postResolve.path)}
             />
           ),
           x: 290,
@@ -879,7 +814,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             <StatusDirective
               enabled={hookState.mutatingPostResolve.enable}
               label="mutatingPostResolve"
-              onDoubleClick={() => showIde(hookState.mutatingPostResolve.path)}
+              onDoubleClick={() => setHookPath(hookState.mutatingPostResolve.path)}
             />
           ),
           x: 280,
@@ -1052,7 +987,12 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     }
   }, [directiveState, hookState, globalHookState])
 
-  return <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
+  return (
+    <>
+      <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
+      {hookPath ? <EditPanel hookPath={hookPath} onClose={() => setHookPath('')} /> : ''}
+    </>
+  )
 }
 
 export default FlowChart
