@@ -1,4 +1,4 @@
-import { Button, Descriptions, Form, Input, notification, Radio, Select } from 'antd'
+import { Button, Descriptions, Form, Input, Modal, notification, Radio, Select } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
@@ -10,6 +10,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import styles from './DB.module.less'
+import FileList from './FileList'
 import Setting from './Setting'
 
 interface Props {
@@ -41,6 +42,8 @@ const ipReg =
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
 
+const BASEPATH = '/static/upload/sqlite'
+
 export default function DB({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [_disabled, setDisabled] = useImmer(false)
@@ -51,6 +54,16 @@ export default function DB({ content, type }: Props) {
   const [isValue, setIsValue] = useImmer(true)
   const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
   const [envVal, setEnvVal] = useImmer('')
+
+  const [visible, setVisible] = useImmer(false)
+  // const [uploadPath, setUploadPath] = useImmer(BASEPATH)
+
+  const dbType = config.dbType
+
+  const setUploadPath = (v: string) => {
+    form.setFieldValue(['databaseUrl', 'val'], v)
+    form.setFieldValue(['databaseUrl', 'kind'], '0')
+  }
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -83,33 +96,55 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const initForm = (
-    <Form.Item label="连接URL">
-      <Input.Group compact>
-        <Form.Item name={['databaseUrl', 'kind']} noStyle>
-          <Select className="w-1/5" onChange={onValueChange}>
-            <Option value="0">值</Option>
-            <Option value="1">环境变量</Option>
-          </Select>
-        </Form.Item>
-        {isValue ? (
-          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-            <Input style={{ width: '80%' }} placeholder="请输入" />
+  const initForm =
+    dbType === 'sqlite' ? (
+      <Form.Item
+        rules={[{ required: true, message: '请上传文件' }]}
+        label={
+          <>
+            <span>路径</span>
+            {/* <FormToolTip title="路径" /> */}
+          </>
+        }
+        colon={false}
+        name={['databaseUrl', 'val']}
+        style={{ marginBottom: '20px' }}
+      >
+        <Input
+          placeholder="请输入..."
+          onClick={() => setVisible(true)}
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+          readOnly
+        />
+      </Form.Item>
+    ) : (
+      <Form.Item label="连接URL">
+        <Input.Group compact>
+          <Form.Item name={['databaseUrl', 'kind']} noStyle>
+            <Select className="w-1/5" onChange={onValueChange}>
+              <Option value="0">值</Option>
+              <Option value="1">环境变量</Option>
+            </Select>
           </Form.Item>
-        ) : (
-          <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-            <Select
-              className="w-1/5"
-              style={{ width: '80%' }}
-              options={envOpts}
-              value={envVal}
-              onChange={onValue2Change}
-            />
-          </Form.Item>
-        )}
-      </Input.Group>
-    </Form.Item>
-  )
+          {isValue ? (
+            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+              <Input style={{ width: '80%' }} placeholder="请输入" />
+            </Form.Item>
+          ) : (
+            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+              <Select
+                className="w-1/5"
+                style={{ width: '80%' }}
+                options={envOpts}
+                value={envVal}
+                onChange={onValue2Change}
+              />
+            </Form.Item>
+          )}
+        </Input.Group>
+      </Form.Item>
+    )
 
   const paramForm = (
     <>
@@ -210,6 +245,9 @@ export default function DB({ content, type }: Props) {
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
+    if (newValues.databaseUrl.kind === undefined) {
+      newValues.databaseUrl.kind = '0'
+    }
     let newContent: DatasourceResp
     if (content.name == '' || content.name.startsWith('example_')) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
@@ -281,10 +319,26 @@ export default function DB({ content, type }: Props) {
 
   return (
     <>
+      <Modal
+        className={styles['modal']}
+        title={null}
+        footer={null}
+        open={visible}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        width={920}
+      >
+        <FileList
+          basePath={BASEPATH}
+          setUploadPath={setUploadPath}
+          setVisible={setVisible}
+          upType={2}
+        />
+      </Modal>
+
       {/* { (() => { your code })() }  useFormWarning的解决方案
       在return外定义setPage函数，当切换编辑页面时，在函数中使用useForm 返回相应的html代码*/}
       {type === 'detail' ? (
-        //查看页面———————————————————————————————————————————————————————————————————————————————————
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className="py-10px flex justify-end">
@@ -299,58 +353,68 @@ export default function DB({ content, type }: Props) {
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
-              <Descriptions.Item label="类型">
-                {config.appendType == '0' ? '连接URL' : config.appendType == '1' ? '连接参数' : ''}
-              </Descriptions.Item>
-
-              {config.appendType == '1' ? (
-                <>
-                  <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-                  <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
-                  <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
-                  <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
-                  <Descriptions.Item label="密码">
-                    {isSecretShow ? (
-                      <span>
-                        {config.password}
-                        <IconFont
-                          className="ml-2"
-                          type="icon-xiaoyanjing-chakan"
-                          onClick={() => setIsSecretShow(!isSecretShow)}
-                        />
-                      </span>
-                    ) : (
-                      <span>
-                        **********
-                        <IconFont
-                          className="ml-2"
-                          type="icon-xiaoyanjing-yincang"
-                          onClick={() => setIsSecretShow(!isSecretShow)}
-                        />
-                      </span>
-                    )}
-                  </Descriptions.Item>
-                </>
+              {dbType === 'sqlite' ? (
+                <Descriptions.Item label="路径">{config.filepath}</Descriptions.Item>
               ) : (
                 <>
-                  <Descriptions.Item label="环境变量">
-                    {(config.databaseUrl as unknown as { kind: string; val: string })?.kind == '0'
-                      ? '值'
-                      : (config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
-                        '1'
-                      ? '环境变量'
+                  <Descriptions.Item label="类型">
+                    {config.appendType == '0'
+                      ? '连接URL'
+                      : config.appendType == '1'
+                      ? '连接参数'
                       : ''}
                   </Descriptions.Item>
-                  <Descriptions.Item label="连接URL">
-                    {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
-                  </Descriptions.Item>
+
+                  {config.appendType == '1' ? (
+                    <>
+                      <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
+                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
+                      <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
+                      <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
+                      <Descriptions.Item label="密码">
+                        {isSecretShow ? (
+                          <span>
+                            {config.password}
+                            <IconFont
+                              className="ml-2"
+                              type="icon-xiaoyanjing-chakan"
+                              onClick={() => setIsSecretShow(!isSecretShow)}
+                            />
+                          </span>
+                        ) : (
+                          <span>
+                            **********
+                            <IconFont
+                              className="ml-2"
+                              type="icon-xiaoyanjing-yincang"
+                              onClick={() => setIsSecretShow(!isSecretShow)}
+                            />
+                          </span>
+                        )}
+                      </Descriptions.Item>
+                    </>
+                  ) : (
+                    <>
+                      <Descriptions.Item label="环境变量">
+                        {(config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
+                        '0'
+                          ? '值'
+                          : (config.databaseUrl as unknown as { kind: string; val: string })
+                              ?.kind == '1'
+                          ? '环境变量'
+                          : ''}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="连接URL">
+                        {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
+                      </Descriptions.Item>
+                    </>
+                  )}
                 </>
               )}
             </Descriptions>
           </div>
         </div>
       ) : type === 'form' ? (
-        //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         //编辑页面—————————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className={`${styles['form-contain']} py-6 rounded-xl mb-4`}>
@@ -410,14 +474,18 @@ export default function DB({ content, type }: Props) {
                 </Select>
               </Form.Item> */}
 
-              <Form.Item label="类型:" name="appendType">
-                <Radio.Group onChange={e => typeChange(e.target.value as string)}>
-                  <Radio value="0" style={{ marginRight: '50px' }}>
-                    连接URL
-                  </Radio>
-                  <Radio value="1"> 连接参数 </Radio>
-                </Radio.Group>
-              </Form.Item>
+              {dbType === 'sqlite' || dbType === 'mongodb' ? (
+                <></>
+              ) : (
+                <Form.Item label="类型:" name="appendType">
+                  <Radio.Group onChange={e => typeChange(e.target.value as string)}>
+                    <Radio value="0" style={{ marginRight: '50px' }}>
+                      连接URL
+                    </Radio>
+                    <Radio value="1"> 连接参数 </Radio>
+                  </Radio.Group>
+                </Form.Item>
+              )}
               {viewerForm}
               <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                 <Button

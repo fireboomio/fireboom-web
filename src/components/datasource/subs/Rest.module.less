@@ -1,5 +1,3 @@
-
-
 .switch-check-btn {
   width: 60px;
   height: 24px;
@@ -18,7 +16,6 @@
   color: #dbdcdd;
   font-size: 11px;
 }
-
 
 .connect-check-btn-common {
   height: 28px;
@@ -50,5 +47,27 @@
   }
   .sc-kYWVYA {
     display: none;
+  }
+}
+
+.modal :global {
+  .ant-modal-content {
+    border-radius: 20px;
+
+    .ant-modal-close {
+      top: 10px;
+      right: 10px;
+      &-x {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        border: 1px solid;
+        border-radius: 9px 9px;
+      }
+    }
+
+    .ant-modal-body {
+      padding: 32px;
+    }
   }
 }

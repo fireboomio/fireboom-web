@@ -1,4 +1,4 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import {
   Button,
@@ -18,11 +18,10 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import Uploader from '@/components/common/Uploader'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
@@ -33,6 +32,7 @@ import {
 } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
+import FileList from './FileList'
 import styles from './Rest.module.less'
 
 interface Props {
@@ -101,6 +101,9 @@ interface OptionT {
   label: string
   value: string
 }
+
+const BASEPATH = '/static/upload/oas'
+
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const dispatch = useContext(DatasourceDispatchContext)
@@ -116,6 +119,14 @@ export default function Rest({ content, type }: Props) {
 
   const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
   const [envVal, setEnvVal] = useImmer('')
+
+  const [visible, setVisible] = useImmer(false)
+
+  // const [uploadPath, setUploadPath] = useState(BASEPATH)
+
+  const setUploadPath = (v: string) => {
+    form.setFieldValue('filePath', v)
+  }
 
   useEffect(() => {
     form.resetFields()
@@ -159,9 +170,7 @@ export default function Rest({ content, type }: Props) {
       })
   }
 
-  if (!content) {
-    return <Error50x />
-  }
+  if (!content) return <Error50x />
 
   const config = content.config as Config
 
@@ -200,38 +209,7 @@ export default function Rest({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
-    const index = (config.filePath as string)?.lastIndexOf('/')
-    const fileId = (config.filePath as string)?.substring(index + 1) //获取文件id
-
-    //如果进行上传文件操作
-    if (file.uid) {
-      //如果存在已经上传文件 先删除先前文件
-      if (config.filePath) {
-        await requests({
-          method: 'post',
-          url: '/dataSource/removeFile',
-          data: { id: fileId }
-        })
-      }
-      newValues.filePath = (await requests({
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        method: 'post',
-        url: '/dataSource/import',
-        data: { file: file }
-      })) as unknown as string
-    } else {
-      //如果删除文件则将config中的filePath置空
-      if (deleteFlag) {
-        await requests({
-          method: 'post',
-          url: '/dataSource/removeFile',
-          data: { id: fileId }
-        })
-        newValues.filePath = undefined
-      } else newValues.filePath = config.filePath //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
-    }
+    console.log(newValues)
 
     //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
@@ -258,14 +236,6 @@ export default function Rest({ content, type }: Props) {
     throw errorInfo
   }
 
-  //文件上传过程钩子
-  const normFile = (e: UploadProps) => {
-    if (Array.isArray(e)) {
-      return e
-    }
-    return e?.fileList
-  }
-
   //单选框改变，表单变化回调
   const onChangeRadio = (e: RadioChangeEvent) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -273,17 +243,30 @@ export default function Rest({ content, type }: Props) {
     setIsRadioShow(!isRadioShow)
   }
 
-  //文件移除回调
-  const onRemoveFile = () => {
-    setDeleteFlag(true)
-    setFile({} as unknown as UploadFile)
-  }
-
   const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
+
   return (
     <>
+      <Modal
+        className={styles['modal']}
+        title={null}
+        footer={null}
+        open={visible}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        width={920}
+        // closable={false}
+      >
+        <FileList
+          basePath={BASEPATH}
+          setUploadPath={setUploadPath}
+          setVisible={setVisible}
+          upType={1}
+        />
+      </Modal>
+
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
@@ -320,7 +303,7 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      名称 <FormToolTip title="test" />
+                      名称 <FormToolTip title="名称" />
                     </span>
                   </>
                 }
@@ -333,7 +316,7 @@ export default function Rest({ content, type }: Props) {
                   <>
                     <span className={styles['label-style']}>
                       Rest 端点
-                      <FormToolTip title="test" />
+                      <FormToolTip title="Rest 端点" />
                     </span>
                   </>
                 }
@@ -345,8 +328,8 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      指定OAS
-                      <FormToolTip title="test" />
+                      指定 OAS
+                      <FormToolTip title="指定OAS" />
                     </span>
                   </>
                 }
@@ -384,7 +367,7 @@ export default function Rest({ content, type }: Props) {
                           <div>
                             <span className={styles['label-style']}>
                               {key}
-                              <FormToolTip title="test" />
+                              <FormToolTip title={key} />
                             </span>
                           </div>
                         }
@@ -405,7 +388,7 @@ export default function Rest({ content, type }: Props) {
                   <>
                     <span className={styles['label-style']}>
                       授权
-                      <FormToolTip title="test" />
+                      <FormToolTip title="授权" />
                     </span>
                   </>
                 }
@@ -529,14 +512,15 @@ export default function Rest({ content, type }: Props) {
                 baseUrl: config.baseUrl,
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret || { kind: '0' }
+                secret: config.secret || { kind: '0' },
+                filePath: config.filePath || ''
               }}
             >
               <Form.Item
                 label={
                   <>
                     <span>命名空间</span>
-                    <FormToolTip title="test" />
+                    <FormToolTip title="命名空间" />
                   </>
                 }
                 rules={[
@@ -556,15 +540,10 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span>Rest 端点</span>
-                    <FormToolTip title="test" />
+                    <FormToolTip title="Rest 端点" />
                   </>
                 }
-                rules={[
-                  {
-                    pattern: /^https?:\/\/[:.\w\d/]+$/g,
-                    message: '只允许输入链接'
-                  }
-                ]}
+                rules={[{ pattern: /^https?:\/\/[:.\w\d/]+$/g, message: '只允许输入链接' }]}
                 name="baseUrl"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -575,17 +554,25 @@ export default function Rest({ content, type }: Props) {
                 rules={[{ required: true, message: '请上传 OAS 文件' }]}
                 label={
                   <>
-                    <span>指定OAS:</span>
-                    <FormToolTip title="test" />
+                    <span>指定 OAS</span>
+                    <FormToolTip title="指定OAS" />
                   </>
                 }
                 colon={false}
                 name="filePath"
-                valuePropName="fileList"
+                // valuePropName="filePath"
                 style={{ marginBottom: '20px' }}
-                getValueFromEvent={normFile}
+                // getValueFromEvent={normFile}
               >
-                <Uploader
+                <Input
+                  placeholder="请输入..."
+                  onClick={() => setVisible(true)}
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                  suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+                  readOnly
+                  // value={uploadPath}
+                />
+                {/* <Uploader
                   defaultFileList={
                     (config.filePath as string)
                       ? [
@@ -607,7 +594,7 @@ export default function Rest({ content, type }: Props) {
                     return false
                   }}
                   onRemove={onRemoveFile}
-                />
+                /> */}
               </Form.Item>
 
               <div className="tabs-form">
@@ -799,7 +786,7 @@ export default function Rest({ content, type }: Props) {
                       <>
                         <span className={styles['label-style']}>
                           是否状态联合
-                          <FormToolTip title="test" />
+                          <FormToolTip title="是否状态联合" />
                         </span>
                       </>
                     }

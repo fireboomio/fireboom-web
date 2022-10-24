@@ -22,9 +22,9 @@ const initData = [
     name: '数据库',
     items: [
       { name: 'PostgreSQL', logo: 'icon-shujuyuantubiao2', sourceType: 1, dbType: 'postgresql' },
-      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'mysql' }
-      // { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'sqlite' },
-      // { name: 'MongoDB', logo: 'icon-shujuyuantubiao4', sourceType: 1, dbType: 'mongodb' },
+      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'mysql' },
+      { name: 'MongoDB', logo: 'icon-shujuyuantubiao4', sourceType: 1, dbType: 'mongodb' },
+      { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'sqlite' }
     ]
   },
   { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] }
