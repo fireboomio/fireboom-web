@@ -68,7 +68,7 @@ interface Props {
   hook: { name: string; path: string }
 }
 export default function EditPanel({ onClose, hook }: Props) {
-  const { apiContainerRef } = useAPIManager()
+  const { apiContainerRef, refreshAPI } = useAPIManager()
   return apiContainerRef ? (
     <Drawer
       className={styles.drawer}
@@ -90,6 +90,7 @@ export default function EditPanel({ onClose, hook }: Props) {
       }
     >
       <IdeContainer
+        // onChange={refreshAPI}
         hookPath={hook.path}
         defaultCode={defaults[hook.name] || ''}
         defaultLanguage="typescript"

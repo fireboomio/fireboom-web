@@ -39,7 +39,7 @@ export default function SidePanel(props: SidePanelProps) {
         <div className={styles.action} onClick={e => e.stopPropagation()}>
           {props.action ? props.action : null}
           {props.hideAdd ? null : (
-            <Tooltip title="筛选">
+            <Tooltip title="新建">
               <div className={styles.add} onClick={props.onAdd} />
             </Tooltip>
           )}
