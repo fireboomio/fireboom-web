@@ -37,6 +37,7 @@ interface APIState {
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
   updateContent: (content: string) => Promise<boolean>
   refreshAPI: () => void
+  appendToAPIRefresh: (fn: () => void) => void
   // 是否已保存
   saved: boolean
   setSaved: (v: boolean) => void

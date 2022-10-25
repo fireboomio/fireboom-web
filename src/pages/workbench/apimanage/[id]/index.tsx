@@ -117,6 +117,7 @@ export default function APIEditorProvider() {
   const [saved, setSaved] = useState(true)
   const workbenchCtx = useContext(WorkbenchContext)
   const apiContainerRef = useRef<HTMLDivElement>(null)
+  const refreshFns = useRef<(() => void)[]>([])
 
   const fetcher = useCallback(
     async (rec: Record<string, unknown>) => {
@@ -154,7 +155,7 @@ export default function APIEditorProvider() {
     })
   }
 
-  const updateContent = (content: string) => {
+  const updateContent = async (content: string) => {
     // content 校验
     if (!content || !schemaAST) {
       message.error('请输入合法的 GraphQL 查询语句')
@@ -186,7 +187,12 @@ export default function APIEditorProvider() {
     setAPIDesc({ ...api, setting })
     // @ts-ignore
     setQuery(api.content)
+    refreshFns.current.forEach(fn => fn())
   }, [params.id])
+
+  const appendToAPIRefresh = (fn: () => void) => {
+    refreshFns.current.push(fn)
+  }
 
   useEffect(() => {
     refreshAPI()
@@ -221,6 +227,7 @@ export default function APIEditorProvider() {
         schemaAST,
         updateAPI,
         updateContent,
+        appendToAPIRefresh,
         refreshAPI,
         saved,
         setSaved
