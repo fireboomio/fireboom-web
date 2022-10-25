@@ -100,8 +100,9 @@ const APIHeader = () => {
 
   const save = async () => {
     try {
-      await updateContent(query)
-      message.success('已保存')
+      if (await updateContent(query)) {
+        message.success('已保存')
+      }
     } catch (error) {
       //
     }

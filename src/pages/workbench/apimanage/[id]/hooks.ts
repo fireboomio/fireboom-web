@@ -35,7 +35,7 @@ interface APIState {
   fetcher: SchemaContextProviderProps['fetcher']
   schemaAST?: DocumentNode
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
-  updateContent: (content: string) => Promise<void>
+  updateContent: (content: string) => Promise<boolean>
   refreshAPI: () => void
   // 是否已保存
   saved: boolean

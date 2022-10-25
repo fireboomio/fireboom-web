@@ -4,7 +4,7 @@
 
 import 'graphiql/graphiql.css'
 
-import { Tabs } from 'antd'
+import { message, Tabs } from 'antd'
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
@@ -60,7 +60,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 
 export function APIEditorContainer({ id }: { id: string | undefined }) {
   const params = useParams()
-  const { apiDesc, fetcher, query, schema, setQuery } = useAPIManager()
+  const { fetcher, query, schema, setQuery } = useAPIManager()
   // function save() {
   //   const content = ref.current?.props.query as string
   //   return onSave(content)
@@ -155,6 +155,15 @@ export default function APIEditorProvider() {
   }
 
   const updateContent = (content: string) => {
+    // content 校验
+    if (!content || !schemaAST) {
+      message.error('请输入合法的 GraphQL 查询语句')
+      return false
+    }
+    if (schemaAST.definitions.length > 1) {
+      message.error('不支持多条查询语句')
+      return false
+    }
     return requests.put(`/operateApi/content/${params.id}`, { content }).then(resp => {
       if (resp) {
         setQuery(content ?? '')
@@ -162,7 +171,9 @@ export default function APIEditorProvider() {
         setAPIDesc({ ...(apiDesc ?? {}), content })
         setSaved(true)
         workbenchCtx.onRefreshMenu('api')
+        return true
       }
+      return false
     })
   }
 
