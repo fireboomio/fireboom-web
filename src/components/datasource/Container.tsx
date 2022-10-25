@@ -1,4 +1,4 @@
-import { Button, Switch } from 'antd'
+import { Button, Image, Switch } from 'antd'
 import { useContext, useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
@@ -65,12 +65,33 @@ export default function DatasourceContainer({ content, showType }: Props) {
     }
     onRefreshMenu('dataSource')
   }
+
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       {' '}
       <div className="h-54px flex-0 bg-white flex items-center pl-11">
-        <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
-        {content?.name}
+        {showType === 'setting' ? (
+          <>
+            <div className="mr-6 py-0.5 px-2 flex items-center justify-evenly cursor-pointer bg-[#F9F9F9FF]">
+              <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
+              <span
+                className="ml-1"
+                onClick={() => {
+                  handleToggleDesigner('detail')
+                }}
+              >
+                返回
+              </span>
+            </div>
+            <div className="font-medium">高级设置</div>
+          </>
+        ) : (
+          <>
+            <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
+            {content?.name}
+          </>
+        )}
+
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
