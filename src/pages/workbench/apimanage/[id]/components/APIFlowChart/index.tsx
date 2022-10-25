@@ -13,7 +13,7 @@ type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { schemaAST } = useAPIManager()
+  const { schemaAST, query } = useAPIManager()
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
 
@@ -31,8 +31,11 @@ const APIFlowChart = ({ id }: { id: string }) => {
       injectEnvironmentVariable: allDirectives.includes('injectEnvironmentVariable'),
       injectGeneratedUUID: allDirectives.includes('injectGeneratedUUID'),
       jsonSchema: allDirectives.includes('jsonSchema'),
-      rbac: allDirectives.includes('rbac'),
-      transform: allDirectives.includes('transform')
+      rbac:
+        (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.directives?.some(
+          dir => dir.name.value === 'rbac'
+        ) ?? false,
+      transform: query.includes('@transform')
     }
     return state
   }, [schemaAST])

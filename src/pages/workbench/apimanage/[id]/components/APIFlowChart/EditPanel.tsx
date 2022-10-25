@@ -90,7 +90,7 @@ export default function EditPanel({ onClose, hook }: Props) {
         </div>
       }
     >
-      <IdeContainer hookPath={hookPath} defaultLanguage="typescript" />
+      <IdeContainer hookPath={hook.path} defaultLanguage="typescript" />
     </Drawer>
   ) : null
 }
