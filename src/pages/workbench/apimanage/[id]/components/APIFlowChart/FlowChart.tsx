@@ -11,7 +11,8 @@ import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
 import hookImg from './assets/hook.png'
-import routerImg from './assets/router.png'
+import routerBottomImg from './assets/tee_bottom.svg'
+import routerLeftImg from './assets/tee_left.svg'
 import StatusDirective from './StatusDirective'
 
 export interface FlowChartProps {
@@ -94,7 +95,297 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-let isFirstRegister = true
+// 起止
+Graph.registerNode('terminal', {
+  inherit: 'rect',
+  width: TERMINAL_WIDTH,
+  height: TERMINAL_HEIGHT,
+  attrs: {
+    body: {
+      strokeWidth: 0.5,
+      stroke: 'rgba(95, 98, 105, 0.6)',
+      fill: '#F3F9FD',
+      rx: 14,
+      ry: 14
+    },
+    text: {
+      fontSize: 14,
+      fill: '#333333'
+    }
+  }
+})
+
+// 流程箭头
+Graph.registerEdge('flowline', {
+  zIndex: -1,
+  attrs: {
+    line: {
+      stroke: '#1034FF',
+      targetMarker: {
+        name: 'block',
+        width: 3,
+        height: 4
+      }
+    }
+  }
+})
+
+// 拒绝流程里的箭头
+Graph.registerEdge('rejectArrow', {
+  attrs: {
+    line: {
+      stroke: '#787D8B',
+      targetMarker: {
+        name: 'block',
+        width: 3,
+        height: 4
+      }
+    }
+  }
+})
+
+// 决策判断
+Graph.registerNode('decision', {
+  inherit: 'polygon',
+  width: DECISION_WIDTH,
+  height: DECISION_HEIGHT,
+  attrs: {
+    body: {
+      strokeWidth: 0.5,
+      stroke: '#F2B241',
+      fill: '#ffffff',
+      refPoints: '0,10 10,0 20,10 10,20'
+    },
+    text: {
+      fontSize: 14,
+      fill: '#F3B13F'
+    }
+  }
+})
+
+// 程序
+Graph.registerNode('process', {
+  inherit: 'rect',
+  width: PROCESS_WIDTH,
+  height: PROCESS_HEIGHT,
+  attrs: {
+    body: {
+      strokeWidth: 0.5,
+      stroke: 'rgba(95, 98, 105, 0.6)',
+      fill: '#ffffff',
+      rx: 4,
+      ry: 4
+    },
+    text: {
+      fontSize: 14,
+      fill: '#333333'
+    }
+  }
+})
+
+// 执行
+Graph.registerNode('operation', {
+  inherit: 'rect',
+  width: OPERATION_WIDTH,
+  height: OPERATION_HEIGHT,
+  attrs: {
+    body: {
+      strokeWidth: 0.5,
+      stroke: {
+        type: 'linearGradient',
+        attrs: { x1: '100%', y1: '100%', x2: '0%', y2: '0%' },
+        stops: [
+          { offset: '0%', color: '#FF9378' },
+          { offset: '100%', color: '#E13D5B' }
+        ]
+      },
+      fill: {
+        type: 'linearGradient',
+        attrs: { x1: '100%', y1: '0%', x2: '0%', y2: '100%' },
+        stops: [
+          { offset: '0%', color: '#FFF3F8' },
+          { offset: '100%', color: '#FFDBDD' }
+        ]
+      },
+      rx: 4,
+      ry: 4
+    },
+    text: {
+      fontSize: 14,
+      fill: '#E92E5E'
+    }
+  }
+})
+
+// 全局钩子
+Graph.registerNode('globalHook', {
+  inherit: 'rect',
+  width: HOOK_WIDTH,
+  height: HOOK_HEIGHT,
+  markup: [{ tagName: 'image' }],
+  attrs: {
+    image: {
+      'xlink:href': globalHookImg,
+      width: HOOK_WIDTH,
+      height: HOOK_HEIGHT,
+      refX: 0,
+      refY: 0,
+      filter: {
+        name: 'dropShadow',
+        args: {
+          color: 'rgba(202,83,206,0.33)',
+          dx: 0,
+          dy: 2,
+          blur: 7
+        }
+      }
+    }
+  }
+})
+
+// API钩子
+Graph.registerNode('hook', {
+  inherit: 'rect',
+  width: HOOK_WIDTH,
+  height: HOOK_HEIGHT,
+  markup: [{ tagName: 'image' }],
+  attrs: {
+    image: {
+      'xlink:href': hookImg,
+      width: HOOK_WIDTH,
+      height: HOOK_HEIGHT,
+      refX: 0,
+      refY: 0,
+      filter: {
+        name: 'dropShadow',
+        args: {
+          color: 'rgba(56,110,252,0.23)',
+          dx: 0,
+          dy: 2,
+          blur: 4
+        }
+      }
+    }
+  }
+})
+
+// 自定义流程标签
+Graph.registerNode('flowLabel', {
+  inherit: 'rect',
+  height: LABEL_HEIGHT,
+  attrs: {
+    body: {
+      fill: '#fff',
+      strokeWidth: 0.3,
+      stroke: 'rgba(175, 176, 180, 0.6)',
+      rx: 7,
+      ry: 7
+    },
+    text: {
+      fontSize: 12,
+      fill: '#6f6f6f'
+    }
+  }
+})
+
+// 路由器
+Graph.registerNode('router', {
+  inherit: 'rect',
+  width: 24,
+  height: 24,
+  markup: [{ tagName: 'image' }],
+  attrs: {
+    image: {
+      // 'xlink:href': routerImg,
+      width: 24,
+      height: 24,
+      refX: 0,
+      refY: 0,
+      filter: {
+        name: 'dropShadow',
+        args: {
+          color: 'rgba(69, 211, 142, 0.4)',
+          dx: 0,
+          dy: 3,
+          blur: 6
+        }
+      }
+    }
+  }
+})
+
+// 异常流程
+Graph.registerEdge('reject', {
+  router: {
+    name: 'oneSide',
+    args: {
+      side: 'left',
+      padding: 128
+    }
+  },
+  attrs: {
+    line: {
+      stroke: '#787D8B',
+      strokeWidth: 0.5,
+      strokeDasharray: '3 3',
+      targetMarker: ''
+    }
+  }
+})
+
+// 可交互的指令
+Graph.registerNode('directiveTrigger', {
+  inherit: 'circle',
+  zIndex: 200,
+  width: 12,
+  height: 12,
+  attrs: {
+    body: {
+      fill: {
+        type: 'linearGradient',
+        attrs: { x1: '0', y1: '0%', x2: '100%', y2: '100%' },
+        stops: [
+          { offset: '0%', color: '#7CD4FC' },
+          { offset: '100%', color: '#478FFF' }
+        ]
+      },
+      stroke: '',
+      filter: {
+        name: 'dropShadow',
+        args: {
+          color: 'rgba(105,187,253,0.43)',
+          dx: 0,
+          dy: 2,
+          blur: 3
+        }
+      }
+    },
+    text: {
+      fontSize: 12,
+      fill: '#fff'
+    }
+  }
+})
+
+// 指令
+Graph.registerNode('directive', {
+  inherit: 'rect',
+  width: 100,
+  height: 16,
+  attrs: {
+    body: {
+      height: 16,
+      rx: 8,
+      ry: 8,
+      fill: '#A4BEE1',
+      stroke: ''
+    },
+    text: {
+      fontSize: 12,
+      fill: '#fff'
+    }
+  }
+})
 
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -131,323 +422,14 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       }
     })
 
-    if (isFirstRegister) {
-      // 起止
-      Graph.registerNode(
-        'terminal',
-        {
-          inherit: 'rect',
-          width: TERMINAL_WIDTH,
-          height: TERMINAL_HEIGHT,
-          attrs: {
-            body: {
-              strokeWidth: 0.5,
-              stroke: 'rgba(95, 98, 105, 0.6)',
-              fill: '#F3F9FD',
-              rx: 14,
-              ry: 14
-            },
-            text: {
-              fontSize: 14,
-              fill: '#333333'
-            }
-          }
-        },
-        true
-      )
-
-      // 流程箭头
-      Graph.registerEdge('flowline', {
-        zIndex: -1,
-        attrs: {
-          line: {
-            stroke: '#1034FF',
-            targetMarker: {
-              name: 'block',
-              width: 3,
-              height: 4
-            }
-          }
-        }
-      })
-
-      // 拒绝流程里的箭头
-      Graph.registerEdge('rejectArrow', {
-        attrs: {
-          line: {
-            stroke: '#787D8B',
-            targetMarker: {
-              name: 'block',
-              width: 3,
-              height: 4
-            }
-          }
-        }
-      })
-
-      // 决策判断
-      Graph.registerNode(
-        'decision',
-        {
-          inherit: 'polygon',
-          width: DECISION_WIDTH,
-          height: DECISION_HEIGHT,
-          attrs: {
-            body: {
-              strokeWidth: 0.5,
-              stroke: '#F2B241',
-              fill: '#ffffff',
-              refPoints: '0,10 10,0 20,10 10,20'
-            },
-            text: {
-              fontSize: 14,
-              fill: '#F3B13F'
-            }
-          }
-        },
-        true
-      )
-
-      // 程序
-      Graph.registerNode(
-        'process',
-        {
-          inherit: 'rect',
-          width: PROCESS_WIDTH,
-          height: PROCESS_HEIGHT,
-          attrs: {
-            body: {
-              strokeWidth: 0.5,
-              stroke: 'rgba(95, 98, 105, 0.6)',
-              fill: '#ffffff',
-              rx: 4,
-              ry: 4
-            },
-            text: {
-              fontSize: 14,
-              fill: '#333333'
-            }
-          }
-        },
-        true
-      )
-
-      // 执行
-      Graph.registerNode(
-        'operation',
-        {
-          inherit: 'rect',
-          width: OPERATION_WIDTH,
-          height: OPERATION_HEIGHT,
-          attrs: {
-            body: {
-              strokeWidth: 0.5,
-              stroke: {
-                type: 'linearGradient',
-                attrs: { x1: '100%', y1: '100%', x2: '0%', y2: '0%' },
-                stops: [
-                  { offset: '0%', color: '#FF9378' },
-                  { offset: '100%', color: '#E13D5B' }
-                ]
-              },
-              fill: {
-                type: 'linearGradient',
-                attrs: { x1: '100%', y1: '0%', x2: '0%', y2: '100%' },
-                stops: [
-                  { offset: '0%', color: '#FFF3F8' },
-                  { offset: '100%', color: '#FFDBDD' }
-                ]
-              },
-              rx: 4,
-              ry: 4
-            },
-            text: {
-              fontSize: 14,
-              fill: '#E92E5E'
-            }
-          }
-        },
-        true
-      )
-
-      // 全局钩子
-      Graph.registerNode('globalHook', {
-        inherit: 'rect',
-        width: HOOK_WIDTH,
-        height: HOOK_HEIGHT,
-        markup: [{ tagName: 'image' }],
-        attrs: {
-          image: {
-            'xlink:href': globalHookImg,
-            width: HOOK_WIDTH,
-            height: HOOK_HEIGHT,
-            refX: 0,
-            refY: 0,
-            filter: {
-              name: 'dropShadow',
-              args: {
-                color: 'rgba(202,83,206,0.33)',
-                dx: 0,
-                dy: 2,
-                blur: 7
-              }
-            }
-          }
-        }
-      })
-
-      // API钩子
-      Graph.registerNode('hook', {
-        inherit: 'rect',
-        width: HOOK_WIDTH,
-        height: HOOK_HEIGHT,
-        markup: [{ tagName: 'image' }],
-        attrs: {
-          image: {
-            'xlink:href': hookImg,
-            width: HOOK_WIDTH,
-            height: HOOK_HEIGHT,
-            refX: 0,
-            refY: 0,
-            filter: {
-              name: 'dropShadow',
-              args: {
-                color: 'rgba(56,110,252,0.23)',
-                dx: 0,
-                dy: 2,
-                blur: 4
-              }
-            }
-          }
-        }
-      })
-
-      // 自定义流程标签
-      Graph.registerNode('flowLabel', {
-        inherit: 'rect',
-        height: LABEL_HEIGHT,
-        attrs: {
-          body: {
-            fill: '#fff',
-            strokeWidth: 0.3,
-            stroke: 'rgba(175, 176, 180, 0.6)',
-            rx: 7,
-            ry: 7
-          },
-          text: {
-            fontSize: 12,
-            fill: '#6f6f6f'
-          }
-        }
-      })
-
-      // 路由器
-      Graph.registerNode('router', {
-        inherit: 'rect',
-        width: 24,
-        height: 24,
-        markup: [{ tagName: 'image' }],
-        attrs: {
-          image: {
-            'xlink:href': routerImg,
-            width: 24,
-            height: 24,
-            refX: 0,
-            refY: 0,
-            filter: {
-              name: 'dropShadow',
-              args: {
-                color: 'rgba(69, 211, 142, 0.4)',
-                dx: 0,
-                dy: 3,
-                blur: 6
-              }
-            }
-          }
-        }
-      })
-
-      // 异常流程
-      Graph.registerEdge('reject', {
-        router: {
-          name: 'oneSide',
-          args: {
-            side: 'left',
-            padding: 128
-          }
-        },
-        attrs: {
-          line: {
-            stroke: '#787D8B',
-            strokeWidth: 0.5,
-            strokeDasharray: '3 3',
-            targetMarker: ''
-          }
-        }
-      })
-
-      // 可交互的指令
-      Graph.registerNode('directiveTrigger', {
-        inherit: 'circle',
-        zIndex: 200,
-        width: 12,
-        height: 12,
-        attrs: {
-          body: {
-            fill: {
-              type: 'linearGradient',
-              attrs: { x1: '0', y1: '0%', x2: '100%', y2: '100%' },
-              stops: [
-                { offset: '0%', color: '#7CD4FC' },
-                { offset: '100%', color: '#478FFF' }
-              ]
-            },
-            stroke: '',
-            filter: {
-              name: 'dropShadow',
-              args: {
-                color: 'rgba(105,187,253,0.43)',
-                dx: 0,
-                dy: 2,
-                blur: 3
-              }
-            }
-          },
-          text: {
-            fontSize: 12,
-            fill: '#fff'
-          }
-        }
-      })
-
-      // 指令
-      Graph.registerNode('directive', {
-        inherit: 'rect',
-        width: 100,
-        height: 16,
-        attrs: {
-          body: {
-            height: 16,
-            rx: 8,
-            ry: 8,
-            fill: '#A4BEE1',
-            stroke: ''
-          },
-          text: {
-            fontSize: 12,
-            fill: '#fff'
-          }
-        }
-      })
-      isFirstRegister = false
-    }
-
     // 记录要渲染的节点 边
     const renderNodes: Node<Node.Properties>[] = []
     // 有箭头的节点
     const arrowNodes: Node<Node.Properties>[] = []
     // 拦截异常请求
-    const rejectNodes: Node<Node.Properties>[] = []
+    const rejectNodes: [Node<Node.Properties>, string][] = []
+    // 指令
+    const directiveNodes: ActionGroup[] = []
 
     // 开始请求
     let y = CANVAS_PADDING
@@ -469,7 +451,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
         y
       }
       // 全局请求前置指令
-      new ActionGroup(
+      const globalPreDirective = new ActionGroup(
         globalPreHookMetadata,
         [
           {
@@ -488,7 +470,8 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
           }
         ],
         'arrow'
-      ).addToGraph(graph)
+      )
+      directiveNodes.push(globalPreDirective)
       y += 10 + HOOK_HEIGHT
     }
 
@@ -502,12 +485,12 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       })
       arrowNodes.push(loggedValidation)
       // 指令
-      new ActionGroup(
+      const loggedDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
           label: '1',
           x: 258,
-          y
+          y: y + 19
         },
         [
           {
@@ -516,11 +499,12 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             width: 84,
             height: 16,
             x: 290,
-            y
+            y: y + 17
           }
         ],
         'linear'
-      ).addToGraph(graph)
+      )
+      directiveNodes.push(loggedDirective)
       // yes
       y += 7 + DECISION_HEIGHT
       const y1 = graph.createNode({
@@ -532,7 +516,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
         y
       })
       renderNodes.push(loggedValidation, y1)
-      rejectNodes.push(loggedValidation)
+      rejectNodes.push([loggedValidation, '401'])
       y += 8 + LABEL_HEIGHT
     }
 
@@ -545,14 +529,15 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
         y
       })
       arrowNodes.push(authValidation)
+      rejectNodes.push([authValidation, '401'])
 
       // 授权指令
-      new ActionGroup(
+      const authDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
           label: '1',
           x: 258,
-          y
+          y: y + 19
         },
         [
           {
@@ -561,11 +546,12 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             width: 64,
             height: 16,
             x: 300,
-            y
+            y: y + 17
           }
         ],
         'linear'
-      ).addToGraph(graph)
+      )
+      directiveNodes.push(authDirective)
 
       // yes
       y += 7 + DECISION_HEIGHT
@@ -590,14 +576,15 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
         y
       })
       arrowNodes.push(requestValidation)
+      rejectNodes.push([requestValidation, '400'])
 
       // 入参指令
-      new ActionGroup(
+      const argumentDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
           label: '1',
           x: 258,
-          y
+          y: y + 19
         },
         [
           {
@@ -606,11 +593,12 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             width: 88,
             height: 16,
             x: 290,
-            y
+            y: y + 17
           }
         ],
         'linear'
-      ).addToGraph(graph)
+      )
+      directiveNodes.push(argumentDirective)
 
       // yes
       y += 7 + DECISION_HEIGHT
@@ -640,7 +628,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       })
       arrowNodes.push(argsInjection)
       // 参数注入指令集
-      new ActionGroup(
+      const injectDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
           label: '3',
@@ -674,7 +662,8 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
           }
         ],
         'linear'
-      ).addToGraph(graph)
+      )
+      directiveNodes.push(injectDirective)
       y += 7 + PROCESS_HEIGHT
       renderNodes.push(argsInjection)
     }
@@ -683,9 +672,16 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     const routerSwitch = graph.createNode({
       shape: 'router',
       x: (CANVAS_WIDTH - 24) / 2,
-      y
+      y,
+      attrs: {
+        image: {
+          'xlink:href': hookState.mockResolve.enable ? routerLeftImg : routerBottomImg
+        }
+      }
     })
     renderNodes.push(routerSwitch)
+    // 记录路由索引
+    const routerIndex = arrowNodes.push(routerSwitch) - 1
     y += 12 + 24
 
     // 执行前钩子
@@ -696,7 +692,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     }
 
     // 执行前置指令集
-    new ActionGroup(
+    const preOperationDirective = new ActionGroup(
       preHookMetadata,
       [
         {
@@ -711,7 +707,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             />
           ),
           x: 290,
-          y: y - 24
+          y: y - 32
         },
         {
           shape: 'react-shape',
@@ -725,7 +721,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             />
           ),
           x: 280,
-          y: y
+          y: y - 8
         },
         {
           shape: 'react-shape',
@@ -739,12 +735,37 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             />
           ),
           x: 290,
-          y: y + 24
+          y: y + 16
         }
       ],
       'arrow'
-    ).addToGraph(graph)
+    )
+    directiveNodes.push(preOperationDirective)
     y += 14 + HOOK_HEIGHT
+
+    // mockResolve
+    const mockResolve = graph.createNode({
+      shape: 'react-shape',
+      width: 88,
+      height: 20,
+      x: 30,
+      y: y + 14,
+      // attrs: {
+      //   body: { rx: 10, ry: 10 }
+      // },
+      component: (
+        <div
+          className="rounded-xl h-5 text-xs text-center px-1 leading-5 "
+          style={{
+            border: `1px solid rgb(233, 46, 94)`,
+            background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
+          }}
+          onDoubleClick={() => setHook(hookState.mockResolve)}
+        >
+          mockResolve
+        </div>
+      )
+    })
 
     // 执行
     const operation = graph.createNode({
@@ -767,14 +788,13 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       })
       renderNodes.push(responseTransform)
       arrowNodes.push(responseTransform)
-      y += 12 + PROCESS_HEIGHT
       // 响应转换指令
-      new ActionGroup(
+      const transformDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
           label: '1',
           x: 258,
-          y
+          y: y + 10
         },
         [
           {
@@ -783,11 +803,13 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
             width: 82,
             height: 16,
             x: 290,
-            y
+            y: y + 8
           }
         ],
         'linear'
-      ).addToGraph(graph)
+      )
+      y += 12 + PROCESS_HEIGHT
+      directiveNodes.push(transformDirective)
     }
 
     // 响应后置钩子
@@ -840,7 +862,7 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       y
     }
     // 全局后置指令
-    new ActionGroup(
+    const globalPostDirective = new ActionGroup(
       globalPostHookMetadata,
       [
         {
@@ -859,7 +881,8 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
         }
       ],
       'arrow'
-    ).addToGraph(graph)
+    )
+    directiveNodes.push(globalPostDirective)
     y += 12 + HOOK_HEIGHT
 
     // 发送响应到客户端
@@ -885,112 +908,122 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     renderNodes.push(end)
     arrowNodes.push(end)
 
+    // 主流程
     graph.addNodes(renderNodes)
 
-    // 主流程
+    // mock 边
+    graph.addEdge({
+      shape: 'reject',
+      source: routerSwitch,
+      target: sendResponse,
+      router: {
+        name: 'oneSide',
+        args: {
+          side: 'left',
+          padding: 60
+        }
+      },
+
+      ...(hookState.mockResolve.enable
+        ? {
+            stroke: '#1034FF',
+            attrs: {
+              line: {
+                stroke: '#1034FF',
+                strokeWidth: 1,
+                strokeDasharray: '3 0',
+                targetMarker: ''
+              }
+            }
+          }
+        : {})
+    })
+    graph.addEdge({
+      shape: 'rejectArrow',
+      source: { x: 100, y: routerSwitch.getBBox().y + 12 },
+      target: { x: 96, y: routerSwitch.getBBox().y + 12 },
+      ...(hookState.mockResolve.enable
+        ? {
+            attrs: {
+              line: {
+                stroke: '#1034FF'
+              }
+            }
+          }
+        : {})
+    })
+
+    graph.addNode(mockResolve)
+
+    // 主流程边
     graph.addEdges(
       arrowNodes.reduce<(Edge | Edge.Metadata)[]>((arr, node, index) => {
+        console.log(hookState.mockResolve.enable && index > routerIndex + 1, index, routerIndex)
         if (index < arrowNodes.length - 1) {
           arr.push({
             shape: 'flowline',
             source: node,
-            target: arrowNodes[index + 1]
+            target: arrowNodes[index + 1],
+            // mock 开启，灰色
+            ...(hookState.mockResolve.enable &&
+            index >= routerIndex &&
+            index !== arrowNodes.length - 2
+              ? {
+                  attrs: {
+                    line: {
+                      stroke: '#787D8B',
+                      strokeWidth: 0.5,
+                      strokeDasharray: '3 3',
+                      targetMarker: ''
+                    }
+                  }
+                }
+              : index === routerIndex - 1
+              ? {
+                  attrs: {
+                    line: {
+                      targetMarker: ''
+                    }
+                  }
+                }
+              : {})
           })
         }
         return arr
       }, [])
     )
 
-    // 请求拦截直接返回的
-    // graph.addEdge({
-    //   shape: 'reject',
-    //   source: loggedValidation,
-    //   target: end
-    // })
-    // graph.addNode({
-    //   shape: 'flowLabel',
-    //   label: '401',
-    //   width: 24,
-    //   height: LABEL_HEIGHT,
-    //   x: 80,
-    //   y: 111
-    // })
-    // graph.addEdge({
-    //   shape: 'rejectArrow',
-    //   source: { x: 64, y: 119 },
-    //   target: { x: 60, y: 119 }
-    // })
-    // // 避免边重叠
-    // graph.addEdge({
-    //   shape: 'reject',
-    //   source: authValidation,
-    //   router: 'normal',
-    //   target: { x: 20, y: 198 }
-    // })
-    // graph.addNode({
-    //   shape: 'flowLabel',
-    //   label: '401',
-    //   width: 24,
-    //   height: LABEL_HEIGHT,
-    //   x: 80,
-    //   y: 191
-    // })
-    // graph.addEdge({
-    //   shape: 'rejectArrow',
-    //   source: { x: 64, y: 198 },
-    //   target: { x: 60, y: 198 }
-    // })
-    // // 避免边重叠
-    // graph.addEdge({
-    //   shape: 'reject',
-    //   source: requestValidation,
-    //   router: 'normal',
-    //   target: { x: 20, y: 277 }
-    // })
-    // graph.addNode({
-    //   shape: 'flowLabel',
-    //   label: '401',
-    //   width: 24,
-    //   height: LABEL_HEIGHT,
-    //   x: 80,
-    //   y: 270
-    // })
-    // graph.addEdge({
-    //   shape: 'rejectArrow',
-    //   source: { x: 64, y: 277 },
-    //   target: { x: 60, y: 277 }
-    // })
+    // 校验失败边
+    rejectNodes.forEach(node => {
+      const bbox = node[0].getBBox()
+      // 边
+      graph.addEdge({
+        shape: 'reject',
+        source: node[0],
+        target: end
+      })
+      // 状态码
+      graph.addNode({
+        shape: 'flowLabel',
+        label: node[1],
+        width: 24,
+        height: LABEL_HEIGHT,
+        x: 80,
+        y: bbox.y + 18
+      })
+      // 箭头
+      graph.addEdge({
+        shape: 'rejectArrow',
+        source: { x: 64, y: bbox.y + 25 },
+        target: { x: 60, y: bbox.y + 25 }
+      })
+    })
 
-    // // mock
-    // graph.addEdge({
-    //   shape: 'reject',
-    //   source: routerSwitch,
-    //   target: sendResponse,
-    //   router: {
-    //     args: {
-    //       padding: 60
-    //     }
-    //   }
-    // })
-    // graph.addEdge({
-    //   shape: 'rejectArrow',
-    //   source: { x: 100, y: 382 },
-    //   target: { x: 96, y: 382 }
-    // })
-    // // mockResolve
-    // graph.addNode({
-    //   shape: 'operation',
-    //   width: 88,
-    //   height: 20,
-    //   label: 'mockResolve',
-    //   x: 30,
-    //   y: 451,
-    //   attrs: {
-    //     body: { rx: 10, ry: 10 }
-    //   }
-    // })
+    // 指令
+    directiveNodes.forEach(item => item.addToGraph(graph))
 
     return () => {
+      console.log('dispose FlowChart')
       graph.dispose()
     }
   }, [directiveState, hookState, globalHookState])

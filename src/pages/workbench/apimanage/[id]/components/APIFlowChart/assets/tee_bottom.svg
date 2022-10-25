@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>三通</title>
+    <defs>
+        <circle id="path-1" cx="16" cy="16" r="16"></circle>
+        <filter x="-21.9%" y="-15.6%" width="143.8%" height="143.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.663141452   0 0 0 0 0.708804371   0 0 0 0 0.800130208  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="三通" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <g id="蒙版">
+            <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+            <use fill="#5F799D" fill-rule="evenodd" xlink:href="#path-1"></use>
+        </g>
+        <rect id="矩形" fill="#FFFFFF" mask="url(#mask-2)" x="11" y="-4" width="10" height="36"></rect>
+        <line x1="16" y1="-2" x2="16" y2="1" id="路径-52" stroke="#40CD88" stroke-width="3" mask="url(#mask-2)"></line>
+        <line x1="16" y1="8" x2="16" y2="11" id="路径-52" stroke="#40CD88" stroke-width="3" mask="url(#mask-2)"></line>
+        <line x1="16" y1="18" x2="16" y2="21" id="路径-52" stroke="#40CD88" stroke-width="3" mask="url(#mask-2)"></line>
+        <polygon id="三角形" fill="#40CD88" mask="url(#mask-2)" transform="translate(16.000000, 2.500000) scale(1, -1) translate(-16.000000, -2.500000) " points="16 0.5 19 4.5 13 4.5"></polygon>
+        <polygon id="三角形" fill="#40CD88" mask="url(#mask-2)" transform="translate(16.000000, 12.500000) scale(1, -1) translate(-16.000000, -12.500000) " points="16 10.5 19 14.5 13 14.5"></polygon>
+        <polygon id="三角形" fill="#40CD88" mask="url(#mask-2)" transform="translate(16.000000, 22.500000) scale(1, -1) translate(-16.000000, -22.500000) " points="16 20.5 19 24.5 13 24.5"></polygon>
+        <line x1="16" y1="28" x2="16" y2="31" id="路径-52" stroke="#40CD88" stroke-width="3" mask="url(#mask-2)"></line>
+        <polygon id="三角形" fill="#40CD88" mask="url(#mask-2)" transform="translate(16.000000, 32.500000) scale(1, -1) translate(-16.000000, -32.500000) " points="16 30.5 19 34.5 13 34.5"></polygon>
+        <rect id="矩形" fill-opacity="0.691897946" fill="#FFFFFF" mask="url(#mask-2)" x="-3" y="11" width="14" height="10"></rect>
+        <line x1="11" y1="20.876373" x2="11" y2="11" id="路径-49" stroke="#216DFA" mask="url(#mask-2)"></line>
+        <circle id="椭圆形" fill="#292929" mask="url(#mask-2)" cx="11" cy="20.5" r="1"></circle>
+    </g>
+</svg>

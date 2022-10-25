@@ -90,7 +90,7 @@ export default function EditPanel({ onClose, hook }: Props) {
       }
     >
       <IdeContainer
-        // onChange={refreshAPI}
+        onChange={refreshAPI}
         hookPath={hook.path}
         defaultCode={defaults[hook.name] || ''}
         defaultLanguage="typescript"
