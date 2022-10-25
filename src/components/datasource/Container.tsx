@@ -45,7 +45,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     return rv
   }, [content?.sourceType, showType])
 
-  if (!content)
+  if (!content) {
     return (
       <div className="pl-6 mt-6 mr-6">
         <div className="flex justify-start items-center  mb-24px">
@@ -54,11 +54,11 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <Designer />
       </div>
     )
+  }
 
   const toggleOpen = async () => {
-    if (!content) {
-      return
-    }
+    if (!content) return
+
     content.switch ^= 1
     if (content) {
       void (await requests.put('/dataSource', content))
@@ -81,8 +81,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
               onChange={toggleOpen}
             />
             <Button className={'btn-test ml-4 mr-4'}>设计</Button>
-            <Button className={'btn-test  mr-4'}>测试</Button>
-            <Button className={'btn-save  mr-11'} onClick={() => handleToggleDesigner('form')}>
+            <Button className={'btn-test mr-4'}>测试</Button>
+            <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
               编辑
             </Button>
           </>
