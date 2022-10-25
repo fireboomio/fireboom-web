@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons'
 import type { UploadProps } from 'antd'
-import { Image, Input, message, Table, Upload } from 'antd'
+import { Image, Input, message, Popconfirm, Table, Upload } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 
@@ -16,15 +16,6 @@ interface TableType {
   permission: string
   owner: string
 }
-
-const columns: ColumnsType<TableType> = [
-  { title: '文件名', dataIndex: 'name', key: 'name', className: 'cursor-pointer' },
-  { title: '大小', dataIndex: 'size', key: 'size', width: 100 },
-  { title: '修改时间', dataIndex: 'modifyTime', key: 'modifyTime', width: 180 },
-  { title: '权限', dataIndex: 'permission', key: 'permission', width: 80 },
-  // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
-  { title: '', dataIndex: 'icon', key: 'icon', width: 50 }
-]
 
 interface Props {
   setUploadPath: (value: string) => void
@@ -55,33 +46,57 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
     }
   }
 
+  const confirm = (rcd: TableType, e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
+    e?.stopPropagation()
+    rmFile(rcd.name)
+    setRefreshFlag(!refreshFlag)
+  }
+
+  const cancel = (e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
+    e?.stopPropagation()
+  }
+
   useEffect(() => {
     void requests.get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`).then(x => {
-      setData(
-        x.files.map(f => ({
-          ...f,
-          icon: (
-            <IconFont
-              onClick={e => {
-                e.stopPropagation()
-                rmFile(f.name)
-                setRefreshFlag(!refreshFlag)
-              }}
-              type="icon-shanchu"
-              className="cursor-pointer"
-              style={{ fontSize: '16px', color: '#f6595b' }}
-            />
-          )
-        }))
-      )
+      setData(x.files)
     })
-  }, [refreshFlag])
+  }, [refreshFlag, upType])
 
   function rmFile(fname: string) {
     void requests
       .delete('/file/removeFile', { data: { name: fname, type: `${upType}` } })
       .then(x => console.log(x))
   }
+
+  const columns: ColumnsType<TableType> = [
+    { title: '文件名', dataIndex: 'name', key: 'name', className: 'cursor-pointer' },
+    { title: '大小', dataIndex: 'size', key: 'size', width: 100 },
+    { title: '修改时间', dataIndex: 'modifyTime', key: 'modifyTime', width: 180 },
+    { title: '权限', dataIndex: 'permission', key: 'permission', width: 80 },
+    // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
+    {
+      title: '',
+      dataIndex: 'icon',
+      key: 'icon',
+      width: 50,
+      render: (_, rcd) => (
+        <Popconfirm
+          title="确认删除？"
+          onConfirm={e => confirm(rcd, e)}
+          onCancel={cancel}
+          okText="是"
+          cancelText="否"
+        >
+          <IconFont
+            onClick={e => e?.stopPropagation()}
+            type="icon-shanchu"
+            className="cursor-pointer"
+            style={{ fontSize: '16px', color: '#f6595b' }}
+          />
+        </Popconfirm>
+      )
+    }
+  ]
 
   return (
     <>
