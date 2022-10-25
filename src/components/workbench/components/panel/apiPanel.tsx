@@ -31,6 +31,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // const [query, setQuery] = useState<string>()
   const [isBlur, setIsBlur] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false)
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([])
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
     return getNodeByKey(currEditingKey, treeData)
@@ -157,12 +158,23 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
     const tree = treeData ?? []
 
+    console.log(expandedKeys)
+    let addTarget
     if (curr?.isDir) {
-      curr.children.push(node)
+      // 如果当前目标是目录则向当前目标插入
+      addTarget = curr
     } else if (parent) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      parent.children!.push(node)
+      // 否则如果有父目录则向其插入
+      addTarget = parent
+    }
+    if (addTarget) {
+      // 有插入目标时，向目标插入并自动展开
+      addTarget.children?.push(node)
+      if (!expandedKeys.includes(addTarget.key)) {
+        setExpandedKeys([...expandedKeys, addTarget.key])
+      }
     } else {
+      // 无插入目标时，插入根节点
       tree.push(node)
     }
 
@@ -381,6 +393,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           showIcon
           defaultExpandAll={true}
           defaultExpandParent
+          expandedKeys={expandedKeys}
+          onExpand={setExpandedKeys}
           // @ts-ignore
           treeData={treeData}
           selectedKeys={[selectedKey]}

@@ -103,7 +103,7 @@ const IdeHeaderContainer: FC<Props> = props => {
             {toggleLoading && <LoadingOutlined className="mr-5" />}
             <div>
               <Switch
-                defaultChecked={!props.disabled}
+                checked={!props.disabled}
                 disabled={toggleLoading}
                 onChange={onToggleHookChange}
               />

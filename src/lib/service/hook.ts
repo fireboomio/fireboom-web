@@ -9,7 +9,7 @@ export const saveScript = (data: any) => {
 export const updateHookSwitch = (path: string, value: boolean) => {
   return requests.post('/hook/switch', {
     path: path,
-    switch: value,
+    switch: value
   })
 }
 
@@ -22,7 +22,7 @@ export const getHook = <T>(path: string) => {
 export const saveHookScript = (path: string, script: string) => {
   return requests.post('/hook/script', {
     path,
-    script,
+    script
   })
 }
 
@@ -30,7 +30,7 @@ export const saveHookScript = (path: string, script: string) => {
 export const saveHookInput = (path: string, input: Record<string, string>) => {
   return requests.post('/hook/input', {
     path,
-    input,
+    input
   })
 }
 
@@ -38,7 +38,7 @@ export const saveHookInput = (path: string, input: Record<string, string>) => {
 export const saveHookDepend = (path: string, depend: Record<string, string>[]) => {
   return requests.post('/hook/depend', {
     path,
-    depend,
+    depend
   })
 }
 
@@ -57,10 +57,9 @@ export const runHook = <R>(
     depend: params.depend,
     input: params.input,
     script: params.script,
-    scriptType: params.scriptType,
+    scriptType: params.scriptType
   })
 }
-
 
 // 获取全部类型声明文件
 export const getTypes = <R>() => {

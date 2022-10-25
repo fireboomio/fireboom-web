@@ -6,7 +6,7 @@ import { useAPIManager } from '@/pages/workbench/apimanage/[id]/hooks'
 import backArrow from './assets/back-arrow.svg'
 import styles from './editPanel.module.less'
 
-const defaults = {
+const defaults: Record<string, string | undefined> = {
   preResolve: `// import type { User } from "../../../wundergraph/.wundergraph/generated/wundergraph.server"
 // import type { InternalClient } from "../../../wundergraph/.wundergraph/generated/wundergraph.internal.client"
 // import type { Context } from "@wundergraph/sdk"
@@ -68,8 +68,7 @@ interface Props {
   hook: { name: string; path: string }
 }
 export default function EditPanel({ onClose, hook }: Props) {
-  const { apiContainerRef } = useAPIManager()
-  console.log(hook)
+  const { apiContainerRef, refreshAPI } = useAPIManager()
   return apiContainerRef ? (
     <Drawer
       className={styles.drawer}
@@ -86,11 +85,16 @@ export default function EditPanel({ onClose, hook }: Props) {
             返回文件
           </div>
           <div className={styles.split} />
-          <div className={styles.title}>{hook.path}</div>
+          <div className={styles.title}>{hook.path.split('/').pop()}</div>
         </div>
       }
     >
-      <IdeContainer hookPath={hook.path} defaultLanguage="typescript" />
+      <IdeContainer
+        onChange={refreshAPI}
+        hookPath={hook.path}
+        defaultCode={defaults[hook.name] || ''}
+        defaultLanguage="typescript"
+      />
     </Drawer>
   ) : null
 }
