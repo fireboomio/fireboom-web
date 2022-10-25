@@ -18,11 +18,11 @@ interface TableType {
 }
 
 const columns: ColumnsType<TableType> = [
-  { title: '文件名', dataIndex: 'name', key: 'name' },
+  { title: '文件名', dataIndex: 'name', key: 'name', className: 'cursor-pointer' },
   { title: '大小', dataIndex: 'size', key: 'size', width: 100 },
   { title: '修改时间', dataIndex: 'modifyTime', key: 'modifyTime', width: 180 },
   { title: '权限', dataIndex: 'permission', key: 'permission', width: 80 },
-  { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
+  // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
   { title: '', dataIndex: 'icon', key: 'icon', width: 50 }
 ]
 
@@ -93,7 +93,7 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          defaultValue={''}
+          defaultValue={'./'}
         />
         <Upload
           {...upProps}
