@@ -7,7 +7,7 @@ import { Button } from 'antd'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { FullScreen, useFullScreenHandle } from 'react-full-screen'
+import { useFullScreenHandle } from 'react-full-screen'
 
 import {
   getHook,
@@ -86,6 +86,7 @@ export const editorOptions: EditorProps['options'] = {
 const SAVE_DELAY = 1000
 
 interface Props {
+  hideSwitch?: boolean
   hookPath: string
   defaultCode?: string
   defaultInput?: string
@@ -307,95 +308,96 @@ const IdeContainer: FC<Props> = props => {
 
   return (
     <div className={`${ideStyles['ide-container']}`}>
-      <FullScreen
-        handle={handle}
-        className={`${ideStyles['fullscreen']}`}
-        onChange={state => {
-          if (!state) {
-            setFullScreen(false)
-          }
-        }}
-      >
-        <>
-          {/* 头部 */}
-          <IdeHeaderContainer
-            {...{
-              savePayload,
-              fullScreen,
-              disabled: hookInfo?.switch === false,
-              onSave: () => {
-                handleSave('active')
-              },
-              onToggleHook: async value => {
-                hookInfo && setHookInfo({ ...hookInfo, switch: value })
-                props.onChange?.()
-                await updateHookSwitch(props.hookPath, value)
-              },
-              onFullScreen: () => {
-                setFullScreen(!fullScreen)
-                handle.active ? void handle.exit() : void handle.enter()
-              }
-            }}
-          />
-          <div className="flex justify-start" style={{ height: fullScreen ? '100vh' : 'auto' }}>
-            {/* 依赖列表是否收起 */}
-            {smallDepend ? (
-              <Button
-                onClick={() => {
-                  setSmallDepend(false)
-                }}
-                className="mt-2 ml-2"
-                size="small"
-                shape="circle"
-                icon={<DoubleRightOutlined color="#ADADAD" />}
-              />
-            ) : (
-              <IdeDependList
-                {...{
-                  dependList: hookInfo?.depend || [],
-                  onFold: dependFold,
-                  onDependChange: dependChange,
-                  onDependDelete: dependRemove
-                }}
-              />
-            )}
-            <div className={`${ideStyles['code-wrapper']} ${smallDepend ? 'flex-1' : ''}`}>
-              {/* 编辑器 */}
-              <IdeCodeContainer
-                {...{
-                  defaultLanguage: props.defaultLanguage,
-                  value: hookInfo?.script,
-                  expandAction,
-                  fullScreen,
-                  editorOptions,
-                  onChange: value => {
-                    codeChange(value)
-                    props.onChange?.()
-                  },
-                  onBeforeMount: handleEditorBeforeMount,
-                  onMount: handleEditorMount,
-                  onClickExpandAction: () => {
-                    setExpandAction(!expandAction)
-                  }
-                }}
-              />
-              {/* 输入和输出区 */}
-              <IdeActionContainer
-                defaultInputValue={props.defaultInput}
-                onClickDebug={async json => {
-                  return await handleDebug(json)
-                }}
-                onClickClearLog={() => {
-                  setRunResult(defaultRunResult)
-                }}
-                runResult={runResult}
-                expandAction={expandAction}
-                editorOptions={editorOptions}
-              />
-            </div>
+      {/*<FullScreen*/}
+      {/*  handle={handle}*/}
+      {/*  className={`${ideStyles['fullscreen']}`}*/}
+      {/*  onChange={state => {*/}
+      {/*    if (!state) {*/}
+      {/*      setFullScreen(false)*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*>*/}
+      <div className={fullScreen ? ideStyles.fullscreen : ''}>
+        {/* 头部 */}
+        <IdeHeaderContainer
+          hideSwitch={props.hideSwitch ?? false}
+          {...{
+            savePayload,
+            fullScreen,
+            disabled: hookInfo?.switch === false,
+            onSave: () => {
+              handleSave('active')
+            },
+            onToggleHook: async value => {
+              hookInfo && setHookInfo({ ...hookInfo, switch: value })
+              props.onChange?.()
+              await updateHookSwitch(props.hookPath, value)
+            },
+            onFullScreen: () => {
+              setFullScreen(!fullScreen)
+              handle.active ? void handle.exit() : void handle.enter()
+            }
+          }}
+        />
+        <div className="flex justify-start" style={{ height: fullScreen ? '100vh' : 'auto' }}>
+          {/* 依赖列表是否收起 */}
+          {smallDepend ? (
+            <Button
+              onClick={() => {
+                setSmallDepend(false)
+              }}
+              className="mt-2 ml-2"
+              size="small"
+              shape="circle"
+              icon={<DoubleRightOutlined color="#ADADAD" />}
+            />
+          ) : (
+            <IdeDependList
+              {...{
+                dependList: hookInfo?.depend || [],
+                onFold: dependFold,
+                onDependChange: dependChange,
+                onDependDelete: dependRemove
+              }}
+            />
+          )}
+          <div className={`${ideStyles['code-wrapper']} ${smallDepend ? 'flex-1' : ''}`}>
+            {/* 编辑器 */}
+            <IdeCodeContainer
+              {...{
+                defaultLanguage: props.defaultLanguage,
+                value: hookInfo?.script,
+                expandAction,
+                fullScreen,
+                editorOptions,
+                onChange: value => {
+                  codeChange(value)
+                  props.onChange?.()
+                },
+                onBeforeMount: handleEditorBeforeMount,
+                onMount: handleEditorMount,
+                onClickExpandAction: () => {
+                  setExpandAction(!expandAction)
+                }
+              }}
+            />
+            {/* 输入和输出区 */}
+            <IdeActionContainer
+              defaultInputValue={props.defaultInput}
+              onClickDebug={async json => {
+                return await handleDebug(json)
+              }}
+              onClickClearLog={() => {
+                setRunResult(defaultRunResult)
+              }}
+              runResult={runResult}
+              expandAction={expandAction}
+              editorOptions={editorOptions}
+            />
           </div>
-        </>
-      </FullScreen>
+        </div>
+      </div>
+      {/*</FullScreen>*/}
     </div>
   )
 }

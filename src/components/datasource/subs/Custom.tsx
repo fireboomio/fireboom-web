@@ -144,7 +144,11 @@ export default function Custom({ content }: Props) {
         </span>
       </div>
       {content.name ? (
-        <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" />
+        <IdeContainer
+          hookPath={`customize/${content.name}`}
+          defaultLanguage="typescript"
+          hideSwitch
+        />
       ) : (
         ''
       )}

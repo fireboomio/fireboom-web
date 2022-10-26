@@ -11,6 +11,8 @@ import { AutoSaveStatus } from './../index'
 import ideStyles from './index.module.less'
 
 interface Props {
+  // 隐藏启停开关
+  hideSwitch: boolean
   // 保存状态
   savePayload: AutoSavePayload
   fullScreen: boolean
@@ -99,16 +101,18 @@ const IdeHeaderContainer: FC<Props> = props => {
             保存
           </Button>
           {/* 开关 */}
-          <div className="common-form flex items-center ml-10">
-            {toggleLoading && <LoadingOutlined className="mr-5" />}
-            <div>
-              <Switch
-                checked={!props.disabled}
-                disabled={toggleLoading}
-                onChange={onToggleHookChange}
-              />
+          {props.hideSwitch ? null : (
+            <div className="common-form flex items-center ml-10">
+              {toggleLoading && <LoadingOutlined className="mr-5" />}
+              <div>
+                <Switch
+                  checked={!props.disabled}
+                  disabled={toggleLoading}
+                  onChange={onToggleHookChange}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         {/* 右侧区域 */}
         <div className="flex items-center">

@@ -1,15 +1,21 @@
 .fullscreen {
-    background-color: #fff;
+  background-color: #fff;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 900;
 }
 
 .ide-container :global {
-    width: 100%;
-    border: 1px solid #efefef;
+  width: 100%;
+  border: 1px solid #efefef;
 }
 
 .code-wrapper :global {
-    min-width: calc(100% - 24%);
-    @media (max-width: 1980px) {
-        min-width: calc(100% - 34%);
-    }
+  min-width: calc(100% - 24%);
+  @media (max-width: 1980px) {
+    min-width: calc(100% - 34%);
+  }
 }
