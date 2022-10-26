@@ -19,7 +19,6 @@ export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const config = content.config as unknown as Config
-  const point = content.point as string
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
@@ -41,9 +40,7 @@ export default function AuthMainCheck({ content }: Props) {
     <>
       <div className="mt-8">
         <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label="供应商ID">
-            <a href={point as string}>{config.id}</a>
-          </Descriptions.Item>
+          <Descriptions.Item label="供应商ID">{config.id}</Descriptions.Item>
           <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>

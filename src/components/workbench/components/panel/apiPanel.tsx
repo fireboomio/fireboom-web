@@ -146,6 +146,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [])
 
   const handleAddNode = (action: ActionT) => {
+    if (!panelOpened) {
+      setPanelOpened(true)
+    }
     setAction(action)
 
     const { parent, curr } = getNodeFamily(selectedKey, treeData)
@@ -401,6 +404,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     <SidePanel
       title="API管理"
       hideAdd
+      open={panelOpened}
       {...props}
       onOpen={flag => {
         setPanelOpened(flag)

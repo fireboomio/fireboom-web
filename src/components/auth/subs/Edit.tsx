@@ -104,7 +104,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
       }
 
   const handleTest = () => {
-    // TODO 测试接口
+    window.open(content.point)
   }
 
   return (

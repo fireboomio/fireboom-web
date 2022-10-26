@@ -11,7 +11,7 @@ import type { StorageResp } from '@/interfaces/storage'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import commonPanelReducer from '@/lib/reducers/PanelReducer'
+import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.less'
 

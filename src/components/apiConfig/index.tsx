@@ -1,4 +1,5 @@
 import { Button, Form, InputNumber, message, Switch } from 'antd'
+import { OperationTypeNode } from 'graphql/index'
 import { useEffect, useState } from 'react'
 
 import requests from '@/lib/fetchers'
@@ -6,6 +7,7 @@ import requests from '@/lib/fetchers'
 import styles from './index.module.less'
 
 interface Props {
+  operationType?: OperationTypeNode
   id?: number
   onClose?: () => void
   type: 'global' | 'panel'
@@ -81,16 +83,18 @@ export default function Index(props: Props) {
         labelAlign="left"
         onValuesChange={onChange}
       >
-        <Form.Item label="启用独立配置">
-          <>
-            <Form.Item noStyle name="enable" valuePropName="checked">
-              <Switch checkedChildren="开启" unCheckedChildren="关闭" />
-            </Form.Item>
-            <span className={styles.tip} style={{ marginLeft: 12 }}>
-              开启后，该 API 使用独立配置
-            </span>
-          </>
-        </Form.Item>
+        {props.type !== 'global' ? (
+          <Form.Item label="启用独立配置">
+            <>
+              <Form.Item noStyle name="enable" valuePropName="checked">
+                <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+              </Form.Item>
+              <span className={styles.tip} style={{ marginLeft: 12 }}>
+                开启后，该 API 使用独立配置
+              </span>
+            </>
+          </Form.Item>
+        ) : null}
         {setting.enable || props.type === 'global' ? (
           <>
             <div className={styles.tip}>授权</div>
@@ -104,26 +108,35 @@ export default function Index(props: Props) {
                 </span>
               </>
             </Form.Item>
-            {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-            <div className={styles.tip}>缓存</div>
-            <Form.Item label="开启缓存" name="cachingEnable" valuePropName="checked">
-              <Switch checkedChildren="开启" unCheckedChildren="关闭" />
-            </Form.Item>
-            <Form.Item label="最大时长" name="cachingMaxAge">
-              <InputNumber addonAfter="秒" />
-            </Form.Item>
-            <Form.Item label="重新校验时长" name="cachingStaleWhileRevalidate">
-              <InputNumber addonAfter="秒" />
-            </Form.Item>
-            {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-            <div className={styles.tip}>实时</div>
-            <Form.Item label="开启时长" name="liveQueryEnable" valuePropName="checked">
-              <Switch checkedChildren="开启" unCheckedChildren="关闭" />
-            </Form.Item>
+            {props.operationType === OperationTypeNode.QUERY && props.type !== 'global' ? (
+              <>
+                {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
+                <div className={styles.tip}>缓存</div>
+                <Form.Item label="开启缓存" name="cachingEnable" valuePropName="checked">
+                  <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                </Form.Item>
+                <Form.Item label="最大时长" name="cachingMaxAge">
+                  <InputNumber addonAfter="秒" />
+                </Form.Item>
+                <Form.Item label="重新校验时长" name="cachingStaleWhileRevalidate">
+                  <InputNumber addonAfter="秒" />
+                </Form.Item>
+              </>
+            ) : null}
 
-            <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">
-              <InputNumber addonAfter="秒" />
-            </Form.Item>
+            {props.operationType === OperationTypeNode.QUERY && props.type !== 'global' ? (
+              <>
+                {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
+                <div className={styles.tip}>实时</div>
+                <Form.Item label="开启时长" name="liveQueryEnable" valuePropName="checked">
+                  <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                </Form.Item>
+
+                <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">
+                  <InputNumber addonAfter="秒" />
+                </Form.Item>
+              </>
+            ) : null}
           </>
         ) : null}
         {props.type === 'global' ? (

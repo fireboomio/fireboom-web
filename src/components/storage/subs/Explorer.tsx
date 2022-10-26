@@ -211,7 +211,6 @@ export default function StorageExplorer({ bucketId }: Props) {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
     setTarget({ ...targetOption })
-
     let path = targetOption.name ?? ''
 
     if (targetOption.isLeaf) {
@@ -230,7 +229,6 @@ export default function StorageExplorer({ bucketId }: Props) {
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
       params: { bucketID: bucketId, filePrefix: `${path}` }
     })
-
     const fileOpts = files
       .sort(sortFile)
       .filter(x => x.name !== targetOption.name)
@@ -253,10 +251,16 @@ export default function StorageExplorer({ bucketId }: Props) {
         isLeaf: !x.isDir,
         ...x
       }))
-
     targetOption.children = fileOpts
     targetOption.loading = false
-    setOptions([...options])
+
+    const newOptions = options.map(x => {
+      if (x.name === targetOption.name) {
+        return targetOption
+      }
+      return x
+    })
+    setOptions(newOptions)
   }
 
   const isImage = (mime: string | undefined) => {
@@ -361,7 +365,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
             action="/api/v1/s3Upload/upload"
-            data={{ bucketID: bucketId, path: 'sail/' }}
+            data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
               if (info.file.status === 'success' || info.file.status === 'done') {
