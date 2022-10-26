@@ -15,6 +15,7 @@ import {
   Input,
   Menu,
   message,
+  Modal,
   Tooltip,
   Upload
 } from 'antd'
@@ -269,7 +270,32 @@ export default function StorageExplorer({ bucketId }: Props) {
       .then(() => void message.success('删除成功'))
   }
 
-  const createFold = () => {}
+  const inputValue = useRef<string>()
+  const createFold = () => {
+    Modal.info({
+      title: '请输入文件夹名称',
+      content: (
+        <Input
+          autoFocus
+          placeholder="请输入"
+          onChange={e => {
+            inputValue.current = e.target.value
+          }}
+        />
+      ),
+      okText: '创建',
+      onOk: () => {
+        if (!inputValue.current) {
+          return
+        }
+        requests.post('/api/v1/s3Upload/upload', {
+          bucketID: bucketId,
+          path: `${inputValue.current}/`
+        })
+      }
+    })
+    // requests.post('/api/v1/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
+  }
 
   const renderPreview = (file?: Option) => {
     if (!file) {
@@ -335,12 +361,10 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
             action="/api/v1/s3Upload/upload"
-            data={{ bucketID: bucketId, path: uploadPath }}
+            data={{ bucketID: bucketId, path: 'sail/' }}
             showUploadList={false}
             onChange={info => {
-              console.log(info.file.status, '***')
               if (info.file.status === 'success' || info.file.status === 'done') {
-                console.log('doRefresh')
                 setRefreshFlag(!refreshFlag)
               }
             }}
