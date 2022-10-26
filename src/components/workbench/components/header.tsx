@@ -72,7 +72,8 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles['redoc-container']}>
           {/* @ts-ignore */}
           <rapi-doc
-            spec-url={`/api/v1/file/postToSwag`}
+            // spec-url={`/api/v1/file/postToSwag`}
+            spec-url={`https://petstore.swagger.io/v2/swagger.json`}
             show-header="false"
             show-info="false"
             allow-authentication="false"

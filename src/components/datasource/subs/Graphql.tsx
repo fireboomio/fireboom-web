@@ -480,10 +480,8 @@ export default function Graphql({ content, type }: Props) {
                 colon={false}
                 required
                 rules={[
-                  {
-                    pattern: urlReg,
-                    message: '请填写规范域名'
-                  }
+                  { required: true, message: '端点不能为空' },
+                  { pattern: urlReg, message: '请填写规范域名' }
                 ]}
                 style={{ marginBottom: '20px' }}
                 name="url"
