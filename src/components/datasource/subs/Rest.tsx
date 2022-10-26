@@ -481,12 +481,12 @@ export default function Rest({ content, type }: Props) {
           <div className="border-gray border-b flex pb-9px items-center justify-between">
             {content.name == '' ? (
               <>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-shujuyuantubiao3" />
                 <span className="ml-2">创建数据源</span>
               </>
             ) : (
               <>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-shujuyuantubiao3" />
                 <span className="ml-2">
                   {content.name} <span className="text-xs text-gray-500/80">GET</span>
                 </span>

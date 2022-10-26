@@ -409,12 +409,12 @@ export default function Graphql({ content, type }: Props) {
           <div className="pb-9px flex items-center justify-between border-gray border-b">
             {content.name == '' ? (
               <div>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-QLweixuanzhong1" />
                 <span className="ml-2">创建数据源</span>
               </div>
             ) : (
               <div>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-QLweixuanzhong1" />
                 <span className="ml-2">
                   {content.name} <span className="text-xs text-gray-500/80">GET</span>
                 </span>
