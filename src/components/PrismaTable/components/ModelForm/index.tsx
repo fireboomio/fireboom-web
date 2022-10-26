@@ -106,6 +106,9 @@ const ModelFormContainer = ({
               if (field.type === 'Boolean') {
                 return <Inputs.Boolean key={field.name} {...options} />
               }
+              if (field.type === 'Json') {
+                return <Inputs.Json key={field.name} {...options} />
+              }
               if (['Int', 'BigInt', 'Float', 'Decimal'].includes(field.type)) {
                 return <Inputs.Number key={field.name} {...options} />
               }

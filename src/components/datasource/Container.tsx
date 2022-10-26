@@ -20,30 +20,6 @@ interface Props {
 export default function DatasourceContainer({ content, showType }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { onRefreshMenu } = useContext(WorkbenchContext)
-  const handleIconClick = () => {
-    console.log('aaa')
-  }
-
-  const title = useMemo(() => {
-    let rv = ''
-    switch (content?.sourceType) {
-      case 1:
-        rv = showType == 'setting' ? '设置' : 'DB'
-        break
-      case 2:
-        rv = 'REST'
-        break
-      case 3:
-        rv = 'GraphQL'
-        break
-      case 4:
-        rv = '自定义'
-        break
-      default:
-        break
-    }
-    return rv
-  }, [content?.sourceType, showType])
 
   if (!content) {
     return (
