@@ -158,10 +158,12 @@ const IdeContainer: FC<Props> = props => {
   useEffect(() => {
     if (editor && monaco) {
       // depend数组转换为对象
-      const depend = hookInfo?.depend?.reduce((acc, cur) => {
-        acc[cur.name] = cur.version
-        return acc
-      }, {} as Depend)
+      const depend =
+        hookInfo?.depend?.reduce((acc, cur) => {
+          acc[cur.name] = cur.version
+          return acc
+        }, {} as Depend) || {}
+      // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       void AutoTypings.create(editor, {

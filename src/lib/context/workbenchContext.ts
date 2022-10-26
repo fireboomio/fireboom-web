@@ -8,7 +8,21 @@ export type RefreshMap = {
 }
 export type MenuName = keyof RefreshMap
 
+export type TitleChangeEvent = {
+  event: 'titleChange'
+  title: string
+}
+export type CompileFinishEvent = {
+  event: 'compileFinish'
+}
+
+export type WorkbenchEvent = TitleChangeEvent | CompileFinishEvent
+
+export type WorkbenchListener = (event: WorkbenchEvent) => void
+
 interface WorkbenchContextType {
+  triggerPageEvent: (event: WorkbenchEvent) => void // 触发事件
+  registerPageListener: (fun: WorkbenchListener) => void // 内容页注册监听函数
   refreshMap: RefreshMap // 各目录刷新标记
   onRefreshMenu: (list: MenuName) => void // 触发制定目录刷新
   editFlag: boolean // 当前页面是否有未保存的内容

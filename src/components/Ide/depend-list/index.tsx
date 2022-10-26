@@ -218,7 +218,7 @@ const DependList = (props: DependListProps) => {
     })
     // 默认设置一个null作为version, 为null的version其代表了暂时不显示
     dependList.set(name, null)
-    console.log('aha')
+    console.log('aha', dependList)
     setDependList(new Map([...dependList]))
   }
 

@@ -10,6 +10,7 @@ import type { SidePanelProps } from '@/components/workbench/components/panel/sid
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import events from '@/lib/event/events'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const selectedNode = useMemo(() => getNodeByKey(selectedKey, treeData), [selectedKey, treeData])
 
-  const { refreshMap, navCheck } = useContext(WorkbenchContext)
+  const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
   // 监听location变化，及时清空选中状态
   useEffect(() => {
@@ -192,6 +193,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       case '重命名':
         void renameNode(currEditingNode, inputValue).then(() => {
           setCurrEditingKey(null)
+          events.emit({ event: 'titleChange', data: { title: inputValue } })
+          // triggerPageEvent({ event: 'titleChange', title: inputValue })
           setRefreshFlag(!refreshFlag)
         })
         break
