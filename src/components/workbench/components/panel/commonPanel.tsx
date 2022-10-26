@@ -47,7 +47,7 @@ const panelMap: Record<string, PanelConfig> = {
               let tip = ''
               switch (row.sourceType) {
                 case 1:
-                  icon = { MySQL: 'mysql', PostgreSQL: 'pgsql' }[String(row.config.dbType)] || icon
+                  icon = { mysql: 'mysql', postgresql: 'pgsql' }[String(row.config.dbType)] || icon
                   tip = String(row.config.dbName || '')
                   break
                 case 2:

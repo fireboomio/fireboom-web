@@ -146,27 +146,30 @@ export default function AuthRole() {
     })
     setRefreshFlag(!refreshFlag)
   }
-
+  const [tab, setTab] = useState<string>('role')
   return (
-    <>
+    <div className="relative">
+      {tab === 'role' ? (
+        <div className="absolute top-2px right-0">
+          <Button
+            className="px-4 py-0 h-7.5"
+            onClick={() => {
+              setModal1Visible(true)
+            }}
+          >
+            <span className="text-sm text-gray">添加</span>
+          </Button>
+        </div>
+      ) : (
+        ''
+      )}
       <Tabs
-        defaultActiveKey="1"
         renderTabBar={(props, DefaultTabBar) => {
           return <DefaultTabBar className={styles.pillTab} {...props} />
         }}
+        onChange={setTab}
       >
         <TabPane tab="角色管理" key="role" className={styles.tabContent}>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-base text-gray">角色管理</span>
-            <Button
-              className="px-4 py-0 h-7.5"
-              onClick={() => {
-                setModal1Visible(true)
-              }}
-            >
-              <span className="text-sm text-gray">添加</span>
-            </Button>
-          </div>
           <Modal
             mask={false}
             title="添加"
@@ -236,7 +239,7 @@ export default function AuthRole() {
             )}
           </div>
         </TabPane>
-        <TabPane tab="身份鉴权" key="auto" className={styles.tabContent}>
+        <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
             <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
@@ -249,6 +252,6 @@ export default function AuthRole() {
           </div>
         </TabPane>
       </Tabs>
-    </>
+    </div>
   )
 }
