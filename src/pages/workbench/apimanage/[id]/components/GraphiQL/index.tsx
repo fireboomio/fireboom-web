@@ -186,6 +186,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     return def?.variableDefinitions || []
   }, [schemaAST])
 
+  // API 变更后需要刷新输入输出
   useEffect(() => {
     if (prevApiID.current && prevApiID.current !== apiID) {
       editorCtx?.responseEditor?.setValue('')

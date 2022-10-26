@@ -98,15 +98,14 @@ const APIFlowChart = ({ id }: { id: string }) => {
     appendToAPIRefresh(loadHook)
   }, [appendToAPIRefresh, loadHook])
 
-  return (
-    globalState &&
-    hookState && (
-      <FlowChart
-        globalHookState={globalState}
-        hookState={hookState}
-        directiveState={directiveState}
-      />
-    )
+  return globalState && hookState ? (
+    <FlowChart
+      globalHookState={globalState}
+      hookState={hookState}
+      directiveState={directiveState}
+    />
+  ) : (
+    <></>
   )
 }
 
