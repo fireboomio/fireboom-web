@@ -62,7 +62,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 
 export function APIEditorContainer({ id }: { id: string | undefined }) {
   const params = useParams()
-  const { fetcher, query, schema, setQuery } = useAPIManager()
+  const { fetcher, query, schema, setQuery, operationType } = useAPIManager()
   return (
     <>
       <Helmet>
@@ -96,7 +96,9 @@ export function APIEditorContainer({ id }: { id: string | undefined }) {
                 {
                   label: '设置',
                   key: '2',
-                  children: id ? <ApiConfig type="panel" id={Number(id)} /> : null
+                  children: id ? (
+                    <ApiConfig operationType={operationType} type="panel" id={Number(id)} />
+                  ) : null
                 }
               ]}
             />

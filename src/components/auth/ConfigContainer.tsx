@@ -56,7 +56,10 @@ export default function AuthConfigContainer() {
         <div className="flex-1"></div>
         {!editFlag ? (
           <>
-            <Button className={'btn-test  mr-4'} onClick={() => setEditFlag(true)}>
+            <Button
+              className={'btn-test  mr-4'}
+              onClick={() => content?.point && window.open(content?.point)}
+            >
               测试
             </Button>
             <Button className={'btn-save  mr-11'} onClick={() => setEditFlag(true)}>

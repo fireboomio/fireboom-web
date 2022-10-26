@@ -76,9 +76,9 @@ export const editorOptions: EditorProps['options'] = {
   },
   overviewRulerLanes: 0,
   scrollbar: {
-    vertical: 'hidden',
-    horizontal: 'hidden',
-    handleMouseWheel: false
+    // vertical: 'hidden',
+    // horizontal: 'hidden',
+    handleMouseWheel: true
   }
 }
 

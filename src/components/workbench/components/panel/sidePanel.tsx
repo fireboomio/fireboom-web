@@ -7,6 +7,7 @@ import styles from './sidePanel.module.less'
 export interface SidePanelProps {
   title: string
   action?: React.ReactNode
+  open?: boolean
   hideAdd?: boolean
   children?: React.ReactNode
   defaultOpen?: boolean
@@ -18,10 +19,12 @@ export default function SidePanel(props: SidePanelProps) {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (props.defaultOpen) {
+    if (props.open !== undefined) {
+      handelOpen(props.open)
+    } else if (props.defaultOpen) {
       handelOpen(true)
     }
-  }, [props.defaultOpen])
+  }, [props.defaultOpen, props.open])
 
   const handelOpen = (flag: boolean) => {
     setOpen(flag)

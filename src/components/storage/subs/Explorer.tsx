@@ -15,6 +15,7 @@ import {
   Input,
   Menu,
   message,
+  Modal,
   Tooltip,
   Upload
 } from 'antd'
@@ -210,7 +211,6 @@ export default function StorageExplorer({ bucketId }: Props) {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
     setTarget({ ...targetOption })
-
     let path = targetOption.name ?? ''
 
     if (targetOption.isLeaf) {
@@ -229,7 +229,6 @@ export default function StorageExplorer({ bucketId }: Props) {
     const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
       params: { bucketID: bucketId, filePrefix: `${path}` }
     })
-
     const fileOpts = files
       .sort(sortFile)
       .filter(x => x.name !== targetOption.name)
@@ -252,10 +251,16 @@ export default function StorageExplorer({ bucketId }: Props) {
         isLeaf: !x.isDir,
         ...x
       }))
-
     targetOption.children = fileOpts
     targetOption.loading = false
-    setOptions([...options])
+
+    const newOptions = options.map(x => {
+      if (x.name === targetOption.name) {
+        return targetOption
+      }
+      return x
+    })
+    setOptions(newOptions)
   }
 
   const isImage = (mime: string | undefined) => {
@@ -269,7 +274,32 @@ export default function StorageExplorer({ bucketId }: Props) {
       .then(() => void message.success('删除成功'))
   }
 
-  const createFold = () => {}
+  const inputValue = useRef<string>()
+  const createFold = () => {
+    Modal.info({
+      title: '请输入文件夹名称',
+      content: (
+        <Input
+          autoFocus
+          placeholder="请输入"
+          onChange={e => {
+            inputValue.current = e.target.value
+          }}
+        />
+      ),
+      okText: '创建',
+      onOk: () => {
+        if (!inputValue.current) {
+          return
+        }
+        requests.post('/api/v1/s3Upload/upload', {
+          bucketID: bucketId,
+          path: `${inputValue.current}/`
+        })
+      }
+    })
+    // requests.post('/api/v1/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
+  }
 
   const renderPreview = (file?: Option) => {
     if (!file) {
@@ -338,9 +368,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
-              console.log(info.file.status, '***')
               if (info.file.status === 'success' || info.file.status === 'done') {
-                console.log('doRefresh')
                 setRefreshFlag(!refreshFlag)
               }
             }}
