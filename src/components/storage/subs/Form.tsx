@@ -59,16 +59,24 @@ export default function StorageForm({ content }: Props) {
           className="ml-3"
           initialValues={{ ...config }}
         >
-          <Form.Item label="名称" rules={[{ required: true }]} name="name">
+          <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
             <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item label="服务地址" name="endpoint">
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App ID" rules={[{ required: true }]} name="accessKeyID">
+          <Form.Item
+            label="App ID"
+            rules={[{ required: true, message: '请输入 App ID' }]}
+            name="accessKeyID"
+          >
             <Input placeholder="请输入..." />
           </Form.Item>
-          <Form.Item label="App Secret" rules={[{ required: true }]} name="secretAccessKey">
+          <Form.Item
+            label="App Secret"
+            rules={[{ required: true, message: '请输入 App Secret' }]}
+            name="secretAccessKey"
+          >
             <Input.Password placeholder="请输入..." />
           </Form.Item>
           <Form.Item label="区域" name="bucketLocation">
