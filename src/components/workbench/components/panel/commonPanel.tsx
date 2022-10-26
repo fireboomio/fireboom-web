@@ -254,9 +254,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     <SidePanel
       title={panelConfig.title}
       onAdd={() => navigate(panelConfig.newItem)}
-      onOpen={(flag: boolean) => {
-        setPanelOpened(flag)
-      }}
+      onOpen={(flag: boolean) => setPanelOpened(flag)}
       defaultOpen={props.defaultOpen}
       action={
         <>

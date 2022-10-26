@@ -16,6 +16,7 @@ import {
   Menu,
   message,
   Modal,
+  Popconfirm,
   Tooltip,
   Upload
 } from 'antd'
@@ -444,9 +445,16 @@ export default function StorageExplorer({ bucketId }: Props) {
                   >
                     复制URL
                   </Button>
-                  <Button onClick={deleteFile} className="m-1.5">
-                    <span className="text-[#F21212]">删除</span>
-                  </Button>
+                  <Popconfirm
+                    title="确定删除吗?"
+                    onConfirm={deleteFile}
+                    okText="删除"
+                    cancelText="取消"
+                  >
+                    <Button onClick={deleteFile} className="m-1.5">
+                      <span className="text-[#F21212]">删除</span>
+                    </Button>
+                  </Popconfirm>
                 </div>
               </Collapse>
             </div>
