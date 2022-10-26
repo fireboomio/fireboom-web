@@ -400,7 +400,7 @@ export default function DB({ content, type }: Props) {
                       <Descriptions.Item label="环境变量">
                         {(config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
                         '0'
-                          ? '值'
+                          ? ''
                           : (config.databaseUrl as unknown as { kind: string; val: string })
                               ?.kind == '1'
                           ? '环境变量'
