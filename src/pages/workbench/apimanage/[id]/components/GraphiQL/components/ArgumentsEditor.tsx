@@ -44,8 +44,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     )
     setValues(
       props.arguments.map(item => {
-        const name = item.variable.name.value
-        if (name in originValueMap) {
+        const name = item.variable?.name.value
+        if (name && name in originValueMap) {
           return originValueMap[name]
         }
         return ''
@@ -84,8 +84,13 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
         }, {})
         return JSON.stringify(obj)
       },
-      setValue() {
-        /** */
+      setValue(v: string) {
+        // 暂时只支持清空
+        if (!v) {
+          const val = props.arguments.map(() => '')
+          setValues(val)
+          valuesRef.current = val
+        }
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

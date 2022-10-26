@@ -20,12 +20,13 @@ import {
   // ResponseEditor,
   GraphiQLProvider,
   QueryEditor,
+  useEditorContext,
   useTheme
 } from '@graphiql/react'
 import { Tabs } from 'antd'
 import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
-import type { ReactNode } from 'react'
-import React, { useEffect, useMemo, useState } from 'react'
+import type { MutableRefObject, ReactNode } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAPIManager } from '../../hooks'
 import ArgumentsEditor from './components/ArgumentsEditor'
@@ -171,7 +172,12 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-  const { schemaAST } = useAPIManager()
+  const { schemaAST, apiID } = useAPIManager()
+  const editorCtx = useEditorContext()
+  const prevApiID = useRef<string>()
+  const responseRef = useRef<{
+    setActiveKey?: (v: string) => void
+  }>()
 
   // const prettify = usePrettifyEditors()
 
@@ -179,6 +185,16 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
     return def?.variableDefinitions || []
   }, [schemaAST])
+
+  useEffect(() => {
+    if (prevApiID.current && prevApiID.current !== apiID) {
+      editorCtx?.responseEditor?.setValue('')
+      editorCtx?.variableEditor?.setValue('')
+      editorCtx?.headerEditor?.setValue('')
+      responseRef.current?.setActiveKey?.('arguments')
+    }
+    prevApiID.current = apiID
+  }, [apiID, editorCtx])
 
   useEffect(() => {
     setTheme('light')
@@ -198,7 +214,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
       />
       <section className="graphiql-editor-tool">
         <ResponseWrapper>
-          <GraphiInputAndResponse argumentList={argumentList} />
+          <GraphiInputAndResponse actionRef={responseRef} argumentList={argumentList} />
         </ResponseWrapper>
       </section>
     </div>
@@ -207,9 +223,15 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 
 interface GraphiInputAndResponseProps {
   argumentList: ReadonlyArray<VariableDefinitionNode>
+  actionRef?: MutableRefObject<
+    | {
+        setActiveKey?: (v: string) => void
+      }
+    | undefined
+  >
 }
 
-const GraphiInputAndResponse = ({ argumentList }: GraphiInputAndResponseProps) => {
+const GraphiInputAndResponse = ({ argumentList, actionRef }: GraphiInputAndResponseProps) => {
   const [activeKey, setActiveKey] = useState('arguments')
 
   const { response } = useResponse()
@@ -227,6 +249,14 @@ const GraphiInputAndResponse = ({ argumentList }: GraphiInputAndResponseProps) =
       setActiveKey('response')
     }
   }, [response])
+
+  useEffect(() => {
+    if (actionRef) {
+      actionRef.current = {
+        setActiveKey
+      }
+    }
+  }, [actionRef])
 
   return (
     <Tabs

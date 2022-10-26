@@ -218,6 +218,7 @@ export default function APIEditorProvider() {
   return (
     <APIContext.Provider
       value={{
+        apiID: params.id!,
         apiContainerRef: apiContainerRef.current,
         apiDesc,
         query,

@@ -14,12 +14,16 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
   switch (argument.type) {
     case 'Int':
       return (
-        <InputNumber className="text-xs" value={value as number} onChange={e => onChange?.(e)} />
+        <InputNumber
+          className="text-xs w-full"
+          value={value as number}
+          onChange={e => onChange?.(e)}
+        />
       )
     case 'String':
       return (
         <Input
-          className="text-xs"
+          className="text-xs w-full"
           value={value as string}
           onChange={e => onChange?.(e.target.value)}
         />
@@ -27,7 +31,7 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
     case 'Boolean':
       return (
         <Checkbox
-          className="text-xs"
+          className="text-xs w-full"
           checked={value as boolean}
           onChange={e => {
             onChange?.(e.target.checked)
