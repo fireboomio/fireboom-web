@@ -1,5 +1,6 @@
 import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from 'antd'
 import type { Key } from 'antd/lib/table/interface'
+import uniq from 'lodash/uniq'
 import type React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -63,12 +64,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       // })
       .then(res => {
         const tree = convertToTree(res, '0')
-        setTreeData(tree)
 
+        setTreeData(tree)
         // 根据当前path识别需要选中高亮的项目
         const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
         if (pathId) {
           const currentNode = getNodeById(pathId, tree)
+          openApi(tree, pathId)
           currentNode?.key && setSelectedKey(currentNode?.key)
         }
       })
@@ -159,7 +161,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
     const tree = treeData ?? []
 
-    console.log(expandedKeys)
     let addTarget
     if (curr?.isDir) {
       // 如果当前目标是目录则向当前目标插入
@@ -191,12 +192,23 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
     switch (action) {
       case '重命名':
-        void renameNode(currEditingNode, inputValue).then(() => {
-          setCurrEditingKey(null)
-          events.emit({ event: 'titleChange', data: { title: inputValue } })
-          // triggerPageEvent({ event: 'titleChange', title: inputValue })
-          setRefreshFlag(!refreshFlag)
-        })
+        if (currEditingNode.isDir) {
+          void renameNode(currEditingNode, inputValue).then(res => {
+            setCurrEditingKey(null)
+            setRefreshFlag(!refreshFlag)
+          })
+        } else {
+          void renameApi(currEditingNode, inputValue).then(res => {
+            setCurrEditingKey(null)
+            if (res) {
+              events.emit({
+                event: 'titleChange',
+                data: { title: inputValue, path: `${currEditingNode.baseDir}/${inputValue}` }
+              })
+            }
+            setRefreshFlag(!refreshFlag)
+          })
+        }
         break
       case '创建目录':
         void createNode(currEditingNode, inputValue).then(() => {
@@ -261,10 +273,49 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
       if (`/workbench/apimanage/${node.id}` === location.pathname) {
-        navigate('/workbench/apimanage/new')
+        const node = openApi(treeData)
+        if (node) {
+          console.log([node.key], { node })
+          handleSelectTreeNode([node.key], { node })
+        } else {
+          navigate('/workbench/apimanage')
+        }
       }
     })
   }
+
+  const openApi = (treeData: DirTreeNode[], id?: number) => {
+    const expandList: string[] = []
+    let fond
+    for (let i = 0; i < treeData.length; i++) {
+      const node = treeData[i]
+      fond = findApi(node)
+      if (fond) {
+        break
+      }
+    }
+    function findApi(node: DirTreeNode): DirTreeNode | undefined {
+      if (!node.isDir) {
+        if (!id || id === node.id) {
+          return node
+        }
+      }
+      if (node.children) {
+        const matched = node.children.find(findApi)
+        if (matched) {
+          expandList.push(node.key)
+          return matched
+        }
+      }
+    }
+    if (fond) {
+      setExpandedKeys(uniq([...expandedKeys, ...expandList]))
+      return fond
+    } else {
+      return false
+    }
+  }
+
   const titleRender = (nodeData: DirTreeNode) => {
     const miniStatus = calcMiniStatus(nodeData)
     let itemTypeClass
@@ -388,22 +439,23 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }
     >
       <div className={styles.treeContainer}>
-        <Tree
-          rootClassName="overflow-auto"
-          // @ts-ignore
-          titleRender={titleRender}
-          // draggable
-          showIcon
-          defaultExpandAll={true}
-          defaultExpandParent
-          expandedKeys={expandedKeys}
-          onExpand={setExpandedKeys}
-          // @ts-ignore
-          treeData={treeData}
-          selectedKeys={[selectedKey]}
-          // @ts-ignore
-          onSelect={handleSelectTreeNode}
-        />
+        {treeData.length ? (
+          <Tree
+            rootClassName="overflow-auto"
+            // @ts-ignore
+            titleRender={titleRender}
+            // draggable
+            showIcon
+            defaultExpandParent
+            expandedKeys={expandedKeys}
+            onExpand={setExpandedKeys}
+            // @ts-ignore
+            treeData={treeData}
+            selectedKeys={[selectedKey]}
+            // @ts-ignore
+            onSelect={handleSelectTreeNode}
+          />
+        ) : null}
       </div>
       <Modal
         title="全局设置"
@@ -492,17 +544,16 @@ function getNodeByKey(key: string, data: DirTreeNode[] | undefined): DirTreeNode
 }
 
 function renameNode(node: DirTreeNode, value: string) {
-  if (node.isDir) {
-    return requests.put('/operateApi/dir', {
-      oldPath: `${node.path}`,
-      newPath: `${node.baseDir}/${value}`
-    })
-  } else {
-    return requests.put(`/operateApi/${node.id}`, {
-      ...node,
-      path: `${node.baseDir}/${value}`
-    })
-  }
+  return requests.put('/operateApi/dir', {
+    oldPath: `${node.path}`,
+    newPath: `${node.baseDir}/${value}`
+  })
+}
+function renameApi(node: DirTreeNode, value: string) {
+  return requests.put<any, DirTreeNode>(`/operateApi/${node.id}`, {
+    ...node,
+    path: `${node.baseDir}/${value}`
+  })
 }
 
 function getNodeFamily(key: string, data?: DirTreeNode[]) {

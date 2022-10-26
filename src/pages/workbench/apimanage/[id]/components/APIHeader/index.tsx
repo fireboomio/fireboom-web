@@ -15,7 +15,7 @@ import styles from './index.module.less'
 const APIHeader = () => {
   const { apiDesc, schemaAST, updateAPI, updateContent, saved, query } = useAPIManager()
   const workbenchCtx = useContext(WorkbenchContext)
-  useEventBus('titleChange', e => console.log(e.data.title))
+  useEventBus('titleChange', e => console.log(e.data))
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
   const [name, setName] = useState('')
