@@ -40,7 +40,7 @@ const ipReg =
 // const envReg =
 //   // eslint-disable-next-line no-useless-escape
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
-const passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[._~!@#$^&*])[A-Za-z0-9._~!@#$^&*]{8,20}$/
+const passwordReg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/
 
 const BASEPATH = '/static/upload/sqlite'
 
@@ -197,10 +197,10 @@ export default function DB({ content, type }: Props) {
       <Form.Item
         label="密码:"
         name="password"
-        rules={[
-          { required: true, message: '密码不能为空' },
-          { pattern: passwordReg, message: '请输入4-64位包含数字、字母和非中文字符的组合' }
-        ]}
+        // rules={[
+        //   { required: true, message: '密码不能为空' },
+        //   { pattern: passwordReg, message: '请输入4-64位包含数字、字母的组合' }
+        // ]}
       >
         <Input.Password placeholder="请输入..." />
       </Form.Item>
@@ -211,7 +211,9 @@ export default function DB({ content, type }: Props) {
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
-    form.resetFields()
+    if (type === 'form') {
+      form.resetFields()
+    }
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
@@ -398,7 +400,7 @@ export default function DB({ content, type }: Props) {
                       <Descriptions.Item label="环境变量">
                         {(config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
                         '0'
-                          ? '值'
+                          ? ''
                           : (config.databaseUrl as unknown as { kind: string; val: string })
                               ?.kind == '1'
                           ? '环境变量'
