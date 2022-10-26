@@ -1,5 +1,5 @@
 import { type SchemaContextProviderProps } from '@graphiql/react'
-import type { DocumentNode, GraphQLSchema } from 'graphql'
+import type { DocumentNode, GraphQLSchema, OperationTypeNode } from 'graphql'
 import { createContext, useContext } from 'react'
 
 export interface APIDesc {
@@ -35,13 +35,13 @@ interface APIState {
   setQuery: (v: string) => void
   fetcher: SchemaContextProviderProps['fetcher']
   schemaAST?: DocumentNode
+  operationType?: OperationTypeNode
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
   updateContent: (content: string) => Promise<boolean>
   refreshAPI: () => void
   appendToAPIRefresh: (fn: () => void) => void
   // 是否已保存
   saved: boolean
-  setSaved: (v: boolean) => void
 }
 
 // @ts-ignore

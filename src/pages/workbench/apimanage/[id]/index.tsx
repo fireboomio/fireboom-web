@@ -8,13 +8,15 @@ import { message, Tabs } from 'antd'
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import type { GraphQLSchema, IntrospectionQuery } from 'graphql'
-import { buildClientSchema, getIntrospectionQuery } from 'graphql'
+import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
+import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 
 import APIFlowChart from './components/APIFlowChart'
@@ -61,10 +63,6 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 export function APIEditorContainer({ id }: { id: string | undefined }) {
   const params = useParams()
   const { fetcher, query, schema, setQuery } = useAPIManager()
-  // function save() {
-  //   const content = ref.current?.props.query as string
-  //   return onSave(content)
-  // }
   return (
     <>
       <Helmet>
@@ -114,7 +112,7 @@ export default function APIEditorProvider() {
   const params = useParams()
   const [schema, setSchema] = useState<GraphQLSchema | null>(null)
   const [query, setQuery] = useState<string>(DEFAULT_QUERY)
-  const [saved, setSaved] = useState(true)
+  const [savedValue, setSavedValue] = useState(query)
   const workbenchCtx = useContext(WorkbenchContext)
   const apiContainerRef = useRef<HTMLDivElement>(null)
   const refreshFns = useRef<(() => void)[]>([])
@@ -147,6 +145,10 @@ export default function APIEditorProvider() {
     }
   }, [query])
 
+  const saved = useMemo(() => {
+    return query === savedValue
+  }, [query, savedValue])
+
   const updateAPI = (newAPI: Partial<APIDesc>) => {
     return requests.put(`/operateApi/${params.id}`, newAPI).then(resp => {
       // @ts-ignore
@@ -155,28 +157,35 @@ export default function APIEditorProvider() {
     })
   }
 
-  const updateContent = async (content: string) => {
-    // content 校验
-    if (!content || !schemaAST) {
-      message.error('请输入合法的 GraphQL 查询语句')
-      return false
-    }
-    if (schemaAST.definitions.length > 1) {
-      message.error('不支持多条查询语句')
-      return false
-    }
-    return requests.put(`/operateApi/content/${params.id}`, { content }).then(resp => {
-      if (resp) {
-        setQuery(content ?? '')
-        // @ts-ignore
-        setAPIDesc({ ...(apiDesc ?? {}), content })
-        setSaved(true)
-        workbenchCtx.onRefreshMenu('api')
-        return true
+  const updateContent = useCallback(
+    async (content: string, showMessage = true) => {
+      // content 校验
+      if (!content || !schemaAST) {
+        if (showMessage) {
+          message.error('请输入合法的 GraphQL 查询语句')
+        }
+        return false
       }
-      return false
-    })
-  }
+      if (schemaAST.definitions.length > 1) {
+        if (showMessage) {
+          message.error('不支持多条查询语句')
+        }
+        return false
+      }
+      return requests.put(`/operateApi/content/${params.id}`, { content }).then(resp => {
+        if (resp) {
+          setQuery(content ?? '')
+          setSavedValue(content ?? '')
+          // @ts-ignore
+          setAPIDesc({ ...(apiDesc ?? {}), content })
+          workbenchCtx.onRefreshMenu('api')
+          return true
+        }
+        return false
+      })
+    },
+    [apiDesc, params.id, schemaAST, workbenchCtx]
+  )
 
   const refreshAPI = useCallback(async () => {
     const [api, setting] = await Promise.all([
@@ -190,9 +199,30 @@ export default function APIEditorProvider() {
     refreshFns.current.forEach(fn => fn())
   }, [params.id])
 
+  const operationType = useMemo(() => {
+    if (schemaAST?.definitions) {
+      return schemaAST?.definitions[0]?.kind === Kind.OPERATION_DEFINITION
+        ? schemaAST.definitions[0].operation
+        : undefined
+    }
+  }, [schemaAST])
+
   const appendToAPIRefresh = (fn: () => void) => {
     refreshFns.current.push(fn)
   }
+
+  useEventBus('titleChange', ({ data }) => {
+    // @ts-ignore
+    setAPIDesc({ ...(apiDesc ?? {}), path: data.path })
+  })
+
+  useEffect(() => {
+    // 3秒后自动保存
+    const save = debounce(() => updateContent(query, false), 3000)
+    if (!saved) {
+      save()
+    }
+  }, [query, saved, updateContent])
 
   useEffect(() => {
     refreshAPI()
@@ -226,12 +256,12 @@ export default function APIEditorProvider() {
         schema,
         fetcher,
         schemaAST,
+        operationType,
         updateAPI,
         updateContent,
         appendToAPIRefresh,
         refreshAPI,
-        saved,
-        setSaved
+        saved
       }}
     >
       <div className="h-full" ref={apiContainerRef}>
