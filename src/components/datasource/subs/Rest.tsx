@@ -17,15 +17,14 @@ import {
   Tag
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { useContext, useEffect, useState } from 'react'
+import type { UploadFile } from 'antd/es/upload/interface'
+import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import { DOMAIN } from '@/lib/common'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext
@@ -270,7 +269,7 @@ export default function Rest({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
+          <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
@@ -285,11 +284,11 @@ export default function Rest({ content, type }: Props) {
                 onChange={connectSwitchOnChange}
                 className={styles['switch-check-btn']}
               />
-              <Button className="btn-light-border w-16 ml-4" onClick={() => setTestVisible(true)}>
+              <Button className="ml-4 w-16 btn-light-border" onClick={() => setTestVisible(true)}>
                 测试
               </Button>
               <Button
-                className="btn-light-full ml-4"
+                className="ml-4 btn-light-full"
                 onClick={() => handleToggleDesigner('form', content.id)}
               >
                 编辑
@@ -297,7 +296,7 @@ export default function Rest({ content, type }: Props) {
             </div>
           </div>
 
-          <div className="flex justify-center mb-8">
+          <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
               <Descriptions.Item
                 label={
@@ -342,7 +341,7 @@ export default function Rest({ content, type }: Props) {
                     alt="文件"
                     preview={false}
                   />
-                  <span className="text-11px text-[#909399] ml-2">{config.filePath}</span>
+                  <span className="ml-2 text-11px text-[#909399]">{config.filePath}</span>
                 </div>
               </Descriptions.Item>
             </Descriptions>
@@ -376,7 +375,7 @@ export default function Rest({ content, type }: Props) {
                       >
                         <div className="flex items-center">
                           <div className="text-0px">{renderIcon(kind)}</div>
-                          <div className="flex-1 min-w-0 ml-2">{val}</div>
+                          <div className="flex-1 ml-2 min-w-0">{val}</div>
                         </div>
                       </Descriptions.Item>
                     )
@@ -394,7 +393,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 key="2"
               >
-                <div className="flex justify-center mb-11">
+                <div className="flex mb-11 justify-center">
                   <Descriptions
                     bordered
                     column={1}
@@ -465,7 +464,7 @@ export default function Rest({ content, type }: Props) {
             <div className={styles['redoc-container']}>
               {/* @ts-ignore */}
               <rapi-doc
-                spec-url={`//${DOMAIN}/static/upload/oas/${config.filePath ?? ''}`}
+                spec-url={`/upload/oas/${config.filePath ?? ''}`}
                 show-header="false"
                 show-info="false"
                 allow-authentication="false"
@@ -479,7 +478,7 @@ export default function Rest({ content, type }: Props) {
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="pb-9px flex items-center justify-between border-gray border-b">
+          <div className="border-gray border-b flex pb-9px items-center justify-between">
             {content.name == '' ? (
               <>
                 <IconFont type="icon-shujuyuantubiao1" />
@@ -495,7 +494,7 @@ export default function Rest({ content, type }: Props) {
             )}
           </div>
 
-          <div className="py-6 rounded-xl mb-4">
+          <div className="rounded-xl mb-4 py-6">
             <Form
               form={form}
               name="basic"
@@ -625,19 +624,19 @@ export default function Rest({ content, type }: Props) {
                                 >
                                   <Select onChange={onValueChange}>
                                     <Option value="0">
-                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                      <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('0')}
                                       </span>
                                       值
                                     </Option>
                                     <Option value="1">
-                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                      <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('1')}
                                       </span>
                                       环境变量
                                     </Option>
                                     <Option value="2">
-                                      <span className="mr-1 inline-flex align-top h-full items-center">
+                                      <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('2')}
                                       </span>
                                       转发自客户端
@@ -800,7 +799,7 @@ export default function Rest({ content, type }: Props) {
                 </Panel>
               </Collapse>
 
-              <div className="flex justify-center items-center w-160px mt-10">
+              <div className="flex mt-10 w-160px justify-center items-center">
                 <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
                   {content.name == '' ? '创建' : '保存'}
                 </Button>

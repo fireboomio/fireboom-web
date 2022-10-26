@@ -4,7 +4,6 @@ import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 
 import type { LogMessage } from '@/interfaces/window'
-import { DOMAIN } from '@/lib/common'
 
 import RcTab from '../rc-tab'
 import Log from './Log'
@@ -25,7 +24,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   const [msg, setMsg] = useState<LogMessage>()
 
   useEffect(() => {
-    void fetch(`${DOMAIN}/api/v1/wdg/log`).then(res => {
+    void fetch(`/api/v1/wdg/log`).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
 
@@ -58,7 +57,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   }, [msg])
 
   const extra = (
-    <div className="flex justify-end cursor-pointer">
+    <div className="cursor-pointer flex justify-end">
       <div className="">
         <Image
           src="/assets/clear.png"
@@ -87,7 +86,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
 
   return (
     <div
-      className="absolute bottom-36px min-h-80px bg-[#fff] z-200 px-7 py-5  border-gray-500/50"
+      className="bg-[#fff] border-gray-500/50 min-h-80px py-5 px-7 bottom-36px z-200  absolute"
       style={{ borderTop: '1px solid #EFEFEFFF', ...style }}
     >
       <Resizable

@@ -8,7 +8,6 @@ import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
-import { DOMAIN } from '@/lib/common'
 import requests from '@/lib/fetchers'
 
 import styles from './layout.module.less'

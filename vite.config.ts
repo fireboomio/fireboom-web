@@ -7,27 +7,24 @@ import vitePluginImp from 'vite-plugin-imp'
 import Pages from 'vite-plugin-pages'
 import WindiCSS from 'vite-plugin-windicss'
 
+const backendUrl = 'http://8.142.115.204:9123'
+// const backendUrl = 'http://192.168.166.143:9123'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '^/api/v1/schemas': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true
-      },
-      '^/api/v1/sources': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true
-      },
       '^/api/v1': {
-        target: 'http://8.142.115.204:9123',
-        // target: 'http://192.168.166.143:9123',
+        target: backendUrl,
         changeOrigin: true
       },
       '^/app': {
-        target: 'http://8.142.115.204:9123',
-        // target: 'http://192.168.166.143:9123',
+        target: backendUrl,
+        changeOrigin: true
+      },
+      '^/upload': {
+        target: backendUrl,
         changeOrigin: true
       }
     }

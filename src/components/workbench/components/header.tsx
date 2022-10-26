@@ -2,7 +2,6 @@ import { message, Modal } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { DOMAIN } from '@/lib/common'
 import requests from '@/lib/fetchers'
 
 import HeaderCompile from '../assets/header-compile.png'
@@ -38,13 +37,13 @@ export default function Header(props: { onToggleSider: () => void }) {
             void requests.get('/wdg/reStart').then(() => void message.success('正在重启!'))
           }
         >
-          <img src={HeaderCompile} className="w-5.25 h-5" alt="编译" />
+          <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
         </div>
         <div className={styles.headBtn} onClick={() => setTestVisible(true)}>
-          <img src={HeaderPreview} className="w-5 h-5" alt="预览" />
+          <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
         </div>
         <div className={styles.headBtn}>
-          <img src={HeaderDeploy} className="w-5 h-5" alt="部署" />
+          <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />
         </div>
         {/*<div className={styles.headBtn}>*/}
         {/*  <HeaderDeploy />*/}
@@ -57,7 +56,7 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles.helpIcon} onClick={() => navigate('/workbench/help')} />
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
         <div className={styles.avatar}>
-          <img className="w-5 h-5" alt="avatar" src="/assets/total-user.png" />
+          <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />
         </div>
       </div>
 
@@ -73,7 +72,7 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles['redoc-container']}>
           {/* @ts-ignore */}
           <rapi-doc
-            spec-url={`//${DOMAIN}/static/upload/swagger/swagger.json`}
+            spec-url={`/api/v1/file/postToSwag`}
             show-header="false"
             show-info="false"
             allow-authentication="false"
