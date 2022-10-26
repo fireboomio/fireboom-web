@@ -958,7 +958,6 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     // 主流程边
     graph.addEdges(
       arrowNodes.reduce<(Edge | Edge.Metadata)[]>((arr, node, index) => {
-        console.log(hookState.mockResolve.enable && index > routerIndex + 1, index, routerIndex)
         if (index < arrowNodes.length - 1) {
           arr.push({
             shape: 'flowline',

@@ -27,6 +27,7 @@ export interface APIDesc {
 }
 
 interface APIState {
+  apiID: string
   apiContainerRef: HTMLDivElement | null
   apiDesc?: APIDesc
   schema: GraphQLSchema | null
@@ -35,8 +36,9 @@ interface APIState {
   fetcher: SchemaContextProviderProps['fetcher']
   schemaAST?: DocumentNode
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
-  updateContent: (content: string) => Promise<void>
+  updateContent: (content: string) => Promise<boolean>
   refreshAPI: () => void
+  appendToAPIRefresh: (fn: () => void) => void
   // 是否已保存
   saved: boolean
   setSaved: (v: boolean) => void

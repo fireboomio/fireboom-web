@@ -1,5 +1,5 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
@@ -13,7 +13,7 @@ type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { schemaAST, query } = useAPIManager()
+  const { schemaAST, query, appendToAPIRefresh } = useAPIManager()
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
 
@@ -38,9 +38,9 @@ const APIFlowChart = ({ id }: { id: string }) => {
       transform: query.includes('@transform')
     }
     return state
-  }, [schemaAST])
+  }, [query, schemaAST?.definitions])
 
-  useEffect(() => {
+  const loadHook = useCallback(() => {
     requests.get(`/operateApi/hooks/${id}`).then(resp => {
       // @ts-ignore
       const globalHooks = resp.globalHooks
@@ -92,6 +92,11 @@ const APIFlowChart = ({ id }: { id: string }) => {
       })
     })
   }, [id])
+
+  useEffect(() => {
+    loadHook()
+    appendToAPIRefresh(loadHook)
+  }, [appendToAPIRefresh, loadHook])
 
   return (
     globalState &&

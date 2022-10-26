@@ -9,9 +9,12 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
+import { useContext } from 'react'
+
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 import { useAPIManager } from '../../../hooks'
-import fullscreenIcon from '../assets/fullscreen.svg'
+import { ExitFullscreenOutlined, FullscreenOutlined } from '../../icons'
 import { printSchemaAST } from '../utils'
 import ArgumentDirectivePopup from './ArgumentDirectivePopup'
 import CrossOriginPopup from './CrossOriginPopup'
@@ -21,6 +24,7 @@ import RBACPopup from './RBACPopup'
 const GraphiQLToolbar = () => {
   const { query, schemaAST, setQuery } = useAPIManager()
   const editorContext = useEditorContext({ nonNull: true })
+  const workbenchCtx = useContext(WorkbenchContext)
 
   const checkInject = (
     callback: (directives: DirectiveNode[], definitionNode: OperationDefinitionNode) => void
@@ -234,6 +238,11 @@ const GraphiQLToolbar = () => {
     })
   }
 
+  const toggleFullscreen = () => {
+    console.log(111)
+    workbenchCtx.setFullscreen(!workbenchCtx.isFullscreen)
+  }
+
   return (
     <div className="graphiql-toolbar">
       <ExecuteButton className="cursor-pointer mr-6" />
@@ -254,13 +263,9 @@ const GraphiQLToolbar = () => {
         <button className="graphiql-toolbar-btn">跨源关联</button>
       </Dropdown>
       <span className="graphiql-toolbar-sequence-chart">时序图</span>
-      <img
-        className="graphiql-toolbar-fullscreen"
-        src={fullscreenIcon}
-        width="10"
-        height="10"
-        alt="toggle fullscreen"
-      />
+      <span className="graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
+        {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}
+      </span>
     </div>
   )
 }
