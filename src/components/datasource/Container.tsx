@@ -85,12 +85,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             <div className="mr-6 py-0.5 px-2 flex items-center justify-evenly cursor-pointer bg-[#F9F9F9FF]">
               <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
-              <span
-                className="ml-1"
-                onClick={() => {
-                  handleToggleDesigner('detail')
-                }}
-              >
+              <span className="ml-1" onClick={() => handleToggleDesigner('detail')}>
                 返回
               </span>
             </div>
