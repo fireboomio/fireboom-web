@@ -36,7 +36,10 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     const originValueMap = valuesRef.current.reduce<Record<string, InputValueType>>(
       (map, val, index) => {
         if (val !== null && val !== undefined) {
-          map[parsed[index].name] = val
+          const param = parsed[index]
+          if (param) {
+            map[param.name] = val
+          }
         }
         return map
       },
