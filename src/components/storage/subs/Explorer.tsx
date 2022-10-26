@@ -393,7 +393,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           // @ts-ignore
           onChange={onChange}
           changeOnSelect
-          dropdownClassName={`${styles['casader-select']} flex mb-8`}
+          popupClassName={`${styles['casader-select']} flex mb-8`}
         >
           <div />
         </Cascader>
