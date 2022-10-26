@@ -94,25 +94,23 @@ export default function Designer() {
 
           <div className="flex flex-wrap gap-x-9.5 gap-y-5 items-center my-4">
             {category.items.map(x => (
-              <>
-                <div
-                  key={x.name}
-                  className="cursor-pointer text-[#333333FF] border border-gray-300/20 bg-[#FDFDFDFF] py-3.5 pl-4 min-w-53 w-53"
-                  // @ts-ignore
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                  onClick={() => handleClick(x.sourceType, x.dbType, x.name)}
-                >
-                  {/* <Image
+              <div
+                key={x.name}
+                className="cursor-pointer text-[#333333FF] border border-gray-300/20 bg-[#FDFDFDFF] py-3.5 pl-4 min-w-53 w-53"
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                onClick={() => handleClick(x.sourceType, x.dbType, x.name)}
+              >
+                {/* <Image
                     height={28}
                     width={28}
                     src={`/assets/${x.logo}`}
                     alt={x.name}
                     preview={false}
                   /> */}
-                  <IconFont type={x.logo} style={{ fontSize: '16px' }} />
-                  <span className="ml-3">{x.name}</span>
-                </div>
-              </>
+                <IconFont type={x.logo} style={{ fontSize: '16px' }} />
+                <span className="ml-3">{x.name}</span>
+              </div>
             ))}
           </div>
         </div>

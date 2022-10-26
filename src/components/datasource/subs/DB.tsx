@@ -211,7 +211,9 @@ export default function DB({ content, type }: Props) {
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
-    form.resetFields()
+    if (type === 'form') {
+      form.resetFields()
+    }
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
