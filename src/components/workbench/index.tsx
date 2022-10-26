@@ -1,6 +1,6 @@
 import { Layout as ALayout, Modal } from 'antd'
 import type { PropsWithChildren } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -10,9 +10,16 @@ import { useImmer } from 'use-immer'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
-import type { MenuName, RefreshMap } from '@/lib/context/workbenchContext'
+import type {
+  MenuName,
+  RefreshMap,
+  WorkbenchEvent,
+  WorkbenchListener
+} from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
+import { matchJson } from '@/lib/utils'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
 import Header from './components/header'
@@ -32,6 +39,7 @@ export default function Index(props: PropsWithChildren) {
   const [env, setEnv] = useState<string>('--')
   const [showWindow, setShowWindow] = useState(false)
   const [hideSider, setHideSider] = useState(false)
+  const listener = useRef<WorkbenchListener>()
 
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
@@ -61,9 +69,15 @@ export default function Index(props: PropsWithChildren) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          void data.json().then(res => {
-            setInfo(res)
-            console.log(res)
+          console.log(data)
+          void data.text().then(res => {
+            const status = matchJson(res).pop()
+            if (status) {
+              setInfo(status)
+              if (status.engineStatus === '已启动') {
+                events.emit({ event: 'compileFinish' })
+              }
+            }
           })
         } catch (error) {
           // eslint-disable-next-line no-console
@@ -148,6 +162,12 @@ export default function Index(props: PropsWithChildren) {
     return (
       <WorkbenchContext.Provider
         value={{
+          triggerPageEvent: (event: WorkbenchEvent) => {
+            listener.current?.(event)
+          },
+          registerPageListener: fun => {
+            listener.current = fun
+          },
           refreshMap,
           onRefreshMenu: handleRefreshMenu,
           editFlag,

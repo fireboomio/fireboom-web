@@ -5,6 +5,7 @@ import { Kind, OperationTypeNode } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 
 import { useAPIManager } from '../../hooks'
@@ -14,6 +15,7 @@ import styles from './index.module.less'
 const APIHeader = () => {
   const { apiDesc, schemaAST, updateAPI, updateContent, saved, query } = useAPIManager()
   const workbenchCtx = useContext(WorkbenchContext)
+  useEventBus('titleChange', e => console.log(e.data.title))
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
   const [name, setName] = useState('')

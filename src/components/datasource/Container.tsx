@@ -1,5 +1,5 @@
 import { Button, Image, Switch } from 'antd'
-import { useContext, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -65,7 +65,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
     }
     onRefreshMenu('dataSource')
   }
-
+  let icon = 'other'
+  switch (content?.sourceType) {
+    case 1:
+      icon = { MySQL: 'mysql', PostgreSQL: 'pgsql' }[String(content.config.dbType)] || icon
+      break
+    case 2:
+      icon = 'rest'
+      break
+    case 3:
+      icon = 'graphql'
+      break
+  }
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       {' '}
@@ -87,6 +98,11 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : (
           <>
+            <img
+              className="w-14px h-14px mr-1.5"
+              src={`/assets/workbench/panel-item-${icon}.png`}
+              alt="数据源"
+            />
             <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
             {content?.name}
           </>

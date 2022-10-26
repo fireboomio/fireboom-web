@@ -24,4 +24,32 @@ const formatBytes = (bytes: number | undefined, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export { capitalize, formatBytes, isEmpty, isUpperCase }
+const matchJson = (str: string) => {
+  let jsonStart = -1
+  let deep = 0
+  const jsonList = []
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i]
+    if (char === '{') {
+      if (deep === 0) {
+        jsonStart = i
+      }
+      deep++
+    } else if (char === '}') {
+      deep--
+      if (deep < 0) {
+        // 异常
+      } else if (deep === 0) {
+        const jsonStr = str.slice(jsonStart, i + 1)
+        try {
+          jsonList.push(JSON.parse(jsonStr))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+  }
+  return jsonList
+}
+
+export { capitalize, formatBytes, isEmpty, isUpperCase, matchJson }
