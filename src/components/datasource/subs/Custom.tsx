@@ -95,21 +95,6 @@ export default function Custom({ content }: Props) {
 
   return (
     <>
-      <div className="pb-9px flex items-center justify-between border-gray border-b mb-5">
-        <div>
-          <span className="ml-2">{content.name}</span>
-        </div>
-        <div className="flex  items-center">
-          <Switch
-            checked={content.switch == 0 ? true : false}
-            checkedChildren="开启"
-            unCheckedChildren="关闭"
-            onChange={connectSwitchOnChange}
-            className={styles['switch-check-btn']}
-          />
-        </div>
-      </div>
-
       <div className="flex justify-center">
         <Descriptions bordered column={1} size="small" className="w-full mt-4">
           <Descriptions.Item label="连接名" className="h-12">
