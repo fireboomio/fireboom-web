@@ -269,7 +269,7 @@ export default function Rest({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
+          {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
@@ -294,7 +294,7 @@ export default function Rest({ content, type }: Props) {
                 编辑
               </Button>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
@@ -321,7 +321,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.baseUrl}
+                {config.baseURL}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -508,7 +508,7 @@ export default function Rest({ content, type }: Props) {
               className="ml-3"
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
-                baseUrl: config.baseUrl,
+                baseURL: config.baseURL,
                 headers: config.headers || [],
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
@@ -543,7 +543,7 @@ export default function Rest({ content, type }: Props) {
                   </>
                 }
                 rules={[{ pattern: /^https?:\/\/[:.\w\d/]+$/g, message: '只允许输入链接' }]}
-                name="baseUrl"
+                name="baseURL"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >

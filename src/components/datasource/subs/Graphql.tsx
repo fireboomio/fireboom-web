@@ -212,9 +212,8 @@ export default function Graphql({ content, type }: Props) {
     <>
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
-        //查看页面--------------------------------------------------------------------------
         <>
-          <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
+          {/* <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
@@ -241,7 +240,7 @@ export default function Graphql({ content, type }: Props) {
                 </Button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex justify-center mb-8">
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
@@ -403,7 +402,6 @@ export default function Graphql({ content, type }: Props) {
           </Collapse>
         </>
       ) : (
-        //编辑页面--------------------------------------------------------------------------
         //编辑页面--------------------------------------------------------------------------
         <>
           <div className="pb-9px flex items-center justify-between border-gray border-b">
