@@ -1,6 +1,7 @@
-import { message, Modal } from 'antd'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { CloudDownloadOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { message, Popover } from 'antd'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import requests from '@/lib/fetchers'
 
@@ -11,16 +12,9 @@ import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void }) {
   const navigate = useNavigate()
-  const [testVisible, setTestVisible] = useState(false)
+  const { pathname } = useLocation()
 
-  useEffect(() => {
-    if (window && document) {
-      const script = document.createElement('script')
-      const body = document.getElementsByTagName('body')[0]
-      script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
-      body.appendChild(script)
-    }
-  }, [])
+  const [open, setOpen] = useState(false)
 
   return (
     <>
@@ -31,26 +25,68 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles.title}>后台管理系统</div>
         <div className={styles.titleIcon} />
         <div className="flex-1" />
-        <div
-          className={styles.headBtn}
-          onClick={() =>
-            void requests.get('/wdg/reStart').then(() => void message.success('正在重启!'))
-          }
-        >
-          <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
-        </div>
-        <div className={styles.headBtn} onClick={() => setTestVisible(true)}>
-          <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
-        </div>
-        <div className={styles.headBtn}>
-          <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />
-        </div>
-        {/*<div className={styles.headBtn}>*/}
-        {/*  <HeaderDeploy />*/}
-        {/*</div>*/}
-        {/*<div className={styles.headBtn}>*/}
-        {/*  <HeaderPreview />*/}
-        {/*</div>*/}
+        {pathname === '/workbench/rapi' ? (
+          <>
+            <ShareAltOutlined style={{ fontSize: '18px' }} className="cursor-pointer" />
+
+            <Popover
+              color="#2A2B2CFF"
+              content={
+                <div>
+                  <a
+                    className="text-[#f0f8ff]"
+                    onClick={() => setOpen(false)}
+                    href="/api/v1/operateApi/sdk"
+                    download="Postman"
+                  >
+                    下载 POSTMAN
+                  </a>
+                  <br />
+                  <a
+                    className="text-[#f0f8ff]"
+                    onClick={() => setOpen(false)}
+                    href="/api/v1/file/postToSwag"
+                    download="OpenAPI"
+                  >
+                    下载 OpenAPI
+                  </a>
+                  <br />
+                  <a
+                    className="text-[#f0f8ff]"
+                    onClick={() => setOpen(false)}
+                    href="/api/v1/operateApi/sdk"
+                    download="SDK"
+                  >
+                    下载 React SDK
+                  </a>
+                </div>
+              }
+              title={false}
+              trigger="click"
+              open={open}
+              onOpenChange={v => setOpen(v)}
+            >
+              <CloudDownloadOutlined style={{ fontSize: '18px' }} className="ml-7 cursor-pointer" />
+            </Popover>
+          </>
+        ) : (
+          <>
+            <div
+              className={styles.headBtn}
+              onClick={() =>
+                void requests.get('/wdg/reStart').then(() => void message.success('正在重启!'))
+              }
+            >
+              <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
+            </div>
+            <div className={styles.headBtn} onClick={() => navigate('/workbench/rapi')}>
+              <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
+            </div>
+            <div className={styles.headBtn}>
+              <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />
+            </div>
+          </>
+        )}
         <div className={styles.splitLine} style={{ margin: '0 26px' }} />
 
         <div className={styles.helpIcon} onClick={() => navigate('/workbench/help')} />
@@ -59,30 +95,6 @@ export default function Header(props: { onToggleSider: () => void }) {
           <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />
         </div>
       </div>
-
-      <Modal
-        centered
-        open={testVisible}
-        onCancel={() => setTestVisible(false)}
-        destroyOnClose={true}
-        width={'80%'}
-        bodyStyle={{ height: '885px', overflow: 'auto' }}
-        footer={null}
-      >
-        <div className={styles['redoc-container']}>
-          {/* @ts-ignore */}
-          <rapi-doc
-            // spec-url={`/api/v1/file/postToSwag`}
-            spec-url={`https://petstore.swagger.io/v2/swagger.json`}
-            show-header="false"
-            show-info="false"
-            allow-authentication="false"
-            allow-server-selection="false"
-            allow-api-list-style-selection="false"
-            render-style="read"
-          />
-        </div>
-      </Modal>
     </>
   )
 }
