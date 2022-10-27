@@ -248,6 +248,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // }
 
   const handleSaveGql = () => {
+    console.log('ggg')
     if (action === '创建文件') {
       if (!currEditingNode) return
 
@@ -255,12 +256,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         .then(result => {
           if (result?.id) {
             navigate(`/workbench/apimanage/${result?.id}`)
+            setCurrEditingKey(null)
+            setRefreshFlag(!refreshFlag)
           }
-          setCurrEditingKey(null)
-          setRefreshFlag(!refreshFlag)
           // void message.success('保存成功')
         })
         .catch(_ => {
+          setAction('创建文件')
           return
         })
 

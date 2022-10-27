@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
@@ -16,6 +17,7 @@ export default function AuthConfigContainer() {
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
   const { id } = useParams()
+  const { config } = useContext(ConfigContext)
   useEffect(() => {
     // 如果id为new，则视为新增
     if (id === 'new') {
@@ -47,6 +49,18 @@ export default function AuthConfigContainer() {
     navigate(`/workbench/auth/${content.id}`)
   }
 
+  const onTest = () => {
+    let target = new URL(content?.point + encodeURIComponent(location.href))
+    if (!config.apiHost) {
+      target.protocol = location.protocol
+      target.hostname = location.hostname
+      target.port = location.port
+    }
+
+    console.log(target)
+    location.href = target.toString()
+  }
+
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       {' '}
@@ -56,10 +70,7 @@ export default function AuthConfigContainer() {
         <div className="flex-1"></div>
         {!editFlag ? (
           <>
-            <Button
-              className={'btn-test  mr-4'}
-              onClick={() => content?.point && window.open(content?.point)}
-            >
+            <Button className={'btn-test  mr-4'} onClick={onTest}>
               测试
             </Button>
             <Button className={'btn-save  mr-11'} onClick={() => setEditFlag(true)}>
@@ -74,7 +85,7 @@ export default function AuthConfigContainer() {
         >
           {content ? (
             editFlag ? (
-              <AuthEdit content={content} onChange={onEdit} />
+              <AuthEdit content={content} onChange={onEdit} onTest={onTest} />
             ) : (
               <AuthCheck content={content} />
             )

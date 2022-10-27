@@ -15,7 +15,10 @@ import styles from './subs.module.less'
 dayjs.extend(duration)
 
 interface systemConfig {
+  apiHost: string
   apiPort: string
+  oidcHost: string
+  oidcPort: string
   debugSwitch: boolean
   devSwitch: boolean
   forcedJumpSwitch: boolean
@@ -30,7 +33,10 @@ interface Runtime {
   seconds: number
 }
 export default function SettingMainVersion() {
+  const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
+  const [isOidcHostEditing, setIsOidcHostEditing] = useImmer(false)
+  const [isOidcPortEditing, setIsOidcPortEditing] = useImmer(false)
   const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
@@ -96,11 +102,81 @@ export default function SettingMainVersion() {
             <Descriptions.Item label="运行时长:">
               {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
             </Descriptions.Item>
+            <Descriptions.Item label="认证器域名:" className="w-20">
+              {isOidcHostEditing ? (
+                <Input
+                  defaultValue={systemConfig.oidcHost}
+                  autoFocus
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
+                  type="text"
+                  onBlur={e => {
+                    setIsOidcHostEditing(!isOidcHostEditing)
+                    void editPort('oidcHost', e.target.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.oidcHost}</span>
+              )}
+              <IconFont
+                type="icon-bianji"
+                className="ml-2"
+                onClick={() => {
+                  setIsOidcHostEditing(!isOidcHostEditing)
+                }}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label="认证器端口:" className="w-20">
+              {isOidcPortEditing ? (
+                <Input
+                  defaultValue={systemConfig.oidcPort}
+                  autoFocus
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
+                  type="text"
+                  onBlur={e => {
+                    setIsOidcPortEditing(!isOidcPortEditing)
+                    void editPort('oidcPort', e.target.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.oidcPort}</span>
+              )}
+              <IconFont
+                type="icon-bianji"
+                className="ml-2"
+                onClick={() => {
+                  setIsOidcPortEditing(!isOidcPortEditing)
+                }}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label="API域名:" className="w-20">
+              {isApiHostEditing ? (
+                <Input
+                  defaultValue={systemConfig.apiHost}
+                  autoFocus
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
+                  type="text"
+                  onBlur={e => {
+                    setIsApiHostEditing(!isApiHostEditing)
+                    void editPort('apiHost', e.target.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.apiHost}</span>
+              )}
+              <IconFont
+                type="icon-bianji"
+                className="ml-2"
+                onClick={() => {
+                  setIsApiHostEditing(!isApiHostEditing)
+                }}
+              />
+            </Descriptions.Item>
             <Descriptions.Item label="API端口:" className="w-20">
               {isApiPortEditing ? (
                 <Input
+                  defaultValue={systemConfig.apiPort}
                   autoFocus
-                  style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   type="text"
                   onBlur={e => {
                     setIsApiPortEditing(!isApiPortEditing)
@@ -121,9 +197,10 @@ export default function SettingMainVersion() {
             <Descriptions.Item label="中间件端口:">
               {isMidPortEditing ? (
                 <Input
+                  defaultValue={systemConfig.middlewarePort}
                   autoFocus
                   type="text"
-                  style={{ width: '80px', height: '24px', paddingLeft: '6px' }}
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   onBlur={e => {
                     setIsMidPortEditing(!isMidPortEditing)
                     void editPort('middlewarePort', e.target.value)

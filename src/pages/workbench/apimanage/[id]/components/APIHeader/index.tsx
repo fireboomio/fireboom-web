@@ -4,6 +4,7 @@ import copy from 'copy-to-clipboard'
 import { Kind, OperationTypeNode } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
@@ -21,6 +22,7 @@ const APIHeader = () => {
     query: state.query
   }))
   const workbenchCtx = useContext(WorkbenchContext)
+  const { config } = useContext(ConfigContext)
 
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
@@ -102,10 +104,20 @@ const APIHeader = () => {
   }
 
   const copyLink = async () => {
-    if (apiDesc?.restUrl) {
-      copy(apiDesc!.restUrl)
-      message.success('URL 地址已复制')
+    console.log(apiDesc)
+    let link = apiDesc?.restUrl
+    if (!link) {
+      message.error('接口异常')
+      return
     }
+    if (!config.apiHost) {
+      const url = new URL(apiDesc?.restUrl!)
+      url.hostname = location.hostname
+      url.port = config.apiPort
+      link = url.toString()
+    }
+    copy(link)
+    message.success('URL 地址已复制')
   }
 
   const save = async () => {
