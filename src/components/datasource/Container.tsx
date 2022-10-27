@@ -1,4 +1,5 @@
-import { Button, Image, Switch } from 'antd'
+import { Button, Image, notification, Switch } from 'antd'
+import type { NotificationPlacement } from 'antd/lib/notification'
 import React, { useContext, useMemo } from 'react'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
@@ -6,6 +7,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
+import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'
@@ -44,7 +46,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   let icon = 'other'
   switch (content?.sourceType) {
     case 1:
-      icon = { MySQL: 'mysql', PostgreSQL: 'pgsql' }[String(content.config.dbType)] || icon
+      icon = String(content.config.dbType) || icon
       break
     case 2:
       icon = 'rest'
@@ -53,6 +55,28 @@ export default function DatasourceContainer({ content, showType }: Props) {
       icon = 'graphql'
       break
   }
+
+  const testLink = (placement: NotificationPlacement) => {
+    void requests
+      .post('/checkDBConn', {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: { sourceType: content.sourceType, config: content.config }
+      })
+      .then(x => console.log(x))
+
+    notification.open({
+      message: <IconFont type="icon-xingzhuangjiehe" />,
+      description: (
+        <div>
+          <h1>链接失败</h1>
+          描述性语句描述性语句描述性语句
+        </div>
+      ),
+      placement
+    })
+  }
+
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       {' '}
@@ -89,7 +113,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
               onChange={toggleOpen}
             />
             <Button className={'btn-test ml-4 mr-4'}>设计</Button>
-            <Button className={'btn-test mr-4'}>测试</Button>
+            <Button className={'btn-test mr-4'} onClick={() => testLink('bottomLeft')}>
+              测试
+            </Button>
             <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
               编辑
             </Button>
