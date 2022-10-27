@@ -269,7 +269,7 @@ export default function Rest({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
+          {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
@@ -294,7 +294,7 @@ export default function Rest({ content, type }: Props) {
                 编辑
               </Button>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>

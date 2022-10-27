@@ -74,7 +74,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               src={`/assets/workbench/panel-item-${icon}.png`}
               alt="数据源"
             />
-            <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
+            {/* <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" /> */}
             {content?.name}
           </>
         )}
