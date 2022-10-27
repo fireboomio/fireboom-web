@@ -28,7 +28,7 @@ import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { useAPIManager } from '../../hooks'
+import { useAPIManager } from '../../store'
 import ArgumentsEditor from './components/ArgumentsEditor'
 import { emptyStorage } from './components/emptyStorage'
 import GraphiQLToolbar from './components/GraphiQLToolbar'
@@ -172,7 +172,10 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-  const { schemaAST, apiID } = useAPIManager()
+  const { schemaAST, apiID } = useAPIManager(state => ({
+    schemaAST: state.schemaAST,
+    apiID: state.apiID
+  }))
   const editorCtx = useEditorContext()
   const prevApiID = useRef<string>()
   const responseRef = useRef<{
@@ -197,14 +200,8 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     prevApiID.current = apiID
   }, [apiID, editorCtx])
 
-  useEffect(() => {
-    setTheme('light')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return (
-    <div data-testid="graphiql-container" className="graphiql-container">
-      <GraphiQLToolbar />
+  const editor = useMemo(() => {
+    return (
       <QueryEditor
         editorTheme={props.editorTheme}
         keyMap={props.keyMap}
@@ -213,6 +210,18 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         onEdit={props.onEditQuery}
         readOnly={props.readOnly}
       />
+    )
+  }, [props.editorTheme, props.keyMap, props.onCopyQuery, props.onEditQuery, props.readOnly])
+
+  useEffect(() => {
+    setTheme('light')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
+    <div data-testid="graphiql-container" className="graphiql-container">
+      <GraphiQLToolbar />
+      {editor}
       <section className="graphiql-editor-tool">
         <ResponseWrapper>
           <GraphiInputAndResponse actionRef={responseRef} argumentList={argumentList} />
