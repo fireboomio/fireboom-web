@@ -1,8 +1,9 @@
 import { Drawer } from 'antd'
+import { useRef } from 'react'
 
 import IdeContainer from '@/components/Ide'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/hooks'
 
+import { useAPIManager } from '../../store'
 import backArrow from './assets/back-arrow.svg'
 import styles from './editPanel.module.less'
 
@@ -68,15 +69,16 @@ interface Props {
   hook: { name: string; path: string }
 }
 export default function EditPanel({ onClose, hook }: Props) {
-  const { apiContainerRef, refreshAPI } = useAPIManager()
-  return apiContainerRef ? (
+  const apiContainerRef = useRef<HTMLDivElement>(document.querySelector('#api-editor-container'))
+  const { refreshAPI } = useAPIManager()
+  return apiContainerRef.current ? (
     <Drawer
       className={styles.drawer}
       width="100%"
       placement="right"
       onClose={onClose}
       open
-      getContainer={() => apiContainerRef}
+      getContainer={() => apiContainerRef.current!}
       style={{ position: 'absolute' }}
       extra={
         <div className="flex items-center">
