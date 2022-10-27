@@ -44,7 +44,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   let icon = 'other'
   switch (content?.sourceType) {
     case 1:
-      icon = { MySQL: 'mysql', PostgreSQL: 'pgsql' }[String(content.config.dbType)] || icon
+      icon = String(content.config.dbType) || icon
       break
     case 2:
       icon = 'rest'
