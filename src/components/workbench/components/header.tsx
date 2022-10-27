@@ -1,7 +1,8 @@
 import { message, Modal } from 'antd'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 
 import HeaderCompile from '../assets/header-compile.png'
@@ -12,6 +13,7 @@ import styles from './header.module.less'
 export default function Header(props: { onToggleSider: () => void }) {
   const navigate = useNavigate()
   const [testVisible, setTestVisible] = useState(false)
+  const { config } = useContext(ConfigContext)
 
   useEffect(() => {
     if (window && document) {
@@ -21,6 +23,10 @@ export default function Header(props: { onToggleSider: () => void }) {
       body.appendChild(script)
     }
   }, [])
+
+  const customServerUrl = config.domain
+    ? undefined
+    : `http://${location.hostname}:${config.apiPort}`
 
   return (
     <>
@@ -72,6 +78,7 @@ export default function Header(props: { onToggleSider: () => void }) {
         <div className={styles['redoc-container']}>
           {/* @ts-ignore */}
           <rapi-doc
+            server-url={customServerUrl}
             spec-url={`/api/v1/file/postToSwag`}
             show-header="false"
             show-info="false"

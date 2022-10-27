@@ -54,7 +54,7 @@ export default function SettingCrossdomain() {
           <Form
             form={form}
             initialValues={{
-              allowedMethods: corsConfig.allowedMethods[0],
+              allowedMethods: corsConfig.allowedMethods,
               maxAge: corsConfig.maxAge,
               allowedHeaders: corsConfig.allowedHeaders.join(','),
               exposedHeaders: corsConfig.exposedHeaders.join(','),
@@ -161,9 +161,7 @@ export default function SettingCrossdomain() {
                 mode="multiple"
                 placeholder="请选择..."
                 onChange={(values: string) => {
-                  const newMethodsList = corsConfig.allowedMethods.filter(item => item != values)
-                  newMethodsList.unshift(values)
-                  void postRequest('allowedMethods', newMethodsList).then(() => {
+                  void postRequest('allowedMethods', values).then(() => {
                     setRefreshFlag(!refreshFlag)
                   })
                 }}

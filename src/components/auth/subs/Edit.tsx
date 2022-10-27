@@ -17,6 +17,7 @@ loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 interface Props {
   content: AuthProvResp
   onChange: (content: AuthProvResp) => void
+  onTest: () => void
 }
 
 type Config = Record<string, ReactNode>
@@ -28,7 +29,7 @@ const options = [
   { label: '基于Token', value: 'tokenBased' }
 ]
 
-export default function AuthMainEdit({ content, onChange }: Props) {
+export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
@@ -102,10 +103,6 @@ export default function AuthMainEdit({ content, onChange }: Props) {
         jwksJSON: '',
         switchState: []
       }
-
-  const handleTest = () => {
-    window.open(content.point)
-  }
 
   return (
     <>
@@ -224,7 +221,7 @@ export default function AuthMainEdit({ content, onChange }: Props) {
             >
               <span>取消</span>
             </Button>
-            <Button className="btn-test ml-4" onClick={() => handleTest()}>
+            <Button className="btn-test ml-4" onClick={onTest}>
               测试
             </Button>
             <Button

@@ -255,9 +255,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         .then(result => {
           if (result?.id) {
             navigate(`/workbench/apimanage/${result?.id}`)
+            setCurrEditingKey(null)
+            setRefreshFlag(!refreshFlag)
           }
-          setCurrEditingKey(null)
-          setRefreshFlag(!refreshFlag)
           // void message.success('保存成功')
         })
         .catch(_ => {
