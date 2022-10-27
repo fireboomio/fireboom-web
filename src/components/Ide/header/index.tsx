@@ -1,5 +1,6 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
 import { Button, Select, Switch } from 'antd'
+import dayjs from 'dayjs'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
@@ -49,7 +50,7 @@ const IdeHeaderContainer: FC<Props> = props => {
         break
       case AutoSaveStatus.SAVED:
         // 拼接保存时间, 时:分:秒
-        _text = `已保存 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        _text = `已保存 ${dayjs().format('hh:MM:ss')}`
         break
       case AutoSaveStatus.EDIT:
         _text = '已编辑'

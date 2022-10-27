@@ -13,7 +13,7 @@ import { useContext } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
-import { useAPIManager } from '../../../hooks'
+import { useAPIManager } from '../../../store'
 import { ExitFullscreenOutlined, FullscreenOutlined } from '../../icons'
 import { printSchemaAST } from '../utils'
 import ArgumentDirectivePopup from './ArgumentDirectivePopup'
@@ -22,7 +22,11 @@ import ExecuteButton from './ExecuteButton'
 import RBACPopup from './RBACPopup'
 
 const GraphiQLToolbar = () => {
-  const { query, schemaAST, setQuery } = useAPIManager()
+  const { query, schemaAST, setQuery } = useAPIManager(state => ({
+    query: state.query,
+    schemaAST: state.schemaAST,
+    setQuery: state.setQuery
+  }))
   const editorContext = useEditorContext({ nonNull: true })
   const workbenchCtx = useContext(WorkbenchContext)
 

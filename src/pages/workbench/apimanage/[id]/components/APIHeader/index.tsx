@@ -8,12 +8,19 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
-import { useAPIManager } from '../../hooks'
+import { useAPIManager } from '../../store'
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = () => {
-  const { apiDesc, schemaAST, updateAPI, updateContent, saved, query } = useAPIManager()
+  const { apiDesc, schemaAST, updateAPI, updateContent, saved, query } = useAPIManager(state => ({
+    apiDesc: state.apiDesc,
+    schemaAST: state.schemaAST,
+    updateAPI: state.updateAPI,
+    updateContent: state.updateContent,
+    saved: state.computed.saved,
+    query: state.query
+  }))
   const workbenchCtx = useContext(WorkbenchContext)
   const { config } = useContext(ConfigContext)
 
@@ -56,15 +63,17 @@ const APIHeader = () => {
   }
 
   const isLive = useMemo(() => {
-    if (apiDesc?.setting.liveQueryEnable) {
-      return true
-    }
-    if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {
-      if (schemaAST.definitions[0].operation === OperationTypeNode.SUBSCRIPTION) {
-        return true
-      }
-    }
-  }, [apiDesc?.setting.liveQueryEnable, schemaAST])
+    // if (apiDesc?.setting.liveQueryEnable) {
+    //   return true
+    // }
+    // if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {
+    //   if (schemaAST.definitions[0].operation === OperationTypeNode.SUBSCRIPTION) {
+    //     return true
+    //   }
+    // }
+    return apiDesc?.liveQuery
+    // }, [apiDesc?.setting.liveQueryEnable, schemaAST])
+  }, [apiDesc?.liveQuery])
 
   const method = useMemo(() => {
     if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {

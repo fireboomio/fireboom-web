@@ -155,10 +155,7 @@ export default function Graphql({ content, type }: Props) {
         return
       case '2':
         setIsValue(true)
-        setRulesObj({
-          pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-          message: '以字母或下划线开头，只能由字母、下划线和数字组成'
-        })
+        setRulesObj({ pattern: /^\w+$/g, message: '请输入非空值' })
         return
       default:
         return
@@ -215,9 +212,8 @@ export default function Graphql({ content, type }: Props) {
     <>
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
-        //查看页面--------------------------------------------------------------------------
         <>
-          <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
+          {/* <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
               <IconFont type="icon-shujuyuantubiao1" />
               <span className="ml-2">
@@ -244,7 +240,7 @@ export default function Graphql({ content, type }: Props) {
                 </Button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex justify-center mb-8">
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
@@ -407,17 +403,16 @@ export default function Graphql({ content, type }: Props) {
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
-        //编辑页面--------------------------------------------------------------------------
         <>
           <div className="pb-9px flex items-center justify-between border-gray border-b">
             {content.name == '' ? (
               <div>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-QLweixuanzhong1" />
                 <span className="ml-2">创建数据源</span>
               </div>
             ) : (
               <div>
-                <IconFont type="icon-shujuyuantubiao1" />
+                <IconFont type="icon-QLweixuanzhong1" />
                 <span className="ml-2">
                   {content.name} <span className="text-xs text-gray-500/80">GET</span>
                 </span>
@@ -463,7 +458,7 @@ export default function Graphql({ content, type }: Props) {
                 rules={[
                   { required: true, message: '名称不能为空' },
                   {
-                    pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
                     message: '以字母或下划线开头，只能由数字、字母、下划线组成'
                   }
                 ]}
@@ -483,10 +478,8 @@ export default function Graphql({ content, type }: Props) {
                 colon={false}
                 required
                 rules={[
-                  {
-                    pattern: urlReg,
-                    message: '请填写规范域名'
-                  }
+                  { required: true, message: '端点不能为空' },
+                  { pattern: urlReg, message: '请填写规范域名' }
                 ]}
                 style={{ marginBottom: '20px' }}
                 name="url"
@@ -612,9 +605,7 @@ export default function Graphql({ content, type }: Props) {
                       <Form.Item wrapperCol={{ span: 16 }}>
                         <Button
                           type="dashed"
-                          onClick={() => {
-                            add({ kind: '0' })
-                          }}
+                          onClick={() => add({ kind: '0' })}
                           icon={<PlusOutlined />}
                           className="text-gray-500/60 w-1/1"
                         >

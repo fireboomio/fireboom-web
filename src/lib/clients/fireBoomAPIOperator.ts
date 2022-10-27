@@ -39,7 +39,8 @@ export const getFetcher = <T>(url: string, params?: Record<string, string>) =>
     return res
   })
 
-export const fetchDBSources = () => getFetcher<DBSourceResp[]>(DATABASE_SOURCE)
+export const fetchDBSources = () =>
+  getFetcher<DBSourceResp[]>(`${DATABASE_SOURCE}?datasourceType=1`)
 
 export const migratePrismaSchema = (blocks: Block[], dbSourceId: number) => {
   if (!blocks.find(b => ['enum', 'model'].includes(b.type))) {

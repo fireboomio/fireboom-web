@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
-import { useAPIManager } from '../../hooks'
+import { useAPIManager } from '../../store'
+import { useDebounceMemo } from './debounce'
 import type { FlowChartProps } from './FlowChart'
 import FlowChart from './FlowChart'
 
@@ -13,32 +14,42 @@ type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { schemaAST, query, appendToAPIRefresh } = useAPIManager()
+  const { schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(state => ({
+    schemaAST: state.schemaAST,
+    query: state.query,
+    appendToAPIRefresh: state.appendToAPIRefresh,
+    dispendToAPIRefresh: state.dispendToAPIRefresh
+  }))
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
 
-  const directiveState = useMemo(() => {
-    const defs =
-      (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
-    const variables = parseParameters(defs)
-    const allDirectives = variables.reduce<string[]>((arr, item) => {
-      arr.push(...(item.directives?.map(dir => dir.name) ?? []))
-      return arr
-    }, [])
-    const state: DirectiveState = {
-      fromClaim: allDirectives.includes('fromClaim'),
-      injectCurrentDatetime: allDirectives.includes('injectCurrentDatetime'),
-      injectEnvironmentVariable: allDirectives.includes('injectEnvironmentVariable'),
-      injectGeneratedUUID: allDirectives.includes('injectGeneratedUUID'),
-      jsonSchema: allDirectives.includes('jsonSchema'),
-      rbac:
-        (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.directives?.some(
-          dir => dir.name.value === 'rbac'
-        ) ?? false,
-      transform: query.includes('@transform')
-    }
-    return state
-  }, [query, schemaAST?.definitions])
+  const directiveState = useDebounceMemo(
+    () => {
+      const defs =
+        (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
+        []
+      const variables = parseParameters(defs)
+      const allDirectives = variables.reduce<string[]>((arr, item) => {
+        arr.push(...(item.directives?.map(dir => dir.name) ?? []))
+        return arr
+      }, [])
+      const state: DirectiveState = {
+        fromClaim: allDirectives.includes('fromClaim'),
+        injectCurrentDatetime: allDirectives.includes('injectCurrentDatetime'),
+        injectEnvironmentVariable: allDirectives.includes('injectEnvironmentVariable'),
+        injectGeneratedUUID: allDirectives.includes('injectGeneratedUUID'),
+        jsonSchema: allDirectives.includes('jsonSchema'),
+        rbac:
+          (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.directives?.some(
+            dir => dir.name.value === 'rbac'
+          ) ?? false,
+        transform: query.includes('@transform')
+      }
+      return state
+    },
+    1000,
+    [query, schemaAST?.definitions]
+  )
 
   const loadHook = useCallback(() => {
     requests.get(`/operateApi/hooks/${id}`).then(resp => {
@@ -96,7 +107,10 @@ const APIFlowChart = ({ id }: { id: string }) => {
   useEffect(() => {
     loadHook()
     appendToAPIRefresh(loadHook)
-  }, [appendToAPIRefresh, loadHook])
+    return () => {
+      dispendToAPIRefresh(loadHook)
+    }
+  }, [appendToAPIRefresh, loadHook, dispendToAPIRefresh])
 
   return globalState && hookState ? (
     <FlowChart

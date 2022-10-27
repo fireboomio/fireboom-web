@@ -20,30 +20,6 @@ interface Props {
 export default function DatasourceContainer({ content, showType }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { onRefreshMenu } = useContext(WorkbenchContext)
-  const handleIconClick = () => {
-    console.log('aaa')
-  }
-
-  const title = useMemo(() => {
-    let rv = ''
-    switch (content?.sourceType) {
-      case 1:
-        rv = showType == 'setting' ? '设置' : 'DB'
-        break
-      case 2:
-        rv = 'REST'
-        break
-      case 3:
-        rv = 'GraphQL'
-        break
-      case 4:
-        rv = '自定义'
-        break
-      default:
-        break
-    }
-    return rv
-  }, [content?.sourceType, showType])
 
   if (!content) {
     return (
@@ -85,12 +61,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             <div className="mr-6 py-0.5 px-2 flex items-center justify-evenly cursor-pointer bg-[#F9F9F9FF]">
               <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
-              <span
-                className="ml-1"
-                onClick={() => {
-                  handleToggleDesigner('detail')
-                }}
-              >
+              <span className="ml-1" onClick={() => handleToggleDesigner('detail')}>
                 返回
               </span>
             </div>
@@ -103,7 +74,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               src={`/assets/workbench/panel-item-${icon}.png`}
               alt="数据源"
             />
-            <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
+            {/* <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" /> */}
             {content?.name}
           </>
         )}

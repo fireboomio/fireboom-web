@@ -81,43 +81,6 @@ export default function DatasourcePannel({ onClickItem }: Props) {
         <Collapse ghost bordered>
           <Panel header={header} key={1}>
             <DatasourceList onClickItem={onClickItem} />
-            {/* <div className="h-40" style={{ overflow: 'auto' }}>
-              <Collapse
-                activeKey={activeKey}
-                ghost
-                bordered
-                onChange={keys => setActiveKey(keys as string[])}
-              >
-                <Panel
-                  header={setHeader('DB', 1)}
-                  key={'1'}
-                  className={styles['datasource-border']}
-                >
-                  <DatasourceList onClickItem={onClickItem} datasourceType={1} />
-                </Panel>
-                <Panel
-                  header={setHeader('REST', 2)}
-                  key={'2'}
-                  className={styles['datasource-border']}
-                >
-                  <DatasourceList onClickItem={onClickItem} datasourceType={2} />
-                </Panel>
-                <Panel
-                  header={setHeader('GraphQL', 3)}
-                  key={'3'}
-                  className={styles['datasource-border']}
-                >
-                  <DatasourceList onClickItem={onClickItem} datasourceType={3} />
-                </Panel>
-                <Panel
-                  header={setHeader('自定义', 4)}
-                  key={'4'}
-                  className={styles['datasource-border']}
-                >
-                  <DatasourceList onClickItem={onClickItem} datasourceType={4} />
-                </Panel>
-              </Collapse>
-            </div> */}
           </Panel>
         </Collapse>
       </div>

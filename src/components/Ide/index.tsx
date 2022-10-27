@@ -139,7 +139,7 @@ const IdeContainer: FC<Props> = props => {
       }
       setHookInfo(data)
     })
-  }, [])
+  }, [props.defaultCode, props.hookPath])
 
   useEffect(() => {
     // 监听键盘的ctrl+s事件
