@@ -104,12 +104,13 @@ const APIHeader = () => {
   }
 
   const copyLink = async () => {
+    console.log(apiDesc)
     let link = apiDesc?.restUrl
     if (!link) {
       message.error('接口异常')
       return
     }
-    if (!config.domain) {
+    if (!config.apiHost) {
       const url = new URL(apiDesc?.restUrl!)
       url.hostname = location.hostname
       url.port = config.apiPort

@@ -248,6 +248,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // }
 
   const handleSaveGql = () => {
+    console.log('ggg')
     if (action === '创建文件') {
       if (!currEditingNode) return
 
@@ -261,6 +262,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           // void message.success('保存成功')
         })
         .catch(_ => {
+          setAction('创建文件')
           return
         })
 

@@ -6,8 +6,10 @@ export type SystemConfigType = {
   forcedJumpSwitch: boolean
   logLevel: string
   middlewarePort: string
-  domain: string // api域名
-  apiPort: string // api端口
+  apiHost: string
+  apiPort: string
+  oidcHost: string
+  oidcPort: string
 }
 
 type SystemConfigContext = {

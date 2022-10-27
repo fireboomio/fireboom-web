@@ -7,8 +7,8 @@ import vitePluginImp from 'vite-plugin-imp'
 import Pages from 'vite-plugin-pages'
 import WindiCSS from 'vite-plugin-windicss'
 
-const backendUrl = 'http://120.26.62.151:9123'
-// const backendUrl = 'http://192.168.166.143:9123'
+// const backendUrl = 'http://120.26.62.151:9123'
+const backendUrl = 'http://192.168.166.143:9123'
 
 // https://vitejs.dev/config/
 export default defineConfig({

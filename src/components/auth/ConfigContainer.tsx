@@ -50,16 +50,15 @@ export default function AuthConfigContainer() {
   }
 
   const onTest = () => {
-    console.log(location)
-    const host = config.domain ? config.domain : `${location.hostname}:${config.apiPort}`
-    console.log(
-      `http://${host}/app/main/auth/cookie/authorize/authing?redirect_uri=${encodeURIComponent(
-        location.href
-      )}`
-    )
-    // location.href = `http://${host}/app/main/auth/cookie/authorize/authing?redirect_uri=${encodeURIComponent(
-    //   location.href
-    // )}`
+    let target = new URL(content?.point + encodeURIComponent(location.href))
+    if (!config.apiHost) {
+      target.protocol = location.protocol
+      target.hostname = location.hostname
+      target.port = location.port
+    }
+
+    console.log(target)
+    location.href = target.toString()
   }
 
   return (
