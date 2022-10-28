@@ -16,6 +16,7 @@ import {
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { Rule } from 'antd/lib/form'
 import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
@@ -67,6 +68,7 @@ const renderIcon = (kind: string) => (
 const BASEPATH = '/static/upload/oas'
 
 export default function Graphql({ content, type }: Props) {
+  const navigate = useNavigate()
   const config = content.config as Config
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
@@ -736,7 +738,13 @@ export default function Graphql({ content, type }: Props) {
               </Button>
               <Button
                 className={'btn-cancel ml-4'}
-                onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
+                onClick={() => {
+                  if (content.name) {
+                    handleToggleDesigner('detail', content.id, content.sourceType)
+                  } else {
+                    navigate('/workbench/dataSource/new')
+                  }
+                }}
               >
                 <span>取消</span>
               </Button>

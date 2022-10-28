@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleFilled } from '@ant-design/icons'
-import Editor from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { Button, Select, Switch } from 'antd'
 import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { parse } from 'graphql'
@@ -13,6 +13,8 @@ import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasour
 import requests from '@/lib/fetchers'
 
 import styles from './Setting.module.less'
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface OptionT {
   label: string
