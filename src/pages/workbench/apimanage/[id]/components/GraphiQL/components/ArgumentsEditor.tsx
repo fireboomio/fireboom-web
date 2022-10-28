@@ -143,7 +143,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
               <td>
                 <ArgumentInput
                   argument={arg}
-                  value={values[0]}
+                  value={values[index]}
                   onChange={v => updateValue(v, index)}
                 />
               </td>

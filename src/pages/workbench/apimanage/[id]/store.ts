@@ -193,16 +193,21 @@ export const useAPIManager = create<APIState>((set, get) => ({
   },
   refreshAPI: async () => {
     const id = get().apiID
-    const [api, setting] = await Promise.all([
-      requests.get(`/operateApi/${id}`),
-      requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
-    ])
-    // @ts-ignore
-    set({ apiDesc: { ...api, setting } })
-    // @ts-ignore
-    const content = api.content
-    get().setQuery(content)
-    set({ lastSavedQuery: content })
+    try {
+      const [api, setting] = await Promise.all([
+        requests.get(`/operateApi/${id}`),
+        requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
+      ])
+      // @ts-ignore
+      set({ apiDesc: { ...api, setting } })
+      // @ts-ignore
+      const content = api.content
+      get().setQuery(content)
+      set({ lastSavedQuery: content })
+    } catch (e) {
+      // 接口请求错误就刷新api列表
+      get()._workbenchContext?.onRefreshMenu('api')
+    }
   },
   refreshSchema: () => {
     fetch('/app/main/graphql', {
