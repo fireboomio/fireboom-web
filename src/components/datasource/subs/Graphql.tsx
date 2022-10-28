@@ -14,6 +14,7 @@ import {
   Tag
 } from 'antd'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
+import type { Rule } from 'antd/lib/form'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -23,7 +24,7 @@ import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import requests, { getFetcher } from '@/lib/fetchers'
 
 // import GraphiQLApp from '../../../pages/graphiql'
 import styles from './Graphql.module.less'
@@ -38,6 +39,11 @@ interface DataType {
   key: string
   kind: string
   val: string
+}
+
+interface OptionT {
+  label: string
+  value: string
 }
 
 type FromValues = Record<string, string | undefined | number | Array<DataType>>
@@ -62,11 +68,14 @@ export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
-  const [rulesObj, setRulesObj] = useImmer({})
+  const [rulesObj, setRulesObj] = useImmer<Rule>({})
   const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
   const [isValue, setIsValue] = useImmer(true)
+
+  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const [envVal, setEnvVal] = useImmer('')
 
   const [form] = Form.useForm()
   const { Option } = Select
@@ -82,6 +91,16 @@ export default function Graphql({ content, type }: Props) {
     form.resetFields()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
+
+  useEffect(() => {
+    void getFetcher('/env')
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
+      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      .then(x => setEnvOpts(x))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
@@ -164,10 +183,14 @@ export default function Graphql({ content, type }: Props) {
 
   const children: React.ReactNode[] = []
 
-  const handleChange = (_value: string) => {
+  const handleChange = (_value: string | string[]) => {
     setRulesObj({
-      pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-      message: '以字母或下划线开头，只能由字母、下划线和数字组成'
+      type: 'array',
+      validator(_, value) {
+        return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
+          ? Promise.resolve()
+          : Promise.reject('以字母或下划线开头，只能由字母、下划线和数字组成')
+      }
     })
   }
 
@@ -293,14 +316,7 @@ export default function Graphql({ content, type }: Props) {
           </div>
           <h2 className="ml-3 mb-3">请求头</h2>
           <div className={`${styles['table-contain']} mb-8`}>
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-              labelStyle={{
-                width: 190
-              }}
-            >
+            <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               {((config?.headers as unknown as DataType[]) ?? []).map(
                 ({ key = '', kind = '', val = '' }) => (
                   <Descriptions.Item
@@ -336,14 +352,7 @@ export default function Graphql({ content, type }: Props) {
           >
             <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
               <div className="flex justify-center mb-8">
-                <Descriptions
-                  bordered
-                  column={1}
-                  size="small"
-                  labelStyle={{
-                    width: 190
-                  }}
-                >
+                <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
                   <Descriptions.Item
                     label={
                       <div>
@@ -424,8 +433,8 @@ export default function Graphql({ content, type }: Props) {
             <Form
               form={form}
               name="basic"
-              labelCol={{ span: 3 }}
-              wrapperCol={{ span: 11 }}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 10 }}
               onFinish={values => void onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
@@ -439,7 +448,7 @@ export default function Graphql({ content, type }: Props) {
                 customFloatScalars: config.defineFloat,
                 customIntScalars: config.defineInt,
                 skipRenameRootFields: config.exceptRename,
-                headers: config.headers || [{ kind: '0' }],
+                headers: config.headers || [],
                 agreement: config.loadSchemaFromString !== undefined ? true : false
               }}
             >
@@ -487,7 +496,7 @@ export default function Graphql({ content, type }: Props) {
                 <Input placeholder="请输入..." />
               </Form.Item>
 
-              <Form.Item name="agreement" label=" ">
+              <Form.Item name="agreement" label=" " valuePropName="checked">
                 <Checkbox
                   onChange={() => {
                     setIsShowUpSchema(!isShowUpSchema)
@@ -549,9 +558,9 @@ export default function Graphql({ content, type }: Props) {
 
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Form.List name="headers">
-                  {(fields, { add }, { errors }) => (
+                  {(fields, { add, remove }, { errors }) => (
                     <>
-                      {fields.map(field => (
+                      {fields.map((field, idx) => (
                         <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
                           <Form.Item className="w-52.5" name={[field.name, 'key']}>
                             <Input />
@@ -581,15 +590,27 @@ export default function Graphql({ content, type }: Props) {
                           <Form.Item
                             className="w-135 flex-0"
                             name={[field.name, 'val']}
-                            rules={[rulesObj]}
+                            rules={
+                              form.getFieldValue(['headers', field.name, 'kind']) === '0'
+                                ? [
+                                    {
+                                      pattern: /^\w{1,128}$/g,
+                                      message: '请输入长度不大于128的非空值'
+                                    }
+                                  ]
+                                : []
+                            }
                           >
-                            {isValue ? (
+                            {form.getFieldValue(['headers', field.name, 'kind']) === '0' ? (
                               <Input placeholder="请输入" />
                             ) : (
-                              <Select className="w-1/5" style={{ width: '80%' }}>
-                                <Option value="1">1</Option>
-                                <Option value="2">2</Option>
-                              </Select>
+                              <Select
+                                className="w-1/5"
+                                style={{ width: '80%' }}
+                                options={envOpts}
+                                value={envVal}
+                                onChange={value => setEnvVal(value)}
+                              />
                             )}
                           </Form.Item>
                           <Image
@@ -598,6 +619,8 @@ export default function Graphql({ content, type }: Props) {
                             height={14}
                             preview={false}
                             src="/assets/clear.png"
+                            className="cursor-pointer"
+                            onClick={() => remove(idx)}
                           />
                         </Space>
                       ))}
@@ -605,7 +628,10 @@ export default function Graphql({ content, type }: Props) {
                       <Form.Item wrapperCol={{ span: 16 }}>
                         <Button
                           type="dashed"
-                          onClick={() => add({ kind: '0' })}
+                          onClick={() => {
+                            setIsValue(true)
+                            add({ kind: '0' })
+                          }}
                           icon={<PlusOutlined />}
                           className="text-gray-500/60 w-1/1"
                         >
