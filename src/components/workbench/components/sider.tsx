@@ -50,7 +50,10 @@ export default function Header() {
 
       {tab === 'api' ? (
         <div className={styles.panels}>
-          <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
+          <ApiPanel
+            open={location.pathname.startsWith('/workbench/apimanage/')}
+            defaultOpen={location.pathname.startsWith('/workbench/apimanage/')}
+          />
           <CommonPanel
             type="dataSource"
             defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}
