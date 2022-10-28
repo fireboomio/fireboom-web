@@ -1,4 +1,4 @@
-import { CaretRightOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import {
   Button,
@@ -133,15 +133,6 @@ export default function Rest({ content, type }: Props) {
   }, [content, type])
 
   useEffect(() => {
-    if (window && document) {
-      const script = document.createElement('script')
-      const body = document.getElementsByTagName('body')[0]
-      script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
-      body.appendChild(script)
-    }
-  }, [])
-
-  useEffect(() => {
     void getFetcher('/env')
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
@@ -242,7 +233,6 @@ export default function Rest({ content, type }: Props) {
     setIsRadioShow(!isRadioShow)
   }
 
-  const { TabPane } = Tabs
   const { Option } = Select
   const { Panel } = Collapse
 
@@ -347,83 +337,91 @@ export default function Rest({ content, type }: Props) {
             </Descriptions>
           </div>
           <div className="tabs-form">
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="请求头" key="1">
-                <Descriptions
-                  className="mb-8"
-                  bordered
-                  column={1}
-                  size="small"
-                  labelStyle={{
-                    width: 190
-                  }}
-                >
-                  {((config?.headers as unknown as DataType[]) ?? []).map(
-                    ({ key = '', kind = '', val = '' }) => (
-                      <Descriptions.Item
-                        key={key}
-                        label={
-                          <div>
-                            <span className={styles['label-style']}>
-                              {key}
-                              <FormToolTip title={key} />
-                            </span>
-                          </div>
-                        }
-                        className="justify-start"
-                        style={{ wordBreak: 'break-all' }}
-                      >
-                        <div className="flex items-center">
-                          <div className="text-0px">{renderIcon(kind)}</div>
-                          <div className="flex-1 ml-2 min-w-0">{val}</div>
-                        </div>
-                      </Descriptions.Item>
-                    )
-                  )}
-                </Descriptions>
-              </TabPane>
-              <TabPane
-                tab={
-                  <>
+            <Tabs
+              defaultActiveKey="1"
+              items={[
+                {
+                  key: '1',
+                  label: '请求头',
+                  children: (
+                    <Descriptions
+                      className="mb-8"
+                      bordered
+                      column={1}
+                      size="small"
+                      labelStyle={{
+                        width: 190
+                      }}
+                    >
+                      {((config?.headers as unknown as DataType[]) ?? []).map(
+                        ({ key = '', kind = '', val = '' }) => (
+                          <Descriptions.Item
+                            key={key}
+                            label={
+                              <div>
+                                <span className={styles['label-style']}>
+                                  {key}
+                                  <FormToolTip title={key} />
+                                </span>
+                              </div>
+                            }
+                            className="justify-start"
+                            style={{ wordBreak: 'break-all' }}
+                          >
+                            <div className="flex items-center">
+                              <div className="text-0px">{renderIcon(kind)}</div>
+                              <div className="flex-1 ml-2 min-w-0">{val}</div>
+                            </div>
+                          </Descriptions.Item>
+                        )
+                      )}
+                    </Descriptions>
+                  )
+                },
+                {
+                  key: '2',
+                  label: (
                     <span className={styles['label-style']}>
                       授权
                       <FormToolTip title="授权" />
                     </span>
-                  </>
+                  ),
+                  children: (
+                    <div className="flex mb-11 justify-center">
+                      <Descriptions
+                        bordered
+                        column={1}
+                        size="small"
+                        className={styles['descriptions-box']}
+                      >
+                        <Descriptions.Item label="JWT获取">
+                          {config.jwtType == 1 ? '动态' : '静态'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="密钥">
+                          {isEyeShow ? (
+                            <>
+                              <span className="mr-5">
+                                {(config.secret as unknown as DataType)?.val}
+                              </span>
+                              <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
+                            </>
+                          ) : (
+                            <>
+                              <span className="mr-5">********</span>
+                              <IconFont type="icon-xiaoyanjing-yincang" onClick={changeEyeState} />
+                            </>
+                          )}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="签名方法">
+                          {config.signingMethod}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
+                      </Descriptions>
+                    </div>
+                  )
                 }
-                key="2"
-              >
-                <div className="flex mb-11 justify-center">
-                  <Descriptions
-                    bordered
-                    column={1}
-                    size="small"
-                    className={styles['descriptions-box']}
-                  >
-                    <Descriptions.Item label="JWT获取">
-                      {config.jwtType == 1 ? '动态' : '静态'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="密钥">
-                      {isEyeShow ? (
-                        <>
-                          <span className="mr-5">
-                            {(config.secret as unknown as DataType)?.val}
-                          </span>
-                          <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
-                        </>
-                      ) : (
-                        <>
-                          <span className="mr-5">********</span>
-                          <IconFont type="icon-xiaoyanjing-yincang" onClick={changeEyeState} />
-                        </>
-                      )}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="签名方法">{config.signingMethod}</Descriptions.Item>
-                    <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
-                  </Descriptions>
-                </div>
-              </TabPane>
-            </Tabs>
+              ]}
+            />
           </div>
           <Collapse
             ghost
@@ -462,16 +460,15 @@ export default function Rest({ content, type }: Props) {
             footer={null}
           >
             <div className={styles['redoc-container']}>
-              {/* @ts-ignore */}
-              <rapi-doc
-                spec-url={`/upload/oas/${config.filePath ?? ''}`}
-                show-header="false"
-                show-info="false"
-                allow-authentication="false"
-                allow-server-selection="false"
-                allow-api-list-style-selection="false"
-                render-style="read"
-              />
+              {testVisible && config.filePath && (
+                <iframe
+                  title="rapi"
+                  src={`/#/rapi-frame?url=/upload/oas/${config.filePath ?? ''}`}
+                  width={'100%'}
+                  height={'100%'}
+                  className="border-none"
+                />
+              )}
             </div>
           </Modal>
         </>
@@ -597,181 +594,204 @@ export default function Rest({ content, type }: Props) {
               </Form.Item>
 
               <div className="tabs-form">
-                <Tabs defaultActiveKey="1" className="ml-3">
-                  <TabPane tab="请求头" key="1">
-                    <Form.Item
-                      wrapperCol={{
-                        xs: { span: 24 },
-                        sm: { span: 24 }
-                      }}
-                    >
-                      <Form.List name="headers">
-                        {(fields, { add, remove }, { errors }) => (
-                          <>
-                            {fields.map((field, index) => (
-                              <Space key={field.key} align="baseline">
-                                <Form.Item
-                                  className="w-52.5"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'key']}
-                                >
-                                  <Input />
-                                </Form.Item>
-                                <Form.Item
-                                  className="w-40"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'kind']}
-                                >
-                                  <Select onChange={onValueChange}>
-                                    <Option value="0">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('0')}
-                                      </span>
-                                      值
-                                    </Option>
-                                    <Option value="1">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('1')}
-                                      </span>
-                                      环境变量
-                                    </Option>
-                                    <Option value="2">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('2')}
-                                      </span>
-                                      转发自客户端
-                                    </Option>
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  className="w-135"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'val']}
-                                  rules={[rulesObj]}
-                                >
-                                  {isValue ? (
-                                    <Input style={{ width: '80%' }} placeholder="请输入" />
-                                  ) : (
-                                    <Select className="w-1/5" style={{ width: '80%' }}>
-                                      <Option value="1">1</Option>
-                                      <Option value="2">2</Option>
-                                    </Select>
-                                  )}
-                                </Form.Item>
-                                <IconFont type="icon-guanbi" onClick={() => remove(index)} />
-                              </Space>
-                            ))}
-
-                            <Form.Item wrapperCol={{ span: 16 }}>
-                              <Button
-                                type="dashed"
-                                onClick={() => add({ kind: '0' })}
-                                icon={<PlusOutlined />}
-                                className="text-gray-500/60 w-1/1"
-                              >
-                                新增请求头信息
-                              </Button>
-                              <Form.ErrorList errors={errors} />
-                            </Form.Item>
-                          </>
-                        )}
-                      </Form.List>
-                    </Form.Item>
-                  </TabPane>
-                  <TabPane
-                    tab={
-                      <div>
-                        <span>授权</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
-                      </div>
-                    }
-                    key="2"
-                  >
-                    <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
-                      <Radio.Group onChange={onChangeRadio} value={value}>
-                        <Radio value={'0'} className="mr-20">
-                          静态
-                        </Radio>
-                        <Radio value={'1'}>动态</Radio>
-                      </Radio.Group>
-                    </Form.Item>
-                    {isRadioShow ? (
-                      <>
-                        <Form.Item label="密钥">
-                          <Input.Group compact>
-                            <Form.Item name={['secret', 'kind']} noStyle>
-                              <Select className="w-1/5" onChange={onValueChange}>
-                                <Option value="0">值</Option>
-                                <Option value="1">环境变量</Option>
-                              </Select>
-                            </Form.Item>
-                            {isValue ? (
-                              <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-                                <Input style={{ width: '80%' }} placeholder="请输入" />
-                              </Form.Item>
-                            ) : (
-                              <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
-                                <Select
-                                  className="w-1/5"
-                                  style={{ width: '80%' }}
-                                  options={envOpts}
-                                  value={envVal}
-                                  onChange={onValue2Change}
-                                />
-                              </Form.Item>
-                            )}
-                          </Input.Group>
-                        </Form.Item>
-
-                        <Form.Item label="签名方法" name="signingMethod" initialValue={'HS256'}>
-                          <Radio value={'HS256'} checked>
-                            HS256
-                          </Radio>
-                        </Form.Item>
-                      </>
-                    ) : (
-                      <>
-                        <Form.Item label="密钥">
-                          <Input.Group compact>
-                            <Form.Item name={['secret', 'kind']} noStyle>
-                              <Select className="w-1/5" onChange={onValueChange}>
-                                <Option value="0">值</Option>
-                                <Option value="1">环境变量</Option>
-                              </Select>
-                            </Form.Item>
-                            <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
-                              {isValue ? (
-                                <Input style={{ width: '80%' }} placeholder="请输入" />
-                              ) : (
-                                <Select className="w-1/5" style={{ width: '80%' }}>
-                                  <Option value="1">1</Option>
-                                  <Option value="2">2</Option>
-                                </Select>
-                              )}
-                            </Form.Item>
-                          </Input.Group>
-                        </Form.Item>
+                <Tabs
+                  defaultActiveKey="1"
+                  className="ml-3"
+                  items={[
+                    {
+                      key: '1',
+                      label: '请求头',
+                      children: (
                         <Form.Item
-                          label={
-                            <>
-                              <span>Token 端点:</span>
-                              <IconFont
-                                type="icon-wenhao"
-                                className={`${styles['form-icon']} ml-1`}
-                              />
-                            </>
-                          }
-                          colon={false}
-                          required
-                          style={{ marginBottom: '20px' }}
-                          name="tokenPoint"
+                          wrapperCol={{
+                            xs: { span: 24 },
+                            sm: { span: 24 }
+                          }}
                         >
-                          <Input placeholder="请输入..." />
+                          <Form.List name="headers">
+                            {(fields, { add, remove }, { errors }) => (
+                              <>
+                                {fields.map((field, index) => (
+                                  <Space key={field.key} align="baseline">
+                                    <Form.Item
+                                      className="w-52.5"
+                                      wrapperCol={{ span: 24 }}
+                                      name={[field.name, 'key']}
+                                    >
+                                      <Input />
+                                    </Form.Item>
+                                    <Form.Item
+                                      className="w-40"
+                                      wrapperCol={{ span: 24 }}
+                                      name={[field.name, 'kind']}
+                                    >
+                                      <Select onChange={onValueChange}>
+                                        <Option value="0">
+                                          <span className="h-full mr-1 inline-flex align-top items-center">
+                                            {renderIcon('0')}
+                                          </span>
+                                          值
+                                        </Option>
+                                        <Option value="1">
+                                          <span className="h-full mr-1 inline-flex align-top items-center">
+                                            {renderIcon('1')}
+                                          </span>
+                                          环境变量
+                                        </Option>
+                                        <Option value="2">
+                                          <span className="h-full mr-1 inline-flex align-top items-center">
+                                            {renderIcon('2')}
+                                          </span>
+                                          转发自客户端
+                                        </Option>
+                                      </Select>
+                                    </Form.Item>
+                                    <Form.Item
+                                      className="w-135"
+                                      wrapperCol={{ span: 24 }}
+                                      name={[field.name, 'val']}
+                                      rules={[rulesObj]}
+                                    >
+                                      {isValue ? (
+                                        <Input style={{ width: '80%' }} placeholder="请输入" />
+                                      ) : (
+                                        <Select className="w-1/5" style={{ width: '80%' }}>
+                                          <Option value="1">1</Option>
+                                          <Option value="2">2</Option>
+                                        </Select>
+                                      )}
+                                    </Form.Item>
+                                    <IconFont type="icon-guanbi" onClick={() => remove(index)} />
+                                  </Space>
+                                ))}
+
+                                <Form.Item wrapperCol={{ span: 16 }}>
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => add({ kind: '0' })}
+                                    icon={<PlusOutlined />}
+                                    className="text-gray-500/60 w-1/1"
+                                  >
+                                    新增请求头信息
+                                  </Button>
+                                  <Form.ErrorList errors={errors} />
+                                </Form.Item>
+                              </>
+                            )}
+                          </Form.List>
                         </Form.Item>
-                      </>
-                    )}
-                  </TabPane>
-                </Tabs>
+                      )
+                    },
+                    {
+                      key: '2',
+                      label: (
+                        <div>
+                          <span>授权</span>
+                          <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        </div>
+                      ),
+                      children: (
+                        <>
+                          <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
+                            <Radio.Group onChange={onChangeRadio} value={value}>
+                              <Radio value={'0'} className="mr-20">
+                                静态
+                              </Radio>
+                              <Radio value={'1'}>动态</Radio>
+                            </Radio.Group>
+                          </Form.Item>
+                          {isRadioShow ? (
+                            <>
+                              <Form.Item label="密钥">
+                                <Input.Group compact>
+                                  <Form.Item name={['secret', 'kind']} noStyle>
+                                    <Select className="w-1/5" onChange={onValueChange}>
+                                      <Option value="0">值</Option>
+                                      <Option value="1">环境变量</Option>
+                                    </Select>
+                                  </Form.Item>
+                                  {isValue ? (
+                                    <Form.Item
+                                      name={['databaseUrl', 'val']}
+                                      noStyle
+                                      rules={[rulesObj]}
+                                    >
+                                      <Input style={{ width: '80%' }} placeholder="请输入" />
+                                    </Form.Item>
+                                  ) : (
+                                    <Form.Item
+                                      name={['databaseUrl', 'val']}
+                                      noStyle
+                                      rules={[rulesObj]}
+                                    >
+                                      <Select
+                                        className="w-1/5"
+                                        style={{ width: '80%' }}
+                                        options={envOpts}
+                                        value={envVal}
+                                        onChange={onValue2Change}
+                                      />
+                                    </Form.Item>
+                                  )}
+                                </Input.Group>
+                              </Form.Item>
+
+                              <Form.Item
+                                label="签名方法"
+                                name="signingMethod"
+                                initialValue={'HS256'}
+                              >
+                                <Radio value={'HS256'} checked>
+                                  HS256
+                                </Radio>
+                              </Form.Item>
+                            </>
+                          ) : (
+                            <>
+                              <Form.Item label="密钥">
+                                <Input.Group compact>
+                                  <Form.Item name={['secret', 'kind']} noStyle>
+                                    <Select className="w-1/5" onChange={onValueChange}>
+                                      <Option value="0">值</Option>
+                                      <Option value="1">环境变量</Option>
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
+                                    {isValue ? (
+                                      <Input style={{ width: '80%' }} placeholder="请输入" />
+                                    ) : (
+                                      <Select className="w-1/5" style={{ width: '80%' }}>
+                                        <Option value="1">1</Option>
+                                        <Option value="2">2</Option>
+                                      </Select>
+                                    )}
+                                  </Form.Item>
+                                </Input.Group>
+                              </Form.Item>
+                              <Form.Item
+                                label={
+                                  <>
+                                    <span>Token 端点:</span>
+                                    <IconFont
+                                      type="icon-wenhao"
+                                      className={`${styles['form-icon']} ml-1`}
+                                    />
+                                  </>
+                                }
+                                colon={false}
+                                required
+                                style={{ marginBottom: '20px' }}
+                                name="tokenPoint"
+                              >
+                                <Input placeholder="请输入..." />
+                              </Form.Item>
+                            </>
+                          )}
+                        </>
+                      )
+                    }
+                  ]}
+                />
               </div>
               <Collapse
                 ghost

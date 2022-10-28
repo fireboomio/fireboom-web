@@ -1,17 +1,23 @@
 import { useContext, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
 
+if (window && document) {
+  const script = document.createElement('script')
+  const body = document.getElementsByTagName('body')[0]
+  script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
+  body.appendChild(script)
+}
+
+type Props = {
+  specUrl: string
+}
+
 export default function RapiFrame() {
+  const [params] = useSearchParams()
   const { config } = useContext(ConfigContext)
-  useEffect(() => {
-    if (window && document) {
-      const script = document.createElement('script')
-      const body = document.getElementsByTagName('body')[0]
-      script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
-      body.appendChild(script)
-    }
-  }, [])
+
   const customServerUrl =
     config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
 
@@ -22,7 +28,7 @@ export default function RapiFrame() {
     // @ts-ignore
     <rapi-doc
       theme="dark"
-      spec-url={`/api/v1/file/postToSwag`}
+      spec-url={params.get('url')}
       server-url={customServerUrl}
       default-api-server={customServerUrl}
       show-header="false"

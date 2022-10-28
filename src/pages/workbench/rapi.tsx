@@ -13,7 +13,7 @@ export default function Rapi() {
   return (
     <iframe
       title="rapi"
-      src="/#/rapi-frame"
+      src="/#/rapi-frame?url=/api/v1/file/postToSwag"
       width={'100%'}
       height={'100%'}
       className="border-none"
