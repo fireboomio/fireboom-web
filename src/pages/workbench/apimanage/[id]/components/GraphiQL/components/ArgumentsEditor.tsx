@@ -1,8 +1,9 @@
 import { useEditorContext } from '@graphiql/react'
 import { message, Tooltip } from 'antd'
 import type { VariableDefinitionNode } from 'graphql'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { useDebounceEffect } from '@/hooks/debounce'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { CircleCloseOutlined } from '../../icons'
@@ -11,49 +12,39 @@ import type { InputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'
 
 interface ArgumentsEditorProps {
+  apiID: string
   arguments: ReadonlyArray<VariableDefinitionNode>
   onRemoveDirective: (argumentIndex: number, directiveIndex: number) => void
 }
 
 const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   const editorContext = useEditorContext()
-  const [values, setValues] = useState<InputValueType[]>([])
-  const valuesRef = useRef<InputValueType[]>([])
+  const [values, setValues] = useState<Record<string, InputValueType>>({})
+  const valuesRef = useRef<Record<string, InputValueType>>({})
 
   const parsed = useMemo(() => {
     return parseParameters(props.arguments)
   }, [props.arguments])
 
-  const updateValue = (v: InputValueType, index: number) => {
-    const clone = values.slice()
-    clone.splice(index, 1, v)
-    setValues(clone)
-    valuesRef.current = clone
+  const updateValue = (v: InputValueType, key: string) => {
+    const target = {
+      ...values,
+      [key]: v
+    }
+    setValues(target)
+    valuesRef.current = target
   }
 
   useEffect(() => {
     // 参数改变时要变更输入框的值
-    const originValueMap = valuesRef.current.reduce<Record<string, InputValueType>>(
-      (map, val, index) => {
-        if (val !== null && val !== undefined) {
-          const param = parsed[index]
-          if (param) {
-            map[param.name] = val
-          }
-        }
-        return map
-      },
-      {}
-    )
-    setValues(
-      props.arguments.map(item => {
-        const name = item.variable?.name.value
-        if (name && name in originValueMap) {
-          return originValueMap[name]
-        }
-        return ''
-      })
-    )
+    const newValues = props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
+      const name = arg.variable?.name.value
+      if (name) {
+        obj[name] = valuesRef.current[name] ?? ''
+      }
+      return obj
+    }, {})
+    setValues(newValues)
   }, [parsed, props.arguments])
 
   useEffect(() => {
@@ -99,6 +90,39 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsed])
 
+  useDebounceEffect(
+    () => {
+      const storeKey = `_api_args_${props.apiID}`
+      if (Object.keys(values).length && Object.keys(values).some(k => !!values[k])) {
+        localStorage.setItem(storeKey, JSON.stringify(values))
+      }
+    },
+    [values],
+    1000
+  )
+
+  useEffect(() => {
+    if (props.apiID && props.arguments.length) {
+      const storeKey = `_api_args_${props.apiID}`
+      try {
+        const savedStr = localStorage.getItem(storeKey)
+        if (savedStr) {
+          const saved = JSON.parse(savedStr)
+          const newValues = props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
+            const name = arg.variable?.name.value
+            if (name) {
+              obj[name] = saved[name] ?? ''
+            }
+            return obj
+          }, {})
+          setValues(newValues)
+        }
+      } catch (error) {
+        //
+      }
+    }
+  }, [props.apiID, props.arguments])
+
   return (
     <div className="arguments-editor">
       <table>
@@ -143,8 +167,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
               <td>
                 <ArgumentInput
                   argument={arg}
-                  value={values[index]}
-                  onChange={v => updateValue(v, index)}
+                  value={values[arg.name]}
+                  onChange={v => updateValue(v, arg.name)}
                 />
               </td>
             </tr>

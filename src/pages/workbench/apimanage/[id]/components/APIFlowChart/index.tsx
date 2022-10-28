@@ -1,11 +1,11 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
+import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../store'
-import { useDebounceMemo } from './debounce'
 import type { FlowChartProps } from './FlowChart'
 import FlowChart from './FlowChart'
 

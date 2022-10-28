@@ -129,6 +129,7 @@ export default function APIEditorContainer() {
               />
             </Tooltip>
             <GraphiqlExplorer1
+              key={params.id}
               style={{ width: '258px !important' }}
               schema={schema}
               query={query}
