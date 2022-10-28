@@ -1,11 +1,13 @@
 import { Image } from 'antd'
 import { Resizable } from 're-resizable'
 import type { CSSProperties } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { LogMessage } from '@/interfaces/window'
+import { matchJson } from '@/lib/utils'
 
 import RcTab from '../rc-tab'
+import type { LogAction } from './Log'
 import Log from './Log'
 
 const tabs = [
@@ -20,41 +22,34 @@ interface Props {
 // eslint-disable-next-line react/prop-types
 const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   const [tabActiveKey, setTabActiveKey] = useState('0')
-  const [log, setLog] = useState<LogMessage[]>([])
-  const [msg, setMsg] = useState<LogMessage>()
+  const logActionRef = useRef<LogAction>()
+  const responseRef = useRef<Response>()
 
   useEffect(() => {
-    void fetch(`/api/v1/wdg/log`).then(res => {
-      const reader = res.body?.getReader()
-      if (!reader) return
-
-      // @ts-ignore
-      const process = ({ value, done }) => {
-        if (done) return
-
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          const data = new Response(value)
-          void data.json().then((x: LogMessage) => setMsg(x))
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.log(error)
+    const controller = new AbortController()
+    const signal = controller.signal
+    async function fn() {
+      if (!responseRef.current) {
+        responseRef.current = await fetch('/api/v1/wdg/log', { signal })
+        const reader = responseRef.current.body!.getReader()
+        const decoder = new TextDecoder()
+        let result = await reader.read()
+        while (!result.done) {
+          const text = decoder.decode(result.value)
+          console.log('log stream: ', text)
+          const resps = matchJson(text) as LogMessage[]
+          logActionRef.current?.appendLogs(resps)
+          result = await reader.read()
         }
-        // @ts-ignore
-        void reader.read().then(process)
+        console.log('Log finished')
       }
-
-      // @ts-ignore
-      void reader.read().then(process)
-    })
+    }
+    fn()
+    return () => {
+      console.log('close fetch')
+      controller.abort()
+    }
   }, [])
-
-  useEffect(() => {
-    if (!msg) return
-
-    setLog(log.concat(msg))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [msg])
 
   const extra = (
     <div className="cursor-pointer flex justify-end">
@@ -65,7 +60,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
           width={20}
           alt="清空"
           preview={false}
-          onClick={() => setLog([])}
+          onClick={logActionRef.current?.clearLogs}
         />
       </div>
       <div className="ml-4">
@@ -96,7 +91,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
         maxWidth="100%"
       >
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
-        {tabActiveKey === '0' ? <Log log={log} /> : <></>}
+        {tabActiveKey === '0' ? <Log actionRef={logActionRef} /> : <></>}
       </Resizable>
     </div>
   )

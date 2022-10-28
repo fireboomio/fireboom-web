@@ -198,7 +198,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
     ])
     // @ts-ignore
-    set({ api: { ...api, setting } })
+    set({ apiDesc: { ...api, setting } })
     // @ts-ignore
     const content = api.content
     get().setQuery(content)

@@ -57,7 +57,9 @@ export default function Index(props: PropsWithChildren) {
     })
   }, [])
   useEffect(() => {
-    void fetch(`/api/v1/wdg/state`).then(res => {
+    const controller = new AbortController()
+    const signal = controller.signal
+    fetch(`/api/v1/wdg/state`, { signal }).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
 
@@ -91,6 +93,10 @@ export default function Index(props: PropsWithChildren) {
       // @ts-ignore
       void reader.read().then(process)
     })
+
+    return () => {
+      controller.abort()
+    }
   }, [])
 
   const handleRefreshMenu = (listName: MenuName) => {
