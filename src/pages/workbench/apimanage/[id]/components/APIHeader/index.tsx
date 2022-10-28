@@ -38,6 +38,7 @@ const APIHeader = () => {
   }, [apiDesc?.path])
 
   const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log(e.code)
     if (e.code === 'Enter') {
       try {
         await updateAPI({
