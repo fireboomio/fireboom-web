@@ -79,7 +79,10 @@ export default function Header(props: { onToggleSider: () => void }) {
             >
               <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
             </div>
-            <div className={styles.headBtn} onClick={() => navigate('/workbench/rapi')}>
+            <div
+              className={styles.headBtn}
+              onClick={() => window.open('/#/workbench/rapi', '_blank')}
+            >
               <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
             </div>
             <div className={styles.headBtn}>
