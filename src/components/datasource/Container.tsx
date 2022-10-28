@@ -1,6 +1,7 @@
 import { Button, Image, notification, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -23,6 +24,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { onRefreshMenu } = useContext(WorkbenchContext)
 
+  const navigate = useNavigate()
   if (!content) {
     return (
       <div className="pl-6 mt-6 mr-6">
@@ -112,7 +114,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
               unCheckedChildren="关闭"
               onChange={toggleOpen}
             />
-            <Button className={'btn-test ml-4 mr-4'}>设计</Button>
+            <Button
+              className={'btn-test ml-4 mr-4'}
+              onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
+            >
+              设计
+            </Button>
             <Button className={'btn-test mr-4'} onClick={() => testLink('bottomLeft')}>
               测试
             </Button>
