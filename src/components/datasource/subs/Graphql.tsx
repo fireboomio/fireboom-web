@@ -19,13 +19,13 @@ import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import Uploader from '@/components/common/Uploader'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
+import FileList from './FileList'
 // import GraphiQLApp from '../../../pages/graphiql'
 import styles from './Graphql.module.less'
 
@@ -64,6 +64,8 @@ const renderIcon = (kind: string) => (
   />
 )
 
+const BASEPATH = '/static/upload/oas'
+
 export default function Graphql({ content, type }: Props) {
   const config = content.config as Config
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
@@ -76,6 +78,7 @@ export default function Graphql({ content, type }: Props) {
 
   const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
   const [envVal, setEnvVal] = useImmer('')
+  const [visible, setVisible] = useImmer(false)
 
   const [form] = Form.useForm()
   const { Option } = Select
@@ -106,37 +109,6 @@ export default function Graphql({ content, type }: Props) {
   const onFinish = async (values: FromValues) => {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     const newValues = { ...values }
-    const index = (config.loadSchemaFromString as string)?.lastIndexOf('/')
-    const fileId = (config.loadSchemaFromString as string)?.substring(index + 1) //文件id
-    //如果进行上传文件操作
-    if (file.uid) {
-      //如果存在已经上传文件 先删除先前文件
-      if (config.loadSchemaFromString) {
-        await requests({
-          method: 'post',
-          url: '/dataSource/removeFile',
-          data: { id: fileId }
-        })
-      }
-      newValues.loadSchemaFromString = (await requests({
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        method: 'post',
-        url: '/dataSource/import',
-        data: { file: file }
-      })) as unknown as string
-    } else {
-      //如果删除文件则将config中的filePath置空
-      if (deleteFlag) {
-        await requests({
-          method: 'post',
-          url: '/dataSource/removeFile',
-          data: { id: fileId }
-        })
-        newValues.loadSchemaFromString = undefined
-      } else newValues.loadSchemaFromString = config.loadSchemaFromString //如果没有进行上传文件操作，且没有删除文件，将原本的文件路径保存
-    }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
     if (content.name == '' || content.name.startsWith('example_')) {
@@ -225,6 +197,10 @@ export default function Graphql({ content, type }: Props) {
 
   function testGql() {
     setIsModalVisible(true)
+  }
+
+  const setUploadPath = (v: string) => {
+    form.setFieldValue('loadSchemaFromString', v)
   }
 
   if (!content) {
@@ -518,11 +494,19 @@ export default function Graphql({ content, type }: Props) {
                   colon={false}
                   name="loadSchemaFromString"
                   required
-                  valuePropName="fileList"
+                  // valuePropName="fileList"
                   style={{ marginBottom: '48px' }}
-                  getValueFromEvent={normFile}
+                  // getValueFromEvent={normFile}
                 >
-                  <Uploader
+                  <Input
+                    placeholder="请输入..."
+                    onClick={() => setVisible(true)}
+                    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                    suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+                    readOnly
+                    // value={uploadPath}
+                  />
+                  {/* <Uploader
                     defaultFileList={
                       (config.loadSchemaFromString as string)
                         ? [
@@ -548,7 +532,7 @@ export default function Graphql({ content, type }: Props) {
                     <Button icon={<PlusOutlined />} className="w-159.5">
                       添加文件
                     </Button>
-                  </Uploader>
+                  </Uploader> */}
                 </Form.Item>
               ) : (
                 ''
@@ -760,6 +744,24 @@ export default function Graphql({ content, type }: Props) {
           </div>
         </>
       )}
+
+      <Modal
+        className={styles['modal']}
+        title={null}
+        footer={null}
+        open={visible}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        width={920}
+        // closable={false}
+      >
+        <FileList
+          basePath={BASEPATH}
+          setUploadPath={setUploadPath}
+          setVisible={setVisible}
+          upType={1}
+        />
+      </Modal>
 
       <Modal
         title="GraphiQL"
