@@ -61,24 +61,30 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const testLink = (placement: NotificationPlacement) => {
-    void requests
-      .post('/checkDBConn', {
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: { sourceType: content.sourceType, config: content.config }
-      })
-      .then(x => console.log(x))
+    if (content.sourceType === 1) {
+      void requests
+        .post('/checkDBConn', {
+          // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          data: { sourceType: content.sourceType, config: content.config }
+        })
+        .then(x => console.log(x))
 
-    notification.open({
-      message: <IconFont type="icon-xingzhuangjiehe" />,
-      description: (
-        <div>
-          <h1>链接失败</h1>
-          描述性语句描述性语句描述性语句
-        </div>
-      ),
-      placement
-    })
+      notification.open({
+        message: <IconFont type="icon-xingzhuangjiehe" />,
+        description: (
+          <div>
+            <h1>链接失败</h1>
+            描述性语句描述性语句描述性语句
+          </div>
+        ),
+        placement
+      })
+    } else if (content.sourceType === 2) {
+      console.log(content)
+    } else if (content.sourceType === 3) {
+      window.open(content.config.url, '_blank')
+    }
   }
 
   return (

@@ -38,7 +38,8 @@ const APIHeader = () => {
   }, [apiDesc?.path])
 
   const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter') {
+    console.log(e.code, e.key)
+    if (e.key === 'Enter') {
       try {
         await updateAPI({
           path: `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`

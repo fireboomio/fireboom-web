@@ -29,3 +29,18 @@ export function useDebounceMemo<T>(
 
   return state
 }
+
+export function useDebounceEffect(fn: () => void, deps: DependencyList, delay: number) {
+  const [val, setVal] = useState(1)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVal(val + 1), delay)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [delay, val, ...deps])
+
+  useEffect(() => {
+    fn()
+  }, [val])
+}

@@ -224,7 +224,11 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
       {editor}
       <section className="graphiql-editor-tool">
         <ResponseWrapper>
-          <GraphiInputAndResponse actionRef={responseRef} argumentList={argumentList} />
+          <GraphiInputAndResponse
+            apiID={apiID}
+            actionRef={responseRef}
+            argumentList={argumentList}
+          />
         </ResponseWrapper>
       </section>
     </div>
@@ -232,6 +236,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 }
 
 interface GraphiInputAndResponseProps {
+  apiID: string
   argumentList: ReadonlyArray<VariableDefinitionNode>
   actionRef?: MutableRefObject<
     | {
@@ -241,7 +246,11 @@ interface GraphiInputAndResponseProps {
   >
 }
 
-const GraphiInputAndResponse = ({ argumentList, actionRef }: GraphiInputAndResponseProps) => {
+const GraphiInputAndResponse = ({
+  apiID,
+  argumentList,
+  actionRef
+}: GraphiInputAndResponseProps) => {
   const [activeKey, setActiveKey] = useState('arguments')
 
   const { response } = useResponse()
@@ -277,7 +286,11 @@ const GraphiInputAndResponse = ({ argumentList, actionRef }: GraphiInputAndRespo
           label: '输入',
           key: 'arguments',
           children: (
-            <ArgumentsEditor arguments={argumentList} onRemoveDirective={onRemoveDirective} />
+            <ArgumentsEditor
+              apiID={apiID}
+              arguments={argumentList}
+              onRemoveDirective={onRemoveDirective}
+            />
           )
         },
         { label: '响应', key: 'response', children: <ResponseViewer /> }

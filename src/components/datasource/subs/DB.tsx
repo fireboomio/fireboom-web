@@ -71,10 +71,12 @@ export default function DB({ content, type }: Props) {
       case '0':
         setIsValue(true)
         setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        form.setFieldValue(['databaseUrl', 'val'], '')
         return
       case '1':
         setIsValue(false)
         setEnvVal(envOpts.at(0)?.label ?? '')
+        form.setFieldValue(['databaseUrl', 'val'], '')
         return
       default:
         setIsValue(false)
@@ -247,7 +249,9 @@ export default function DB({ content, type }: Props) {
   //表单提交成功回调
   const onFinish = async (values: FromValues) => {
     const newValues = { ...config, ...values }
-    if (newValues.databaseUrl.kind === undefined) {
+    if (newValues.databaseUrl === undefined) {
+      newValues.databaseUrl = {}
+    } else if (newValues.databaseUrl.kind === undefined) {
       newValues.databaseUrl.kind = '0'
     }
     let newContent: DatasourceResp

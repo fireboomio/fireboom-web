@@ -92,6 +92,16 @@ export interface APIState {
 
 const refreshFns: (() => void)[] = []
 
+function isQueryHasContent(query: string) {
+  return (
+    !!query &&
+    query.split('\n').some(line => {
+      const str = line.trim()
+      return !!str && !str.match(/^#/)
+    })
+  )
+}
+
 export const useAPIManager = create<APIState>((set, get) => ({
   apiDesc: undefined,
   query: DEFAULT_QUERY,
@@ -100,12 +110,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
   setID: async (id: string) => {
     set({ apiID: id })
     await get().refreshAPI()
-    try {
-      const schemaAST = parseSchemaAST(get().query)
-      set({ schemaAST })
-    } catch (error) {
-      //
-    }
     refreshFns.forEach(fn => fn())
     // 第一次加载
     if (!get().schema) {
@@ -125,12 +129,16 @@ export const useAPIManager = create<APIState>((set, get) => ({
     }
   },
   setQuery(query) {
-    set({ query })
+    set({ query: query || DEFAULT_QUERY })
     try {
-      const schemaAST = parseSchemaAST(get().query)
-      set({ schemaAST })
+      if (!isQueryHasContent(query)) {
+        set({ schemaAST: undefined })
+      } else {
+        const schemaAST = parseSchemaAST(query)
+        set({ schemaAST })
+      }
     } catch (error) {
-      //
+      debugger
     }
   },
   schema: undefined,
