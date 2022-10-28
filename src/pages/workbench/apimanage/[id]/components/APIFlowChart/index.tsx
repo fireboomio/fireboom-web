@@ -60,13 +60,13 @@ const APIFlowChart = ({ id }: { id: string }) => {
       setGlobalState({
         onRequest: {
           name: 'onRequest',
-          enable: globalHooks.onRequest.switch,
-          path: globalHooks.onRequest.path
+          enable: globalHooks.onRequest?.switch ?? false,
+          path: globalHooks.onRequest?.path ?? ''
         },
         onResponse: {
           name: 'onResponse',
-          enable: globalHooks.onResponse.switch,
-          path: globalHooks.onResponse.path
+          enable: globalHooks.onResponse?.switch ?? false,
+          path: globalHooks.onResponse?.path ?? ''
         }
       })
       setHookState({
