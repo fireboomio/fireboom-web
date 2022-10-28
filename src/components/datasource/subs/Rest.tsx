@@ -500,7 +500,7 @@ export default function Rest({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={values => void onFinish(values as Config)}
+              onFinish={values => onFinish(values as Config)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}

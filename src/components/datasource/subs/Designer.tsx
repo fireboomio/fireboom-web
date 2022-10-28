@@ -87,16 +87,16 @@ export default function Designer() {
   return (
     <>
       {data.map(category => (
-        <div key={category.name} className="my-42px">
+        <div key={category.name} className="mb-12">
           <div className={`text-lg ${styles['title']}`}>
             <span className="pl-2.5">{category.name}</span>
           </div>
 
-          <div className="flex flex-wrap gap-x-9.5 gap-y-5 items-center my-4">
+          <div className="flex flex-wrap my-4 gap-x-9.5 gap-y-5 items-center">
             {category.items.map(x => (
               <div
                 key={x.name}
-                className="cursor-pointer text-[#333333FF] border border-gray-300/20 bg-[#FDFDFDFF] py-3.5 pl-4 min-w-53 w-53"
+                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-3.5 pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onClick={() => handleClick(x.sourceType, x.dbType, x.name)}
@@ -108,7 +108,9 @@ export default function Designer() {
                     alt={x.name}
                     preview={false}
                   /> */}
-                <IconFont type={x.logo} style={{ fontSize: '16px' }} />
+                <div className="bg-white rounded-3xl h-7 shadow w-7 inline-flex items-center justify-center">
+                  <IconFont type={x.logo} style={{ fontSize: '16px' }} />
+                </div>
                 <span className="ml-3">{x.name}</span>
               </div>
             ))}

@@ -79,11 +79,7 @@ export default function Datasource() {
             }
           }}
         >
-          <Row className="h-screen">
-            <Col span={24}>
-              <DatasourceContainer showType={showType} content={content} />
-            </Col>
-          </Row>
+          <DatasourceContainer showType={showType} content={content} />
         </DatasourceToggleContext.Provider>
       </DatasourceDispatchContext.Provider>
     </>

@@ -25,11 +25,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
 
   if (!content) {
     return (
-      <div className="pl-6 mt-6 mr-6">
-        <div className="flex justify-start items-center  mb-24px">
-          <span className="text-base flex-grow font-bold text-[18px]">外部数据源 / 选择数据源</span>
+      <div className="h-full p-3 pb-0">
+        <div className="bg-white h-full pt-5.5 pl-5.5 overflow-auto">
+          {/* <div className="flex mb-24px justify-start  items-center">
+            <span className="flex-grow font-bold text-base text-[18px]">外部数据源 / 选择数据源</span>
+          </div> */}
+          <Designer />
         </div>
-        <Designer />
       </div>
     )
   }
@@ -78,12 +80,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   return (
-    <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
+    <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
-      <div className="h-54px flex-0 bg-white flex items-center pl-11">
+      <div className="bg-white flex flex-0 h-54px pl-11 items-center">
         {showType === 'setting' ? (
           <>
-            <div className="mr-6 py-0.5 px-2 flex items-center justify-evenly cursor-pointer bg-[#F9F9F9FF]">
+            <div className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly">
               <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
               <span className="ml-1" onClick={() => handleToggleDesigner('detail')}>
                 返回
@@ -94,11 +96,11 @@ export default function DatasourceContainer({ content, showType }: Props) {
         ) : (
           <>
             <img
-              className="w-14px h-14px mr-1.5"
+              className="h-14px mr-1.5 w-14px"
               src={`/assets/workbench/panel-item-${icon}.png`}
               alt="数据源"
             />
-            {/* <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" /> */}
+            {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
             {content?.name}
           </>
         )}
@@ -122,7 +124,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : null}
       </div>
-      <div className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white px-8 mx-3 mt-3">
+      <div className="bg-white rounded-4px flex-1 mx-3 mt-3 min-h-0 px-8 pt-5 overflow-y-auto">
         {content.sourceType === 1 ? (
           <DB content={content} type={showType} />
         ) : content.sourceType === 2 ? (

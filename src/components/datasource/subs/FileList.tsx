@@ -32,8 +32,9 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
   const upProps: UploadProps = {
     name: 'file',
     action: '/api/v1/file/uploadFile',
-    fileList: [],
+    // fileList: [],
     data: { type: upType },
+    showUploadList: false,
     onChange(info) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList)
@@ -42,7 +43,7 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
         message.success(`${info.file.name} 上传成功`)
         setRefreshFlag(!refreshFlag)
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} 上传失败`)
+        message.error(info.file.response?.message || `${info.file.name} 上传失败`)
       }
     }
   }
@@ -101,10 +102,10 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
 
   return (
     <>
-      <div className="flex justify-between mb-3">
+      <div className="flex mb-3 justify-between">
         <Input
           style={{ height: 26 }}
-          className="max-w-328px h-26px"
+          className="h-26px max-w-328px"
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
@@ -112,7 +113,7 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
         />
         <Upload
           {...upProps}
-          className="w-12 h-6 flex items-center justify-center cursor-pointer m-auto mr-3"
+          className="cursor-pointer flex m-auto h-6 mr-3 w-12 items-center justify-center"
         >
           <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
         </Upload>
