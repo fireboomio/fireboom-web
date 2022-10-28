@@ -1,5 +1,6 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
@@ -20,6 +21,21 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const handleManageSourceClick = () => {
     navigate(MANAGE_DATASOURCE_URL)
   }
+
+  const inited = useRef<boolean>()
+
+  useEffect(() => {
+    if (!sourceOptions.length) {
+      return
+    }
+    if (inited.current) {
+      return
+    }
+    inited.current = true
+    const search = location.hash.split('?')[1] || ''
+    const defaultDB = Number(search.match(/(?:^|\?|&)id=([\d+])/)?.[1])
+    onChangeSource(defaultDB)
+  }, [sourceOptions])
 
   return (
     <div className={styles['select-contain']}>

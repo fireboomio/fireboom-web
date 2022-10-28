@@ -20,7 +20,6 @@ import PreviewContainer from './components/preview'
 const Modeling = () => {
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
   const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
-
   const {
     panel: { showType, setShowType }
   } = useContext(PrismaSchemaContext)
