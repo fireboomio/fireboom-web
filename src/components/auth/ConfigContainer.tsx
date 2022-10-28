@@ -50,7 +50,11 @@ export default function AuthConfigContainer() {
   }
 
   const onTest = () => {
-    let target = new URL(content?.point + encodeURIComponent(location.href))
+    // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
+    const callbackURL = new URL(location.toString())
+    callbackURL.hash = '#/workbench/userInfo'
+
+    let target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
     if (!config.apiHost) {
       target.protocol = location.protocol
       target.hostname = location.hostname
