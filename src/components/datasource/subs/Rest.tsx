@@ -17,7 +17,6 @@ import {
   Tag
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { UploadFile } from 'antd/es/upload/interface'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -25,10 +24,7 @@ import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import {
-  DatasourceDispatchContext,
-  DatasourceToggleContext
-} from '@/lib/context/datasource-context'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 import FileList from './FileList'
@@ -105,14 +101,11 @@ const BASEPATH = '/static/upload/oas'
 
 export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
-  const dispatch = useContext(DatasourceDispatchContext)
   const [form] = Form.useForm()
   const [isEyeShow, setIsEyeShow] = useImmer(false)
   const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   const [value, setValue] = useImmer(1)
-  const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [rulesObj, setRulesObj] = useImmer({})
-  const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [isRadioShow, setIsRadioShow] = useImmer(true)
   const [isValue, setIsValue] = useImmer(true)
 
