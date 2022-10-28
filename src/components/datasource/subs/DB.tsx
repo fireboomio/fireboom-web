@@ -354,12 +354,12 @@ export default function DB({ content, type }: Props) {
           <div>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
-              <Descriptions.Item label="类型">{config.dbType}</Descriptions.Item>
+              <Descriptions.Item label="数据库类型">{config.dbType}</Descriptions.Item>
               {dbType === 'sqlite' ? (
-                <Descriptions.Item label="路径">{config.filepath}</Descriptions.Item>
+                <Descriptions.Item label="路径">{config.databaseUrl.val}</Descriptions.Item>
               ) : (
                 <>
-                  <Descriptions.Item label="类型">
+                  <Descriptions.Item label="连接类型">
                     {config.appendType == '0'
                       ? '连接URL'
                       : config.appendType == '1'
@@ -479,7 +479,7 @@ export default function DB({ content, type }: Props) {
               {dbType === 'sqlite' || dbType === 'mongodb' ? (
                 <></>
               ) : (
-                <Form.Item label="类型:" name="appendType">
+                <Form.Item label="连接类型:" name="appendType">
                   <Radio.Group onChange={e => typeChange(e.target.value as string)}>
                     <Radio value="0" style={{ marginRight: '50px' }}>
                       连接URL

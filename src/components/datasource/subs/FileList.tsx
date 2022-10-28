@@ -27,6 +27,7 @@ interface Props {
 export default function FileList({ setUploadPath, setVisible, basePath, upType }: Props) {
   const [data, setData] = useState<TableType[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
+  const [keyword, setKeyword] = useState('')
 
   const upProps: UploadProps = {
     name: 'file',
@@ -102,7 +103,6 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
     <>
       <div className="flex justify-between mb-3">
         <Input
-          // size="small"
           style={{ height: 26 }}
           className="max-w-328px h-26px"
           addonBefore={
@@ -116,13 +116,18 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
         >
           <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
         </Upload>
-        <Input addonBefore={<SearchOutlined />} style={{ width: 228, height: 26 }} />
+        <Input
+          value={keyword}
+          onChange={v => setKeyword(v.target.value)}
+          addonBefore={<SearchOutlined />}
+          style={{ width: 228, height: 26 }}
+        />
       </div>
 
       <Table
         className={styles.table}
         columns={columns}
-        dataSource={data}
+        dataSource={data.filter(x => x.name.includes(keyword))}
         pagination={false}
         scroll={{ x: 738, y: 455 }}
         onRow={rcd => {
