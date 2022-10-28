@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
-import RcTab from '@/components/rc-tab'
 import type { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -242,7 +241,6 @@ export default function AuthRole() {
         <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
-            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
             <IdeContainer
               key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}
