@@ -18,6 +18,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
@@ -102,6 +103,7 @@ const BASEPATH = '/static/upload/oas'
 const { TabPane } = Tabs
 
 export default function Rest({ content, type }: Props) {
+  const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
   const [isEyeShow, setIsEyeShow] = useImmer(false)
@@ -825,7 +827,13 @@ export default function Rest({ content, type }: Props) {
                 </Button>
                 <Button
                   className={'btn-cancel  ml-4'}
-                  onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
+                  onClick={() => {
+                    if (content.name) {
+                      handleToggleDesigner('detail', content.id, content.sourceType)
+                    } else {
+                      navigate('/workbench/dataSource/new')
+                    }
+                  }}
                 >
                   <span>取消</span>
                 </Button>

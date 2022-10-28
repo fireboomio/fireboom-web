@@ -1,6 +1,7 @@
 import { Button, Descriptions, Form, Input, Modal, notification, Radio, Select } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
@@ -45,6 +46,7 @@ const passwordReg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{
 const BASEPATH = '/static/upload/sqlite'
 
 export default function DB({ content, type }: Props) {
+  const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [_disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
@@ -496,7 +498,13 @@ export default function DB({ content, type }: Props) {
               <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                 <Button
                   className="btn-cancel"
-                  onClick={() => handleToggleDesigner('detail', content.id, content.sourceType)}
+                  onClick={() => {
+                    if (content.name) {
+                      handleToggleDesigner('detail', content.id, content.sourceType)
+                    } else {
+                      navigate('/workbench/dataSource/new')
+                    }
+                  }}
                 >
                   <span>取消</span>
                 </Button>

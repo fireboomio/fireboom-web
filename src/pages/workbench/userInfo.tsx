@@ -1,12 +1,14 @@
+import Editor, { loader } from '@monaco-editor/react'
 import axios from 'axios'
 import { useState } from 'react'
+
+loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export default function UserInfo() {
   const [info, setInfo] = useState<string>()
 
   axios.get('/api/v1/oidc/userInfo').then(info => {
-    console.log(info)
-    setInfo(String(info))
+    setInfo(JSON.stringify(info.data, null, 2))
   })
 
   // const { config } = useContext(ConfigContext)
@@ -29,5 +31,12 @@ export default function UserInfo() {
   //     setInfo(res.data.toString())
   //   })
 
-  return <div>{info}</div>
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex-0 px-4 font-500 text-18px leading-30px bg-white">登录用户</div>
+      <div className="flex-1 p-4 h-full">
+        <Editor language="json" value={info} />
+      </div>
+    </div>
+  )
 }
