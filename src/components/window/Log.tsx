@@ -1,10 +1,17 @@
 /* eslint-disable react/prop-types */
+import type { MutableRefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import type { LogMessage } from '@/interfaces/window'
 
+export type LogAction = {
+  appendLogs: (log: LogMessage[]) => void
+  clearLogs: () => void
+}
+
 type Props = {
-  log: LogMessage[]
+  // log: LogMessage[]
+  actionRef?: MutableRefObject<LogAction | undefined>
 }
 
 const tabs = [
@@ -13,7 +20,8 @@ const tabs = [
 ]
 
 // eslint-disable-next-line react/prop-types
-const Log: React.FC<Props> = ({ log }) => {
+const Log: React.FC<Props> = ({ actionRef }) => {
+  const [logs, setLogs] = useState<LogMessage[]>([])
   const [selectedKey, setSelectedKey] = useState('1')
   const [content, setContent] = useState('')
   const logRef = useRef(null)
@@ -25,18 +33,31 @@ const Log: React.FC<Props> = ({ log }) => {
   }, [content])
 
   useEffect(() => {
-    const displayLog = log.filter(x => x.logType.toString() === selectedKey)
+    const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
     setContent(displayLog.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
-  }, [selectedKey, log])
+  }, [selectedKey, logs])
+
+  useEffect(() => {
+    if (actionRef) {
+      actionRef.current = {
+        appendLogs(_logs: LogMessage[]) {
+          setLogs([...logs, ..._logs.map(item => ({ ...item, logType: item.logType || 1 }))])
+        },
+        clearLogs() {
+          setLogs([])
+        }
+      }
+    }
+  }, [actionRef, logs])
 
   return (
     <div className="flex flex-1 w-full overflow-hidden">
-      <pre className="w-9/10 h-full overflow-auto mb-0">
+      <pre className="h-full mb-0 w-9/10 overflow-auto">
         {content}
         <div ref={logRef} />
       </pre>
 
-      <div className="w-1/10 border-l">
+      <div className="border-l w-1/10">
         <ul className="list-none">
           {tabs.map(x => (
             <li
