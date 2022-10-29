@@ -53,28 +53,14 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
 
   const extra = (
     <div className="cursor-pointer flex justify-end">
-      <div className="">
-        <Image
-          src="/assets/clear.png"
-          height={20}
-          width={20}
-          alt="清空"
-          preview={false}
-          onClick={logActionRef.current?.clearLogs}
-        />
+      <div onClick={logActionRef.current?.clearLogs}>
+        <img src="/assets/clear.png" height={20} width={20} alt="清空" />
       </div>
-      <div className="ml-4">
-        <Image src="/assets/download.png" height={20} width={20} alt="下载" preview={false} />
+      <div className="ml-4" onClick={logActionRef.current?.downloadLogs}>
+        <img src="/assets/download.png" height={20} width={20} alt="下载" />
       </div>
-      <div className="ml-4">
-        <Image
-          src="/assets/close.png"
-          height={20}
-          width={20}
-          alt="关闭"
-          preview={false}
-          onClick={toggleWindow}
-        />
+      <div className="ml-4" onClick={toggleWindow}>
+        <img src="/assets/close.png" height={20} width={20} alt="关闭" />
       </div>
     </div>
   )
