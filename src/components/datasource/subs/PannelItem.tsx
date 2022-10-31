@@ -136,11 +136,11 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
         {datasourceItem.sourceType == 1 ? (
           <IconFont
             type={
-              config.dbType == 'sqlite'
+              config.dbType == 'SQLite'
                 ? 'icon-shujuyuantubiao2'
-                : config.dbType == 'postgresql'
+                : config.dbType == 'PostgreSQL'
                 ? 'icon-shujuyuantubiao3'
-                : config.dbType == 'mongodb'
+                : config.dbType == 'MongoDB'
                 ? 'icon-shujuyuantubiao4'
                 : 'icon-shujuyuantubiao1'
             }
