@@ -390,7 +390,7 @@ Graph.registerNode('directive', {
 
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [hook, setHook] = useState<{ name: string; path: string }>()
+  const [hook, setHook] = useState<{ name: string; path: string } | null>()
 
   const { id } = useParams()
   // 监听路由变化，当路由变化时自动关闭钩子编辑器

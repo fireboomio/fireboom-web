@@ -73,8 +73,13 @@ export default function APIEditorContainer() {
       <Tabs
         className={styles.tabs}
         centered
+        destroyInactiveTabPane
         items={[
-          { label: '概览', key: '1', children: <APIFlowChart id={params.id as string} /> },
+          {
+            label: '概览',
+            key: '1',
+            children: <APIFlowChart id={params.id as string} />
+          },
           {
             label: '设置',
             key: '2',
@@ -129,8 +134,6 @@ export default function APIEditorContainer() {
               />
             </Tooltip>
             <GraphiqlExplorer1
-              key={params.id}
-              style={{ width: '258px !important' }}
               schema={schema}
               query={query}
               explorerIsOpen={true}
