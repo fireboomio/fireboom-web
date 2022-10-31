@@ -80,7 +80,10 @@ export default defineConfig({
       importMode: 'async',
       dirs: 'src/pages'
     })
-  ]
+  ],
+  build: {
+    minify: 'esbuild'
+  }
   // optimizeDeps: {
   //   exclude: ['@antv/x6-react-shape']
   // }
