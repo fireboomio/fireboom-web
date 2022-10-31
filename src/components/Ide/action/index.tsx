@@ -45,7 +45,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
         parseCode = JSON.parse(code) as Record<string, any>
       } catch (error) {
         // 不是json格式
-        void message.warning('脚本内容不是json格式', 999999)
+        void message.warning('脚本内容不是json格式')
         return
       }
       setLoading(true)

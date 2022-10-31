@@ -4,6 +4,7 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 import type { Edge, Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
 import { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
 
@@ -390,6 +391,12 @@ Graph.registerNode('directive', {
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hook, setHook] = useState<{ name: string; path: string } | null>()
+
+  const { id } = useParams()
+  // 监听路由变化，当路由变化时自动关闭钩子编辑器
+  useEffect(() => {
+    setHook(undefined)
+  }, [id])
 
   useEffect(() => {
     // 初始化画布

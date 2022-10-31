@@ -60,7 +60,6 @@ export const runHook = <R>(
     scriptType: params.scriptType
   })
 }
-
 // 获取全部类型声明文件
 export const getTypes = <R>() => {
   return requests.get<any, R>('/hook/types')

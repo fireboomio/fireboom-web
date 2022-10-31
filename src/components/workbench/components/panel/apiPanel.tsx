@@ -248,7 +248,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // }
 
   const handleSaveGql = () => {
-    console.log('ggg')
     if (action === '创建文件') {
       if (!currEditingNode) return
 
@@ -280,7 +279,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       if (`/workbench/apimanage/${node.id}` === location.pathname) {
         const node = openApi(treeData)
         if (node) {
-          console.log([node.key], { node })
           handleSelectTreeNode([node.key], { node })
         } else {
           navigate('/workbench/apimanage')
@@ -378,16 +376,19 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
-        <div className={styles.icon} />
+        <div className={styles.icon}>
+          {nodeData.liveQuery ? <div className={styles.lighting}></div> : null}
+        </div>
         {currEditingKey && nodeData.key === currEditingKey ? (
           <Input
             size="small"
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
+            onBlur={handlePressEnter}
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}
-            onBlur={() => setIsBlur(true)}
+            // onBlur={() => setIsBlur(true)}
           />
         ) : (
           <>

@@ -25,7 +25,6 @@ interface Setting {
 
 export default function Index(props: Props) {
   const [setting, setSetting] = useState<Setting>()
-
   const [form] = Form.useForm()
   useEffect(() => {
     if (!props.id) {
@@ -35,9 +34,10 @@ export default function Index(props: Props) {
     } else {
       void requests.get<unknown, Setting>(`/operateApi/setting/${props.id}`).then(result => {
         setSetting(result)
+        form.setFieldsValue(result)
       })
     }
-  }, [])
+  }, [props.id])
   if (!setting) {
     return null
   }
