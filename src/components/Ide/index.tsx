@@ -9,6 +9,7 @@ import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
+import staticDepend from '@/components/Ide/static-depend'
 import {
   getHook,
   getTypes,
@@ -159,11 +160,13 @@ const IdeContainer: FC<Props> = props => {
   useEffect(() => {
     if (editor && monaco) {
       // depend数组转换为对象
-      const depend =
-        hookInfo?.depend?.reduce((acc, cur) => {
+      const depend = hookInfo?.depend?.reduce(
+        (acc, cur) => {
           acc[cur.name] = cur.version
           return acc
-        }, {} as Depend) || {}
+        },
+        { ...staticDepend } as Depend
+      ) || { ...staticDepend }
       // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -184,15 +187,11 @@ const IdeContainer: FC<Props> = props => {
     void getTypes<Record<string, string>>().then(res => {
       // 循环types
       Object.keys(res).forEach(key => {
-        const libUri = `inmemory://model${key.replace(/^\./, '')}`
+        const libUri = `inmemory://model${key.replace(/^@/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
+        monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
       })
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(
-        'export declare function add(a: number, b: number): number',
-        'inmemory://model/index.d.ts'
-      )
-
       monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
         noSyntaxValidation: false

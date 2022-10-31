@@ -5,6 +5,7 @@ import { Select, Spin } from 'antd'
 import { debounce } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import staticDepend from '@/components/Ide/static-depend'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
 import iconCross from '../assets/cross.svg'
@@ -252,6 +253,21 @@ const DependList = (props: DependListProps) => {
       <SearchDepend onAddDepend={addDepend} />
       {/* 列表 */}
       <div className="list">
+        {Object.keys(staticDepend).map(key => {
+          const version = staticDepend[key]
+          return (
+            <div
+              id="item"
+              className={'item flex justify-between items-center cursor-pointer'}
+              key={key}
+            >
+              <div className={`name  truncate`}>{key}</div>
+              <div className="version flex">
+                <span id="version-flag">{version}</span>
+              </div>
+            </div>
+          )
+        })}
         {/* 迭代depend map */}
         {[...dependList.entries()].map(([name, version], index) => {
           return (
