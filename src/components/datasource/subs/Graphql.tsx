@@ -292,7 +292,7 @@ export default function Graphql({ content, type }: Props) {
               )}
             </Descriptions>
           </div>
-          <h2 className="ml-3 mb-3">请求头</h2>
+          <div className="text-base font-medium ml-3 mb-3">请求头</div>
           <div className={`${styles['table-contain']} mb-8`}>
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               {((config?.headers as unknown as DataType[]) ?? []).map(

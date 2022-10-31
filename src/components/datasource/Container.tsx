@@ -121,14 +121,19 @@ export default function DatasourceContainer({ content, showType }: Props) {
               checkedChildren="开启"
               unCheckedChildren="关闭"
               onChange={toggleOpen}
+              className="mr-4"
             />
-            <Button
-              className={'btn-test ml-4 mr-4'}
-              onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
-            >
-              设计
-            </Button>
-            <Button className={'btn-test mr-4'} onClick={() => testLink('bottomLeft')}>
+            {content.sourceType === 1 ? (
+              <Button
+                className={'btn-test ml-4 '}
+                onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
+              >
+                设计
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
               测试
             </Button>
             <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>

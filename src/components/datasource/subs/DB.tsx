@@ -403,15 +403,6 @@ export default function DB({ content, type }: Props) {
                     </>
                   ) : (
                     <>
-                      <Descriptions.Item label="环境变量">
-                        {(config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
-                        '0'
-                          ? ''
-                          : (config.databaseUrl as unknown as { kind: string; val: string })
-                              ?.kind == '1'
-                          ? '环境变量'
-                          : ''}
-                      </Descriptions.Item>
                       <Descriptions.Item label="连接URL">
                         {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
                       </Descriptions.Item>

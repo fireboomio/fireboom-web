@@ -355,9 +355,7 @@ export default function Rest({ content, type }: Props) {
                       bordered
                       column={1}
                       size="small"
-                      labelStyle={{
-                        width: 190
-                      }}
+                      labelStyle={{ width: 190 }}
                     >
                       {((config?.headers as unknown as DataType[]) ?? []).map(
                         ({ key = '', kind = '', val = '' }) => (
