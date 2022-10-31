@@ -188,7 +188,15 @@ const IdeContainer: FC<Props> = props => {
         const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
-        monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+        try {
+          const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
+          if (currentModel) {
+            currentModel.dispose()
+          }
+          monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+        } catch (e) {
+          console.error(e)
+        }
         return key.replace(/^@?/, '').replace(/\.ts$/, '')
       })
       setLocalDepend(localLibList)
