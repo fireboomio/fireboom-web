@@ -81,9 +81,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       setValue(v: string) {
         // 暂时只支持清空
         if (!v) {
-          const val = props.arguments.map(() => '')
-          setValues(val)
-          valuesRef.current = val
+          setValues({})
+          valuesRef.current = {}
         }
       }
     })
