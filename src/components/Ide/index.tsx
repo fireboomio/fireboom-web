@@ -3,7 +3,7 @@ import { DoubleRightOutlined } from '@ant-design/icons'
 import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
 import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-react'
 import { loader } from '@swordjs/monaco-editor-react'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -124,6 +124,7 @@ const IdeContainer: FC<Props> = props => {
     type: 'passive',
     status: null
   })
+  const [localDepend, setLocalDepend] = useState<string[]>([])
 
   // 获取hook信息
   useEffect(() => {
@@ -183,12 +184,14 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorBeforeMount: BeforeMount = monaco => {
     void getTypes<Record<string, string>>().then(res => {
       // 循环types
-      Object.keys(res).forEach(key => {
-        const libUri = `inmemory://model${key.replace(/^@/, '/node_modules/')}`
+      const localLibList = Object.keys(res).map(key => {
+        const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
         monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+        return key.replace(/^@?/, '').replace(/\.ts$/, '')
       })
+      setLocalDepend(localLibList)
       monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
         noSyntaxValidation: false
@@ -256,6 +259,28 @@ const IdeContainer: FC<Props> = props => {
   const dependRemove = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     typingsRef.current.removePackage(name)
+  }
+  const insertDepend = (name: string) => {
+    if (!hookInfo) {
+      return
+    }
+    //
+    const lines = hookInfo.script.split('\n')
+    let lastImport = -1
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
+      const match = line.match(/^import\s[\w\W]+['"]([^'"]+)['"];?$/)
+      if (match) {
+        lastImport = i
+        if (match[1] === name) {
+          message.warning('已存在，请勿重复引入')
+          return
+        }
+      }
+    }
+    lines.splice(lastImport + 1, 0, `import {} from '${name}'`)
+    hookInfo.script = lines.join('\n')
+    monaco.editor.getModels()[0].setValue(hookInfo.script)
   }
 
   // 代码改变回调
@@ -353,8 +378,10 @@ const IdeContainer: FC<Props> = props => {
                 dependList: hookInfo?.depend || [],
                 onFold: dependFold,
                 onDependChange: dependChange,
-                onDependDelete: dependRemove
+                onDependDelete: dependRemove,
+                onInsertDepend: insertDepend
               }}
+              localDepend={localDepend}
             />
           )}
           <div className={`${ideStyles['code-wrapper']} ${smallDepend ? 'flex-1' : ''}`}>
@@ -367,7 +394,6 @@ const IdeContainer: FC<Props> = props => {
                 fullScreen,
                 editorOptions,
                 onChange: value => {
-                  codeChange(value)
                   props.onChange?.()
                 },
                 onBeforeMount: handleEditorBeforeMount,
