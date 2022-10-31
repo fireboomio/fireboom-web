@@ -101,7 +101,7 @@ export default function DB({ content, type }: Props) {
   }, [])
 
   const initForm =
-    dbType === 'sqlite' ? (
+    dbType === 'SQLite' ? (
       <Form.Item
         rules={[{ required: true, message: '请上传文件' }]}
         label={
@@ -361,7 +361,7 @@ export default function DB({ content, type }: Props) {
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="数据库类型">{config.dbType}</Descriptions.Item>
-              {dbType === 'sqlite' ? (
+              {dbType === 'SQLite' ? (
                 <Descriptions.Item label="路径">{config.databaseUrl.val}</Descriptions.Item>
               ) : (
                 <>
@@ -482,7 +482,7 @@ export default function DB({ content, type }: Props) {
                 </Select>
               </Form.Item> */}
 
-              {dbType === 'sqlite' || dbType === 'mongodb' ? (
+              {dbType === 'SQLite' || dbType === 'MongoDB' ? (
                 <></>
               ) : (
                 <Form.Item label="连接类型:" name="appendType">
