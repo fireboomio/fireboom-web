@@ -264,8 +264,10 @@ const IdeContainer: FC<Props> = props => {
     if (!hookInfo) {
       return
     }
+
+    const code = monaco.editor.getModels()[0].getValue()
     //
-    const lines = hookInfo.script.split('\n')
+    const lines = code.split('\n')
     let lastImport = -1
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
@@ -279,8 +281,7 @@ const IdeContainer: FC<Props> = props => {
       }
     }
     lines.splice(lastImport + 1, 0, `import {} from '${name}'`)
-    hookInfo.script = lines.join('\n')
-    monaco.editor.getModels()[0].setValue(hookInfo.script)
+    monaco.editor.getModels()[0].setValue(lines.join('\n'))
   }
 
   // 代码改变回调
