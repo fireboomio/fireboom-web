@@ -7,6 +7,7 @@ import type { LogMessage } from '@/interfaces/window'
 export type LogAction = {
   appendLogs: (log: LogMessage[]) => void
   clearLogs: () => void
+  downloadLogs: () => void
 }
 
 type Props = {
@@ -45,6 +46,21 @@ const Log: React.FC<Props> = ({ actionRef }) => {
         },
         clearLogs() {
           setLogs([])
+        },
+        downloadLogs() {
+          const file = new File([logs.map(item => JSON.stringify(item)).join('\n')], 'logs.txt', {
+            type: 'text/plain'
+          })
+          const link = document.createElement('a')
+          const url = URL.createObjectURL(file)
+
+          link.href = url
+          link.download = file.name
+          document.body.appendChild(link)
+          link.click()
+
+          document.body.removeChild(link)
+          window.URL.revokeObjectURL(url)
         }
       }
     }

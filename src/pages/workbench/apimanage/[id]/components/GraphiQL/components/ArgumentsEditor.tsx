@@ -59,8 +59,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
         }
       },
       getValue() {
-        const obj = parsed.reduce<Record<string, any>>((obj, item, index) => {
-          let val = valuesRef.current[index]
+        const obj = parsed.reduce<Record<string, any>>((obj, item) => {
+          let val = valuesRef.current[item.name]
           if (item.isRequired && (val === '' || val === undefined || val === null)) {
             message.error(`字段 ${item.name} 的参数未提供`)
             throw new Error(`字段 ${item.name} 的参数未提供`)
@@ -81,9 +81,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       setValue(v: string) {
         // 暂时只支持清空
         if (!v) {
-          const val = props.arguments.map(() => '')
-          setValues(val)
-          valuesRef.current = val
+          setValues({})
+          valuesRef.current = {}
         }
       }
     })
