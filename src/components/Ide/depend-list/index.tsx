@@ -253,23 +253,29 @@ const DependList = (props: DependListProps) => {
       <SearchDepend onAddDepend={addDepend} />
       {/* 列表 */}
       <div className="list">
-        {Object.keys(staticDepend).map(key => {
-          const version = staticDepend[key]
-          return (
-            <div
-              id="item"
-              className={'item flex justify-between items-center cursor-pointer'}
-              key={key}
-            >
-              <div className={`name  truncate`}>{key}</div>
-              <div className="version flex">
-                <span id="version-flag">{version}</span>
-              </div>
-            </div>
-          )
-        })}
         {/* 迭代depend map */}
         {[...dependList.entries()].map(([name, version], index) => {
+          const isStatic = staticDepend.includes(name)
+          if (isStatic) {
+            return (
+              <div
+                id="item"
+                className={'item flex justify-between items-center cursor-pointer'}
+                key={index}
+              >
+                <div
+                  className={`name ${
+                    showSelectVersion === index ? 'show-select-version-name' : ''
+                  } truncate`}
+                >
+                  {name}
+                </div>
+                <div className="version flex">
+                  <span id="version-flag">{version}</span>
+                </div>
+              </div>
+            )
+          }
           return (
             <div
               id="item"

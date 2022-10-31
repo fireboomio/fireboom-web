@@ -9,7 +9,6 @@ import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
-import staticDepend from '@/components/Ide/static-depend'
 import {
   getHook,
   getTypes,
@@ -160,13 +159,11 @@ const IdeContainer: FC<Props> = props => {
   useEffect(() => {
     if (editor && monaco) {
       // depend数组转换为对象
-      const depend = hookInfo?.depend?.reduce(
-        (acc, cur) => {
+      const depend =
+        hookInfo?.depend?.reduce((acc, cur) => {
           acc[cur.name] = cur.version
           return acc
-        },
-        { ...staticDepend } as Depend
-      ) || { ...staticDepend }
+        }, {} as Depend) || {}
       // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
