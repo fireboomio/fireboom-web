@@ -362,7 +362,7 @@ export default function DB({ content, type }: Props) {
               <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
               <Descriptions.Item label="数据库类型">{config.dbType}</Descriptions.Item>
               {dbType === 'SQLite' ? (
-                <Descriptions.Item label="路径">{config.databaseUrl.val}</Descriptions.Item>
+                <Descriptions.Item label="路径">{config.databaseUrl?.val ?? ''}</Descriptions.Item>
               ) : (
                 <>
                   <Descriptions.Item label="连接类型">
