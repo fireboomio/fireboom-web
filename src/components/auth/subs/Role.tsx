@@ -209,7 +209,13 @@ export default function AuthRole() {
               <Form.Item
                 label="角色code"
                 name="code"
-                rules={[{ required: true, message: 'Please input your roleCode!' }]}
+                rules={[
+                  { required: true, message: '请输入角色编码' },
+                  {
+                    pattern: /^[_a-zA-Z][_a-zA-Z\d]*$/g,
+                    message: '请输入数字、字母或下划线，第一位不能是数字'
+                  }
+                ]}
               >
                 <Input />
               </Form.Item>
