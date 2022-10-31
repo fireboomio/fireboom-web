@@ -4,6 +4,7 @@ export type OperationItem = OperationResp & {
   title: string
   baseDir: string
   currDir: string
+  liveQuery: boolean
   children: OperationItem[] | null
 }
 
@@ -13,6 +14,7 @@ export interface OperationResp {
   content: string
   remark: string
   isDir: boolean
+  liveQuery: boolean
   enable: boolean
   legal: boolean
   isPublic: boolean

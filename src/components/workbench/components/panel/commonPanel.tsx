@@ -47,7 +47,7 @@ const panelMap: Record<string, PanelConfig> = {
               let tip = ''
               switch (row.sourceType) {
                 case 1:
-                  icon = { mysql: 'mysql', postgresql: 'pgsql' }[String(row.config.dbType)] || icon
+                  icon = String(row.config.dbType).toLowerCase() || icon
                   tip = String(row.config.dbName || '')
                   break
                 case 2:
@@ -294,6 +294,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                   onPressEnter={e => void handleItemEdit(e.target.value)}
+                  onChange={console.log}
                   onKeyUp={(e: React.KeyboardEvent) => {
                     e.key == 'Escape' && setEditTarget(undefined)
                   }}
