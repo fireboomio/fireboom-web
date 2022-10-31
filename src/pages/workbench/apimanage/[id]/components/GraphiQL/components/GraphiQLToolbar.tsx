@@ -249,7 +249,7 @@ const GraphiQLToolbar = () => {
 
   return (
     <div className="graphiql-toolbar">
-      <ExecuteButton className="cursor-pointer mr-6" />
+      <ExecuteButton className="cursor-pointer mr-4" />
       <Dropdown overlay={<RBACPopup onChange={injectRole} />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">@角色</button>
       </Dropdown>

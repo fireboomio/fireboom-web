@@ -33,7 +33,7 @@
 .graphiql-container .graphiql-toolbar {
   display: flex;
   align-items: center;
-  padding: 8px 12px 8px 24px;
+  padding: 8px 12px 8px 20px;
   background: rgb(97 102 115 / 5%);
 }
 
@@ -55,7 +55,7 @@
 .graphiql-container .graphiql-toolbar-divider {
   width: 1px;
   height: 14px;
-  margin: 0 14px;
+  margin: 0 12px;
   background: rgb(175 176 180 / 60%);
   transform: scaleX(50%);
 }
@@ -122,6 +122,10 @@
   transform: scaleX(0.2);
 }
 
+.graphiql-container .arguments-editor {
+  overflow-x: auto;
+}
+
 .graphiql-container .arguments-editor table {
   width: 100%;
   table-layout: fixed;
@@ -173,6 +177,7 @@
   display: inline-flex;
   align-items: center;
   /* width: 60px; */
+  min-width: 60px;
   max-width: 45%;
   height: 24px;
   margin: 2px 4px 0;

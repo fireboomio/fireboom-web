@@ -124,14 +124,14 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
 
   return (
     <div className="arguments-editor">
-      <table>
+      <table className="min-w-120">
         <thead>
           <tr>
-            <th style={{ width: '80px' }}>参数</th>
-            <th style={{ width: '112px' }}>类型</th>
+            <th style={{ width: '15%', maxWidth: '80px' }}>参数</th>
+            <th style={{ width: '20%', maxWidth: '112px' }}>类型</th>
             <th style={{ width: '56px' }}>必填</th>
             <th>指令</th>
-            <th style={{ width: '200px' }}>输入值</th>
+            <th style={{ width: '25%', maxWidth: '200px' }}>输入值</th>
           </tr>
         </thead>
         <tbody>

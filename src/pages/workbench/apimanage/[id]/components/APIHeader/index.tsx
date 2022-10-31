@@ -38,15 +38,16 @@ const APIHeader = () => {
   }, [apiDesc?.path])
 
   const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(e.code, e.key)
     if (e.key === 'Enter') {
-      try {
-        await updateAPI({
-          path: `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
-        })
+      const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
+      if (targetPath !== apiDesc?.path) {
+        try {
+          await updateAPI({ path: targetPath })
+        } catch (error) {
+          //
+        }
+      } else {
         setIsEditingName(false)
-      } catch (error) {
-        //
       }
     }
   }
@@ -105,7 +106,6 @@ const APIHeader = () => {
   }
 
   const copyLink = async () => {
-    console.log(apiDesc)
     let link = apiDesc?.restUrl
     if (!link) {
       message.error('接口异常')
@@ -152,6 +152,7 @@ const APIHeader = () => {
                   autoFocus
                   onChange={e => setName(e.target.value)}
                   onKeyDown={onInputKey}
+                  onBlur={() => onInputKey({ key: 'Enter' })}
                 />
               ) : (
                 apiPathList[apiPathList.length - 1]

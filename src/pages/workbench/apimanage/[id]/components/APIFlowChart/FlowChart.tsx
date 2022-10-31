@@ -389,7 +389,7 @@ Graph.registerNode('directive', {
 
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [hook, setHook] = useState<{ name: string; path: string }>()
+  const [hook, setHook] = useState<{ name: string; path: string } | null>()
 
   useEffect(() => {
     // 初始化画布
