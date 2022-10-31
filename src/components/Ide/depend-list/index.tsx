@@ -101,6 +101,8 @@ const SearchDepend = (props: SearchDependProps) => {
 }
 
 type DependListProps = {
+  // 本地依赖
+  localDepend: string[]
   dependList: Depend[]
   // 点击缩起依赖区域
   onFold: () => void
@@ -108,6 +110,8 @@ type DependListProps = {
   onDependChange?: (depend: Depend) => void
   // 依赖被删除回调
   onDependDelete?: (dependName: string) => void
+  // 将依赖插入代码
+  onInsertDepend?: (dependName: string) => void
 }
 
 // 依赖列表
@@ -345,6 +349,18 @@ const DependList = (props: DependListProps) => {
             </div>
           )
         })}
+      </div>
+      <div className="p-14px">
+        <div className="text-default font-500">内部依赖</div>
+        {props.localDepend.map(item => (
+          <div
+            onDoubleClick={() => props.onInsertDepend?.(item)}
+            key={item}
+            className="truncate text-[#333] font-14px leading-30px cursor-pointer"
+          >
+            {item}
+          </div>
+        ))}
       </div>
     </div>
   )
