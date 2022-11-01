@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Image } from 'antd'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -24,19 +25,19 @@ type Props = {
 const Log: React.FC<Props> = ({ actionRef }) => {
   const [logs, setLogs] = useState<LogMessage[]>([])
   // const [selectedKey, setSelectedKey] = useState('1')
-  const [content, setContent] = useState('')
+  // const [content, setContent] = useState('')
   const logRef = useRef(null)
 
   useEffect(() => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     logRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [content])
-
-  useEffect(() => {
-    // const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
-    setContent(logs.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
   }, [logs])
+
+  // useEffect(() => {
+  //   // const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
+  //   setContent(logs.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
+  // }, [logs])
 
   useEffect(() => {
     if (actionRef) {
@@ -68,10 +69,28 @@ const Log: React.FC<Props> = ({ actionRef }) => {
 
   return (
     <div className="flex flex-1 w-full overflow-hidden">
-      <pre className="h-full mb-0 w-10/10 overflow-auto">
-        {content}
+      <div className="h-full mb-0 w-10/10 overflow-auto">
+        {logs.map((x, idx) => (
+          <div
+            className="text-xs leading-25px font-normal text-[#333333]"
+            style={{
+              fontFamily: 'PingFangSC-Regular, PingFang SC;'
+            }}
+            key={idx}
+          >
+            <span className="mr-8">{x.time}</span>{' '}
+            <span className="mr-1.5">
+              <Image
+                src={x.logType === 1 ? '/assets/log-core.svg' : '/assets/log-hook.svg'}
+                preview={false}
+              />
+            </span>
+            <span className="w-100 mr-1">{x.level}</span> <span>{x.msg}</span>
+          </div>
+        ))}
+
         <div ref={logRef} />
-      </pre>
+      </div>
 
       {/* <div className="border-l w-1/10">
         <ul className="list-none">
