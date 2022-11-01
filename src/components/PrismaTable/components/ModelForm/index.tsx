@@ -52,7 +52,7 @@ const ModelFormContainer = ({
       width={550}
       visible={modalVisible}
       destroyOnClose
-      title="添加"
+      title={{ create: '添加', update: '编辑', view: '查看' }[action]}
       onCancel={() => setModalVisible(false)}
       footer={
         <ButtonGroup className="gap-2">
