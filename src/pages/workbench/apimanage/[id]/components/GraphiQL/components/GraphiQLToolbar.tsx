@@ -9,7 +9,7 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
-import { useContext } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
@@ -19,6 +19,7 @@ import { printSchemaAST } from '../utils'
 import ArgumentDirectivePopup from './ArgumentDirectivePopup'
 import CrossOriginPopup from './CrossOriginPopup'
 import ExecuteButton from './ExecuteButton'
+import InternalPopup from './InternalPopup'
 import RBACPopup from './RBACPopup'
 
 const GraphiQLToolbar = () => {
@@ -82,21 +83,24 @@ const GraphiQLToolbar = () => {
     })
   }
 
-  const injectInternalOperation = () => {
+  const injectInternalOperation = (isInternal: boolean) => {
     checkInject(directives => {
-      // toggle
       const index =
         directives.findIndex(
           item => item.kind === Kind.DIRECTIVE && item.name.value === 'internalOperation'
         ) ?? -1
       if (index > -1) {
-        directives.splice(index, 1)
+        if (!isInternal) {
+          directives.splice(index, 1)
+        }
       } else {
-        directives.push({
-          kind: Kind.DIRECTIVE,
-          name: { kind: Kind.NAME, value: 'internalOperation' },
-          arguments: []
-        })
+        if (isInternal) {
+          directives.push({
+            kind: Kind.DIRECTIVE,
+            name: { kind: Kind.NAME, value: 'internalOperation' },
+            arguments: []
+          })
+        }
       }
       setQuery(printSchemaAST(schemaAST!))
     })
@@ -243,19 +247,49 @@ const GraphiQLToolbar = () => {
   }
 
   const toggleFullscreen = () => {
-    console.log(111)
     workbenchCtx.setFullscreen(!workbenchCtx.isFullscreen)
   }
+
+  const selectedRole = useMemo(() => {
+    if (schemaAST?.definitions?.[0].kind === Kind.OPERATION_DEFINITION) {
+      const { directives = [] } = schemaAST.definitions[0]
+      const rbacDirective = directives.find(dir => dir.name.value === 'rbac')
+      if (rbacDirective) {
+        const arg = rbacDirective.arguments?.[0]
+        return {
+          rule: arg?.name.value,
+          value:
+            arg?.value.kind === Kind.LIST
+              ? arg.value.values.map(item => (item.kind === Kind.ENUM ? item.value : ''))
+              : []
+        }
+      }
+    }
+  }, [schemaAST])
+
+  const isInternal = useMemo(() => {
+    if (schemaAST?.definitions?.[0].kind === Kind.OPERATION_DEFINITION) {
+      const { directives = [] } = schemaAST.definitions[0]
+      const internalDirective = directives.find(dir => dir.name.value === 'internalOperation')
+      return !!internalDirective
+    }
+  }, [schemaAST])
 
   return (
     <div className="graphiql-toolbar">
       <ExecuteButton className="cursor-pointer mr-4" />
-      <Dropdown overlay={<RBACPopup onChange={injectRole} />} trigger={['click']}>
+      <Dropdown
+        overlay={<RBACPopup value={selectedRole} onChange={injectRole} />}
+        trigger={['click']}
+      >
         <button className="graphiql-toolbar-btn">@角色</button>
       </Dropdown>
-      <button className="graphiql-toolbar-btn" onClick={injectInternalOperation}>
-        @内部
-      </button>
+      <Dropdown
+        overlay={<InternalPopup value={isInternal} onChange={injectInternalOperation} />}
+        trigger={['click']}
+      >
+        <button className="graphiql-toolbar-btn">@内部</button>
+      </Dropdown>
       <div className="graphiql-toolbar-divider" />
       <Dropdown overlay={<ArgumentDirectivePopup onInject={injectArgument} />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">入参指令</button>

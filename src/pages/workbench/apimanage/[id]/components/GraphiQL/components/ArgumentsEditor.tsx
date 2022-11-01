@@ -45,6 +45,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       return obj
     }, {})
     setValues(newValues)
+    valuesRef.current = newValues
   }, [parsed, props.arguments])
 
   useEffect(() => {
@@ -115,6 +116,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             return obj
           }, {})
           setValues(newValues)
+          valuesRef.current = newValues
         }
       } catch (error) {
         //

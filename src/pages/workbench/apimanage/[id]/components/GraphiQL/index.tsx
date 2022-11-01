@@ -28,6 +28,8 @@ import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
+import { useDragResize } from '@/hooks/resize'
+
 import { useAPIManager } from '../../store'
 import ArgumentsEditor from './components/ArgumentsEditor'
 import { emptyStorage } from './components/emptyStorage'
@@ -177,6 +179,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     apiID: state.apiID
   }))
   const editorCtx = useEditorContext()
+  const { dragRef } = useDragResize({ direction: 'vertical', maxSize: 600 })
   const prevApiID = useRef<string>()
   const responseRef = useRef<{
     setActiveKey?: (v: string) => void
@@ -222,7 +225,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     <div data-testid="graphiql-container" className="graphiql-container">
       <GraphiQLToolbar />
       {editor}
-      <section className="graphiql-editor-tool">
+      <section className="graphiql-editor-tool" ref={dragRef}>
         <ResponseWrapper>
           <GraphiInputAndResponse
             apiID={apiID}

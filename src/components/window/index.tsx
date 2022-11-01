@@ -53,7 +53,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
 
   const extra = (
     <div className="cursor-pointer flex justify-end">
-      <div onClick={logActionRef.current?.clearLogs}>
+      <div onClick={() => logActionRef.current?.clearLogs()}>
         <img src="/assets/clear.png" height={20} width={20} alt="清空" />
       </div>
       <div className="ml-4" onClick={logActionRef.current?.downloadLogs}>
