@@ -122,6 +122,7 @@ export default function Rest({ content, type }: Props) {
 
   const setUploadPath = (v: string) => {
     form.setFieldValue('filePath', v)
+    form.validateFields(['filePath'])
   }
 
   useEffect(() => {
@@ -569,29 +570,6 @@ export default function Rest({ content, type }: Props) {
                   readOnly
                   // value={uploadPath}
                 />
-                {/* <Uploader
-                  defaultFileList={
-                    (config.filePath as string)
-                      ? [
-                          {
-                            name: config.filePath as unknown as string,
-                            uid: config.filePath as unknown as string
-                          }
-                        ]
-                      : []
-                  }
-                  maxCount={1}
-                  beforeUpload={(file: UploadFile) => {
-                    const req = new RegExp('.json|.yaml', 'g')
-                    if (req.test(file.name)) {
-                      setFile(file)
-                    } else {
-                      file.status = 'error'
-                    }
-                    return false
-                  }}
-                  onRemove={onRemoveFile}
-                /> */}
               </Form.Item>
 
               <div className="tabs-form">
