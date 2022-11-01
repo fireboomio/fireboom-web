@@ -424,10 +424,10 @@ export default function Graphql({ content, type }: Props) {
                 apiNameSpace: config.apiNameSpace,
                 url: config.url,
                 loadSchemaFromString: config.loadSchemaFromString,
-                internal: config.isInner,
-                customFloatScalars: config.defineFloat,
-                customIntScalars: config.defineInt,
-                skipRenameRootFields: config.exceptRename,
+                internal: config.internal,
+                customFloatScalars: config.customFloatScalars,
+                customIntScalars: config.customIntScalars,
+                skipRenameRootFields: config.skipRenameRootFields,
                 headers: config.headers || [],
                 agreement: config.loadSchemaFromString !== undefined ? true : false
               }}
