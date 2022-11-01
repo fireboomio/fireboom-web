@@ -437,11 +437,7 @@ export default function Rest({ content, type }: Props) {
             <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
               <Descriptions bordered column={1} size="small">
                 <Descriptions.Item
-                  label={
-                    <>
-                      <span className={styles['label-style']}>是否状态联合</span>
-                    </>
-                  }
+                  label={<span className={styles['label-style']}>是否状态联合</span>}
                   className="justify-start"
                 >
                   {config.statusCodeUnions ? (
