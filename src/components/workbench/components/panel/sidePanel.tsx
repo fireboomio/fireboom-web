@@ -17,7 +17,6 @@ export interface SidePanelProps {
 
 export default function SidePanel(props: SidePanelProps) {
   const [open, setOpen] = useState(false)
-
   useEffect(() => {
     if (props.open !== undefined) {
       handelOpen(props.open)

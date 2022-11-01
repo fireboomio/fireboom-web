@@ -2,16 +2,23 @@ import { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import ModelPannel from '@/pages/workbench/modeling/components/pannel'
 
 import ApiPanel from './panel/apiPanel'
 import CommonPanel from './panel/commonPanel'
 import styles from './sider.module.less'
 
-export default function Header() {
+const tapPathMap: Record<string, string> = {
+  api: '/workbench',
+  data: '/workbench/modeling'
+}
+
+export default function Sider() {
   const [tab, setTab] = useState<string>('')
   const location = useLocation()
   const navigate = useNavigate()
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   useEffect(() => {
     const tab = location.pathname.startsWith('/workbench/modeling') ? 'data' : 'api'
     setTab(tab)
@@ -21,6 +28,16 @@ export default function Header() {
   const { handleToggleDesigner, handleClickEntity, handleChangeSource, setShowType, dataSources } =
     panel || {}
 
+  const changeTab = (targetTab: string) => {
+    // 记住当前tab的路由
+    tapPathMap[tab] = location.pathname
+    // 切换tab
+    // setTab(targetTab)
+    // 跳转到目标tab默认路由
+    navigate(tapPathMap[targetTab])
+    // onRefreshMenu('api')
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className={styles.tabs}>
@@ -28,8 +45,7 @@ export default function Header() {
           <div
             className={`${styles.tabs_tab} ${tab === 'api' ? styles.tabs_tab__active : ''}`}
             onClick={() => {
-              setTab('api')
-              navigate('/workbench')
+              changeTab('api')
             }}
           >
             <div className={styles.apiIcon} />
@@ -38,8 +54,7 @@ export default function Header() {
           <div
             className={`${styles.tabs_tab}  ${tab === 'data' ? styles.tabs_tab__active : ''}`}
             onClick={() => {
-              setTab('data')
-              navigate('/workbench/modeling')
+              changeTab('data')
             }}
           >
             <div className={styles.dataIcon} />
@@ -50,10 +65,7 @@ export default function Header() {
 
       {tab === 'api' ? (
         <div className={styles.panels}>
-          <ApiPanel
-            open={location.pathname.startsWith('/workbench/apimanage/')}
-            defaultOpen={location.pathname.startsWith('/workbench/apimanage/')}
-          />
+          <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
           <CommonPanel
             type="dataSource"
             defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}

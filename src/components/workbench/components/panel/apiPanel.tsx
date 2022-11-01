@@ -32,7 +32,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   // const [query, setQuery] = useState<string>()
   const [isBlur, setIsBlur] = useState(false)
-  const [panelOpened, setPanelOpened] = useState(false)
+  const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
+  const [delayAction, setDelayAction] = useState<ActionT>() // 面板展开后执行新增操作
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([])
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
@@ -52,8 +53,22 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       setSelectedKey('')
     }
   }, [location])
+  useEffect(() => {
+    if (props.defaultOpen) {
+      setPanelOpened(true)
+    }
+  }, [props.defaultOpen])
+
+  // 数据加载完成后，如果有需要延迟执行的新增操作，则此刻执行并清空标记
+  useEffect(() => {
+    if (delayAction) {
+      handleAddNode(delayAction)
+      setDelayAction(undefined)
+    }
+  }, [treeData])
 
   useEffect(() => {
+    console.log('pppppp', panelOpened)
     if (!panelOpened) {
       return
     }
@@ -147,7 +162,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const handleAddNode = (action: ActionT) => {
     if (!panelOpened) {
+      setDelayAction(action)
       setPanelOpened(true)
+      return
     }
     setAction(action)
 
@@ -405,10 +422,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   return (
     <SidePanel
+      {...props}
       title="API管理"
       hideAdd
       open={panelOpened}
-      {...props}
       onOpen={flag => {
         setPanelOpened(flag)
         props.onOpen && props.onOpen(flag)

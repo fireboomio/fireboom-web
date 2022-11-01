@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { loader } from '@monaco-editor/react'
-import { Button, Form, Input, Modal, Table, Tabs } from 'antd'
+import { Button, Form, Input, Modal, Popconfirm, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
@@ -75,22 +75,23 @@ export default function AuthRole() {
     },
     {
       title: '创建时间',
-      dataIndex: 'create_time',
-      key: 'create_time'
+      dataIndex: 'createTime',
+      key: 'createTime'
     },
     {
       title: '操作',
       key: 4,
       render: (_, { id }) => (
-        <span
-          className="pl-0 text-red-500"
-          onClick={() => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        <Popconfirm
+          title="确定要删除?"
+          okText="确定"
+          cancelText="取消"
+          onConfirm={() => {
             void handleDeleteRole(id)
           }}
         >
-          删除
-        </span>
+          <span className="pl-0 text-red-500 cursor-pointer">删除</span>
+        </Popconfirm>
       )
     }
   ]
