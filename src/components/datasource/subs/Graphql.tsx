@@ -161,6 +161,7 @@ export default function Graphql({ content, type }: Props) {
     setRulesObj({
       type: 'array',
       validator(_, value) {
+        if (!value) return
         return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
           ? Promise.resolve()
           : Promise.reject('以字母或下划线开头，只能由字母、下划线和数字组成')
