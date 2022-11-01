@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Image } from 'antd'
+import { useEffect, useState } from 'react'
 
 import type { ErrorInfo } from '@/interfaces/common'
+import calcTime from '@/lib/helpers/calcTime'
 
 import styles from './index.module.less'
 
@@ -9,6 +11,7 @@ interface Props {
   className?: string
   env?: string
   version?: string
+  startTime?: string
   errorInfo?: ErrorInfo
   engineStatus?: string
   hookStatus?: string
@@ -20,11 +23,26 @@ const StatusBar: React.FC<Props> = ({
   className,
   env,
   version,
+  startTime,
   errorInfo,
   engineStatus,
   hookStatus,
   toggleWindow
 }) => {
+  const [compileTime, setCompileTime] = useState<string>()
+
+  useEffect(() => {
+    if (!startTime) {
+      return
+    }
+    setCompileTime(calcTime(startTime))
+    const timer = setInterval(() => {
+      setCompileTime(calcTime(startTime))
+    }, 60000)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [startTime])
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -70,6 +88,7 @@ const StatusBar: React.FC<Props> = ({
             <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
             <span className="ml-1 text-[#50C772]">{hookStatus}</span>
           </span>
+          <span className="ml-4.5">编译时间：{compileTime}</span>
         </span>
       </div>
     </div>

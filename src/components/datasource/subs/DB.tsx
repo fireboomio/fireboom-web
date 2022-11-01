@@ -376,8 +376,8 @@ export default function DB({ content, type }: Props) {
                   {config.appendType == '1' ? (
                     <>
                       <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
                       <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
+                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
                       <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
                       <Descriptions.Item label="密码">
                         {isSecretShow ? (

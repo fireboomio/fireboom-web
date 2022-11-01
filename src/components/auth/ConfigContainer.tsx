@@ -61,8 +61,7 @@ export default function AuthConfigContainer() {
       target.port = location.port
     }
 
-    console.log(target)
-    location.href = target.toString()
+    window.open(target.toString())
   }
 
   return (
