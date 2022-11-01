@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Radio } from 'antd'
+import { Checkbox, Dropdown, Radio, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 
 import type { Role } from '@/interfaces/user'
@@ -8,16 +8,16 @@ import { CircleCloseOutlined, CircleRemoveOutlined, PlusCircleFilled } from '../
 import styles from './index.module.less'
 
 interface RBACPopupProps {
-  initialValue?: {
-    rule: string
-    value: string[]
+  value?: {
+    rule?: string
+    value?: string[]
   }
   onChange?: (v: { rule: string; value: string[] }) => void
 }
 
-const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
-  const [rule, setRule] = useState(initialValue?.rule ?? 'requireMatchAll')
-  const [selected, setSelected] = useState(initialValue?.value ?? [])
+const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
+  const [rule, setRule] = useState(value?.rule ?? 'requireMatchAll')
+  const [selected, setSelected] = useState(value?.value ?? [])
   const [roles, setRoles] = useState<Role[]>([])
 
   const onAllCheckChange = () => {
@@ -58,6 +58,11 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
     setRule(v)
     onChange?.({ rule: v, value: selected })
   }
+
+  useEffect(() => {
+    setSelected(value?.value ?? [])
+    setRule(value?.rule ?? '')
+  }, [value, setSelected])
 
   useEffect(() => {
     requests.get('/role').then(res => {
@@ -106,6 +111,7 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
           <Dropdown
             trigger={['click']}
             placement="bottomLeft"
+            disabled={!rule}
             overlay={
               <div className="bg-white">
                 <div className="border-solid flex border-0 border-[rgba(95,98,105,0.1)] text-xs py-2.5 pr-2 pl-3 !border-b">
@@ -136,7 +142,13 @@ const RBACPopup = ({ initialValue, onChange }: RBACPopupProps) => {
               </div>
             }
           >
-            <PlusCircleFilled className="cursor-pointer ml-2" />
+            {!rule ? (
+              <Tooltip title="请先选择匹配模式">
+                <PlusCircleFilled className="cursor-pointer ml-2" />
+              </Tooltip>
+            ) : (
+              <PlusCircleFilled className="cursor-pointer ml-2" />
+            )}
           </Dropdown>
         </div>
       </div>
