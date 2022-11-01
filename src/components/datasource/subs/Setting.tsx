@@ -57,10 +57,10 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
     setData(
       replaceJSON.map((x, idx) => ({
         id: idx.toString(),
-        table: x.entityName,
-        field: x.fieldName,
-        resType: x.responseTypeReplacement,
-        inputType: x.inputTypeReplacement,
+        table: x.table,
+        field: x.field,
+        resType: x.resType,
+        inputType: x.inputType,
         isOpen: x?.isOpen || false
       }))
     )

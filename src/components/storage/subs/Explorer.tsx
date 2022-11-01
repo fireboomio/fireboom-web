@@ -466,7 +466,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                     okText="删除"
                     cancelText="取消"
                   >
-                    <Button onClick={deleteFile} className="m-1.5">
+                    <Button className="m-1.5">
                       <span className="text-[#F21212]">删除</span>
                     </Button>
                   </Popconfirm>
