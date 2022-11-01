@@ -188,7 +188,15 @@ const IdeContainer: FC<Props> = props => {
         const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
-        monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+        try {
+          const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
+          if (currentModel) {
+            currentModel.dispose()
+          }
+          monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+        } catch (e) {
+          console.error(e)
+        }
         return key.replace(/^@?/, '').replace(/\.ts$/, '')
       })
       setLocalDepend(localLibList)
@@ -264,8 +272,10 @@ const IdeContainer: FC<Props> = props => {
     if (!hookInfo) {
       return
     }
+
+    const code = monaco.editor.getModels()[0].getValue()
     //
-    const lines = hookInfo.script.split('\n')
+    const lines = code.split('\n')
     let lastImport = -1
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
@@ -279,8 +289,7 @@ const IdeContainer: FC<Props> = props => {
       }
     }
     lines.splice(lastImport + 1, 0, `import {} from '${name}'`)
-    hookInfo.script = lines.join('\n')
-    monaco.editor.getModels()[0].setValue(hookInfo.script)
+    monaco.editor.getModels()[0].setValue(lines.join('\n'))
   }
 
   // 代码改变回调
