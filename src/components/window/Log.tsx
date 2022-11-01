@@ -15,15 +15,15 @@ type Props = {
   actionRef?: MutableRefObject<LogAction | undefined>
 }
 
-const tabs = [
-  { key: '1', name: '核心日志' },
-  { key: '2', name: '钩子日志' }
-]
+// const tabs = [
+//   { key: '1', name: '核心日志' },
+//   { key: '2', name: '钩子日志' }
+// ]
 
 // eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ actionRef }) => {
   const [logs, setLogs] = useState<LogMessage[]>([])
-  const [selectedKey, setSelectedKey] = useState('1')
+  // const [selectedKey, setSelectedKey] = useState('1')
   const [content, setContent] = useState('')
   const logRef = useRef(null)
 
@@ -34,9 +34,9 @@ const Log: React.FC<Props> = ({ actionRef }) => {
   }, [content])
 
   useEffect(() => {
-    const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
-    setContent(displayLog.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
-  }, [selectedKey, logs])
+    // const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
+    setContent(logs.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
+  }, [logs])
 
   useEffect(() => {
     if (actionRef) {
@@ -68,12 +68,12 @@ const Log: React.FC<Props> = ({ actionRef }) => {
 
   return (
     <div className="flex flex-1 w-full overflow-hidden">
-      <pre className="h-full mb-0 w-9/10 overflow-auto">
+      <pre className="h-full mb-0 w-10/10 overflow-auto">
         {content}
         <div ref={logRef} />
       </pre>
 
-      <div className="border-l w-1/10">
+      {/* <div className="border-l w-1/10">
         <ul className="list-none">
           {tabs.map(x => (
             // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
@@ -88,7 +88,7 @@ const Log: React.FC<Props> = ({ actionRef }) => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   )
 }
