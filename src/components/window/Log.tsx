@@ -76,6 +76,7 @@ const Log: React.FC<Props> = ({ actionRef }) => {
       <div className="border-l w-1/10">
         <ul className="list-none">
           {tabs.map(x => (
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
             <li
               onClick={() => setSelectedKey(x.key)}
               className={`px-3 py-4.5 text-[#222222] cursor-pointer ${
