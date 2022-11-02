@@ -542,7 +542,7 @@ export default function Graphql({ content, type }: Props) {
                 ''
               )}
 
-              <h2 className="ml-3 mb-3">请求头:</h2>
+              <div className="text-lg ml-3 mb-3">请求头:</div>
 
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Form.List name="headers">
