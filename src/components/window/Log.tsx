@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { Image } from 'antd'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -59,18 +58,12 @@ const Log: React.FC<Props> = ({ actionRef }) => {
     <div className="flex flex-1 w-full overflow-hidden">
       <div className="h-full mb-0 w-10/10 overflow-auto">
         {logs.map((x, idx) => (
-          <div
-            className="text-xs leading-25px font-normal text-[#333333]"
-            style={{
-              fontFamily: 'PingFangSC-Regular, PingFang SC;'
-            }}
-            key={idx}
-          >
+          <div className="text-xs leading-25px font-normal text-[#333333]" key={idx}>
             <span className="mr-8">{x.time}</span>{' '}
             <span className="mr-1.5">
-              <Image
+              <img
                 src={x.logType === 1 ? '/assets/log-core.svg' : '/assets/log-hook.svg'}
-                preview={false}
+                alt={x.logType === 1 ? '核心日志' : '钩子日志'}
               />
             </span>
             <span className="w-100 mr-1">{x.level}</span> <span>{x.msg}</span>
