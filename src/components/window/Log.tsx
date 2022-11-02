@@ -16,16 +16,9 @@ type Props = {
   actionRef?: MutableRefObject<LogAction | undefined>
 }
 
-// const tabs = [
-//   { key: '1', name: '核心日志' },
-//   { key: '2', name: '钩子日志' }
-// ]
-
 // eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ actionRef }) => {
   const [logs, setLogs] = useState<LogMessage[]>([])
-  // const [selectedKey, setSelectedKey] = useState('1')
-  // const [content, setContent] = useState('')
   const logRef = useRef(null)
 
   useEffect(() => {
@@ -33,11 +26,6 @@ const Log: React.FC<Props> = ({ actionRef }) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     logRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [logs])
-
-  // useEffect(() => {
-  //   // const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
-  //   setContent(logs.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
-  // }, [logs])
 
   useEffect(() => {
     if (actionRef) {
@@ -91,23 +79,6 @@ const Log: React.FC<Props> = ({ actionRef }) => {
 
         <div ref={logRef} />
       </div>
-
-      {/* <div className="border-l w-1/10">
-        <ul className="list-none">
-          {tabs.map(x => (
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-            <li
-              onClick={() => setSelectedKey(x.key)}
-              className={`px-3 py-4.5 text-[#222222] cursor-pointer ${
-                selectedKey === x.key ? 'bg-[#F7F7F7FF]' : ''
-              }`}
-              key={x.key}
-            >
-              {x.name}
-            </li>
-          ))}
-        </ul>
-      </div> */}
     </div>
   )
 }
