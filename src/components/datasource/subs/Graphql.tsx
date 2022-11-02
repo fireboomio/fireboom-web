@@ -113,7 +113,7 @@ export default function Graphql({ content, type }: Props) {
     const newValues = { ...values }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
-    if (content.name == '' || content.name.startsWith('example_')) {
+    if (content.name === '' || content.id.toString().length > 10) {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
@@ -141,7 +141,7 @@ export default function Graphql({ content, type }: Props) {
     switch (value) {
       case '0':
         setIsValue(true)
-        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        setRulesObj({ pattern: /^[/\w]{1,128}$/g, message: '请输入长度不大于128的非空值' })
         return
       case '1':
         setIsValue(false)
@@ -161,6 +161,7 @@ export default function Graphql({ content, type }: Props) {
     setRulesObj({
       type: 'array',
       validator(_, value) {
+        if (!value) return
         return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
           ? Promise.resolve()
           : Promise.reject('以字母或下划线开头，只能由字母、下划线和数字组成')
@@ -292,7 +293,7 @@ export default function Graphql({ content, type }: Props) {
               )}
             </Descriptions>
           </div>
-          <h2 className="ml-3 mb-3">请求头</h2>
+          <div className="text-base font-medium ml-3 mb-3">请求头</div>
           <div className={`${styles['table-contain']} mb-8`}>
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               {((config?.headers as unknown as DataType[]) ?? []).map(
@@ -422,10 +423,11 @@ export default function Graphql({ content, type }: Props) {
               initialValues={{
                 apiNameSpace: config.apiNameSpace,
                 url: config.url,
-                internal: config.isInner,
-                customFloatScalars: config.defineFloat,
-                customIntScalars: config.defineInt,
-                skipRenameRootFields: config.exceptRename,
+                loadSchemaFromString: config.loadSchemaFromString,
+                internal: config.internal,
+                customFloatScalars: config.customFloatScalars,
+                customIntScalars: config.customIntScalars,
+                skipRenameRootFields: config.skipRenameRootFields,
                 headers: config.headers || [],
                 agreement: config.loadSchemaFromString !== undefined ? true : false
               }}
@@ -580,7 +582,7 @@ export default function Graphql({ content, type }: Props) {
                               form.getFieldValue(['headers', field.name, 'kind']) === '0'
                                 ? [
                                     {
-                                      pattern: /^\w{1,128}$/g,
+                                      pattern: /^[/\w]{1,128}$/g,
                                       message: '请输入长度不大于128的非空值'
                                     }
                                   ]

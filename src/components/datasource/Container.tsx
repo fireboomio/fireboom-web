@@ -68,18 +68,21 @@ export default function DatasourceContainer({ content, showType }: Props) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           data: { sourceType: content.sourceType, config: content.config }
         })
-        .then(x => console.log(x))
-
-      notification.open({
-        message: <IconFont type="icon-xingzhuangjiehe" />,
-        description: (
-          <div>
-            <h1>链接失败</h1>
-            描述性语句描述性语句描述性语句
-          </div>
-        ),
-        placement
-      })
+        .then(x => {
+          if (x.msg === '连接成功') {
+            notification.open({
+              message: <IconFont type="icon-bixu" />,
+              description: <h1>连接成功</h1>,
+              placement
+            })
+          } else {
+            notification.open({
+              message: <IconFont type="icon-xingzhuangjiehe" />,
+              description: <h1>连接失败</h1>,
+              placement
+            })
+          }
+        })
     } else if (content.sourceType === 2) {
       console.log(content)
     } else if (content.sourceType === 3) {
@@ -121,14 +124,19 @@ export default function DatasourceContainer({ content, showType }: Props) {
               checkedChildren="开启"
               unCheckedChildren="关闭"
               onChange={toggleOpen}
+              className="mr-4"
             />
-            <Button
-              className={'btn-test ml-4 mr-4'}
-              onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
-            >
-              设计
-            </Button>
-            <Button className={'btn-test mr-4'} onClick={() => testLink('bottomLeft')}>
+            {content.sourceType === 1 ? (
+              <Button
+                className={'btn-test ml-4 '}
+                onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
+              >
+                设计
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
               测试
             </Button>
             <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
