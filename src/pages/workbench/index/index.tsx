@@ -3,10 +3,8 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
-import AvatarBox from '@/components/common/AvatarBox'
 import { Guide } from '@/components/home/Guide'
 import { Notice } from '@/components/home/Notice'
-import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './index.module.less'
