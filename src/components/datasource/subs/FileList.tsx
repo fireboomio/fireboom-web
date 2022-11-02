@@ -80,22 +80,33 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
       title: '',
       dataIndex: 'icon',
       key: 'icon',
-      width: 50,
+      width: 80,
       render: (_, rcd) => (
-        <Popconfirm
-          title="确认删除？"
-          onConfirm={e => confirm(rcd, e)}
-          onCancel={cancel}
-          okText="是"
-          cancelText="否"
-        >
-          <IconFont
-            onClick={e => e?.stopPropagation()}
-            type="icon-shanchu"
-            className="cursor-pointer"
-            style={{ fontSize: '16px', color: '#f6595b' }}
-          />
-        </Popconfirm>
+        <div className="flex items-center justify-between">
+          <Popconfirm
+            title="确认删除？"
+            onConfirm={e => confirm(rcd, e)}
+            onCancel={cancel}
+            okText="是"
+            cancelText="否"
+          >
+            <IconFont
+              onClick={e => e?.stopPropagation()}
+              type="icon-shanchu"
+              className="cursor-pointer"
+              style={{ fontSize: '16px', color: '#f6595b' }}
+            />
+          </Popconfirm>
+
+          <a href={`/api/v1/file/downloadFile?type=${upType}&fileName=${rcd.name}`}>
+            <IconFont
+              onClick={e => e.stopPropagation()}
+              type="icon-xiazai"
+              className="cursor-pointer"
+              style={{ fontSize: '22px' }}
+            />
+          </a>
+        </div>
       )
     }
   ]
