@@ -2,14 +2,39 @@
 import path from 'path'
 
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, type PluginOption } from 'vite'
 import vitePluginImp from 'vite-plugin-imp'
 import Pages from 'vite-plugin-pages'
 import WindiCSS from 'vite-plugin-windicss'
+import { visualizer } from 'rollup-plugin-visualizer'
+import { argv } from 'process'
 
 // const backendUrl = 'http://120.26.62.151:9123'
 // const backendUrl = 'http://192.168.166.143:9123'
 const backendUrl = 'http://8.142.115.204:9123'
+
+const plugins: PluginOption[] = [
+  react(),
+  vitePluginImp({
+    libList: [
+      {
+        libName: 'antd',
+        style: name => `antd/es/${name}/style/index.js`
+      }
+    ]
+  }),
+  WindiCSS(),
+  Pages({
+    extensions: ['tsx'],
+    exclude: ['**/components/**/*.*', '**/blocks/**/*.*', '**/hooks/**/*.*', '**/_*.*'],
+    routeStyle: 'next',
+    importMode: 'async',
+    dirs: 'src/pages'
+  })
+]
+if (argv[2] === 'build' && argv[3] === '--' && argv[4] === 'report') {
+  plugins.push(visualizer())
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -62,27 +87,21 @@ export default defineConfig({
       //   }
     ]
   },
-  plugins: [
-    react(),
-    vitePluginImp({
-      libList: [
-        {
-          libName: 'antd',
-          style: name => `antd/es/${name}/style/index.js`
-        }
-      ]
-    }),
-    WindiCSS(),
-    Pages({
-      extensions: ['tsx'],
-      exclude: ['**/components/**/*.*', '**/blocks/**/*.*', '**/hooks/**/*.*', '**/_*.*'],
-      routeStyle: 'next',
-      importMode: 'async',
-      dirs: 'src/pages'
-    })
-  ],
+  plugins,
   build: {
     minify: 'esbuild'
+  },
+  experimental: {},
+  optimizeDeps: {
+    include: [
+      'antd',
+      'axios',
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'react-helmet',
+      'use-immer'
+    ]
   }
   // optimizeDeps: {
   //   exclude: ['@antv/x6-react-shape']

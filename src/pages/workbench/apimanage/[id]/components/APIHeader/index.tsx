@@ -43,6 +43,7 @@ const APIHeader = () => {
       if (targetPath !== apiDesc?.path) {
         try {
           await updateAPI({ path: targetPath })
+          setIsEditingName(false)
         } catch (error) {
           //
         }

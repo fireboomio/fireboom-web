@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -8,10 +8,6 @@ if (window && document) {
   const body = document.getElementsByTagName('body')[0]
   script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
   body.appendChild(script)
-}
-
-type Props = {
-  specUrl: string
 }
 
 export default function RapiFrame() {
@@ -27,7 +23,7 @@ export default function RapiFrame() {
   return (
     // @ts-ignore
     <rapi-doc
-      theme="dark"
+      theme={params.get('theme') || 'light'}
       spec-url={params.get('url')}
       server-url={customServerUrl}
       default-api-server={customServerUrl}
