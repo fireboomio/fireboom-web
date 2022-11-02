@@ -1,12 +1,13 @@
 import type { Monaco } from '@swordjs/monaco-editor-react'
 
-import requests from '@/lib/fetchers'
+import requests, { NPM_RESOLVE_HOSE } from '@/lib/fetchers'
 
 export async function dependLoader(name: string, version: string, monaco: Monaco) {
   const result = await requests.get<unknown, { types: string; dtsFiles: Record<string, string> }>(
-    `http://localhost:9801/loadPkgTypes`,
+    `${NPM_RESOLVE_HOSE}/loadPkgTypes`,
     {
-      params: { name, version }
+      params: { name, version },
+      timeout: 60000
     }
   )
 
