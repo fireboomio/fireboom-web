@@ -17,9 +17,8 @@ export default function RapiFrame() {
   const customServerUrl =
     config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
 
-  if (!config) {
-    return
-  }
+  if (!config) return
+
   return (
     // @ts-ignore
     <rapi-doc
