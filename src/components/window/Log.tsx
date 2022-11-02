@@ -15,28 +15,16 @@ type Props = {
   actionRef?: MutableRefObject<LogAction | undefined>
 }
 
-const tabs = [
-  { key: '1', name: '核心日志' },
-  { key: '2', name: '钩子日志' }
-]
-
 // eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ actionRef }) => {
   const [logs, setLogs] = useState<LogMessage[]>([])
-  const [selectedKey, setSelectedKey] = useState('1')
-  const [content, setContent] = useState('')
   const logRef = useRef(null)
 
   useEffect(() => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     logRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [content])
-
-  useEffect(() => {
-    const displayLog = logs.filter(x => x.logType.toString() === selectedKey)
-    setContent(displayLog.map(x => `${x.time} ${x.level} ${x.msg}`).join('\n'))
-  }, [selectedKey, logs])
+  }, [logs])
 
   useEffect(() => {
     if (actionRef) {
@@ -68,25 +56,21 @@ const Log: React.FC<Props> = ({ actionRef }) => {
 
   return (
     <div className="flex flex-1 w-full overflow-hidden">
-      <pre className="h-full mb-0 w-9/10 overflow-auto">
-        {content}
-        <div ref={logRef} />
-      </pre>
+      <div className="h-full mb-0 w-10/10 overflow-auto">
+        {logs.map((x, idx) => (
+          <div className="text-xs leading-25px font-normal text-[#333333]" key={idx}>
+            <span className="mr-8">{x.time}</span>{' '}
+            <span className="mr-1.5">
+              <img
+                src={x.logType === 1 ? '/assets/log-core.svg' : '/assets/log-hook.svg'}
+                alt={x.logType === 1 ? '核心日志' : '钩子日志'}
+              />
+            </span>
+            <span className="w-100 mr-1">{x.level}</span> <span>{x.msg}</span>
+          </div>
+        ))}
 
-      <div className="border-l w-1/10">
-        <ul className="list-none">
-          {tabs.map(x => (
-            <li
-              onClick={() => setSelectedKey(x.key)}
-              className={`px-3 py-4.5 text-[#222222] cursor-pointer ${
-                selectedKey === x.key ? 'bg-[#F7F7F7FF]' : ''
-              }`}
-              key={x.key}
-            >
-              {x.name}
-            </li>
-          ))}
-        </ul>
+        <div ref={logRef} />
       </div>
     </div>
   )
