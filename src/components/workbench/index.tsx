@@ -154,6 +154,7 @@ export default function Index(props: PropsWithChildren) {
           version={version}
           env={env}
           errorInfo={info?.errorInfo}
+          startTime={info?.startTime}
           engineStatus={info?.engineStatus}
           hookStatus={info?.hookStatus}
           toggleWindow={() => setShowWindow(!showWindow)}

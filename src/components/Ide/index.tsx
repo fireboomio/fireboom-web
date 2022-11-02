@@ -9,6 +9,7 @@ import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
+import { dependLoader } from '@/components/Ide/dependLoader'
 import {
   getHook,
   getTypes,
@@ -159,12 +160,9 @@ const IdeContainer: FC<Props> = props => {
 
   useEffect(() => {
     if (editor && monaco) {
-      // depend数组转换为对象
-      const depend =
-        hookInfo?.depend?.reduce((acc, cur) => {
-          acc[cur.name] = cur.version
-          return acc
-        }, {} as Depend) || {}
+      hookInfo?.depend?.forEach((item, index) => {
+        dependLoader(item.name, item.version, monaco)
+      })
       // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -174,7 +172,7 @@ const IdeContainer: FC<Props> = props => {
         monaco: monaco,
         onlySpecifiedPackages: true,
         preloadPackages: true,
-        versions: depend
+        versions: {}
       }).then(t => {
         typingsRef.current = t
       })
@@ -182,6 +180,7 @@ const IdeContainer: FC<Props> = props => {
   }, [editor, monaco, hookInfo?.depend])
 
   const handleEditorBeforeMount: BeforeMount = monaco => {
+    dependLoader('axios', '1.1.3', monaco)
     void getTypes<Record<string, string>>().then(res => {
       // 循环types
       const localLibList = Object.keys(res).map(key => {
@@ -257,23 +256,22 @@ const IdeContainer: FC<Props> = props => {
   // dependchange回调
   const dependChange = (depend: Depend) => {
     // 在typings类中的原型上调用setVersions
-    if (typingsRef.current) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      typingsRef.current.setVersions(depend)
-      void handleDependChange(depend)
-    }
+    void handleDependChange(depend)
+    Object.keys(depend).forEach(key => {
+      dependLoader(key, depend[key], monaco)
+    })
   }
 
   const dependRemove = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     typingsRef.current.removePackage(name)
   }
-  const insertDepend = (name: string) => {
+  const insertLocalDepend = (name: string) => {
     if (!hookInfo) {
       return
     }
 
-    const code = monaco.editor.getModels()[0].getValue()
+    const code = editor.getValue()
     //
     const lines = code.split('\n')
     let lastImport = -1
@@ -289,7 +287,7 @@ const IdeContainer: FC<Props> = props => {
       }
     }
     lines.splice(lastImport + 1, 0, `import {} from '${name}'`)
-    monaco.editor.getModels()[0].setValue(lines.join('\n'))
+    editor.setValue(lines.join('\n'))
   }
 
   // 代码改变回调
@@ -388,7 +386,7 @@ const IdeContainer: FC<Props> = props => {
                 onFold: dependFold,
                 onDependChange: dependChange,
                 onDependDelete: dependRemove,
-                onInsertDepend: insertDepend
+                onInsertLocalDepend: insertLocalDepend
               }}
               localDepend={localDepend}
             />
