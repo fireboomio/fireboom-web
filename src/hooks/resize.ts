@@ -1,64 +1,108 @@
 /* eslint-disable no-inner-declarations */
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type DragResizeArgs = {
   direction: 'horizontal' | 'vertical'
+  defaultHidden?: boolean
   minSize?: number
   maxSize?: number
 }
 
-export function useDragResize({ direction, minSize = 2, maxSize }: DragResizeArgs) {
-  const dragRef = useRef<HTMLElement>()
+export function useDragResize({
+  defaultHidden = false,
+  direction,
+  minSize = 2,
+  maxSize
+}: DragResizeArgs) {
+  const [isHidden, setIsHidden] = useState(defaultHidden)
+  const dragRef = useRef<HTMLElement>(null)
+  const elRef = useRef<HTMLElement>(null)
+  const parentRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const el = dragRef.current
-    console.log(el)
-    if (el) {
+    const $el = elRef.current
+    const $drag = dragRef.current
+    const $parent = parentRef.current
+
+    if ($drag && $el) {
+      // 当水平方向时，拖动的元素在el左侧，则 坐标点 变小时需要增加宽度
+      // 当水平方向时，拖动的元素在el右侧，则 坐标点 变大时需要增加宽度
+      // 当垂直方向时，拖动的元素在el上方，则 坐标点 变小时需要增加高度
+      // 当垂直方向时，拖动的元素在el下方，则 坐标点 变大时需要增加高度
+      let increateDirection = 1
+      const dragRect = $drag.getBoundingClientRect()
+      const elRect = $el.getBoundingClientRect()
       if (direction === 'horizontal') {
-        el.style.cursor = 'col-resize'
-        const initialWidth = el.clientWidth
-        let startX: number
-
-        function onMouseDown(e: MouseEvent) {
-          startX = e.clientX
+        if (Math.abs(dragRect.left - elRect.left) > Math.abs(elRect.right - dragRect.right)) {
+          increateDirection = 1
+        } else {
+          increateDirection = -1
         }
-        function onMouseMove(e: MouseEvent) {
-          let size = Math.max(minSize, initialWidth + e.clientX - startX)
-          if (maxSize) {
-            size = Math.min(maxSize, size)
-          }
-          el!.style.width = `${size}px`
-        }
-        el.addEventListener('mousedown', onMouseDown)
-        el.addEventListener('mousemove', onMouseMove)
-        el.removeEventListener('mousedown', onMouseDown)
-        el.removeEventListener('mousemove', onMouseMove)
       } else {
-        el.style.cursor = 'row-resize'
-        const initialHeight = el.clientHeight
-        let startY: number
+        if (Math.abs(dragRect.top - elRect.top) > Math.abs(elRect.bottom - dragRect.bottom)) {
+          increateDirection = 1
+        } else {
+          increateDirection = -1
+        }
+      }
 
-        function onMouseDown(e: MouseEvent) {
-          console.log('onMouseDown')
-          startY = e.clientY
+      $drag.style.cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize'
+      let initialSize: number
+      let startP: number
+
+      function onMouseDown(e: MouseEvent) {
+        initialSize = direction === 'horizontal' ? $el!.clientWidth : $el!.clientHeight
+        startP = direction === 'horizontal' ? e.clientX : e.clientY
+        document.addEventListener('mousemove', onMouseMove, false)
+        document.addEventListener('mouseup', onMouseLeave, false)
+      }
+      function onMouseMove(e: MouseEvent) {
+        let size = Math.max(
+          minSize,
+          direction === 'horizontal' ? $drag!.clientWidth : $drag!.clientHeight,
+          initialSize +
+            increateDirection * ((direction === 'horizontal' ? e.clientX : e.clientY) - startP)
+        )
+        if (maxSize) {
+          size = Math.min(maxSize, size)
         }
-        function onMouseMove(e: MouseEvent) {
-          let size = Math.max(minSize, initialHeight + e.clientY - startY)
-          if (maxSize) {
-            size = Math.min(maxSize, size)
-          }
-          console.log('onMouseMove', size)
-          el!.style.width = `${size}px`
+        if ($parent) {
+          size = Math.min(
+            size,
+            direction === 'horizontal' ? $parent.clientWidth : $parent.clientHeight
+          )
         }
-        el.addEventListener('mousedown', onMouseDown)
-        el.addEventListener('mousemove', onMouseMove)
-        el.removeEventListener('mousedown', onMouseDown)
-        el.removeEventListener('mousemove', onMouseMove)
+        setIsHidden(
+          size === (direction === 'horizontal' ? $drag!.clientWidth : $drag!.clientHeight)
+        )
+        $el!.style[direction === 'horizontal' ? 'width' : 'height'] = `${size}px`
+      }
+      function onMouseLeave(e: MouseEvent) {
+        document.removeEventListener('mousemove', onMouseMove, false)
+        document.removeEventListener('mouseup', onMouseLeave, false)
+      }
+      $drag.addEventListener('mousedown', onMouseDown, false)
+      return () => {
+        document.removeEventListener('mousemove', onMouseMove, false)
+        document.removeEventListener('mouseup', onMouseLeave, false)
       }
     }
   }, [direction, maxSize, minSize])
 
+  const resetSize = useCallback(
+    (size: number) => {
+      if (elRef.current) {
+        elRef.current.style[direction === 'horizontal' ? 'width' : 'height'] = `${size}px`
+      }
+    },
+    [direction]
+  )
+
   return {
-    dragRef
+    dragRef,
+    elRef,
+    parentRef,
+    resetSize,
+    isHidden
   }
 }

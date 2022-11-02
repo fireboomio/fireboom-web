@@ -14,6 +14,7 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
+import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 
@@ -42,7 +43,7 @@ async function fetcher(rec: Record<string, unknown>) {
 
 export default function APIEditorContainer() {
   const params = useParams()
-  console.log('APIEditorContainer refresh')
+  const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
   const workbenchCtx = useContext(WorkbenchContext)
   const {
     query,
@@ -123,7 +124,8 @@ export default function APIEditorContainer() {
         <APIHeader />
         <div className={styles.wrapper}>
           {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
-          <div className="h-full relative">
+          <div className="h-full relative" ref={elRef}>
+            <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
             <Tooltip title="刷新">
               <ReloadOutlined
                 onClick={async () => {

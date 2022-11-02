@@ -85,6 +85,16 @@
 }
 
 .graphiql-container .graphiql-editor-tool {
+  position: relative;
+}
+
+.graphiql-container .graphiql-editor-tool-resize-handler {
+  position: absolute;
+  left: 156px;
+  top: 0;
+  right: 0;
+  height: 26px;
+  z-index: 2;
 }
 
 .graphiql-container .graphiql-editor-tool .ant-tabs-nav {

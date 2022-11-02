@@ -179,7 +179,10 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     apiID: state.apiID
   }))
   const editorCtx = useEditorContext()
-  const { dragRef } = useDragResize({ direction: 'vertical', maxSize: 600 })
+  const { dragRef, elRef, parentRef, isHidden, resetSize } = useDragResize({
+    direction: 'vertical',
+    maxSize: 600
+  })
   const prevApiID = useRef<string>()
   const responseRef = useRef<{
     setActiveKey?: (v: string) => void
@@ -222,15 +225,21 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   }, [])
 
   return (
-    <div data-testid="graphiql-container" className="graphiql-container">
+    <div data-testid="graphiql-container" className="graphiql-container" ref={parentRef}>
       <GraphiQLToolbar />
       {editor}
-      <section className="graphiql-editor-tool" ref={dragRef}>
+      <section className="graphiql-editor-tool" ref={elRef}>
+        <div className="graphiql-editor-tool-resize-handler" ref={dragRef}></div>
         <ResponseWrapper>
           <GraphiInputAndResponse
             apiID={apiID}
             actionRef={responseRef}
             argumentList={argumentList}
+            onTabChange={() => {
+              if (isHidden) {
+                resetSize(180)
+              }
+            }}
           />
         </ResponseWrapper>
       </section>
@@ -247,12 +256,14 @@ interface GraphiInputAndResponseProps {
       }
     | undefined
   >
+  onTabChange: (activeKey: string) => void
 }
 
 const GraphiInputAndResponse = ({
   apiID,
   argumentList,
-  actionRef
+  actionRef,
+  onTabChange
 }: GraphiInputAndResponseProps) => {
   const [activeKey, setActiveKey] = useState('arguments')
 
@@ -284,6 +295,7 @@ const GraphiInputAndResponse = ({
     <Tabs
       activeKey={activeKey}
       onChange={v => setActiveKey(v)}
+      onTabClick={onTabChange}
       items={[
         {
           label: '输入',
