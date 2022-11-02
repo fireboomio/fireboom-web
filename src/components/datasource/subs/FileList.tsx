@@ -60,7 +60,11 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
 
   useEffect(() => {
     void requests.get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`).then(x => {
-      setData(x.files)
+      if (upType === 1) {
+        setData(x.files.filter(f => f.name.endsWith('.json') || f.name.endsWith('.yaml')))
+      } else {
+        setData(x.files)
+      }
     })
   }, [refreshFlag, upType])
 
