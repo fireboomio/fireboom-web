@@ -34,4 +34,6 @@ export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
     return res
   })
 
+export const NPM_RESOLVE_HOSE = 'http://8.142.115.204:9801'
+
 export default requests
