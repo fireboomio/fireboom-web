@@ -511,7 +511,8 @@ export default function Rest({ content, type }: Props) {
                 statusCodeUnions: config.statusCodeUnions,
                 secret: config.secret || { kind: '0' },
                 filePath: config.filePath || '',
-                tokenPoint: config.tokenPoint
+                tokenPoint: config.tokenPoint,
+                jwtType: config.jwtType
               }}
             >
               <Form.Item
