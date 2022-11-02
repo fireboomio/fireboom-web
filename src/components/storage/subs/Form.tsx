@@ -45,72 +45,65 @@ export default function StorageForm({ content }: Props) {
   }
 
   return (
-    <>
-      <div className={`${styles['form-contain']}`}>
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 11 }}
-          onFinish={values => void onFinish(values as StorageConfig)}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-          validateTrigger="onBlur"
-          className="ml-3"
-          initialValues={{ ...config }}
+    <div className={`${styles['form-contain']}`}>
+      <Form
+        form={form}
+        name="basic"
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 11 }}
+        onFinish={values => void onFinish(values as StorageConfig)}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        validateTrigger="onBlur"
+        className="ml-3"
+        initialValues={{ ...config }}
+      >
+        <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
+          <Input placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item label="服务地址" name="endpoint">
+          <Input placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item
+          label="App ID"
+          rules={[{ required: true, message: '请输入 App ID' }]}
+          name="accessKeyID"
         >
-          <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item label="服务地址" name="endpoint">
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item
-            label="App ID"
-            rules={[{ required: true, message: '请输入 App ID' }]}
-            name="accessKeyID"
-          >
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item
-            label="App Secret"
-            rules={[{ required: true, message: '请输入 App Secret' }]}
-            name="secretAccessKey"
-          >
-            <Input.Password placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item label="区域" name="bucketLocation">
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item label="bucketName" name="bucketName">
-            <Input placeholder="请输入..." />
-          </Form.Item>
-          <Form.Item
-            label="开启SSL"
-            style={{ marginTop: '29px' }}
-            name="useSSL"
-            valuePropName="checked"
-          >
-            <Switch className={styles['switch-set-btn']} size="small" />
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-            <Button className="btn-cancel" onClick={() => handleSwitch('detail', content?.id)}>
-              <span>取消</span>
-            </Button>
-            <Button className="btn-test ml-4" onClick={() => handleTest()}>
-              测试
-            </Button>
-            <Button
-              className="btn-save ml-4"
-              onClick={() => {
-                form.submit()
-              }}
-            >
-              保存
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </>
+          <Input placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item
+          label="App Secret"
+          rules={[{ required: true, message: '请输入 App Secret' }]}
+          name="secretAccessKey"
+        >
+          <Input.Password placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item label="区域" name="bucketLocation">
+          <Input placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item label="bucketName" name="bucketName">
+          <Input placeholder="请输入..." />
+        </Form.Item>
+        <Form.Item
+          label="开启SSL"
+          style={{ marginTop: '29px' }}
+          name="useSSL"
+          valuePropName="checked"
+        >
+          <Switch className={styles['switch-set-btn']} size="small" />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+          <Button className="btn-cancel" onClick={() => handleSwitch('detail', content?.id)}>
+            <span>取消</span>
+          </Button>
+          <Button className="btn-test ml-4" onClick={() => handleTest()}>
+            测试
+          </Button>
+          <Button className="btn-save ml-4" onClick={() => form.submit()}>
+            保存
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   )
 }

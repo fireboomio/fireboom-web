@@ -292,18 +292,21 @@ export default function DB({ content, type }: Props) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: { sourceType: content.sourceType, config: config }
       })
-      .then(x => console.log(x))
-
-    notification.open({
-      message: <IconFont type="icon-xingzhuangjiehe" />,
-      description: (
-        <div>
-          <h1>链接失败</h1>
-          描述性语句描述性语句描述性语句
-        </div>
-      ),
-      placement
-    })
+      .then(x => {
+        if (x.msg === '连接成功') {
+          notification.open({
+            message: <IconFont type="icon-bixu" />,
+            description: <h1>连接成功</h1>,
+            placement
+          })
+        } else {
+          notification.open({
+            message: <IconFont type="icon-xingzhuangjiehe" />,
+            description: <h1>连接失败</h1>,
+            placement
+          })
+        }
+      })
   }
 
   //单选框链接URL和链接参数切换回调
@@ -376,8 +379,8 @@ export default function DB({ content, type }: Props) {
                   {config.appendType == '1' ? (
                     <>
                       <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
                       <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
+                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
                       <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
                       <Descriptions.Item label="密码">
                         {isSecretShow ? (
@@ -403,15 +406,6 @@ export default function DB({ content, type }: Props) {
                     </>
                   ) : (
                     <>
-                      <Descriptions.Item label="环境变量">
-                        {(config.databaseUrl as unknown as { kind: string; val: string })?.kind ==
-                        '0'
-                          ? ''
-                          : (config.databaseUrl as unknown as { kind: string; val: string })
-                              ?.kind == '1'
-                          ? '环境变量'
-                          : ''}
-                      </Descriptions.Item>
                       <Descriptions.Item label="连接URL">
                         {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
                       </Descriptions.Item>

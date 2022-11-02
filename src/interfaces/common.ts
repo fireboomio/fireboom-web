@@ -19,6 +19,7 @@ export interface ErrorInfo {
 export interface Info {
   errorInfo: ErrorInfo
   engineStatus: EngineStatus
+  startTime: string
   hookStatus: string
 }
 

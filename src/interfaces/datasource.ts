@@ -67,9 +67,9 @@ export interface TypeField {
 }
 
 export interface ReplaceJSON {
-  entityName: string
-  fieldName: string
-  responseTypeReplacement: string
-  inputTypeReplacement: string
+  table: string
+  field: string
+  resType: string
+  inputType: string
   isOpen?: boolean
 }

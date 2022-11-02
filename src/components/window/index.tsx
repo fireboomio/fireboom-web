@@ -1,4 +1,3 @@
-import { Image } from 'antd'
 import { Resizable } from 're-resizable'
 import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'

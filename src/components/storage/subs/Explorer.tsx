@@ -17,6 +17,7 @@ import {
   message,
   Modal,
   Popconfirm,
+  Popover,
   Tooltip,
   Upload
 } from 'antd'
@@ -106,7 +107,12 @@ export default function StorageExplorer({ bucketId }: Props) {
                     <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
                   )}
                 </span>
-                <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
+                <Popover
+                  content={<div className="max-w-[50vw] overflow-clip break-all">{x.name}</div>}
+                  placement="topLeft"
+                >
+                  <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
+                </Popover>
               </>
             ),
             value: x.name,
@@ -243,9 +249,18 @@ export default function StorageExplorer({ bucketId }: Props) {
                 <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
               )}
             </span>
-            <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
-              {x.name.replace(targetOption.value, '')}
-            </span>
+            <Popover
+              content={
+                <div className="max-w-[50vw] overflow-clip break-all">
+                  {x.name.replace(targetOption.value, '')}
+                </div>
+              }
+              placement="topLeft"
+            >
+              <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
+                {x.name.replace(targetOption.value, '')}
+              </span>
+            </Popover>
           </>
         ),
         value: x.name.replace(targetOption.value, ''),
@@ -451,7 +466,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                     okText="删除"
                     cancelText="取消"
                   >
-                    <Button onClick={deleteFile} className="m-1.5">
+                    <Button className="m-1.5">
                       <span className="text-[#F21212]">删除</span>
                     </Button>
                   </Popconfirm>
