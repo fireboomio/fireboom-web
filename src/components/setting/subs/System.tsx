@@ -82,7 +82,7 @@ export default function SettingMainVersion() {
   }
 
   const editPort = (key: string, value: string) => {
-    if (value == '') return
+    if (value == '' && !['apiHost', 'oidcHost'].includes(key)) return
     void requests.post('/setting', { key: key, val: value }).then(() => {
       setRefreshFlag(!refreshFlag)
     })

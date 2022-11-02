@@ -111,7 +111,7 @@ type DependListProps = {
   // 依赖被删除回调
   onDependDelete?: (dependName: string) => void
   // 将依赖插入代码
-  onInsertDepend?: (dependName: string) => void
+  onInsertLocalDepend?: (dependName: string) => void
 }
 
 // 依赖列表
@@ -354,7 +354,7 @@ const DependList = (props: DependListProps) => {
         <div className="text-default font-500">内部依赖</div>
         {props.localDepend.map(item => (
           <div
-            onDoubleClick={() => props.onInsertDepend?.(item)}
+            onDoubleClick={() => props.onInsertLocalDepend?.(item)}
             key={item}
             className="truncate text-[#333] font-14px leading-30px cursor-pointer"
           >

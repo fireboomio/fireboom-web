@@ -401,7 +401,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             size="small"
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
-            onBlur={handlePressEnter}
+            onBlur={() => {
+              if (inputValue) {
+                handlePressEnter()
+              }
+            }}
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}

@@ -1,36 +1,29 @@
-import axios from 'axios'
-
-const CDN = 'https://api.cdnjs.com/libraries'
+const NPM_REGISTRY = 'https://registry.npmjs.org'
 
 export const getDependList = async (keys: string) => {
-  type Return = Record<'results', { name: string; latest: string }[]>
-  const data = await axios.get<any, { data: Return }>(`${CDN}?search=${keys}&limit=20`)
-  // 处理data为select的label和value格式
-  return data.data.results.map(item => ({ label: item.name, value: item.name }))
+  const endpoint = `${NPM_REGISTRY}/-/v1/search?text=${keys}`
+  const res = await fetch(endpoint)
+  const data = await res.json()
+  return data.objects.map((item: any) => {
+    return {
+      label: item.package.name,
+      value: item.package.version
+    }
+  })
 }
 
 export const getDependVersions = async (keys: string) => {
-  // const t = await axios.get(
-  //   'https://unpkg.webutils.app/search/wunder?_data=routes%2Fsearch%2F%24query'
-  // )
-  // console.log(t)
-  const data = await axios.get<any, { data: { versions: string[]; version: string } }>(
-    `${CDN}/${keys}`
-  )
-  console.log({
-    list: data.data.versions
-      .reverse()
-      .slice(0, 100)
-      .map(item => ({ label: item, value: item })),
-    latest: data.data.version
-  })
-  // 处理data为select的label和value格式
-  // 倒序且筛选前100条
+  const endpoint = `${NPM_REGISTRY}/${keys}`
+  const res = await fetch(endpoint)
+  const data = await res.json()
+
   return {
-    list: data.data.versions
-      .reverse()
-      .slice(0, 100)
-      .map(item => ({ label: item, value: item })),
-    latest: data.data.version
+    latest: data['dist-tags'].latest,
+    list: Object.keys(data.versions).map((item: any) => {
+      return {
+        label: item,
+        value: item
+      }
+    })
   }
 }
