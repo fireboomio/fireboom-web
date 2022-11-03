@@ -59,7 +59,10 @@ const Json = ({ field: { name, required, title }, disabled, initialValues }: Pro
 const Datetime = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
   const form = useFormInstance()
 
-  const handleDateChange = (dateString: string) => form.setFieldValue(name, moment(dateString))
+  const handleDateChange = (dateString: string) => {
+    if (!form) return
+    form.setFieldValue(name, moment(dateString))
+  }
   const initialValue = initialValues[name]
   const initialDatetime = initialValue ? moment(initialValue as string) : null
   return (
