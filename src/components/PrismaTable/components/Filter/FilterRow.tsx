@@ -89,15 +89,16 @@ const FilterRow = ({
 
   useEffect(() => {
     let filterValue = inputValue
-    if (!filterValue) {
-      return
-    }
+    if (!filterValue) return
+
     if (['Int', 'BigInt', 'Decimal', 'Float'].includes(fieldType)) {
       filterValue = ['in', 'notIn'].includes(operatorSelectValue)
         ? String(filterValue)
             .split(',')
             .filter(v => v)
             .map(v => Number(v))
+        : isNaN(Number(filterValue))
+        ? ''
         : Number(filterValue)
     }
     if ('String' === fieldType) {
