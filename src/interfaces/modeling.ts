@@ -2,11 +2,7 @@ import type { Block as BlockT, Enum as EnumT, Model as ModelT } from '@mrleebo/p
 import type { Schema } from '@paljs/types'
 
 // support the following 3 options for now
-export type DBSourceType =
-  | 'SQLITE'
-  // 'MONGODB' |
-  | 'PGSQL'
-  | 'MySQL'
+export type DBSourceType = 'SQLITE' | 'MONGODB' | 'PGSQL' | 'MySQL'
 
 export interface DBSourceResp {
   id: number

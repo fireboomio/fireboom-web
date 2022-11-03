@@ -151,7 +151,7 @@ export default function AuthMainRole() {
         bodyStyle={{ width: '549px', height: '480px', overflow: 'auto', margin: '10px auto' }}
         width={549}
         transitionName=""
-        visible={hooksVisible}
+        open={hooksVisible}
         onOk={() => setHooksVisible(false)}
         onCancel={() => setHooksVisible(false)}
         okText={

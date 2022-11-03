@@ -368,13 +368,17 @@ export default function DB({ content, type }: Props) {
                 <Descriptions.Item label="路径">{config.databaseUrl?.val ?? ''}</Descriptions.Item>
               ) : (
                 <>
-                  <Descriptions.Item label="连接类型">
-                    {config.appendType == '0'
-                      ? '连接URL'
-                      : config.appendType == '1'
-                      ? '连接参数'
-                      : ''}
-                  </Descriptions.Item>
+                  {dbType === 'MongoDB' ? (
+                    <></>
+                  ) : (
+                    <Descriptions.Item label="连接类型">
+                      {config.appendType == '0'
+                        ? '连接URL'
+                        : config.appendType == '1'
+                        ? '连接参数'
+                        : ''}
+                    </Descriptions.Item>
+                  )}
 
                   {config.appendType == '1' ? (
                     <>

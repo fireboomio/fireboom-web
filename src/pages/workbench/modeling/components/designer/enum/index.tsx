@@ -211,7 +211,7 @@ const EnumDesigner = ({
       ))}
       <Modal
         title="新增枚举"
-        visible={enumNameModalVisible}
+        open={enumNameModalVisible}
         onCancel={() => setEnumNameModalVisible(false)}
         destroyOnClose
         footer={

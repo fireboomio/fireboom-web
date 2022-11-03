@@ -188,8 +188,8 @@ const DynamicTable = ({
           trigger="click"
           placement="bottomRight"
           showArrow={false}
-          visible={filterVisible}
-          onVisibleChange={setFilterVisible}
+          open={filterVisible}
+          onOpenChange={setFilterVisible}
           content={
             <FilterContainer
               enums={enums}
