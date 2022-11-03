@@ -5,7 +5,6 @@ import { Select, Spin } from 'antd'
 import { debounce } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import staticDepend from '@/components/Ide/static-depend'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
 import iconCross from '../assets/cross.svg'
@@ -259,27 +258,6 @@ const DependList = (props: DependListProps) => {
       <div className="list">
         {/* 迭代depend map */}
         {[...dependList.entries()].map(([name, version], index) => {
-          const isStatic = staticDepend.includes(name)
-          if (isStatic) {
-            return (
-              <div
-                id="item"
-                className={'item flex justify-between items-center cursor-pointer'}
-                key={index}
-              >
-                <div
-                  className={`name ${
-                    showSelectVersion === index ? 'show-select-version-name' : ''
-                  } truncate`}
-                >
-                  {name}
-                </div>
-                <div className="version flex">
-                  <span id="version-flag">{version}</span>
-                </div>
-              </div>
-            )
-          }
           return (
             <div
               id="item"

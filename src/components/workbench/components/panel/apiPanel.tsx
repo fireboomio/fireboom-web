@@ -68,7 +68,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [treeData])
 
   useEffect(() => {
-    console.log('pppppp', panelOpened)
     if (!panelOpened) {
       return
     }
