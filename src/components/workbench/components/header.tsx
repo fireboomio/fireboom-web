@@ -36,7 +36,7 @@ export default function Header(props: { onToggleSider: () => void }) {
                   <a
                     className="text-[#f0f8ff]"
                     onClick={() => setOpen(false)}
-                    href="/api/v1/operateApi/postman"
+                    href="/api/v1/file/DownloadPostman"
                     download="Postman"
                   >
                     下载 POSTMAN
