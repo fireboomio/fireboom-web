@@ -146,8 +146,8 @@ export default function ModelEntityItem({ entity, onClick, onToggleDesigner }: P
         overlay={menu}
         trigger={['click']}
         placement="bottomRight"
-        visible={visible}
-        onVisibleChange={v => {
+        open={visible}
+        onOpenChange={v => {
           setVisible(v)
           leaveItem(v)
         }}

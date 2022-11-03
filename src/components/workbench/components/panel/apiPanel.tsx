@@ -68,10 +68,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [treeData])
 
   useEffect(() => {
-    console.log('pppppp', panelOpened)
-    if (!panelOpened) {
-      return
-    }
+    if (!panelOpened) return
+
     getFetcher<OperationResp[]>('/operateApi')
       // .then(x => {
       //   console.log('tree', convertToTree(x))

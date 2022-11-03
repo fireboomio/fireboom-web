@@ -50,7 +50,7 @@ const ModelFormContainer = ({
   return (
     <Modal
       width={550}
-      visible={modalVisible}
+      open={modalVisible}
       destroyOnClose
       title={{ create: '添加', update: '编辑', view: '查看' }[action]}
       onCancel={() => setModalVisible(false)}

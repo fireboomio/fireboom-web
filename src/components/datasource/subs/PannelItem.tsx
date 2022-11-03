@@ -188,7 +188,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           overlay={menu}
           trigger={['click']}
           placement="bottomRight"
-          visible={visible}
+          open={visible}
           onOpenChange={v => {
             setVisible(v)
             leaveItem(v)

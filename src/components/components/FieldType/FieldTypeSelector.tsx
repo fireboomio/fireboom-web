@@ -119,7 +119,7 @@ const FieldTypeSelector = ({
         title="新增枚举"
         closable
         destroyOnClose
-        visible={newEnumModalVisible}
+        open={newEnumModalVisible}
         onCancel={() => setNewEnumModalVisible(false)}
         footer={<></>}
       >

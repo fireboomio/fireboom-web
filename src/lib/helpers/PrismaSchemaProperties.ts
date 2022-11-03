@@ -43,7 +43,7 @@ type PrismaSchemaAttributePropertiesType = Record<
 >
 
 export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
-  PGSQL: {
+  PostgreSQL: {
     fieldType: {
       String: {
         attributes: [
@@ -226,7 +226,7 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
       attributes: [...CommonModelAttributes]
     }
   },
-  SQLITE: {
+  SQLite: {
     fieldType: {
       String: {
         attributes: [
