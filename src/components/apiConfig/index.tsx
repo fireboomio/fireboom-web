@@ -1,4 +1,4 @@
-import { Button, Form, InputNumber, message, Switch } from 'antd'
+import { Button, Checkbox, Form, InputNumber, message, Switch } from 'antd'
 import { OperationTypeNode } from 'graphql/index'
 import { useEffect, useState } from 'react'
 
@@ -16,6 +16,9 @@ interface Props {
 interface Setting {
   enable: boolean
   authenticationRequired: boolean
+  authenticationQueriesRequired: boolean
+  authenticationMutationsRequired: boolean
+  authenticationSubscriptionsRequired: boolean
   cachingEnable: boolean
   cachingMaxAge: number
   cachingStaleWhileRevalidate: number
@@ -24,29 +27,52 @@ interface Setting {
 }
 
 export default function Index(props: Props) {
-  const [setting, setSetting] = useState<Setting>()
+  const [apiSetting, setApiSetting] = useState<Setting>()
+  const [globalSetting, setGlobalSetting] = useState<Setting>()
   const [form] = Form.useForm()
   useEffect(() => {
-    if (!props.id) {
-      void requests.get<unknown, Setting>('/operateApi/setting').then(result => {
-        setSetting(result)
-      })
-    } else {
+    void requests.get<unknown, Setting>('/operateApi/setting').then(result => {
+      setGlobalSetting(result)
+    })
+    if (props.id) {
       void requests.get<unknown, Setting>(`/operateApi/setting/${props.id}`).then(result => {
-        setSetting(result)
+        setApiSetting(result)
         form.setFieldsValue(result)
       })
     }
   }, [props.id])
-  if (!setting) {
-    return null
-  }
+  useEffect(() => {
+    let setting
+    if (apiSetting?.enable) {
+      setting = apiSetting
+    } else if (globalSetting) {
+      setting = globalSetting
+      setting.authenticationRequired = !!{
+        [OperationTypeNode.QUERY]: globalSetting?.authenticationQueriesRequired,
+        [OperationTypeNode.MUTATION]: globalSetting?.authenticationMutationsRequired,
+        [OperationTypeNode.SUBSCRIPTION]: globalSetting?.authenticationSubscriptionsRequired
+      }[props.operationType || OperationTypeNode.QUERY]
+    }
+    form.setFieldsValue(setting)
+  }, [apiSetting, globalSetting])
 
-  const onChange = (_: unknown, allValues: Setting) => {
+  const onChange = (changedValues: Setting, allValues: Setting) => {
+    // 全局配置需要手动保存
     if (props.type !== 'panel') {
       return
     }
-    setSetting(allValues)
+    // 修改开关的情况下，只修改开关容纳后保存
+    if (changedValues.enable !== undefined) {
+      void requests.put<unknown, any>(`/operateApi/setting/${props.id}`, {
+        ...apiSetting,
+        enable: changedValues.enable,
+        settingType: props.id ? 1 : 2,
+        id: props.id || 0
+      })
+      setApiSetting({ ...apiSetting!, enable: changedValues.enable })
+      return
+    }
+    setApiSetting({ ...apiSetting!, ...changedValues })
     void requests.put<unknown, any>(`/operateApi/setting/${props.id}`, {
       ...allValues,
       settingType: props.id ? 1 : 2,
@@ -57,6 +83,14 @@ export default function Index(props: Props) {
     //   props.onClose?.()
     // })
   }
+
+  // let setting = globalSetting
+  // if (apiSetting?.enable) {
+  //   setting = apiSetting
+  // }
+  // if (!setting) {
+  //   return null
+  // }
 
   const onFinish = (values: Setting) => {
     void requests
@@ -71,11 +105,12 @@ export default function Index(props: Props) {
       })
   }
 
+  const disabled = !apiSetting?.enable && props.type !== 'global'
+
   return (
     <div className={styles[props.type]}>
       <Form
         form={form}
-        initialValues={setting}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         onFinish={onFinish}
@@ -84,61 +119,100 @@ export default function Index(props: Props) {
         onValuesChange={onChange}
       >
         {props.type !== 'global' ? (
-          <Form.Item label="启用独立配置">
-            <>
-              <Form.Item noStyle name="enable" valuePropName="checked">
-                <Switch checkedChildren="开启" unCheckedChildren="关闭" />
-              </Form.Item>
-              <span className={styles.tip} style={{ marginLeft: 12 }}>
-                开启后，该 API 使用独立配置
-              </span>
-            </>
-          </Form.Item>
+          <>
+            <Form.Item
+              // noStyle
+              name="enable"
+              valuePropName="checked"
+            >
+              <Checkbox>使用独立配置</Checkbox>
+            </Form.Item>
+
+            <div className={styles.splitLine} />
+          </>
         ) : null}
-        {setting.enable || props.type === 'global' ? (
+        {props.type === 'global' ? (
           <>
             <div className={styles.tip}>授权</div>
-            <Form.Item label="需要授权">
+            <Form.Item label="查询授权">
               <>
-                <Form.Item noStyle name="authenticationRequired" valuePropName="checked">
+                <Form.Item noStyle name="authenticationQueriesRequired" valuePropName="checked">
                   <Switch checkedChildren="开启" unCheckedChildren="关闭" />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  开启后，登录后才能访问
+                  查询是否需要登录
                 </span>
               </>
             </Form.Item>
-            {props.operationType === OperationTypeNode.QUERY && props.type !== 'global' ? (
+            <Form.Item label="变更授权">
               <>
-                {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-                <div className={styles.tip}>缓存</div>
-                <Form.Item label="开启缓存" name="cachingEnable" valuePropName="checked">
+                <Form.Item noStyle name="authenticationMutationsRequired" valuePropName="checked">
                   <Switch checkedChildren="开启" unCheckedChildren="关闭" />
                 </Form.Item>
-                <Form.Item label="最大时长" name="cachingMaxAge">
-                  <InputNumber addonAfter="秒" />
-                </Form.Item>
-                <Form.Item label="重新校验时长" name="cachingStaleWhileRevalidate">
-                  <InputNumber addonAfter="秒" />
-                </Form.Item>
+                <span className={styles.tip} style={{ marginLeft: 12 }}>
+                  变更是否需要登录
+                </span>
               </>
-            ) : null}
-
-            {props.operationType === OperationTypeNode.QUERY && props.type !== 'global' ? (
+            </Form.Item>
+            <Form.Item label="订阅授权">
               <>
-                {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-                <div className={styles.tip}>实时</div>
-                <Form.Item label="开启时长" name="liveQueryEnable" valuePropName="checked">
+                <Form.Item
+                  noStyle
+                  name="authenticationSubscriptionsRequired"
+                  valuePropName="checked"
+                >
                   <Switch checkedChildren="开启" unCheckedChildren="关闭" />
                 </Form.Item>
-
-                <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">
-                  <InputNumber addonAfter="秒" />
-                </Form.Item>
+                <span className={styles.tip} style={{ marginLeft: 12 }}>
+                  订阅是否需要登录
+                </span>
               </>
-            ) : null}
+            </Form.Item>
           </>
-        ) : null}
+        ) : (
+          <Form.Item label="开启授权">
+            <>
+              <Form.Item noStyle name="authenticationRequired" valuePropName="checked">
+                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              </Form.Item>
+              <span className={styles.tip} style={{ marginLeft: 12 }}>
+                是否需要登录
+              </span>
+            </>
+          </Form.Item>
+        )}
+
+        <>
+          {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
+            <>
+              {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
+              <div className={styles.tip}>缓存</div>
+              <Form.Item label="开启缓存" name="cachingEnable" valuePropName="checked">
+                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              </Form.Item>
+              <Form.Item label="最大时长" name="cachingMaxAge">
+                <InputNumber disabled={disabled} addonAfter="秒" />
+              </Form.Item>
+              <Form.Item label="重新校验时长" name="cachingStaleWhileRevalidate">
+                <InputNumber disabled={disabled} addonAfter="秒" />
+              </Form.Item>
+            </>
+          ) : null}
+
+          {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
+            <>
+              {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
+              <div className={styles.tip}>实时</div>
+              <Form.Item label="开启时长" name="liveQueryEnable" valuePropName="checked">
+                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              </Form.Item>
+
+              <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">
+                <InputNumber disabled={disabled} addonAfter="秒" />
+              </Form.Item>
+            </>
+          ) : null}
+        </>
         {props.type === 'global' ? (
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button
