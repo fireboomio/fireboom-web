@@ -153,8 +153,8 @@ export default function AuthItem({ authItem, onClickItem }: Props) {
           overlay={menu}
           trigger={['click']}
           placement="bottomRight"
-          visible={visible}
-          onVisibleChange={v => {
+          open={visible}
+          onOpenChange={v => {
             setVisible(v)
             leaveItem(v)
           }}

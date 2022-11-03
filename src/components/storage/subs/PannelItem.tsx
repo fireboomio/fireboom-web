@@ -158,8 +158,8 @@ export default function StoragePannelItem({ bucket }: Props) {
         overlay={menu}
         trigger={['click']}
         placement="bottomRight"
-        visible={visible}
-        onVisibleChange={v => {
+        open={visible}
+        onOpenChange={v => {
           setVisible(v)
           leaveItem(v)
         }}

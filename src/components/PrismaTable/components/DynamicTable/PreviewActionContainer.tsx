@@ -59,7 +59,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
       <Modal
         title="删除确认"
         closable
-        visible={deleteModalVisible}
+        open={deleteModalVisible}
         destroyOnClose
         onCancel={() => setDeleteModalVisible(false)}
         footer={

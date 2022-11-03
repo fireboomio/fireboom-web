@@ -451,7 +451,7 @@ const ModelDesigner = ({
       />
       <Modal
         title="新增实体"
-        visible={modelNameModalVisible}
+        open={modelNameModalVisible}
         onCancel={() => setModelNameModalVisible(false)}
         destroyOnClose
         footer={

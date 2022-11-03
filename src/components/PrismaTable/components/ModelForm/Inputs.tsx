@@ -176,7 +176,7 @@ const Object = ({
       <Modal
         width={1200}
         title={`关联 ${type} 表数据`}
-        visible={connectModalVisible}
+        open={connectModalVisible}
         footer={false}
         destroyOnClose
         onCancel={() => setConnectModalVisible(false)}
