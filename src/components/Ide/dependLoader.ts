@@ -11,11 +11,8 @@ export async function dependLoader(name: string, version: string, monaco: Monaco
     timeout: 60000
   })
 
-  inject(monaco, name + '.ts', result.dtsFiles[result.types])
   Object.keys(result.dtsFiles).forEach(key => {
-    // if (key !== result.types) {
     inject(monaco, name + '/' + key, result.dtsFiles[key])
-    // }
   })
   Object.keys(result.dependencies || {}).forEach(key => {
     dependLoader(key, result.dependencies[key], monaco)
