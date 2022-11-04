@@ -186,12 +186,12 @@ const APIHeader = () => {
       </div>
       <button className={styles.save} onClick={save}>
         <SaveFilled className={styles.saveIcon} />
-        储存
+        保存
       </button>
       <Switch
         className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
-        checkedChildren="开启"
-        unCheckedChildren="关闭"
+        checkedChildren="上线"
+        unCheckedChildren="下线"
         checked={apiDesc?.enable}
         onChange={toggleEnable}
       />

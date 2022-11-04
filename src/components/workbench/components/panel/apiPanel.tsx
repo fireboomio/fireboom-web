@@ -484,7 +484,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         ) : null}
       </div>
       <Modal
-        title="全局设置"
+        title="API全局设置"
         open={isModalVisible}
         onOk={() => {
           setIsModalVisible(false)
