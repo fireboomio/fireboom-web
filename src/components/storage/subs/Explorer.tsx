@@ -28,11 +28,14 @@ import type { FileT } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
+import iconCompress from './../assets/icon-compress.svg'
 import iconDoc from './../assets/icon-doc.svg'
 import iconFold from './../assets/icon-fold.svg'
+import iconOther from './../assets/icon-other.svg'
 import iconPic from './../assets/icon-pic.svg'
 import iconVideo from './../assets/icon-video.svg'
 import styles from './Explorer.module.less'
+import FileTypeMap from './fileType'
 
 interface Props {
   bucketId?: number
@@ -44,6 +47,7 @@ type Option = Partial<FileT> & {
   children?: Option[]
   loading?: boolean
   isLeaf?: boolean
+  parent?: Option | undefined
 }
 
 const { Panel } = Collapse
@@ -51,24 +55,25 @@ const { Panel } = Collapse
 function sortFile(a: FileT, b: FileT) {
   return (a.isDir ? 1 : 2) - (b.isDir ? 1 : 2)
 }
-function fileType(fileName: string): 'pic' | 'video' | 'doc' {
+
+type FileType = keyof typeof FileTypeMap
+function fileType(fileName: string): 'pic' | 'video' | 'doc' | 'compress' | 'other' {
   const fileType = fileName.split('.')?.pop()?.toLowerCase() || ''
-  if (
-    ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'ico', 'webp', 'tif', 'pcx', 'tga'].includes(
-      fileType
-    )
-  ) {
-    return 'pic'
-  } else if (['mp4', 'avi', '3gp', 'rmvb', 'wmv', 'mov', 'mkv'].includes(fileType)) {
-    return 'video'
-  } else {
-    return 'doc'
-  }
+  const keys = Object.keys(FileTypeMap) as FileType[]
+  return (
+    keys.find(key => {
+      if (FileTypeMap[key as FileType].has(fileType)) {
+        return true
+      }
+    }) ?? 'other'
+  )
 }
 const FILE_ICON = {
   pic: iconPic,
   video: iconVideo,
-  doc: iconDoc
+  doc: iconDoc,
+  compress: iconCompress,
+  other: iconOther
 }
 
 export default function StorageExplorer({ bucketId }: Props) {
@@ -80,12 +85,11 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
   const [breads, setBreads] = useImmer<Array<{ value: string; isLeaf: boolean }>>([])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
+  const [refreshChildFlag, setRefreshChildFlag] = useImmer(false)
   const containerEle = useRef<HTMLDivElement>(null)
 
   const uploadPath = useMemo(() => {
-    const rv = target?.isLeaf
-      ? target.value.split('/').slice(0, -1).join('/') ?? ''
-      : target?.value ?? ''
+    const rv = target?.isLeaf ? target.parent?.value ?? '' : target?.value ?? ''
     return rv
   }, [target])
 
@@ -128,17 +132,28 @@ export default function StorageExplorer({ bucketId }: Props) {
   useEffect(loadRoot, [bucketId])
   const firstUpdate = useRef(true)
   useEffect(() => {
+    refresh()
+  }, [refreshFlag])
+  useEffect(() => {
+    refresh(true)
+  }, [refreshChildFlag])
+
+  /*
+   * 刷新列表
+   * @param {boolean} refreshChild 是否刷新子节点，默认false时刷新当前节点所在的层级，true时刷新当前节点的子节点
+   */
+  const refresh = (refreshChild: boolean = false) => {
     if (firstUpdate.current) {
       firstUpdate.current = false
       return
     }
-    if (target) {
-      void loadData([{ ...target }])
+    const refreshTarget = refreshChild ? target : target?.parent
+    if (refreshTarget) {
+      void loadData([{ ...refreshTarget }], target)
     } else {
       void loadRoot()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
+  }
 
   const changeSerachState = () => {
     setIsSerach(!isSerach)
@@ -214,15 +229,44 @@ export default function StorageExplorer({ bucketId }: Props) {
     }
   }
 
-  const loadData = async (selectedOptions: Option[]) => {
+  /**
+   * 根据path匹配options中的节点
+   * @param {string} path
+   * @param {Option[]} options
+   */
+  // const matchOption = (path: string, options: Option[]) => {
+  //   const pathArr = path.split('/')
+  //   const targetOption = options.find(x => x.value === pathArr[0])
+  //   if (pathArr.length === 1) {
+  //     return targetOption
+  //   }
+  //   if (targetOption?.children) {
+  //     return matchOption(pathArr.slice(1).join('/'), targetOption.children)
+  //   }
+  //   return undefined
+  // }
+  /**
+   * 根据path匹配options中的节点并刷新
+   */
+  const loadMenu = async (path: string) => {}
+
+  const onLoadData = async (selectedOptions: Option[]) => {
+    const path = selectedOptions[selectedOptions.length - 1].name ?? ''
+    await loadMenu(path)
+  }
+
+  const loadData = async (selectedOptions: Option[], target?: Option) => {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
-    setTarget({ ...targetOption })
+    if (target) {
+      setTarget({ ...target })
+    } else {
+      setTarget({ ...targetOption })
+    }
     let path = targetOption.name ?? ''
-
     if (targetOption.isLeaf) {
       if (path.includes('/')) {
-        path = path.replace(/\/[^/]+$/, '')
+        path = path.replace(/\/[^/]+$/, '/')
       } else {
         path = ''
       }
@@ -240,6 +284,7 @@ export default function StorageExplorer({ bucketId }: Props) {
       .sort(sortFile)
       .filter(x => x.name !== targetOption.name)
       .map(x => ({
+        parent: targetOption,
         label: (
           <>
             <span>
@@ -287,7 +332,10 @@ export default function StorageExplorer({ bucketId }: Props) {
   const deleteFile = () => {
     void requests
       .post('/s3Upload/remove', { bucketID: bucketId, fileName: target?.name })
-      .then(() => void message.success('删除成功'))
+      .then(() => {
+        void message.success('删除成功')
+        setRefreshFlag(!refreshFlag)
+      })
   }
 
   const inputValue = useRef<string>()
@@ -327,7 +375,14 @@ export default function StorageExplorer({ bucketId }: Props) {
     } else if (type === 'video') {
       return <video controls width={200} height={200} src={target?.url ?? ''} />
     } else {
-      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+      return (
+        <img
+          src={FILE_ICON[fileType(target?.value as string)]}
+          width={200}
+          height={200}
+          alt={target?.value}
+        />
+      )
     }
   }
 
@@ -385,7 +440,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             showUploadList={false}
             onChange={info => {
               if (info.file.status === 'success' || info.file.status === 'done') {
-                setRefreshFlag(!refreshFlag)
+                setRefreshChildFlag(!refreshChildFlag)
               }
             }}
           >

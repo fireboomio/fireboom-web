@@ -180,7 +180,6 @@ const IdeContainer: FC<Props> = props => {
   }, [editor, monaco, hookInfo?.depend])
 
   const handleEditorBeforeMount: BeforeMount = monaco => {
-    dependLoader('axios', '1.1.3', monaco)
     void getTypes<Record<string, string>>().then(res => {
       // 循环types
       const localLibList = Object.keys(res).map(key => {

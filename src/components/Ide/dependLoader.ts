@@ -17,7 +17,7 @@ export async function dependLoader(name: string, version: string, monaco: Monaco
     inject(monaco, name + '/' + key, result.dtsFiles[key])
     // }
   })
-  Object.keys(result.dependencies).forEach(key => {
+  Object.keys(result.dependencies || {}).forEach(key => {
     dependLoader(key, result.dependencies[key], monaco)
   })
 }
