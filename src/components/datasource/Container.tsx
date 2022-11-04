@@ -137,12 +137,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
             ) : (
               <></>
             )}
-            <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
-              测试
-            </Button>
-            <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
-              编辑
-            </Button>
+            {content.sourceType !== 4 ? (
+              <>
+                <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
+                  测试
+                </Button>
+                <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
+                  编辑
+                </Button>
+              </>
+            ) : (
+              <></>
+            )}
           </>
         ) : null}
       </div>
