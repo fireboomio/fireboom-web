@@ -14,7 +14,8 @@ import {
   Space,
   Switch,
   Tabs,
-  Tag
+  Tag,
+  Upload
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useContext, useEffect } from 'react'
@@ -260,6 +261,16 @@ export default function Rest({ content, type }: Props) {
           setUploadPath={setUploadPath}
           setVisible={setVisible}
           upType={1}
+          beforeUpload={file => {
+            const isAllowed =
+              file.name.endsWith('.json') ||
+              file.name.endsWith('.yaml') ||
+              file.name.endsWith('.yml')
+            if (!isAllowed) {
+              message.error('只允许上传 json 或 yaml 格式文件')
+            }
+            return isAllowed || Upload.LIST_IGNORE
+          }}
         />
       </Modal>
 
