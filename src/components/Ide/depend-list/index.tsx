@@ -275,6 +275,7 @@ const DependList = (props: DependListProps) => {
               <div className="version flex">
                 {showSelectVersion === -1 && (
                   <span
+                    style={{ whiteSpace: 'nowrap' }}
                     id="version-flag"
                     onClick={() => {
                       void getVersions(name, index)

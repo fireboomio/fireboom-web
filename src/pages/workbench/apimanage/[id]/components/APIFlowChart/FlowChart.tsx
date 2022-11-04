@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
+import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -391,6 +392,9 @@ Graph.registerNode('directive', {
 const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hook, setHook] = useState<{ name: string; path: string } | null>()
+  const { apiDesc } = useAPIManager(state => ({
+    apiDesc: state.apiDesc
+  }))
 
   const { id } = useParams()
   // 监听路由变化，当路由变化时自动关闭钩子编辑器
@@ -1037,7 +1041,15 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
   return (
     <>
       <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
-      {hook ? <EditPanel hook={hook} onClose={() => setHook(null)} /> : ''}
+      {hook ? (
+        <EditPanel
+          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
+          hook={hook}
+          onClose={() => setHook(null)}
+        />
+      ) : (
+        ''
+      )}
     </>
   )
 }

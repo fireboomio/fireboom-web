@@ -402,6 +402,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             onBlur={() => {
               if (inputValue) {
                 handlePressEnter()
+              } else {
+                setCurrEditingKey(null)
+                setRefreshFlag(!refreshFlag)
               }
             }}
             onChange={handleInputChange}

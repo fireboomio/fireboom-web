@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
+import getDefaultCode from '@/components/Ide/getDefaultCode'
+import RcTab from '@/components/rc-tab'
 import type { HookName, HookResp } from '@/interfaces/auth'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -37,8 +39,13 @@ export default function AuthRole() {
   const [roleFlag, setRoleFlag] = useState<boolean>()
   const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
   const [hooks, setHooks] = useImmer<HookResp[]>([])
-  const [tabs, setTabs] = useState<TabT[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
+  const [defaultCode, setDefaultCode] = useState<string>('')
+
+  const tabs = [
+    { key: 'postAuthentication', title: 'postAuthentication' },
+    { key: 'mutatingPostAuthentication', title: 'mutatingPostAuthentication' }
+  ]
 
   // 角色管理的相关函数
   // const getData = useCallback(async () => {
@@ -106,18 +113,13 @@ export default function AuthRole() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshFlag])
 
-  useEffect(() => {
-    void requests
-      .get<unknown, HookResp[]>('/auth/hooks')
-      .then(res => {
-        setHooks(res)
-        return res
-      })
-      .then(res => setTabs(res.map(x => ({ key: x.hookName, title: x.hookName }))))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
+  useEffect(() => {
+    setDefaultCode('')
+    getDefaultCode(activeKey).then(res => {
+      setDefaultCode(res)
+    })
+  }, [activeKey])
 
   const save = () => {
     void requests.post('/auth/hooks', {
@@ -248,11 +250,13 @@ export default function AuthRole() {
         <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
+            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
             <IdeContainer
               key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}
               defaultLanguage="typescript"
               onChange={console.log}
+              defaultCode={defaultCode}
             />
           </div>
         </TabPane>
