@@ -85,6 +85,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
         })
     } else if (content.sourceType === 2) {
       console.log(content)
+
       window.open(`/#/workbench/rapi-test?url=${content.config.baseURL}`, '_blank')
     } else if (content.sourceType === 3) {
       window.open(content.config.url, '_blank')
@@ -139,9 +140,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
-                <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
-                  测试
-                </Button>
+                {content.sourceType === 2 ? (
+                  <a href={`/api/v1/file/downloadFile?type=1&fileName=${content.config.filePath}`}>
+                    <Button className={'btn-test ml-4 mr-4'}>测试</Button>
+                  </a>
+                ) : (
+                  <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
+                    测试
+                  </Button>
+                )}
                 <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
                   编辑
                 </Button>
