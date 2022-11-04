@@ -168,7 +168,7 @@ export default function DB({ content, type }: Props) {
         rules={[
           { required: true, message: '数据库名不能为空' },
           {
-            pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+            pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_-]*$', 'g'),
             message: '以字母或下划线开头，只能由数字、字母、下划线组成'
           }
         ]}
