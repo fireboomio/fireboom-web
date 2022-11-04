@@ -85,6 +85,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
         })
     } else if (content.sourceType === 2) {
       console.log(content)
+
       window.open(`/#/workbench/rapi-test?url=${content.config.baseURL}`, '_blank')
     } else if (content.sourceType === 3) {
       window.open(content.config.url, '_blank')
