@@ -202,6 +202,7 @@ const DependList = (props: DependListProps) => {
       setVersionLoading(index)
     }
     const { list: versions, latest } = await getDependVersions(dependName)
+    versions.reverse()
     setVersionList(prev => ({ ...prev, [dependName]: versions }))
     _setShowSelectVersion(index)
     setVersionLoading(-1)
@@ -288,6 +289,14 @@ const DependList = (props: DependListProps) => {
                   {versionLoading === index && <LoadingOutlined color="#ADADAD;" />}
                   {versionLoading !== index && showSelectVersion === index && (
                     <Select
+                      popupClassName="version-select"
+                      virtual={false}
+                      open
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      optionFilterProp="children"
+                      showSearch
                       labelInValue
                       size="small"
                       options={versionList[name]}

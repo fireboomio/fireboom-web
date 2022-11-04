@@ -133,7 +133,7 @@ export default function Index(props: Props) {
         ) : null}
         {props.type === 'global' ? (
           <>
-            <div className={styles.tip}>授权</div>
+            <div className={styles.tip}>授权配置</div>
             <Form.Item label="查询授权">
               <>
                 <Form.Item noStyle name="authenticationQueriesRequired" valuePropName="checked">
@@ -186,9 +186,17 @@ export default function Index(props: Props) {
           {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
             <>
               {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-              <div className={styles.tip}>缓存</div>
-              <Form.Item label="开启缓存" name="cachingEnable" valuePropName="checked">
-                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              <div className={styles.tip}>缓存配置</div>
+
+              <Form.Item label="查询缓存">
+                <>
+                  <Form.Item noStyle name="cachingEnable" valuePropName="checked">
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                  </Form.Item>
+                  <span className={styles.tip} style={{ marginLeft: 12 }}>
+                    对查询进行缓存
+                  </span>
+                </>
               </Form.Item>
               <Form.Item label="最大时长" name="cachingMaxAge">
                 <InputNumber disabled={disabled} addonAfter="秒" />
@@ -202,9 +210,17 @@ export default function Index(props: Props) {
           {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
             <>
               {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-              <div className={styles.tip}>实时</div>
-              <Form.Item label="开启时长" name="liveQueryEnable" valuePropName="checked">
-                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              <div className={styles.tip}>实时配置</div>
+
+              <Form.Item label="实时查询">
+                <>
+                  <Form.Item noStyle name="liveQueryEnable" valuePropName="checked">
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                  </Form.Item>
+                  <span className={styles.tip} style={{ marginLeft: 12 }}>
+                    服务端实时查询
+                  </span>
+                </>
               </Form.Item>
 
               <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">

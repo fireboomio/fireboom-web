@@ -1,8 +1,9 @@
 import { CloudDownloadOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { message, Popover } from 'antd'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import HeaderCompile from '../assets/header-compile.png'
@@ -13,13 +14,17 @@ import styles from './header.module.less'
 export default function Header(props: { onToggleSider: () => void }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { isFullscreen } = useContext(WorkbenchContext)
 
   const [open, setOpen] = useState(false)
 
   return (
     <>
       <div className={styles.header}>
-        <div className={styles.dashboardIcon} onClick={() => props.onToggleSider()} />
+        <div
+          className={!isFullscreen ? styles.dashboardIcon : styles.dashboardIcon2}
+          onClick={() => props.onToggleSider()}
+        />
         <div className={styles.logo} onClick={() => navigate('/workbench')} />
         <div className={styles.splitLine} />
         <div className={styles.title}>后台管理系统</div>
@@ -74,7 +79,7 @@ export default function Header(props: { onToggleSider: () => void }) {
             <div
               className={styles.headBtn}
               onClick={() =>
-                void requests.get('/wdg/reStart').then(() => void message.success('正在重启!'))
+                void requests.get('/wdg/reStart').then(() => void message.success('正在编译...'))
               }
             >
               <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />

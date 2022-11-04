@@ -22,9 +22,9 @@
 }
 
 .ide-container-depend-list :global {
-  min-width: 24%;
+  width: 24%;
   @media (max-width: 1980px) {
-    min-width: 34%;
+    width: 24%;
   }
   background: #f9f9f9;
   .title-top {
@@ -94,6 +94,24 @@
   }
 }
 
-.ide-depend-list-select :global {
+.ide-depend-list-select {
   position: fixed !important;
+}
+body :global {
+  #version-select {
+    .ant-select-selector {
+      min-width: 88px;
+    }
+  }
+  .version-select {
+    width: fit-content !important;
+    & > div,
+    .ant-select-item,
+    .rc-virtual-list,
+    .rc-virtual-list-holder,
+    .rc-virtual-list-holder > div,
+    .rc-virtual-list-holder-inner {
+      width: fit-content;
+    }
+  }
 }
