@@ -2,6 +2,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import type { UploadProps } from 'antd'
 import { Image, Input, message, Popconfirm, Table, Upload } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
+import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
@@ -18,13 +19,23 @@ interface TableType {
 }
 
 interface Props {
+  beforeUpload?: (
+    file: RcFile,
+    FileList: RcFile[]
+  ) => void | boolean | string | Blob | File | Promise<void | boolean | string | Blob | File>
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
   basePath: string
   upType: number
 }
 
-export default function FileList({ setUploadPath, setVisible, basePath, upType }: Props) {
+export default function FileList({
+  beforeUpload,
+  setUploadPath,
+  setVisible,
+  basePath,
+  upType
+}: Props) {
   const [data, setData] = useState<TableType[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
   const [keyword, setKeyword] = useState('')
@@ -32,9 +43,9 @@ export default function FileList({ setUploadPath, setVisible, basePath, upType }
   const upProps: UploadProps = {
     name: 'file',
     action: '/api/v1/file/uploadFile',
-    // fileList: [],
     data: { type: upType },
     showUploadList: false,
+    beforeUpload: beforeUpload,
     onChange(info) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList)
