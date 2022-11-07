@@ -1,8 +1,9 @@
-import { Checkbox, Input, InputNumber } from 'antd'
+import { Checkbox, DatePicker, Input, InputNumber } from 'antd'
+import moment from 'moment'
 
 import type { ParameterT } from '@/interfaces/apimanage'
 
-export type InputValueType = string | number | boolean | object
+export type InputValueType = string | number | boolean | object | undefined
 
 interface ArgumentInputProps {
   argument: ParameterT
@@ -35,6 +36,16 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
           checked={value as boolean}
           onChange={e => {
             onChange?.(e.target.checked)
+          }}
+        />
+      )
+    case 'DateTime':
+      return (
+        <DatePicker
+          className="text-xs w-full"
+          value={value ? moment(value as string) : null}
+          onChange={e => {
+            onChange?.(e?.toISOString())
           }}
         />
       )

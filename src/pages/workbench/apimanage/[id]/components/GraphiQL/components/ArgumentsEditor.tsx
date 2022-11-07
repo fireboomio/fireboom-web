@@ -1,7 +1,7 @@
 import { useEditorContext } from '@graphiql/react'
 import { message, Tooltip } from 'antd'
 import type { VariableDefinitionNode } from 'graphql'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useDebounceEffect } from '@/hooks/debounce'
 import { parseParameters } from '@/lib/gql-parser'
@@ -10,6 +10,15 @@ import { CircleCloseOutlined } from '../../icons'
 import requiredIcon from '../assets/required.svg'
 import type { InputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'
+
+const NOT_EDITABLE_DIRECTIVES = [
+  'fromClaim',
+  'injectGeneratedUUID',
+  'injectGeneratedUUID',
+  'injectCurrentDatetime',
+  'injectEnvironmentVariable',
+  'internal'
+]
 
 interface ArgumentsEditorProps {
   apiID: string
@@ -66,7 +75,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             message.error(`字段 ${item.name} 的参数未提供`)
             throw new Error(`字段 ${item.name} 的参数未提供`)
           }
-          if (!['Int', 'String', 'Boolean'].includes(item.type)) {
+          if (!['Int', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
             try {
               val = JSON.parse(val as string)
             } catch (error) {
@@ -166,11 +175,13 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                 })}
               </td>
               <td>
-                <ArgumentInput
-                  argument={arg}
-                  value={values[arg.name]}
-                  onChange={v => updateValue(v, arg.name)}
-                />
+                {!arg.directives?.find(dir => NOT_EDITABLE_DIRECTIVES.includes(dir.name)) && (
+                  <ArgumentInput
+                    argument={arg}
+                    value={values[arg.name]}
+                    onChange={v => updateValue(v, arg.name)}
+                  />
+                )}
               </td>
             </tr>
           ))}
