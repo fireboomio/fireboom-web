@@ -1038,12 +1038,14 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     }
   }, [directiveState, hookState, globalHookState])
 
+  console.log(`=====`, hookState)
   return (
     <>
       <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
       {hook ? (
         <EditPanel
           apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
+          hasParams={!!(apiDesc?.content ?? '').match(/\(\$\w+/)}
           hook={hook}
           onClose={() => setHook(null)}
         />

@@ -61,7 +61,7 @@ const Modeling = () => {
         <title>FireBoom - 数据建模</title>
       </Helmet>
 
-      <Row className="h-screen">
+      <Row className="h-full">
         {/* <Col span={5} className={styles['col-left']}>
             <ModelPannel
               setShowType={setShowType}
@@ -74,7 +74,7 @@ const Modeling = () => {
               onToggleDesigner={handleToggleDesigner}
             />
           </Col> */}
-        <Col span={24}>
+        <Col span={24} className="h-full">
           {showType === 'preview' && <PreviewContainer />}
           {showType === 'editModel' && (
             <DesignerContainer

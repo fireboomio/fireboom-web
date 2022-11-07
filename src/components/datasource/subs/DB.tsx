@@ -72,7 +72,7 @@ export default function DB({ content, type }: Props) {
     switch (value) {
       case '0':
         setIsValue(true)
-        setRulesObj({ pattern: /^\w{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        setRulesObj({ pattern: /^.{1,128}$/g, message: '请输入长度不大于128的非空值' })
         form.setFieldValue(['databaseUrl', 'val'], '')
         return
       case '1':

@@ -11,16 +11,24 @@ import styles from './editPanel.module.less'
 interface Props {
   onClose: () => void
   apiName: string
+  hasParams?: boolean
   hook: { name: string; path: string }
 }
-export default function EditPanel({ onClose, hook, apiName }: Props) {
+export default function EditPanel({ onClose, hook, apiName, hasParams = false }: Props) {
   const apiContainerRef = useRef<HTMLDivElement>(document.querySelector('#api-editor-container'))
   const { refreshAPI } = useAPIManager()
   const [defaultCode, setDefaultCode] = useState<string>()
   useEffect(() => {
-    getDefaultCode(hook.name).then(res => {
-      setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
-    })
+    if (hook.path.startsWith('global/')) {
+      getDefaultCode(`global.${hook.name}`).then(res => {
+        setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
+      })
+    } else {
+      const tmplPath = `hook.${hasParams ? 'WithInput' : 'WithoutInput'}.${hook.name}`
+      getDefaultCode(tmplPath).then(res => {
+        setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
+      })
+    }
   }, [hook.name])
   return apiContainerRef.current ? (
     <Drawer
@@ -43,7 +51,7 @@ export default function EditPanel({ onClose, hook, apiName }: Props) {
       }
     >
       <IdeContainer
-        onChange={refreshAPI}
+        onChangeEnable={refreshAPI}
         hookPath={hook.path}
         defaultCode={defaultCode}
         defaultLanguage="typescript"

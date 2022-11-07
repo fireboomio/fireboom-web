@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Descriptions, Divider, Form, Input, Modal, Popconfirm, Table } from 'antd'
+import { Descriptions, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
@@ -274,7 +274,7 @@ export default function SettingMainEnvironmentVariable() {
               name="devEnv"
               rules={[
                 { required: true, message: '开发环境不能为空' },
-                { pattern: /^[/\w]{1,256}$/g, message: '请输入长度不大于256的非空值' }
+                { pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
               ]}
             >
               <Input />
@@ -284,7 +284,7 @@ export default function SettingMainEnvironmentVariable() {
               name="proEnv"
               rules={[
                 { required: true, message: '生产环境不能为空' },
-                { pattern: /^[/\w]{1,256}$/g, message: '请输入长度不大于256的非空值' }
+                { pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
               ]}
             >
               <Input />

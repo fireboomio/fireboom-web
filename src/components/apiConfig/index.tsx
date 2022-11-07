@@ -1,7 +1,8 @@
 import { Button, Checkbox, Form, InputNumber, message, Switch } from 'antd'
 import { OperationTypeNode } from 'graphql/index'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import styles from './index.module.less'
@@ -27,6 +28,7 @@ interface Setting {
 }
 
 export default function Index(props: Props) {
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   const [apiSetting, setApiSetting] = useState<Setting>()
   const [globalSetting, setGlobalSetting] = useState<Setting>()
   const [form] = Form.useForm()
@@ -70,14 +72,25 @@ export default function Index(props: Props) {
         id: props.id || 0
       })
       setApiSetting({ ...apiSetting!, enable: changedValues.enable })
+
+      // 刷新API菜单
+      onRefreshMenu('api')
       return
     }
     setApiSetting({ ...apiSetting!, ...changedValues })
-    void requests.put<unknown, any>(`/operateApi/setting/${props.id}`, {
-      ...allValues,
-      settingType: props.id ? 1 : 2,
-      id: props.id || 0
-    })
+    void requests
+      .put<unknown, any>(`/operateApi/setting/${props.id}`, {
+        ...allValues,
+        settingType: props.id ? 1 : 2,
+        id: props.id || 0
+      })
+      .then(() => {
+        // 如果修改的是实时查询，则需要刷新api面板=
+        if (changedValues.liveQueryEnable !== undefined) {
+          onRefreshMenu('api')
+        }
+      })
+
     // .then(() => {
     //   message.success('保存成功')
     //   props.onClose?.()
@@ -166,6 +179,7 @@ export default function Index(props: Props) {
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
                   订阅是否需要登录
                 </span>
+                onch
               </>
             </Form.Item>
           </>
