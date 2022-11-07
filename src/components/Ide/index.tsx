@@ -93,6 +93,7 @@ interface Props {
   defaultInput?: string
   defaultLanguage?: string
   onChange?: (value?: string) => void
+  onChangeEnable?: (value?: string) => void
 }
 
 /**
@@ -128,19 +129,34 @@ const IdeContainer: FC<Props> = props => {
   const [localDepend, setLocalDepend] = useState<string[]>([])
 
   // 获取hook信息
+  const lastHookPath = useRef<string>()
+  const currentDefault = useRef<string>()
   useEffect(() => {
-    void getHook<HookInfo>(props.hookPath).then(data => {
-      // 更新payload
-      setPayload({
-        type: 'passive',
-        status: AutoSaveStatus.LOADED
+    if (props.hookPath !== lastHookPath.current) {
+      console.log('======aaa', props.hookPath, props.defaultCode)
+      currentDefault.current = props.defaultCode
+      lastHookPath.current = props.hookPath
+      void getHook<HookInfo>(props.hookPath).then(data => {
+        // 更新payload
+        setPayload({
+          type: 'passive',
+          status: AutoSaveStatus.LOADED
+        })
+        // 如果data中的script为空, 就用defaultCode
+        if (data.script === '' || data.script === null) {
+          data.script = currentDefault.current || ''
+        }
+        setHookInfo(data)
       })
-      // 如果data中的script为空, 就用defaultCode
-      if (data.script === '' || data.script === null) {
-        data.script = props.defaultCode || ''
+    } else {
+      currentDefault.current = props.defaultCode
+      if (hookInfo?.script === '' || hookInfo?.script === null) {
+        setHookInfo({
+          ...hookInfo,
+          script: currentDefault.current || ''
+        })
       }
-      setHookInfo(data)
-    })
+    }
   }, [props.defaultCode, props.hookPath])
 
   useEffect(() => {
@@ -185,7 +201,11 @@ const IdeContainer: FC<Props> = props => {
       const localLibList = Object.keys(res).map(key => {
         const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // if (!monaco.languages.typescript.typescriptDefaults.getExtraLibs()[libUri]) {
         monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
+        // } else {
+        //   monaco.languages.typescript.typescriptDefaults.set
+        // }
         try {
           const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
           if (currentModel) {
@@ -357,7 +377,7 @@ const IdeContainer: FC<Props> = props => {
             },
             onToggleHook: async value => {
               hookInfo && setHookInfo({ ...hookInfo, switch: value })
-              props.onChange?.()
+              props.onChangeEnable?.()
               await updateHookSwitch(props.hookPath, value)
             },
             onFullScreen: () => {

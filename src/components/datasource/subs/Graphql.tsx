@@ -141,7 +141,7 @@ export default function Graphql({ content, type }: Props) {
     switch (value) {
       case '0':
         setIsValue(true)
-        setRulesObj({ pattern: /^[/\w]{1,128}$/g, message: '请输入长度不大于128的非空值' })
+        setRulesObj({ pattern: /^.{1,2000}$/g, message: '请输入长度不大于2000的非空值' })
         return
       case '1':
         setIsValue(false)
@@ -582,8 +582,8 @@ export default function Graphql({ content, type }: Props) {
                               form.getFieldValue(['headers', field.name, 'kind']) === '0'
                                 ? [
                                     {
-                                      pattern: /^[/\w]{1,128}$/g,
-                                      message: '请输入长度不大于128的非空值'
+                                      pattern: /^.{1,2000}$/g,
+                                      message: '请输入长度不大于2000的非空值'
                                     }
                                   ]
                                 : []

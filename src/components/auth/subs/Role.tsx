@@ -40,7 +40,8 @@ export default function AuthRole() {
   const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
   const [hooks, setHooks] = useImmer<HookResp[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const [defaultCode, setDefaultCode] = useState<string>('')
+  // const [defaultCode, setDefaultCode] = useState<string>('')
+  const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
 
   const tabs = [
     { key: 'postAuthentication', title: 'postAuthentication' },
@@ -115,9 +116,8 @@ export default function AuthRole() {
 
   const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
   useEffect(() => {
-    setDefaultCode('')
-    getDefaultCode(activeKey).then(res => {
-      setDefaultCode(res)
+    getDefaultCode(`auth.${activeKey}`).then(res => {
+      setDefaultCodeMap({ ...defaultCodeMap, [activeKey]: res })
     })
   }, [activeKey])
 
@@ -256,7 +256,7 @@ export default function AuthRole() {
               hookPath={hookPath[activeKey]}
               defaultLanguage="typescript"
               onChange={console.log}
-              defaultCode={defaultCode}
+              defaultCode={defaultCodeMap[activeKey]}
             />
           </div>
         </TabPane>

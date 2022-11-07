@@ -1,10 +1,13 @@
 import { AppleOutlined } from '@ant-design/icons'
-import { Empty, message } from 'antd'
+import { Button, Empty, message, Radio } from 'antd'
+import { useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
+import type { DMFResp } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import requests from '@/lib/fetchers'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
@@ -12,6 +15,7 @@ import useDBSource from '@/lib/hooks/useDBSource'
 import useEntities from '@/lib/hooks/useEntities'
 import useLocalStorage from '@/lib/hooks/useLocalStorage'
 
+import ModelEditor from './editor'
 import EnumDesigner from './enum'
 import ModelDesigner from './model'
 
@@ -34,6 +38,9 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
 
+  const [mode, setMode] = useState<'editor' | 'designer'>('designer')
+  // 编辑器当前内容
+  const [editorContent, setEditorContent] = useState<string>()
   const [isEditing, setIsEditing] = useImmer(editType === 'add')
 
   const [newEnums, setNewEnums] = useImmer<Enum[]>([])
@@ -105,9 +112,23 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     return <Empty className="pt-20" description="无可用实体！" />
   }
 
+  function onSave() {
+    if (editorContent !== undefined) {
+      console.log('触发保存', editorContent)
+      if (type === 'model' && mode === 'editor') {
+        void requests
+          .post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, { schema: editorContent })
+          .then(x => {})
+      }
+    }
+  }
+
   return (
-    <div className="p-6">
-      <div className="flex justify-start items-center mb-6">
+    <div className="h-full flex flex-col">
+      <div
+        className="flex justify-start items-center h-10 bg-white pl-7 pr-4"
+        style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
+      >
         <span className="flex-grow text-lg font-medium">
           {editType === 'edit' ? '编辑' : '新增'}
           {isEditing && '(未保存)'}
@@ -115,20 +136,41 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         <AppleOutlined className="text-base mr-3" />
         <AppleOutlined className="text-base mr-3" />
         <AppleOutlined className="text-base" />
+        <Button>重置</Button>
+        <Button onClick={onSave}>保存</Button>
+        <Radio.Group
+          value={mode}
+          onChange={e => {
+            setEditorContent(undefined)
+            setMode(e.target.value)
+          }}
+        >
+          <Radio.Button value="designer">普通</Radio.Button>
+          <Radio.Button value="editor">编辑器</Radio.Button>
+        </Radio.Group>
       </div>
 
-      {type === 'model' && (
-        <ModelDesigner
-          updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
-          setIsEditing={editType === 'edit' ? setIsEditing : undefined}
-          isEditing={isEditing}
-          model={editType === 'edit' ? (currentEntity as Model) : (newEntity as Model)}
-          resetNewEnums={() => setNewEnums([])}
-          saveModel={handleSaveModel}
-          addNewEnum={handleAddNewEnum}
-          newEnums={newEnums}
-        />
-      )}
+      {type === 'model' &&
+        (mode === 'designer' ? (
+          <ModelDesigner
+            updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
+            setIsEditing={editType === 'edit' ? setIsEditing : undefined}
+            isEditing={isEditing}
+            model={editType === 'edit' ? (currentEntity as Model) : (newEntity as Model)}
+            resetNewEnums={() => setNewEnums([])}
+            saveModel={handleSaveModel}
+            addNewEnum={handleAddNewEnum}
+            newEnums={newEnums}
+          />
+        ) : (
+          <div style={{ flex: '1 1 0' }}>
+            <ModelEditor
+              dbId={dbSourceId}
+              current={currentEntity.name}
+              onChange={setEditorContent}
+            />
+          </div>
+        ))}
 
       {type === 'enum' && (
         <EnumDesigner

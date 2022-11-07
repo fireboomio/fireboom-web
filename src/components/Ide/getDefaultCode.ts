@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { get } from 'lodash'
 
 const hookTemplate: Record<string, string> = {
   // 全局hook
@@ -16,14 +17,21 @@ const hookTemplate: Record<string, string> = {
   postResolve: '/assets/hooks/postResolve.ts',
   preResolve: '/assets/hooks/preResolve.ts'
 }
+let hookPromise: Promise<any>
+
 export default async function getDefaultCode(name: string, hookName = ''): Promise<string> {
-  return await axios
-    .get<unknown, { data: string }>(hookTemplate[name], { responseType: 'text' })
-    .then(res => {
-      return res.data
-    })
-    .catch(err => {
-      console.log('err', err)
-      return ''
-    })
+  if (!hookPromise) {
+    hookPromise = axios
+      .get('/assets/hooks/hookTmpl.json')
+      .then(res => {
+        return res.data
+      })
+      .catch(err => {
+        console.log('err', err)
+        return ''
+      })
+  }
+  const data = await hookPromise
+  console.log(data, 'data')
+  return get(data, name, '')
 }

@@ -174,7 +174,7 @@ export default function Rest({ content, type }: Props) {
       case '0':
         setIsValue(true)
         setRulesObj({
-          pattern: /^[/\w]{1,128}$/g,
+          pattern: /^.{1,128}$/g,
           message: '请输入长度不大于128的非空值'
         })
         return
@@ -238,7 +238,7 @@ export default function Rest({ content, type }: Props) {
     if (key === '1') {
       setIsValue(true)
       setRulesObj({
-        pattern: /^[/\w]{1,128}$/g,
+        pattern: /^.{1,128}$/g,
         message: '请输入长度不大于128的非空值'
       })
     }
@@ -639,7 +639,7 @@ export default function Rest({ content, type }: Props) {
                                     form.getFieldValue(['headers', field.name, 'kind']) === '0'
                                       ? [
                                           {
-                                            pattern: /^[/\w]{1,128}$/g,
+                                            pattern: /^.{1,128}$/g,
                                             message: '请输入长度不大于128的非空值'
                                           }
                                         ]
