@@ -142,6 +142,7 @@ const IdeContainer: FC<Props> = props => {
           type: 'passive',
           status: AutoSaveStatus.LOADED
         })
+
         // 如果data中的script为空, 就用defaultCode
         if (data.script === '' || data.script === null) {
           data.script = currentDefault.current || ''
