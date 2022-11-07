@@ -9,7 +9,7 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
@@ -23,6 +23,7 @@ import InternalPopup from './InternalPopup'
 import RBACPopup from './RBACPopup'
 
 const GraphiQLToolbar = () => {
+  const [argOpen, setArgOpen] = useState(false)
   const { query, schemaAST, setQuery } = useAPIManager(state => ({
     query: state.query,
     schemaAST: state.schemaAST,
@@ -169,6 +170,7 @@ const GraphiQLToolbar = () => {
               // @ts-ignore
               varDef.directives!.push(val)
               setQuery(printSchemaAST(schemaAST!))
+              setArgOpen(false)
             }
           }
         } else {
@@ -250,6 +252,10 @@ const GraphiQLToolbar = () => {
     workbenchCtx.setFullscreen(!workbenchCtx.isFullscreen)
   }
 
+  const onArgOpenChange = (e: boolean) => {
+    setArgOpen(e)
+  }
+
   const selectedRole = useMemo(() => {
     if (schemaAST?.definitions?.[0].kind === Kind.OPERATION_DEFINITION) {
       const { directives = [] } = schemaAST.definitions[0]
@@ -291,7 +297,12 @@ const GraphiQLToolbar = () => {
         <button className="graphiql-toolbar-btn">@内部</button>
       </Dropdown>
       <div className="graphiql-toolbar-divider" />
-      <Dropdown overlay={<ArgumentDirectivePopup onInject={injectArgument} />} trigger={['click']}>
+      <Dropdown
+        open={argOpen}
+        onOpenChange={onArgOpenChange}
+        overlay={<ArgumentDirectivePopup onInject={injectArgument} />}
+        trigger={['click']}
+      >
         <button className="graphiql-toolbar-btn">入参指令</button>
       </Dropdown>
       <button className="graphiql-toolbar-btn" onClick={injectTransform}>
