@@ -47,7 +47,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           onChangeSource(v)
         }}
         optionLabelProp="label"
-        value={id === 0 ? undefined : id}
+        value={id === 0 ? sourceOptions.map(x => ({ label: x.name, value: x.id })).at(0) : id}
         options={sourceOptions.map(x => ({ label: x.name, value: x.id }))}
         dropdownRender={menu => (
           <div className="divide-y">
