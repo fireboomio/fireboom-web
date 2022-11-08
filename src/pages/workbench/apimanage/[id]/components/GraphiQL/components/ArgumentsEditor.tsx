@@ -75,7 +75,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             message.error(`字段 ${item.name} 的参数未提供`)
             throw new Error(`字段 ${item.name} 的参数未提供`)
           }
-          if (!['Int', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+          if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
             try {
               val = JSON.parse(val as string)
             } catch (error) {

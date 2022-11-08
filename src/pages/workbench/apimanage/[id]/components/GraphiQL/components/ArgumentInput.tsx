@@ -17,11 +17,21 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
       return (
         <InputNumber
           className="text-xs w-full"
+          precision={0}
+          value={value as number}
+          onChange={e => onChange?.(e)}
+        />
+      )
+    case 'Float':
+      return (
+        <InputNumber
+          className="text-xs w-full"
           value={value as number}
           onChange={e => onChange?.(e)}
         />
       )
     case 'String':
+    case 'ID':
       return (
         <Input
           className="text-xs w-full"
