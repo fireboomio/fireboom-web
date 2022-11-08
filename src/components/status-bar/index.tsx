@@ -88,7 +88,11 @@ const StatusBar: React.FC<Props> = ({
             <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
             <span className="ml-1 text-[#50C772]">{hookStatus}</span>
           </span>
-          <span className="ml-4.5">编译时间：{compileTime}</span>
+          <span className="ml-4.5">编译时间：</span>
+
+          <span className={styles.errLabel}>
+            <span className="ml-1 text-[#50C772]">{compileTime}</span>
+          </span>
         </span>
       </div>
     </div>

@@ -478,7 +478,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               <div className={styles.header}>
                 {target?.isLeaf ? (
                   <img
-                    src={FILE_ICON[fileType(FILE_ICON[fileType(target?.name ?? '')])]}
+                    src={FILE_ICON[fileType(target?.name ?? '')]}
                     alt="图片"
                     className="w-3.5 h-3.5 mr-2"
                   />

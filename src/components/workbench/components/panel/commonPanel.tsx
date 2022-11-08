@@ -223,6 +223,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       const index = datasource.findIndex(item => !item.openInNewPage)
       if (index >= 0) {
         handleItemNav(datasource[index])
+      } else {
+        navigate(panelConfig.newItem)
       }
     }
   }
