@@ -111,6 +111,11 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsOidcHostEditing(!isOidcHostEditing)
+                    void editPort('oidcHost', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsOidcHostEditing(!isOidcHostEditing)
+                    void editPort('oidcHost', e.currentTarget.value)
                   }}
                 />
               ) : (
@@ -133,6 +138,11 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsOidcPortEditing(!isOidcPortEditing)
+                    void editPort('oidcPort', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsOidcPortEditing(!isOidcPortEditing)
+                    void editPort('oidcPort', e.currentTarget.value)
                   }}
                 />
               ) : (
@@ -155,6 +165,11 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsApiHostEditing(!isApiHostEditing)
+                    void editPort('apiHost', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsApiHostEditing(!isApiHostEditing)
+                    void editPort('apiHost', e.currentTarget.value)
                   }}
                 />
               ) : (
@@ -177,6 +192,11 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsApiPortEditing(!isApiPortEditing)
+                    void editPort('apiPort', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsApiPortEditing(!isApiPortEditing)
+                    void editPort('apiPort', e.currentTarget.value)
                   }}
                 />
               ) : (
@@ -199,6 +219,11 @@ export default function SettingMainVersion() {
                   style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   onBlur={e => {
                     setIsMidPortEditing(!isMidPortEditing)
+                    void editPort('middlewarePort', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsMidPortEditing(!isMidPortEditing)
+                    void editPort('middlewarePort', e.currentTarget.value)
                   }}
                 />
               ) : (
