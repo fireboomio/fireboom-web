@@ -37,6 +37,7 @@ export interface FlowChartProps {
       path: string
     }
     mutatingPreResolve: {
+      can: boolean
       name: string
       enable: boolean
       path: string
@@ -703,54 +704,54 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     }
 
     // 执行前置指令集
-    const preOperationDirective = new ActionGroup(
-      preHookMetadata,
-      [
-        {
-          shape: 'react-shape',
-          width: 114,
-          height: 20,
-          component: (
-            <StatusDirective
-              enabled={hookState.preResolve.enable}
-              label="preResolve"
-              onDoubleClick={() => setHook(hookState.preResolve)}
-            />
-          ),
-          x: 290,
-          y: y - 32
-        },
-        {
-          shape: 'react-shape',
-          width: 114,
-          height: 20,
-          component: (
-            <StatusDirective
-              enabled={hookState.mutatingPreResolve.enable}
-              label="mutatingPreResolve"
-              onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
-            />
-          ),
-          x: 280,
-          y: y - 8
-        },
-        {
-          shape: 'react-shape',
-          width: 114,
-          height: 20,
-          component: (
-            <StatusDirective
-              enabled={hookState.customResolve.enable}
-              label="customResolve"
-              onDoubleClick={() => setHook(hookState.customResolve)}
-            />
-          ),
-          x: 290,
-          y: y + 16
-        }
-      ],
-      'arrow'
-    )
+    const preHookRefs: Node.Metadata[] = [
+      {
+        shape: 'react-shape',
+        width: 114,
+        height: 20,
+        component: (
+          <StatusDirective
+            enabled={hookState.preResolve.enable}
+            label="preResolve"
+            onDoubleClick={() => setHook(hookState.preResolve)}
+          />
+        ),
+        x: 290,
+        y: y - 32
+      },
+      {
+        shape: 'react-shape',
+        width: 114,
+        height: 20,
+        component: (
+          <StatusDirective
+            enabled={hookState.customResolve.enable}
+            label="customResolve"
+            onDoubleClick={() => setHook(hookState.customResolve)}
+          />
+        ),
+        x: 290,
+        y: y + 16
+      }
+    ]
+    // 根据是否支持 mutatingPreResolve 钩子现实
+    if (hookState.mutatingPreResolve.can) {
+      preHookRefs.splice(1, 0, {
+        shape: 'react-shape',
+        width: 114,
+        height: 20,
+        component: (
+          <StatusDirective
+            enabled={hookState.mutatingPreResolve.enable}
+            label="mutatingPreResolve"
+            onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
+          />
+        ),
+        x: 280,
+        y: y - 8
+      })
+    }
+    const preOperationDirective = new ActionGroup(preHookMetadata, preHookRefs, 'arrow')
     directiveNodes.push(preOperationDirective)
     y += 14 + HOOK_HEIGHT
 

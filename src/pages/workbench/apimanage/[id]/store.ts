@@ -138,7 +138,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         set({ schemaAST })
       }
     } catch (error) {
-      debugger
+      // debugger
     }
   },
   schema: undefined,
