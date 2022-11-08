@@ -32,6 +32,5 @@ export default async function getDefaultCode(name: string, hookName = ''): Promi
       })
   }
   const data = await hookPromise
-  console.log(data, 'data')
   return get(data, name, '')
 }

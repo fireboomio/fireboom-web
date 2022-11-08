@@ -111,7 +111,6 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsOidcHostEditing(!isOidcHostEditing)
-                    void editPort('oidcHost', e.target.value)
                   }}
                 />
               ) : (
@@ -134,7 +133,6 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsOidcPortEditing(!isOidcPortEditing)
-                    void editPort('oidcPort', e.target.value)
                   }}
                 />
               ) : (
@@ -157,7 +155,6 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsApiHostEditing(!isApiHostEditing)
-                    void editPort('apiHost', e.target.value)
                   }}
                 />
               ) : (
@@ -180,7 +177,6 @@ export default function SettingMainVersion() {
                   type="text"
                   onBlur={e => {
                     setIsApiPortEditing(!isApiPortEditing)
-                    void editPort('apiPort', e.target.value)
                   }}
                 />
               ) : (
@@ -203,7 +199,6 @@ export default function SettingMainVersion() {
                   style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   onBlur={e => {
                     setIsMidPortEditing(!isMidPortEditing)
-                    void editPort('middlewarePort', e.target.value)
                   }}
                 />
               ) : (

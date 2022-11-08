@@ -85,74 +85,38 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
   const [breads, setBreads] = useImmer<Array<{ value: string; isLeaf: boolean }>>([])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
-  const [refreshChildFlag, setRefreshChildFlag] = useImmer(false)
   const containerEle = useRef<HTMLDivElement>(null)
 
   const uploadPath = useMemo(() => {
-    const rv = target?.isLeaf ? target.parent?.value ?? '' : target?.value ?? ''
+    const rv = target?.isLeaf ? target.parent?.name ?? '' : target?.name ?? ''
+    console.log('uploadPath', rv)
     return rv
   }, [target])
 
-  const loadRoot = () => {
-    if (!bucketId) return
-
-    void requests
-      .get<unknown, FileT[]>('/s3Upload/list', { params: { bucketID: bucketId } })
-      .then(res =>
-        res
-          .sort(sortFile)
-          .map(x => ({
-            label: (
-              <>
-                <span>
-                  {x.isDir ? (
-                    <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
-                  ) : (
-                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
-                  )}
-                </span>
-                <Popover
-                  content={<div className="max-w-[50vw] overflow-clip break-all">{x.name}</div>}
-                  placement="topLeft"
-                >
-                  <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>{x.name}</span>
-                </Popover>
-              </>
-            ),
-            value: x.name,
-            isLeaf: !x.isDir,
-            ...x
-          }))
-          .filter(x => x.name !== '')
-      )
-      .then(res => setOptions(res))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
-
-  useEffect(loadRoot, [bucketId])
-  const firstUpdate = useRef(true)
+  const inited = useRef(false)
   useEffect(() => {
+    // bucketId更新后，清空状态，然后刷新
+    setTarget(undefined)
+    setVisible(false)
+    inited.current = false
+    loadMenu('').then(() => {
+      inited.current = true
+    })
+  }, [bucketId])
+  useEffect(() => {
+    if (!inited.current) {
+      return
+    }
     refresh()
   }, [refreshFlag])
-  useEffect(() => {
-    refresh(true)
-  }, [refreshChildFlag])
 
   /*
    * 刷新列表
    * @param {boolean} refreshChild 是否刷新子节点，默认false时刷新当前节点所在的层级，true时刷新当前节点的子节点
    */
   const refresh = (refreshChild: boolean = false) => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false
-      return
-    }
     const refreshTarget = refreshChild ? target : target?.parent
-    if (refreshTarget) {
-      void loadData([{ ...refreshTarget }], target)
-    } else {
-      void loadRoot()
-    }
+    loadMenu(refreshTarget?.name ?? '')
   }
 
   const changeSerachState = () => {
@@ -221,12 +185,15 @@ export default function StorageExplorer({ bucketId }: Props) {
         isLeaf: !!item.isLeaf
       }))
     )
-    setVisible(false)
+
     const targetOption = selectedOptions[selectedOptions.length - 1]
-    if (targetOption.isLeaf) {
-      setTarget({ ...targetOption })
-      setVisible(true)
-    }
+    setTarget({ ...targetOption })
+    setVisible(true)
+    // setVisible(false)
+    // if (targetOption.isLeaf) {
+    //   setTarget({ ...targetOption })
+    //   setVisible(true)
+    // }
   }
 
   /**
@@ -248,85 +215,86 @@ export default function StorageExplorer({ bucketId }: Props) {
   /**
    * 根据path匹配options中的节点并刷新
    */
-  const loadMenu = async (path: string) => {}
+  const loadMenu = async (path: string) => {
+    if (!bucketId) return
+    const hide = message.loading('加载中', 0)
+    try {
+      // 找到需要刷新的节点
+      const matchNode = (node: Option): Option | undefined => {
+        if (!node.children) {
+          return
+        }
+        const fond = node.children.find(x => {
+          return x.name && path.startsWith(x.name)
+        })
+        if (fond) {
+          if (path === fond.name) {
+            return fond
+          } else if (fond.children) {
+            return matchNode(fond)
+          }
+        }
+      }
+      // 构造一个虚拟的root节点，用于统一根目录刷新和子目录刷新逻辑
+      const root: Option = { label: '', name: '', value: '', children: options }
+      let loadTarget = matchNode(root)
+      if (!loadTarget) {
+        loadTarget = root
+      }
+      const loadPath = loadTarget?.name ?? ''
+
+      // 请求并构造节点
+      const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+        params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined }
+      })
+      const oldChildMap = new Map(loadTarget.children?.map(x => [x.name, x]) ?? [])
+
+      const fileOpts = files
+        .sort(sortFile)
+        .filter(x => x.name !== loadPath)
+        .map(x => ({
+          children: oldChildMap.get(x.name)?.children,
+          parent: loadTarget,
+          label: (
+            <>
+              <span>
+                {x.isDir ? (
+                  <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+                ) : (
+                  <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
+                )}
+              </span>
+              <Popover
+                content={
+                  <div className="max-w-[50vw] overflow-clip break-all">
+                    {x.name.replace(loadPath, '')}
+                  </div>
+                }
+                placement="topLeft"
+              >
+                <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
+                  {x.name.replace(loadPath, '')}
+                </span>
+              </Popover>
+            </>
+          ),
+          value: x.name.replace(loadPath, ''),
+          isLeaf: !x.isDir,
+          ...x
+        }))
+
+      loadTarget.children = fileOpts
+      setOptions([...root.children!])
+    } catch (e) {
+      console.error(e)
+    } finally {
+      hide()
+    }
+  }
 
   const onLoadData = async (selectedOptions: Option[]) => {
     const path = selectedOptions[selectedOptions.length - 1].name ?? ''
     await loadMenu(path)
-  }
-
-  const loadData = async (selectedOptions: Option[], target?: Option) => {
-    const targetOption = selectedOptions[selectedOptions.length - 1]
-    targetOption.loading = true
-    if (target) {
-      setTarget({ ...target })
-    } else {
-      setTarget({ ...targetOption })
-    }
-    let path = targetOption.name ?? ''
-    if (targetOption.isLeaf) {
-      if (path.includes('/')) {
-        path = path.replace(/\/[^/]+$/, '/')
-      } else {
-        path = ''
-      }
-    }
-
-    if (!path) {
-      loadRoot()
-      return
-    }
-
-    const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-      params: { bucketID: bucketId, filePrefix: `${path}` }
-    })
-    const fileOpts = files
-      .sort(sortFile)
-      .filter(x => x.name !== targetOption.name)
-      .map(x => ({
-        parent: targetOption,
-        label: (
-          <>
-            <span>
-              {x.isDir ? (
-                <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
-              ) : (
-                <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
-              )}
-            </span>
-            <Popover
-              content={
-                <div className="max-w-[50vw] overflow-clip break-all">
-                  {x.name.replace(targetOption.value, '')}
-                </div>
-              }
-              placement="topLeft"
-            >
-              <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
-                {x.name.replace(targetOption.value, '')}
-              </span>
-            </Popover>
-          </>
-        ),
-        value: x.name.replace(targetOption.value, ''),
-        isLeaf: !x.isDir,
-        ...x
-      }))
-    targetOption.children = fileOpts
-    targetOption.loading = false
-
-    const newOptions = options.map(x => {
-      if (x.name === targetOption.name) {
-        return targetOption
-      }
-      return x
-    })
-    setOptions(newOptions)
-  }
-
-  const isImage = (mime: string | undefined) => {
-    if (!mime) return undefined
-    return mime.indexOf('image/') === 0
   }
 
   const deleteFile = () => {
@@ -370,7 +338,9 @@ export default function StorageExplorer({ bucketId }: Props) {
       return null
     }
     const type = fileType(file?.name ?? '')
-    if (type === 'pic') {
+    if (file.isDir) {
+      return <img width={200} height={200} src={iconFold} alt="文件夹" />
+    } else if (type === 'pic') {
       return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
     } else if (type === 'video') {
       return <video controls width={200} height={200} src={target?.url ?? ''} />
@@ -440,7 +410,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             showUploadList={false}
             onChange={info => {
               if (info.file.status === 'success' || info.file.status === 'done') {
-                setRefreshChildFlag(!refreshChildFlag)
+                loadMenu(uploadPath)
               }
             }}
           >
@@ -460,7 +430,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           open
           options={options}
           // @ts-ignore
-          loadData={x => void loadData(x)}
+          loadData={x => void onLoadData(x)}
           // @ts-ignore
           onChange={onChange}
           changeOnSelect
@@ -508,7 +478,9 @@ export default function StorageExplorer({ bucketId }: Props) {
                   </div>
                 </Panel>
                 <div className="flex flex-col">
-                  <Button className="m-1.5">下载</Button>
+                  <a className="flex" href={target?.url} download={target?.value}>
+                    <Button className="m-1.5 flex-1">下载</Button>
+                  </a>
                   <Button
                     onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
                     className="m-1.5"
