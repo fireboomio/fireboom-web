@@ -11,7 +11,7 @@ import type { StorageResp } from '@/interfaces/storage'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import commonPanelReducer from '@/lib/reducers/PanelReducer'
+import commonPanelReducer from '@/lib/reducers/panelReducer'
 
 import styles from './commonPanel.module.less'
 
@@ -303,7 +303,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   onKeyUp={(e: React.KeyboardEvent) => {
                     e.key == 'Escape' && setEditTarget(undefined)
                   }}
-                  className="text-sm font-normal leading-4 h-5 w-5/7"
+                  className="font-normal h-5 text-sm leading-4 w-5/7"
                   defaultValue={editTarget.name}
                   autoFocus
                   placeholder="请输入外部数据源名"
