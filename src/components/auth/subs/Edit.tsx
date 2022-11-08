@@ -3,6 +3,7 @@ import Editor, { loader } from '@monaco-editor/react'
 import { Button, Checkbox, Form, Input, Radio } from 'antd'
 import type { ReactNode } from 'react'
 import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
@@ -37,6 +38,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const config = content.config as unknown as Config
   const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
   const [disabled, setDisabled] = useImmer(false)
+  const navigate = useNavigate()
   const [inputValue, setInputValue] = useImmer(
     '' as string | number | readonly string[] | undefined
   )
@@ -217,7 +219,14 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
             <Button
               className="btn-cancel"
-              onClick={() => handleBottomToggleDesigner('data', content.id)}
+              onClick={() => {
+                // 无id的情况下取消，后退到前一个页面
+                if (!content?.id) {
+                  navigate(-1)
+                  return
+                }
+                handleBottomToggleDesigner('data', content.id)
+              }}
             >
               <span>取消</span>
             </Button>

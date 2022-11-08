@@ -205,7 +205,7 @@ export default function Index(props: Props) {
               <Form.Item label="查询缓存">
                 <>
                   <Form.Item noStyle name="cachingEnable" valuePropName="checked">
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                    <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
                   </Form.Item>
                   <span className={styles.tip} style={{ marginLeft: 12 }}>
                     对查询进行缓存
@@ -229,7 +229,7 @@ export default function Index(props: Props) {
               <Form.Item label="实时查询">
                 <>
                   <Form.Item noStyle name="liveQueryEnable" valuePropName="checked">
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                    <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
                   </Form.Item>
                   <span className={styles.tip} style={{ marginLeft: 12 }}>
                     服务端实时查询

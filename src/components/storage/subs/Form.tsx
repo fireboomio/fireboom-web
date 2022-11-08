@@ -93,7 +93,17 @@ export default function StorageForm({ content }: Props) {
           <Switch className={styles['switch-set-btn']} size="small" />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-          <Button className="btn-cancel" onClick={() => handleSwitch('detail', content?.id)}>
+          <Button
+            className="btn-cancel"
+            onClick={() => {
+              // 无id的情况下取消，后退到前一个页面
+              if (!content?.id) {
+                navigate(-1)
+                return
+              }
+              handleSwitch('detail', content?.id)
+            }}
+          >
             <span>取消</span>
           </Button>
           <Button className="btn-test ml-4" onClick={() => handleTest()}>

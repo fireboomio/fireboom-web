@@ -55,6 +55,9 @@ const IdeHeaderContainer: FC<Props> = props => {
       case AutoSaveStatus.EDIT:
         _text = '已编辑'
         break
+      case AutoSaveStatus.DEFAULT:
+        _text = '示例代码'
+        break
       default:
         break
     }
@@ -88,9 +91,10 @@ const IdeHeaderContainer: FC<Props> = props => {
       <div className="ide-container-header-right flex justify-between flex-1">
         <div className="flex items-center">
           <Button
+            className="ml-2"
             onClick={props.onSave}
             size="small"
-            disabled={props.savePayload.status === AutoSaveStatus.SAVEING}
+            disabled={props.savePayload.status !== AutoSaveStatus.EDIT}
             icon={
               props.savePayload.status === AutoSaveStatus.SAVEING ? (
                 <LoadingOutlined />

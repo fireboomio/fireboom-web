@@ -18,12 +18,15 @@ export default function FileStorage() {
       setShowType('form')
       setContent(undefined)
       return
+    } else {
+      setShowType('detail')
     }
+  }, [id])
+  useEffect(() => {
     void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
       setContent(data.filter(item => item.id === Number(id))[0])
-      setShowType('detail')
     })
-  }, [id, showType])
+  }, [showType])
 
   function handleSwitch(value: 'explorer' | 'form' | 'detail', _id: number | undefined) {
     setShowType(value)
