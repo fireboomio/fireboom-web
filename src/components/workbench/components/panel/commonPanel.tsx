@@ -1,4 +1,4 @@
-import { Dropdown, Image, Input, Menu, Popconfirm, Tooltip } from 'antd'
+import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -231,6 +231,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     if (row === undefined) {
       return
     }
+    if (!value.match(/^\w[a-zA-Z0-9_]*$/)) {
+      message.error('请输入字母、数字或下划线')
+      return
+    }
     row.name = value
     await panelConfig.request.editItem(row)
     panelConfig.request.getList(dispatch)
@@ -293,7 +297,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                   onPressEnter={e => void handleItemEdit(e.target.value)}
-                  onBlur={e => void handleItemEdit(e.target.value)}
+                  // onBlur={e => void handleItemEdit(e.target.value)}
                   onKeyUp={(e: React.KeyboardEvent) => {
                     e.key == 'Escape' && setEditTarget(undefined)
                   }}

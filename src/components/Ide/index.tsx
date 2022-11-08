@@ -57,6 +57,7 @@ export type RunHookResponse = { logs: any[][]; result: any }
 
 // 保存的4种状态
 export enum AutoSaveStatus {
+  DEFAULT = 'default',
   LOADED = 'loaded',
   SAVEING = 'saveing',
   SAVED = 'saved',
@@ -133,25 +134,31 @@ const IdeContainer: FC<Props> = props => {
   const currentDefault = useRef<string>()
   useEffect(() => {
     if (props.hookPath !== lastHookPath.current) {
-      console.log('======aaa', props.hookPath, props.defaultCode)
       currentDefault.current = props.defaultCode
       lastHookPath.current = props.hookPath
       void getHook<HookInfo>(props.hookPath).then(data => {
-        // 更新payload
-        setPayload({
-          type: 'passive',
-          status: AutoSaveStatus.LOADED
-        })
-
         // 如果data中的script为空, 就用defaultCode
-        if (data.script === '' || data.script === null) {
+        if ((data.script === '' || data.script === null) && currentDefault.current) {
+          setPayload({
+            type: 'passive',
+            status: AutoSaveStatus.DEFAULT
+          })
           data.script = currentDefault.current || ''
+        } else {
+          setPayload({
+            type: 'passive',
+            status: AutoSaveStatus.LOADED
+          })
         }
         setHookInfo(data)
       })
     } else {
       currentDefault.current = props.defaultCode
-      if (hookInfo?.script === '' || hookInfo?.script === null) {
+      if ((hookInfo?.script === '' || hookInfo?.script === null) && currentDefault.current) {
+        setPayload({
+          type: 'passive',
+          status: AutoSaveStatus.DEFAULT
+        })
         setHookInfo({
           ...hookInfo,
           script: currentDefault.current || ''
@@ -312,6 +319,7 @@ const IdeContainer: FC<Props> = props => {
 
   // 代码改变回调
   const codeChange = (value?: string) => {
+    console.log('===111')
     if (hookInfo?.script === value) return
     if (hookInfo) {
       setHookInfo({
@@ -319,11 +327,13 @@ const IdeContainer: FC<Props> = props => {
         script: value ?? ''
       })
     }
+    console.log('===222')
     if (
       ![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(
         savePayload.status ?? AutoSaveStatus.LOADED
       )
     ) {
+      console.log('===333')
       setPayload({
         type: 'passive',
         status: AutoSaveStatus.EDIT
@@ -421,6 +431,7 @@ const IdeContainer: FC<Props> = props => {
                 fullScreen,
                 editorOptions,
                 onChange: value => {
+                  codeChange(value)
                   props.onChange?.()
                 },
                 onBeforeMount: handleEditorBeforeMount,

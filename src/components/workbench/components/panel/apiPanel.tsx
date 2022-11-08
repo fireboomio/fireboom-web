@@ -198,13 +198,30 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       tree.push(node)
     }
 
+    // 清空输入框内容
+    setInputValue('')
     setCurrEditingKey(node.key)
     setTreeData([...tree])
+  }
+
+  const validateName = (name: string, isDir = false) => {
+    if (!isUpperCase(name[0])) {
+      message.error('接口名称必须大写开头')
+      return false
+    }
+    if (!name.match(/^\w[a-zA-Z0-9_]*$/)) {
+      message.error('请输入字母、数字或下划线')
+      return false
+    }
+    return true
   }
 
   const handlePressEnter = () => {
     if (!currEditingNode) {
       setAction(null)
+      return
+    }
+    if (!validateName(inputValue, currEditingNode.isDir)) {
       return
     }
 
@@ -216,6 +233,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             setRefreshFlag(!refreshFlag)
           })
         } else {
+          if (!isUpperCase(inputValue[0])) {
+            message.error('接口名称必须大写开头')
+            return
+          }
           void renameApi(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
             if (res) {
@@ -240,7 +261,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           setRefreshFlag(!refreshFlag)
           // @ts-ignore
         } else if (!isUpperCase(inputValue.at(0))) {
-          void message.warn('文件名必须以大写字母开头！')
+          void message.warn('接口名称必须大写开头！')
         } else {
           handleSaveGql()
           currEditingNode.title = inputValue
@@ -353,6 +374,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <div
             onClick={() => {
               setCurrEditingKey(nodeData.key)
+              // 记录当前名称
+              setInputValue(nodeData.title)
               setAction('重命名')
             }}
           >
@@ -399,14 +422,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             size="small"
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
-            onBlur={() => {
-              if (inputValue) {
-                handlePressEnter()
-              } else {
-                setCurrEditingKey(null)
-                setRefreshFlag(!refreshFlag)
-              }
-            }}
+            // onBlur={() => {
+            //   if (inputValue) {
+            //     handlePressEnter()
+            //   } else {
+            //     setCurrEditingKey(null)
+            //     setRefreshFlag(!refreshFlag)
+            //   }
+            // }}
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}
