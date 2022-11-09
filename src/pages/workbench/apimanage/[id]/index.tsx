@@ -150,7 +150,7 @@ export default function APIEditorContainer() {
             onEditQuery={setQuery}
             defaultEditorToolsVisibility={false}
           />
-          <div className="h-full flex-shrink-0 w-102">{tabs}</div>
+          <div className="h-full flex-shrink-0 w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
 import { MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
@@ -17,6 +17,7 @@ interface Props {
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const { id } = useDBSource()
   const navigate = useNavigate()
+  const [params, setParams] = useSearchParams()
 
   const handleManageSourceClick = () => {
     navigate(MANAGE_DATASOURCE_URL)
@@ -25,25 +26,29 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const inited = useRef<boolean>()
 
   useEffect(() => {
-    if (!sourceOptions.length) {
-      return
-    }
-    if (inited.current) {
-      return
-    }
+    if (!sourceOptions.length) return
+    if (inited.current) return
+
     inited.current = true
-    const search = location.hash.split('?')[1] || ''
-    const defaultDB = Number(search.match(/(?:^|\?|&)id=([\d+])/)?.[1])
-    onChangeSource(defaultDB)
-  }, [sourceOptions])
+    if (params.get('id')) {
+      onChangeSource(+(params.get('id') as string))
+    } else {
+      onChangeSource(sourceOptions[0].id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, sourceOptions])
 
   return (
     <div className={styles['select-contain']}>
       <Select
         className={styles.select}
-        onChange={onChangeSource}
+        onChange={v => {
+          setParams({ id: `${v}` })
+          onChangeSource(v)
+        }}
         optionLabelProp="label"
-        value={id}
+        value={id === 0 ? sourceOptions.map(x => ({ label: x.name, value: x.id })).at(0) : id}
+        options={sourceOptions.map(x => ({ label: x.name, value: x.id }))}
         dropdownRender={menu => (
           <div className="divide-y">
             {menu}
@@ -60,11 +65,11 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           </div>
         )}
       >
-        {sourceOptions.map(({ id, name }) => (
+        {/* {sourceOptions.map(({ id, name }) => (
           <Select.Option label={name} key={id} value={id}>
             {name}
           </Select.Option>
-        ))}
+        ))} */}
       </Select>
     </div>
   )

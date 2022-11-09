@@ -35,7 +35,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
         let result = await reader.read()
         while (!result.done) {
           const text = decoder.decode(result.value)
-          console.log('log stream: ', text)
+          // console.log('log stream: ', text)
           const resps = matchJson(text) as LogMessage[]
           logActionRef.current?.appendLogs(resps)
           result = await reader.read()
@@ -76,7 +76,9 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
         maxWidth="100%"
       >
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
-        {tabActiveKey === '0' ? <Log actionRef={logActionRef} /> : <></>}
+        <div className={`w-full overflow-auto ${tabActiveKey === '0' ? 'visible' : 'invisible'}`}>
+          <Log actionRef={logActionRef} />{' '}
+        </div>
       </Resizable>
     </div>
   )
