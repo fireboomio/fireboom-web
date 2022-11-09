@@ -11,6 +11,7 @@ import iconCross from '../assets/cross.svg'
 import iconDepend from '../assets/depend.svg'
 import iconDoubleLeft from '../assets/double-left.svg'
 import iconRefresh from '../assets/refresh.svg'
+import iconRefreshDepend from '../assets/refresh-depend.svg'
 import iconUpAndDown from '../assets/up-and-down.svg'
 import type { Depend } from '../index'
 import ideStyles from './index.module.less'
@@ -111,8 +112,10 @@ type DependListProps = {
   onDependDelete?: (dependName: string) => void
   // 将依赖插入代码
   onInsertLocalDepend?: (dependName: string) => void
-  // 将依赖插入代码
-  onChangeDependVersion?: (depend: Record<string, string>) => void
+  // 刷新内部依赖
+  onRefreshLocalDepend?: () => void
+  // 刷新外部依赖
+  onDependRefresh?: (depend: Record<string, string>) => void
 }
 
 // 依赖列表
@@ -125,6 +128,7 @@ const DependList = (props: DependListProps) => {
     Record<string, { label: string; value: string }[]>
   >({})
   const [versionLoading, setVersionLoading] = useState<number>(-1)
+  const [hideLocalDepend, setHideLocalDepend] = useState<boolean>(false)
   const firstUpload = useRef(true)
   const firstSetDependList = useRef(false)
 
@@ -331,7 +335,7 @@ const DependList = (props: DependListProps) => {
                 } flex justify-between`}
               >
                 {/*<img src={iconUpAndDown} alt="选择版本" />*/}
-                <span onClick={() => version && props.onChangeDependVersion?.({ [name]: version })}>
+                <span onClick={() => version && props.onDependRefresh?.({ [name]: version })}>
                   <img src={iconRefresh} alt="刷新" />
                 </span>
                 <span className="ml-2" onClick={() => removeDepend(name)}>
@@ -343,16 +347,31 @@ const DependList = (props: DependListProps) => {
         })}
       </div>
       <div className="p-14px">
-        <div className="text-default font-500">内部依赖</div>
-        {props.localDepend.map(item => (
+        <div className="text-default font-500 flex cursor-pointer">
           <div
-            onDoubleClick={() => props.onInsertLocalDepend?.(item)}
-            key={item}
-            className="truncate text-[#333] font-14px leading-30px cursor-pointer"
+            className="w-4 h-5 bg-red flex items-center justify-center mr-1"
+            onClick={() => setHideLocalDepend(!hideLocalDepend)}
           >
-            {item}
+            <div
+              className={ideStyles.triangle}
+              style={{ transform: hideLocalDepend ? 'rotate(180deg)' : '' }}
+            ></div>
           </div>
-        ))}
+          内部依赖
+          <span className="ml-auto cursor-pointer" onClick={() => props.onRefreshLocalDepend?.()}>
+            <img src={iconRefreshDepend} alt="刷新" />
+          </span>
+        </div>
+        {!hideLocalDepend &&
+          props.localDepend.map(item => (
+            <div
+              onDoubleClick={() => props.onInsertLocalDepend?.(item)}
+              key={item}
+              className="truncate text-[#333] font-14px leading-30px cursor-pointer"
+            >
+              {item}
+            </div>
+          ))}
       </div>
     </div>
   )
