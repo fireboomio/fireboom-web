@@ -111,6 +111,8 @@ type DependListProps = {
   onDependDelete?: (dependName: string) => void
   // 将依赖插入代码
   onInsertLocalDepend?: (dependName: string) => void
+  // 将依赖插入代码
+  onChangeDependVersion?: (depend: Record<string, string>) => void
 }
 
 // 依赖列表
@@ -329,7 +331,9 @@ const DependList = (props: DependListProps) => {
                 } flex justify-between`}
               >
                 {/*<img src={iconUpAndDown} alt="选择版本" />*/}
-                <img src={iconRefresh} alt="刷新" />
+                <span onClick={() => version && props.onChangeDependVersion?.({ [name]: version })}>
+                  <img src={iconRefresh} alt="刷新" />
+                </span>
                 <span className="ml-2" onClick={() => removeDepend(name)}>
                   <img src={iconCross} alt="移除" />
                 </span>

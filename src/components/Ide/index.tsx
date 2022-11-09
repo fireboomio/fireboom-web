@@ -413,6 +413,7 @@ const IdeContainer: FC<Props> = props => {
             <IdeDependList
               {...{
                 dependList: hookInfo?.depend || [],
+                onChangeDependVersion: dependChange,
                 onFold: dependFold,
                 onDependChange: dependChange,
                 onDependDelete: dependRemove,
