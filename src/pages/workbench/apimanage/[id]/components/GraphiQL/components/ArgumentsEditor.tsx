@@ -49,7 +49,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     const newValues = props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
       const name = arg.variable?.name.value
       if (name) {
-        obj[name] = valuesRef.current[name] ?? ''
+        obj[name] = valuesRef.current[name] ?? undefined
       }
       return obj
     }, {})
@@ -120,7 +120,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
           const newValues = props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
             const name = arg.variable?.name.value
             if (name) {
-              obj[name] = saved[name] ?? ''
+              obj[name] = saved[name] ?? undefined
             }
             return obj
           }, {})

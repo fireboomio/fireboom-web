@@ -97,6 +97,10 @@
   z-index: 2;
 }
 
+.graphiql-container .graphiql-editor-tool .ant-tabs {
+  height: 100%;
+}
+
 .graphiql-container .graphiql-editor-tool .ant-tabs-nav {
   margin-bottom: 12px;
   padding: 0 12px;
@@ -107,6 +111,7 @@
 .graphiql-container .graphiql-editor-tool .ant-tabs-content-holder {
   min-height: 120px;
   padding: 0 12px;
+  overflow: auto;
 }
 
 .graphiql-container .graphiql-editor-tool .ant-tabs-tab {

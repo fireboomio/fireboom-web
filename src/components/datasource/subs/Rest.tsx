@@ -553,7 +553,7 @@ export default function Rest({ content, type }: Props) {
                     <FormToolTip title="Rest 端点" />
                   </>
                 }
-                rules={[{ pattern: /^https?:\/\/[:.\w\d/]+$/g, message: '只允许输入链接' }]}
+                rules={[{ type: 'url', message: '只允许输入链接' }]}
                 name="baseURL"
                 colon={false}
                 style={{ marginBottom: '20px' }}
