@@ -62,3 +62,58 @@
     border-color: #e13d5b;
   }
 }
+
+.split {
+  width: 1px;
+  height: 10px;
+  margin: 0 8px;
+  background: rgba(95, 98, 105, 0.1);
+}
+
+.resetBtn {
+  margin-left: 24px;
+  width: 64px;
+  height: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f7f7 62%, #ebebeb 100%);
+  box-shadow: 0px 1px 3px 0px rgba(120, 125, 139, 0.14);
+  border-radius: 2px;
+  border: 0px solid rgba(175, 176, 180, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+}
+
+.saveBtn {
+  margin-left: 8px;
+  width: 64px;
+  height: 24px;
+  background: linear-gradient(36deg, #ffae72 0%, #ff5e5e 100%);
+  box-shadow: 0px 1px 3px 0px rgba(120, 125, 139, 0.14);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.modeRadio {
+  margin-left: 8px;
+  :global {
+    .ant-radio-button-wrapper {
+      height: 24px !important;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 9px;
+    }
+    .ant-radio-button {
+      line-height: 24px !important;
+    }
+  }
+}

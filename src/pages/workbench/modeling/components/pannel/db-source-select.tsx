@@ -2,11 +2,13 @@ import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
 import { useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
-import { MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
+import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
 
+import refreshIcon from '../../assets/refresh.svg'
 import styles from './pannel.module.less'
 
 interface Props {
@@ -18,6 +20,8 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const { id } = useDBSource()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
+
+  const { mutate } = useSWRConfig()
 
   const handleManageSourceClick = () => {
     navigate(MANAGE_DATASOURCE_URL)
@@ -39,7 +43,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   }, [params, sourceOptions])
 
   return (
-    <div className={styles['select-contain']}>
+    <div className={'common-form ' + styles['select-contain']}>
       <Select
         className={styles.select}
         onChange={v => {
@@ -71,6 +75,9 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           </Select.Option>
         ))} */}
       </Select>
+      <div className={styles.refreshBtn} onClick={() => mutate(DATABASE_SOURCE)}>
+        <img alt="刷新" src={refreshIcon} className="w-4 h-4" />
+      </div>
     </div>
   )
 }

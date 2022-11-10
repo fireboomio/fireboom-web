@@ -1,12 +1,13 @@
-import { AppleOutlined } from '@ant-design/icons'
-import { Button, Empty, message, Radio } from 'antd'
-import { useState } from 'react'
+import { Dropdown, Empty, Input, Menu, message, Radio } from 'antd'
+import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
+import IconFont from '@/components/iconfont'
 import type { DMFResp } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
-import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import { ENTITY_NAME_REGEX, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import requests from '@/lib/fetchers'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 import useBlocks from '@/lib/hooks/useBlocks'
@@ -17,6 +18,7 @@ import useLocalStorage from '@/lib/hooks/useLocalStorage'
 
 import ModelEditor from './editor'
 import EnumDesigner from './enum'
+import styles from './index.module.less'
 import ModelDesigner from './model'
 
 type EditType = 'add' | 'edit'
@@ -42,13 +44,62 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   // 编辑器当前内容
   const [editorContent, setEditorContent] = useState<string>()
   const [isEditing, setIsEditing] = useImmer(editType === 'add')
+  const ModelDesignerRef = useRef<typeof ModelDesigner>(null)
+  const EnumDesignerRef = useRef<typeof EnumDesigner>(null)
 
   const [newEnums, setNewEnums] = useImmer<Enum[]>([])
+
+  const [editTitle, setEditTitle] = useState<boolean>(false)
+  const [titleValue, setTitleValue] = useState<string>('')
+  useEffect(() => {
+    setTitleValue(currentEntity?.name || '')
+  }, [currentEntity])
+
+  const { panel } = useContext(PrismaSchemaContext)
+  // const ctx = useContext(PrismaSchemaContext)
+  const { handleClickEntity } = panel || {}
 
   const initialModel: Model = {
     type: 'model',
     name: UNTITLED_NEW_ENTITY,
-    properties: [],
+    properties: [
+      {
+        type: 'field',
+        name: 'id',
+        fieldType: 'Int',
+        optional: false,
+        array: false,
+        attributes: [{ name: 'id', type: 'attribute', kind: 'field' }]
+      },
+      {
+        type: 'field',
+        name: 'createdAt',
+        fieldType: 'DateTime',
+        optional: false,
+        array: false,
+        attributes: [
+          {
+            name: 'default',
+            type: 'attribute',
+            kind: 'field',
+            args: [{ type: 'attributeArgument', value: { name: 'now', type: 'function' } }]
+          }
+        ]
+      },
+      {
+        type: 'field',
+        name: 'updatedAt',
+        fieldType: 'DateTime',
+        optional: false,
+        array: false
+      },
+      {
+        type: 'field',
+        name: 'deletedAt',
+        fieldType: 'DateTime',
+        optional: true
+      }
+    ],
     id: newEntityId
   }
 
@@ -69,8 +120,17 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const handleSaveModel = (model: Model) => {
     // 在这里 将 新增的枚举 添加进去
     const newBlocks = PrismaSchemaBlockOperator(blocks).addEnums(newEnums)
-
-    void updateAndSaveBlock(
+    if (!titleValue) {
+      void message.error('实体名不可为空！')
+      return
+    }
+    const nameIsValid = new RegExp(ENTITY_NAME_REGEX).test(titleValue)
+    if (!nameIsValid) {
+      void message.error('实体名不合法！')
+      return
+    }
+    model = { ...model, name: titleValue }
+    return updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
         : PrismaSchemaBlockOperator(newBlocks).updateModel(model)
@@ -88,6 +148,16 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   }
 
   const handleSaveEnum = (enumm: Enum) => {
+    if (!titleValue) {
+      void message.error('枚举名不可为空！')
+      return
+    }
+    const nameIsValid = new RegExp(ENTITY_NAME_REGEX).test(titleValue)
+    if (!nameIsValid) {
+      void message.error('枚举名不合法！')
+      return
+    }
+    enumm = { ...enumm, name: titleValue }
     void updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(blocks).addEnum(enumm)
@@ -112,16 +182,69 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     return <Empty className="pt-20" description="无可用实体！" />
   }
 
-  function onSave() {
-    if (editorContent !== undefined) {
-      console.log('触发保存', editorContent)
-      if (type === 'model' && mode === 'editor') {
-        void requests
-          .post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, { schema: editorContent })
-          .then(x => {})
-      }
+  function onCancel() {
+    if (mode === 'editor') {
+      // 编辑器
+    } else if (type === 'model') {
+      // @ts-ignore
+      ModelDesignerRef?.current?.handleResetModel?.()
+    } else {
+      // @ts-ignore
+      EnumDesignerRef?.current?.handleResetEnum?.()
     }
   }
+  async function onSave() {
+    if (mode === 'editor') {
+      if (editorContent !== undefined) {
+        await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
+          schema: editorContent
+        })
+      }
+    } else if (type === 'model') {
+      // @ts-ignore
+      await ModelDesignerRef?.current?.handleSaveModel?.()
+    } else {
+      // @ts-ignore
+      await EnumDesignerRef?.current?.handleSaveEnum?.()
+    }
+  }
+  const dropdownMenu = [
+    {
+      label: (
+        <div
+          onClick={() => {
+            handleClickEntity?.(currentEntity)
+          }}
+        >
+          查看
+        </div>
+      ),
+      key: 'view'
+    },
+    {
+      label: (
+        <div
+          onClick={() => {
+            changeToEntityById(getFirstEntity()?.id ?? 0)
+            setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
+            const hide = message.loading('删除中...', 0)
+            void updateAndSaveBlock(
+              PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id)
+            )
+              .then(() => {
+                message.success('删除成功')
+              })
+              .finally(() => {
+                hide()
+              })
+          }}
+        >
+          删除
+        </div>
+      ),
+      key: 'delete'
+    }
+  ].filter(item => !(item.key === 'view' && type === 'enum'))
 
   return (
     <div className="h-full flex flex-col">
@@ -129,16 +252,86 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         className="flex justify-start items-center h-10 bg-white pl-7 pr-4"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <span className="flex-grow text-lg font-medium">
-          {editType === 'edit' ? '编辑' : '新增'}
+        <span className="text-lg font-medium text-16px common-form">
+          {/*{editType === 'edit' ? currentEntity.name : '新增'}*/}
+          {editTitle ? (
+            <Input
+              className="!w-20"
+              onPressEnter={e => {
+                setTitleValue(e.currentTarget.value)
+                setEditTitle(false)
+              }}
+              onBlur={() => setEditTitle(false)}
+              defaultValue={titleValue}
+            />
+          ) : (
+            titleValue
+          )}
+          <IconFont
+            onClick={() => {
+              setEditTitle(!editTitle)
+              setTitleValue(currentEntity.name)
+            }}
+            className="ml-1 cursor-pointer"
+            type="icon-zhongmingming"
+          />
           {isEditing && '(未保存)'}
         </span>
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base" />
-        <Button>重置</Button>
-        <Button onClick={onSave}>保存</Button>
+        <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">{type}</span>
+
+        {mode === 'designer' && type === 'model' ? (
+          <>
+            <div
+              onClick={() => {
+                // @ts-ignore
+                ModelDesignerRef?.current?.addEmptyField?.()
+              }}
+            >
+              <img style={{ width: 12, height: 12, background: 'red' }} />
+            </div>
+            <div className={styles.split} />
+            <div
+              onClick={() => {
+                // @ts-ignore
+                ModelDesignerRef?.current?.addEmptyModelAttribute?.()
+              }}
+            >
+              <img style={{ width: 12, height: 12, background: 'red' }} />
+            </div>
+            <div className={styles.split} />
+          </>
+        ) : null}
+        {mode === 'designer' && type === 'enum' ? (
+          <>
+            <div
+              onClick={() => {
+                // @ts-ignore
+                EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
+              }}
+            >
+              <img style={{ width: 12, height: 12, background: 'red' }} />
+            </div>
+            <div className={styles.split} />
+          </>
+        ) : null}
+        <Dropdown
+          overlay={<Menu items={dropdownMenu} />}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <div className="w-5.5 h-4 bg-[rgba(95,98,105,0.05)] text-center !leading-4 cursor-pointer">
+            ···
+          </div>
+        </Dropdown>
+
+        <div className={styles.resetBtn} onClick={onCancel}>
+          重置
+        </div>
+        <div className={styles.saveBtn} onClick={onSave}>
+          保存
+        </div>
         <Radio.Group
+          className={styles.modeRadio}
           value={mode}
           onChange={e => {
             setEditorContent(undefined)
@@ -161,6 +354,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
             saveModel={handleSaveModel}
             addNewEnum={handleAddNewEnum}
             newEnums={newEnums}
+            ref={ModelDesignerRef}
           />
         ) : (
           <div style={{ flex: '1 1 0' }}>
@@ -174,6 +368,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
 
       {type === 'enum' && (
         <EnumDesigner
+          ref={EnumDesignerRef}
           updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
           setIsEditing={editType === 'edit' ? setIsEditing : undefined}
           isEditing={isEditing}

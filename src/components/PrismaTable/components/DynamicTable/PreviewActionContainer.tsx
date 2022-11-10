@@ -49,11 +49,11 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
   }
 
   return (
-    <ButtonGroup className="flex w-full gap-2">
-      <Button type="link" className="p-0" onClick={handleEditOne}>
+    <div className="flex w-full flex h-7 items-center">
+      <Button type="link" className="!p-0 mr-4" onClick={handleEditOne}>
         编辑
       </Button>
-      <Button type="link" className="p-0" onClick={onclickDelete}>
+      <Button type="link" className="!p-0 mr-4" onClick={onclickDelete}>
         删除
       </Button>
       <Modal
@@ -82,7 +82,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
         namespace={namespace}
         setModalVisible={setUpdateModalVisible}
       />
-    </ButtonGroup>
+    </div>
   )
 }
 

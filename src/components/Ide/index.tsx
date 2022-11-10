@@ -203,29 +203,34 @@ const IdeContainer: FC<Props> = props => {
     }
   }, [editor, monaco, hookInfo?.depend])
 
-  const handleEditorBeforeMount: BeforeMount = monaco => {
-    void getTypes<Record<string, string>>().then(res => {
+  const refreshLocalDepend = async (_monaco = monaco) => {
+    return getTypes<Record<string, string>>().then(res => {
       // 循环types
       const localLibList = Object.keys(res).map(key => {
         const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        // if (!monaco.languages.typescript.typescriptDefaults.getExtraLibs()[libUri]) {
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
+        // if (!_monaco.languages.typescript.typescriptDefaults.getExtraLibs()[libUri]) {
+        _monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
         // } else {
-        //   monaco.languages.typescript.typescriptDefaults.set
+        //   _monaco.languages.typescript.typescriptDefaults.set
         // }
         try {
-          const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
+          const currentModel = _monaco.editor.getModel(_monaco.Uri.parse(libUri))
           if (currentModel) {
             currentModel.dispose()
           }
-          monaco.editor.createModel(res[key], 'typescript', monaco.Uri.parse(libUri))
+          _monaco.editor.createModel(res[key], 'typescript', _monaco.Uri.parse(libUri))
         } catch (e) {
           console.error(e)
         }
         return key.replace(/^@?/, '').replace(/\.ts$/, '')
       })
       setLocalDepend(localLibList)
+    })
+  }
+
+  const handleEditorBeforeMount: BeforeMount = monaco => {
+    refreshLocalDepend(monaco).then(() => {
       monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
         noSyntaxValidation: false
@@ -284,6 +289,8 @@ const IdeContainer: FC<Props> = props => {
   const dependChange = (depend: Depend) => {
     // 在typings类中的原型上调用setVersions
     void handleDependChange(depend)
+  }
+  const dependRefresh = (depend: Depend) => {
     Object.keys(depend).forEach(key => {
       dependLoader(key, depend[key], monaco)
     })
@@ -413,8 +420,11 @@ const IdeContainer: FC<Props> = props => {
             <IdeDependList
               {...{
                 dependList: hookInfo?.depend || [],
+                onChangeDependVersion: dependChange,
                 onFold: dependFold,
                 onDependChange: dependChange,
+                onRefreshLocalDepend: refreshLocalDepend,
+                onDependRefresh: dependRefresh,
                 onDependDelete: dependRemove,
                 onInsertLocalDepend: insertLocalDepend
               }}

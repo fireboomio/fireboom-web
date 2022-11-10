@@ -1,5 +1,5 @@
-import { AppleOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu } from 'antd'
+import { AppleOutlined } from '@ant-design/icons'
+import { Menu } from 'antd'
 import type { Updater } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
@@ -53,26 +53,12 @@ const ModelPannel = ({
   return (
     <>
       <div className={styles.pannel}>
-        <div className={styles.title}>数据建模</div>
-
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
-        <OperationButtons changeToER={changeToER} />
+        <OperationButtons addNewModel={addNewModel} changeToER={changeToER} />
       </div>
 
-      <div className="flex justify-between items-center p-4 my-3 border-[#5f62691a] border-b-1 border-t-1">
-        <span className="text-sm font-medium leading-5">所有实体</span>
-        <Dropdown overlay={menu} placement="bottomRight">
-          <Button
-            className={styles['add-btn']}
-            icon={<PlusOutlined />}
-            shape="circle"
-            size="small"
-          />
-        </Dropdown>
-      </div>
-
-      <div className="mt-3">
+      <div className="mt-1">
         {entities.map(entity => (
           <ModelEntityItem
             setShowType={setShowType}
