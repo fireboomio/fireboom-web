@@ -109,7 +109,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   return (
     <>
       <div className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}>
-        <span className=" w-19 h-5 float-right">{/* 前往管理 <RightOutlined /> */}</span>
+        <span className=" h-5 w-19 float-right">{/* 前往管理 <RightOutlined /> */}</span>
       </div>
       <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4`}>
         <Form
@@ -171,7 +171,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             rules={[
               { required: true, message: 'Issuer不能为空' },
               {
-                pattern: /^https?:\/\/[:.\w\d/]+$/,
+                // pattern: /^https?:\/\/[:.\w\d/]+$/,
+                type: 'url',
                 message: '只允许输入链接'
               }
             ]}
@@ -230,11 +231,11 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             >
               <span>取消</span>
             </Button>
-            <Button className="btn-test ml-4" onClick={onTest}>
+            <Button className="ml-4 btn-test" onClick={onTest}>
               测试
             </Button>
             <Button
-              className="btn-save ml-4"
+              className="ml-4 btn-save"
               onClick={() => {
                 form.submit()
               }}
