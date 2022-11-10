@@ -18,7 +18,8 @@ import language from '@/components/PrismaTable/libs/language'
 import type { FilterState, GraphQLResp } from '@/components/PrismaTable/libs/types'
 import { getTableDataFromGraphQLResp } from '@/components/PrismaTable/libs/utils'
 import useTableSchema from '@/lib/hooks/useTableSchema'
-import styles from '@/pages/workbench/modeling/components/pannel/pannel.module.less'
+
+import styles from './index.module.less'
 
 interface Props {
   model: string
@@ -182,7 +183,9 @@ const DynamicTable = ({
 
   return (
     <ConfigProvider locale={zhCN}>
-      <ButtonGroup className="w-full mb-4 flex gap-4 justify-end">
+      <div className="flex justify-start items-center h-54px bg-white flex-shrink-0 px-11">
+        <span className="text-16px font-medium">{currentModel.name}</span>
+        <span className="text-14px text-[#118aD1] ml-3 mr-auto">model</span>
         <Popover
           destroyTooltipOnHide
           trigger="click"
@@ -201,41 +204,40 @@ const DynamicTable = ({
             />
           }
         >
-          <Button className={`${styles['add-btn']} cursor-default p-0`}>
-            <div className="flex flex-row gap-1 w-full h-full ">
-              <span className="self-center">高级筛选</span>
-              <div className="bg-[#FF9378] w-4 h-4 rounded-1/2 mr-2 self-center leading-none">
-                {initialFilters.length}
-              </div>
-              <CaretDownOutlined className={`self-center ${styles['dropdown-icon']}`} />
-            </div>
-          </Button>
+          <div className={styles.filterBtn}>
+            高级筛选
+            <div className={styles.dot}>{initialFilters.length}</div>
+            <div className={styles.split} />
+            <CaretDownOutlined className={`self-center mx-7px ${styles['dropdown-icon']}`} />
+          </div>
         </Popover>
         {usage === 'dataPreview' && (
-          <Button className={styles['add-btn']} onClick={() => setCreateModalVisible(true)}>
+          <div className={styles.addBtn} onClick={() => setCreateModalVisible(true)}>
             添加
-          </Button>
+          </div>
         )}
-      </ButtonGroup>
-      <Table
-        loading={loading}
-        scroll={{ x: 'max-content' }}
-        bordered
-        dataSource={tableData}
-        columns={columns}
-        size="small"
-        //  @ts-ignore
-        onChange={(_page, _filter, sorter) => handleOrderByChange(sorter)}
-        rowKey={(record: Record<string, any>) => String(record[currentIdField?.name ?? 'id'])}
-        pagination={{
-          position: ['bottomRight'],
-          showQuickJumper: true,
-          defaultPageSize: DEFAULT_PAGE_SIZE,
-          total: tableDataTotalCount,
-          onChange: handlePageChange,
-          onShowSizeChange: handleShowSizeChange
-        }}
-      />
+      </div>
+      <div className={styles.tableWrapper}>
+        <Table
+          loading={loading}
+          scroll={{ x: 'max-content' }}
+          bordered={false}
+          dataSource={tableData}
+          columns={columns}
+          size="small"
+          //  @ts-ignore
+          onChange={(_page, _filter, sorter) => handleOrderByChange(sorter)}
+          rowKey={(record: Record<string, any>) => String(record[currentIdField?.name ?? 'id'])}
+          pagination={{
+            position: ['bottomRight'],
+            showQuickJumper: true,
+            defaultPageSize: DEFAULT_PAGE_SIZE,
+            total: tableDataTotalCount,
+            onChange: handlePageChange,
+            onShowSizeChange: handleShowSizeChange
+          }}
+        />
+      </div>
       <ModelFormContainer
         model={currentModel}
         action="create"

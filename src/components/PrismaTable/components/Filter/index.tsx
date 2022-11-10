@@ -1,5 +1,4 @@
 import type { Enums, SchemaModel } from '@paljs/types'
-import { Button } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { useEffect } from 'react'
 import type { Updater } from 'use-immer'
@@ -8,7 +7,8 @@ import { useImmer } from 'use-immer'
 import { filterOperators } from '@/components/PrismaTable/components/Filter/FilterHelper'
 import FilterRow from '@/components/PrismaTable/components/Filter/FilterRow'
 import type { FilterState } from '@/components/PrismaTable/libs/types'
-import styles from '@/pages/workbench/modeling/components/pannel/pannel.module.less'
+
+import styles from './index.module.less'
 
 interface Props {
   currentModelName: string
@@ -72,7 +72,7 @@ const FilterContainer = ({
   }
 
   return (
-    <div className="w-lg py-12px px-8px">
+    <div className={`w-466px py-4px common-form ${styles.filterContainer}`}>
       {filters.map((filter, idx) => {
         return (
           <FilterRow
@@ -86,14 +86,16 @@ const FilterContainer = ({
           />
         )
       })}
-      <Button className="w-468px mb-24px" type="dashed" onClick={addNewFilter}>
+      <div className={styles.filterBtn} onClick={addNewFilter}>
         + 新增筛选条件
-      </Button>
-      <ButtonGroup className="flex gap-4 w-full justify-end m-0 mt-8px">
-        <Button onClick={handleCancel}>取消</Button>
-        <Button className={styles['add-btn']} onClick={handleSave}>
+      </div>
+      <ButtonGroup className="flex gap-2 w-full justify-end pr-24px mt-18px">
+        <div className={styles.cancelBtn} onClick={handleCancel}>
+          取消
+        </div>
+        <div className={styles.addBtn} onClick={handleSave}>
           保存
-        </Button>
+        </div>
       </ButtonGroup>
     </div>
   )

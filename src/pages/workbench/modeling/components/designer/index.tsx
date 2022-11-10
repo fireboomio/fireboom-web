@@ -1,5 +1,4 @@
-import { AppleOutlined } from '@ant-design/icons'
-import { Button, Empty, message, Radio } from 'antd'
+import { Empty, message, Radio } from 'antd'
 import { useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
@@ -17,6 +16,7 @@ import useLocalStorage from '@/lib/hooks/useLocalStorage'
 
 import ModelEditor from './editor'
 import EnumDesigner from './enum'
+import styles from './index.module.less'
 import ModelDesigner from './model'
 
 type EditType = 'add' | 'edit'
@@ -129,16 +129,25 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         className="flex justify-start items-center h-10 bg-white pl-7 pr-4"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <span className="flex-grow text-lg font-medium">
-          {editType === 'edit' ? '编辑' : '新增'}
+        <span className="text-lg font-medium text-16px">
+          {editType === 'edit' ? currentEntity.name : '新增'}
           {isEditing && '(未保存)'}
         </span>
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base" />
-        <Button>重置</Button>
-        <Button onClick={onSave}>保存</Button>
+        <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">{type}</span>
+        <div>1</div>
+        <div className={styles.split} />
+        <div>2</div>
+        <div className={styles.split} />
+        <div className="w-5.5 h-4 bg-[rgba(95,98,105,0.05)] text-center !leading-4 cursor-pointer">
+          ···
+        </div>
+
+        <div className={styles.resetBtn}>重置</div>
+        <div className={styles.saveBtn} onClick={onSave}>
+          保存
+        </div>
         <Radio.Group
+          className={styles.modeRadio}
           value={mode}
           onChange={e => {
             setEditorContent(undefined)

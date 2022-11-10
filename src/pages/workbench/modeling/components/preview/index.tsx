@@ -1,6 +1,5 @@
-import { AppleOutlined } from '@ant-design/icons'
 import { ApolloProvider } from '@apollo/client'
-import { Breadcrumb, Empty, message } from 'antd'
+import { Empty, message } from 'antd'
 
 import PrismaTable from '@/components/PrismaTable'
 import type { FilterState } from '@/components/PrismaTable/libs/types'
@@ -32,22 +31,7 @@ const PreviewContainer = () => {
   }
 
   return (
-    <div className="p-6 h-screen">
-      <div className="flex justify-start items-center mb-6">
-        <span className="flex-grow text-lg font-medium">
-          {'查看'} / {currentModel.name}
-        </span>
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base mr-3" />
-        <AppleOutlined className="text-base" />
-      </div>
-
-      <div className="flex justify-start items-center my-6">
-        <Breadcrumb className="text-base flex-grow" separator=" ">
-          <Breadcrumb.Item>{currentModel.name}</Breadcrumb.Item>
-          <Breadcrumb.Item className="text-[#118AD1]">{currentModel.type}</Breadcrumb.Item>
-        </Breadcrumb>
-      </div>
+    <div className="h-full flex flex-col">
       <ApolloProvider client={graphqlClient}>
         <PrismaTable
           model={currentModel.name}

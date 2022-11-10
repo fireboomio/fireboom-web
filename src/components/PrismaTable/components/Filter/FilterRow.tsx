@@ -1,4 +1,3 @@
-import { CloseOutlined } from '@ant-design/icons'
 import type { Enums, SchemaModel } from '@paljs/types'
 import type { InputRef } from 'antd'
 import { DatePicker, Input, Select } from 'antd'
@@ -10,6 +9,8 @@ import type { FieldType } from '@/components/PrismaTable/components/Filter/Filte
 import { filterOperators } from '@/components/PrismaTable/components/Filter/FilterHelper'
 import language from '@/components/PrismaTable/libs/language'
 import type { FilterState, FilterValueType } from '@/components/PrismaTable/libs/types'
+
+import iconDel from './assets/del.svg'
 
 const { Option } = Select
 
@@ -121,7 +122,7 @@ const FilterRow = ({
       <div className="w-468px flex flex-row gap-2 justify-between mb-2">
         <Select
           dropdownMatchSelectWidth={false}
-          className="w-1/3"
+          className="w-140px flex-shrink-0"
           value={fieldNameSelectValue || fields[0].name}
           onSelect={setFieldNameSelectValue}
         >
@@ -134,7 +135,7 @@ const FilterRow = ({
         {relationFieldsOptions && (
           <Select
             dropdownMatchSelectWidth={false}
-            className="w-1/3"
+            className="w-106px flex-shrink-0"
             value={relationFieldNameSelectValue || relationFieldsOptions[0].name}
             onSelect={setRelationFieldNameSelectValue}
           >
@@ -147,7 +148,7 @@ const FilterRow = ({
         )}
         <Select
           dropdownMatchSelectWidth={false}
-          className="w-1/3"
+          className="w-106px flex-shrink-0"
           value={operatorSelectValue || operators[0]}
           onSelect={setOperatorSelectValue}
         >
@@ -164,7 +165,9 @@ const FilterRow = ({
           fieldType={fieldType}
         />
       </div>
-      <CloseOutlined onClick={deleteFilter} className="text-base text-[#e13d5b] cursor-pointer" />
+      <div className="cursor-pointer" onClick={deleteFilter}>
+        <img src={iconDel} alt="删除" />
+      </div>
     </div>
   )
 }
@@ -203,7 +206,7 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
       return (
         <DatePicker
           defaultValue={defaultDate}
-          className="w-1/3"
+          className="w-full"
           onChange={(_: unknown, dateString: string) => handleValueChange(dateString)}
         />
       )
@@ -212,7 +215,7 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
       return (
         <Select
           dropdownMatchSelectWidth={false}
-          className="w-1/3"
+          className="w-full"
           onSelect={(value: boolean) => handleValueChange(value)}
         >
           <Option value={true}>{language.yes}</Option>
@@ -221,7 +224,7 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
       )
     case 'Enum':
       return (
-        <Select dropdownMatchSelectWidth={false} className="w-1/3" onSelect={handleValueChange}>
+        <Select dropdownMatchSelectWidth={false} className="w-full" onSelect={handleValueChange}>
           {enums.map(e => {
             return (
               <Option key={e} value={e}>

@@ -1,0 +1,99 @@
+.filterBtn {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 94, 94, 1);
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 16px;
+  .dot {
+    margin-left: 4px;
+    line-height: 11px;
+    padding: 0 5px;
+    background: #e92e5e;
+    border-radius: 7px;
+    color: white;
+    font-size: 10px;
+  }
+  .split {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 94, 94, 1);
+    margin-left: 8px;
+  }
+}
+.addBtn {
+  cursor: pointer;
+  width: 76px;
+  height: 32px;
+  background: linear-gradient(36deg, #ffae72 0%, #ff5e5e 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.tableWrapper {
+  margin: 12px 12px 0;
+  padding: 24px 32px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid rgba(95, 98, 105, 0.1);
+  :global {
+    th {
+      border: none !important;
+    }
+    thead .ant-table-cell {
+      background: rgba(95, 98, 105, 0.05);
+      &:first-child {
+        border-radius: 6px 0 0 6px;
+      }
+      &:last-child {
+        border-radius: 0 6px 6px 0;
+      }
+    }
+    .ant-table-cell {
+      font-size: 14px;
+      color: #333;
+    }
+    .ant-table-column-title {
+      flex: 0;
+    }
+    .ant-table-column-sorter {
+      flex: 1;
+    }
+    .ant-table-column-sorter-inner {
+      > span {
+        display: none;
+      }
+      &::after {
+        content: ' ';
+        width: 12px;
+        height: 12px;
+        background: url(/assets/sort-none.svg) no-repeat center/contain;
+      }
+    }
+    [aria-sort='ascending'] {
+      .ant-table-column-sorter-inner::after {
+        content: ' ';
+        width: 12px;
+        height: 12px;
+        background: url(/assets/sort-asc.svg) no-repeat center/contain;
+      }
+    }
+    [aria-sort='descending'] {
+      .ant-table-column-sorter-inner::after {
+        content: ' ';
+        width: 12px;
+        height: 12px;
+        background: url(/assets/sort-desc.svg) no-repeat center/contain;
+      }
+    }
+  }
+}

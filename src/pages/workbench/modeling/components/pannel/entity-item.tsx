@@ -1,4 +1,4 @@
-import { AppleOutlined, DeleteOutlined, GithubOutlined, MoreOutlined } from '@ant-design/icons'
+import { AppleOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Dropdown, Input, Menu, message, Popconfirm } from 'antd'
 import type { Updater } from 'use-immer'
@@ -11,6 +11,9 @@ import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
 
+import iconEntity from '../../assets/entity.svg'
+import iconEnum from '../../assets/enum.svg'
+import iconMore from '../../assets/more.svg'
 import styles from './pannel.module.less'
 
 interface Props {
@@ -44,11 +47,19 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
   }
 
   const handleItemDelete = () => {
+    setVisible(false)
     if (isCurrent) {
       changeToEntityById(getFirstEntity()?.id ?? 0)
       setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
     }
+    const hide = message.loading('删除中...', 0)
     void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
+      .then(() => {
+        message.success('删除成功')
+      })
+      .finally(() => {
+        hide()
+      })
   }
 
   const renameEntity = (newName: string) => {
@@ -62,9 +73,16 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
       void message.error('实体名不合法！')
       return
     }
+
+    const hide = message.loading('保存中...', 0)
     updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName))
-      .then(() => message.success('实体名更新成功'))
+      .then(() => {
+        message.success('实体名更新成功')
+      })
       .catch((error: Error) => message.error(`实体名更新失败, error: ${error.message}`))
+      .finally(() => {
+        hide()
+      })
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -81,18 +99,27 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
       items={[
         {
           key: 1,
-          label: <span className="ml-1.5">重命名</span>,
+          label: <span>重命名</span>,
           icon: <AppleOutlined />,
           onClick: () => setIsEditing(!isEditing)
         },
         {
           key: 2,
-          label: <span className="ml-1.5">编辑</span>,
+          label: <span>编辑</span>,
           icon: <AppleOutlined />,
           onClick: () => onToggleDesigner(entity)
         },
         {
           key: 3,
+          label: <span>查看</span>,
+          icon: <AppleOutlined />,
+          onClick: () => {
+            onClick()
+            setVisible(false)
+          }
+        },
+        {
+          key: 4,
           label: (
             <Popconfirm
               className="w-full h-full"
@@ -105,7 +132,7 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
               overlayClassName={styles['delete-label']}
               okType={'danger'}
             >
-              <span className="ml-1.5">删除</span>
+              <span>删除</span>
             </Popconfirm>
           ),
           icon: <DeleteOutlined />
@@ -130,25 +157,22 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
 
   return (
     <div
-      className={`flex justify-start items-center py-3 cursor-pointer hover:bg-[#F8F8F9] ${
-        isCurrent ? 'bg-[#F8F8F9]' : ''
-      }`}
+      className={`${styles.item} ${isCurrent ? styles.itemActive : ''}`}
       key={entity.id}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => leaveItem(visible)}
       onClick={onClick}
       onDoubleClick={() => setIsEditing(true)}
     >
-      <MoreOutlined className="mx-0.5" style={{ visibility: isCurrent ? 'visible' : 'hidden' }} />
-      {entity.type === 'model' ? (
-        // FIXME(更新模型和枚举的icon)
-        <AppleOutlined className="ml-0.5 mr-2" />
-      ) : (
-        <GithubOutlined className="ml-0.5 mr-2" />
-      )}
-
+      <div className={styles.icon}>
+        {entity.type === 'model' ? (
+          // FIXME(更新模型和枚举的icon)
+          <img src={iconEntity} alt="模型" />
+        ) : (
+          <img src={iconEnum} alt="枚举" />
+        )}
+      </div>
       {itemContent}
-
       <Dropdown
         overlay={MenuContainer}
         trigger={['click']}
@@ -159,11 +183,13 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
           leaveItem(v)
         }}
       >
-        <MoreOutlined
+        <div
+          className={styles.dropdownIcon}
           onClick={e => e.stopPropagation()}
-          className="m-auto mr-0 pr-2"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
-        />
+        >
+          <img src={iconMore} alt="菜单" />
+        </div>
       </Dropdown>
     </div>
   )
