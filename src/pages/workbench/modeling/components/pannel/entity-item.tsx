@@ -1,4 +1,3 @@
-import { AppleOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Dropdown, Input, Menu, message, Popconfirm } from 'antd'
 import type { Updater } from 'use-immer'
@@ -11,9 +10,13 @@ import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
 
+import iconDel from '../../assets/del.svg'
+import iconEdit from '../../assets/edit.svg'
 import iconEntity from '../../assets/entity.svg'
 import iconEnum from '../../assets/enum.svg'
 import iconMore from '../../assets/more.svg'
+import iconRename from '../../assets/rename.svg'
+import iconView from '../../assets/view.svg'
 import styles from './pannel.module.less'
 
 interface Props {
@@ -100,19 +103,19 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
         {
           key: 1,
           label: <span>重命名</span>,
-          icon: <AppleOutlined />,
+          icon: <img src={iconRename} alt="重命名" />,
           onClick: () => setIsEditing(!isEditing)
         },
         {
           key: 2,
           label: <span>编辑</span>,
-          icon: <AppleOutlined />,
+          icon: <img src={iconEdit} alt="编辑" />,
           onClick: () => onToggleDesigner(entity)
         },
         {
           key: 3,
           label: <span>查看</span>,
-          icon: <AppleOutlined />,
+          icon: <img src={iconView} alt="查看" />,
           onClick: () => {
             onClick()
             setVisible(false)
@@ -135,7 +138,7 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
               <span>删除</span>
             </Popconfirm>
           ),
-          icon: <DeleteOutlined />
+          icon: <img src={iconDel} alt="删除" />
         }
       ]}
     />

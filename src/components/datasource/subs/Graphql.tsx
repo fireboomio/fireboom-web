@@ -392,22 +392,6 @@ export default function Graphql({ content, type }: Props) {
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="pb-9px flex items-center justify-between border-gray border-b">
-            {content.name == '' ? (
-              <div>
-                <IconFont type="icon-QLweixuanzhong1" />
-                <span className="ml-2">创建数据源</span>
-              </div>
-            ) : (
-              <div>
-                <IconFont type="icon-QLweixuanzhong1" />
-                <span className="ml-2">
-                  {content.name} <span className="text-xs text-gray-500/80">GET</span>
-                </span>
-              </div>
-            )}
-          </div>
-
           <div className="py-6 rounded-xl mb-4">
             <Form
               form={form}
@@ -429,7 +413,7 @@ export default function Graphql({ content, type }: Props) {
                 customIntScalars: config.customIntScalars,
                 skipRenameRootFields: config.skipRenameRootFields,
                 headers: config.headers || [],
-                agreement: config.loadSchemaFromString !== undefined ? true : false
+                agreement: false
               }}
             >
               <Form.Item
@@ -729,28 +713,30 @@ export default function Graphql({ content, type }: Props) {
                 </Panel>
               </Collapse>
             </Form>
-            <div className="flex justify-center items-center w-40 mt-5">
-              <Button
-                className={'btn-save ml-4'}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
-                {content.name == '' ? '创建' : '保存'}
-              </Button>
-              <Button
-                className={'btn-cancel ml-4'}
-                onClick={() => {
-                  if (content.name) {
-                    handleToggleDesigner('detail', content.id, content.sourceType)
-                  } else {
-                    navigate('/workbench/dataSource/new')
-                  }
-                }}
-              >
-                <span>取消</span>
-              </Button>
-            </div>
+            <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
+              <div className="flex justify-center items-center w-40 mt-5">
+                <Button
+                  className={'btn-cancel ml-4'}
+                  onClick={() => {
+                    if (content.name && content.name !== 'example_graphqlApi') {
+                      handleToggleDesigner('detail', content.id, content.sourceType)
+                    } else {
+                      navigate('/workbench/dataSource/new')
+                    }
+                  }}
+                >
+                  <span>取消</span>
+                </Button>
+                <Button
+                  className={'btn-save ml-4'}
+                  onClick={() => {
+                    form.submit()
+                  }}
+                >
+                  {content.name == '' ? '创建' : '保存'}
+                </Button>
+              </div>
+            </Form.Item>
           </div>
         </>
       )}

@@ -1,4 +1,4 @@
-import { MoreOutlined, PaperClipOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { MoreOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import type { Attribute, Field, ModelAttribute, Property } from '@mrleebo/prisma-ast'
 import { Button, Col, Divider, Form, Input, message, Modal, Popover, Row, Spin } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
@@ -14,6 +14,7 @@ import type { Enum, Model } from '@/interfaces/modeling'
 import { MAGIC_DELETE_ENTITY_NAME, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { checkAndUpdateRelation, checkIdExist } from '@/lib/helpers/PropertiesHelper'
 
+import iconAt from '../../../assets/at.svg'
 import styles from '../index.module.less'
 import FieldTypeCell from './field-type-cell'
 import FieldAttributesCell from './fieldattributes'
@@ -48,7 +49,8 @@ const ModelDesigner = forwardRef(
       handleResetModel,
       handleSaveModel,
       addEmptyField,
-      addEmptyModelAttribute
+      addEmptyModelAttribute,
+      currentModel
     }))
     const [currentModel, setCurrentModel] = useImmer<Model>(model)
 
@@ -385,12 +387,16 @@ const ModelDesigner = forwardRef(
                 }
                 placement="left"
               >
-                <MoreOutlined onClick={handleMoreClick(field.name)} />
+                <MoreOutlined
+                  style={{ transform: 'rotate(90deg)' }}
+                  onClick={handleMoreClick(field.name)}
+                />
               </Popover>
 
               <Divider type="vertical" />
-
-              <PaperClipOutlined onClick={() => addEmptyFieldAttribute(field)} />
+              <div className="cursor-pointer" onClick={() => addEmptyFieldAttribute(field)}>
+                <img src={iconAt} alt="" />
+              </div>
 
               <Divider type="vertical" />
 

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 
 import styles from './index.module.less'
 
@@ -58,6 +59,7 @@ export default function Index(props: Props) {
     form.setFieldsValue(setting)
   }, [apiSetting, globalSetting])
 
+  const { refreshAPI } = useAPIManager()
   const onChange = (changedValues: Setting, allValues: Setting) => {
     // 全局配置需要手动保存
     if (props.type !== 'panel') {
@@ -88,6 +90,15 @@ export default function Index(props: Props) {
         // 如果修改的是实时查询，则需要刷新api面板=
         if (changedValues.liveQueryEnable !== undefined) {
           onRefreshMenu('api')
+        }
+        // 如果修改的是开启授权，则需要刷新当前api页面
+        if (
+          changedValues.authenticationRequired !== undefined ||
+          changedValues.authenticationQueriesRequired !== undefined ||
+          changedValues.authenticationMutationsRequired !== undefined ||
+          changedValues.authenticationSubscriptionsRequired !== undefined
+        ) {
+          refreshAPI()
         }
       })
 

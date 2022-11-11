@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import type { ReactNode } from 'react'
 import { useEffect, useReducer } from 'react'
 import useSWR from 'swr'
@@ -34,7 +35,10 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [dataSources])
 
   const handleChangeSource = (dbSourceId: number) => {
-    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)
+    const hide = message.loading('加载中...', 0)
+    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)?.finally(() => {
+      hide()
+    })
     setShowType('preview')
   }
 
