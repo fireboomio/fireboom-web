@@ -30,7 +30,7 @@ const ModelPannel = ({
   addNewModel,
   setShowType
 }: Props) => {
-  const { entities } = useEntities()
+  const { entities, editMap, newMap, delMap } = useEntities()
 
   const menu = (
     <Menu
@@ -58,9 +58,12 @@ const ModelPannel = ({
         <OperationButtons addNewModel={addNewModel} changeToER={changeToER} />
       </div>
 
+      {Object.keys(delMap).length ? <div>{`已删除${Object.keys(delMap).length}个模块`}</div> : null}
       <div className="mt-1">
         {entities.map(entity => (
           <ModelEntityItem
+            editFlag={editMap[entity.name]}
+            newFlag={newMap[entity.name]}
             setShowType={setShowType}
             key={entity.id}
             entity={entity}

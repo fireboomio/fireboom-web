@@ -7,6 +7,7 @@ import type { AnyAction } from '@/lib/actions/ActionTypes'
 import {
   createApolloClient,
   initialPrismaSchemaAction,
+  localPrismaSchemaAction,
   refetchPrismaSchemaAction
 } from '@/lib/actions/PrismaSchemaActions'
 import { fetchPrismaDMF } from '@/lib/clients/fireBoomAPIOperator'
@@ -37,6 +38,10 @@ export const refetchPrismaSchema = (dataSourceId: string, dispatch: Dispatch<Any
   fetchPrismaDMF(dataSourceId).then(({ enums, models, schemaContent }) => {
     dispatch(refetchPrismaSchemaAction(buildBlocks(schemaContent), { models, enums }))
   })
+// 使用本地schema
+export const applyLocalPrismaSchema = (schemaContent: string, dispatch: Dispatch<AnyAction>) => {
+  dispatch(localPrismaSchemaAction(buildBlocks(schemaContent)))
+}
 
 export const fetchAndSaveToPrismaSchemaContext = (
   dataSourceId: number,
@@ -48,7 +53,7 @@ export const fetchAndSaveToPrismaSchemaContext = (
     // void message.error(`切换数据源失败！无法找到数据源: id=${dataSourceId}`)
     return
   }
-  initialPrismaSchema(String(dataSourceId), dispatch, selectedDataSource)
+  return initialPrismaSchema(String(dataSourceId), dispatch, selectedDataSource)
     .then(() => dispatch(createApolloClient(dataSourceId)))
     .catch((err: Error) => message.error(`获取prisma dmf & schema 失败！Error: ${err.message}`))
 }

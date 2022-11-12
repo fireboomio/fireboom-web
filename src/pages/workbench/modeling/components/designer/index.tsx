@@ -42,7 +42,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const { getFirstEntity } = useEntities()
   const { getNextId } = useEntities()
-  const { blocks, updateAndSaveBlock } = useBlocks()
+  const { blocks, updateAndSaveBlock, applyLocalSchema } = useBlocks()
   const { id: dbSourceId } = useDBSource()
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
@@ -415,6 +415,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
               current={currentEntity.name}
               onChange={value => {
                 setEditorContent(value)
+                applyLocalSchema(value)
               }}
               defaultContent={editorContent ?? ''}
             />

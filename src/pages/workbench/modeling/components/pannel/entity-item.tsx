@@ -21,12 +21,21 @@ import styles from './pannel.module.less'
 
 interface Props {
   entity: Entity
+  editFlag: boolean
+  newFlag: boolean
   onClick: () => void
   onToggleDesigner: (entity: Entity) => void
   setShowType: Updater<ModelingShowTypeT>
 }
 
-const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Props) => {
+const ModelEntityItem = ({
+  entity,
+  onClick,
+  onToggleDesigner,
+  setShowType,
+  editFlag,
+  newFlag
+}: Props) => {
   const { currentEntityId, changeToEntityById } = useCurrentEntity()
   const { blocks, updateAndSaveBlock } = useBlocks()
   const [isHovering, setIsHovering] = useImmer(false)
@@ -176,6 +185,8 @@ const ModelEntityItem = ({ entity, onClick, onToggleDesigner, setShowType }: Pro
         )}
       </div>
       {itemContent}
+      {editFlag ? <div className={styles.editMark}>已修改</div> : null}
+      {newFlag ? <div className={styles.editMark}>新增</div> : null}
       <Dropdown
         overlay={MenuContainer}
         trigger={['click']}

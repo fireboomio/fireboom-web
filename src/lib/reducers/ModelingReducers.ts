@@ -1,7 +1,8 @@
 import type { Schema } from '@paljs/types'
+import { differenceBy, isEqual, keyBy } from 'lodash'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
-import type { Block, Entity } from '@/interfaces/modeling'
+import type { Block, Entity, Enum, Model } from '@/interfaces/modeling'
 import type {
   AnyAction,
   PrismaSchemaPayload,
@@ -10,6 +11,7 @@ import type {
 import {
   CREATE_APOLLO_CLIENT_ACTION,
   INITIAL_PRISMA_SCHEMA_ACTION,
+  LOCAL_PRISMA_SCHEMA_ACTION,
   REFETCH_PRISMA_SCHEMA_ACTION,
   SAVE_GQL_SCHEMA_ACTION,
   UPDATE_BLOCKS_ACTION,
@@ -29,9 +31,13 @@ const initialPrismaSchema = (
 ) => ({
   currentEntityId: getFirstEntityId(blocks),
   blocks: blocks,
+  originBlocks: blocks,
   currentDBSource: dbSource,
   previewFilters: [],
-  schema
+  schema,
+  delMap: {},
+  editMap: {},
+  newMap: {}
 })
 
 const refetchPrismaSchema = (
@@ -41,7 +47,59 @@ const refetchPrismaSchema = (
   return {
     ...state,
     blocks,
-    schema
+    originBlocks: blocks,
+    schema,
+    delMap: {},
+    editMap: {},
+    newMap: {}
+  }
+}
+
+const localPrismaSchema = (
+  state: PrismaSchemaContextState,
+  { blocks }: RefetchPrismaSchemaPayload
+) => {
+  // 对比并标记已修改block
+  const originBlocks = state.originBlocks
+  const blockMap = keyBy(blocks, 'name')
+  const delMap: Record<string, boolean> = {}
+  const editMap: Record<string, boolean> = {}
+  const newMap: Record<string, boolean> = {}
+
+  console.log(blocks)
+  console.log(originBlocks)
+  differenceBy(blocks, originBlocks, 'name').forEach(block => {
+    if (block.type === 'model' || block.type === 'enum') {
+      newMap[block.name] = true
+    }
+  })
+
+  originBlocks.forEach(originBlock => {
+    if (originBlock.type === 'model' || originBlock.type === 'enum') {
+      // 如果新block列表中找不到对应模块，则视为已删除
+      const newBlock = blockMap[originBlock.name]
+      if (!newBlock) {
+        delMap[originBlock.name] = true
+        return
+      }
+      if (originBlock.type === 'model') {
+        if (!isEqual(originBlock.properties, (newBlock as Model).properties)) {
+          editMap[originBlock.name] = true
+        }
+      } else if (originBlock.type === 'enum') {
+        if (!isEqual(originBlock.enumerators, (newBlock as Enum).enumerators)) {
+          editMap[originBlock.name] = true
+        }
+      }
+    }
+  })
+
+  return {
+    ...state,
+    blocks,
+    delMap,
+    editMap,
+    newMap
   }
 }
 
@@ -82,6 +140,8 @@ const modelingReducer = (
       return initialPrismaSchema(state, action.payload as PrismaSchemaPayload)
     case REFETCH_PRISMA_SCHEMA_ACTION:
       return refetchPrismaSchema(state, action.payload as RefetchPrismaSchemaPayload)
+    case LOCAL_PRISMA_SCHEMA_ACTION:
+      return localPrismaSchema(state, action.payload as RefetchPrismaSchemaPayload)
     case UPDATE_BLOCKS_ACTION:
       return updateDraftBlocks(state, action.payload as Block[])
     case UPDATE_CURRENT_ENTITY_ID_ACTION:

@@ -29,7 +29,9 @@ const ModelEditor = ({ current, dbId, onChange, defaultContent }: Props) => {
     // console.log('====', defaultContent)
     setValue(defaultContent)
     if (editorRef.current) {
-      editorRef.current.setValue(defaultContent)
+      if (editorRef.current.getValue() !== defaultContent) {
+        editorRef.current.setValue(defaultContent)
+      }
     }
   }, [defaultContent])
   return (
