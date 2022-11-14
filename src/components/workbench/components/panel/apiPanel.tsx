@@ -422,14 +422,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             size="small"
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
-            // onBlur={() => {
-            //   if (inputValue) {
-            //     handlePressEnter()
-            //   } else {
-            //     setCurrEditingKey(null)
-            //     setRefreshFlag(!refreshFlag)
-            //   }
-            // }}
+            onBlur={() => {
+              if (inputValue) {
+                handlePressEnter()
+              } else {
+                setCurrEditingKey(null)
+                setRefreshFlag(!refreshFlag)
+              }
+            }}
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}
@@ -490,24 +490,35 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         </>
       }
     >
-      <div className={styles.treeContainer}>
-        {treeData.length ? (
-          <Tree
-            rootClassName="overflow-auto"
-            // @ts-ignore
-            titleRender={titleRender}
-            // draggable
-            showIcon
-            defaultExpandParent
-            expandedKeys={expandedKeys}
-            onExpand={setExpandedKeys}
-            // @ts-ignore
-            treeData={treeData}
-            selectedKeys={[selectedKey]}
-            // @ts-ignore
-            onSelect={handleSelectTreeNode}
-          />
-        ) : null}
+      <div className="flex flex-col justify-between h-full">
+        <div className={styles.treeContainer}>
+          {treeData.length ? (
+            <Tree
+              rootClassName="overflow-auto"
+              // @ts-ignore
+              titleRender={titleRender}
+              // draggable
+              showIcon
+              defaultExpandParent
+              expandedKeys={expandedKeys}
+              onExpand={setExpandedKeys}
+              // @ts-ignore
+              treeData={treeData}
+              selectedKeys={[selectedKey]}
+              // @ts-ignore
+              onSelect={handleSelectTreeNode}
+            />
+          ) : null}
+        </div>
+        <div className={styles.createRow}>
+          <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
+            新建
+          </span>
+          <span> 或者 </span>
+          <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+            批量新建
+          </span>
+        </div>
       </div>
       <Modal
         title="API全局设置"
