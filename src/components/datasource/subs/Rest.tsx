@@ -487,22 +487,6 @@ export default function Rest({ content, type }: Props) {
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="border-gray border-b flex pb-9px items-center justify-between">
-            {content.name == '' ? (
-              <>
-                <IconFont type="icon-shujuyuantubiao3" />
-                <span className="ml-2">创建数据源</span>
-              </>
-            ) : (
-              <>
-                <IconFont type="icon-shujuyuantubiao3" />
-                <span className="ml-2">
-                  {content.name} <span className="text-xs text-gray-500/80">GET</span>
-                </span>
-              </>
-            )}
-          </div>
-
           <div className="rounded-xl mb-4 py-6">
             <Form
               form={form}
@@ -805,23 +789,25 @@ export default function Rest({ content, type }: Props) {
                 </Panel>
               </Collapse>
 
-              <div className="flex mt-10 w-160px justify-center items-center">
-                <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
-                  {content.name == '' ? '创建' : '保存'}
-                </Button>
-                <Button
-                  className={'btn-cancel  ml-4'}
-                  onClick={() => {
-                    if (content.name) {
-                      handleToggleDesigner('detail', content.id, content.sourceType)
-                    } else {
-                      navigate('/workbench/dataSource/new')
-                    }
-                  }}
-                >
-                  <span>取消</span>
-                </Button>
-              </div>
+              <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
+                <div className="flex mt-10 w-160px justify-center items-center">
+                  <Button
+                    className={'btn-cancel  ml-4'}
+                    onClick={() => {
+                      if (content.name && content.name !== 'example_restApi') {
+                        handleToggleDesigner('detail', content.id, content.sourceType)
+                      } else {
+                        navigate('/workbench/dataSource/new')
+                      }
+                    }}
+                  >
+                    <span>取消</span>
+                  </Button>
+                  <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
+                    {content.name == '' ? '创建' : '保存'}
+                  </Button>
+                </div>
+              </Form.Item>
             </Form>
           </div>
         </>

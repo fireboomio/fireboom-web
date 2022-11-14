@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
-import Editor, { loader } from '@monaco-editor/react'
+import { loader } from '@monaco-editor/react'
 import { Button, Checkbox, Form, Input, Radio } from 'antd'
 import type { ReactNode } from 'react'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -42,11 +43,26 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const [inputValue, setInputValue] = useImmer(
     '' as string | number | readonly string[] | undefined
   )
+  const [jwksObj, setjwksObj] = useState<Object>({})
+  const [jwksJSON, setJwksJSON] = useState<string>('')
+
+  useEffect(() => {
+    try {
+      setjwksObj(JSON.parse(String(config.jwksJSON || '{}')))
+    } catch (e) {
+      setjwksObj({})
+      console.error(e)
+    }
+    setJwksJSON(JSON.stringify(jwksObj))
+  }, [content])
 
   if (!content) {
     return <Error50x />
   }
   const onFinish = async (values: FromValues) => {
+    if (values.jwks == 1) {
+      values.jwksJSON = jwksJSON
+    }
     const newValues = { ...config, ...values }
     const newContent = { ...content, switchState: values.switchState, name: values.id }
     if (content.name == '') {
@@ -105,6 +121,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         jwksJSON: '',
         switchState: []
       }
+
+  const saveJwksJSON = ({ updated_src }: { updated_src: Object }) => {
+    setJwksJSON(JSON.stringify(updated_src))
+  }
 
   return (
     <>
@@ -194,11 +214,14 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Radio.Group>
           </Form.Item>
           {isRadioShow ? (
-            <Form.Item label="jwksJSON" name="jwksJSON" className="mb-5" wrapperCol={20}>
-              <Editor
-                defaultLanguage="typescript"
-                defaultValue="// some comment"
-                className={styles['monaco-edit']}
+            <Form.Item label="jwksJSON" className="mb-5">
+              <ReactJson
+                onEdit={saveJwksJSON}
+                onAdd={saveJwksJSON}
+                onDelete={saveJwksJSON}
+                src={jwksObj}
+                iconStyle="triangle"
+                name={false}
               />
             </Form.Item>
           ) : (

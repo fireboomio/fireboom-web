@@ -497,7 +497,7 @@ export default function DB({ content, type }: Props) {
                 <Button
                   className="btn-cancel"
                   onClick={() => {
-                    if (content.name) {
+                    if (content.name && content.name !== 'example_pgsql') {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
                       navigate('/workbench/dataSource/new')

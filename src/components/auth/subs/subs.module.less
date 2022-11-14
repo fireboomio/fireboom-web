@@ -103,6 +103,9 @@
   .ant-form-item {
     margin-bottom: 20px;
   }
+  .key-modal-request > div {
+    z-index: 1;
+  }
 }
 
 .db-check-setting {
@@ -304,24 +307,23 @@
 //   }
 // }
 
-
 .pillTab {
   height: 36px;
   background: #f0f1f4;
   border-radius: 4px;
   align-self: flex-start;
-  :global{
-    .ant-tabs-ink-bar{
+  :global {
+    .ant-tabs-ink-bar {
       display: none;
     }
-    .ant-tabs-nav-list{
+    .ant-tabs-nav-list {
       height: 36px;
       display: flex;
       align-items: center;
       flex-direction: row;
       padding: 0 6px;
     }
-    .ant-tabs-tab{
+    .ant-tabs-tab {
       margin: 0;
       width: 97px;
       height: 26px;
@@ -329,21 +331,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #787D8B;
+      color: #787d8b;
       border-radius: 4px;
       cursor: pointer;
     }
-    .ant-tabs-tab-active{
+    .ant-tabs-tab-active {
       background: white;
-      box-shadow: 0px 1px 4px 0px rgba(211,211,222,0.84);
-      .ant-tabs-tab-btn{
+      box-shadow: 0px 1px 4px 0px rgba(211, 211, 222, 0.84);
+      .ant-tabs-tab-btn {
         color: #333 !important;
       }
     }
   }
 
   .tab {
-
     &__active {
       color: #333;
       font-weight: 500;
@@ -381,9 +382,9 @@
   }
 }
 
-.tabContent{
-  background: #FFFFFF;
+.tabContent {
+  background: #ffffff;
   border-radius: 4px;
-  border: 1px solid rgba(95,98,105,0.1);
+  border: 1px solid rgba(95, 98, 105, 0.1);
   padding: 16px;
 }

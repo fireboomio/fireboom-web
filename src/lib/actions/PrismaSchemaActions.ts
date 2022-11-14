@@ -7,6 +7,7 @@ import type {
   CreateApolloClientAction,
   InitCurrentEntityIdAction,
   InitialPrismaSchemaAction,
+  LocalPrismaSchemaAction,
   RefetchPrismaSchemaAction,
   SaveGQLSchemaAction,
   UpdateBlocksAction,
@@ -15,6 +16,7 @@ import type {
 
 export const INITIAL_PRISMA_SCHEMA_ACTION = 'fetch_blocks'
 export const REFETCH_PRISMA_SCHEMA_ACTION = 'refetch_blocks'
+export const LOCAL_PRISMA_SCHEMA_ACTION = 'local_blocks'
 export const UPDATE_BLOCKS_ACTION = 'update_blocks'
 export const UPDATE_CURRENT_ENTITY_ID_ACTION = 'update_current_entity_id'
 export const UPDATE_PREVIEW_FILTERS_ACTION = 'update_preview_filters'
@@ -29,6 +31,7 @@ export const initialPrismaSchemaAction = (
   type: INITIAL_PRISMA_SCHEMA_ACTION,
   payload: {
     blocks: draft,
+    originBlocks: draft,
     dbSource,
     schema
   }
@@ -41,7 +44,14 @@ export const refetchPrismaSchemaAction = (
   type: REFETCH_PRISMA_SCHEMA_ACTION,
   payload: {
     blocks,
+    originBlocks: blocks,
     schema
+  }
+})
+export const localPrismaSchemaAction = (blocks: Block[]): LocalPrismaSchemaAction => ({
+  type: LOCAL_PRISMA_SCHEMA_ACTION,
+  payload: {
+    blocks
   }
 })
 

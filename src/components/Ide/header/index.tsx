@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 
 import iconCloud from '../assets/cloud.svg'
 import iconFullscreen from '../assets/fullscreen.svg'
+import iconFullscreen2 from '../assets/fullscreen2.svg'
 import iconHelp from '../assets/help.svg'
 import type { AutoSavePayload } from './../index'
 import { AutoSaveStatus } from './../index'
@@ -132,7 +133,7 @@ const IdeHeaderContainer: FC<Props> = props => {
           </div>
           <div className="ml-3 cursor-pointer" onClick={() => props.onFullScreen()}>
             {props.fullScreen ? (
-              <img src={iconFullscreen} alt="全屏" />
+              <img src={iconFullscreen2} alt="全屏" />
             ) : (
               <img src={iconFullscreen} alt="全屏" />
             )}

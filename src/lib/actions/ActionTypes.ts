@@ -10,18 +10,35 @@ export interface Action<T> {
 
 export interface PrismaSchemaPayload {
   blocks: Block[]
+  originBlocks: Block[]
+  delMap: Record<string, boolean>
+  editMap: Record<string, boolean>
+  newMap: Record<string, boolean>
   dbSource: DBSourceResp
   schema: Schema
 }
 
 export interface RefetchPrismaSchemaPayload {
   blocks: Block[]
+  originBlocks: Block[]
+  delMap: Record<string, boolean>
+  editMap: Record<string, boolean>
+  newMap: Record<string, boolean>
   schema: Schema
+}
+
+export interface LocalPrismaSchemaPayload {
+  blocks: Block[]
+  delMap: Record<string, boolean>
+  editMap: Record<string, boolean>
+  newMap: Record<string, boolean>
 }
 
 export interface InitialPrismaSchemaAction extends Action<PrismaSchemaPayload> {}
 
 export interface RefetchPrismaSchemaAction extends Action<RefetchPrismaSchemaPayload> {}
+
+export interface LocalPrismaSchemaAction extends Action<LocalPrismaSchemaPayload> {}
 
 export interface UpdateDraftBlockAction extends Action<Block> {}
 
@@ -47,6 +64,7 @@ export type AnyAction =
   | UpdateDraftEnumAction
   | InitialPrismaSchemaAction
   | RefetchPrismaSchemaAction
+  | LocalPrismaSchemaAction
   | UpdateBlocksAction
   | UpdateDraftBlockAction
   | AddDraftBlockAction

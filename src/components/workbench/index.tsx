@@ -71,7 +71,6 @@ export default function Index(props: PropsWithChildren) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const data = new Response(value)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          console.log(data)
           void data.text().then(res => {
             const status = matchJson(res).pop()
             if (status) {

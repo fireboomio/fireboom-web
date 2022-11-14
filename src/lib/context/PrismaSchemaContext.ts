@@ -8,6 +8,10 @@ import type { BasicContextContainer } from '@/lib/context/baseContextContainer'
 
 export type PrismaSchemaContextState = {
   blocks: Block[]
+  originBlocks: Block[]
+  delMap: Record<string, boolean>
+  editMap: Record<string, boolean>
+  newMap: Record<string, boolean>
   currentEntityId: number
   currentDBSource: DBSourceResp
   previewFilters: FilterState[]
@@ -16,9 +20,14 @@ export type PrismaSchemaContextState = {
 }
 
 export const emptyPrismaSchemaContextState: PrismaSchemaContextContainer = {
+  panel: undefined,
   state: {
     currentEntityId: 0,
     blocks: [],
+    originBlocks: [],
+    delMap: {},
+    editMap: {},
+    newMap: {},
     currentDBSource: {
       id: 0,
       name: '',

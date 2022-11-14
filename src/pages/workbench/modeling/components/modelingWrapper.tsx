@@ -1,5 +1,6 @@
+import { message } from 'antd'
 import type { ReactNode } from 'react'
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
@@ -19,10 +20,14 @@ import modelingReducer from '@/lib/reducers/ModelingReducers'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
+  const { newMap, delMap, editMap } = state
   const [showType, setShowType] = useImmer<ModelingShowTypeT>('preview')
+  // 是否处于编辑状态，如果在编辑状态，则点击实体后不会切换到预览面板
+  const inEdit = useRef<boolean>(false)
   const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
 
   const { data, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
+  const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
   useEffect(() => {
     setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])
   }, [data, setDataSources])
@@ -34,19 +39,54 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [dataSources])
 
   const handleChangeSource = (dbSourceId: number) => {
-    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)
+    const hide = message.loading('加载中...', 0)
+    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)?.finally(() => {
+      hide()
+    })
     setShowType('preview')
   }
 
-  const handleClickEntity = (entity: Entity) => {
-    setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
-    dispatch(updateCurrentEntityIdAction(entity.id))
-    dispatch(updatePreviewFiltersAction([]))
+  const handleClickEntity = (entity: Entity, auto = false) => {
+    if (!auto) {
+      setCurrentEntity(entity)
+    }
+    if (inEdit.current) {
+      setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
+      dispatch(updateCurrentEntityIdAction(entity.id))
+    } else {
+      setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
+      dispatch(updateCurrentEntityIdAction(entity.id))
+      dispatch(updatePreviewFiltersAction([]))
+    }
   }
 
-  const handleToggleDesigner = (entity: Entity) => {
-    setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
-    dispatch(updateCurrentEntityIdAction(entity.id))
+  const handleToggleDesigner = (entity: Entity, auto = false) => {
+    if (!auto) {
+      setCurrentEntity(entity)
+    }
+
+    if (inEdit.current) {
+      setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
+      dispatch(updateCurrentEntityIdAction(entity.id))
+    } else {
+      setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
+      dispatch(updateCurrentEntityIdAction(entity.id))
+      dispatch(updatePreviewFiltersAction([]))
+    }
+  }
+
+  const handleSetInEdit = (flag: boolean) => {
+    if (inEdit.current) {
+      if (Object.keys({ ...newMap, ...delMap, ...editMap }).length > 0) {
+        message.error('请先保存或取消编辑')
+        return
+      }
+    }
+    inEdit.current = flag
+    if (!currentEntity) {
+      return
+    }
+    handleClickEntity(currentEntity, true)
   }
 
   // console.log('provider', {
@@ -66,6 +106,8 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
         state,
         dispatch,
         panel: {
+          inEdit: inEdit.current,
+          handleSetInEdit,
           handleToggleDesigner,
           handleClickEntity,
           handleChangeSource,

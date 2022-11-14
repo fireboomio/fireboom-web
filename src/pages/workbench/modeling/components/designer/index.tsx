@@ -1,3 +1,4 @@
+import { printSchema } from '@mrleebo/prisma-ast'
 import { Dropdown, Empty, Input, Menu, message, Radio } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
@@ -16,6 +17,12 @@ import useDBSource from '@/lib/hooks/useDBSource'
 import useEntities from '@/lib/hooks/useEntities'
 import useLocalStorage from '@/lib/hooks/useLocalStorage'
 
+import iconAdd from '../../assets/add.svg'
+import iconAt from '../../assets/at.svg'
+import iconDesignMode from '../../assets/design-mode.svg'
+import iconDesignModeActive from '../../assets/design-mode-active.svg'
+import iconEditMode from '../../assets/edit-mode.svg'
+import iconEditModeActive from '../../assets/edit-mode-active.svg'
 import ModelEditor from './editor'
 import EnumDesigner from './enum'
 import styles from './index.module.less'
@@ -35,7 +42,8 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const { getFirstEntity } = useEntities()
   const { getNextId } = useEntities()
-  const { blocks, updateAndSaveBlock } = useBlocks()
+  const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
+    useBlocks()
   const { id: dbSourceId } = useDBSource()
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
@@ -90,8 +98,16 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         type: 'field',
         name: 'updatedAt',
         fieldType: 'DateTime',
-        optional: false,
-        array: false
+        optional: true,
+        array: false,
+        attributes: [
+          {
+            name: 'default',
+            type: 'attribute',
+            kind: 'field',
+            args: [{ type: 'attributeArgument', value: { name: 'now', type: 'function' } }]
+          }
+        ]
       },
       {
         type: 'field',
@@ -175,7 +191,15 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   }
 
   const handleAddNewEnum = (newEnum: Enum) => {
-    setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
+    const exist = blocks.find(block => {
+      return block.type === 'enum' && block.name === newEnum.name
+    })
+    if (exist) {
+      return message.error('枚举名已存在！')
+    }
+
+    applyLocalBlocks(PrismaSchemaBlockOperator(blocks).addEnum(newEnum))
+    // setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
   }
 
   if (editType === 'edit' && !currentEntity) {
@@ -183,30 +207,32 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   }
 
   function onCancel() {
-    if (mode === 'editor') {
-      // 编辑器
-    } else if (type === 'model') {
-      // @ts-ignore
-      ModelDesignerRef?.current?.handleResetModel?.()
-    } else {
-      // @ts-ignore
-      EnumDesignerRef?.current?.handleResetEnum?.()
-    }
+    const hide = message.loading('刷新中...')
+    refreshBlocks().then(() => {
+      hide()
+      message.success('重置成功！')
+    })
   }
   async function onSave() {
-    if (mode === 'editor') {
-      if (editorContent !== undefined) {
-        await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
-          schema: editorContent
-        })
+    const hide = message.loading('保存中...')
+    try {
+      if (mode === 'editor') {
+        if (editorContent !== undefined) {
+          await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
+            schema: editorContent
+          })
+        }
+      } else if (type === 'model') {
+        // @ts-ignore
+        await ModelDesignerRef?.current?.handleSaveModel?.()
+      } else {
+        // @ts-ignore
+        await EnumDesignerRef?.current?.handleSaveEnum?.()
       }
-    } else if (type === 'model') {
-      // @ts-ignore
-      await ModelDesignerRef?.current?.handleSaveModel?.()
-    } else {
-      // @ts-ignore
-      await EnumDesignerRef?.current?.handleSaveEnum?.()
+    } catch (e) {
+      console.error(e)
     }
+    hide()
   }
   const dropdownMenu = [
     {
@@ -246,6 +272,29 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     }
   ].filter(item => !(item.key === 'view' && type === 'enum'))
 
+  const transferToEditor = () => {
+    // 在这里 将 新增的枚举 添加进去
+    let newBlocks = PrismaSchemaBlockOperator(blocks).addEnums(newEnums)
+    // @ts-ignore
+    let model = ModelDesignerRef?.current?.currentModel as Model
+    if (titleValue && new RegExp(ENTITY_NAME_REGEX).test(titleValue)) {
+      model = { ...model, name: titleValue }
+    } else {
+      void message.error('实体名不合法')
+    }
+
+    newBlocks =
+      editType === 'add'
+        ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
+        : PrismaSchemaBlockOperator(newBlocks).updateModel(model)
+    return printSchema({ type: 'schema', list: newBlocks })
+  }
+
+  const handelEditTitle = (title: string) => {
+    const edited = { ...currentEntity, name: title }
+    applyLocalBlocks(PrismaSchemaBlockOperator(blocks).updateModel(edited as Model))
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div
@@ -258,7 +307,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
             <Input
               className="!w-20"
               onPressEnter={e => {
-                setTitleValue(e.currentTarget.value)
+                handelEditTitle(e.currentTarget.value)
                 setEditTitle(false)
               }}
               onBlur={() => setEditTitle(false)}
@@ -286,17 +335,19 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
                 // @ts-ignore
                 ModelDesignerRef?.current?.addEmptyField?.()
               }}
+              className="cursor-pointer mt-2px"
             >
-              <img style={{ width: 12, height: 12, background: 'red' }} />
+              <img src={iconAdd} alt="增加" />
             </div>
             <div className={styles.split} />
             <div
+              className="cursor-pointer"
               onClick={() => {
                 // @ts-ignore
                 ModelDesignerRef?.current?.addEmptyModelAttribute?.()
               }}
             >
-              <img style={{ width: 12, height: 12, background: 'red' }} />
+              <img src={iconAt} alt="at" />
             </div>
             <div className={styles.split} />
           </>
@@ -304,12 +355,13 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         {mode === 'designer' && type === 'enum' ? (
           <>
             <div
+              className="cursor-pointer mt-2px"
               onClick={() => {
                 // @ts-ignore
                 EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
               }}
             >
-              <img style={{ width: 12, height: 12, background: 'red' }} />
+              <img src={iconAdd} alt="增加" />
             </div>
             <div className={styles.split} />
           </>
@@ -334,12 +386,18 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
           className={styles.modeRadio}
           value={mode}
           onChange={e => {
-            setEditorContent(undefined)
+            if (e.target.value === 'editor') {
+              setEditorContent(transferToEditor())
+            }
             setMode(e.target.value)
           }}
         >
-          <Radio.Button value="designer">普通</Radio.Button>
-          <Radio.Button value="editor">编辑器</Radio.Button>
+          <Radio.Button value="designer">
+            <img src={mode === 'designer' ? iconDesignModeActive : iconDesignMode} alt="" />
+          </Radio.Button>
+          <Radio.Button value="editor">
+            <img src={mode === 'editor' ? iconEditModeActive : iconEditMode} alt="" />
+          </Radio.Button>
         </Radio.Group>
       </div>
 
@@ -361,7 +419,11 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
             <ModelEditor
               dbId={dbSourceId}
               current={currentEntity.name}
-              onChange={setEditorContent}
+              onChange={value => {
+                setEditorContent(value)
+                applyLocalSchema(value)
+              }}
+              defaultContent={editorContent ?? ''}
             />
           </div>
         ))}
