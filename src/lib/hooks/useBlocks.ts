@@ -7,7 +7,11 @@ import { migratePrismaSchema } from '@/lib/clients/fireBoomAPIOperator'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 
-import { applyLocalPrismaSchema, refetchPrismaSchema } from '../helpers/ModelingHelpers'
+import {
+  applyLocalPrismaBlocks,
+  applyLocalPrismaSchema,
+  refetchPrismaSchema
+} from '../helpers/ModelingHelpers'
 
 const useBlocks = () => {
   const {
@@ -34,12 +38,20 @@ const useBlocks = () => {
   const applyLocalSchema = (schema: string) => {
     applyLocalPrismaSchema(schema, dispatch)
   }
+  const applyLocalBlocks = (newBlocks: Block[]) => {
+    applyLocalPrismaBlocks(newBlocks, dispatch)
+  }
+  const refreshBlocks = () => {
+    return refetchPrismaSchema(String(currentDBSource.id), dispatch)
+  }
 
   return {
     blocks: blocks,
     originBlocks: originBlocks,
     updateAndSaveBlock,
-    applyLocalSchema
+    applyLocalSchema,
+    applyLocalBlocks,
+    refreshBlocks
   }
 }
 

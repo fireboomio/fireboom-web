@@ -66,8 +66,6 @@ const localPrismaSchema = (
   const editMap: Record<string, boolean> = {}
   const newMap: Record<string, boolean> = {}
 
-  console.log(blocks)
-  console.log(originBlocks)
   differenceBy(blocks, originBlocks, 'name').forEach(block => {
     if (block.type === 'model' || block.type === 'enum') {
       newMap[block.name] = true

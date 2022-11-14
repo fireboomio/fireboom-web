@@ -42,7 +42,8 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const { getFirstEntity } = useEntities()
   const { getNextId } = useEntities()
-  const { blocks, updateAndSaveBlock, applyLocalSchema } = useBlocks()
+  const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
+    useBlocks()
   const { id: dbSourceId } = useDBSource()
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
@@ -190,7 +191,15 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   }
 
   const handleAddNewEnum = (newEnum: Enum) => {
-    setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
+    const exist = blocks.find(block => {
+      return block.type === 'enum' && block.name === newEnum.name
+    })
+    if (exist) {
+      return message.error('枚举名已存在！')
+    }
+
+    applyLocalBlocks(PrismaSchemaBlockOperator(blocks).addEnum(newEnum))
+    // setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
   }
 
   if (editType === 'edit' && !currentEntity) {
@@ -198,15 +207,11 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   }
 
   function onCancel() {
-    if (mode === 'editor') {
-      // 编辑器
-    } else if (type === 'model') {
-      // @ts-ignore
-      ModelDesignerRef?.current?.handleResetModel?.()
-    } else {
-      // @ts-ignore
-      EnumDesignerRef?.current?.handleResetEnum?.()
-    }
+    const hide = message.loading('刷新中...')
+    refreshBlocks().then(() => {
+      hide()
+      message.success('重置成功！')
+    })
   }
   async function onSave() {
     const hide = message.loading('保存中...')
@@ -285,8 +290,9 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     return printSchema({ type: 'schema', list: newBlocks })
   }
 
-  const transferToDesigner = () => {
-    //
+  const handelEditTitle = (title: string) => {
+    const edited = { ...currentEntity, name: title }
+    applyLocalBlocks(PrismaSchemaBlockOperator(blocks).updateModel(edited as Model))
   }
 
   return (
@@ -301,7 +307,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
             <Input
               className="!w-20"
               onPressEnter={e => {
-                setTitleValue(e.currentTarget.value)
+                handelEditTitle(e.currentTarget.value)
                 setEditTitle(false)
               }}
               onBlur={() => setEditTitle(false)}

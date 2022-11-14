@@ -2,7 +2,7 @@ import { getSchema } from '@mrleebo/prisma-ast'
 import { message } from 'antd'
 import type { Dispatch } from 'react'
 
-import type { DBSourceResp } from '@/interfaces/modeling'
+import type { Block, DBSourceResp } from '@/interfaces/modeling'
 import type { AnyAction } from '@/lib/actions/ActionTypes'
 import {
   createApolloClient,
@@ -41,6 +41,10 @@ export const refetchPrismaSchema = (dataSourceId: string, dispatch: Dispatch<Any
 // 使用本地schema
 export const applyLocalPrismaSchema = (schemaContent: string, dispatch: Dispatch<AnyAction>) => {
   dispatch(localPrismaSchemaAction(buildBlocks(schemaContent)))
+}
+// 使用本地schema
+export const applyLocalPrismaBlocks = (blocks: Block[], dispatch: Dispatch<AnyAction>) => {
+  dispatch(localPrismaSchemaAction(blocks))
 }
 
 export const fetchAndSaveToPrismaSchemaContext = (
