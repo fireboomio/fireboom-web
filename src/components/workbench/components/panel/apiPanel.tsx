@@ -2,7 +2,7 @@ import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from
 import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
 import type React from 'react'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
@@ -44,13 +44,25 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
+  const isLocationPage = useRef<boolean>()
+
   // 监听location变化，及时清空选中状态
   useEffect(() => {
-    if (
-      location.pathname !== '/workbench/apimanage' &&
-      location.pathname !== `/workbench/apimanage/${selectedNode?.id || ' '}`
-    ) {
+    if (!location.pathname.match(/^\/workbench\/apimanage(?:\/\d*)?$/)) {
+      isLocationPage.current = false
       setSelectedKey('')
+    } else {
+      if (!isLocationPage.current) {
+        // 如果是从其他页面跳转过来的，需要刷新一下尝试自动选中当前项
+        if (treeData) {
+          const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+          if (pathId) {
+            const currentNode = getNodeById(pathId, treeData)
+            currentNode?.key && setSelectedKey(currentNode?.key)
+          }
+        }
+      }
+      isLocationPage.current = true
     }
   }, [location])
   useEffect(() => {
@@ -423,7 +435,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
             onBlur={() => {
-              if (inputValue) {
+              if (inputValue && validateName(inputValue, currEditingNode?.isDir)) {
                 handlePressEnter()
               } else {
                 setCurrEditingKey(null)

@@ -302,7 +302,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
         </Form.Item>
         {auth ? (
           <>
-            <Form.Item name="authType" label="登录鉴权">
+            <Form.Item name="authType" label="接口角色">
               <Radio.Group>
                 <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
                 <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
@@ -320,6 +320,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
           </>
         ) : null}
         <Form.Item name="prefix" label="API前缀" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="alias" label="别名" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <Form.Item

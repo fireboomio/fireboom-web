@@ -1,6 +1,9 @@
 export type Datasource = {
   id: number
   name: string
+  config: {
+    apiNamespace: string
+  }
 }
 
 export enum AuthType {

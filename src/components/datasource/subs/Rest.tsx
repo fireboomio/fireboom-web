@@ -18,6 +18,8 @@ import {
   Upload
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import axios from 'axios'
+import { get } from 'lodash'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -124,6 +126,18 @@ export default function Rest({ content, type }: Props) {
   const setUploadPath = (v: string) => {
     form.setFieldValue('filePath', v)
     form.validateFields(['filePath'])
+    console.log(v)
+    console.log(encodeURIComponent(v))
+    axios.get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`).then(res => {
+      form.setFieldValue(
+        'baseURL',
+        `${get(res, 'data.schemes[0]', 'http')}://${get(res, 'data.host', '')}${get(
+          res,
+          'data.basePath',
+          ''
+        )}`
+      )
+    })
   }
 
   useEffect(() => {

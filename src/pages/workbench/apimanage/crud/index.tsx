@@ -29,7 +29,11 @@ export default function CRUDIndex() {
               setModelList(modelList)
             }}
           />
-          <Body model={currentModel} dbName={currentDatasource?.name ?? ''} modelList={modelList} />
+          <Body
+            model={currentModel}
+            dbName={currentDatasource?.config.apiNamespace ?? ''}
+            modelList={modelList}
+          />
         </div>
       </div>
     </div>

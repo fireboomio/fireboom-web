@@ -29,7 +29,6 @@ const initialPrismaSchema = (
   state: PrismaSchemaContextState,
   { blocks, dbSource, schema }: PrismaSchemaPayload
 ) => ({
-  currentEntityId: getFirstEntityId(blocks),
   blocks: blocks,
   originBlocks: blocks,
   currentDBSource: dbSource,

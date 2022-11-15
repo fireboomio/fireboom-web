@@ -86,6 +86,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const [breads, setBreads] = useImmer<Array<{ value: string; isLeaf: boolean }>>([])
   const [refreshFlag, setRefreshFlag] = useImmer(false)
   const containerEle = useRef<HTMLDivElement>(null)
+  const uploadingTip = useRef<Function>()
 
   const uploadPath = useMemo(() => {
     const rv = target?.isLeaf ? target.parent?.name ?? '' : target?.name ?? ''
@@ -409,8 +410,15 @@ export default function StorageExplorer({ bucketId }: Props) {
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
+              console.log('====', info)
               if (info.file.status === 'success' || info.file.status === 'done') {
+                uploadingTip.current?.()
+                uploadingTip.current = undefined
                 loadMenu(uploadPath)
+              } else {
+                if (!uploadingTip.current) {
+                  uploadingTip.current = message.loading('上传中...')
+                }
               }
             }}
           >
