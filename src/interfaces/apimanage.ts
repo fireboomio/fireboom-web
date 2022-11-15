@@ -45,6 +45,7 @@ export interface ParameterT {
   position: string
   type: string
   isRequired: boolean
+  isList: boolean
   directives?: DirectiveT[]
 }
 

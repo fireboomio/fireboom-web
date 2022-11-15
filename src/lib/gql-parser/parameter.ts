@@ -24,13 +24,14 @@ export const parseParameters = (
   if (!varDefs) return []
 
   return varDefs.map((x: VariableDefinitionNode) => {
-    const { type, isRequired } = parseType(x.type)
+    const { type, isRequired, isList } = parseType(x.type)
 
     return {
       key: x.variable.name.value,
       name: x.variable.name.value,
       position: 'path',
       type: type,
+      isList,
       isRequired: isRequired,
       directives: parseDirective(x.directives)
     }

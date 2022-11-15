@@ -38,6 +38,9 @@ async function fetcher(rec: Record<string, unknown>) {
     return res
   } catch (error) {
     console.error(error)
+    return {
+      error: (error as { message: string, stack: string })?.message || error
+    }
   }
 }
 
