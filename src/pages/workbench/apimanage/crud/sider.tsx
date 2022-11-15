@@ -9,7 +9,7 @@ import styles from './index.module.less'
 import type { Datasource } from './interface'
 
 interface CRUDSiderProps {
-  onSelectedModelChange: (model: DMFModel) => void
+  onSelectedModelChange: (model: DMFModel, datasource: Datasource, models: DMFModel[]) => void
 }
 
 export default function CRUDSider(props: CRUDSiderProps) {
@@ -39,7 +39,11 @@ export default function CRUDSider(props: CRUDSiderProps) {
     if (!currentModel) {
       return
     }
-    props.onSelectedModelChange(currentModel)
+    props.onSelectedModelChange(
+      currentModel,
+      dataSourceList.find(item => item.id === currentDataSourceId)!,
+      modelList
+    )
   }, [currentModel])
 
   const queryDataSourceList = async () => {

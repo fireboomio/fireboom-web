@@ -1,4 +1,4 @@
-import { printSchema } from '@mrleebo/prisma-ast'
+import { getSchema, printSchema } from '@mrleebo/prisma-ast'
 import { Dropdown, Empty, Input, Menu, message, Radio } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
@@ -67,57 +67,13 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   // const ctx = useContext(PrismaSchemaContext)
   const { handleClickEntity } = panel || {}
 
-  const initialModel: Model = {
-    type: 'model',
-    name: UNTITLED_NEW_ENTITY,
-    properties: [
-      {
-        type: 'field',
-        name: 'id',
-        fieldType: 'Int',
-        optional: false,
-        array: false,
-        attributes: [{ name: 'id', type: 'attribute', kind: 'field' }]
-      },
-      {
-        type: 'field',
-        name: 'createdAt',
-        fieldType: 'DateTime',
-        optional: false,
-        array: false,
-        attributes: [
-          {
-            name: 'default',
-            type: 'attribute',
-            kind: 'field',
-            args: [{ type: 'attributeArgument', value: { name: 'now', type: 'function' } }]
-          }
-        ]
-      },
-      {
-        type: 'field',
-        name: 'updatedAt',
-        fieldType: 'DateTime',
-        optional: true,
-        array: false,
-        attributes: [
-          {
-            name: 'default',
-            type: 'attribute',
-            kind: 'field',
-            args: [{ type: 'attributeArgument', value: { name: 'now', type: 'function' } }]
-          }
-        ]
-      },
-      {
-        type: 'field',
-        name: 'deletedAt',
-        fieldType: 'DateTime',
-        optional: true
-      }
-    ],
-    id: newEntityId
-  }
+  const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  deletedAt DateTime?
+}
+`).list[0] as Model
 
   const initialEnum: Enum = {
     type: 'enum',

@@ -1,10 +1,11 @@
-import { Button, Checkbox, Form, Input, Radio, Select, Table } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { Button, Checkbox, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
+import React, { useContext, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
-import type { DMFModel } from '@/interfaces/datasource'
-import { getFetcher } from '@/lib/fetchers'
+import type { DMFField, DMFModel } from '@/interfaces/datasource'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import requests, { getFetcher } from '@/lib/fetchers'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
 import type { ApiOptions, TableAttr } from './interface'
@@ -12,6 +13,8 @@ import { API, AuthType, KeyType, SortDirection } from './interface'
 
 interface CRUDBodyProps {
   model?: DMFModel
+  modelList?: DMFModel[]
+  dbName: string
 }
 
 const apiOptions = [
@@ -21,20 +24,26 @@ const apiOptions = [
   { label: '详情', value: API.Detail },
   { label: '分页查询', value: API.List },
   { label: '批量删除', value: API.BatchDelete },
-  { label: '批量导出', value: API.Export }
+  { label: '查询全部', value: API.Export }
 ]
 
 export default function CRUDBody(props: CRUDBodyProps) {
   const [form] = Form.useForm()
   const auth = Form.useWatch('auth', form)
   const table = Form.useWatch('table', form)
+  // 当前选择的模型
   const [model, setModel] = useImmer<DMFModel | undefined>(void 0)
+  // 表单初始化数据
   const [initData, setInitData] = useState<ApiOptions>()
+  // 字段列表，用于主键下拉框
   const [field, setField] = useImmer<{ value: string; label: string }[]>([])
+  // 展开状态表，用于标记外键展开状态
+  const [expandMap, setExpandMap] = useImmer<Record<string, boolean>>({})
   const { data: roles } = useSWR<{ id: number; code: string; remark: string }[]>(
     '/role',
     getFetcher
   )
+  const { onRefreshMenu } = useContext(WorkbenchContext)
 
   useEffect(() => {
     if (!props.model) {
@@ -42,6 +51,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     }
     setField(props.model?.fields.map(item => ({ value: item.name, label: item.name })) || [])
     setInitData({
+      dbName: props.dbName,
       apiList: Object.values(API),
       roleList: [],
       auth: true,
@@ -51,25 +61,83 @@ export default function CRUDBody(props: CRUDBodyProps) {
           name: cur.name,
           type: cur.type,
           sort: false,
-          show: true,
-          filter: false,
+          detail: true,
+          list: true,
+          filter: true,
           sortDirection: SortDirection.Asc,
-          create: KeyType.Hidden,
-          update: KeyType.Hidden
+          create:
+            cur.name === props.model?.idField
+              ? KeyType.Hidden
+              : cur.required
+              ? KeyType.Required
+              : KeyType.Optional,
+          update: cur.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
         }
         return acc
       }, {}),
       prefix: props?.model?.name,
       primaryKey: props.model.idField
     })
-    form.resetFields()
     setModel(props.model)
   }, [props.model])
+  useEffect(() => {
+    form.resetFields()
+  }, [initData])
 
   if (!model) return null
 
-  const onFinish = (values: any) => {
-    buildApi(values).then(() => {})
+  const onFinish = async (values: any) => {
+    console.log(values)
+    const apiList = buildApi(values)
+    const pathList = apiList.map(item => item.path)
+
+    const hideCheck = message.loading('校验中')
+    // TODO 校验API是否重复
+    const existPathList = pathList
+    hideCheck()
+    if (existPathList.length) {
+      const confirmFlag = await new Promise(resolve => {
+        Modal.confirm({
+          title: '检测到以下API已存在，是否覆盖？',
+          content: existPathList.map(item => <div key={item}>{item}</div>),
+          onOk: () => {
+            // TODO 生成API
+            resolve(true)
+          },
+          onCancel: () => {
+            resolve(false)
+          },
+          okText: '确认生成',
+          cancelText: '取消'
+        })
+      })
+      if (!confirmFlag) {
+        return false
+      }
+    }
+    const hide = message.loading('正在生成')
+
+    const results: boolean[] = await Promise.all(
+      apiList.map(item => {
+        return requests
+          .post<unknown, { id: number }>('/operateApi', {
+            path: item.path,
+            content: item.content
+          })
+          .then(() => {
+            return true
+          })
+          .catch(e => {
+            console.log(e)
+            return false
+          })
+      })
+    )
+    hide()
+    onRefreshMenu('api')
+    message.success(
+      `执行结束，成功${results.filter(x => x).length}条，失败${results.filter(x => !x).length}条`
+    )
   }
 
   const setTableFiled = (rowName: string, key: string, value: any) => {
@@ -82,17 +150,39 @@ export default function CRUDBody(props: CRUDBodyProps) {
   }
 
   const columns = [
-    { title: '字段', dataIndex: 'name' },
+    {
+      title: '字段',
+      dataIndex: 'name',
+      render: (text: string, field: DMFField, index: number) => (
+        <>
+          <span>{text}</span>
+        </>
+      )
+    },
     { title: '类型', dataIndex: 'type' },
     {
-      title: '展示',
-      dataIndex: 'show',
+      title: '列表',
+      dataIndex: 'list',
       render: (text: any, record: any) => {
         return (
           <Checkbox
-            checked={table?.[record.name]?.show}
+            checked={table?.[record.name]?.list}
             onChange={e => {
-              setTableFiled(record.name, 'show', e.target.checked)
+              setTableFiled(record.name, 'list', e.target.checked)
+            }}
+          />
+        )
+      }
+    },
+    {
+      title: '详情',
+      dataIndex: 'detail',
+      render: (text: any, record: any) => {
+        return (
+          <Checkbox
+            checked={table?.[record.name]?.detail}
+            onChange={e => {
+              setTableFiled(record.name, 'detail', e.target.checked)
             }}
           />
         )
@@ -153,6 +243,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
         return (
           <Select
             value={table?.[record.name]?.create}
+            // 生成时，如果是主键，必须是隐藏，如果是必填，必须是必填
+            disabled={record.name === model.idField || record.required}
             options={[
               { label: '无', value: KeyType.Hidden },
               { label: '选填', value: KeyType.Optional },
@@ -171,11 +263,12 @@ export default function CRUDBody(props: CRUDBodyProps) {
       render: (text: any, record: any) => {
         return (
           <Select
+            disabled={record.name === model.idField}
             value={table?.[record.name]?.update ?? 'choose'}
             options={[
-              { label: '无', value: 'none' },
-              { label: '选填', value: 'choose' },
-              { label: '必填', value: 'required' }
+              { label: '无', value: KeyType.Hidden },
+              { label: '选填', value: KeyType.Optional },
+              { label: '必填', value: KeyType.Required }
             ]}
             onChange={value => {
               setTableFiled(record.name, 'update', value)
@@ -250,6 +343,10 @@ export default function CRUDBody(props: CRUDBodyProps) {
               创建
             </Button>
           </>
+        </Form.Item>
+        {/* 用于保持字段 */}
+        <Form.Item name="dbName" hidden>
+          <Input />
         </Form.Item>
       </Form>
     </div>

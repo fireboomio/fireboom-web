@@ -24,7 +24,8 @@ export enum SortDirection {
 export type TableAttr = {
   name: string
   type: string
-  show: boolean
+  detail: boolean
+  list: boolean
   filter: boolean
   sort: boolean
   sortDirection: SortDirection
@@ -32,6 +33,7 @@ export type TableAttr = {
   update: KeyType
 }
 export type ApiOptions = {
+  dbName: string
   primaryKey: string
   prefix: string
   apiList: API[]

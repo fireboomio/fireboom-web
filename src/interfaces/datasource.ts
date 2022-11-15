@@ -41,9 +41,9 @@ export interface DMFField {
   id: string
   name: string
   title: string
-  type: 'String' | 'Int'
+  type: 'String' | 'Int' | string
   list: boolean
-  kind: 'scalar'
+  kind: 'scalar' | 'object' | 'enum'
   read: boolean
   required: boolean
   isId: boolean
