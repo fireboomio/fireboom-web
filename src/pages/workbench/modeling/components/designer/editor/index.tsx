@@ -15,16 +15,20 @@ const ModelEditor = ({ current, dbId, onChange, defaultContent }: Props) => {
   const editorRef = useRef<any>()
 
   const [value, setValue] = useState<string>('')
-  const { currentEntity, changeToEntityById } = useCurrentEntity()
+  const { currentEntity } = useCurrentEntity()
   useEffect(() => {
-    // void requests.get<unknown, DMFResp>(`/prisma/dmf/${dbId ?? ''}`).then(x => {
-    //   setValue(x.schemaContent)
-    //   if (editorRef.current) {
-    //     editorRef.current.setValue(x.schemaContent)
-    //     onChange?.(x.schemaContent)
-    //   }
-    // })
-  }, [dbId])
+    console.log(currentEntity)
+    if (editorRef.current) {
+      const targetRow = editorRef.current
+        .getValue()
+        .split('\n')
+        .findIndex(
+          (line: string) =>
+            !!line.match(new RegExp(`${currentEntity.type}\\s+${currentEntity.name}\\s+\\{`))
+        )
+      editorRef.current.revealLine(targetRow)
+    }
+  }, [currentEntity])
   useEffect(() => {
     // console.log('====', defaultContent)
     setValue(defaultContent)

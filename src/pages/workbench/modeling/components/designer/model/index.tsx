@@ -2,6 +2,7 @@ import { MoreOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import type { Attribute, Field, ModelAttribute, Property } from '@mrleebo/prisma-ast'
 import { Button, Col, Divider, Form, Input, message, Modal, Popover, Row, Spin } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
+import { findLastIndex } from 'lodash'
 import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
@@ -79,7 +80,12 @@ const ModelDesigner = forwardRef(
 
     const addEmptyField = () => {
       setCurrentModel(m => {
-        m.properties.push({
+        const lastNotTimeFieldIndex = findLastIndex(m.properties, function (f) {
+          // @ts-ignore
+          return f.name !== 'updatedAt' && f.name !== 'createdAt'
+        })
+        console.log(lastNotTimeFieldIndex)
+        m.properties.splice(lastNotTimeFieldIndex + 1, 0, {
           type: 'field',
           fieldType: 'String',
           name: ''
@@ -323,7 +329,7 @@ const ModelDesigner = forwardRef(
       return (
         <Row
           justify="space-between"
-          key={idx}
+          key={idx + field.name}
           className="my-1.5 text-sm font-normal leading-7"
           wrap={false}
         >

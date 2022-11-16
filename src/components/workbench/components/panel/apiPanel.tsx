@@ -2,7 +2,7 @@ import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from
 import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
 import type React from 'react'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
@@ -44,13 +44,25 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
+  const isLocationPage = useRef<boolean>()
+
   // 监听location变化，及时清空选中状态
   useEffect(() => {
-    if (
-      location.pathname !== '/workbench/apimanage' &&
-      location.pathname !== `/workbench/apimanage/${selectedNode?.id || ' '}`
-    ) {
+    if (!location.pathname.match(/^\/workbench\/apimanage(?:\/\d*)?$/)) {
+      isLocationPage.current = false
       setSelectedKey('')
+    } else {
+      if (!isLocationPage.current) {
+        // 如果是从其他页面跳转过来的，需要刷新一下尝试自动选中当前项
+        if (treeData) {
+          const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+          if (pathId) {
+            const currentNode = getNodeById(pathId, treeData)
+            currentNode?.key && setSelectedKey(currentNode?.key)
+          }
+        }
+      }
+      isLocationPage.current = true
     }
   }, [location])
   useEffect(() => {
@@ -422,14 +434,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             size="small"
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
-            // onBlur={() => {
-            //   if (inputValue) {
-            //     handlePressEnter()
-            //   } else {
-            //     setCurrEditingKey(null)
-            //     setRefreshFlag(!refreshFlag)
-            //   }
-            // }}
+            onBlur={() => {
+              if (inputValue && validateName(inputValue, currEditingNode?.isDir)) {
+                handlePressEnter()
+              } else {
+                setCurrEditingKey(null)
+                setRefreshFlag(!refreshFlag)
+              }
+            }}
             onChange={handleInputChange}
             autoFocus
             onClick={handleInputClick}
@@ -490,24 +502,35 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         </>
       }
     >
-      <div className={styles.treeContainer}>
-        {treeData.length ? (
-          <Tree
-            rootClassName="overflow-auto"
-            // @ts-ignore
-            titleRender={titleRender}
-            // draggable
-            showIcon
-            defaultExpandParent
-            expandedKeys={expandedKeys}
-            onExpand={setExpandedKeys}
-            // @ts-ignore
-            treeData={treeData}
-            selectedKeys={[selectedKey]}
-            // @ts-ignore
-            onSelect={handleSelectTreeNode}
-          />
-        ) : null}
+      <div className="flex flex-col justify-between h-full">
+        <div className={styles.treeContainer}>
+          {treeData.length ? (
+            <Tree
+              rootClassName="overflow-auto"
+              // @ts-ignore
+              titleRender={titleRender}
+              // draggable
+              showIcon
+              defaultExpandParent
+              expandedKeys={expandedKeys}
+              onExpand={setExpandedKeys}
+              // @ts-ignore
+              treeData={treeData}
+              selectedKeys={[selectedKey]}
+              // @ts-ignore
+              onSelect={handleSelectTreeNode}
+            />
+          ) : null}
+        </div>
+        <div className={styles.createRow}>
+          <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
+            新建
+          </span>
+          <span> 或者 </span>
+          <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+            批量新建
+          </span>
+        </div>
       </div>
       <Modal
         title="API全局设置"

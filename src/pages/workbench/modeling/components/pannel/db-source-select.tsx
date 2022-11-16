@@ -1,11 +1,10 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
-import { useEffect, useRef } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
+import { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
-import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
+import { MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
 
 import refreshIcon from '../../assets/refresh.svg'
@@ -19,39 +18,29 @@ interface Props {
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const { id } = useDBSource()
   const navigate = useNavigate()
-  const [params, setParams] = useSearchParams()
 
-  const { mutate } = useSWRConfig()
+  // const { mutate } = useSWRConfig()
 
+  const { id: paramId } = useParams()
   const handleManageSourceClick = () => {
     navigate(MANAGE_DATASOURCE_URL)
   }
 
-  const inited = useRef<boolean>()
-
   useEffect(() => {
-    if (!sourceOptions.length) return
-    if (inited.current) return
-
-    inited.current = true
-    if (params.get('id')) {
-      onChangeSource(+(params.get('id') as string))
-    } else {
-      onChangeSource(sourceOptions[0].id)
+    if (sourceOptions.length > 0 && !paramId) {
+      navigate(`/workbench/modeling/${sourceOptions[0].id}`)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, sourceOptions])
+  }, [sourceOptions, paramId])
 
   return (
     <div className={'common-form ' + styles['select-contain']}>
       <Select
         className={styles.select}
         onChange={v => {
-          setParams({ id: `${v}` })
-          onChangeSource(v)
+          navigate(`/workbench/modeling/${v}`)
         }}
         optionLabelProp="label"
-        value={id === 0 ? sourceOptions.map(x => ({ label: x.name, value: x.id })).at(0) : id}
+        value={paramId ? Number(paramId) : ''}
         options={sourceOptions.map(x => ({ label: x.name, value: x.id }))}
         dropdownRender={menu => (
           <div className="divide-y">
@@ -75,7 +64,13 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           </Select.Option>
         ))} */}
       </Select>
-      <div className={styles.refreshBtn} onClick={() => mutate(DATABASE_SOURCE)}>
+      <div
+        className={styles.refreshBtn}
+        onClick={() => {
+          // mutate(DATABASE_SOURCE)
+          onChangeSource(id)
+        }}
+      >
         <img alt="刷新" src={refreshIcon} className="w-4 h-4" />
       </div>
     </div>

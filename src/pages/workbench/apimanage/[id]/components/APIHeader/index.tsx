@@ -118,6 +118,13 @@ const APIHeader = () => {
       url.port = config.apiPort
       link = url.toString()
     }
+    let query = []
+    if (apiDesc?.liveQuery) {
+      query.push('liveQuery=true')
+    }
+    if (query.length) {
+      link += '?' + query.join('&')
+    }
     copy(link)
     message.success('URL 地址已复制')
   }

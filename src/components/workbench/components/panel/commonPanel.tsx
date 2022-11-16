@@ -299,7 +299,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                   onPressEnter={e => void handleItemEdit(e.target.value)}
-                  // onBlur={e => void handleItemEdit(e.target.value)}
+                  onBlur={e => void handleItemEdit(e.target.value)}
                   onKeyUp={(e: React.KeyboardEvent) => {
                     e.key == 'Escape' && setEditTarget(undefined)
                   }}

@@ -88,7 +88,7 @@ export default function Graphql({ content, type }: Props) {
   const urlReg = /^https?:\/\/[-.\w\d:/]+$/i
   // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
-    setIsShowUpSchema(config.loadSchemaFromString !== undefined)
+    setIsShowUpSchema(!!config.loadSchemaFromString)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
 
@@ -413,7 +413,7 @@ export default function Graphql({ content, type }: Props) {
                 customIntScalars: config.customIntScalars,
                 skipRenameRootFields: config.skipRenameRootFields,
                 headers: config.headers || [],
-                agreement: false
+                agreement: content.id ? !!config.loadSchemaFromString : false
               }}
             >
               <Form.Item

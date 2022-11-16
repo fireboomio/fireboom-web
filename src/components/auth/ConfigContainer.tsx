@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -53,8 +53,14 @@ export default function AuthConfigContainer() {
     // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
     const callbackURL = new URL(location.toString())
     callbackURL.hash = '#/workbench/userInfo'
-
-    let target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
+    let target
+    try {
+      target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
+    } catch (e) {
+      message.error('地址异常，请检查系统设置中的API域名是否正确')
+      console.error(e)
+      return
+    }
     if (!config.apiHost) {
       target.protocol = location.protocol
       target.hostname = location.hostname

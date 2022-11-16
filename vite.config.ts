@@ -30,7 +30,16 @@ const plugins: PluginOption[] = [
     exclude: ['**/components/**/*.*', '**/blocks/**/*.*', '**/hooks/**/*.*', '**/_*.*'],
     routeStyle: 'next',
     importMode: 'async',
-    dirs: 'src/pages'
+    dirs: 'src/pages',
+    onRoutesGenerated: routes => {
+      const modeling = routes
+        .find(route => route.path === 'workbench')
+        .children.find((route: { path: string }) => route.path === 'modeling')
+      const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
+      newRoute.path = ':id'
+      modeling.children.push(newRoute)
+      return routes
+    }
   })
 ]
 if (argv[2] === 'build' && argv[3] === '--' && argv[4] === 'report') {
