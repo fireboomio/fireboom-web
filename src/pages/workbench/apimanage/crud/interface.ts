@@ -39,6 +39,7 @@ export type ApiOptions = {
   dbName: string
   primaryKey: string
   prefix: string
+  alias: string
   apiList: API[]
   auth: boolean
   authType: AuthType

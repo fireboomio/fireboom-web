@@ -23,10 +23,10 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
       .filter(key => options.table[key].detail)
       .join('\n    ')
 
-    const path = `/CreateOne${options.prefix}`
+    const path = `/CreateOne${options.alias}`
     const content = `
-mutation CreateOne${options.prefix}(${paramStr}) {
-  data: ${options.dbName}_createOne${options.prefix}(data: {${dataStr}}) {
+mutation CreateOne${options.alias}(${paramStr}) {
+  data: ${options.dbName}_createOne${options.alias}(data: {${dataStr}}) {
     ${returnStr}
   }
 }`.trim()
@@ -35,10 +35,10 @@ mutation CreateOne${options.prefix}(${paramStr}) {
   delete(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
-    const path = `/DeleteOne${options.prefix}`
+    const path = `/DeleteOne${options.alias}`
     const content = `
-mutation DeleteOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
-  data: ${options.dbName}_deleteOne${options.prefix}(where: {${primaryKey}: $${primaryKey}}) {
+mutation DeleteOne${options.alias}($${primaryKey}: ${primaryKeyType}!) {
+  data: ${options.dbName}_deleteOne${options.alias}(where: {${primaryKey}: $${primaryKey}}) {
     ${primaryKey}
   }
 }`.trim()
@@ -63,10 +63,10 @@ mutation DeleteOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
       .filter(key => options.table[key].detail)
       .join('\n    ')
 
-    const path = `/UpdateOne${options.prefix}`
+    const path = `/UpdateOne${options.alias}`
     const content = `
-mutation UpdateOne${options.prefix}(${paramStr}) {
-  data: ${options.dbName}_updateOne${options.prefix}(
+mutation UpdateOne${options.alias}(${paramStr}) {
+  data: ${options.dbName}_updateOne${options.alias}(
     data: {${updateStr}}
     where: {${primaryKey}: $${primaryKey}}
   ) {
@@ -82,10 +82,10 @@ mutation UpdateOne${options.prefix}(${paramStr}) {
       .filter(key => options.table[key].detail)
       .join('\n    ')
 
-    const path = `/GetOne${options.prefix}`
+    const path = `/GetOne${options.alias}`
     const content = `
-query GetOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
-  data: ${options.dbName}_findFirst${options.prefix}(where: {${primaryKey}: {equals: $${primaryKey}}}) {
+query GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!) {
+  data: ${options.dbName}_findFirst${options.alias}(where: {${primaryKey}: {equals: $${primaryKey}}}) {
     ${returnStr}
   }
 }`.trim()
@@ -97,13 +97,24 @@ query GetOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
       .filter(key => options.table[key].list)
       .join('\n    ')
 
-    const path = `/Get${options.prefix}List`
+    const hasSort = Object.keys(options.table).some(key => options.table[key].sort)
+    const hasFilter = Object.keys(options.table).some(key => options.table[key].filter)
+    const sortStr = hasSort
+      ? `, $orderBy: [${options.dbName}_${options.alias}OrderByWithRelationInput]`
+      : ''
+    const filterStr = hasFilter ? `, $query: ${options.dbName}_${options.alias}WhereInput` : ''
+    const filterStrInDataQuery = hasFilter ? '\n    where: {AND: $query}' : ''
+    const filterStrInCountQuery = hasFilter ? '(where: {AND: $query})' : ''
+
+    const path = `/Get${options.alias}List`
     const content = `
-query Get${options.prefix}List($take: Int = 10, $skip: Int = 0) {
-  data: ${options.dbName}_findMany${options.prefix}(skip: $skip, take: $take) {
+query Get${options.alias}List($take: Int = 10, $skip: Int = 0${sortStr}${filterStr}) {
+  data: ${options.dbName}_findMany${options.alias}(
+    skip: $skip
+    take: $take${filterStrInDataQuery}) {
     ${returnStr}
   }
-  total: ${options.dbName}_aggregate${options.prefix} @transform(get: "_count.${primaryKey}") {
+  total: ${options.dbName}_aggregate${options.alias}${filterStrInCountQuery} @transform(get: "_count.${primaryKey}") {
     _count {
       ${primaryKey}
     }
@@ -115,11 +126,11 @@ query Get${options.prefix}List($take: Int = 10, $skip: Int = 0) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
 
-    const path = `/DeleteMany${options.prefix}`
+    const path = `/DeleteMany${options.alias}`
 
     const content = `
-mutation DeleteMany${options.prefix}($${primaryKey}s: [${primaryKeyType}]!) {
-  data: ${options.dbName}_deleteMany${options.prefix}(where: {${primaryKey}: {in: $${primaryKey}s}}) {
+mutation DeleteMany${options.alias}($${primaryKey}s: [${primaryKeyType}]!) {
+  data: ${options.dbName}_deleteMany${options.alias}(where: {${primaryKey}: {in: $${primaryKey}s}}) {
     count
   }
 }`.trim()
@@ -130,10 +141,10 @@ mutation DeleteMany${options.prefix}($${primaryKey}s: [${primaryKeyType}]!) {
       .filter(key => options.table[key].list)
       .join('\n    ')
 
-    const path = `/GetMany${options.prefix}`
+    const path = `/GetMany${options.alias}`
     const content = `
-query GetMany${options.prefix} {
-  data: ${options.dbName}_findMany${options.prefix} {
+query GetMany${options.alias} {
+  data: ${options.dbName}_findMany${options.alias} {
     ${returnStr}
   }
 }`.trim()
