@@ -36,7 +36,7 @@ export const hookPath = {
   OperationMutatingPreResolve: (api: string) => `operations/${api}/mutatingPreResolve`,
   OperationMock: (api: string) => `operations/${api}/mock`,
   AuthPostAuthentication: 'auth/postAuthentication',
-  AuthMutatingPostPreResolve: 'auth/mutatingPostPreResolve',
+  AuthMutatingPostAuthentication: 'auth/mutatingPostAuthentication',
   Customize: (connect: string) => `customize/${connect}`,
   GlobalOnRequest: 'global/onRequest',
   GlobalOnResponse: 'global/onResponse'
@@ -106,7 +106,7 @@ interface Props {
 const IdeContainer: FC<Props> = props => {
   const defaultRunResult = { logs: [], result: '' }
   // 防止主动保存和被动保存冲突的timer
-  const saveTimer = useRef<NodeJS.Timeout | null>(null)
+  const saveTimer = useRef<number | null>(null)
   const handle = useFullScreenHandle()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [editor, setEditor] = useState<any>()

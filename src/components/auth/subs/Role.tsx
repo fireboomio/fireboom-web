@@ -30,7 +30,7 @@ interface TabT {
 const { TabPane } = Tabs
 export const hookPath: Record<string, string> = {
   postAuthentication: 'auth/postAuthentication',
-  mutatingPostAuthentication: 'auth/mutatingPostPreResolve'
+  mutatingPostAuthentication: 'auth/mutatingPostAuthentication'
 }
 export default function AuthRole() {
   const [form] = Form.useForm()
@@ -98,7 +98,7 @@ export default function AuthRole() {
             void handleDeleteRole(id)
           }}
         >
-          <span className="pl-0 text-red-500 cursor-pointer">删除</span>
+          <span className="cursor-pointer pl-0 text-red-500">删除</span>
         </Popconfirm>
       )
     }
@@ -152,9 +152,9 @@ export default function AuthRole() {
   return (
     <div className="relative">
       {tab === 'role' ? (
-        <div className="absolute top-2px right-0">
+        <div className="top-2px right-0 absolute">
           <Button
-            className="px-4 py-0 h-7.5"
+            className="h-7.5 py-0 px-4"
             onClick={() => {
               setModal1Visible(true)
             }}
