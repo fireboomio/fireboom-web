@@ -7,10 +7,10 @@ export type Datasource = {
 }
 
 export enum AuthType {
-  RequireMatchAll = 0,
-  RequireMatchAny = 1,
-  DenyMatchAll = 2,
-  DenyMatchAny = 3
+  RequireMatchAll = 'RequireMatchAll',
+  RequireMatchAny = 'RequireMatchAny',
+  DenyMatchAll = 'DenyMatchAll',
+  DenyMatchAny = 'DenyMatchAny'
 }
 
 export enum KeyType {
@@ -26,8 +26,10 @@ export enum SortDirection {
 
 export type TableAttr = {
   name: string
+  kind: string
   type: string
   detail: boolean
+  isDirectField: boolean
   list: boolean
   filter: boolean
   sort: boolean
@@ -41,10 +43,17 @@ export type ApiOptions = {
   prefix: string
   alias: string
   apiList: API[]
-  auth: boolean
+  authApiList: API[]
+  auth: AuthOptions
   authType: AuthType
   roleList: string[]
   table: Record<string, TableAttr>
+}
+
+export enum AuthOptions {
+  default = -1,
+  enable = 1,
+  disable = 0
 }
 
 export enum API {

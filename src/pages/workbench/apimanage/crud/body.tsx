@@ -10,7 +10,7 @@ import requests, { getFetcher } from '@/lib/fetchers'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
 import type { ApiOptions, TableAttr } from './interface'
-import { API, AuthType, KeyType, SortDirection } from './interface'
+import { API, AuthOptions, AuthType, KeyType, SortDirection } from './interface'
 
 interface CRUDBodyProps {
   model?: DMFModel
@@ -116,33 +116,51 @@ export default function CRUDBody(props: CRUDBodyProps) {
           // 取消级联生成，子字段目前不做任何默认数据
           // genTableData(field.children || [])
         }
-        tableData[field.tableId ?? ''] = {
-          name: field.name,
-          type: field.type,
-          sort: field.kind !== 'object',
-          detail: field.kind !== 'object',
-          list: field.kind !== 'object',
-          filter: field.kind !== 'object',
-          sortDirection: SortDirection.Asc,
-          create:
-            field.name === props.model?.idField
-              ? KeyType.Hidden
-              : field.required
-              ? KeyType.Required
-              : KeyType.Optional,
-          update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
+        if (field.kind === 'object') {
+          tableData[field.tableId ?? ''] = {
+            isDirectField: false,
+            kind: field.kind,
+            name: field.name,
+            type: field.type,
+            detail: false,
+            filter: false,
+            list: false,
+            sort: false,
+            create: KeyType.Hidden,
+            update: KeyType.Hidden,
+            sortDirection: SortDirection.Asc
+          }
+        } else {
+          tableData[field.tableId ?? ''] = {
+            isDirectField: true,
+            kind: field.kind,
+            name: field.name,
+            type: field.type,
+            sort: true,
+            detail: true,
+            list: true,
+            filter: true,
+            sortDirection: SortDirection.Asc,
+            create:
+              field.name === props.model?.idField
+                ? KeyType.Hidden
+                : field.required
+                ? KeyType.Required
+                : KeyType.Optional,
+            update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
+          }
         }
       })
     }
     genTableData(model.fields)
 
-    console.log('======', tableData, model)
     // 设置表单初始化数据
     setInitData({
       dbName: props.dbName,
       apiList: Object.values(API),
+      authApiList: [],
       roleList: [],
-      auth: true,
+      auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
       table: tableData,
       prefix: '',
@@ -223,7 +241,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     setTableFiled(field.tableId ?? '', type, check)
     console.log(field.tableId ?? '', type, check)
     if (check) {
-      // 如果是勾选，则递归向上将所有祖先勾选，同时则将自己的第一个非id子字段勾选
+      // 如果是勾选，则递归向上将所有祖先勾选，同时则将自己的主键和第一个非主键子字段勾选
       let parent = field.parentField
       while (parent) {
         setTableFiled(parent.tableId ?? '', type, check)
@@ -237,7 +255,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
           })
         }
         const noIdField = field.children?.find(child => !child.isPrimaryKey)
+        const idField = field.children?.find(child => child.isPrimaryKey)
         noIdField && setTableFiled(noIdField.tableId ?? '', type, check)
+        idField && setTableFiled(idField.tableId ?? '', type, check)
       }
     } else {
       // 如果是取消，则递归向上检查是否需要取消勾选，同时将自己的子字段全部去选
@@ -421,30 +441,32 @@ export default function CRUDBody(props: CRUDBodyProps) {
         </Form.Item>
         <Form.Item name="auth" label="登录鉴权">
           <Radio.Group>
-            <Radio value={true}>开启</Radio>
-            <Radio value={false}>关闭</Radio>
+            <Radio value={-1}>默认</Radio>
+            <Radio value={1}>开启</Radio>
+            <Radio value={0}>关闭</Radio>
           </Radio.Group>
         </Form.Item>
-        {auth ? (
-          <>
-            <Form.Item name="authType" label="接口角色">
-              <Radio.Group>
-                <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
-                <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
-                <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
-                <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-              <Select
-                mode="multiple"
-                options={roles ?? []}
-                fieldNames={{ label: 'remark', value: 'code' }}
-              />
-            </Form.Item>
-          </>
-        ) : null}
-        <Form.Item name="prefix" label="API前缀" rules={[{ required: true }]}>
+        <>
+          <Form.Item name="authType" label="接口角色">
+            <Radio.Group>
+              <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
+              <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
+              <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
+              <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item name="authApiList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+            <Checkbox.Group options={apiOptions} />
+          </Form.Item>
+          <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+            <Select
+              mode="multiple"
+              options={roles ?? []}
+              fieldNames={{ label: 'remark', value: 'code' }}
+            />
+          </Form.Item>
+        </>
+        <Form.Item name="prefix" label="API前缀">
           <Input />
         </Form.Item>
         <Form.Item name="alias" label="别名" rules={[{ required: true }]}>
