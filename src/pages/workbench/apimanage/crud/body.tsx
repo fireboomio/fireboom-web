@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 
 import type { DMFField, DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
 import type { ApiOptions, TableAttr } from './interface'
@@ -95,8 +95,15 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
   const { data: roles } = useSWR<{ id: number; code: string; remark: string }[]>(
     '/role',
-    getFetcher
+    (url: string) =>
+      requests.get<unknown, { id: number; code: string; remark: string }[]>(url).then(res => {
+        res.forEach(item => {
+          item.remark = item.remark || item.code
+        })
+        return res
+      })
   )
+
   const { onRefreshMenu } = useContext(WorkbenchContext)
 
   useEffect(() => {
@@ -433,7 +440,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
         onFinish={onFinish}
         initialValues={initData}
       >
-        <Form.Item name="primaryKey" label="主键选择" rules={[{ required: true }]}>
+        <Form.Item
+          name="primaryKey"
+          label="主键选择"
+          rules={[{ required: true, message: '请选择主键' }]}
+        >
           <Select options={field} />
         </Form.Item>
         <Form.Item name="apiList" label="生成接口">
@@ -461,22 +472,38 @@ export default function CRUDBody(props: CRUDBodyProps) {
           <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
             <Select
               mode="multiple"
+              showArrow
               options={roles ?? []}
               fieldNames={{ label: 'remark', value: 'code' }}
             />
           </Form.Item>
         </>
-        <Form.Item name="prefix" label="API前缀">
-          <Input />
-        </Form.Item>
-        <Form.Item name="alias" label="别名" rules={[{ required: true }]}>
+        <Form.Item
+          name="prefix"
+          label="API前缀"
+          rules={[
+            {
+              pattern: /^[A-Z][a-zA-Z0-9_]*$/,
+              message: '请输入字母数字或下划线组合，以大写字母开头'
+            }
+          ]}
+        >
           <Input />
         </Form.Item>
         <Form.Item
-          name="table"
-          wrapperCol={{ offset: 4, xs: { offset: 5 } }}
-          rules={[{ required: true }]}
+          name="alias"
+          label="别名"
+          rules={[
+            {
+              required: true,
+              pattern: /^[A-Z][a-zA-Z0-9_]*$/,
+              message: '请输入字母数字或下划线组合，以大写字母开头'
+            }
+          ]}
         >
+          <Input />
+        </Form.Item>
+        <Form.Item name="table" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
           <Table
             expandable={{
               expandedRowKeys: expandRowKey,
@@ -490,7 +517,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
             pagination={false}
           />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: 4, xs: { offset: 5 } }} rules={[{ required: true }]}>
+        <Form.Item wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
           <>
             <Button
               className="btn-cancel mr-4"

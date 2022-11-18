@@ -1,4 +1,5 @@
 import { message } from 'antd'
+import { throttle } from 'lodash'
 import { useContext } from 'react'
 
 import type { Block } from '@/interfaces/modeling'
@@ -12,6 +13,10 @@ import {
   applyLocalPrismaSchema,
   refetchPrismaSchema
 } from '../helpers/ModelingHelpers'
+
+const errorToast = throttle(() => {
+  message.error('当前schema不合法', 3)
+}, 3000)
 
 const useBlocks = () => {
   const {
@@ -36,7 +41,12 @@ const useBlocks = () => {
   }
 
   const applyLocalSchema = (schema: string) => {
-    applyLocalPrismaSchema(schema, dispatch)
+    try {
+      applyLocalPrismaSchema(schema, dispatch)
+    } catch (e) {
+      errorToast()
+      console.error(e)
+    }
   }
   const applyLocalBlocks = (newBlocks: Block[]) => {
     applyLocalPrismaBlocks(newBlocks, dispatch)

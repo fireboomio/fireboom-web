@@ -29,6 +29,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
   const { data, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
+  const [syncEditorFlag, setSyncEditorFlag] = useImmer<boolean>(false)
   useEffect(() => {
     setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])
   }, [data, setDataSources])
@@ -49,6 +50,9 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }
 
   const handleClickEntity = (entity: Entity, auto = false) => {
+    if (!entity) {
+      return
+    }
     if (!auto) {
       setCurrentEntity(entity)
     }
@@ -88,6 +92,8 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     <PrismaSchemaContext.Provider
       value={{
         state,
+        syncEditorFlag,
+        triggerSyncEditor: () => setSyncEditorFlag(!syncEditorFlag),
         dispatch,
         panel: {
           inEdit: inEdit,

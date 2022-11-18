@@ -325,11 +325,26 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
       if (`/workbench/apimanage/${node.id}` === location.pathname) {
-        const node = openApi(treeData)
-        if (node) {
-          handleSelectTreeNode([node.key], { node })
-        } else {
-          navigate('/workbench/apimanage')
+        const findList = [...treeData]
+        console.log(111)
+        while (findList.length) {
+          const curr = findList.shift()
+          console.log(222, curr)
+          if (!curr) {
+            console.log(333)
+            navigate('/workbench/apimanage')
+            return
+          }
+          if (curr.children?.length) {
+            console.log(444)
+            findList.push(...curr.children)
+            continue
+          }
+          if (!curr.isDir && curr.id !== node.id) {
+            console.log(555)
+            navigate(`/workbench/apimanage/${curr.id}`)
+            return
+          }
         }
       }
     })
@@ -522,14 +537,16 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             />
           ) : null}
         </div>
-        <div className={styles.createRow}>
-          <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
-            新建
-          </span>
-          <span> 或者 </span>
-          <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
-            批量新建
-          </span>
+        <div className={styles.createRowWrapper}>
+          <div className={styles.createRow}>
+            <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
+              新建
+            </span>
+            <span> 或者 </span>
+            <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+              批量新建
+            </span>
+          </div>
         </div>
       </div>
       <Modal

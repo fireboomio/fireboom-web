@@ -14,7 +14,9 @@ export default function buildApi(options: ApiOptions): { path: string; content: 
  */
 const buildAuthStr = (options: ApiOptions, api: API) => {
   const { authType, authApiList, roleList } = options
-  return authApiList.includes(api) ? ` @rbac(${authType}: [${roleList.join(', ')}])` : ``
+  return authApiList.includes(api) && roleList.length
+    ? ` @rbac(${authType}: [${roleList.join(', ')}])`
+    : ``
 }
 
 /**
@@ -90,7 +92,7 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/CreateOne${options.alias}`
+    const path = `/${options.prefix}CreateOne${options.alias}`
     const content = `
 mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
@@ -105,9 +107,11 @@ mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
   delete(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
-    const path = `/DeleteOne${options.alias}`
+    const path = `/${options.prefix}DeleteOne${options.alias}`
     const content = `
-mutation ${options.prefix}DeleteOne${options.alias}($${primaryKey}: ${primaryKeyType}!) {
+mutation ${options.prefix}DeleteOne${
+      options.alias
+    }($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(options, API.Delete)} {
   data: ${options.dbName}_deleteOne${options.alias}(where: {${primaryKey}: $${primaryKey}}) {
     ${primaryKey}
   }
@@ -140,7 +144,7 @@ mutation ${options.prefix}DeleteOne${options.alias}($${primaryKey}: ${primaryKey
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/UpdateOne${options.alias}`
+    const path = `/${options.prefix}UpdateOne${options.alias}`
     const content = `
 mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
@@ -160,7 +164,7 @@ mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
     const primaryKeyType = options.table[primaryKey].type
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/GetOne${options.alias}`
+    const path = `/${options.prefix}GetOne${options.alias}`
     const content = `
 query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
       options,
@@ -188,7 +192,7 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
     const filterStrInDataQuery = hasFilter ? '\n    where: {AND: $query}' : ''
     const filterStrInCountQuery = hasFilter ? '(where: {AND: $query})' : ''
 
-    const path = `/Get${options.alias}List`
+    const path = `/${options.prefix}Get${options.alias}List`
     const content = `
 query ${options.prefix}Get${
       options.alias
@@ -212,7 +216,7 @@ query ${options.prefix}Get${
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
 
-    const path = `/DeleteMany${options.alias}`
+    const path = `/${options.prefix}DeleteMany${options.alias}`
 
     const content = `
 mutation ${options.prefix}DeleteMany${
@@ -229,7 +233,7 @@ mutation ${options.prefix}DeleteMany${
   export(options: ApiOptions) {
     const returnStr = buildReturnStr(options, 'list')
 
-    const path = `/GetMany${options.alias}`
+    const path = `/${options.prefix}GetMany${options.alias}`
     const content = `
 query ${options.prefix}GetMany${options.alias}${buildAuthStr(options, API.Export)} {
   data: ${options.dbName}_findMany${options.alias} {

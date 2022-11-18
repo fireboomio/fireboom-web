@@ -1,22 +1,22 @@
 import type { MenuProps } from 'antd'
 import { Dropdown, Input, Menu, message, Popconfirm } from 'antd'
+import { useContext } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
 import type { Entity, ModelingShowTypeT } from '@/interfaces/modeling'
 import { ENTITY_NAME_REGEX, MAGIC_DELETE_ENTITY_NAME } from '@/lib/constants/fireBoomConstants'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
 
 import iconDel from '../../assets/del.svg'
-import iconEdit from '../../assets/edit.svg'
 import iconEntity from '../../assets/entity.svg'
 import iconEnum from '../../assets/enum.svg'
 import iconMore from '../../assets/more.svg'
 import iconRename from '../../assets/rename.svg'
-import iconView from '../../assets/view.svg'
 import styles from './pannel.module.less'
 
 interface Props {
@@ -37,11 +37,14 @@ const ModelEntityItem = ({
   newFlag
 }: Props) => {
   const { currentEntityId, changeToEntityById } = useCurrentEntity()
-  const { blocks, updateAndSaveBlock } = useBlocks()
+  const { blocks, updateAndSaveBlock, applyLocalBlocks } = useBlocks()
   const [isHovering, setIsHovering] = useImmer(false)
   const [isEditing, setIsEditing] = useImmer(entity.name === '')
   const [visible, setVisible] = useImmer(false)
   const { getFirstEntity } = useEntities()
+  const { panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
+  // const ctx = useContext(PrismaSchemaContext)
+  const { inEdit } = panel || {}
 
   const isCurrent = currentEntityId === entity.id
 
@@ -85,16 +88,22 @@ const ModelEntityItem = ({
       void message.error('实体名不合法！')
       return
     }
-
-    const hide = message.loading('保存中...', 0)
-    updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName))
-      .then(() => {
-        message.success('实体名更新成功')
-      })
-      .catch((error: Error) => message.error(`实体名更新失败, error: ${error.message}`))
-      .finally(() => {
-        hide()
-      })
+    if (!inEdit) {
+      const hide = message.loading('保存中...', 0)
+      updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName))
+        .then(() => {
+          message.success('实体名更新成功')
+        })
+        .catch((error: Error) => message.error(`实体名更新失败, error: ${error.message}`))
+        .finally(() => {
+          hide()
+        })
+    } else {
+      setIsEditing(false)
+      const localBlocks = PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName)
+      applyLocalBlocks(localBlocks)
+      triggerSyncEditor()
+    }
   }
 
   //实现鼠标移出item判断，当菜单显示的时候，仍处于hovering状态
@@ -114,21 +123,6 @@ const ModelEntityItem = ({
           label: <span>重命名</span>,
           icon: <img src={iconRename} alt="重命名" />,
           onClick: () => setIsEditing(!isEditing)
-        },
-        {
-          key: 2,
-          label: <span>编辑</span>,
-          icon: <img src={iconEdit} alt="编辑" />,
-          onClick: () => onToggleDesigner(entity)
-        },
-        {
-          key: 3,
-          label: <span>查看</span>,
-          icon: <img src={iconView} alt="查看" />,
-          onClick: () => {
-            onClick()
-            setVisible(false)
-          }
         },
         {
           key: 4,

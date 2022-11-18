@@ -16,8 +16,14 @@ const ModelEditor = ({ current, dbId, onChange, defaultContent }: Props) => {
 
   const [value, setValue] = useState<string>('')
   const { currentEntity } = useCurrentEntity()
+  const lastScrollEntity = useRef<string>('')
   useEffect(() => {
-    console.log(currentEntity)
+    const key = `${currentEntity.type}_${currentEntity.id}`
+    if (lastScrollEntity.current === key) {
+      return
+    }
+    lastScrollEntity.current = key
+    // 滚动到当前entity
     if (editorRef.current) {
       const targetRow = editorRef.current
         .getValue()
@@ -26,7 +32,7 @@ const ModelEditor = ({ current, dbId, onChange, defaultContent }: Props) => {
           (line: string) =>
             !!line.match(new RegExp(`${currentEntity.type}\\s+${currentEntity.name}\\s+\\{`))
         )
-      editorRef.current.revealLine(targetRow)
+      editorRef.current.revealLineInCenter(targetRow)
     }
   }, [currentEntity])
   useEffect(() => {

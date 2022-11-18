@@ -55,4 +55,8 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceId: number) => {
 }
 
 export const fetchPrismaDMF = (dbSourceId: string) =>
-  getFetcher<PrismaDMF>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':id', dbSourceId))
+  getFetcher<PrismaDMF>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':id', dbSourceId)).then(res => {
+    res.models = res.models ?? []
+    res.enums = res.enums ?? []
+    return res
+  })

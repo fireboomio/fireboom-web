@@ -22,20 +22,31 @@
 .headerNewFile {
   background: url(/assets/workbench/header-new-file.png) no-repeat center/contain;
 }
+.createRowWrapper {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: center;
+}
 .createRow {
-  margin: 0 auto 8px;
   padding: 0 15px;
   line-height: 27px;
   text-align: center;
   background: #fafafc;
   border-radius: 14px;
+  white-space: nowrap;
   .btn {
     cursor: pointer;
     color: #649fff;
   }
 }
 .treeContainer {
-  padding: 7px 10px 7px 10px;
+  padding: 7px 0px 37px 10px;
 
   :global {
     // 调整tree组件样式，如果需要可以将此处移入全局，移动后请注意优先级问题

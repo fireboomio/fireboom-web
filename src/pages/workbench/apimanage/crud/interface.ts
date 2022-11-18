@@ -7,10 +7,10 @@ export type Datasource = {
 }
 
 export enum AuthType {
-  RequireMatchAll = 'RequireMatchAll',
-  RequireMatchAny = 'RequireMatchAny',
-  DenyMatchAll = 'DenyMatchAll',
-  DenyMatchAny = 'DenyMatchAny'
+  RequireMatchAll = 'requireMatchAll',
+  RequireMatchAny = 'requireMatchAny',
+  DenyMatchAll = 'denyMatchAll',
+  DenyMatchAny = 'denyMatchAny'
 }
 
 export enum KeyType {
