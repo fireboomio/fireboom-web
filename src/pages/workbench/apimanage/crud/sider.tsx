@@ -23,6 +23,9 @@ export default function CRUDSider(props: CRUDSiderProps) {
   }, [])
 
   useEffect(() => {
+    loadModelList()
+  }, [currentDataSourceId])
+  function loadModelList() {
     if (!currentDataSourceId) {
       return
     }
@@ -30,11 +33,11 @@ export default function CRUDSider(props: CRUDSiderProps) {
     requests
       .get<unknown, { models: DMFModel[] }>(`/prisma/dmf/${currentDataSourceId}`)
       .then(res => {
-        setModelList(res.models)
-        setCurrentModel(res.models[0])
+        setModelList(res.models || [])
+        setCurrentModel(res.models?.[0])
         hide()
       })
-  }, [currentDataSourceId])
+  }
   useEffect(() => {
     if (!currentModel) {
       return
@@ -72,7 +75,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
         />
         <div
           className="ml-1 w-28px h-28px bg-[#f7f7f7] flex items-center justify-center cursor-pointer"
-          onClick={queryDataSourceList}
+          onClick={loadModelList}
         >
           <img width={18} height={18} src="/assets/refresh.svg" alt="刷新" />
         </div>

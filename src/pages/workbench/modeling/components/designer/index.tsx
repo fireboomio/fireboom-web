@@ -1,5 +1,5 @@
 import { getSchema, printSchema } from '@mrleebo/prisma-ast'
-import { Dropdown, Empty, Input, Menu, message, Radio } from 'antd'
+import { Empty, Input, message, Popover, Radio } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
@@ -45,6 +45,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
     useBlocks()
   const { id: dbSourceId } = useDBSource()
+  const { syncEditorFlag, panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
 
@@ -62,10 +63,17 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
   useEffect(() => {
     setTitleValue(currentEntity?.name || '')
   }, [currentEntity])
+  useEffect(() => {
+    if (showType === 'newModel') {
+      setTitleValue(UNTITLED_NEW_ENTITY)
+    }
+  }, [showType])
+  useEffect(() => {
+    setEditorContent(printSchema({ type: 'schema', list: blocks }))
+  }, [syncEditorFlag])
 
-  const { panel } = useContext(PrismaSchemaContext)
   // const ctx = useContext(PrismaSchemaContext)
-  const { handleClickEntity } = panel || {}
+  const { handleClickEntity, inEdit } = panel || {}
 
   const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
   id        Int       @id @default(autoincrement())
@@ -166,6 +174,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     const hide = message.loading('刷新中...')
     refreshBlocks().then(() => {
       hide()
+      triggerSyncEditor()
       message.success('重置成功！')
     })
   }
@@ -190,43 +199,28 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     }
     hide()
   }
-  const dropdownMenu = [
-    {
-      label: (
-        <div
-          onClick={() => {
-            handleClickEntity?.(currentEntity)
-          }}
-        >
-          查看
-        </div>
-      ),
-      key: 'view'
-    },
-    {
-      label: (
-        <div
-          onClick={() => {
-            changeToEntityById(getFirstEntity()?.id ?? 0)
-            setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
-            const hide = message.loading('删除中...', 0)
-            void updateAndSaveBlock(
-              PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id)
-            )
-              .then(() => {
-                message.success('删除成功')
-              })
-              .finally(() => {
-                hide()
-              })
-          }}
-        >
-          删除
-        </div>
-      ),
-      key: 'delete'
+
+  const onDelete = () => {
+    if (!inEdit) {
+      // 查看模式下使用老逻辑直接删除
+      changeToEntityById(getFirstEntity()?.id ?? 0)
+      setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
+      const hide = message.loading('删除中...', 0)
+      void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id))
+        .then(() => {
+          message.success('删除成功')
+        })
+        .finally(() => {
+          hide()
+        })
+    } else {
+      // 编辑模式下改为修改本地数据并选中第一项
+      const localBlocks = PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id)
+      applyLocalBlocks(blocks)
+      setEditorContent(printSchema({ type: 'schema', list: localBlocks }))
+      handleClickEntity(getFirstEntity())
     }
-  ].filter(item => !(item.key === 'view' && type === 'enum'))
+  }
 
   const transferToEditor = () => {
     // 在这里 将 新增的枚举 添加进去
@@ -248,7 +242,9 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
 
   const handelEditTitle = (title: string) => {
     const edited = { ...currentEntity, name: title }
-    applyLocalBlocks(PrismaSchemaBlockOperator(blocks).updateModel(edited as Model))
+    const localBlocks = PrismaSchemaBlockOperator(blocks).updateModel(edited as Model)
+    applyLocalBlocks(localBlocks)
+    setEditorContent(printSchema({ type: 'schema', list: localBlocks }))
   }
 
   return (
@@ -283,55 +279,50 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
           {isEditing && '(未保存)'}
         </span>
         <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">{type}</span>
+        <div className="flex items-center flex-0">
+          {mode === 'designer' && type === 'model' ? (
+            <>
+              <div
+                onClick={() => {
+                  // @ts-ignore
+                  ModelDesignerRef?.current?.addEmptyField?.()
+                }}
+                className="cursor-pointer mt-2px"
+              >
+                <img src={iconAdd} alt="增加" />
+              </div>
+              <div className={styles.split} />
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  // @ts-ignore
+                  ModelDesignerRef?.current?.addEmptyModelAttribute?.()
+                }}
+              >
+                <img src={iconAt} alt="at" />
+              </div>
+              <div className={styles.split} />
+            </>
+          ) : null}
+          {mode === 'designer' && type === 'enum' ? (
+            <>
+              <div
+                className="cursor-pointer mt-2px"
+                onClick={() => {
+                  // @ts-ignore
+                  EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
+                }}
+              >
+                <img src={iconAdd} alt="增加" />
+              </div>
+              <div className={styles.split} />
+            </>
+          ) : null}
+        </div>
 
-        {mode === 'designer' && type === 'model' ? (
-          <>
-            <div
-              onClick={() => {
-                // @ts-ignore
-                ModelDesignerRef?.current?.addEmptyField?.()
-              }}
-              className="cursor-pointer mt-2px"
-            >
-              <img src={iconAdd} alt="增加" />
-            </div>
-            <div className={styles.split} />
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                // @ts-ignore
-                ModelDesignerRef?.current?.addEmptyModelAttribute?.()
-              }}
-            >
-              <img src={iconAt} alt="at" />
-            </div>
-            <div className={styles.split} />
-          </>
-        ) : null}
-        {mode === 'designer' && type === 'enum' ? (
-          <>
-            <div
-              className="cursor-pointer mt-2px"
-              onClick={() => {
-                // @ts-ignore
-                EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
-              }}
-            >
-              <img src={iconAdd} alt="增加" />
-            </div>
-            <div className={styles.split} />
-          </>
-        ) : null}
-        <Dropdown
-          overlay={<Menu items={dropdownMenu} />}
-          trigger={['click']}
-          placement="bottomRight"
-        >
-          <div className="w-5.5 h-4 bg-[rgba(95,98,105,0.05)] text-center !leading-4 cursor-pointer">
-            ···
-          </div>
-        </Dropdown>
-
+        <div className={styles.resetBtn} onClick={onDelete}>
+          删除
+        </div>
         <div className={styles.resetBtn} onClick={onCancel}>
           重置
         </div>
@@ -348,12 +339,16 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
             setMode(e.target.value)
           }}
         >
-          <Radio.Button value="designer">
-            <img src={mode === 'designer' ? iconDesignModeActive : iconDesignMode} alt="" />
-          </Radio.Button>
-          <Radio.Button value="editor">
-            <img src={mode === 'editor' ? iconEditModeActive : iconEditMode} alt="" />
-          </Radio.Button>
+          <Popover content="普通视图" trigger="hover">
+            <Radio.Button value="designer">
+              <img src={mode === 'designer' ? iconDesignModeActive : iconDesignMode} alt="" />
+            </Radio.Button>
+          </Popover>
+          <Popover content="源码视图" trigger="hover">
+            <Radio.Button value="editor">
+              <img src={mode === 'editor' ? iconEditModeActive : iconEditMode} alt="" />
+            </Radio.Button>
+          </Popover>
         </Radio.Group>
       </div>
 

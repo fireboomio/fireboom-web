@@ -3,6 +3,7 @@
   min-height: 26px;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   &.active {
     flex: 1 1 auto;
@@ -26,7 +27,7 @@
   padding: 0 8px 0 12px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(115,122,139,0.1);
+  box-shadow: 0 2px 8px 0 rgba(115, 122, 139, 0.1);
 
   .arrow {
     flex: 0 0 auto;
@@ -69,10 +70,10 @@
     flex: 0 0 auto;
   }
 }
-.content{
+.content {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;

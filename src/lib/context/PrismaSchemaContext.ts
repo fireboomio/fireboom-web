@@ -21,6 +21,8 @@ export type PrismaSchemaContextState = {
 
 export const emptyPrismaSchemaContextState: PrismaSchemaContextContainer = {
   panel: undefined,
+  syncEditorFlag: false,
+  triggerSyncEditor: () => {},
   state: {
     currentEntityId: 0,
     blocks: [],
@@ -51,6 +53,8 @@ export const emptyPrismaSchemaContextState: PrismaSchemaContextContainer = {
 export type PrismaSchemaContextContainer = BasicContextContainer & {
   state: PrismaSchemaContextState
   panel: any
+  syncEditorFlag: boolean
+  triggerSyncEditor: () => void
 }
 
 export const PrismaSchemaContext = createContext<PrismaSchemaContextContainer>(
