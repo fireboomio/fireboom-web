@@ -26,14 +26,16 @@ export const parseParameters = (
   return varDefs.map((x: VariableDefinitionNode) => {
     const { type, isRequired, isList } = parseType(x.type)
 
+    const directives = parseDirective(x.directives)
+
     return {
       key: x.variable.name.value,
       name: x.variable.name.value,
       position: 'path',
       type: type,
       isList,
-      isRequired: isRequired,
-      directives: parseDirective(x.directives)
+      isRequired: directives?.some(dir => dir.name === 'internal') ? false : isRequired,
+      directives
     }
   })
 }
