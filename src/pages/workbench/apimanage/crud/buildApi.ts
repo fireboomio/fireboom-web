@@ -1,9 +1,66 @@
-import type { API, ApiOptions } from './interface'
-import { KeyType } from './interface'
+import { get, set } from 'lodash'
+
+import type { ApiOptions } from './interface'
+import { API, KeyType } from './interface'
 
 export default function buildApi(options: ApiOptions): { path: string; content: string }[] {
   return options.apiList.map(api => apiBuilder[api](options))
 }
+
+/**
+ * 构造授权字符串
+ * @param options
+ * @param api
+ */
+const buildAuthStr = (options: ApiOptions, api: API) => {
+  const { authType, authApiList, roleList } = options
+  return authApiList.includes(api) ? ` @rbac(${authType}: [${roleList.join(', ')}])` : ``
+}
+
+/**
+ * 构造返回值结构
+ * @param options
+ * @param type
+ */
+const buildReturnStr = (options: ApiOptions, type: 'detail' | 'list') => {
+  const obj = {}
+  const q = {}
+  Object.keys(options.table).forEach(key => {
+    if (options.table[key][type]) {
+      if (!get(obj, key)) {
+        set(obj, key, true)
+      }
+    }
+  })
+  // console.log(obj)
+  // console.log(convertReturnObjToStr(obj))
+  return convertReturnObjToStr(obj)
+}
+function convertReturnObjToStr(obj: any, depth = 0): string {
+  const prefix = '\n' + `  `.repeat(depth + 2)
+  return Object.keys(obj)
+    .map((key: string) => {
+      if (obj[key] === true) {
+        return prefix + key
+      }
+      return `${prefix}${key} {${convertReturnObjToStr(obj[key], depth + 1)}${prefix}}`
+    })
+    .join('')
+}
+
+// 映射类型，目前仅用于update
+function mappingType(key: string, options: ApiOptions): string {
+  const type = options.table[key].type
+  const kind = options.table[key].kind
+  const dbName = options.dbName
+  if (kind === 'enum') {
+    return `${dbName}_${type}`
+  }
+  return `${dbName}_${type}FieldUpdateOperationsInput`
+}
+
+// TODO
+const foreignMap: Record<string, string> = {}
 
 const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: string }> = {
   create(options: ApiOptions) {
@@ -11,22 +68,35 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
       key => options.table[key].create !== KeyType.Hidden
     )
     const paramStr = createFields
-      .map(
-        key =>
-          `$${key}: ${options.table[key].type}${
-            options.table[key].create === KeyType.Required ? '!' : ''
-          }`
-      )
+      .filter(key => options.table[key].isDirectField)
+      .map(key => {
+        const field = options.table[key]
+        let type = field.type
+        if (field.kind === 'enum') {
+          type = `${options.dbName}_${type}`
+        }
+        return `$${key}: ${type}${options.table[key].create === KeyType.Required ? '!' : ''}`
+      })
       .join(', ')
-    const dataStr = createFields.map(key => `${key}: $${key}`).join(', ')
-    const returnStr = Object.keys(options.table)
-      .filter(key => options.table[key].detail)
-      .join('\n    ')
+    const dataStr = createFields
+      .filter(key => options.table[key].isDirectField)
+      .map(key => {
+        if (foreignMap[key]) {
+          return `${foreignMap[key]}: {connect: {id: $${key}}}`
+        } else {
+          return `${key}: $${key}`
+        }
+      })
+      .join(', ')
+    const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/CreateOne${options.prefix}`
+    const path = `/CreateOne${options.alias}`
     const content = `
-mutation CreateOne${options.prefix}(${paramStr}) {
-  data: ${options.dbName}_createOne${options.prefix}(data: {${dataStr}}) {
+mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
+      options,
+      API.Create
+    )} {
+  data: ${options.dbName}_createOne${options.alias}(data: {${dataStr}}) {
     ${returnStr}
   }
 }`.trim()
@@ -35,10 +105,10 @@ mutation CreateOne${options.prefix}(${paramStr}) {
   delete(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
-    const path = `/DeleteOne${options.prefix}`
+    const path = `/DeleteOne${options.alias}`
     const content = `
-mutation DeleteOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
-  data: ${options.dbName}_deleteOne${options.prefix}(where: {${primaryKey}: $${primaryKey}}) {
+mutation ${options.prefix}DeleteOne${options.alias}($${primaryKey}: ${primaryKeyType}!) {
+  data: ${options.dbName}_deleteOne${options.alias}(where: {${primaryKey}: $${primaryKey}}) {
     ${primaryKey}
   }
 }`.trim()
@@ -47,26 +117,36 @@ mutation DeleteOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
   update(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const updateFields = Object.keys(options.table).filter(
-      key => options.table[key].update !== KeyType.Hidden
+      key => options.table[key].update !== KeyType.Hidden && options.table[key].isDirectField
     )
     const paramStr =
+      `$${primaryKey}: ${options.table[primaryKey].type}!, ` +
       updateFields
         .map(
           key =>
-            `$${key}: ${options.table[key].type}${
+            `$${key}: ${mappingType(key, options)}${
               options.table[key].update === KeyType.Required ? '!' : ''
             }`
         )
-        .join(', ') + `, $${primaryKey}: ${options.table[primaryKey].type}!`
-    const updateStr = updateFields.map(key => `${key}: {set: $${key}}`).join(', ')
-    const returnStr = Object.keys(options.table)
-      .filter(key => options.table[key].detail)
-      .join('\n    ')
+        .join(', ')
+    const updateStr = updateFields
+      .map(key => {
+        if (foreignMap[key]) {
+          return `${foreignMap[key]}: {connect: {id: $${key}}}`
+        } else {
+          return `${key}: $${key}`
+        }
+      })
+      .join(', ')
+    const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/UpdateOne${options.prefix}`
+    const path = `/UpdateOne${options.alias}`
     const content = `
-mutation UpdateOne${options.prefix}(${paramStr}) {
-  data: ${options.dbName}_updateOne${options.prefix}(
+mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
+      options,
+      API.Update
+    )} {
+  data: ${options.dbName}_updateOne${options.alias}(
     data: {${updateStr}}
     where: {${primaryKey}: $${primaryKey}}
   ) {
@@ -78,14 +158,17 @@ mutation UpdateOne${options.prefix}(${paramStr}) {
   detail(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
-    const returnStr = Object.keys(options.table)
-      .filter(key => options.table[key].detail)
-      .join('\n    ')
+    const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/GetOne${options.prefix}`
+    const path = `/GetOne${options.alias}`
     const content = `
-query GetOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
-  data: ${options.dbName}_findFirst${options.prefix}(where: {${primaryKey}: {equals: $${primaryKey}}}) {
+query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
+      options,
+      API.Detail
+    )} {
+  data: ${options.dbName}_findFirst${
+      options.alias
+    }(where: {${primaryKey}: {equals: $${primaryKey}}}) {
     ${returnStr}
   }
 }`.trim()
@@ -93,17 +176,31 @@ query GetOne${options.prefix}($${primaryKey}: ${primaryKeyType}!) {
   },
   list(options: ApiOptions) {
     const primaryKey = options.primaryKey
-    const returnStr = Object.keys(options.table)
-      .filter(key => options.table[key].list)
-      .join('\n    ')
+    const returnStr = buildReturnStr(options, 'list')
 
-    const path = `/Get${options.prefix}List`
+    const hasSort = Object.keys(options.table).some(key => options.table[key].sort)
+    const hasFilter = Object.keys(options.table).some(key => options.table[key].filter)
+    const sortStr = hasSort
+      ? `, $orderBy: [${options.dbName}_${options.alias}OrderByWithRelationInput]`
+      : ''
+    const sortStr2 = hasSort ? `\n  orderBy: $orderBy` : ''
+    const filterStr = hasFilter ? `, $query: ${options.dbName}_${options.alias}WhereInput` : ''
+    const filterStrInDataQuery = hasFilter ? '\n    where: {AND: $query}' : ''
+    const filterStrInCountQuery = hasFilter ? '(where: {AND: $query})' : ''
+
+    const path = `/Get${options.alias}List`
     const content = `
-query Get${options.prefix}List($take: Int = 10, $skip: Int = 0) {
-  data: ${options.dbName}_findMany${options.prefix}(skip: $skip, take: $take) {
+query ${options.prefix}Get${
+      options.alias
+    }List($take: Int = 10, $skip: Int = 0${sortStr}${filterStr})${buildAuthStr(options, API.List)} {
+  data: ${options.dbName}_findMany${options.alias}(
+    skip: $skip
+    take: $take${sortStr2}${filterStrInDataQuery}) {
     ${returnStr}
   }
-  total: ${options.dbName}_aggregate${options.prefix} @transform(get: "_count.${primaryKey}") {
+  total: ${options.dbName}_aggregate${
+      options.alias
+    }${filterStrInCountQuery} @transform(get: "_count.${primaryKey}") {
     _count {
       ${primaryKey}
     }
@@ -115,25 +212,27 @@ query Get${options.prefix}List($take: Int = 10, $skip: Int = 0) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
 
-    const path = `/DeleteMany${options.prefix}`
+    const path = `/DeleteMany${options.alias}`
 
     const content = `
-mutation DeleteMany${options.prefix}($${primaryKey}s: [${primaryKeyType}]!) {
-  data: ${options.dbName}_deleteMany${options.prefix}(where: {${primaryKey}: {in: $${primaryKey}s}}) {
+mutation ${options.prefix}DeleteMany${
+      options.alias
+    }($${primaryKey}s: [${primaryKeyType}]!)${buildAuthStr(options, API.BatchDelete)} {
+  data: ${options.dbName}_deleteMany${
+      options.alias
+    }(where: {${primaryKey}: {in: $${primaryKey}s}}) {
     count
   }
 }`.trim()
     return { path, content }
   },
   export(options: ApiOptions) {
-    const returnStr = Object.keys(options.table)
-      .filter(key => options.table[key].list)
-      .join('\n    ')
+    const returnStr = buildReturnStr(options, 'list')
 
-    const path = `/GetMany${options.prefix}`
+    const path = `/GetMany${options.alias}`
     const content = `
-query GetMany${options.prefix} {
-  data: ${options.dbName}_findMany${options.prefix} {
+query ${options.prefix}GetMany${options.alias}${buildAuthStr(options, API.Export)} {
+  data: ${options.dbName}_findMany${options.alias} {
     ${returnStr}
   }
 }`.trim()

@@ -410,7 +410,6 @@ export default function StorageExplorer({ bucketId }: Props) {
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
-              console.log('====', info)
               if (info.file.status === 'success' || info.file.status === 'done') {
                 uploadingTip.current?.()
                 uploadingTip.current = undefined
