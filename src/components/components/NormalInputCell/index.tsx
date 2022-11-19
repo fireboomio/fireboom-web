@@ -1,7 +1,6 @@
 import { WarningOutlined } from '@ant-design/icons'
 import type { InputRef } from 'antd'
 import { Input, Popover } from 'antd'
-import type { ReactNode } from 'react'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
 import { useImmer } from 'use-immer'
@@ -29,7 +28,7 @@ const NormalInputCell = ({
 
   const [inputStatus, setInputStatus] = useImmer<'error' | 'warning' | ''>('')
 
-  const [errorPrompt, setErrorPrompt] = useImmer<ReactNode>(<></>)
+  const [errorPrompt, setErrorPrompt] = useImmer<React.ReactNode>(<></>)
 
   const inputRef = useRef<InputRef>(null)
 
@@ -72,6 +71,17 @@ const NormalInputCell = ({
     )
   }
 
+  const content = (
+    <div
+      className={`h-7 hover:bg-[#F8F8F9] ${
+        className ?? ''
+      } overflow-hidden overflow-ellipsis max-w-full`}
+      onClick={changeIsEditing}
+    >
+      {data ? data : <div className="text-[#AFB0B4] w-max">{placeholder}</div>}
+    </div>
+  )
+
   return (
     <div className="h-7">
       {isEditing ? (
@@ -95,7 +105,15 @@ const NormalInputCell = ({
           } overflow-hidden overflow-ellipsis max-w-full`}
           onClick={changeIsEditing}
         >
-          {data ? data : <div className="text-[#AFB0B4] w-max">{placeholder}</div>}
+          {data ? (
+            data.length > 10 ? (
+              <Popover content={data}>{data}</Popover>
+            ) : (
+              data
+            )
+          ) : (
+            <div className="text-[#AFB0B4] w-max">{placeholder}</div>
+          )}
         </div>
       )}
     </div>

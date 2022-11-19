@@ -53,7 +53,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
     const result = await requests.get<unknown, Datasource[]>('/dataSource?datasourceType=1')
     setDataSourceList(result)
     if (!result.find(item => item.id === currentDataSourceId)) {
-      setCurrentDataSourceId(result[0].id)
+      setCurrentDataSourceId(result?.[0]?.id)
     }
   }
 

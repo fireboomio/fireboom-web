@@ -1,6 +1,7 @@
 import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import type { RadioChangeEvent } from 'antd'
 import {
+  AutoComplete,
   Button,
   Collapse,
   Descriptions,
@@ -20,7 +21,7 @@ import {
 import type { ColumnsType } from 'antd/es/table'
 import axios from 'axios'
 import { get } from 'lodash'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -115,6 +116,7 @@ export default function Rest({ content, type }: Props) {
   const [rulesObj, setRulesObj] = useImmer({})
   const [isRadioShow, setIsRadioShow] = useImmer(true)
   const [isValue, setIsValue] = useImmer(true)
+  const [baseURLOptions, setBaseURLOptions] = useState<OptionT[]>([])
 
   const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
   const [envVal, setEnvVal] = useImmer('')
@@ -126,20 +128,34 @@ export default function Rest({ content, type }: Props) {
   const setUploadPath = (v: string) => {
     form.setFieldValue('filePath', v)
     form.validateFields(['filePath'])
-    axios.get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`).then(res => {
-      form.setFieldValue(
-        'baseURL',
-        `${get(res, 'data.schemes[0]', 'http')}://${get(res, 'data.host', '')}${get(
-          res,
-          'data.basePath',
-          ''
-        )}`
-      )
-    })
+    initBaseUrlOptions(v)
+  }
+
+  const initBaseUrlOptions = (v: string) => {
+    axios
+      .get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`)
+      .then(res => {
+        const servers = get(res, 'data.servers') ?? []
+        form.setFieldsValue({
+          baseURL: servers[0]?.url ?? ''
+        })
+        setBaseURLOptions(
+          servers
+            .map((item: any) => ({ label: item?.url ?? '', value: item?.url ?? '' }))
+            .concat([{ label: 'custom', value: 'custom' }])
+        )
+      })
+      .catch(err => {
+        console.error(err)
+        setBaseURLOptions([])
+      })
   }
 
   useEffect(() => {
     form.resetFields()
+    if (type === 'form' && content?.config?.filePath) {
+      initBaseUrlOptions(content?.config?.filePath as string)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
 
@@ -245,7 +261,6 @@ export default function Rest({ content, type }: Props) {
 
   const { Option } = Select
   const { Panel } = Collapse
-
   const onTabChange = (key: string) => {
     if (key === '1') {
       setIsValue(true)
@@ -255,7 +270,7 @@ export default function Rest({ content, type }: Props) {
       })
     }
   }
-
+  const jwtType = form.getFieldValue('jwtType')
   return (
     <>
       <Modal
@@ -423,7 +438,7 @@ export default function Rest({ content, type }: Props) {
                         className={styles['descriptions-box']}
                       >
                         <Descriptions.Item label="JWT获取">
-                          {config.jwtType == 1 ? '动态' : '静态'}
+                          {{ 0: '无', 1: '静态', 2: '动态' }[config.jwtType ?? 0]}
                         </Descriptions.Item>
                         <Descriptions.Item label="密钥">
                           {isEyeShow ? (
@@ -549,12 +564,18 @@ export default function Rest({ content, type }: Props) {
                     <FormToolTip title="Rest 端点" />
                   </>
                 }
-                rules={[{ type: 'url', message: '只允许输入链接' }]}
+                // rules={[{ type: 'url', message: '只允许输入链接' }]}
                 name="baseURL"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
-                <Input placeholder="请输入..." />
+                <AutoComplete
+                  options={baseURLOptions}
+                  filterOption={(inputValue, option) => {
+                    return (option?.value ?? '').includes(inputValue)
+                  }}
+                  placeholder="请输入..."
+                />
               </Form.Item>
               <Form.Item
                 rules={[{ required: true, message: '请上传 OAS 文件' }]}
@@ -689,12 +710,15 @@ export default function Rest({ content, type }: Props) {
                     <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
                       <Radio.Group onChange={onChangeRadio} value={value}>
                         <Radio value={'0'} className="mr-20">
+                          无
+                        </Radio>
+                        <Radio value={'1'} className="mr-20">
                           静态
                         </Radio>
-                        <Radio value={'1'}>动态</Radio>
+                        <Radio value={'2'}>动态</Radio>
                       </Radio.Group>
                     </Form.Item>
-                    {isRadioShow ? (
+                    {jwtType === '1' ? (
                       <>
                         <Form.Item label="密钥">
                           <Input.Group compact>
@@ -728,7 +752,8 @@ export default function Rest({ content, type }: Props) {
                           </Radio>
                         </Form.Item>
                       </>
-                    ) : (
+                    ) : null}
+                    {jwtType === '2' ? (
                       <>
                         <Form.Item label="密钥">
                           <Input.Group compact>
@@ -771,7 +796,7 @@ export default function Rest({ content, type }: Props) {
                           <Input placeholder="请输入..." />
                         </Form.Item>
                       </>
-                    )}
+                    ) : null}
                   </TabPane>
                 </Tabs>
               </div>

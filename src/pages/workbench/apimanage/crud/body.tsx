@@ -1,6 +1,7 @@
 import { Button, Checkbox, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
-import { cloneDeep } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import { cloneDeep, keyBy, mapValues } from 'lodash'
+import type React from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
@@ -93,6 +94,10 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [field, setField] = useImmer<{ value: string; label: string }[]>([])
   // 展开状态表，用于标记外键展开状态
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
+  // api已存在提示内容
+  const [confirmModal, setConfirmModal] = useState<React.ReactNode>()
+  // api提示的promise对应的resolve，用于实现对话框promise化
+  const confirmResolve = useRef<(value: unknown) => void>()
   const { data: roles } = useSWR<{ id: number; code: string; remark: string }[]>(
     '/role',
     (url: string) =>
@@ -172,6 +177,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       table: tableData,
       prefix: '',
       alias: props?.model?.name,
+      modelName: props?.model?.name,
       primaryKey: props.model.idField
     })
     setModel(model)
@@ -183,42 +189,52 @@ export default function CRUDBody(props: CRUDBodyProps) {
   if (!model) return null
 
   const onFinish = async (values: any) => {
-    const apiList = buildApi(values)
+    let apiList = buildApi(values)
+    console.log(apiList)
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading('校验中')
     // TODO 校验API是否重复
-    const existPathList = pathList
+    const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
+      '/operateApi/operationByPaths',
+      {
+        params: { paths: JSON.stringify(pathList) }
+      }
+    )
+    const pathIdMap = mapValues(keyBy(existPathList, 'Path'), 'ID')
     hideCheck()
     if (existPathList.length) {
-      const confirmFlag = await new Promise(resolve => {
-        Modal.confirm({
-          title: '检测到以下API已存在，是否覆盖？',
-          content: existPathList.map(item => <div key={item}>{item}</div>),
-          onOk: () => {
-            // TODO 生成API
-            resolve(true)
-          },
-          onCancel: () => {
-            resolve(false)
-          },
-          okText: '确认生成',
-          cancelText: '取消'
-        })
+      const result = await new Promise(resolve => {
+        confirmResolve.current = resolve
+        setConfirmModal(
+          existPathList.map(item => {
+            return <div key={item.Path}>{item.Path}</div>
+          })
+        )
       })
-      if (!confirmFlag) {
-        return false
+      if (result === 0) {
+        return
+      } else if (result === 1) {
+        apiList = apiList.filter(item => !pathIdMap[item.path])
       }
     }
     const hide = message.loading('正在生成')
 
     const results: boolean[] = await Promise.all(
       apiList.map(item => {
-        return requests
-          .post<unknown, { id: number }>('/operateApi', {
+        const existId = pathIdMap[item.path]
+        let promise
+        if (existId) {
+          promise = requests.put(`/operateApi/content/${existId}`, {
+            content: item.content
+          })
+        } else {
+          promise = requests.post('/operateApi', {
             path: item.path,
             content: item.content
           })
+        }
+        return promise
           .then(() => {
             return true
           })
@@ -496,8 +512,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
           rules={[
             {
               required: true,
-              pattern: /^[A-Z][a-zA-Z0-9_]*$/,
-              message: '请输入字母数字或下划线组合，以大写字母开头'
+              pattern: /^[a-zA-Z0-9_]*$/,
+              message: '请输入字母数字或下划线组合'
             }
           ]}
         >
@@ -536,7 +552,50 @@ export default function CRUDBody(props: CRUDBodyProps) {
         <Form.Item name="dbName" hidden>
           <Input />
         </Form.Item>
+        <Form.Item name="modelName" hidden>
+          <Input />
+        </Form.Item>
       </Form>
+      <Modal
+        open={!!confirmModal}
+        title="检测到以下API已存在，是否覆盖？"
+        onCancel={() => {
+          setConfirmModal(undefined)
+        }}
+        footer={
+          <div className="common-form">
+            <Button
+              className="btn-cancel"
+              onClick={() => {
+                setConfirmModal(undefined)
+                confirmResolve.current?.(0)
+              }}
+            >
+              取消
+            </Button>
+            <Button
+              className="btn-save"
+              onClick={() => {
+                setConfirmModal(undefined)
+                confirmResolve.current?.(1)
+              }}
+            >
+              跳过已有API
+            </Button>
+            <Button
+              className="btn-save"
+              onClick={() => {
+                setConfirmModal(undefined)
+                confirmResolve.current?.(2)
+              }}
+            >
+              全部覆盖
+            </Button>
+          </div>
+        }
+      >
+        {confirmModal}
+      </Modal>
     </div>
   )
 }

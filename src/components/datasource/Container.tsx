@@ -141,7 +141,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType !== 4 ? (
               <>
                 {content.sourceType === 2 ? (
-                  <a href={`/api/v1/file/downloadFile?type=1&fileName=${content.config.filePath}`}>
+                  <a
+                    href={`/#/workbench/rapi/${encodeURIComponent(
+                      `/api/v1/file/downloadFile?type=1&fileName=${content.config.filePath}` ?? ''
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <Button className={'btn-test ml-4 mr-4'}>测试</Button>
                   </a>
                 ) : (

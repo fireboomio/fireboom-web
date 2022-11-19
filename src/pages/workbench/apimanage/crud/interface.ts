@@ -42,6 +42,7 @@ export type ApiOptions = {
   primaryKey: string
   prefix: string
   alias: string
+  modelName: string
   apiList: API[]
   authApiList: API[]
   auth: AuthOptions

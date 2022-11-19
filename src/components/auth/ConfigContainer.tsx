@@ -1,6 +1,7 @@
 import { Button, message } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import useSwr from 'swr'
 
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
@@ -18,6 +19,9 @@ export default function AuthConfigContainer() {
   const navigate = useNavigate()
   const { id } = useParams()
   const { config } = useContext(ConfigContext)
+  const { data: authList, mutate } = useSwr<AuthProvResp[]>(['/auth', id], function (url, id) {
+    return requests.get(url)
+  })
   useEffect(() => {
     // 如果id为new，则视为新增
     if (id === 'new') {
@@ -42,6 +46,13 @@ export default function AuthConfigContainer() {
       })
     })
   }, [id])
+
+  useEffect(() => {
+    if (id !== 'create' && id !== 'new') {
+      setEditFlag(false)
+      setContent(authList?.find(item => item.id === Number(id)))
+    }
+  }, [authList, id])
 
   const onEdit = (content: AuthProvResp) => {
     onRefreshMenu('auth')
