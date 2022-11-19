@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Col, Row } from 'antd'
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
+import useSwr from 'swr'
 import { useImmer } from 'use-immer'
 
 import { DatasourceContainer } from '@/components/datasource'
@@ -24,6 +24,12 @@ export default function Datasource() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
 
+  const { data: datasourceList, mutate } = useSwr<DatasourceResp[]>(
+    ['/dataSource', id],
+    function (url, id) {
+      return requests.get(url)
+    }
+  )
   useEffect(() => {
     // 当前状态为新建中且已选择数据源类型
     if (id === 'create') {
@@ -38,10 +44,13 @@ export default function Datasource() {
       return
     }
     setShowType('detail')
-    void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-      setContent(res.filter(x => x.id === Number(id))[0])
-    })
   }, [id])
+  useEffect(() => {
+    if (id !== 'create' && id !== 'new') {
+      setShowType('detail')
+      setContent(datasourceList?.find(item => item.id === Number(id)))
+    }
+  }, [datasourceList, id])
 
   const handleToggleDesigner = (type: ShowType, _id?: number, _sourceType?: number) => {
     //新增的item点击取消逻辑

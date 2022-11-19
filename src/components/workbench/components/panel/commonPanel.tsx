@@ -2,6 +2,7 @@ import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd
 import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import IconFont from '@/components/iconfont'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
@@ -19,6 +20,7 @@ interface PanelConfig {
   title: string
   openItem: (id: number) => string
   newItem: string
+  mutateKey: (id: string) => string[]
   request: {
     getList: (dispatch: React.Dispatch<CommonPanelAction>) => void
     editItem: (row: unknown) => Promise<unknown>
@@ -64,7 +66,8 @@ const panelMap: Record<string, PanelConfig> = {
       },
       editItem: async row => await requests.put('/dataSource', row),
       delItem: async id => await requests.delete(`/dataSource/${id}`)
-    }
+    },
+    mutateKey: id => ['/dataSource', String(id)]
   },
   storage: {
     title: '文件存储',
@@ -86,6 +89,7 @@ const panelMap: Record<string, PanelConfig> = {
       editItem: async row => await requests.put('/storageBucket', row),
       delItem: async id => await requests.delete(`/storageBucket/${id}`)
     },
+    mutateKey: id => ['/dataSource', String(id)],
     navMenu: [
       {
         icon: 'icon-wenjian1',
@@ -105,6 +109,7 @@ const panelMap: Record<string, PanelConfig> = {
         tooltip: '权限管理'
       }
     ],
+    mutateKey: id => ['/auth', String(id)],
     request: {
       getList: dispatch => {
         void requests.get<unknown, StorageResp[]>('/auth').then(res => {
@@ -136,6 +141,7 @@ const panelMap: Record<string, PanelConfig> = {
 }
 
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
+  const { mutate } = useSWRConfig()
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type])
   const navigate = useNavigate()
   const location = useLocation()
@@ -241,6 +247,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     await panelConfig.request.editItem(row)
     panelConfig.request.getList(dispatch)
     setEditTarget(undefined)
+    await mutate(panelConfig.mutateKey(String(editTarget?.id)))
   }
 
   const handleItemNav = (item: CommonPanelResp) => {

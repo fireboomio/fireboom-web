@@ -4,6 +4,7 @@ import type { ApiOptions } from './interface'
 import { API, KeyType } from './interface'
 
 export default function buildApi(options: ApiOptions): { path: string; content: string }[] {
+  console.log(options)
   return options.apiList.map(api => apiBuilder[api](options))
 }
 
@@ -98,7 +99,7 @@ mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
       API.Create
     )} {
-  data: ${options.dbName}_createOne${options.alias}(data: {${dataStr}}) {
+  data: ${options.dbName}_createOne${options.modelName}(data: {${dataStr}}) {
     ${returnStr}
   }
 }`.trim()
@@ -112,7 +113,7 @@ mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
 mutation ${options.prefix}DeleteOne${
       options.alias
     }($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(options, API.Delete)} {
-  data: ${options.dbName}_deleteOne${options.alias}(where: {${primaryKey}: $${primaryKey}}) {
+  data: ${options.dbName}_deleteOne${options.modelName}(where: {${primaryKey}: $${primaryKey}}) {
     ${primaryKey}
   }
 }`.trim()
@@ -150,7 +151,7 @@ mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
       API.Update
     )} {
-  data: ${options.dbName}_updateOne${options.alias}(
+  data: ${options.dbName}_updateOne${options.modelName}(
     data: {${updateStr}}
     where: {${primaryKey}: $${primaryKey}}
   ) {
@@ -171,7 +172,7 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
       API.Detail
     )} {
   data: ${options.dbName}_findFirst${
-      options.alias
+      options.modelName
     }(where: {${primaryKey}: {equals: $${primaryKey}}}) {
     ${returnStr}
   }
@@ -185,10 +186,10 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
     const hasSort = Object.keys(options.table).some(key => options.table[key].sort)
     const hasFilter = Object.keys(options.table).some(key => options.table[key].filter)
     const sortStr = hasSort
-      ? `, $orderBy: [${options.dbName}_${options.alias}OrderByWithRelationInput]`
+      ? `, $orderBy: [${options.dbName}_${options.modelName}OrderByWithRelationInput]`
       : ''
     const sortStr2 = hasSort ? `\n  orderBy: $orderBy` : ''
-    const filterStr = hasFilter ? `, $query: ${options.dbName}_${options.alias}WhereInput` : ''
+    const filterStr = hasFilter ? `, $query: ${options.dbName}_${options.modelName}WhereInput` : ''
     const filterStrInDataQuery = hasFilter ? '\n    where: {AND: $query}' : ''
     const filterStrInCountQuery = hasFilter ? '(where: {AND: $query})' : ''
 
@@ -197,13 +198,13 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
 query ${options.prefix}Get${
       options.alias
     }List($take: Int = 10, $skip: Int = 0${sortStr}${filterStr})${buildAuthStr(options, API.List)} {
-  data: ${options.dbName}_findMany${options.alias}(
+  data: ${options.dbName}_findMany${options.modelName}(
     skip: $skip
     take: $take${sortStr2}${filterStrInDataQuery}) {
     ${returnStr}
   }
   total: ${options.dbName}_aggregate${
-      options.alias
+      options.modelName
     }${filterStrInCountQuery} @transform(get: "_count.${primaryKey}") {
     _count {
       ${primaryKey}
@@ -223,7 +224,7 @@ mutation ${options.prefix}DeleteMany${
       options.alias
     }($${primaryKey}s: [${primaryKeyType}]!)${buildAuthStr(options, API.BatchDelete)} {
   data: ${options.dbName}_deleteMany${
-      options.alias
+      options.modelName
     }(where: {${primaryKey}: {in: $${primaryKey}s}}) {
     count
   }
@@ -236,7 +237,7 @@ mutation ${options.prefix}DeleteMany${
     const path = `/${options.prefix}GetMany${options.alias}`
     const content = `
 query ${options.prefix}GetMany${options.alias}${buildAuthStr(options, API.Export)} {
-  data: ${options.dbName}_findMany${options.alias} {
+  data: ${options.dbName}_findMany${options.modelName} {
     ${returnStr}
   }
 }`.trim()

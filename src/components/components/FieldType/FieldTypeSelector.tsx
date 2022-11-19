@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Modal, Select } from 'antd'
+import { Button, Modal, Popover, Select } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -62,58 +62,68 @@ const FieldTypeSelector = ({
     handleDataChange(newEnum.name)
   }
 
+  const content = (
+    <div className={`${styles['parent-select']} max-w-full`}>
+      {
+        <div className={`flex flex-row ${styles['parent-select']}`}>
+          <div
+            className={`overflow-hidden overflow-ellipsis ${
+              PRISMA_BASE_TYPES.includes(selectedValue) ? 'text-[#1BB659]' : 'text-[#99109B]'
+            }`}
+          >
+            {selectedValue}
+            {isArray ? '[]' : ''}
+            {isOptional ? '?' : ''}
+          </div>
+        </div>
+      }
+      <div className={styles['child-select']}>
+        <Select
+          value={selectedValue}
+          bordered={false}
+          showArrow={false}
+          dropdownMatchSelectWidth={false}
+          onChange={onChange}
+          showSearch
+          onSearch={handleSearch}
+          tagRender={TagRender}
+          dropdownRender={menu => (
+            <div className="divide-y">
+              {menu}
+              <div className="text-center">
+                <Button
+                  className="w-full"
+                  icon={<PlusOutlined />}
+                  type="link"
+                  onClick={() => setNewEnumModalVisible(true)}
+                >
+                  新增枚举类型
+                </Button>
+              </div>
+            </div>
+          )}
+        >
+          {selectOptions.map((item, index) => (
+            <Select.Option label={item.label} key={index} value={item.value}>
+              <span className={PRISMA_BASE_TYPES.includes(item.value) ? '' : 'text-[#99109B]'}>
+                {item.value}
+              </span>
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
+    </div>
+  )
+
   return (
     <div className={`${styles['parent-content']} max-w-full`}>
-      <div className={`${styles['parent-select']} max-w-full`}>
-        {
-          <div className={`flex flex-row ${styles['parent-select']}`}>
-            <div
-              className={`overflow-hidden overflow-ellipsis ${
-                PRISMA_BASE_TYPES.includes(selectedValue) ? 'text-[#1BB659]' : 'text-[#99109B]'
-              }`}
-            >
-              {selectedValue}
-              {isArray ? '[]' : ''}
-              {isOptional ? '?' : ''}
-            </div>
-          </div>
-        }
-        <div className={styles['child-select']}>
-          <Select
-            value={selectedValue}
-            bordered={false}
-            showArrow={false}
-            dropdownMatchSelectWidth={false}
-            onChange={onChange}
-            showSearch
-            onSearch={handleSearch}
-            tagRender={TagRender}
-            dropdownRender={menu => (
-              <div className="divide-y">
-                {menu}
-                <div className="text-center">
-                  <Button
-                    className="w-full"
-                    icon={<PlusOutlined />}
-                    type="link"
-                    onClick={() => setNewEnumModalVisible(true)}
-                  >
-                    新增枚举类型
-                  </Button>
-                </div>
-              </div>
-            )}
-          >
-            {selectOptions.map((item, index) => (
-              <Select.Option label={item.label} key={index} value={item.value}>
-                <span className={PRISMA_BASE_TYPES.includes(item.value) ? '' : 'text-[#99109B]'}>
-                  {item.value}
-                </span>
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      </div>
+      {selectedValue.length > 10 ? (
+        <Popover content={selectedValue} trigger="hover">
+          {content}
+        </Popover>
+      ) : (
+        content
+      )}
       <Modal
         width={800}
         title="新增枚举"
