@@ -262,7 +262,10 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
                 handelEditTitle(e.currentTarget.value)
                 setEditTitle(false)
               }}
-              onBlur={() => setEditTitle(false)}
+              onBlur={e => {
+                handelEditTitle(e.currentTarget.value)
+                setEditTitle(false)
+              }}
               defaultValue={titleValue}
             />
           ) : (

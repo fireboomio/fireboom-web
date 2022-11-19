@@ -17,17 +17,17 @@ requests.interceptors.response.use(
       return resp.data.result
     } else {
       // eslint-disable-next-line no-console
+      const errMag = resp.config.resolveErrorMsg?.(resp)
       console.warn(resp.data.message)
-      void message.error(resp.data.message)
+      void message.error(errMag ?? resp.data.message)
     }
   },
   (error: AxiosError) => {
+    const errMag = error.config.resolveErrorMsg?.(error.response)
     // @ts-ignore
-    if (!error.config.noErrorNotify) {
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      void message.error(error?.response?.data?.message ?? '网络请求错误！')
-    }
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    void message.error(errMag ?? error?.response?.data?.message ?? '网络请求错误！')
     return Promise.reject(error)
   }
 )

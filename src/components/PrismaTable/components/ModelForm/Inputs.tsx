@@ -1,7 +1,6 @@
 import type { SchemaField } from '@paljs/types'
 import type { FormItemProps } from 'antd'
 import { DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd'
-import useFormInstance from 'antd/lib/form/hooks/useFormInstance'
 import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
 import moment from 'moment'
@@ -57,7 +56,7 @@ const Json = ({ field: { name, required, title }, disabled, initialValues }: Pro
 )
 
 const Datetime = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const form = useFormInstance()
+  const form = Form.useFormInstance()
 
   const handleDateChange = (dateString: string) => {
     if (!form) return
@@ -119,7 +118,7 @@ const Object = ({
   disabled,
   initialValues
 }: Props) => {
-  const form = useFormInstance()
+  const form = Form.useFormInstance()
   const initialObjectValue = initialValues[name] as Record<string, any>
 
   const [displayValue, setDisplayValue] = useImmer<string | undefined>(undefined)
