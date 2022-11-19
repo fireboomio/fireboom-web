@@ -111,7 +111,7 @@ const ModelFormContainer = ({
                 return <Inputs.Json key={field.name} {...options} />
               }
               if (['Int', 'BigInt', 'Float', 'Decimal'].includes(field.type)) {
-                return <Inputs.Enum key={field.name} {...options} />
+                return <Inputs.Number key={field.name} {...options} />
               }
               return <Inputs.Default key={field.name} {...options} />
             })}

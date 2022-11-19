@@ -246,7 +246,10 @@ export default function StorageExplorer({ bucketId }: Props) {
 
       // 请求并构造节点
       const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
-        params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined }
+        params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined },
+        resolveErrorMsg: response => {
+          return '文件列表加载失败'
+        }
       })
       const oldChildMap = new Map(loadTarget.children?.map(x => [x.name, x]) ?? [])
 

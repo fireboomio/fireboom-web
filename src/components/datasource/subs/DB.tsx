@@ -1,4 +1,15 @@
-import { Button, Descriptions, Form, Input, Modal, notification, Radio, Select } from 'antd'
+import {
+  Button,
+  Descriptions,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Radio,
+  Select,
+  Upload
+} from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -344,6 +355,13 @@ export default function DB({ content, type }: Props) {
           setUploadPath={setUploadPath}
           setVisible={setVisible}
           upType={2}
+          beforeUpload={file => {
+            const isAllowed = file.name.endsWith('.db')
+            if (!isAllowed) {
+              message.error('只允许上传 db 格式文件')
+            }
+            return isAllowed || Upload.LIST_IGNORE
+          }}
         />
       </Modal>
 

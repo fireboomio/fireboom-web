@@ -1,3 +1,5 @@
+import type { AxiosResponse } from 'axios'
+
 export interface Result<T> {
   code: number
   message: string
@@ -28,3 +30,9 @@ export interface WithClassNames {
 }
 
 export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    resolveErrorMsg?: (response?: AxiosResponse) => string
+  }
+}
