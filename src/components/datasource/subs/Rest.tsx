@@ -126,8 +126,6 @@ export default function Rest({ content, type }: Props) {
   const setUploadPath = (v: string) => {
     form.setFieldValue('filePath', v)
     form.validateFields(['filePath'])
-    console.log(v)
-    console.log(encodeURIComponent(v))
     axios.get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`).then(res => {
       form.setFieldValue(
         'baseURL',

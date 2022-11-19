@@ -24,7 +24,7 @@ export default function FileStorage() {
   }, [id])
   useEffect(() => {
     void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
-      setContent(data.filter(item => item.id === Number(id))[0])
+      setContent(data?.filter(item => item.id === Number(id))?.[0])
     })
   }, [showType])
 

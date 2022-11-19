@@ -75,7 +75,7 @@ const panelMap: Record<string, PanelConfig> = {
         void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
           dispatch({
             type: 'fetched',
-            data: res.map(row => {
+            data: (res ?? []).map(row => {
               const icon = 'other'
               const tip = ''
               return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
