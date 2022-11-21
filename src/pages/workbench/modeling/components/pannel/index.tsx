@@ -1,8 +1,13 @@
 import { AppleOutlined } from '@ant-design/icons'
+import { getSchema } from '@mrleebo/prisma-ast'
 import { Menu } from 'antd'
+import { useContext } from 'react'
 import type { Updater } from 'use-immer'
 
-import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
+import type { DBSourceResp, Entity, Model, ModelingShowTypeT } from '@/interfaces/modeling'
+import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
+import useBlocks from '@/lib/hooks/useBlocks'
 import useEntities from '@/lib/hooks/useEntities'
 
 import DBSourceSelect from './db-source-select'
@@ -31,6 +36,9 @@ const ModelPannel = ({
   setShowType
 }: Props) => {
   const { entities, editMap, newMap, delMap } = useEntities()
+  const { panel } = useContext(PrismaSchemaContext)
+  // const ctx = useContext(PrismaSchemaContext)
+  const { handleSetInEdit, inEdit } = panel || {}
 
   const menu = (
     <Menu
@@ -50,16 +58,45 @@ const ModelPannel = ({
     />
   )
 
+  const { blocks, updateAndSaveBlock, applyLocalBlocks } = useBlocks()
+
+  const addNewModelHandler = () => {
+    const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  deletedAt DateTime?
+}
+`).list[0] as Model
+    initialModel.id = Math.max(10000, ...entities.map(e => Number(e.id) || 0)) + 1
+    initialModel.name = `${UNTITLED_NEW_ENTITY}${
+      Math.max(
+        0,
+        ...entities.map(e => {
+          const match = e.name.match(new RegExp(`${UNTITLED_NEW_ENTITY}(\\d*)`))
+          return match ? Number(match[1]) : 0
+        })
+      ) + 1
+    }`
+    console.log('id', initialModel.id)
+    console.log('initialModel', initialModel)
+    applyLocalBlocks(blocks.concat(initialModel))
+    if (!inEdit) {
+      handleSetInEdit(true)
+    }
+    onClickEntity(initialModel)
+  }
+
   return (
-    <>
+    <div className="flex-1 flex flex-col min-h-0">
       <div className={styles.pannel}>
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
-        <OperationButtons addNewModel={addNewModel} changeToER={changeToER} />
+        <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
       </div>
 
       {Object.keys(delMap).length ? <div>{`已删除${Object.keys(delMap).length}个模块`}</div> : null}
-      <div className="mt-1">
+      <div className="mt-1 flex-1 overflow-y-auto">
         {entities.map(entity => (
           <ModelEntityItem
             editFlag={editMap[entity.name]}
@@ -72,7 +109,7 @@ const ModelPannel = ({
           />
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
