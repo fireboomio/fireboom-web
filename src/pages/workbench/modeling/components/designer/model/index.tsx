@@ -12,7 +12,7 @@ import NormalInputCell from '@/components/components/NormalInputCell'
 import type { ArrayOrOptionalRadioValue } from '@/components/components/QuestionPopoverContent'
 import QuestionPopoverContent from '@/components/components/QuestionPopoverContent'
 import type { Enum, Model } from '@/interfaces/modeling'
-import { MAGIC_DELETE_ENTITY_NAME, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import { MAGIC_DELETE_ENTITY_NAME } from '@/lib/constants/fireBoomConstants'
 import { checkAndUpdateRelation, checkIdExist } from '@/lib/helpers/PropertiesHelper'
 
 import iconAt from '../../../assets/at.svg'
@@ -309,10 +309,10 @@ const ModelDesigner = forwardRef(
         void message.error('实体未设置主键')
         return
       }
-      if (currentModelName === UNTITLED_NEW_ENTITY) {
-        setModelNameModalVisible(true)
-        return
-      }
+      // if (currentModelName === UNTITLED_NEW_ENTITY) {
+      //   setModelNameModalVisible(true)
+      //   return
+      // }
       return saveModel(currentModel)
     }
 

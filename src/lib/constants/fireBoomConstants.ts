@@ -6,7 +6,7 @@ export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_ID = '/prisma/migrate/:id'
 export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/prisma/dmf/:id'
 export const PRISMA_PREVIEW_GRAPHQL_URL = '/model/graphql/'
 
-export const UNTITLED_NEW_ENTITY = 'Untitled *'
+export const UNTITLED_NEW_ENTITY = 'Untitled'
 export const ENTITY_NAME_REGEX = '^[A-Za-z][A-Za-z0-9_]*$'
 
 export const MANAGE_DATASOURCE_URL = '/'

@@ -186,6 +186,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
           await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
             schema: editorContent
           })
+          await refreshBlocks()
         }
       } else if (type === 'model') {
         // @ts-ignore

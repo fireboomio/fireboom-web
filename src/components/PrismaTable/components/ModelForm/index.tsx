@@ -47,6 +47,8 @@ const ModelFormContainer = ({
   const handleFormSubmit = (values: Record<string, any>) =>
     void onSubmit(values).catch((error: Error) => message.error(`提交失败！ ${error.message}`))
 
+  console.log(model)
+
   return (
     <Modal
       className="common-form"
@@ -84,7 +86,8 @@ const ModelFormContainer = ({
               field =>
                 (canBeUpdatedOrCreated(action, field) || canBeUpdatedOrViewed(action, field)) &&
                 !(field.list && field.kind === 'object') &&
-                !field.relationField
+                !field.relationField &&
+                field.name !== model.idField
             )
             .slice()
             .sort((a, b) => a.order - b.order)

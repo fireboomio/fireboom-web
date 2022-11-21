@@ -190,7 +190,6 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
   const onFinish = async (values: any) => {
     let apiList = buildApi(values)
-    console.log(apiList)
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading('校验中')
@@ -244,6 +243,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
           })
       })
     )
+    // 处理登录鉴权
+    // if (values.auth !== AuthOptions.default) {
+    // }
     hide()
     onRefreshMenu('api')
     message.success(
