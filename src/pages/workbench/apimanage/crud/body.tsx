@@ -8,6 +8,7 @@ import { useImmer } from 'use-immer'
 import type { DMFField, DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
 import type { ApiOptions, TableAttr } from './interface'
@@ -16,6 +17,7 @@ import { API, AuthOptions, AuthType, KeyType, SortDirection } from './interface'
 interface CRUDBodyProps {
   model?: DMFModel
   modelList?: DMFModel[]
+  relationMap?: RelationMap
   dbName: string
 }
 
@@ -40,6 +42,15 @@ const apiOptions = [
   { label: '查询全部', value: API.Export }
 ]
 
+function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
+  model.fields = model.fields.filter(field => {
+    if (relationMap.key2obj[field.name]) {
+      return false
+    }
+    return true
+  })
+}
+
 /**
  * 将model中的外键字段展开为级联model，会修改入参model
  * @param model 需要展开的model
@@ -62,6 +73,7 @@ function expandForeignField(
     field.isForeign = isForeign
     field.parentField = parentField
     field.isPrimaryKey = field.name === model.idField
+
     if (field.kind !== 'object') {
       // 非外键字段，直接返回
       return true
@@ -119,7 +131,10 @@ export default function CRUDBody(props: CRUDBodyProps) {
     setField(props.model?.fields.map(item => ({ value: item.name, label: item.name })) || [])
     // 展开外键
     const model: _DMFModel = cloneDeep(props.model)
+
+    omitForeignKey(model, props.relationMap!)
     expandForeignField(model, props.modelList || [], 3)
+    console.log(model)
 
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {

@@ -4,12 +4,19 @@ import React, { useEffect, useState } from 'react'
 
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
+import type { RelationMap } from '@/lib/helpers/prismaRelation'
+import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
 
 import styles from './index.module.less'
 import type { Datasource } from './interface'
 
 interface CRUDSiderProps {
-  onSelectedModelChange: (model: DMFModel, datasource: Datasource, models: DMFModel[]) => void
+  onSelectedModelChange: (
+    model: DMFModel,
+    datasource: Datasource,
+    models: DMFModel[],
+    relationMap: RelationMap
+  ) => void
 }
 
 export default function CRUDSider(props: CRUDSiderProps) {
@@ -18,6 +25,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>([])
+  const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
   useEffect(() => {
     void queryDataSourceList()
   }, [])
@@ -31,10 +39,13 @@ export default function CRUDSider(props: CRUDSiderProps) {
     }
     const hide = message.loading('正在加载模型列表')
     requests
-      .get<unknown, { models: DMFModel[] }>(`/prisma/dmf/${currentDataSourceId}`)
+      .get<unknown, { models: DMFModel[]; schemaContent: string }>(
+        `/prisma/dmf/${currentDataSourceId}`
+      )
       .then(res => {
         setModelList(res.models || [])
         setCurrentModel(res.models?.[0])
+        setRelationMaps(findAllRelationInSchema(res.schemaContent))
         hide()
       })
   }
@@ -45,7 +56,8 @@ export default function CRUDSider(props: CRUDSiderProps) {
     props.onSelectedModelChange(
       currentModel,
       dataSourceList.find(item => item.id === currentDataSourceId)!,
-      modelList
+      modelList,
+      relationMaps?.[currentModel.name]!
     )
   }, [currentModel])
 

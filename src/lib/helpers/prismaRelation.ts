@@ -1,4 +1,5 @@
 // 解析
+import { getSchema } from '@mrleebo/prisma-ast'
 import { get } from 'lodash'
 
 export type RelationMap = {
@@ -21,4 +22,14 @@ export function findRelations(entity: any): RelationMap {
     })
   })
   return { obj2key, key2obj }
+}
+
+export function findAllRelationInSchema(schema: string): Record<string, RelationMap> {
+  const relations: Record<string, RelationMap> = {}
+  getSchema(schema)?.list?.forEach((e: any) => {
+    if (e.type === 'model') {
+      relations[e.name] = findRelations(e)
+    }
+  })
+  return relations
 }
