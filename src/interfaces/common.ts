@@ -36,3 +36,8 @@ declare module 'axios' {
     resolveErrorMsg?: (response?: AxiosResponse) => string
   }
 }
+declare module '@paljs/types' {
+  export interface Field {
+    hasDefault: boolean
+  }
+}

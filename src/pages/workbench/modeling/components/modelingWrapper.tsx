@@ -37,16 +37,27 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   useEffect(() => {
     if (dataSources.length > 0 && paramId) {
       const hide = message.loading('加载中...', 0)
-      fetchAndSaveToPrismaSchemaContext(Number(paramId), dispatch, dataSources)?.finally(hide)
+      fetchAndSaveToPrismaSchemaContext(Number(paramId), dispatch, dataSources)?.finally(() => {
+        hide()
+        // 更新数据源后强制刷新编辑器
+        setSyncEditorFlag(!syncEditorFlag)
+      })
     }
   }, [dataSources, paramId])
+  useEffect(() => {
+    // 如果当前blocks有内容(表示数据源已经加载完成)，且blocks中没有model或enum，则自动切换到编辑模式
+    if (state.blocks.length && !state.blocks.find(b => ['model', 'enum'].includes(b.type))) {
+      setShowType('editModel')
+      setInEdit(true)
+    }
+  }, [state.blocks])
 
   const handleChangeSource = (dbSourceId: number) => {
     const hide = message.loading('加载中...', 0)
     fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)?.finally(() => {
       hide()
     })
-    setShowType('preview')
+    // setShowType('preview')
   }
 
   const handleClickEntity = (entity: Entity, auto = false) => {

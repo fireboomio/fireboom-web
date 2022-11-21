@@ -146,6 +146,23 @@ const ModelDesigner = forwardRef(
       })
     }
 
+    const handleResetModel = () => {
+      resetNewEnums()
+      setCurrentModel(model)
+    }
+
+    const handleSaveModel = () => {
+      if (!checkIdExist(currentModel)) {
+        void message.error('实体未设置主键')
+        return
+      }
+      // if (currentModelName === UNTITLED_NEW_ENTITY) {
+      //   setModelNameModalVisible(true)
+      //   return
+      // }
+      return saveModel(currentModel)
+    }
+
     if (!currentModel) {
       return <Spin />
     }
@@ -298,23 +315,6 @@ const ModelDesigner = forwardRef(
         }
         return { result: true }
       }
-
-    const handleResetModel = () => {
-      resetNewEnums()
-      setCurrentModel(model)
-    }
-
-    const handleSaveModel = () => {
-      if (!checkIdExist(currentModel)) {
-        void message.error('实体未设置主键')
-        return
-      }
-      // if (currentModelName === UNTITLED_NEW_ENTITY) {
-      //   setModelNameModalVisible(true)
-      //   return
-      // }
-      return saveModel(currentModel)
-    }
 
     const handleUpdateModelName = ({ modelName }: { modelName: string }) => {
       if (modelName === MAGIC_DELETE_ENTITY_NAME) {

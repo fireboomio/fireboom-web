@@ -25,6 +25,7 @@ const checkIfRelationIsUnique = (field: Field, model: Model): boolean => {
 
 const checkAndUpdateRelationField = (updatedModel: Model, blocks: Block[]): Block[] => {
   const newBlocks = [...blocks]
+  updatedModel.properties = updatedModel.properties ?? []
   // 当前表的关联字段
   const relationFields = updatedModel.properties
     .filter(p => p.type === 'field')
@@ -141,6 +142,9 @@ const PrismaSchemaBlockOperator = (blocks: Block[]) => ({
   },
   updateModel: (model: Model): Block[] => {
     const originalModel = blocks.find(b => b.id === model.id) as Model
+    if (!originalModel) {
+      return blocks
+    }
     const originalRelationFields = originalModel?.properties
       .filter(p => p.type === 'field' && p.attributes?.find(attr => attr.name === 'relation'))
       .map(f => f as Field)
