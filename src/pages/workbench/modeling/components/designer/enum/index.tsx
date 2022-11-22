@@ -16,12 +16,16 @@ interface Props {
   savedEnum: Enum
   saveEnum: (enumm: Enum) => void
   updateLocalstorage?: (enumm: Enum) => void
+  saveModify?: (enumm: Enum) => void
   isEditing: boolean
   setIsEditing?: Updater<boolean>
 }
 
 const EnumDesigner = forwardRef(
-  ({ savedEnum, saveEnum, updateLocalstorage, setIsEditing, isEditing }: Props, ref) => {
+  (
+    { savedEnum, saveEnum, updateLocalstorage, setIsEditing, isEditing, saveModify }: Props,
+    ref
+  ) => {
     useImperativeHandle(ref, () => ({
       handleResetEnum,
       handleSaveEnum,
@@ -80,6 +84,7 @@ const EnumDesigner = forwardRef(
           }
         ]
       }
+      saveModify?.(newEnum)
       setCurrentEnum(newEnum)
     }
 
@@ -88,6 +93,7 @@ const EnumDesigner = forwardRef(
         ...currentEnum,
         enumerators: enumerators.filter(e => e.type !== 'enumerator' || e.name !== enumerator.name)
       }
+      saveModify?.(newEnum)
       setCurrentEnum(newEnum)
     }
 
@@ -101,6 +107,7 @@ const EnumDesigner = forwardRef(
           return e
         })
       }
+      saveModify?.(newEnum)
       setCurrentEnum(newEnum)
     }
 
@@ -112,6 +119,7 @@ const EnumDesigner = forwardRef(
             e => e.type !== 'enumerator' || e.name !== enumerator.name
           )
         }
+        saveModify?.(newEnum)
         setCurrentEnum(newEnum)
         return
       }

@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 
 import iconER from '../../assets/er.svg'
+import iconSwitch from '../../assets/modeling-switch.svg'
 import styles from './pannel.module.less'
 
 interface Props {
@@ -16,9 +17,9 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
   const { handleSetInEdit, inEdit } = panel || {}
   return (
     <div className={styles.actions}>
-      <span className="text-[#333] text-14px font-500 mr-auto">概览</span>
-      <div onClick={() => handleSetInEdit(!inEdit)} className={styles.erBtn}>
-        <img src={iconER} alt="ER" />
+      <span className="text-[#333] text-14px font-500 mr-auto">建模</span>
+      <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
+        <img src={iconSwitch} alt="switch" />
       </div>
       <div onClick={changeToER} className={styles.erBtn}>
         <img src={iconER} alt="ER" />
