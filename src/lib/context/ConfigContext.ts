@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 
 export type SystemConfigType = {
   debugSwitch: boolean
@@ -18,3 +18,7 @@ type SystemConfigContext = {
 }
 
 export const ConfigContext = createContext<SystemConfigContext>({} as SystemConfigContext)
+
+export function useConfigContext(): SystemConfigContext {
+  return useContext(ConfigContext)
+}

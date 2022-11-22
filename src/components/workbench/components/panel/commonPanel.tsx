@@ -46,11 +46,21 @@ const panelMap: Record<string, PanelConfig> = {
             type: 'fetched',
             data: res.map(row => {
               let icon = 'other'
+              let svg = '/assets/icon/db-other.svg'
               let tip = ''
               switch (row.sourceType) {
                 case 1:
                   icon = String(row.config.dbType).toLowerCase() || icon
                   tip = String(row.config.dbName || '')
+                  svg =
+                    {
+                      mysql: '/assets/icon/mysql.svg',
+                      pgsql: '/assets/icon/pg.svg',
+                      graphql: '/assets/icon/graphql.svg',
+                      mongodb: '/assets/icon/mongodb.svg',
+                      rest: '/assets/icon/rest.svg',
+                      sqlite: '/assets/icon/sqlite.svg'
+                    }[String(row.config.dbType).toLowerCase()] || svg
                   break
                 case 2:
                   icon = 'rest'
@@ -59,7 +69,7 @@ const panelMap: Record<string, PanelConfig> = {
                   icon = 'graphql'
                   break
               }
-              return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
+              return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row, svg }
             })
           })
         })
@@ -298,7 +308,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   height={12}
                   preview={false}
                   alt={item.name}
-                  src={`/assets/workbench/panel-item-${item.icon}.png`}
+                  src={item.svg ?? `/assets/workbench/panel-item-${item.icon}.png`}
                 />
               </div>
               {editTarget?.id === item.id ? (

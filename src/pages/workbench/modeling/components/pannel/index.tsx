@@ -1,10 +1,10 @@
 import { AppleOutlined } from '@ant-design/icons'
-import { getSchema } from '@mrleebo/prisma-ast'
+import { printSchema } from '@mrleebo/prisma-ast'
 import { Menu } from 'antd'
 import { useContext } from 'react'
 import type { Updater } from 'use-immer'
 
-import type { DBSourceResp, Entity, Model, ModelingShowTypeT } from '@/interfaces/modeling'
+import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import useBlocks from '@/lib/hooks/useBlocks'
@@ -36,7 +36,7 @@ const ModelPannel = ({
   setShowType
 }: Props) => {
   const { entities, editMap, newMap, delMap } = useEntities()
-  const { panel } = useContext(PrismaSchemaContext)
+  const { panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
 
@@ -58,18 +58,10 @@ const ModelPannel = ({
     />
   )
 
-  const { blocks, updateAndSaveBlock, applyLocalBlocks } = useBlocks()
+  const { blocks, applyLocalSchema, applyLocalBlocks } = useBlocks()
 
   const addNewModelHandler = () => {
-    const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime
-  deletedAt DateTime?
-}
-`).list[0] as Model
-    initialModel.id = Math.max(10000, ...entities.map(e => Number(e.id) || 0)) + 1
-    initialModel.name = `${UNTITLED_NEW_ENTITY}${
+    const newName = `${UNTITLED_NEW_ENTITY}${
       Math.max(
         0,
         ...entities.map(e => {
@@ -78,13 +70,21 @@ const ModelPannel = ({
         })
       ) + 1
     }`
-    console.log('id', initialModel.id)
-    console.log('initialModel', initialModel)
-    applyLocalBlocks(blocks.concat(initialModel))
+    const initialModel = `\nmodel ${newName} {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  deletedAt DateTime?
+}
+`
+
+    let currentSchema = printSchema({ type: 'schema', list: blocks })
+    currentSchema += initialModel
+    applyLocalSchema(currentSchema)
+    triggerSyncEditor()
     if (!inEdit) {
       handleSetInEdit(true)
     }
-    onClickEntity(initialModel)
   }
 
   return (

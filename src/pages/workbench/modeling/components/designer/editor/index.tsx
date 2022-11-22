@@ -4,20 +4,19 @@ import { useEffect, useRef, useState } from 'react'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 
 interface Props {
-  dbId: number
-  current: string
   onChange?: (value: string) => void
   defaultContent: string
 }
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
-const ModelEditor = ({ current, dbId, onChange, defaultContent }: Props) => {
+const ModelEditor = ({ onChange, defaultContent }: Props) => {
   const editorRef = useRef<any>()
 
   const [value, setValue] = useState<string>('')
   const { currentEntity } = useCurrentEntity()
   const lastScrollEntity = useRef<string>('')
   useEffect(() => {
+    if (!currentEntity) return
     const key = `${currentEntity.type}_${currentEntity.id}`
     if (lastScrollEntity.current === key) {
       return

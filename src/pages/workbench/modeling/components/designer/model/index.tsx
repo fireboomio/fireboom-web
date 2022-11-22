@@ -27,6 +27,7 @@ interface Props {
   updateLocalstorage?: (model: Model) => void
   isEditing: boolean
   setIsEditing?: Updater<boolean>
+  saveModify?: (model: any) => void
   newEnums: Enum[]
   addNewEnum: (newEnum: Enum) => void
   resetNewEnums: () => void
@@ -39,6 +40,7 @@ const ModelDesigner = forwardRef(
       saveModel,
       updateLocalstorage,
       setIsEditing,
+      saveModify,
       isEditing,
       addNewEnum,
       newEnums,
@@ -90,6 +92,7 @@ const ModelDesigner = forwardRef(
           fieldType: 'String',
           name: ''
         })
+        saveModify?.(m)
       })
     }
     const addEmptyModelAttribute = () => {
@@ -100,6 +103,7 @@ const ModelDesigner = forwardRef(
           name: '',
           args: []
         })
+        saveModify?.(m)
       })
     }
     const addEmptyFieldAttribute = (field: Field) => {
@@ -124,6 +128,7 @@ const ModelDesigner = forwardRef(
           return property
         })
       }
+      saveModify?.(newModel)
       setCurrentModel(newModel)
     }
 
@@ -143,7 +148,25 @@ const ModelDesigner = forwardRef(
             }
             return p
           })
+        saveModify?.(m)
       })
+    }
+
+    const handleResetModel = () => {
+      resetNewEnums()
+      setCurrentModel(model)
+    }
+
+    const handleSaveModel = () => {
+      if (!checkIdExist(currentModel)) {
+        void message.error('实体未设置主键')
+        return
+      }
+      // if (currentModelName === UNTITLED_NEW_ENTITY) {
+      //   setModelNameModalVisible(true)
+      //   return
+      // }
+      return saveModel(currentModel)
     }
 
     if (!currentModel) {
@@ -164,11 +187,12 @@ const ModelDesigner = forwardRef(
           return property
         })
       }
-      setCurrentModel(
+      const target =
         originalProperty.type === 'field'
           ? checkAndUpdateRelation(newModel, originalProperty, newProperty.name)
           : newModel
-      )
+      saveModify?.(target)
+      setCurrentModel(target)
     }
 
     const handleDeleteProperty = (toBeDel: Property) => {
@@ -176,9 +200,9 @@ const ModelDesigner = forwardRef(
         ...currentModel,
         properties: properties.filter(p => !(JSON.stringify(p) === JSON.stringify(toBeDel)))
       }
-      setCurrentModel(
-        toBeDel.type === 'field' ? checkAndUpdateRelation(newModel, toBeDel) : newModel
-      )
+      const target = toBeDel.type === 'field' ? checkAndUpdateRelation(newModel, toBeDel) : newModel
+      saveModify?.(target)
+      setCurrentModel(target)
     }
 
     const handleDeleteFieldAttribute = (field: Field) => (idx: number) => {
@@ -215,7 +239,9 @@ const ModelDesigner = forwardRef(
             p => !(p.type === 'field' && (p.name === field.name || p.name === ''))
           )
         }
-        setCurrentModel(checkAndUpdateRelation(newModel, field))
+        const target = checkAndUpdateRelation(newModel, field)
+        saveModify?.(target)
+        setCurrentModel(target)
         return
       }
       const newField = {
@@ -246,6 +272,7 @@ const ModelDesigner = forwardRef(
         ...currentModel,
         properties: [...properties, { ...originalField, name: copiedName }]
       }
+      saveModify?.(newModel)
       setCurrentModel(newModel)
       setMorePopoverEditingFieldName(undefined)
     }
@@ -298,23 +325,6 @@ const ModelDesigner = forwardRef(
         }
         return { result: true }
       }
-
-    const handleResetModel = () => {
-      resetNewEnums()
-      setCurrentModel(model)
-    }
-
-    const handleSaveModel = () => {
-      if (!checkIdExist(currentModel)) {
-        void message.error('实体未设置主键')
-        return
-      }
-      // if (currentModelName === UNTITLED_NEW_ENTITY) {
-      //   setModelNameModalVisible(true)
-      //   return
-      // }
-      return saveModel(currentModel)
-    }
 
     const handleUpdateModelName = ({ modelName }: { modelName: string }) => {
       if (modelName === MAGIC_DELETE_ENTITY_NAME) {

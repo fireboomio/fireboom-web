@@ -1,5 +1,6 @@
 import { getSchema, printSchema } from '@mrleebo/prisma-ast'
 import { Empty, Input, message, Popover, Radio } from 'antd'
+import { cloneDeep, isEqual } from 'lodash'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
@@ -38,8 +39,10 @@ interface Props {
   setShowType: Updater<ModelingShowTypeT>
 }
 
-const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => {
+const DesignerContainer = ({ type, setShowType, showType }: Props) => {
+  const { newMap } = useEntities()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
+  const editType = newMap[currentEntity?.name] ? 'add' : 'edit'
   const { getFirstEntity } = useEntities()
   const { getNextId } = useEntities()
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
@@ -60,6 +63,7 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
 
   const [editTitle, setEditTitle] = useState<boolean>(false)
   const [titleValue, setTitleValue] = useState<string>('')
+
   useEffect(() => {
     setTitleValue(currentEntity?.name || '')
   }, [currentEntity])
@@ -166,8 +170,42 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     // setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
   }
 
-  if (editType === 'edit' && !currentEntity) {
-    return <Empty className="pt-20" description="无可用实体！" />
+  if (mode !== 'editor' && !currentEntity) {
+    // setMode('editor')
+    return (
+      <div className="h-full flex flex-col">
+        <div
+          className="flex justify-end items-center h-10 bg-white pl-7 pr-4"
+          style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
+        >
+          <div className={styles.resetBtn} onClick={onCancel}>
+            重置
+          </div>
+          <div className={styles.saveBtn} onClick={onSave}>
+            保存
+          </div>
+          <Radio.Group
+            className={styles.modeRadio}
+            value={mode}
+            onChange={e => {
+              setMode(e.target.value)
+            }}
+          >
+            <Popover content="普通视图" trigger="hover">
+              <Radio.Button value="designer">
+                <img src={iconDesignModeActive} alt="" />
+              </Radio.Button>
+            </Popover>
+            <Popover content="源码视图" trigger="hover">
+              <Radio.Button value="editor">
+                <img src={iconEditMode} alt="" />
+              </Radio.Button>
+            </Popover>
+          </Radio.Group>
+        </div>
+        <Empty className="pt-20" description="无可用实体！" />
+      </div>
+    )
   }
 
   function onCancel() {
@@ -217,9 +255,11 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     } else {
       // 编辑模式下改为修改本地数据并选中第一项
       const localBlocks = PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id)
-      applyLocalBlocks(blocks)
+      applyLocalBlocks(localBlocks)
       setEditorContent(printSchema({ type: 'schema', list: localBlocks }))
-      handleClickEntity(getFirstEntity())
+      handleClickEntity(
+        localBlocks.filter(block => block.type === 'model' || block.type === 'enum')[0]
+      )
     }
   }
 
@@ -233,11 +273,13 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
     } else {
       void message.error('实体名不合法')
     }
-
-    newBlocks =
-      editType === 'add'
-        ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
-        : PrismaSchemaBlockOperator(newBlocks).updateModel(model)
+    PrismaSchemaBlockOperator(newBlocks).updateModel(model)
+    // 兼容代码，避免printSchema报错
+    newBlocks.forEach(block => {
+      if (block.type === 'model' && !block.properties) {
+        block.properties = []
+      }
+    })
     return printSchema({ type: 'schema', list: newBlocks })
   }
 
@@ -254,79 +296,86 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         className="flex justify-start items-center h-10 bg-white pl-7 pr-4"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <span className="text-lg font-medium text-16px common-form">
-          {/*{editType === 'edit' ? currentEntity.name : '新增'}*/}
-          {editTitle ? (
-            <Input
-              className="!w-20"
-              onPressEnter={e => {
-                handelEditTitle(e.currentTarget.value)
-                setEditTitle(false)
-              }}
-              onBlur={e => {
-                handelEditTitle(e.currentTarget.value)
-                setEditTitle(false)
-              }}
-              defaultValue={titleValue}
-            />
-          ) : (
-            titleValue
-          )}
-          <IconFont
-            onClick={() => {
-              setEditTitle(!editTitle)
-              setTitleValue(currentEntity.name)
-            }}
-            className="ml-1 cursor-pointer"
-            type="icon-zhongmingming"
-          />
-          {isEditing && '(未保存)'}
-        </span>
-        <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">{type}</span>
-        <div className="flex items-center flex-0">
-          {mode === 'designer' && type === 'model' ? (
-            <>
-              <div
+        {currentEntity ? (
+          <>
+            <span className="text-lg font-medium text-16px common-form">
+              {/*{editType === 'edit' ? currentEntity.name : '新增'}*/}
+              {editTitle ? (
+                <Input
+                  className="!w-20"
+                  onPressEnter={e => {
+                    handelEditTitle(e.currentTarget.value)
+                    setEditTitle(false)
+                  }}
+                  onBlur={e => {
+                    handelEditTitle(e.currentTarget.value)
+                    setEditTitle(false)
+                  }}
+                  defaultValue={titleValue}
+                />
+              ) : (
+                titleValue
+              )}
+              <IconFont
                 onClick={() => {
-                  // @ts-ignore
-                  ModelDesignerRef?.current?.addEmptyField?.()
+                  setEditTitle(!editTitle)
+                  setTitleValue(currentEntity.name)
                 }}
-                className="cursor-pointer mt-2px"
-              >
-                <img src={iconAdd} alt="增加" />
-              </div>
-              <div className={styles.split} />
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  // @ts-ignore
-                  ModelDesignerRef?.current?.addEmptyModelAttribute?.()
-                }}
-              >
-                <img src={iconAt} alt="at" />
-              </div>
-              <div className={styles.split} />
-            </>
-          ) : null}
-          {mode === 'designer' && type === 'enum' ? (
-            <>
-              <div
-                className="cursor-pointer mt-2px"
-                onClick={() => {
-                  // @ts-ignore
-                  EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
-                }}
-              >
-                <img src={iconAdd} alt="增加" />
-              </div>
-              <div className={styles.split} />
-            </>
-          ) : null}
-        </div>
-
-        <div className={styles.resetBtn} onClick={onDelete}>
-          删除
-        </div>
+                className="ml-1 cursor-pointer"
+                type="icon-zhongmingming"
+              />
+              {/*{isEditing && '(未保存)'}*/}
+            </span>
+            <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">
+              {type}
+            </span>
+            <div className="flex items-center flex-0">
+              {mode === 'designer' && type === 'model' ? (
+                <>
+                  <div
+                    onClick={() => {
+                      // @ts-ignore
+                      ModelDesignerRef?.current?.addEmptyField?.()
+                    }}
+                    className="cursor-pointer mt-2px"
+                  >
+                    <img src={iconAdd} alt="增加" />
+                  </div>
+                  <div className={styles.split} />
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      // @ts-ignore
+                      ModelDesignerRef?.current?.addEmptyModelAttribute?.()
+                    }}
+                  >
+                    <img src={iconAt} alt="at" />
+                  </div>
+                  <div className={styles.split} />
+                </>
+              ) : null}
+              {mode === 'designer' && type === 'enum' ? (
+                <>
+                  <div
+                    className="cursor-pointer mt-2px"
+                    onClick={() => {
+                      // @ts-ignore
+                      EnumDesignerRef?.current?.handleAddNewEnumButtonClick?.()
+                    }}
+                  >
+                    <img src={iconAdd} alt="增加" />
+                  </div>
+                  <div className={styles.split} />
+                </>
+              ) : null}
+            </div>
+            <div className={styles.resetBtn} onClick={onDelete}>
+              删除
+            </div>
+          </>
+        ) : (
+          <div className="flex-1" />
+        )}
         <div className={styles.resetBtn} onClick={onCancel}>
           重置
         </div>
@@ -359,10 +408,20 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
       {type === 'model' &&
         (mode === 'designer' ? (
           <ModelDesigner
-            updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
-            setIsEditing={editType === 'edit' ? setIsEditing : undefined}
+            updateLocalstorage={undefined}
+            saveModify={model => {
+              if (model) {
+                const old = blocks.find(block => block.type === 'model' && block.id === model.id)
+                if (isEqual(old, model)) {
+                  return
+                }
+                const newBlocks = PrismaSchemaBlockOperator(blocks).updateModel(cloneDeep(model))
+                applyLocalBlocks(newBlocks)
+              }
+            }}
+            setIsEditing={setIsEditing}
             isEditing={isEditing}
-            model={editType === 'edit' ? (currentEntity as Model) : (newEntity as Model)}
+            model={currentEntity as Model}
             resetNewEnums={() => setNewEnums([])}
             saveModel={handleSaveModel}
             addNewEnum={handleAddNewEnum}
@@ -372,8 +431,6 @@ const DesignerContainer = ({ editType, type, setShowType, showType }: Props) => 
         ) : (
           <div style={{ flex: '1 1 0' }}>
             <ModelEditor
-              dbId={dbSourceId}
-              current={currentEntity.name}
               onChange={value => {
                 setEditorContent(value)
                 applyLocalSchema(value)
