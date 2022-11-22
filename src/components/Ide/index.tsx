@@ -5,7 +5,7 @@ import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-r
 import { loader } from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd'
 import { debounce } from 'lodash'
-import type { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
@@ -25,6 +25,7 @@ import IdeCodeContainer from './code/index'
 import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
 import ideStyles from './ide.module.less'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -128,6 +129,7 @@ const IdeContainer: FC<Props> = props => {
     status: null
   })
   const [localDepend, setLocalDepend] = useState<string[]>([])
+  const { config: globalConfig } = useContext(ConfigContext)
 
   // 获取hook信息
   const lastHookPath = useRef<string>()
@@ -386,6 +388,8 @@ const IdeContainer: FC<Props> = props => {
         {/* 头部 */}
         <IdeHeaderContainer
           hideSwitch={props.hideSwitch ?? false}
+          hookPath={props.hookPath}
+          hostUrl={globalConfig.apiHost}
           {...{
             savePayload,
             fullScreen,

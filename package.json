@@ -18,6 +18,7 @@
     "@graphiql/toolkit": "^0.8.0",
     "@monaco-editor/react": "^4.4.5",
     "@mrleebo/prisma-ast": "^0.3.1",
+    "@stackblitz/sdk": "^1.8.1",
     "@swordjs/monaco-editor": "*",
     "@swordjs/monaco-editor-auto-typings": "0.5.1",
     "@swordjs/monaco-editor-react": "*",
