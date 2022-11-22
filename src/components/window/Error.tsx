@@ -71,22 +71,10 @@ export default function Error() {
         Object.keys(res).map(key => {
           res[key].forEach((item: any) => {
             if (key === 'datasource') {
-              switch (item.sourceType) {
-                case 1:
-                  item.icon =
-                    {
-                      mysql: '/assets/icon/mysql.svg',
-                      pgsql: '/assets/icon/pg.svg',
-                      mongodb: '/assets/icon/mongodb.svg',
-                      sqlite: '/assets/icon/sqlite.svg'
-                    }[String(item.dbType).toLowerCase()] || '/assets/icon/db-other.svg'
-                  break
-                case 2:
-                  item.svg = '/assets/icon/rest.svg'
-                  break
-                case 3:
-                  item.svg = '/assets/icon/graphql.svg'
-                  break
+              if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(item.type)) {
+                item.icon = `/assets/icons/${item.type}.svg`
+              } else {
+                item.icon = `/assets/icons/db-other.svg`
               }
             } else if (['api', 'storage'].includes(key)) {
               item.icon = '/assets/icon/file.svg'
