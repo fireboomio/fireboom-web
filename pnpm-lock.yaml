@@ -11,6 +11,7 @@ specifiers:
   '@monaco-editor/react': ^4.4.5
   '@mrleebo/prisma-ast': ^0.3.1
   '@paljs/types': ^4.0.18
+  '@stackblitz/sdk': ^1.8.1
   '@swordjs/monaco-editor': '*'
   '@swordjs/monaco-editor-auto-typings': 0.5.1
   '@swordjs/monaco-editor-react': '*'
@@ -78,6 +79,7 @@ dependencies:
   '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.8.0_dcccpntirzjd6qjbtfbncv4bru
   '@monaco-editor/react': registry.npmmirror.com/@monaco-editor/react/4.4.5_jywyd5ymizla4bkdnod6po6m6y
   '@mrleebo/prisma-ast': registry.npmmirror.com/@mrleebo/prisma-ast/0.3.1
+  '@stackblitz/sdk': registry.npmmirror.com/@stackblitz/sdk/1.8.1
   '@swordjs/monaco-editor': registry.npmmirror.com/@swordjs/monaco-editor/0.34.8
   '@swordjs/monaco-editor-auto-typings': registry.npmmirror.com/@swordjs/monaco-editor-auto-typings/0.5.1_oztbn2efcrbjhpncy77qiqrlqa
   '@swordjs/monaco-editor-react': registry.npmmirror.com/@swordjs/monaco-editor-react/4.4.10_ntgarknugaajg6fzxzywnuakhy
@@ -1314,6 +1316,12 @@ packages:
     name: '@remix-run/router'
     version: 1.0.1
     engines: {node: '>=14'}
+    dev: false
+
+  registry.npmmirror.com/@stackblitz/sdk/1.8.1:
+    resolution: {integrity: sha512-hjYfjOLQBNDzqPD5AkGJOD7j+uvFwGocDTmwNqmLCWR5EY7BDtcOtDY2M+91v/twYWWNvI7N8UNIgojCPNgzMA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@stackblitz/sdk/-/sdk-1.8.1.tgz}
+    name: '@stackblitz/sdk'
+    version: 1.8.1
     dev: false
 
   registry.npmmirror.com/@swordjs/monaco-editor-auto-typings/0.5.1_oztbn2efcrbjhpncy77qiqrlqa:
