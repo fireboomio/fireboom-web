@@ -2,9 +2,13 @@ import type { ApolloQueryResult } from '@apollo/client/core/types'
 import type { SchemaField, SchemaModel } from '@paljs/types'
 import { Button, Form, message, Modal } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
+import { useEffect, useState } from 'react'
 import type { Updater } from 'use-immer'
 
 import useActions from '@/components/PrismaTable/hooks/useActions'
+import type { RelationMap } from '@/lib/helpers/prismaRelation'
+import { findRelations } from '@/lib/helpers/prismaRelation'
+import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 
 import styles from './index.module.less'
 import { Inputs } from './Inputs'
@@ -35,6 +39,12 @@ const ModelFormContainer = ({
   refetch,
   initialValues
 }: Props) => {
+  const { currentEntity, changeToEntityById } = useCurrentEntity()
+  const [relationMap, setRelationMap] = useState<RelationMap>()
+
+  useEffect(() => {
+    setRelationMap(findRelations(currentEntity))
+  }, [currentEntity])
   const onSave = async () => {
     await refetch()
       .then(() => setModalVisible(false))
@@ -47,7 +57,18 @@ const ModelFormContainer = ({
   const handleFormSubmit = (values: Record<string, any>) =>
     void onSubmit(values).catch((error: Error) => message.error(`提交失败！ ${error.message}`))
 
-  console.log(model)
+  if (!relationMap) return null
+
+  // const
+  const showFields = model.fields.filter(
+    field =>
+      (canBeUpdatedOrCreated(action, field) || canBeUpdatedOrViewed(action, field)) &&
+      !(field.list && field.kind === 'object') &&
+      // !field.relationField &&
+      !relationMap.key2obj[field.name] && // 不显示关联字段
+      (field.name !== model.idField || !field.hasDefault) // 如果是主键且有默认值，则隐藏
+  )
+  // console.log(relationMap)
 
   return (
     <Modal
@@ -81,14 +102,7 @@ const ModelFormContainer = ({
           name={model.id}
           onFinish={handleFormSubmit}
         >
-          {model.fields
-            .filter(
-              field =>
-                (canBeUpdatedOrCreated(action, field) || canBeUpdatedOrViewed(action, field)) &&
-                !(field.list && field.kind === 'object') &&
-                !field.relationField &&
-                field.name !== model.idField
-            )
+          {showFields
             .slice()
             .sort((a, b) => a.order - b.order)
             .map(field => {
@@ -116,7 +130,7 @@ const ModelFormContainer = ({
               if (['Int', 'BigInt', 'Float', 'Decimal'].includes(field.type)) {
                 return <Inputs.Number key={field.name} {...options} />
               }
-              return <Inputs.Default key={field.name} {...options} />
+              return <Inputs.Json key={field.name} {...options} />
             })}
         </Form>
       </div>

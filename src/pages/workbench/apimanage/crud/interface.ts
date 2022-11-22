@@ -1,3 +1,5 @@
+import type { DMFField, DMFModel } from '@/interfaces/datasource'
+
 export type Datasource = {
   id: number
   name: string
@@ -23,11 +25,24 @@ export enum SortDirection {
   Asc = 'asc',
   Desc = 'desc'
 }
+export interface _DMFModel extends DMFModel {
+  fields: _DMFField[]
+}
+export interface _DMFField extends DMFField {
+  isPrimaryKey?: boolean
+  parentField?: _DMFField
+  isForeign?: boolean
+  children?: _DMFField[]
+  tableId?: string
+  originField?: _DMFField // 外键对应的原始字段
+}
 
 export type TableAttr = {
   name: string
   kind: string
   type: string
+  createType: string
+  updateType: string
   detail: boolean
   isDirectField: boolean
   list: boolean

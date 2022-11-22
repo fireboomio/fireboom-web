@@ -62,9 +62,6 @@ function mappingType(key: string, options: ApiOptions): string {
   return `${dbName}_${type}FieldUpdateOperationsInput`
 }
 
-// TODO
-const foreignMap: Record<string, string> = {}
-
 const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: string }> = {
   create(options: ApiOptions) {
     const createFields = Object.keys(options.table).filter(
@@ -74,21 +71,18 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
       .filter(key => options.table[key].isDirectField)
       .map(key => {
         const field = options.table[key]
-        let type = field.type
-        if (field.kind === 'enum') {
-          type = `${options.dbName}_${type}`
-        }
+        // let type = field.type
+        // if (field.kind === 'enum') {
+        //   type = `${options.dbName}_${type}`
+        // }
+        const type = field.createType
         return `$${key}: ${type}${options.table[key].create === KeyType.Required ? '!' : ''}`
       })
       .join(', ')
     const dataStr = createFields
       .filter(key => options.table[key].isDirectField)
       .map(key => {
-        if (foreignMap[key]) {
-          return `${foreignMap[key]}: {connect: {id: $${key}}}`
-        } else {
-          return `${key}: $${key}`
-        }
+        return `${key}: $${key}`
       })
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
@@ -129,18 +123,14 @@ mutation ${options.prefix}DeleteOne${
       updateFields
         .map(
           key =>
-            `$${key}: ${mappingType(key, options)}${
+            `$${key}: ${options.table[key].updateType}${
               options.table[key].update === KeyType.Required ? '!' : ''
             }`
         )
         .join(', ')
     const updateStr = updateFields
       .map(key => {
-        if (foreignMap[key]) {
-          return `${foreignMap[key]}: {connect: {id: $${key}}}`
-        } else {
-          return `${key}: $${key}`
-        }
+        return `${key}: $${key}`
       })
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')

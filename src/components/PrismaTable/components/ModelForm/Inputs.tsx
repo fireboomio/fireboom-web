@@ -51,7 +51,7 @@ const Default = ({ field: { name, required, title }, disabled, initialValues }: 
 
 const Json = ({ field: { name, required, title }, disabled, initialValues }: Props) => (
   <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-    <TextArea disabled={disabled} />
+    <TextArea disabled={disabled} autoSize={{ minRows: 1 }} />
   </FormItem>
 )
 
@@ -148,7 +148,7 @@ const Object = ({
       callback()
     } else {
       void message.error(`请选择 ${type} 表关联数据`)!
-      callback('Field is required!')
+      callback(`请选择 ${type} 关联数据`)
     }
   }
 
@@ -157,24 +157,25 @@ const Object = ({
       <Form.Item
         label={title}
         name={name}
-        style={{ display: 'none' }}
-        rules={[{ required }, { validator: handleValidateObject }]}
+        // style={{ display: 'none' }}
+        rules={[{ required, validator: handleValidateObject }]}
+        className="w-full"
+        // noStyle
       >
-        {<Input />}
+        <FormItem noStyle>
+          <Search
+            disabled={disabled}
+            onKeyDown={undefined}
+            onPressEnter={undefined}
+            readOnly
+            allowClear
+            placeholder="搜索并关联记录"
+            value={displayValue}
+            enterButton
+            onSearch={() => setConnectModalVisible(true)}
+          />
+        </FormItem>
       </Form.Item>
-      <FormItem label={title} required={required} className="w-full" noStyle>
-        <Search
-          disabled={disabled}
-          onKeyDown={undefined}
-          onPressEnter={undefined}
-          readOnly
-          allowClear
-          placeholder="搜索并关联记录"
-          value={displayValue}
-          enterButton
-          onSearch={() => setConnectModalVisible(true)}
-        />
-      </FormItem>
       <Modal
         width={1200}
         title={`关联 ${type} 表数据`}

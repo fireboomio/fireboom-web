@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import type { DMFModel } from '@/interfaces/datasource'
+import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import type { Datasource } from '@/pages/workbench/apimanage/crud/interface'
 
 import Body from './body'
@@ -10,6 +11,7 @@ import Sider from './sider'
 export default function CRUDIndex() {
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>()
+  const [relationMap, setRelationMap] = useState<RelationMap>()
   const [currentDatasource, setCurrentDatasource] = useState<Datasource>()
   return (
     <div className={styles.wrapper}>
@@ -23,16 +25,18 @@ export default function CRUDIndex() {
         </div>
         <div className="flex flex-1 min-h-0">
           <Sider
-            onSelectedModelChange={(model, datasource, modelList) => {
+            onSelectedModelChange={(model, datasource, modelList, relationMap) => {
               setCurrentModel(model)
               setCurrentDatasource(datasource)
               setModelList(modelList)
+              setRelationMap(relationMap)
             }}
           />
           <Body
             model={currentModel}
             dbName={currentDatasource?.config.apiNamespace ?? ''}
             modelList={modelList}
+            relationMap={relationMap}
           />
         </div>
       </div>
