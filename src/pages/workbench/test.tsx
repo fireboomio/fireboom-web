@@ -6,14 +6,16 @@ export default function MyGraphQLIDE() {
   const editorRef = useRef<any>(null)
   const modelRef = useRef<any>(null)
   const monaco = useMonaco()
+  console.log(monaco)
   return (
     <Editor
       defaultLanguage="json"
-      defaultPath="http://myserver/foo-schema.json"
+      defaultPath="inmemory://inmemory/foo.json"
       beforeMount={monaco => {
         var jsonCode = ['{', '    "p1": "v3",', '    "p2": false', '}'].join('\n')
-        var modelUri = monaco.Uri.parse('http://myserver/foo-schema.json') // a made up unique URI for our model
+        var modelUri = monaco.Uri.parse('inmemory://inmemory/foo.json') // a made up unique URI for our model
         console.log(modelUri)
+        modelRef.current = monaco.editor.createModel(jsonCode, 'json', modelUri)
         modelRef.current = monaco.editor.createModel(jsonCode, 'json', modelUri)
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
           validate: true,
@@ -65,4 +67,15 @@ export default function MyGraphQLIDE() {
       }}
     />
   )
+}
+const startChar = 'a'
+const endChars = ['b', 'c', 'd'].join('')
+const pattern = new RegExp(`${startChar}([^${startChar + endChars}]*)[${endChars}]`, 'g')
+const str = `axxxxxbxxx
+axxxxxcxxx
+axxxxxdxxx
+axxxxxbxxxcxxx`
+
+for (const match of str.matchAll(pattern)) {
+  console.log(match)
 }

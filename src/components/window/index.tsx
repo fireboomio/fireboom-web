@@ -6,6 +6,7 @@ import type { LogMessage } from '@/interfaces/window'
 import { matchJson } from '@/lib/utils'
 
 import RcTab from '../rc-tab'
+import Error from './Error'
 import type { LogAction } from './Log'
 import Log from './Log'
 
@@ -76,8 +77,11 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
         maxWidth="100%"
       >
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
-        <div className={`w-full overflow-auto ${tabActiveKey === '0' ? 'visible' : 'invisible'}`}>
+        <div className={`w-full overflow-auto ${tabActiveKey === '0' ? '' : 'hidden'}`}>
           <Log actionRef={logActionRef} />{' '}
+        </div>
+        <div className={`w-full overflow-auto ${tabActiveKey === '1' ? '' : 'hidden'}`}>
+          <Error />
         </div>
       </Resizable>
     </div>

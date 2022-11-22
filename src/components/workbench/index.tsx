@@ -125,7 +125,7 @@ export default function Index(props: PropsWithChildren) {
   const body = (
     <ALayout className={`h-100vh ${styles.workbench}`}>
       <AHeader className={styles.header}>
-        <Header onToggleSider={() => setHideSider(!hideSider)} />
+        <Header onToggleSider={() => setHideSider(!hideSider)} engineStatus={info?.engineStatus} />
       </AHeader>
       <ALayout>
         <ASider

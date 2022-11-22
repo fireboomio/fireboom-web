@@ -1,0 +1,49 @@
+.block {
+  margin-bottom: 8px;
+  overflow: hidden;
+  position: relative;
+  .line {
+    margin: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    .icon {
+      margin: 0 12px 0 16px;
+      width: 16px;
+      height: 17px;
+      background: red;
+    }
+    .name {
+      color: #333;
+      font-size: 12px;
+      line-height: 17px;
+      font-weight: 500;
+    }
+    .desc {
+      flex: 1 1 0;
+      min-width: 0;
+      word-break: break-all;
+      color: #373737;
+      font-size: 0;
+      line-height: 17px;
+      margin-left: 12px;
+      > span {
+        font-size: 12px;
+      }
+      .action {
+        color: #e92e5e;
+        word-break: keep-all;
+        cursor: pointer;
+      }
+    }
+  }
+  &::after {
+    position: absolute;
+    content: ' ';
+    left: 2px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #f21212;
+    border-radius: 2px 0 0 2px;
+  }
+}

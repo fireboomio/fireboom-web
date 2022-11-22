@@ -3,6 +3,7 @@ import { message, Popover } from 'antd'
 import { useContext, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import type { EngineStatus } from '@/interfaces/common'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
@@ -11,13 +12,14 @@ import HeaderDeploy from '../assets/header-deploy.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
 
-export default function Header(props: { onToggleSider: () => void }) {
+export default function Header(props: { onToggleSider: () => void; engineStatus?: EngineStatus }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isFullscreen } = useContext(WorkbenchContext)
 
   const [open, setOpen] = useState(false)
 
+  console.log('=======', props.engineStatus)
   return (
     <>
       <div className={styles.header}>
@@ -78,11 +80,18 @@ export default function Header(props: { onToggleSider: () => void }) {
           <>
             <div
               className={styles.headBtn}
-              onClick={() =>
-                void requests.get('/wdg/reStart').then(() => void message.success('正在编译...'))
-              }
+              onClick={() => {
+                if (props.engineStatus === '已关闭') {
+                  return
+                }
+                void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
+              }}
             >
-              <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
+              {props.engineStatus === '已启动' ? (
+                <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
+              ) : (
+                <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />
+              )}
             </div>
             <div
               className={styles.headBtn}

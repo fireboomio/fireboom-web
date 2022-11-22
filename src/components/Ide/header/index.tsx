@@ -19,7 +19,7 @@ interface Props {
   savePayload: AutoSavePayload
   fullScreen: boolean
   // 是否禁用此脚本
-  disabled: boolean
+  disabled?: boolean
   // 点击全屏按钮
   onFullScreen: () => void
   onToggleHook?: (value: boolean) => Promise<void>
@@ -112,7 +112,7 @@ const IdeHeaderContainer: FC<Props> = props => {
               {toggleLoading && <LoadingOutlined className="mr-5" />}
               <div>
                 <Switch
-                  checked={!props.disabled}
+                  checked={props.disabled === false}
                   disabled={toggleLoading}
                   onChange={onToggleHookChange}
                 />

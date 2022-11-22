@@ -1,4 +1,8 @@
 import { Button, Checkbox, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
+import type {
+  IntrospectionInputObjectType,
+  IntrospectionType
+} from 'graphql/utilities/getIntrospectionQuery'
 import { cloneDeep, keyBy, mapValues } from 'lodash'
 import type React from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -8,10 +12,11 @@ import { useImmer } from 'use-immer'
 import type { DMFField, DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import IntrospectionGraphql from '@/lib/helpers/introspectionGraphql'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
-import type { ApiOptions, TableAttr } from './interface'
+import type { _DMFField, _DMFModel, ApiOptions, TableAttr } from './interface'
 import { API, AuthOptions, AuthType, KeyType, SortDirection } from './interface'
 
 interface CRUDBodyProps {
@@ -19,17 +24,6 @@ interface CRUDBodyProps {
   modelList?: DMFModel[]
   relationMap?: RelationMap
   dbName: string
-}
-
-interface _DMFModel extends DMFModel {
-  fields: _DMFField[]
-}
-interface _DMFField extends DMFField {
-  isPrimaryKey?: boolean
-  parentField?: _DMFField
-  isForeign?: boolean
-  children?: _DMFField[]
-  tableId?: string
 }
 
 const apiOptions = [
@@ -43,12 +37,16 @@ const apiOptions = [
 ]
 
 function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
-  model.fields = model.fields.filter(field => {
+  const filtered = model.fields.filter(field => {
     if (relationMap.key2obj[field.name]) {
       return false
     }
+    if (relationMap.obj2key[field.name]) {
+      field.originField = model.fields.find(field => field.name === relationMap.obj2key[field.name])
+    }
     return true
   })
+  model.fields = filtered
 }
 
 /**
@@ -108,6 +106,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
   // api已存在提示内容
   const [confirmModal, setConfirmModal] = useState<React.ReactNode>()
+  // api已存在提示内容
+  const { data: typeMap } = useSWR<Record<string, IntrospectionType>>(
+    'graphql',
+    IntrospectionGraphql
+  )
   // api提示的promise对应的resolve，用于实现对话框promise化
   const confirmResolve = useRef<(value: unknown) => void>()
   const { data: roles } = useSWR<{ id: number; code: string; remark: string }[]>(
@@ -122,7 +125,6 @@ export default function CRUDBody(props: CRUDBodyProps) {
   )
 
   const { onRefreshMenu } = useContext(WorkbenchContext)
-
   useEffect(() => {
     if (!props.model) {
       return
@@ -134,8 +136,29 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
     omitForeignKey(model, props.relationMap!)
     expandForeignField(model, props.modelList || [], 3)
-    console.log(model)
 
+    const createType = typeMap?.[
+      `${props.dbName}_${model.name}CreateInput`
+    ]! as IntrospectionInputObjectType
+    const createTypeMap: Record<string, string> = {}
+    createType.inputFields.forEach(item => {
+      if (item.type.kind === 'NON_NULL') {
+        createTypeMap[item.name] = item.type.ofType.name
+      } else {
+        createTypeMap[item.name] = item.type.name
+      }
+    })
+    const updateType = typeMap?.[
+      `${props.dbName}_${model.name}UpdateInput`
+    ]! as IntrospectionInputObjectType
+    const updateTypeMap: Record<string, string> = {}
+    updateType.inputFields.forEach(item => {
+      if (item.type.kind === 'NON_NULL') {
+        updateTypeMap[item.name] = item.type.ofType.name
+      } else {
+        updateTypeMap[item.name] = item.type.name
+      }
+    })
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {
       fields.forEach(field => {
@@ -149,12 +172,14 @@ export default function CRUDBody(props: CRUDBodyProps) {
             kind: field.kind,
             name: field.name,
             type: field.type,
+            createType: createTypeMap[field.name],
+            updateType: updateTypeMap[field.name],
             detail: false,
             filter: false,
             list: false,
             sort: false,
-            create: KeyType.Hidden,
-            update: KeyType.Hidden,
+            create: field.required ? KeyType.Required : KeyType.Optional,
+            update: KeyType.Optional,
             sortDirection: SortDirection.Asc
           }
         } else {
@@ -163,6 +188,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
             kind: field.kind,
             name: field.name,
             type: field.type,
+            createType: createTypeMap[field.name],
+            updateType: updateTypeMap[field.name],
             sort: true,
             detail: true,
             list: true,
@@ -185,7 +212,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     setInitData({
       dbName: props.dbName,
       apiList: Object.values(API),
-      authApiList: [],
+      authApiList: [API.Create, API.Update, API.Delete],
       roleList: [],
       auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
@@ -205,6 +232,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
   const onFinish = async (values: any) => {
     let apiList = buildApi(values)
+    console.log(apiList)
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading('校验中')
@@ -491,16 +519,16 @@ export default function CRUDBody(props: CRUDBodyProps) {
           </Radio.Group>
         </Form.Item>
         <>
-          <Form.Item name="authType" label="接口角色">
+          <Form.Item name="authApiList" label="接口角色">
+            <Checkbox.Group options={apiOptions} />
+          </Form.Item>
+          <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
             <Radio.Group>
               <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
               <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
               <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
               <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
             </Radio.Group>
-          </Form.Item>
-          <Form.Item name="authApiList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-            <Checkbox.Group options={apiOptions} />
           </Form.Item>
           <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
             <Select
