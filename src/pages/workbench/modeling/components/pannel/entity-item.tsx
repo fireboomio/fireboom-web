@@ -14,7 +14,9 @@ import useEntities from '@/lib/hooks/useEntities'
 
 import iconDel from '../../assets/del.svg'
 import iconEntity from '../../assets/entity.svg'
+import iconEntityActive from '../../assets/entity-active.svg'
 import iconEnum from '../../assets/enum.svg'
+import iconEnumActive from '../../assets/enum-active.svg'
 import iconMore from '../../assets/more.svg'
 import iconRename from '../../assets/rename.svg'
 import styles from './pannel.module.less'
@@ -173,14 +175,14 @@ const ModelEntityItem = ({
       <div className={styles.icon}>
         {entity.type === 'model' ? (
           // FIXME(更新模型和枚举的icon)
-          <img src={iconEntity} alt="模型" />
+          <img src={isCurrent ? iconEntityActive : iconEntity} alt="模型" />
         ) : (
-          <img src={iconEnum} alt="枚举" />
+          <img src={isCurrent ? iconEnumActive : iconEnum} alt="枚举" />
         )}
       </div>
       {itemContent}
-      {editFlag ? <div className={styles.editMark}>已修改</div> : null}
-      {newFlag ? <div className={styles.editMark}>新增</div> : null}
+      {editFlag ? <div className={styles.editMark}></div> : null}
+      {newFlag ? <div className={styles.addMark}></div> : null}
       <Dropdown
         overlay={MenuContainer}
         trigger={['click']}

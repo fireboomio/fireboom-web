@@ -114,6 +114,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       return
     }
     model = { ...model, name: titleValue }
+    const hide = message.loading('保存中...')
     return updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
@@ -128,7 +129,10 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         }
         setNewEnums([])
       })
-      .then(() => message.success('保存成功！'))
+      .then(() => {
+        hide()
+        message.success('保存成功！')
+      })
   }
 
   const handleSaveEnum = (enumm: Enum) => {
@@ -142,6 +146,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       return
     }
     enumm = { ...enumm, name: titleValue }
+
+    const hide = message.loading('保存中...')
     void updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(blocks).addEnum(enumm)
@@ -155,7 +161,10 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           setShowType(getFirstEntity()?.type === 'model' ? 'editModel' : 'editEnum')
         }
       })
-      .then(() => message.success('保存成功！'))
+      .then(() => {
+        hide()
+        message.success('保存成功！')
+      })
   }
 
   const handleAddNewEnum = (newEnum: Enum) => {
@@ -182,7 +191,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             重置
           </div>
           <div className={styles.saveBtn} onClick={onSave}>
-            保存
+            迁移
           </div>
           <Radio.Group
             className={styles.modeRadio}
@@ -217,14 +226,15 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     })
   }
   async function onSave() {
-    const hide = message.loading('保存中...')
     try {
       if (mode === 'editor') {
         if (editorContent !== undefined) {
+          const hide = message.loading('保存中...')
           await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
             schema: editorContent
           })
           await refreshBlocks()
+          hide()
         }
       } else if (type === 'model') {
         // @ts-ignore
@@ -236,7 +246,6 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     } catch (e) {
       console.error(e)
     }
-    hide()
   }
 
   const onDelete = () => {
@@ -440,16 +449,38 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           </div>
         ))}
 
-      {type === 'enum' && (
-        <EnumDesigner
-          ref={EnumDesignerRef}
-          updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
-          setIsEditing={editType === 'edit' ? setIsEditing : undefined}
-          isEditing={isEditing}
-          savedEnum={editType === 'edit' ? (currentEntity as Enum) : (newEntity as Enum)}
-          saveEnum={handleSaveEnum}
-        />
-      )}
+      {type === 'enum' &&
+        (mode === 'designer' ? (
+          <EnumDesigner
+            ref={EnumDesignerRef}
+            updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
+            setIsEditing={editType === 'edit' ? setIsEditing : undefined}
+            isEditing={isEditing}
+            savedEnum={editType === 'edit' ? (currentEntity as Enum) : (newEntity as Enum)}
+            saveEnum={handleSaveEnum}
+            saveModify={(entity: any) => {
+              console.log(entity, 'asasdasd')
+              if (entity) {
+                const old = blocks.find(block => block.type === 'enum' && block.id === entity.id)
+                if (isEqual(old, entity)) {
+                  return
+                }
+                const newBlocks = PrismaSchemaBlockOperator(blocks).updateEnum(cloneDeep(entity))
+                applyLocalBlocks(newBlocks)
+              }
+            }}
+          />
+        ) : (
+          <div style={{ flex: '1 1 0' }}>
+            <ModelEditor
+              onChange={value => {
+                setEditorContent(value)
+                applyLocalSchema(value)
+              }}
+              defaultContent={editorContent ?? ''}
+            />
+          </div>
+        ))}
     </div>
   )
 }

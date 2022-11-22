@@ -19,7 +19,6 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
 
   const [open, setOpen] = useState(false)
 
-  console.log('=======', props.engineStatus)
   return (
     <>
       <div className={styles.header}>

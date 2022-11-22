@@ -135,23 +135,23 @@
     &.treeItemDir {
       .icon {
         position: relative;
-        background: url(/assets/ant-tree/fold.png) no-repeat center/contain;
+        background: url(/assets/icon/fold.svg) no-repeat center/contain;
       }
     }
     &.treeItemFile {
       .icon {
         position: relative;
-        background: url(/assets/ant-tree/file.png) no-repeat center/contain;
+        background: url(/assets/icon/file.svg) no-repeat center/contain;
 
         .lighting {
-          background: url(/assets/ant-tree/file-icon.png) no-repeat center/contain;
+          //background: url(/assets/icon/file.svg) no-repeat center/contain;
         }
       }
     }
     &.treeItemErr {
       .icon {
         position: relative;
-        background: url(/assets/ant-tree/file-err.png) no-repeat center/contain;
+        background: url(/assets/icon/file-err.svg) no-repeat center/contain;
       }
       .title {
         color: #f21212;
@@ -161,10 +161,10 @@
     &.treeItemDisable {
       .icon {
         position: relative;
-        background: url(/assets/ant-tree/file-disable.png) no-repeat center/contain;
+        background: url(/assets/icon/file-disable.svg) no-repeat center/contain;
 
         .lighting {
-          background: url(/assets/ant-tree/file-disable-icon.png) no-repeat center/contain;
+          //background: url(/assets/ant-tree/file-disable-icon.png) no-repeat center/contain;
         }
       }
       .title {
@@ -179,10 +179,13 @@
       .lighting {
         content: ' ';
         position: absolute;
-        width: 8px;
-        height: 8px;
-        right: -1px;
-        bottom: -1px;
+        width: 6px;
+        height: 6px;
+        left: -4px;
+        top: -2px;
+        background: #3ae375;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
       }
     }
 
