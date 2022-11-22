@@ -1,53 +1,34 @@
-import Editor, { loader, useMonaco } from '@monaco-editor/react'
+import Editor, { loader } from '@monaco-editor/react'
 import { useRef } from 'react'
+
+import { schemaFetcher } from '@/lib/helpers/gqlSchema'
+import { useJSONManage } from '@/lib/helpers/jsonManage'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 export default function MyGraphQLIDE() {
   const editorRef = useRef<any>(null)
   const modelRef = useRef<any>(null)
-  const monaco = useMonaco()
-  console.log(monaco)
+  const { setupSchema } = useJSONManage()
+  console.log(schemaFetcher.loadSchema().then(schema => console.log(schema, '^^^^^')))
+  console.log('****')
   return (
     <Editor
       defaultLanguage="json"
-      defaultPath="inmemory://inmemory/foo.json"
+      defaultPath="test.json"
       beforeMount={monaco => {
-        var jsonCode = ['{', '    "p1": "v3",', '    "p2": false', '}'].join('\n')
-        var modelUri = monaco.Uri.parse('inmemory://inmemory/foo.json') // a made up unique URI for our model
-        console.log(modelUri)
-        modelRef.current = monaco.editor.createModel(jsonCode, 'json', modelUri)
-        modelRef.current = monaco.editor.createModel(jsonCode, 'json', modelUri)
-        monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-          validate: true,
-          schemas: [
-            {
-              uri: 'http://myserver/foo-schema.json', // id of the first schema
-              fileMatch: [modelUri.toString()], // associate with our model
-              schema: {
-                type: 'object',
-                properties: {
-                  p1: {
-                    enum: ['v1', 'v2']
-                  },
-                  p2: {
-                    $ref: 'http://myserver/bar-schema.json' // reference the second schema
-                  }
-                }
-              }
-            },
-            {
-              uri: 'http://myserver/bar-schema.json', // id of the second schema
-              schema: {
-                type: 'object',
-                properties: {
-                  q1: {
-                    enum: ['x1', 'x2']
-                  }
-                }
+        setupSchema(
+          monaco,
+          'test.json',
+          {
+            type: 'object',
+            properties: {
+              p1: {
+                enum: ['v1', 'v2']
               }
             }
-          ]
-        })
+          },
+          JSON.stringify({ a: 1 }, null, 2)
+        )
       }}
       onMount={editor => {
         // editor.setModel(modelRef.current)

@@ -1,5 +1,6 @@
 import { getSchema, printSchema } from '@mrleebo/prisma-ast'
 import { Empty, Input, message, Popover, Radio } from 'antd'
+import { cloneDeep, isEqual } from 'lodash'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
@@ -323,7 +324,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
                 className="ml-1 cursor-pointer"
                 type="icon-zhongmingming"
               />
-              {isEditing && '(未保存)'}
+              {/*{isEditing && '(未保存)'}*/}
             </span>
             <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">
               {type}
@@ -408,6 +409,16 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         (mode === 'designer' ? (
           <ModelDesigner
             updateLocalstorage={undefined}
+            saveModify={model => {
+              if (model) {
+                const old = blocks.find(block => block.type === 'model' && block.id === model.id)
+                if (isEqual(old, model)) {
+                  return
+                }
+                const newBlocks = PrismaSchemaBlockOperator(blocks).updateModel(cloneDeep(model))
+                applyLocalBlocks(newBlocks)
+              }
+            }}
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             model={currentEntity as Model}

@@ -143,9 +143,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
     const createTypeMap: Record<string, string> = {}
     createType.inputFields.forEach(item => {
       if (item.type.kind === 'NON_NULL') {
-        createTypeMap[item.name] = item.type.ofType.name
+        // @ts-ignore
+        createTypeMap[item.name] = item.type.ofType?.name
       } else {
-        createTypeMap[item.name] = item.type.name
+        // @ts-ignore
+        createTypeMap[item.name] = item.type?.name
       }
     })
     const updateType = typeMap?.[
@@ -154,9 +156,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
     const updateTypeMap: Record<string, string> = {}
     updateType.inputFields.forEach(item => {
       if (item.type.kind === 'NON_NULL') {
-        updateTypeMap[item.name] = item.type.ofType.name
+        // @ts-ignore
+        updateTypeMap[item.name] = item.type.ofType?.name
       } else {
-        updateTypeMap[item.name] = item.type.name
+        // @ts-ignore
+        updateTypeMap[item.name] = item.type?.name
       }
     })
     const tableData: Record<string, TableAttr> = {}
