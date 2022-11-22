@@ -12,7 +12,7 @@ import { useImmer } from 'use-immer'
 import type { DMFField, DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import IntrospectionGraphql from '@/lib/helpers/introspectionGraphql'
+import GraphqlIntrospection from '@/lib/helpers/GraphqlIntrospection'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
@@ -109,7 +109,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
   // api已存在提示内容
   const { data: typeMap } = useSWR<Record<string, IntrospectionType>>(
     'graphql',
-    IntrospectionGraphql
+    GraphqlIntrospection
   )
   // api提示的promise对应的resolve，用于实现对话框promise化
   const confirmResolve = useRef<(value: unknown) => void>()
