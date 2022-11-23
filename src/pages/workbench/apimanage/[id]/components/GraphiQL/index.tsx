@@ -25,6 +25,7 @@ import {
 import { Tabs } from 'antd'
 import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import { collectVariables, getVariablesJSONSchema } from 'graphql-language-service'
+import type { JSONSchema6 } from 'json-schema'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -243,6 +244,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         <div className="graphiql-editor-tool-resize-handler" ref={dragRef}></div>
         <ResponseWrapper>
           <GraphiInputAndResponse
+            jsonSchema={jsonSchema}
             apiID={apiID}
             actionRef={responseRef}
             argumentList={argumentList}
@@ -261,6 +263,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 interface GraphiInputAndResponseProps {
   apiID: string
   argumentList: ReadonlyArray<VariableDefinitionNode>
+  jsonSchema: JSONSchema6
   actionRef?: MutableRefObject<
     | {
         setActiveKey?: (v: string) => void
@@ -273,6 +276,7 @@ interface GraphiInputAndResponseProps {
 const GraphiInputAndResponse = ({
   apiID,
   argumentList,
+  jsonSchema,
   actionRef,
   onTabChange
 }: GraphiInputAndResponseProps) => {
@@ -302,9 +306,9 @@ const GraphiInputAndResponse = ({
       }
     }
   }, [actionRef])
-  console.log(argumentList, 'argumentList')
   return (
     <Tabs
+      className="graphiql-editor-tool-tabs"
       activeKey={activeKey}
       onChange={v => setActiveKey(v)}
       onTabClick={onTabChange}
@@ -329,7 +333,7 @@ const GraphiInputAndResponse = ({
               ) : (
                 <VariablesEditor
                   apiID={apiID}
-                  arguments={argumentList}
+                  jsonSchema={jsonSchema}
                   onRemoveDirective={onRemoveDirective}
                 />
               )}
