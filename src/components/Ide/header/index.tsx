@@ -165,17 +165,36 @@ const IdeHeaderContainer: FC<Props> = props => {
       <iframe id="frame"></iframe>
     </body>
     <script>
-      document.getElementById('frame').src =
-        'data:text/html;charset=utf-8,' +
-        escape(\`<script>var ws = new WebSocket('ws://localhost:8080');
+      const url = window.location.href;
+      const frame = document.getElementById('frame');
+      frame.contentWindow.document
+        .write(\`<script>const ws = new WebSocket('ws://localhost:8080');
       ws.onopen = function () {
         ws.send('hook:ready');
       };
-      ws.onmessage = function (e) {
-        if (typeof e.data === 'object') {
-          const { channel, ...args } = e.data
-          console.log(channel, ...args)
-        }
+      ws.onmessage = async function (e) {
+        console.log(e)
+        try {
+          const data = JSON.parse(e.data)
+          const { channel, ...args } = data
+          if (channel === 'hook:request') {
+            try {
+              const data = await fetch("\${url}" + new URL(args.url).pathname.replace(/^\\\\//, '')  + (args.query ? ('?' + Object.keys(args.query).map(k => k + '=' + args.query[k]).join('&')) : ''), {
+                method: args.method,
+                body: args.method.toLowerCase() === 'get' ? undefined : JSON.stringify(args.body ?? {}),
+                headers: {
+                  'Content-Type': 'application/json;charset=utf-8'
+                }
+              }).then(res => res.json())
+              ws.send({ channel: 'hook:result', result: data })
+            } catch(e) {
+              console.error(e)
+              ws.send({ channel: 'hook:error', error: e })
+            }
+          }
+        } catch(e) {
+          console.error(e)
+        }          
       };
       <\\/script>\`);
     </script>
