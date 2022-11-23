@@ -22,14 +22,17 @@ import {
   useEditorContext,
   useTheme
 } from '@graphiql/react'
-import { Tabs } from 'antd'
+import { useMonaco } from '@monaco-editor/react'
+import { Popover, Radio, Tabs } from 'antd'
 import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
-import { collectVariables, getVariablesJSONSchema } from 'graphql-language-service'
-import type { JSONSchema6 } from 'json-schema'
+import { collectVariables } from 'graphql-language-service'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useDragResize } from '@/hooks/resize'
+import { getVariablesJSONSchema } from '@/lib/helpers/getVariablesJSONSchema'
+import iconDesignModeActive from '@/pages/workbench/modeling/assets/design-mode-active.svg'
+import iconEditMode from '@/pages/workbench/modeling/assets/edit-mode.svg'
 
 import { useAPIManager } from '../../store'
 import ArgumentsEditor from './components/ArgumentsEditor'
@@ -199,10 +202,24 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   }, [schemaAST])
 
   // 用于变量编辑器的json校验
-  const jsonSchema = useMemo(() => {
-    if (!schema || !schemaAST) return
+  // const jsonSchema = useMemo(() => {
+  //   if (!schema || !schemaAST) return
+  //   const variablesToType = collectVariables(schema!, schemaAST!)
+  //   return getVariablesJSONSchema(variablesToType)
+  // }, [schemaAST])
+
+  const monaco = useMonaco()
+  useEffect(() => {
+    if (!schema || !schemaAST) {
+      return
+    }
     const variablesToType = collectVariables(schema!, schemaAST!)
-    return getVariablesJSONSchema(variablesToType)
+    const jsonSchema = getVariablesJSONSchema(variablesToType)
+    delete jsonSchema?.$schema
+    monaco?.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      schemas: [{ uri: 'operation.json', fileMatch: ['operation.json'], schema: jsonSchema }]
+    })
   }, [schemaAST])
 
   const editorContext = useEditorContext()
@@ -244,7 +261,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         <div className="graphiql-editor-tool-resize-handler" ref={dragRef}></div>
         <ResponseWrapper>
           <GraphiInputAndResponse
-            jsonSchema={jsonSchema}
             apiID={apiID}
             actionRef={responseRef}
             argumentList={argumentList}
@@ -263,7 +279,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 interface GraphiInputAndResponseProps {
   apiID: string
   argumentList: ReadonlyArray<VariableDefinitionNode>
-  jsonSchema: JSONSchema6
   actionRef?: MutableRefObject<
     | {
         setActiveKey?: (v: string) => void
@@ -276,7 +291,6 @@ interface GraphiInputAndResponseProps {
 const GraphiInputAndResponse = ({
   apiID,
   argumentList,
-  jsonSchema,
   actionRef,
   onTabChange
 }: GraphiInputAndResponseProps) => {
@@ -307,41 +321,54 @@ const GraphiInputAndResponse = ({
     }
   }, [actionRef])
   return (
-    <Tabs
-      className="graphiql-editor-tool-tabs"
-      activeKey={activeKey}
-      onChange={v => setActiveKey(v)}
-      onTabClick={onTabChange}
-      items={[
-        {
-          label: '输入',
-          key: 'arguments',
-          children: (
-            <>
-              <div
-                className="absolute top-2px right-10px w-5 h-5 bg-[#ff0000] z-10 cursor-pointer"
-                onClick={() => {
-                  setVariableMode(variableMode === 'json' ? 'form' : 'json')
-                }}
-              />
-              {variableMode === 'form' ? (
-                <ArgumentsEditor
-                  apiID={apiID}
-                  arguments={argumentList}
-                  onRemoveDirective={onRemoveDirective}
-                />
-              ) : (
-                <VariablesEditor
-                  apiID={apiID}
-                  jsonSchema={jsonSchema}
-                  onRemoveDirective={onRemoveDirective}
-                />
-              )}
-            </>
-          )
-        },
-        { label: '响应', key: 'response', children: <ResponseViewer /> }
-      ]}
-    />
+    <div className="h-full">
+      {activeKey === 'arguments' && (
+        <Radio.Group
+          size="small"
+          className="absolute top-2px right-10px z-10 "
+          value={variableMode}
+          onChange={e => {
+            setVariableMode(e.target.value)
+          }}
+        >
+          <Popover content="表单模式" trigger="hover">
+            <Radio.Button value="form">
+              <img src={iconDesignModeActive} alt="" />
+            </Radio.Button>
+          </Popover>
+          <Popover content="编辑器模式" trigger="hover">
+            <Radio.Button value="json">
+              <img src={iconEditMode} alt="" />
+            </Radio.Button>
+          </Popover>
+        </Radio.Group>
+      )}
+      <Tabs
+        className="graphiql-editor-tool-tabs"
+        activeKey={activeKey}
+        onChange={v => setActiveKey(v)}
+        onTabClick={onTabChange}
+        items={[
+          {
+            label: '输入',
+            key: 'arguments',
+            children: (
+              <>
+                {variableMode === 'form' ? (
+                  <ArgumentsEditor
+                    apiID={apiID}
+                    arguments={argumentList}
+                    onRemoveDirective={onRemoveDirective}
+                  />
+                ) : (
+                  <VariablesEditor apiID={apiID} onRemoveDirective={onRemoveDirective} />
+                )}
+              </>
+            )
+          },
+          { label: '响应', key: 'response', children: <ResponseViewer /> }
+        ]}
+      />
+    </div>
   )
 }
