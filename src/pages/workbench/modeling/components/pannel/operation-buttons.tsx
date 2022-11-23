@@ -17,7 +17,9 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
   const { handleSetInEdit, inEdit } = panel || {}
   return (
     <div className={styles.actions}>
-      <span className="text-[#333] text-14px font-500 mr-auto">建模</span>
+      <span className="text-[#333] text-14px font-500 mr-auto">
+        {inEdit ? '数据建模' : '数据预览'}
+      </span>
       <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
         <img src={iconSwitch} alt="switch" />
       </div>
