@@ -40,7 +40,8 @@ export default function CRUDSider(props: CRUDSiderProps) {
     const hide = message.loading('正在加载模型列表')
     requests
       .get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/prisma/dmf/${currentDataSourceId}`
+        `/prisma/dmf/${currentDataSourceId}`,
+        { timeout: 15e3 }
       )
       .then(res => {
         setModelList(res.models || [])

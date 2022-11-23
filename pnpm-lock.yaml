@@ -44,6 +44,7 @@ specifiers:
   graphiql: ^1.11.5
   graphiql-explorer: ^0.9.0
   graphql: ^16.6.0
+  graphql-language-service: ^5.0.6
   graphql-tag: ^2.12.6
   less: ^4.1.3
   lodash: ^4.17.21
@@ -94,6 +95,7 @@ dependencies:
   graphiql: registry.npmmirror.com/graphiql/1.11.5_sfpuo3qx4ekyw7mqd47bn2okvm
   graphiql-explorer: registry.npmmirror.com/graphiql-explorer/0.9.0_gdcq4dv6opitr3wbfwyjmanyra
   graphql: registry.npmmirror.com/graphql/16.6.0
+  graphql-language-service: registry.npmmirror.com/graphql-language-service/5.0.6_graphql@16.6.0
   lodash: registry.npmmirror.com/lodash/4.17.21
   moment: registry.npmmirror.com/moment/2.29.4
   monaco-editor: registry.npmmirror.com/monaco-editor/0.33.0
