@@ -17,7 +17,6 @@ import {
   type UseResponseEditorArgs,
   type UseVariableEditorArgs,
   type WriteableEditorProps,
-  // ResponseEditor,
   GraphiQLProvider,
   QueryEditor,
   useEditorContext,
@@ -25,6 +24,7 @@ import {
 } from '@graphiql/react'
 import { Tabs } from 'antd'
 import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
+import { collectVariables, getVariablesJSONSchema } from 'graphql-language-service'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -36,6 +36,7 @@ import { emptyStorage } from './components/emptyStorage'
 import GraphiQLToolbar from './components/GraphiQLToolbar'
 import ResponseWrapper, { useResponse } from './components/ResponseContext'
 import ResponseViewer from './components/ResponseViewer'
+import VariablesEditor from './components/VariablesEditor'
 import { printSchemaAST } from './utils'
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10)
@@ -174,9 +175,10 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-  const { schemaAST, apiID } = useAPIManager(state => ({
+  const { schemaAST, apiID, schema } = useAPIManager(state => ({
     schemaAST: state.schemaAST,
-    apiID: state.apiID
+    apiID: state.apiID,
+    schema: state.schema
   }))
   const editorCtx = useEditorContext()
   const { dragRef, elRef, parentRef, isHidden, resetSize } = useDragResize({
@@ -194,6 +196,15 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
     return def?.variableDefinitions || []
   }, [schemaAST])
+
+  // 用于变量编辑器的json校验
+  const jsonSchema = useMemo(() => {
+    if (!schema || !schemaAST) return
+    const variablesToType = collectVariables(schema!, schemaAST!)
+    return getVariablesJSONSchema(variablesToType)
+  }, [schemaAST])
+
+  const editorContext = useEditorContext()
 
   // API 变更后需要刷新输入输出
   useEffect(() => {
@@ -266,6 +277,7 @@ const GraphiInputAndResponse = ({
   onTabChange
 }: GraphiInputAndResponseProps) => {
   const [activeKey, setActiveKey] = useState('arguments')
+  const [variableMode, setVariableMode] = useState<'json' | 'form'>('form')
 
   const { response } = useResponse()
 
@@ -290,7 +302,7 @@ const GraphiInputAndResponse = ({
       }
     }
   }, [actionRef])
-
+  console.log(argumentList, 'argumentList')
   return (
     <Tabs
       activeKey={activeKey}
@@ -301,11 +313,27 @@ const GraphiInputAndResponse = ({
           label: '输入',
           key: 'arguments',
           children: (
-            <ArgumentsEditor
-              apiID={apiID}
-              arguments={argumentList}
-              onRemoveDirective={onRemoveDirective}
-            />
+            <>
+              <div
+                className="absolute top-2px right-10px w-5 h-5 bg-[#ff0000] z-10 cursor-pointer"
+                onClick={() => {
+                  setVariableMode(variableMode === 'json' ? 'form' : 'json')
+                }}
+              />
+              {variableMode === 'form' ? (
+                <ArgumentsEditor
+                  apiID={apiID}
+                  arguments={argumentList}
+                  onRemoveDirective={onRemoveDirective}
+                />
+              ) : (
+                <VariablesEditor
+                  apiID={apiID}
+                  arguments={argumentList}
+                  onRemoveDirective={onRemoveDirective}
+                />
+              )}
+            </>
           )
         },
         { label: '响应', key: 'response', children: <ResponseViewer /> }

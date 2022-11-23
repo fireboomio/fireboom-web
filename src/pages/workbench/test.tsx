@@ -1,15 +1,40 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { useRef } from 'react'
+import { buildSchema, parse } from 'graphql'
+import { collectVariables, getVariablesJSONSchema } from 'graphql-language-service'
+import { useEffect, useRef } from 'react'
 
 import { schemaFetcher } from '@/lib/helpers/gqlSchema'
 import { useJSONManage } from '@/lib/helpers/jsonManage'
 
+// import testData from './testdata'
+
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+
 export default function MyGraphQLIDE() {
   const editorRef = useRef<any>(null)
   const modelRef = useRef<any>(null)
   const { setupSchema } = useJSONManage()
-  console.log(schemaFetcher.loadSchema().then(schema => console.log(schema, '^^^^^')))
+
+  useEffect(() => {
+//     const gqlSchema = buildSchema(testData)
+//     const variablesToType = collectVariables(
+//       gqlSchema,
+//       parse(`mutation DeleteOnePost($id: Int!) @rbac(requireMatchAll: [code, user]) {
+//   data: lll_deleteOnePost(where: {id: $id}) {
+//     id
+//   }
+// }`)
+//     )
+//     const jsonSchema = getVariablesJSONSchema(variablesToType)
+//     // const JSONSchema6Result = getVariablesJSONSchema(variablesToType, schema)
+//   }, [])
+//
+//   console.log(
+//     schemaFetcher.loadSchema().then(schema => {
+//       // const JSONSchema6Result = getVariablesJSONSchema(variablesToType, schema)
+//       // console.log('JSONSchema6Result', JSONSchema6Result)
+//     })
+  )})
   console.log('****')
   return (
     <Editor

@@ -34,8 +34,8 @@ requests.interceptors.response.use(
   }
 )
 
-export const getFetcher = <T>(url: string, params?: Record<string, string>) =>
-  requests.get<unknown, T>(url, { params: params }).then(res => {
+export const getFetcher = <T>(url: string, params?: Record<string, string>, config?: any) =>
+  requests.get<unknown, T>(url, { params: params, ...config }).then(res => {
     return res
   })
 
@@ -55,7 +55,9 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceId: number) => {
 }
 
 export const fetchPrismaDMF = (dbSourceId: string) =>
-  getFetcher<PrismaDMF>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':id', dbSourceId)).then(res => {
+  getFetcher<PrismaDMF>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':id', dbSourceId), undefined, {
+    timeout: 15e3
+  }).then(res => {
     res.models = res.models ?? []
     res.enums = res.enums ?? []
     return res

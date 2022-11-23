@@ -22,51 +22,6 @@ export default function Error() {
 
   useEffect(() => {
     requests.get<unknown, any>('wdg/question').then(res => {
-      res = {
-        datasource: [
-          {
-            id: '4',
-            type: 'mysql',
-            name: 'mysql_demo',
-            errMsg: '数据库无法连接',
-            switch: true
-          },
-          {
-            id: '4',
-            type: 'sqlite',
-            name: 'sqlite_demo',
-            errMsg: '数据库无法连接',
-            switch: true
-          }
-        ],
-        api: [
-          {
-            id: '4',
-            type: 'api',
-            name: 'api11111',
-            errMsg: 'api错误',
-            switch: true
-          }
-        ],
-        auth: [
-          {
-            id: '4',
-            type: 'auth',
-            name: 'auth1111',
-            errMsg: '授权异常',
-            switch: true
-          }
-        ],
-        storage: [
-          {
-            id: '4',
-            type: 'storage',
-            name: 'storage1111',
-            errMsg: '对象存储异常',
-            switch: true
-          }
-        ]
-      }
       setBlocks(
         Object.keys(res).map(key => {
           res[key].forEach((item: any) => {
