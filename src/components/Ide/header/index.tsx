@@ -186,7 +186,7 @@ const IdeHeaderContainer: FC<Props> = props => {
                   'Content-Type': 'application/json;charset=utf-8'
                 }
               }).then(res => res.json())
-              ws.send({ channel: 'hook:result', result: data })
+              ws.send({ channel: 'hook:result', url: args.url, result: data })
             } catch(e) {
               console.error(e)
               ws.send({ channel: 'hook:error', error: e })
