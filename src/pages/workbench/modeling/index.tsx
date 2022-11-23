@@ -78,6 +78,7 @@ const Modeling = () => {
           {showType === 'preview' && <PreviewContainer />}
           {showType === 'editModel' && (
             <DesignerContainer
+              key="a"
               editType={'edit'}
               type={'model'}
               setShowType={setShowType}
@@ -86,6 +87,7 @@ const Modeling = () => {
           )}
           {showType === 'editEnum' && (
             <DesignerContainer
+              key="a"
               editType={'edit'}
               type={'enum'}
               setShowType={setShowType}

@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { Image } from 'antd'
 import { useEffect, useState } from 'react'
 
 import type { ErrorInfo } from '@/interfaces/common'
@@ -58,23 +57,11 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span onClick={toggleWindow} className="cursor-pointer flex items-center">
             <span className={styles.errLabel}>
-              <Image
-                height={13}
-                width={13}
-                src="/assets/workbench/footer-error.png"
-                alt="错误"
-                preview={false}
-              />
+              <img height={14} width={14} src="/assets/workbench/footer-error.png" alt="错误" />
               <span className="ml-2">{errorInfo?.errTotal ?? 0}</span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
-              <Image
-                height={13}
-                width={13}
-                src="/assets/workbench/footer-warning.png"
-                alt="警告"
-                preview={false}
-              />
+              <img height={14} width={14} src="/assets/workbench/footer-warning.png" alt="警告" />
               <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
             </span>
           </span>

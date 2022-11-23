@@ -50,7 +50,6 @@ const panelMap: Record<string, PanelConfig> = {
               let tip = ''
               switch (row.sourceType) {
                 case 1:
-                  icon = String(row.config.dbType).toLowerCase() || icon
                   tip = String(row.config.dbName || '')
                   svg =
                     {
@@ -63,10 +62,10 @@ const panelMap: Record<string, PanelConfig> = {
                     }[String(row.config.dbType).toLowerCase()] || svg
                   break
                 case 2:
-                  icon = 'rest'
+                  svg = '/assets/icon/rest.svg'
                   break
                 case 3:
-                  icon = 'graphql'
+                  svg = '/assets/icon/graphql.svg'
                   break
               }
               return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row, svg }
@@ -91,7 +90,15 @@ const panelMap: Record<string, PanelConfig> = {
             data: (res ?? []).map(row => {
               const icon = 'other'
               const tip = ''
-              return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
+              return {
+                id: row.id,
+                name: row.name,
+                icon,
+                tip,
+                switch: row.switch,
+                _row: row,
+                svg: '/assets/icon/file.svg'
+              }
             })
           })
         })
@@ -126,10 +133,19 @@ const panelMap: Record<string, PanelConfig> = {
           const rows: Array<CommonPanelResp> = res.map(row => {
             const icon = 'other'
             const tip = 'openid'
-            return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row }
+            return {
+              id: row.id,
+              name: row.name,
+              icon,
+              tip,
+              switch: row.switch,
+              _row: row,
+              svg: '/assets/icon/github-fill.svg'
+            }
           })
           rows.unshift({
             disableMenu: true,
+            svg: '/assets/icon/github-fill.svg',
             switch: 1,
             icon: 'other',
             name: '默认认证器',
@@ -308,7 +324,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   height={12}
                   preview={false}
                   alt={item.name}
-                  src={item.svg ?? `/assets/workbench/panel-item-${item.icon}.png`}
+                  src={item.svg ?? `/assets/icon/github-fill.svg`}
                 />
               </div>
               {editTarget?.id === item.id ? (

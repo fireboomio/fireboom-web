@@ -77,6 +77,8 @@ export default function Index(props: PropsWithChildren) {
               setInfo(status)
               if (status.engineStatus === '已启动') {
                 events.emit({ event: 'compileFinish' })
+              } else if (status.engineStatus === '已停止') {
+                events.emit({ event: 'compileFail' })
               }
             }
           })
