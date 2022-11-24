@@ -1,9 +1,11 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
+import stackblizSDK from '@stackblitz/sdk'
 import { Button, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
-import { FC, useCallback } from 'react'
-import { useEffect, useState } from 'react'
-import stackblizSDK from '@stackblitz/sdk'
+import type { FC } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+
+import requests from '@/lib/fetchers'
 
 import iconCloud from '../assets/cloud.svg'
 import iconFullscreen from '../assets/fullscreen.svg'
@@ -12,7 +14,6 @@ import iconHelp from '../assets/help.svg'
 import type { AutoSavePayload } from './../index'
 import { AutoSaveStatus } from './../index'
 import ideStyles from './index.module.less'
-import requests from '@/lib/fetchers'
 
 interface Props {
   // 钩子路径
@@ -101,7 +102,10 @@ const IdeHeaderContainer: FC<Props> = props => {
             description: props.hookPath,
             files: {
               ...Object.keys(dependFiles).reduce<Record<string, string>>((obj, fileName) => {
-                obj[fileName] = dependFiles[fileName].replace(/@wundergraph\/sdk/g, 'fireboom-wundersdk')
+                obj[fileName] = dependFiles[fileName].replace(
+                  /@wundergraph\/sdk/g,
+                  'fireboom-wundersdk'
+                )
                 // if (fileName === '.wundergraph/wundergraph.server.ts') {
                 //   // 注入socket
                 //   obj[fileName] = obj[fileName].replace('export default', `import { initSocket } from './socket'\nexport default`) + '\ninitSocket()\n'
@@ -112,7 +116,9 @@ const IdeHeaderContainer: FC<Props> = props => {
   "name": "wundergraph-hooks",
   "version": "1.0.0",
   "scripts": {
-    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts --host ${props.hostUrl}"
+    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts --host ${
+      props.hostUrl
+    }"
   },
   "dependencies": {
     "@types/node": "^14.14.37",
@@ -121,10 +127,12 @@ const IdeHeaderContainer: FC<Props> = props => {
     "graphql": "^16.3.0",
     "typescript": "^4.1.3",
     "ts-node": "^10.9.1",
-    "socket.io-client": "^4.5.3"${Object.keys(dependVersion).map(
-      dep => `,
+    "socket.io-client": "^4.5.3"${Object.keys(dependVersion)
+      .map(
+        dep => `,
     "${dep}": "${dependVersion[dep]}"`
-    ).join("")}
+      )
+      .join('')}
   },
   "stackblitz": {
     "startCommand": "npm start"
@@ -152,7 +160,7 @@ const IdeHeaderContainer: FC<Props> = props => {
   },
   "include": [".wundergraph/*.ts"]
 }`,
-  'index.html': `<!DOCTYPE html>
+              'index.html': `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -181,53 +189,53 @@ const IdeHeaderContainer: FC<Props> = props => {
     </script>
   </html>
   `,
-  '.wundergraph/generated/wundergraph.config.json': `{
+              '.wundergraph/generated/wundergraph.config.json': `{
   "api": {
     "operations": [],
     "webhooks": []
   },
   "apiName": "app",
   "deploymentName": "main"
-}`,
-  // '.wundergraph/socket.ts': `import { io } from 'socket.io-client';
-  // import axios from 'axios';
-  
-  // export function initSocket() {
-  //   const socket = io('http://localhost:9123/socket.io');
-  //   const client = axios.create({ baseURL: process.argv[3] });
-  //   socket.on('connect', () => {
-  //     socket.emit('hook:ready');
-  //   });
-  
-  //   socket.on('hook:request', async ({ url, method, query, body }) => {
-  //     console.log('11', url, method, query, body);
-  //     try {
-  //       const ret = await client({
-  //         url,
-  //         method,
-  //         params: query,
-  //         data: body,
-  //       });
-  //       console.log('22', ret);
-  //       socket.emit('hook:result', ret);
-  //     } catch (e) {
-  //       console.error('33', e);
-  //       socket.emit('hook:error', e);
-  //     }
-  //   });
-  
-  //   socket.on('disconnect', (reason) => {
-  //     console.error(reason);
-  //     if (reason === 'io server disconnect') {
-  //       socket.connect();
-  //     }
-  //   });
-  
-  //   socket.on('connect_error', () => {
-  //     console.error('服务端连接失败，请检查本地 fireboom 服务是否正常开启');
-  //   });
-  // }
-  // `
+}`
+              // '.wundergraph/socket.ts': `import { io } from 'socket.io-client';
+              // import axios from 'axios';
+
+              // export function initSocket() {
+              //   const socket = io('http://localhost:9123/socket.io');
+              //   const client = axios.create({ baseURL: process.argv[3] });
+              //   socket.on('connect', () => {
+              //     socket.emit('hook:ready');
+              //   });
+
+              //   socket.on('hook:request', async ({ url, method, query, body }) => {
+              //     console.log('11', url, method, query, body);
+              //     try {
+              //       const ret = await client({
+              //         url,
+              //         method,
+              //         params: query,
+              //         data: body,
+              //       });
+              //       console.log('22', ret);
+              //       socket.emit('hook:result', ret);
+              //     } catch (e) {
+              //       console.error('33', e);
+              //       socket.emit('hook:error', e);
+              //     }
+              //   });
+
+              //   socket.on('disconnect', (reason) => {
+              //     console.error(reason);
+              //     if (reason === 'io server disconnect') {
+              //       socket.connect();
+              //     }
+              //   });
+
+              //   socket.on('connect_error', () => {
+              //     console.error('服务端连接失败，请检查本地 fireboom 服务是否正常开启');
+              //   });
+              // }
+              // `
             }
           },
           {
@@ -256,6 +264,9 @@ const IdeHeaderContainer: FC<Props> = props => {
       </div>
       <div className="flex flex-1 ide-container-header-right justify-between">
         <div className="flex items-center">
+          <Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>
+            调试
+          </Button>
           <Button
             className="ml-2"
             onClick={props.onSave}
@@ -280,13 +291,12 @@ const IdeHeaderContainer: FC<Props> = props => {
                   checked={props.disabled === false}
                   disabled={toggleLoading}
                   onChange={onToggleHookChange}
+                  unCheckedChildren="关"
+                  checkedChildren="开"
                 />
               </div>
             </div>
           )}
-          <Button className="ml-4" loading={debugOpenLoading} type="primary" onClick={onlineDebug}>
-            在线调试
-          </Button>
         </div>
         {/* 右侧区域 */}
         <div className="flex items-center">

@@ -23,7 +23,7 @@ import {
   useTheme
 } from '@graphiql/react'
 import { useMonaco } from '@monaco-editor/react'
-import { Popover, Radio, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import { collectVariables } from 'graphql-language-service'
 import type { MutableRefObject, ReactNode } from 'react'
@@ -31,8 +31,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useDragResize } from '@/hooks/resize'
 import { getVariablesJSONSchema } from '@/lib/helpers/getVariablesJSONSchema'
-import iconDesignModeActive from '@/pages/workbench/modeling/assets/design-mode-active.svg'
-import iconEditMode from '@/pages/workbench/modeling/assets/edit-mode.svg'
 
 import { useAPIManager } from '../../store'
 import ArgumentsEditor from './components/ArgumentsEditor'
@@ -323,26 +321,60 @@ const GraphiInputAndResponse = ({
   return (
     <div className="h-full">
       {activeKey === 'arguments' && (
-        <Radio.Group
-          size="small"
-          className="absolute top-2px right-10px z-10 "
-          value={variableMode}
-          onChange={e => {
-            setVariableMode(e.target.value)
-          }}
-        >
-          <Popover content="表单模式" trigger="hover">
-            <Radio.Button value="form">
-              <img src={iconDesignModeActive} alt="" />
-            </Radio.Button>
-          </Popover>
-          <Popover content="编辑器模式" trigger="hover">
-            <Radio.Button value="json">
-              <img src={iconEditMode} alt="" />
-            </Radio.Button>
-          </Popover>
-        </Radio.Group>
+        <div className="absolute top-0px h-26px right-0px z-20 flex">
+          <div
+            className="h-full w-30px flex items-center justify-center cursor-pointer"
+            style={{ borderLeft: '1px solid rgba(95,98,105,0.1)' }}
+            onClick={() => {
+              setVariableMode('form')
+            }}
+          >
+            <img
+              src={
+                variableMode === 'form' ? '/assets/view-list-active.svg' : '/assets/view-list.svg'
+              }
+              alt=""
+            />
+          </div>
+          <div
+            className="h-full w-30px flex items-center justify-center cursor-pointer"
+            style={{ borderLeft: '1px solid rgba(95,98,105,0.1)' }}
+            onClick={() => {
+              setVariableMode('json')
+            }}
+          >
+            <img
+              src={
+                variableMode === 'json'
+                  ? '/assets/view-editor-active.svg'
+                  : '/assets/view-editor.svg'
+              }
+              alt=""
+            />
+          </div>
+        </div>
       )}
+      {/*{activeKey === 'arguments' && (*/}
+      {/*  <Radio.Group*/}
+      {/*    size="small"*/}
+      {/*    className="absolute top-2px right-10px z-10 "*/}
+      {/*    value={variableMode}*/}
+      {/*    onChange={e => {*/}
+      {/*      setVariableMode(e.target.value)*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <Popover content="表单模式" trigger="hover">*/}
+      {/*      <Radio.Button value="form">*/}
+      {/*        <img src={iconDesignModeActive} alt="" />*/}
+      {/*      </Radio.Button>*/}
+      {/*    </Popover>*/}
+      {/*    <Popover content="编辑器模式" trigger="hover">*/}
+      {/*      <Radio.Button value="json">*/}
+      {/*        <img src={iconEditMode} alt="" />*/}
+      {/*      </Radio.Button>*/}
+      {/*    </Popover>*/}
+      {/*  </Radio.Group>*/}
+      {/*)}*/}
       <Tabs
         className="graphiql-editor-tool-tabs"
         activeKey={activeKey}

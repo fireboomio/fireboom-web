@@ -357,7 +357,9 @@ const DependList = (props: DependListProps) => {
               style={{ transform: hideLocalDepend ? 'rotate(180deg)' : '' }}
             ></div>
           </div>
-          内部依赖
+          <span className="text-[#5F6269]" onClick={() => setHideLocalDepend(!hideLocalDepend)}>
+            内部依赖
+          </span>
           <span className="ml-auto cursor-pointer" onClick={() => props.onRefreshLocalDepend?.()}>
             <img src={iconRefreshDepend} alt="刷新" />
           </span>
@@ -367,7 +369,7 @@ const DependList = (props: DependListProps) => {
             <div
               onDoubleClick={() => props.onInsertLocalDepend?.(item)}
               key={item}
-              className="truncate text-[#333] font-14px leading-30px cursor-pointer"
+              className="truncate text-[#333] font-14px leading-24px cursor-pointer"
             >
               {item}
             </div>

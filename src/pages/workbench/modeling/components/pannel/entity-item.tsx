@@ -65,18 +65,30 @@ const ModelEntityItem = ({
 
   const handleItemDelete = () => {
     setVisible(false)
-    if (isCurrent) {
-      changeToEntityById(getFirstEntity()?.id ?? 0)
-      setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
+
+    if (!inEdit) {
+      // 查看模式下使用老逻辑直接删除
+      if (isCurrent) {
+        changeToEntityById(getFirstEntity()?.id ?? 0)
+        setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
+      }
+      const hide = message.loading('删除中...', 0)
+      void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
+        .then(() => {
+          message.success('删除成功')
+        })
+        .finally(() => {
+          hide()
+        })
+    } else {
+      // 编辑模式下改为修改本地数据并选中第一项
+      const localBlocks = PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id)
+      applyLocalBlocks(localBlocks)
+      triggerSyncEditor()
+      changeToEntityById(
+        localBlocks.filter(block => block.type === 'model' || block.type === 'enum')[0].id
+      )
     }
-    const hide = message.loading('删除中...', 0)
-    void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
-      .then(() => {
-        message.success('删除成功')
-      })
-      .finally(() => {
-        hide()
-      })
   }
 
   const renameEntity = (newName: string) => {

@@ -5,9 +5,12 @@ import { useContext } from 'react'
 import type { Updater } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
+import { updateCurrentEntityIdAction } from '@/lib/actions/PrismaSchemaActions'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
+import { buildBlocks } from '@/lib/helpers/ModelingHelpers'
 import useBlocks from '@/lib/hooks/useBlocks'
+import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
 
 import DBSourceSelect from './db-source-select'
@@ -36,7 +39,8 @@ const ModelPannel = ({
   setShowType
 }: Props) => {
   const { entities, editMap, newMap, delMap } = useEntities()
-  const { panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
+  const { changeToEntityById } = useCurrentEntity()
+  const { panel, triggerSyncEditor, dispatch } = useContext(PrismaSchemaContext)
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
 
@@ -78,13 +82,21 @@ const ModelPannel = ({
 }
 `
 
+    // 构造新的blocks
     let currentSchema = printSchema({ type: 'schema', list: blocks })
     currentSchema += initialModel
-    applyLocalSchema(currentSchema)
+    const newBlocks = buildBlocks(currentSchema)
+    // 保存到本地
+    applyLocalBlocks(newBlocks)
+    // 触发编辑器同步
     triggerSyncEditor()
+    // 如果当前不是编辑模式，切换到编辑模式
     if (!inEdit) {
       handleSetInEdit(true)
     }
+    setTimeout(() => {
+      dispatch(updateCurrentEntityIdAction(newBlocks[newBlocks.length - 1].id))
+    }, 100)
   }
 
   return (

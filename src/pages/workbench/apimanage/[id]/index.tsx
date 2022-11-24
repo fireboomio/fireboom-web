@@ -26,6 +26,7 @@ import styles from './index.module.less'
 import { useAPIManager } from './store'
 
 async function fetcher(rec: Record<string, unknown>) {
+  console.log('rec', JSON.stringify(rec).length)
   try {
     const res = await fetch('/app/main/graphql', {
       method: 'POST',
@@ -39,7 +40,7 @@ async function fetcher(rec: Record<string, unknown>) {
   } catch (error) {
     console.error(error)
     return {
-      error: (error as { message: string, stack: string })?.message || error
+      error: (error as { message: string; stack: string })?.message || error
     }
   }
 }

@@ -10,6 +10,7 @@ export type SystemConfigType = {
   apiPort: string
   oidcHost: string
   oidcPort: string
+  hooksServerURL: string
 }
 
 type SystemConfigContext = {

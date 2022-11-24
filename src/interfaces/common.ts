@@ -1,5 +1,7 @@
 import type { AxiosResponse } from 'axios'
 
+import type { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+
 export interface Result<T> {
   code: number
   message: string
@@ -20,9 +22,9 @@ export interface ErrorInfo {
 
 export interface Info {
   errorInfo: ErrorInfo
-  engineStatus: EngineStatus
+  engineStatus: ServiceStatus
+  hookStatus: ServiceStatus
   startTime: string
-  hookStatus: string
 }
 
 export interface WithClassNames {

@@ -210,33 +210,33 @@ export default function SettingMainVersion() {
                 }}
               />
             </Descriptions.Item>
-            <Descriptions.Item label="中间件端口:">
-              {isMidPortEditing ? (
-                <Input
-                  defaultValue={systemConfig.middlewarePort}
-                  autoFocus
-                  type="text"
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  onBlur={e => {
-                    setIsMidPortEditing(!isMidPortEditing)
-                    void editPort('middlewarePort', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsMidPortEditing(!isMidPortEditing)
-                    void editPort('middlewarePort', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.middlewarePort}</span>
-              )}
-              <IconFont
-                type="icon-bianji"
-                className="ml-2"
-                onClick={() => {
-                  setIsMidPortEditing(!isMidPortEditing)
-                }}
-              />
-            </Descriptions.Item>
+            {/*<Descriptions.Item label="中间件端口:">*/}
+            {/*  {isMidPortEditing ? (*/}
+            {/*    <Input*/}
+            {/*      defaultValue={systemConfig.middlewarePort}*/}
+            {/*      autoFocus*/}
+            {/*      type="text"*/}
+            {/*      style={{ width: '300px', height: '24px', paddingLeft: '6px' }}*/}
+            {/*      onBlur={e => {*/}
+            {/*        setIsMidPortEditing(!isMidPortEditing)*/}
+            {/*        void editPort('middlewarePort', e.target.value)*/}
+            {/*      }}*/}
+            {/*      onPressEnter={e => {*/}
+            {/*        setIsMidPortEditing(!isMidPortEditing)*/}
+            {/*        void editPort('middlewarePort', e.currentTarget.value)*/}
+            {/*      }}*/}
+            {/*    />*/}
+            {/*  ) : (*/}
+            {/*    <span>{systemConfig.middlewarePort}</span>*/}
+            {/*  )}*/}
+            {/*  <IconFont*/}
+            {/*    type="icon-bianji"*/}
+            {/*    className="ml-2"*/}
+            {/*    onClick={() => {*/}
+            {/*      setIsMidPortEditing(!isMidPortEditing)*/}
+            {/*    }}*/}
+            {/*  />*/}
+            {/*</Descriptions.Item>*/}
             <Descriptions.Item label="日志水平:">
               <Radio.Group
                 value={systemConfig.logLevel}

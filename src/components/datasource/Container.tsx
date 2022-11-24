@@ -131,7 +131,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType === 1 ? (
               <Button
                 className={'btn-test ml-4 '}
-                onClick={() => navigate(`/workbench/modeling?id=${content?.id}`)}
+                onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
               >
                 设计
               </Button>

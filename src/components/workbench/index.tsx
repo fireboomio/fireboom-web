@@ -20,6 +20,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
 import Header from './components/header'
@@ -74,10 +75,14 @@ export default function Index(props: PropsWithChildren) {
           void data.text().then(res => {
             const status = matchJson(res).pop()
             if (status) {
+              console.log('status', status)
               setInfo(status)
-              if (status.engineStatus === '已启动') {
+              if (status.engineStatus === ServiceStatus.Running) {
                 events.emit({ event: 'compileFinish' })
-              } else if (status.engineStatus === '已停止') {
+              } else if (
+                status.engineStatus === ServiceStatus.CompileFail ||
+                status.engineStatus === ServiceStatus.StartFail
+              ) {
                 events.emit({ event: 'compileFail' })
               }
             }
