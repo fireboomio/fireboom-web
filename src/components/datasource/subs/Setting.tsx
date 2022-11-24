@@ -94,7 +94,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
 
   useEffect(() => {
     void requests
-      .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`)
+      .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`, { timeout: 15e3 })
       .then(x => {
         const model = (x.models || []).map(m => ({
           name: m.name,

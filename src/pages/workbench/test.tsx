@@ -1,15 +1,16 @@
 import Editor, { loader } from '@monaco-editor/react'
 import { useRef } from 'react'
 
-import { schemaFetcher } from '@/lib/helpers/gqlSchema'
-import { useJSONManage } from '@/lib/helpers/jsonManage'
+import { setupSchema } from '@/lib/helpers/jsonManage'
+
+// import testData from './testdata'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+
 export default function MyGraphQLIDE() {
   const editorRef = useRef<any>(null)
   const modelRef = useRef<any>(null)
-  const { setupSchema } = useJSONManage()
-  console.log(schemaFetcher.loadSchema().then(schema => console.log(schema, '^^^^^')))
+
   console.log('****')
   return (
     <Editor
@@ -48,15 +49,4 @@ export default function MyGraphQLIDE() {
       }}
     />
   )
-}
-const startChar = 'a'
-const endChars = ['b', 'c', 'd'].join('')
-const pattern = new RegExp(`${startChar}([^${startChar + endChars}]*)[${endChars}]`, 'g')
-const str = `axxxxxbxxx
-axxxxxcxxx
-axxxxxdxxx
-axxxxxbxxxcxxx`
-
-for (const match of str.matchAll(pattern)) {
-  console.log(match)
 }

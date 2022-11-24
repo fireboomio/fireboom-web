@@ -95,7 +95,6 @@ const ModelPannel = ({
         <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
       </div>
 
-      {Object.keys(delMap).length ? <div>{`已删除${Object.keys(delMap).length}个模块`}</div> : null}
       <div className="mt-1 flex-1 overflow-y-auto">
         {entities.map(entity => (
           <ModelEntityItem
@@ -109,6 +108,11 @@ const ModelPannel = ({
           />
         ))}
       </div>
+      {Object.keys(delMap).length ? (
+        <div className="bg-[#f7f7f7] m-2 rounded-4px text-[#666] leading-32px px-3">{`已删除${
+          Object.keys(delMap).length
+        }个模块`}</div>
+      ) : null}
     </div>
   )
 }

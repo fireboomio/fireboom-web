@@ -57,7 +57,10 @@ const FieldTypeSelector = ({
   }
 
   const handleSaveEnum = (newEnum: Enum) => {
-    addNewEnum(newEnum)
+    // 延迟提交新枚举，以避免新枚举的保存和model的保存同时进行，导致model保存失败或者model保存成功但是枚举保存失败
+    setTimeout(() => {
+      addNewEnum(newEnum)
+    }, 100)
     setNewEnumModalVisible(false)
     handleDataChange(newEnum.name)
   }

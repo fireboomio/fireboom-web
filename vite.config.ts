@@ -36,10 +36,12 @@ const plugins: PluginOption[] = [
       // 数据建模支持id参数
       const modeling = routes
         .find(route => route.path === 'workbench')
-        .children.find((route: { path: string }) => route.path === 'modeling')
-      const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
-      newRoute.path = ':id'
-      modeling.children.push(newRoute)
+        ?.children.find((route: { path: string }) => route.path === 'modeling')
+      if (modeling) {
+        const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
+        newRoute.path = ':id'
+        modeling.children.push(newRoute)
+      }
       return routes
     }
   })

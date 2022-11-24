@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import styles from './error.module.less'
@@ -20,53 +21,9 @@ type Block = {
 export default function Error() {
   const [blocks, setBlocks] = useState<Block[]>([])
 
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   useEffect(() => {
     requests.get<unknown, any>('wdg/question').then(res => {
-      res = {
-        datasource: [
-          {
-            id: '4',
-            type: 'mysql',
-            name: 'mysql_demo',
-            errMsg: '数据库无法连接',
-            switch: true
-          },
-          {
-            id: '4',
-            type: 'sqlite',
-            name: 'sqlite_demo',
-            errMsg: '数据库无法连接',
-            switch: true
-          }
-        ],
-        api: [
-          {
-            id: '4',
-            type: 'api',
-            name: 'api11111',
-            errMsg: 'api错误',
-            switch: true
-          }
-        ],
-        auth: [
-          {
-            id: '4',
-            type: 'auth',
-            name: 'auth1111',
-            errMsg: '授权异常',
-            switch: true
-          }
-        ],
-        storage: [
-          {
-            id: '4',
-            type: 'storage',
-            name: 'storage1111',
-            errMsg: '对象存储异常',
-            switch: true
-          }
-        ]
-      }
       setBlocks(
         Object.keys(res).map(key => {
           res[key].forEach((item: any) => {
@@ -89,17 +46,33 @@ export default function Error() {
   }, [])
 
   const navigate = useNavigate()
-  function closeDatasource(id: number) {
-    void requests.patch(`/datasource`, { id, switch: 0 })
+  async function closeDatasource(id: number) {
+    const res = await requests.get<unknown, any>(`/dataSource/${id}`)
+    if (res?.id) {
+      await requests.put(`/dataSource`, { ...res, switch: 0 })
+      onRefreshMenu('dataSource')
+    }
   }
-  function openApi(id: number) {
-    void requests.patch(`/datasource`, { id, switch: 0 })
+  async function closeAPI(id: number) {
+    const res = await requests.get<unknown, any>(`/operateApi/${id}`)
+    if (res?.id) {
+      await requests.put(`/operateApi`, { ...res, enable: false })
+      onRefreshMenu('api')
+    }
   }
-  function closeAuth(id: number) {
-    void requests.patch(`/datasource`, { id, switch: 0 })
+  async function closeAuth(id: number) {
+    const res = await requests.get<unknown, any>(`/auth/${id}`)
+    if (res?.id) {
+      await requests.put(`/auth`, { ...res, switch: 0 })
+      onRefreshMenu('auth')
+    }
   }
-  function closeStorage(id: number) {
-    void requests.patch(`/datasource`, { id, switch: 0 })
+  async function closeStorage(id: number) {
+    const res = await requests.get<unknown, any>(`/storageBucket/${id}`)
+    if (res?.id) {
+      await requests.put(`/storageBucket`, { ...res, switch: 0 })
+      onRefreshMenu('storage')
+    }
   }
 
   return (
@@ -144,7 +117,7 @@ export default function Error() {
                       {item.switch && (
                         <>
                           ，或
-                          <span className={styles.action} onClick={() => openApi(item.id)}>
+                          <span className={styles.action} onClick={() => closeAPI(item.id)}>
                             关闭
                           </span>
                           该API

@@ -389,7 +389,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           重置
         </div>
         <div className={styles.saveBtn} onClick={onSave}>
-          保存
+          迁移
         </div>
         <Radio.Group
           className={styles.modeRadio}
