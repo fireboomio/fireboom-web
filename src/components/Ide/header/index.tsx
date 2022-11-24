@@ -123,11 +123,10 @@ const IdeHeaderContainer: FC<Props> = props => {
   "dependencies": {
     "@types/node": "^14.14.37",
     "axios": "^1.1.3",
-    "fireboom-wundersdk": "0.98.2",
+    "fireboom-wundersdk": "0.98.1-r5",
     "graphql": "^16.3.0",
     "typescript": "^4.1.3",
-    "ts-node": "^10.9.1",
-    "socket.io-client": "^4.5.3"${Object.keys(dependVersion)
+    "ts-node": "^10.9.1"${Object.keys(dependVersion)
       .map(
         dep => `,
     "${dep}": "${dependVersion[dep]}"`
@@ -170,76 +169,78 @@ const IdeHeaderContainer: FC<Props> = props => {
     </head>
     <body>
       请勿关闭当前窗口
-      <iframe id="frame"></iframe>
+      <iframe id="frame" style="border:0;display:block"></iframe>
     </body>
     <script>
-      document.getElementById('frame').src =
-        'data:text/html;charset=utf-8,' +
-        escape(\`<script>var ws = new WebSocket('ws://localhost:8080');
+      const url = window.location.href;
+      const frame = document.getElementById('frame');
+      window.addEventListener('message', async (e) => {
+        const { type, ...args } = e.data;
+        if (type === 'request') {
+          try {
+            const result = await fetch(args.url + (args.query ? '?' + Object.keys(args.query).map((k) => k + '=' + args.query[k]).join('&') : ''),
+              {
+                method: args.method,
+                body: args.method.toLowerCase() === 'get' ? undefined : args.body,
+                headers: {
+                  'Content-Type': 'application/json;charset=utf-8',
+                },
+              }
+            ).then((res) => res.json());
+            frame.contentWindow.postMessage({
+              type: 'result',
+              result,
+              url: args.url,
+            });
+          } catch (error) {
+            console.error(e);
+            frame.contentWindow.postMessage({ type: 'error', error });
+          }
+        }
+      });
+      frame.contentWindow.document
+        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace(
+          'http://',
+          ''
+        )}/ws');
       ws.onopen = function () {
         ws.send('hook:ready');
       };
-      ws.onmessage = function (e) {
-        if (typeof e.data === 'object') {
-          const { channel, ...args } = e.data
-          console.log(channel, ...args)
+      ws.onmessage = async function (e) {
+        console.log(e)
+        try {
+          const data = JSON.parse(e.data)
+          const { channel, ...args } = data
+          if (channel === 'hook:request') {
+            window.parent.postMessage({ type: 'request', ...args })
+          }
+        } catch(e) {
+          console.error(e)
         }
       };
+      ws.onclose = (e) => {
+        // The connection was closed abnormally, e.g., without sending or receiving a Close control frame
+        if (e.code === 1006) {
+          alert('连接被关闭，请勿打开多个调试窗口并保证fireboom服务打开')
+        }
+      }
+      window.addEventListener('message', e => {
+        const { type, result, url, error } = e.data
+        if (type === 'result') {
+          ws.send(JSON.stringify({ channel: 'hook:result', url, result }))
+        } else if (type === 'error') {
+          ws.send(JSON.stringify({ channel: 'hook:error', error: e }))
+        }
+      })
       <\\/script>\`);
     </script>
   </html>
-  `,
-              '.wundergraph/generated/wundergraph.config.json': `{
-  "api": {
-    "operations": [],
-    "webhooks": []
-  },
-  "apiName": "app",
-  "deploymentName": "main"
-}`
-              // '.wundergraph/socket.ts': `import { io } from 'socket.io-client';
-              // import axios from 'axios';
-
-              // export function initSocket() {
-              //   const socket = io('http://localhost:9123/socket.io');
-              //   const client = axios.create({ baseURL: process.argv[3] });
-              //   socket.on('connect', () => {
-              //     socket.emit('hook:ready');
-              //   });
-
-              //   socket.on('hook:request', async ({ url, method, query, body }) => {
-              //     console.log('11', url, method, query, body);
-              //     try {
-              //       const ret = await client({
-              //         url,
-              //         method,
-              //         params: query,
-              //         data: body,
-              //       });
-              //       console.log('22', ret);
-              //       socket.emit('hook:result', ret);
-              //     } catch (e) {
-              //       console.error('33', e);
-              //       socket.emit('hook:error', e);
-              //     }
-              //   });
-
-              //   socket.on('disconnect', (reason) => {
-              //     console.error(reason);
-              //     if (reason === 'io server disconnect') {
-              //       socket.connect();
-              //     }
-              //   });
-
-              //   socket.on('connect_error', () => {
-              //     console.error('服务端连接失败，请检查本地 fireboom 服务是否正常开启');
-              //   });
-              // }
-              // `
+  `
             }
           },
           {
-            newWindow: true
+            newWindow: true,
+            openFile: `.wundergraph/new_hook/${props.hookPath}.ts:L6`
           }
         )
         setDebugOpenLoading(false)

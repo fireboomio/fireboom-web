@@ -4,7 +4,7 @@ import moment from 'moment'
 import type { ParameterT } from '@/interfaces/apimanage'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 
-type SingleInputValueType = string | number | boolean | object | undefined
+export type SingleInputValueType = string | number | boolean | object | undefined
 export type InputValueType = SingleInputValueType | SingleInputValueType[]
 
 interface ArgumentInputProps {
