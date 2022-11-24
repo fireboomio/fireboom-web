@@ -207,8 +207,11 @@ const IdeHeaderContainer: FC<Props> = props => {
           console.error(e)
         }
       };
-      ws.onerror = () => {
-        alert(e)
+      ws.onclose = (e) => {
+        // The connection was closed abnormally, e.g., without sending or receiving a Close control frame
+        if (e.code === 1006) {
+          alert('连接被关闭，请勿打开多个调试窗口并保证fireboom服务打开')
+        }
       }
       window.addEventListener('message', e => {
         const { type, result, url, error } = e.data
