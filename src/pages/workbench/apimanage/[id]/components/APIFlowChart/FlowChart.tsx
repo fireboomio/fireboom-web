@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { APIDesc, useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -72,6 +72,7 @@ export interface FlowChartProps {
     injectEnvironmentVariable: boolean
     transform: boolean
   }
+  apiSetting: APIDesc['setting']
 }
 
 const CANVAS_PADDING = 20
@@ -390,7 +391,7 @@ Graph.registerNode('directive', {
   }
 })
 
-const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProps) => {
+const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hook, setHook] = useState<{ name: string; path: string } | null>()
   const { apiDesc } = useAPIManager(state => ({
@@ -488,7 +489,8 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
     }
 
     // 登录校验
-    if (directiveState.fromClaim) {
+    // fromClaim会隐式要求登录
+    if (directiveState.fromClaim || apiSetting.authenticationRequired) {
       const loggedValidation = graph.createNode({
         shape: 'decision',
         label: '登录校验?',
@@ -497,26 +499,28 @@ const FlowChart = ({ globalHookState, hookState, directiveState }: FlowChartProp
       })
       arrowNodes.push(loggedValidation)
       // 指令
-      const loggedDirective = new ActionGroup(
-        {
-          shape: 'directiveTrigger',
-          label: '1',
-          x: 258,
-          y: y + 19
-        },
-        [
+      if (directiveState.fromClaim) {
+        const fromClaimDirective = new ActionGroup(
           {
-            shape: 'directive',
-            label: '@fromClaim',
-            width: 84,
-            height: 16,
-            x: 290,
-            y: y + 17
-          }
-        ],
-        'linear'
-      )
-      directiveNodes.push(loggedDirective)
+            shape: 'directiveTrigger',
+            label: '1',
+            x: 258,
+            y: y + 19
+          },
+          [
+            {
+              shape: 'directive',
+              label: '@fromClaim',
+              width: 84,
+              height: 16,
+              x: 290,
+              y: y + 17
+            }
+          ],
+          'linear'
+        )
+        directiveNodes.push(fromClaimDirective)
+      }
       // yes
       y += 7 + DECISION_HEIGHT
       const y1 = graph.createNode({

@@ -14,7 +14,8 @@ type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(state => ({
+  const { apiDesc, schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(state => ({
+    apiDesc: state.apiDesc,
     schemaAST: state.schemaAST,
     query: state.query,
     appendToAPIRefresh: state.appendToAPIRefresh,
@@ -123,6 +124,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
       globalHookState={globalState}
       hookState={hookState}
       directiveState={directiveState}
+      apiSetting={apiDesc!.setting}
     />
   ) : (
     <></>
