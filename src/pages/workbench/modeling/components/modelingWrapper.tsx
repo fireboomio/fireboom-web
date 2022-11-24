@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import type { ReactNode } from 'react'
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
@@ -20,6 +20,8 @@ import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers
 import modelingReducer from '@/lib/reducers/ModelingReducers'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
+  // 用来获取实时id参数，以避免数据源请求返回后，id参数已经变化
+  const paramIdRef = useRef<string>()
   const { id: paramId } = useParams()
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
   const { newMap, delMap, editMap } = state
@@ -35,9 +37,15 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [data, setDataSources])
 
   useEffect(() => {
+    paramIdRef.current = paramId
     if (dataSources.length > 0 && paramId) {
       const hide = message.loading('加载中...', 0)
-      fetchAndSaveToPrismaSchemaContext(Number(paramId), dispatch, dataSources)?.finally(() => {
+      fetchAndSaveToPrismaSchemaContext(
+        Number(paramId),
+        dispatch,
+        dataSources,
+        paramIdRef
+      )?.finally(() => {
         hide()
         // 更新数据源后强制刷新编辑器
         setSyncEditorFlag(!syncEditorFlag)
@@ -54,9 +62,11 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
 
   const handleChangeSource = (dbSourceId: number) => {
     const hide = message.loading('加载中...', 0)
-    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources)?.finally(() => {
-      hide()
-    })
+    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources, paramIdRef)?.finally(
+      () => {
+        hide()
+      }
+    )
     // setShowType('preview')
   }
 
@@ -69,11 +79,12 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     }
     if (inEdit) {
       setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
-      dispatch(updateCurrentEntityIdAction(entity.id))
     } else {
       setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
-      dispatch(updateCurrentEntityIdAction(entity.id))
       dispatch(updatePreviewFiltersAction([]))
+    }
+    if (!auto) {
+      dispatch(updateCurrentEntityIdAction(entity.id))
     }
   }
 

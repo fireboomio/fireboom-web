@@ -1,11 +1,25 @@
 import { get, set } from 'lodash'
 
 import type { ApiOptions } from './interface'
-import { API, KeyType } from './interface'
+import { API, AuthOptions, KeyType } from './interface'
 
-export default function buildApi(options: ApiOptions): { path: string; content: string }[] {
+export default function buildApi(
+  options: ApiOptions
+): { path: string; content: string; setting?: string }[] {
+  let setting: string | undefined = undefined
+  console.log(options.auth)
   console.log(options)
-  return options.apiList.map(api => apiBuilder[api](options))
+  if (options.auth === AuthOptions.enable) {
+    setting = `{"enable":true,"authenticationRequired":true,"settingType":1}`
+  } else if (options.auth === AuthOptions.disable) {
+    setting = `{"enable":true,"authenticationRequired":false,"settingType":1}`
+  }
+  return options.apiList.map(api => {
+    return {
+      ...apiBuilder[api](options),
+      setting: options.authApiList.includes(api) ? setting : undefined
+    }
+  })
 }
 
 /**

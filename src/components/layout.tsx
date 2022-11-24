@@ -4,7 +4,6 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
-import Player from '@/components/player'
 import StatusBar from '@/components/status-bar'
 import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
@@ -229,7 +228,7 @@ export default function Layout(props: PropsWithChildren) {
 
   return (
     <ALayout>
-      <Player className="top-4 right-65 z-500 fixed" status={info?.engineStatus ?? '--'} />
+      {/*<Player className="top-4 right-65 z-500 fixed" status={info?.engineStatus ?? '--'} />*/}
       <Sider
         className={`${styles['sider']} h-full min-h-screen bg-[#FBFBFB] border`}
         theme="light"

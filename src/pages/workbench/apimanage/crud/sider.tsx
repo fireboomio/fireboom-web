@@ -47,6 +47,8 @@ export default function CRUDSider(props: CRUDSiderProps) {
         setModelList(res.models || [])
         setCurrentModel(res.models?.[0])
         setRelationMaps(findAllRelationInSchema(res.schemaContent))
+      })
+      .finally(() => {
         hide()
       })
   }
@@ -83,8 +85,37 @@ export default function CRUDSider(props: CRUDSiderProps) {
             return (option?.name ?? '').toLowerCase().includes(input.toLowerCase())
           }}
           className="flex-1"
-          options={dataSourceList}
-          fieldNames={{ label: 'name', value: 'id' }}
+          options={dataSourceList.map(x => {
+            let svg = '/assets/icon/db-other.svg'
+            switch (x.sourceType) {
+              case 1:
+                svg =
+                  {
+                    mysql: '/assets/icon/mysql.svg',
+                    pgsql: '/assets/icon/pg.svg',
+                    graphql: '/assets/icon/graphql.svg',
+                    mongodb: '/assets/icon/mongodb.svg',
+                    rest: '/assets/icon/rest.svg',
+                    sqlite: '/assets/icon/sqlite.svg'
+                  }[String(x.config.dbType).toLowerCase()] || svg
+                break
+              case 2:
+                svg = '/assets/icon/rest.svg'
+                break
+              case 3:
+                svg = '/assets/icon/graphql.svg'
+                break
+            }
+            return {
+              label: (
+                <div className="flex items-center">
+                  <img className="mr-1 w-3 h-3" alt={x.name} src={svg} />
+                  {x.name}
+                </div>
+              ),
+              value: x.id
+            }
+          })}
         />
         <div
           className="ml-1 w-28px h-28px bg-[#f7f7f7] flex items-center justify-center cursor-pointer"

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
+import { Button, Checkbox, Collapse, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
 import type {
   IntrospectionInputObjectType,
   IntrospectionType
@@ -9,6 +9,8 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { useImmer } from 'use-immer'
 
+import styles from '@/components/datasource/subs/Graphql.module.less'
+import IconFont from '@/components/iconfont'
 import type { DMFField, DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -37,16 +39,15 @@ const apiOptions = [
 ]
 
 function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
-  const filtered = model.fields.filter(field => {
-    if (relationMap.key2obj[field.name]) {
-      return false
-    }
+  model.fields.forEach(field => {
+    // if (relationMap.key2obj[field.name]) {
+    //   return false
+    // }
     if (relationMap.obj2key[field.name]) {
       field.originField = model.fields.find(field => field.name === relationMap.obj2key[field.name])
     }
     return true
   })
-  model.fields = filtered
 }
 
 /**
@@ -236,11 +237,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
   const onFinish = async (values: any) => {
     let apiList = buildApi(values)
-    console.log(apiList)
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading('校验中')
-    // TODO 校验API是否重复
     const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
       '/operateApi/operationByPaths',
       {
@@ -266,37 +265,19 @@ export default function CRUDBody(props: CRUDBodyProps) {
     }
     const hide = message.loading('正在生成')
 
-    const results: boolean[] = await Promise.all(
-      apiList.map(item => {
-        const existId = pathIdMap[item.path]
-        let promise
-        if (existId) {
-          promise = requests.put(`/operateApi/content/${existId}`, {
-            content: item.content
-          })
-        } else {
-          promise = requests.post('/operateApi', {
-            path: item.path,
-            content: item.content
-          })
-        }
-        return promise
-          .then(() => {
-            return true
-          })
-          .catch(e => {
-            console.log(e)
-            return false
-          })
-      })
-    )
     // 处理登录鉴权
-    // if (values.auth !== AuthOptions.default) {
-    // }
+    const result = await requests.post<unknown, { Code: number; Path: string }[]>(
+      `/operateApi/batch`,
+      {
+        list: apiList
+      }
+    )
     hide()
     onRefreshMenu('api')
     message.success(
-      `执行结束，成功${results.filter(x => x).length}条，失败${results.filter(x => !x).length}条`
+      `执行结束，成功${result.filter(x => !x.Code).length}条，失败${
+        result.filter(x => x.Code).length
+      }条`
     )
   }
 
@@ -515,34 +496,6 @@ export default function CRUDBody(props: CRUDBodyProps) {
         <Form.Item name="apiList" label="生成接口">
           <Checkbox.Group options={apiOptions} />
         </Form.Item>
-        <Form.Item name="auth" label="登录鉴权">
-          <Radio.Group>
-            <Radio value={-1}>默认</Radio>
-            <Radio value={1}>开启</Radio>
-            <Radio value={0}>关闭</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <>
-          <Form.Item name="authApiList" label="接口角色">
-            <Checkbox.Group options={apiOptions} />
-          </Form.Item>
-          <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-            <Radio.Group>
-              <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
-              <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
-              <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
-              <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-            <Select
-              mode="multiple"
-              showArrow
-              options={roles ?? []}
-              fieldNames={{ label: 'remark', value: 'code' }}
-            />
-          </Form.Item>
-        </>
         <Form.Item
           name="prefix"
           label="API前缀"
@@ -555,19 +508,55 @@ export default function CRUDBody(props: CRUDBodyProps) {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="alias"
-          label="别名"
-          rules={[
-            {
-              required: true,
-              pattern: /^[a-zA-Z0-9_]*$/,
-              message: '请输入字母数字或下划线组合'
-            }
-          ]}
+        <Collapse
+          ghost
+          bordered={false}
+          defaultActiveKey={[]}
+          expandIcon={({ isActive }) => <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />}
+          className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
         >
-          <Input />
-        </Form.Item>
+          <Collapse.Panel header="更多设置" key="1" forceRender>
+            <Form.Item name="authApiList" label="接口角色">
+              <Checkbox.Group options={apiOptions} />
+            </Form.Item>
+            <Form.Item name="auth" label="登录鉴权">
+              <Radio.Group>
+                <Radio value={-1}>默认</Radio>
+                <Radio value={1}>开启</Radio>
+                <Radio value={0}>关闭</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+              <Radio.Group>
+                <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
+                <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
+                <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
+                <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+              <Select
+                mode="multiple"
+                showArrow
+                options={roles ?? []}
+                fieldNames={{ label: 'remark', value: 'code' }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="alias"
+              label="别名"
+              rules={[
+                {
+                  required: true,
+                  pattern: /^[a-zA-Z0-9_]*$/,
+                  message: '请输入字母数字或下划线组合'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Collapse.Panel>
+        </Collapse>
         <Form.Item name="table" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
           <Table
             expandable={{

@@ -1,6 +1,6 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
@@ -32,6 +32,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
     }
   }, [sourceOptions, paramId])
 
+  console.log(sourceOptions)
   return (
     <div className={'common-form ' + styles['select-contain']}>
       <Select
@@ -41,7 +42,37 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
         }}
         optionLabelProp="label"
         value={paramId ? Number(paramId) : ''}
-        options={sourceOptions.map(x => ({ label: x.name, value: x.id }))}
+        options={sourceOptions.map(x => {
+          let svg = '/assets/icon/db-other.svg'
+          switch (x.sourceType) {
+            case 1:
+              svg =
+                {
+                  mysql: '/assets/icon/mysql.svg',
+                  pgsql: '/assets/icon/pg.svg',
+                  graphql: '/assets/icon/graphql.svg',
+                  mongodb: '/assets/icon/mongodb.svg',
+                  rest: '/assets/icon/rest.svg',
+                  sqlite: '/assets/icon/sqlite.svg'
+                }[String(x.config.dbType).toLowerCase()] || svg
+              break
+            case 2:
+              svg = '/assets/icon/rest.svg'
+              break
+            case 3:
+              svg = '/assets/icon/graphql.svg'
+              break
+          }
+          return {
+            label: (
+              <div className="flex items-center">
+                <img className="mr-1 w-3 h-3" alt={x.name} src={svg} />
+                {x.name}
+              </div>
+            ),
+            value: x.id
+          }
+        })}
         dropdownRender={menu => (
           <div className="divide-y">
             {menu}

@@ -10,8 +10,11 @@ type TitleChangeEvent = {
 type CompileFinishEvent = {
   event: 'compileFinish'
 }
+type CompileFailEvent = {
+  event: 'compileFail'
+}
 
-type EventTypes = TitleChangeEvent | CompileFinishEvent
+type EventTypes = TitleChangeEvent | CompileFinishEvent | CompileFailEvent
 
 const events = new EventEmitter<any, EventTypes>()
 
@@ -19,6 +22,7 @@ export default events
 
 export function useEventBus(event: 'titleChange', cb: EventHandler<TitleChangeEvent>): void
 export function useEventBus(event: 'compileFinish', cb: EventHandler<CompileFinishEvent>): void
+export function useEventBus(event: 'compileFail', cb: EventHandler<CompileFailEvent>): void
 export function useEventBus(event: string, cb: EventHandler) {
   useEffect(() => {
     events.on(event, cb)

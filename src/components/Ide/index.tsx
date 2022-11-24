@@ -5,11 +5,12 @@ import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-r
 import { loader } from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd'
 import { debounce } from 'lodash'
-import { FC, useContext } from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
 import { dependLoader } from '@/components/Ide/dependLoader'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import {
   getHook,
   getTypes,
@@ -20,12 +21,10 @@ import {
   updateHookSwitch
 } from '@/lib/service/hook'
 
-import IdeActionContainer from './action/index'
 import IdeCodeContainer from './code/index'
 import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
 import ideStyles from './ide.module.less'
-import { ConfigContext } from '@/lib/context/ConfigContext'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -75,7 +74,7 @@ export type AutoSavePayload = {
 
 export const editorOptions: EditorProps['options'] = {
   minimap: {
-    enabled: true
+    enabled: false
   },
   overviewRulerLanes: 0,
   scrollbar: {
@@ -384,7 +383,7 @@ const IdeContainer: FC<Props> = props => {
       {/*    }*/}
       {/*  }}*/}
       {/*>*/}
-      <div className={fullScreen ? ideStyles.fullscreen : ''}>
+      <div className={(fullScreen ? ideStyles.fullscreen : '') + ' h-full flex flex-col'}>
         {/* 头部 */}
         <IdeHeaderContainer
           hideSwitch={props.hideSwitch ?? false}
@@ -408,7 +407,10 @@ const IdeContainer: FC<Props> = props => {
             }
           }}
         />
-        <div className="flex justify-start" style={{ height: fullScreen ? '100vh' : 'auto' }}>
+        <div
+          className="flex justify-start flex-1 min-h-0"
+          style={{ height: fullScreen ? '100vh' : 'auto' }}
+        >
           {/* 依赖列表是否收起 */}
           {smallDepend ? (
             <Button
@@ -456,18 +458,18 @@ const IdeContainer: FC<Props> = props => {
               }}
             />
             {/* 输入和输出区 */}
-            <IdeActionContainer
-              defaultInputValue={props.defaultInput}
-              onClickDebug={async json => {
-                return await handleDebug(json)
-              }}
-              onClickClearLog={() => {
-                setRunResult(defaultRunResult)
-              }}
-              runResult={runResult}
-              expandAction={expandAction}
-              editorOptions={editorOptions}
-            />
+            {/*<IdeActionContainer*/}
+            {/*  defaultInputValue={props.defaultInput}*/}
+            {/*  onClickDebug={async json => {*/}
+            {/*    return await handleDebug(json)*/}
+            {/*  }}*/}
+            {/*  onClickClearLog={() => {*/}
+            {/*    setRunResult(defaultRunResult)*/}
+            {/*  }}*/}
+            {/*  runResult={runResult}*/}
+            {/*  expandAction={expandAction}*/}
+            {/*  editorOptions={editorOptions}*/}
+            {/*/>*/}
           </div>
         </div>
       </div>

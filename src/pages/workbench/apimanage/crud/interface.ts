@@ -81,3 +81,11 @@ export enum API {
   BatchDelete = 'batchDelete',
   Export = 'export'
 }
+
+export enum ServiceStatus {
+  Compiling = 1,
+  Starting = 2,
+  Running = 3,
+  CompileFail = 4,
+  StartFail = 5
+}

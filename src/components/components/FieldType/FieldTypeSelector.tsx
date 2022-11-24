@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Modal, Popover, Select } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import type { Enum } from '@/interfaces/modeling'
@@ -56,13 +56,21 @@ const FieldTypeSelector = ({
     }
   }
 
+  const [delaySubmit, setDelaySubmit] = useState<string>()
+  useEffect(() => {
+    if (delaySubmit) {
+      handleDataChange(delaySubmit)
+    }
+    setDelaySubmit(undefined)
+  }, [delaySubmit])
+
   const handleSaveEnum = (newEnum: Enum) => {
     // 延迟提交新枚举，以避免新枚举的保存和model的保存同时进行，导致model保存失败或者model保存成功但是枚举保存失败
-    setTimeout(() => {
-      addNewEnum(newEnum)
-    }, 100)
+    addNewEnum(newEnum)
     setNewEnumModalVisible(false)
-    handleDataChange(newEnum.name)
+    setTimeout(() => {
+      setDelaySubmit(newEnum.name)
+    }, 100)
   }
 
   const content = (

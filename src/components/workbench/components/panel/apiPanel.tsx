@@ -10,6 +10,7 @@ import IconFont from '@/components/iconfont'
 import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -21,6 +22,7 @@ import styles from './apiPanel.module.less'
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
 export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
+  const { config } = useConfigContext()
   const navigate = useNavigate()
   const location = useLocation()
   const [action, setAction] = useState<ActionT>(null)
@@ -546,6 +548,25 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
               批量新建
             </span>
+          </div>
+          <div
+            className={styles.graphqlEntry}
+            onClick={() => {
+              const current = new URL(window.location.href)
+              if (config.apiHost) {
+                window.open(
+                  `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                  '_blank'
+                )
+              } else {
+                window.open(
+                  `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
+                  '_blank'
+                )
+              }
+            }}
+          >
+            <img alt="" src="/assets/icon/graphql2.svg" />
           </div>
         </div>
       </div>

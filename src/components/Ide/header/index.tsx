@@ -1,9 +1,11 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
+import stackblizSDK from '@stackblitz/sdk'
 import { Button, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
-import { FC, useCallback } from 'react'
-import { useEffect, useState } from 'react'
-import stackblizSDK from '@stackblitz/sdk'
+import type { FC } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+
+import requests from '@/lib/fetchers'
 
 import iconCloud from '../assets/cloud.svg'
 import iconFullscreen from '../assets/fullscreen.svg'
@@ -12,7 +14,6 @@ import iconHelp from '../assets/help.svg'
 import type { AutoSavePayload } from './../index'
 import { AutoSaveStatus } from './../index'
 import ideStyles from './index.module.less'
-import requests from '@/lib/fetchers'
 
 interface Props {
   // 钩子路径
@@ -101,7 +102,10 @@ const IdeHeaderContainer: FC<Props> = props => {
             description: props.hookPath,
             files: {
               ...Object.keys(dependFiles).reduce<Record<string, string>>((obj, fileName) => {
-                obj[fileName] = dependFiles[fileName].replace(/@wundergraph\/sdk/g, 'fireboom-wundersdk')
+                obj[fileName] = dependFiles[fileName].replace(
+                  /@wundergraph\/sdk/g,
+                  'fireboom-wundersdk'
+                )
                 // if (fileName === '.wundergraph/wundergraph.server.ts') {
                 //   // 注入socket
                 //   obj[fileName] = obj[fileName].replace('export default', `import { initSocket } from './socket'\nexport default`) + '\ninitSocket()\n'
@@ -112,7 +116,9 @@ const IdeHeaderContainer: FC<Props> = props => {
   "name": "wundergraph-hooks",
   "version": "1.0.0",
   "scripts": {
-    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts --host ${props.hostUrl}"
+    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts --host ${
+      props.hostUrl
+    }"
   },
   "dependencies": {
     "@types/node": "^14.14.37",
@@ -120,10 +126,12 @@ const IdeHeaderContainer: FC<Props> = props => {
     "fireboom-wundersdk": "0.98.1-r5",
     "graphql": "^16.3.0",
     "typescript": "^4.1.3",
-    "ts-node": "^10.9.1"${Object.keys(dependVersion).map(
-      dep => `,
+    "ts-node": "^10.9.1"${Object.keys(dependVersion)
+      .map(
+        dep => `,
     "${dep}": "${dependVersion[dep]}"`
-    ).join("")}
+      )
+      .join('')}
   },
   "stackblitz": {
     "startCommand": "npm start"
@@ -151,7 +159,7 @@ const IdeHeaderContainer: FC<Props> = props => {
   },
   "include": [".wundergraph/*.ts"]
 }`,
-  'index.html': `<!DOCTYPE html>
+              'index.html': `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -191,7 +199,10 @@ const IdeHeaderContainer: FC<Props> = props => {
         }
       });
       frame.contentWindow.document
-        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace('http://', '')}/ws');
+        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace(
+          'http://',
+          ''
+        )}/ws');
       ws.onopen = function () {
         ws.send('hook:ready');
       };
@@ -224,7 +235,7 @@ const IdeHeaderContainer: FC<Props> = props => {
       <\\/script>\`);
     </script>
   </html>
-  `,
+  `
             }
           },
           {
@@ -254,6 +265,9 @@ const IdeHeaderContainer: FC<Props> = props => {
       </div>
       <div className="flex flex-1 ide-container-header-right justify-between">
         <div className="flex items-center">
+          <Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>
+            调试
+          </Button>
           <Button
             className="ml-2"
             onClick={props.onSave}
@@ -278,13 +292,12 @@ const IdeHeaderContainer: FC<Props> = props => {
                   checked={props.disabled === false}
                   disabled={toggleLoading}
                   onChange={onToggleHookChange}
+                  unCheckedChildren="关"
+                  checkedChildren="开"
                 />
               </div>
             </div>
           )}
-          <Button className="ml-4" loading={debugOpenLoading} type="primary" onClick={onlineDebug}>
-            在线调试
-          </Button>
         </div>
         {/* 右侧区域 */}
         <div className="flex items-center">
