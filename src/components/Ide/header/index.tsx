@@ -191,7 +191,7 @@ const IdeHeaderContainer: FC<Props> = props => {
         }
       });
       frame.contentWindow.document
-        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace('http://', '')}');
+        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace('http://', '')}/ws');
       ws.onopen = function () {
         ws.send('hook:ready');
       };
