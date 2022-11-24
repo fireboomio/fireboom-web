@@ -8,7 +8,7 @@ import { parseParameters } from '@/lib/gql-parser'
 
 import { CircleCloseOutlined } from '../../icons'
 import requiredIcon from '../assets/required.svg'
-import type { InputValueType } from './ArgumentInput'
+import type { InputValueType, SingleInputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'
 
 const NOT_EDITABLE_DIRECTIVES = [
@@ -71,16 +71,42 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       getValue() {
         const obj = parsed.reduce<Record<string, any>>((obj, item) => {
           let val = valuesRef.current[item.name]
-          if (item.isRequired && (val === '' || val === undefined || val === null)) {
-            message.error(`字段 ${item.name} 的参数未提供`)
-            throw new Error(`字段 ${item.name} 的参数未提供`)
+          const requiredMsg = `字段 ${item.name} 的参数未提供`
+          const notValidMsg = `字段 ${item.name} 的参数输入错误`
+          if (item.isRequired) {
+            if (item.isList) {
+              if ((val as SingleInputValueType[]).length) {
+                message.error(requiredMsg)
+                throw new Error(requiredMsg)
+              }
+            } else if (val === '' || val === undefined || val === null) {
+              message.error(requiredMsg)
+                throw new Error(requiredMsg)
+            }
           }
-          if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
-            try {
-              val = JSON.parse(val as string)
-            } catch (error) {
-              message.error(`字段 ${item.name} 的参数输入错误`)
-              throw new Error(`字段 ${item.name} 的参数输入错误`)
+          if (item.isList) {
+            if (val) {
+              val = (val as SingleInputValueType[]).map(vItem => {
+                if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+                  try {
+                    return JSON.parse(vItem as string)
+                  } catch (error) {
+                    message.error(notValidMsg)
+                    throw new Error(notValidMsg)
+                  }
+                }
+              })
+            }
+          } else {
+            if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+              if (val) {
+                try {
+                  val = JSON.parse(val as string)
+                } catch (error) {
+                  message.error(notValidMsg)
+                  throw new Error(notValidMsg)
+                }
+              }
             }
           }
           obj[item.name] = val
