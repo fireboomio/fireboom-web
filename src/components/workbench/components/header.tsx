@@ -1,4 +1,3 @@
-import { CloudDownloadOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { message, Popover } from 'antd'
 import { useContext, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -36,8 +35,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         <div className="flex-1" />
         {pathname === '/workbench/rapi' ? (
           <>
-            <ShareAltOutlined style={{ fontSize: '18px' }} className="cursor-pointer" />
-
+            <img src="/assets/share.svg" alt="" />
             <Popover
               color="#2A2B2CFF"
               content={
@@ -75,7 +73,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
               open={open}
               onOpenChange={v => setOpen(v)}
             >
-              <CloudDownloadOutlined style={{ fontSize: '18px' }} className="ml-7 cursor-pointer" />
+              <div className="cursor-pointer">
+                <img src="/assets/download.svg" alt="" className="ml-7" />
+                <img src="/assets/shape-down.svg" alt="" />
+              </div>
             </Popover>
           </>
         ) : (

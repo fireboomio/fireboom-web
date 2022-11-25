@@ -133,7 +133,7 @@ mutation ${options.prefix}DeleteOne${
       key => options.table[key].update !== KeyType.Hidden && options.table[key].isDirectField
     )
     const paramStr =
-      `$${primaryKey}: ${options.table[primaryKey].type}!, ` +
+      `$${primaryKey}: ${options.table[primaryKey].updateType}!, ` +
       updateFields
         .map(
           key =>

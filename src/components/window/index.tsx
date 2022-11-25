@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from 'react'
 import type { LogMessage } from '@/interfaces/window'
 import { matchJson } from '@/lib/utils'
 
-import RcTab from '../rc-tab'
 import Error from './Error'
 import type { LogAction } from './Log'
 import Log from './Log'
+import RcTab from './rc-tab'
 
 const tabs = [
   { title: '终端', key: '0' },
@@ -54,13 +54,13 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   const extra = (
     <div className="cursor-pointer flex justify-end">
       <div onClick={() => logActionRef.current?.clearLogs()}>
-        <img src="/assets/clear.png" height={20} width={20} alt="清空" />
+        <img src="/assets/clear.svg" height={20} width={20} alt="清空" />
       </div>
       <div className="ml-4" onClick={logActionRef.current?.downloadLogs}>
-        <img src="/assets/download.png" height={20} width={20} alt="下载" />
+        <img src="/assets/download2.svg" height={20} width={20} alt="下载" />
       </div>
       <div className="ml-4" onClick={toggleWindow}>
-        <img src="/assets/close.png" height={20} width={20} alt="关闭" />
+        <img src="/assets/close2.svg" height={20} width={20} alt="关闭" />
       </div>
     </div>
   )
@@ -68,7 +68,12 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   return (
     <div
       className="bg-[#fff] border-gray-500/50 min-h-80px py-5 px-7 bottom-36px z-200  absolute"
-      style={{ borderTop: '1px solid #EFEFEFFF', ...style }}
+      style={{
+        borderTop: '1px solid #EFEFEFFF',
+        borderRadius: '12px 12px 0 0',
+        overflow: 'hidden',
+        ...style
+      }}
     >
       <Resizable
         className="flex flex-col h-full"

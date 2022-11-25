@@ -40,7 +40,7 @@ const RcTab: FC<RcTabProps> = props => {
           {props.tabs.map(i => (
             <div
               key={i.key}
-              className={`text-[#5F6269] cursor-pointer leading-20px ${
+              className={`text-[#252B3A]  cursor-pointer leading-20px ${
                 isActive(i.key) ? styles.active : ''
               }`}
               onClick={() => handleClick(i.key)}

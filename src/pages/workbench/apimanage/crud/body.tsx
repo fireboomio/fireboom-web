@@ -1,23 +1,30 @@
-import { Button, Checkbox, Collapse, Form, Input, message, Modal, Radio, Select, Table } from 'antd'
-import type {
-  IntrospectionInputObjectType,
-  IntrospectionType
-} from 'graphql/utilities/getIntrospectionQuery'
+import {
+  Button,
+  Checkbox,
+  Collapse,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popover,
+  Radio,
+  Select,
+  Table
+} from 'antd'
 import { cloneDeep, keyBy, mapValues } from 'lodash'
 import type React from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import styles from '@/components/datasource/subs/Graphql.module.less'
 import IconFont from '@/components/iconfont'
-import type { DMFField, DMFModel } from '@/interfaces/datasource'
+import type { DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import GraphqlIntrospection from '@/lib/helpers/GraphqlIntrospection'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
+import styles from './index.module.less'
 import type { _DMFField, _DMFModel, ApiOptions, TableAttr } from './interface'
 import { API, AuthOptions, AuthType, KeyType, SortDirection } from './interface'
 
@@ -26,6 +33,7 @@ interface CRUDBodyProps {
   modelList?: DMFModel[]
   relationMap?: RelationMap
   dbName: string
+  dmf?: string
 }
 
 const apiOptions = [
@@ -48,6 +56,19 @@ function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
     }
     return true
   })
+}
+
+function findParamType(type: string, dmf: string): Record<string, string> {
+  const match = dmf.match(new RegExp(`input ${type}[\\s\\S]*?\\n}`))
+  const map: Record<string, string> = {}
+  const str: string = match?.[0] ?? ''
+  if (str) {
+    ;(str.match(/(\w+):\s(\w+)/g) ?? []).forEach(pair => {
+      const [key, value] = pair.split(': ')
+      map[key.trim()] = value.trim()
+    })
+  }
+  return map
 }
 
 /**
@@ -107,14 +128,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
   // api已存在提示内容
   const [confirmModal, setConfirmModal] = useState<React.ReactNode>()
-  // api已存在提示内容
-  const { data: typeMap } = useSWR<Record<string, IntrospectionType>>(
-    'graphql',
-    GraphqlIntrospection
-  )
   // api提示的promise对应的resolve，用于实现对话框promise化
   const confirmResolve = useRef<(value: unknown) => void>()
-  const { data: roles } = useSWR<{ id: number; code: string; remark: string }[]>(
+  const { data: roles } = useSWRImmutable<{ id: number; code: string; remark: string }[]>(
     '/role',
     (url: string) =>
       requests.get<unknown, { id: number; code: string; remark: string }[]>(url).then(res => {
@@ -138,32 +154,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
     omitForeignKey(model, props.relationMap!)
     expandForeignField(model, props.modelList || [], 3)
 
-    const createType = typeMap?.[
-      `${props.dbName}_${model.name}CreateInput`
-    ]! as IntrospectionInputObjectType
-    const createTypeMap: Record<string, string> = {}
-    createType.inputFields.forEach(item => {
-      if (item.type.kind === 'NON_NULL') {
-        // @ts-ignore
-        createTypeMap[item.name] = item.type.ofType?.name
-      } else {
-        // @ts-ignore
-        createTypeMap[item.name] = item.type?.name
-      }
-    })
-    const updateType = typeMap?.[
-      `${props.dbName}_${model.name}UpdateInput`
-    ]! as IntrospectionInputObjectType
-    const updateTypeMap: Record<string, string> = {}
-    updateType.inputFields.forEach(item => {
-      if (item.type.kind === 'NON_NULL') {
-        // @ts-ignore
-        updateTypeMap[item.name] = item.type.ofType?.name
-      } else {
-        // @ts-ignore
-        updateTypeMap[item.name] = item.type?.name
-      }
-    })
+    const createTypeMap = findParamType(`${model.name}CreateInput`, props.dmf ?? '')
+    const updateTypeMap = findParamType(`${model.name}UpdateInput`, props.dmf ?? '')
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {
       fields.forEach(field => {
@@ -173,12 +165,12 @@ export default function CRUDBody(props: CRUDBodyProps) {
         }
         if (field.kind === 'object') {
           tableData[field.tableId ?? ''] = {
-            isDirectField: false,
+            isDirectField: true,
             kind: field.kind,
             name: field.name,
             type: field.type,
-            createType: createTypeMap[field.name],
-            updateType: updateTypeMap[field.name],
+            createType: `${props.dbName}_${createTypeMap[field.name]}`,
+            updateType: `${props.dbName}_${updateTypeMap[field.name]}`,
             detail: false,
             filter: false,
             list: false,
@@ -188,7 +180,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
             sortDirection: SortDirection.Asc
           }
         } else {
-          tableData[field.tableId ?? ''] = {
+          const data = {
             isDirectField: true,
             kind: field.kind,
             name: field.name,
@@ -208,6 +200,13 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 : KeyType.Optional,
             update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
           }
+          if (data.createType === undefined) {
+            data.create = KeyType.Hidden
+          }
+          if (data.updateType === undefined) {
+            data.update = KeyType.Hidden
+          }
+          tableData[field.tableId ?? ''] = data
         }
       })
     }
@@ -336,10 +335,10 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '字段',
       dataIndex: 'name',
-      render: (text: string, field: DMFField, index: number) => (
-        <>
+      render: (text: string) => (
+        <Popover content={text}>
           <span>{text}</span>
-        </>
+        </Popover>
       )
     },
     { title: '类型', dataIndex: 'type' },
@@ -439,7 +438,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
             <Select
               value={table?.[record.tableId]?.create}
               // 生成时，如果是主键，必须是隐藏，如果是必填，必须是必填
-              disabled={record.tableId === model.idField || record.required}
+              disabled={
+                record.tableId === model.idField ||
+                record.required ||
+                record.createType === undefined
+              }
               options={[
                 { label: '无', value: KeyType.Hidden },
                 { label: '选填', value: KeyType.Optional },
@@ -460,7 +463,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
         return (
           !record.isForeign && (
             <Select
-              disabled={record.tableId === model.idField}
+              disabled={record.tableId === model.idField || record.updateType === undefined}
               value={table?.[record.tableId]?.update ?? 'choose'}
               options={[
                 { label: '无', value: KeyType.Hidden },
@@ -559,7 +562,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
         </Collapse>
         <Form.Item name="table" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
           <Table
+            className={styles.table}
             expandable={{
+              indentSize: 0,
               expandedRowKeys: expandRowKey,
               onExpandedRowsChange: keys => {
                 setExpandRowKey(keys as string[])

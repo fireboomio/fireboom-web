@@ -1,14 +1,14 @@
 import stackblizSDK from '@stackblitz/sdk'
+import { message } from 'antd'
 
 import requests from '@/lib/fetchers'
 import { lockFunction } from '@/lib/helpers/lock'
 
 const openStackblitz = lockFunction(async (apiHost: string) => {
   try {
-    await new Promise((resolve, reject) => {
-      setTimeout(resolve, 5000)
-    })
+    const hide = message.loading('加载中...', 0)
     const { dependFiles, dependVersion } = await requests.get<unknown, any>(`/hook/dependFiles`)
+    hide()
     stackblizSDK.openProject(
       {
         template: 'node',

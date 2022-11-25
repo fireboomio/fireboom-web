@@ -3,8 +3,10 @@ import type { DMFField, DMFModel } from '@/interfaces/datasource'
 export type Datasource = {
   id: number
   name: string
+  sourceType: number
   config: {
     apiNamespace: string
+    dbType: string
   }
 }
 

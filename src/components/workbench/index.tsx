@@ -1,5 +1,4 @@
-import { Layout as ALayout, message, Modal } from 'antd'
-import { debounce } from 'lodash'
+import { Layout as ALayout, Modal } from 'antd'
 import type { PropsWithChildren } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -34,10 +33,6 @@ interface BarOnce {
   version: string
   env: string
 }
-
-const compileSucessToast = debounce(function () {
-  message.info('编译成功')
-}, 3000)
 
 export default function Index(props: PropsWithChildren) {
   const [info, setInfo] = useState<Info>()
@@ -83,7 +78,6 @@ export default function Index(props: PropsWithChildren) {
               setInfo(status)
               if (status.engineStatus === ServiceStatus.Running) {
                 events.emit({ event: 'compileFinish' })
-                compileSucessToast()
               } else if (
                 status.engineStatus === ServiceStatus.CompileFail ||
                 status.engineStatus === ServiceStatus.StartFail
