@@ -9,7 +9,7 @@ import { message, Tabs, Tooltip } from 'antd'
 // @ts-ignore
 import GraphiqlExplorer1 from 'graphiql-explorer'
 import { debounce } from 'lodash'
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
@@ -24,6 +24,7 @@ import { GraphiQL } from './components/GraphiQL'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import styles from './index.module.less'
 import { useAPIManager } from './store'
+import { useCallback } from 'react'
 
 async function fetcher(rec: Record<string, unknown>) {
   try {
@@ -71,6 +72,8 @@ export default function APIEditorContainer() {
     autoSave: state.autoSave,
     operationType: state.computed.operationType
   }))
+  const editingContent = useRef(query)
+  const contentUpdateTimeout = useRef<number>()
 
   const tabs = useMemo(() => {
     return (
@@ -95,6 +98,17 @@ export default function APIEditorContainer() {
       />
     )
   }, [operationType, params.id])
+
+  const onEditQuery = useCallback((v: string) => {
+    editingContent.current = v
+    if (contentUpdateTimeout.current) {
+      clearTimeout(contentUpdateTimeout.current)
+    }
+    // 节流设置值
+    contentUpdateTimeout.current = setTimeout(() => {
+      setQuery(editingContent.current)
+    }, 1500)
+  }, [])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -150,7 +164,7 @@ export default function APIEditorContainer() {
             schema={schema}
             query={query}
             // ref={x => (ref.current = x)}
-            onEditQuery={setQuery}
+            onEditQuery={onEditQuery}
             defaultEditorToolsVisibility={false}
           />
           <div className="h-full flex-shrink-0 w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>

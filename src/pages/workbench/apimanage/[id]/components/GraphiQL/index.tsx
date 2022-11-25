@@ -178,6 +178,7 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
   }
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
+  console.log('interface')
   const { setTheme } = useTheme()
   const { schemaAST, apiID, schema } = useAPIManager(state => ({
     schemaAST: state.schemaAST,
@@ -325,7 +326,7 @@ const GraphiInputAndResponse = ({
       {activeKey === 'arguments' && (
         <Radio.Group
           size="small"
-          className="absolute top-2px right-10px z-10 "
+          className="top-2px right-10px z-10 absolute "
           value={variableMode}
           onChange={e => {
             setVariableMode(e.target.value)

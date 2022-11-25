@@ -16,6 +16,7 @@ import hookImg from './assets/hook.png'
 import routerBottomImg from './assets/tee_bottom.svg'
 import routerLeftImg from './assets/tee_left.svg'
 import StatusDirective from './StatusDirective'
+import React from 'react'
 
 export interface FlowChartProps {
   globalHookState: {
@@ -391,7 +392,7 @@ Graph.registerNode('directive', {
   }
 })
 
-const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
+const FlowChart = React.memo(({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hook, setHook] = useState<{ name: string; path: string } | null>()
   const { apiDesc } = useAPIManager(state => ({
@@ -1058,6 +1059,6 @@ const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: F
       )}
     </>
   )
-}
+}, () => true)
 
 export default FlowChart
