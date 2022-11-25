@@ -121,7 +121,7 @@ export default function APIEditorContainer() {
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema])
+  }, [schema, query])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
