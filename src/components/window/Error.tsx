@@ -1,3 +1,4 @@
+import { Empty } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -77,6 +78,7 @@ export default function Error() {
 
   return (
     <div>
+      {!blocks.length && <Empty className="pt-20" description="暂无问题" />}
       {blocks.map((block, index) => (
         <div className={styles.block} key={index}>
           {block.list.map(item => (

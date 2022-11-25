@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from 'react'
 import type { LogMessage } from '@/interfaces/window'
 import { matchJson } from '@/lib/utils'
 
-import RcTab from '../rc-tab'
 import Error from './Error'
 import type { LogAction } from './Log'
 import Log from './Log'
+import RcTab from './rc-tab'
 
 const tabs = [
   { title: '终端', key: '0' },
@@ -68,7 +68,12 @@ const Window: React.FC<Props> = ({ style, toggleWindow }) => {
   return (
     <div
       className="bg-[#fff] border-gray-500/50 min-h-80px py-5 px-7 bottom-36px z-200  absolute"
-      style={{ borderTop: '1px solid #EFEFEFFF', ...style }}
+      style={{
+        borderTop: '1px solid #EFEFEFFF',
+        borderRadius: '12px 12px 0 0',
+        overflow: 'hidden',
+        ...style
+      }}
     >
       <Resizable
         className="flex flex-col h-full"

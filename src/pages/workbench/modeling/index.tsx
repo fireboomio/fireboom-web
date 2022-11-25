@@ -1,7 +1,7 @@
 import { Col, Empty, Row } from 'antd'
 import { useContext, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
@@ -24,7 +24,7 @@ const Modeling = () => {
     panel: { showType, setShowType }
   } = useContext(PrismaSchemaContext)
 
-  const { data: _, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
+  const { data: _, error } = useSWRImmutable(DATABASE_SOURCE, fetchDBSources)
 
   // useEffect(() => {
   //   setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])

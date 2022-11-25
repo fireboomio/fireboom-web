@@ -12,6 +12,7 @@ export default function CRUDIndex() {
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>()
   const [relationMap, setRelationMap] = useState<RelationMap>()
+  const [dmf, setDmf] = useState<string>()
   const [currentDatasource, setCurrentDatasource] = useState<Datasource>()
   return (
     <div className={styles.wrapper}>
@@ -25,11 +26,12 @@ export default function CRUDIndex() {
         </div>
         <div className="flex flex-1 min-h-0">
           <Sider
-            onSelectedModelChange={(model, datasource, modelList, relationMap) => {
+            onSelectedModelChange={(model, datasource, modelList, relationMap, dmf) => {
               setCurrentModel(model)
               setCurrentDatasource(datasource)
               setModelList(modelList)
               setRelationMap(relationMap)
+              setDmf(dmf)
             }}
           />
           <Body
@@ -37,6 +39,7 @@ export default function CRUDIndex() {
             dbName={currentDatasource?.config.apiNamespace ?? ''}
             modelList={modelList}
             relationMap={relationMap}
+            dmf={dmf}
           />
         </div>
       </div>

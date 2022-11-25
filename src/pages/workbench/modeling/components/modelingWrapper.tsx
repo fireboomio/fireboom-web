@@ -2,7 +2,7 @@ import { message } from 'antd'
 import type { ReactNode } from 'react'
 import { useEffect, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
@@ -29,7 +29,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   // 是否处于编辑状态，如果在编辑状态，则点击实体后不会切换到预览面板
   const [inEdit, setInEdit] = useImmer<boolean>(false)
   const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
-  const { data, error } = useSWR(DATABASE_SOURCE, fetchDBSources)
+  const { data, error } = useSWRImmutable(DATABASE_SOURCE, fetchDBSources)
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
   const [syncEditorFlag, setSyncEditorFlag] = useImmer<boolean>(false)
   useEffect(() => {

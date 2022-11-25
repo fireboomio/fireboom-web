@@ -32,7 +32,6 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
     }
   }, [sourceOptions, paramId])
 
-  console.log(sourceOptions)
   return (
     <div className={'common-form ' + styles['select-contain']}>
       <Select

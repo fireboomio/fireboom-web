@@ -1,7 +1,7 @@
 import { Row } from 'antd'
 import { useEffect, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import { AuthContainer, AuthPannel } from '@/components/auth'
@@ -32,7 +32,7 @@ export default function Authentication() {
   const [currAuthProvItemId, setCurrAuthProvItemId] = useImmer(null as number | null | undefined)
   const [authUserCurr, setAuthUserCurr] = useImmer({} as User)
 
-  const { data } = useSWR<AuthProvResp[], Error>('/auth', getFetcher)
+  const { data } = useSWRImmutable<AuthProvResp[], Error>('/auth', getFetcher)
   useEffect(() => {
     data &&
       dispatch({

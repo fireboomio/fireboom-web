@@ -1,10 +1,10 @@
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import type { Connector } from '@/interfaces/connector'
 import requests, { getFetcher } from '@/lib/fetchers'
 
 export const useFetchConnector = () => {
-  return useSWR<Connector[], Error>('/auth/linker', getFetcher)
+  return useSWRImmutable<Connector[], Error>('/auth/linker', getFetcher)
 }
 
 export const deleteConnector: (id: string, enable: boolean) => Promise<void> = (id, enable) => {

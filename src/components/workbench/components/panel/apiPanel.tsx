@@ -328,22 +328,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       setRefreshFlag(!refreshFlag)
       if (`/workbench/apimanage/${node.id}` === location.pathname) {
         const findList = [...treeData]
-        console.log(111)
-        while (findList.length) {
+        for (;;) {
           const curr = findList.shift()
-          console.log(222, curr)
           if (!curr) {
-            console.log(333)
             navigate('/workbench/apimanage')
             return
           }
           if (curr.children?.length) {
-            console.log(444)
             findList.push(...curr.children)
             continue
           }
           if (!curr.isDir && curr.id !== node.id) {
-            console.log(555)
             navigate(`/workbench/apimanage/${curr.id}`)
             return
           }

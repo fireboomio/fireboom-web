@@ -15,7 +15,8 @@ interface CRUDSiderProps {
     model: DMFModel,
     datasource: Datasource,
     models: DMFModel[],
-    relationMap: RelationMap
+    relationMap: RelationMap,
+    dmf: string
   ) => void
 }
 
@@ -25,32 +26,39 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>([])
+  const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
   useEffect(() => {
     void queryDataSourceList()
   }, [])
 
   useEffect(() => {
-    loadModelList()
+    void loadModelList()
   }, [currentDataSourceId])
-  function loadModelList() {
+  async function loadModelList() {
     if (!currentDataSourceId) {
       return
     }
     const hide = message.loading('正在加载模型列表')
-    requests
-      .get<unknown, { models: DMFModel[]; schemaContent: string }>(
+    try {
+      const nativeDMF = await requests.get<unknown, string>(
+        `/prisma/nativeDMF/${currentDataSourceId}`,
+        {
+          timeout: 15e3
+        }
+      )
+      setDmf(nativeDMF)
+      const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
         `/prisma/dmf/${currentDataSourceId}`,
         { timeout: 15e3 }
       )
-      .then(res => {
-        setModelList(res.models || [])
-        setCurrentModel(res.models?.[0])
-        setRelationMaps(findAllRelationInSchema(res.schemaContent))
-      })
-      .finally(() => {
-        hide()
-      })
+      setModelList(res.models || [])
+      setCurrentModel(res.models?.[0])
+      setRelationMaps(findAllRelationInSchema(res.schemaContent))
+    } catch (e) {
+      console.error(e)
+    }
+    hide()
   }
   useEffect(() => {
     if (!currentModel) {
@@ -60,7 +68,8 @@ export default function CRUDSider(props: CRUDSiderProps) {
       currentModel,
       dataSourceList.find(item => item.id === currentDataSourceId)!,
       modelList,
-      relationMaps?.[currentModel.name]!
+      relationMaps?.[currentModel.name]!,
+      dmf
     )
   }, [currentModel])
 
@@ -107,6 +116,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
                 break
             }
             return {
+              name: x.name,
               label: (
                 <div className="flex items-center">
                   <img className="mr-1 w-3 h-3" alt={x.name} src={svg} />

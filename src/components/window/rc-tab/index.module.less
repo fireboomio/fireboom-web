@@ -1,0 +1,22 @@
+.active {
+  position: relative;
+  color: #333;
+  font-weight: 500;
+
+  &::after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 1px;
+    background: #649fff;
+    border-radius: 3px;
+    content: '';
+  }
+}
+
+.divider {
+  margin: 12px 0 16px;
+  border-top: 1px solid rgb(95 98 105 / 10%);
+}
