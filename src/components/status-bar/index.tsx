@@ -1,14 +1,15 @@
 /* eslint-disable react/prop-types */
 import { Input, message, Radio, Space } from 'antd'
-import { useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
 import type { ErrorInfo } from '@/interfaces/common'
-import { useConfigContext } from '@/lib/context/ConfigContext'
+import { ConfigContext, useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
+import { openStackblitz } from './open-stackblitz'
 
 interface Props {
   className?: string
@@ -44,6 +45,7 @@ const StatusBar: React.FC<Props> = ({
   const [hookSwitch, setHookSwitch] = useState<boolean>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
+  const { config: globalConfig } = useContext(ConfigContext)
   useEffect(() => {
     setHookSwitch(!!config.hooksServerURL)
     setHooksServerURL(config.hooksServerURL)
@@ -67,6 +69,12 @@ const StatusBar: React.FC<Props> = ({
       refreshConfig()
     })
   }
+
+  // 在线stackbliz调试
+  const onlineDebug = useCallback(() => {
+    openStackblitz(globalConfig.apiHost)
+  }, [])
+
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -98,21 +106,30 @@ const StatusBar: React.FC<Props> = ({
             </span>
           </span>
           <span className="ml-4.5">钩子状态：</span>
-          <span
-            className={styles.errLabel + ' cursor-pointer'}
-            onClick={() => setShowHookSetting(true)}
-          >
-            <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
-            <span className="ml-1 text-[#50C772]">
-              {statusMap[hookStatus as ServiceStatus] ?? ''}
-            </span>
-            <div className={styles.split} />
-            <div className={styles.hookEntry}>{config.hooksServerURL || 'WebContainer'}</div>
+          <span className={styles.errLabel + ' cursor-pointer'}>
             <div
-              className="ml-8px mr-5px"
-              style={{ transform: showHookSetting ? 'rotate(180deg)' : '' }}
+              className="flex items-center h-full"
+              onClick={() => {
+                if (!config.hooksServerURL) {
+                  onlineDebug()
+                }
+                // setShowHookSetting(true)
+              }}
             >
-              <img alt="" src="/assets/hook-arrow.svg" />
+              <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
+              <span className="ml-1 text-[#50C772]">
+                {statusMap[hookStatus as ServiceStatus] ?? ''}
+              </span>
+            </div>
+            <div className={styles.split} />
+            <div className="flex items-center h-full" onClick={() => setShowHookSetting(true)}>
+              <div className={styles.hookEntry}>{config.hooksServerURL || 'WebContainer'}</div>
+              <div
+                className="ml-8px mr-5px"
+                style={{ transform: showHookSetting ? 'rotate(180deg)' : '' }}
+              >
+                <img alt="" src="/assets/hook-arrow.svg" />
+              </div>
             </div>
             {showHookSetting && (
               <>

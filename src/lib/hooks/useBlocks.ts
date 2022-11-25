@@ -44,7 +44,7 @@ const useBlocks = () => {
     try {
       applyLocalPrismaSchema(schema, dispatch)
     } catch (e) {
-      errorToast()
+      // errorToast()
       console.error(e)
     }
   }
