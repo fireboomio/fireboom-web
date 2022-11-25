@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import type { DocumentNode, GraphQLSchema, IntrospectionQuery, OperationTypeNode } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
+import { isEqual } from 'lodash'
 import create from 'zustand'
 
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
@@ -228,7 +229,11 @@ export const useAPIManager = create<APIState>((set, get) => ({
     })
       .then(resp => resp.json())
       .then(res => {
-        set({ schema: buildClientSchema(res.data as IntrospectionQuery) })
+        const newSchema = buildClientSchema(res.data as IntrospectionQuery)
+        if (!isEqual(get().schema, newSchema)) {
+          console.log('schema changed')
+          set({ schema: newSchema })
+        }
       })
   },
   appendToAPIRefresh: (fn: () => void) => {

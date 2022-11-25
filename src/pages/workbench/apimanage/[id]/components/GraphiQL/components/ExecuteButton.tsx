@@ -1,12 +1,17 @@
 import { useExecutionContext } from '@graphiql/react'
 import type { ImgHTMLAttributes } from 'react'
+import { useEffect } from 'react'
 
+import { useAPIManager } from '../../../store'
 import RunIcon from '../assets/run.svg'
 
 type ExecuteButtonProps = ImgHTMLAttributes<HTMLImageElement>
 
 const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { apiID } = useAPIManager(state => ({
+    apiID: state.apiID
+  }))
+
   const { isFetching, run, stop } = useExecutionContext({
     nonNull: true,
     caller: ExecuteButton
@@ -21,9 +26,18 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
       run()
     }
   }
-  // eslint-disable-next-line @next/next/no-img-element
+
+  // 切换时 stop 前一个
+  useEffect(() => {
+    if (isFetching) {
+      stop()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiID])
+
   return (
     <span className={`h-7 w-7 relative ${className || ''}`}>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <img {...props} src={RunIcon} width="28" height="28" alt="run" onClick={toggleExecute} />
 
       {isFetching && (
