@@ -41,7 +41,7 @@ const DEFAULT_QUERY = `# Welcome to GraphiQL
 `
 
 export interface APIDesc {
-  content: string
+  // content: string
   enable: boolean
   id: number
   isDir: boolean
@@ -188,7 +188,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         get().setQuery(query)
         set({ lastSavedQuery: query })
         // @ts-ignore
-        set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
+        // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
         // 内容变更可能需要刷新api列表
         get()._workbenchContext?.onRefreshMenu('api')
         return true

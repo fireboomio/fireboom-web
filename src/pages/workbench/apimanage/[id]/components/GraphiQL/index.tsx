@@ -220,8 +220,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     })
   }, [schemaAST])
 
-  const editorContext = useEditorContext()
-
   // API 变更后需要刷新输入输出
   useEffect(() => {
     if (prevApiID.current && prevApiID.current !== apiID) {
@@ -321,9 +319,9 @@ const GraphiInputAndResponse = ({
   return (
     <div className="h-full">
       {activeKey === 'arguments' && (
-        <div className="absolute top-0px h-26px right-0px z-20 flex">
+        <div className="flex h-26px top-0px right-0px z-20 absolute">
           <div
-            className="h-full w-30px flex items-center justify-center cursor-pointer"
+            className="cursor-pointer flex h-full w-30px items-center justify-center"
             style={{ borderLeft: '1px solid rgba(95,98,105,0.1)' }}
             onClick={() => {
               setVariableMode('form')
@@ -337,7 +335,7 @@ const GraphiInputAndResponse = ({
             />
           </div>
           <div
-            className="h-full w-30px flex items-center justify-center cursor-pointer"
+            className="cursor-pointer flex h-full w-30px items-center justify-center"
             style={{ borderLeft: '1px solid rgba(95,98,105,0.1)' }}
             onClick={() => {
               setVariableMode('json')
@@ -357,7 +355,7 @@ const GraphiInputAndResponse = ({
       {/*{activeKey === 'arguments' && (*/}
       {/*  <Radio.Group*/}
       {/*    size="small"*/}
-      {/*    className="absolute top-2px right-10px z-10 "*/}
+      {/*    className="top-2px right-10px z-10 absolute "*/}
       {/*    value={variableMode}*/}
       {/*    onChange={e => {*/}
       {/*      setVariableMode(e.target.value)*/}

@@ -3,11 +3,13 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
 import type { Edge, Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
-import { useEffect, useRef, useState } from 'react'
+import { isEqual } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
-import { APIDesc, useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import type { APIDesc } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -391,116 +393,166 @@ Graph.registerNode('directive', {
   }
 })
 
-const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [hook, setHook] = useState<{ name: string; path: string } | null>()
-  const { apiDesc } = useAPIManager(state => ({
-    apiDesc: state.apiDesc
-  }))
+// eslint-disable-next-line react/display-name
+const FlowChart = React.memo(
+  ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [hook, setHook] = useState<{ name: string; path: string } | null>()
+    const { apiDesc } = useAPIManager(state => ({
+      apiDesc: state.apiDesc
+    }))
 
-  const { id } = useParams()
-  // 监听路由变化，当路由变化时自动关闭钩子编辑器
-  useEffect(() => {
-    setHook(undefined)
-  }, [id])
+    const { id } = useParams()
+    // 监听路由变化，当路由变化时自动关闭钩子编辑器
+    useEffect(() => {
+      setHook(undefined)
+    }, [id])
 
-  useEffect(() => {
-    // 初始化画布
-    const graph = new Graph({
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      container: containerRef.current!,
-      mousewheel: {
-        enabled: true,
-        zoomAtMousePosition: true,
-        modifiers: 'ctrl',
-        minScale: 0.5,
-        maxScale: 3
-      },
-      interacting: {
-        nodeMovable: false,
-        edgeMovable: false,
-        edgeLabelMovable: false,
-        arrowheadMovable: false,
-        vertexMovable: false,
-        useEdgeTools: false
-      },
-      background: {
-        color: '#F8F9FD',
-        image: gridImg,
-        size: {
-          width: 22,
-          height: 22
+    useEffect(() => {
+      // 初始化画布
+      const graph = new Graph({
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        container: containerRef.current!,
+        mousewheel: {
+          enabled: true,
+          zoomAtMousePosition: true,
+          modifiers: 'ctrl',
+          minScale: 0.5,
+          maxScale: 3
         },
-        repeat: 'repeat'
-      }
-    })
+        interacting: {
+          nodeMovable: false,
+          edgeMovable: false,
+          edgeLabelMovable: false,
+          arrowheadMovable: false,
+          vertexMovable: false,
+          useEdgeTools: false
+        },
+        background: {
+          color: '#F8F9FD',
+          image: gridImg,
+          size: {
+            width: 22,
+            height: 22
+          },
+          repeat: 'repeat'
+        }
+      })
 
-    // 记录要渲染的节点 边
-    const renderNodes: Node<Node.Properties>[] = []
-    // 有箭头的节点
-    const arrowNodes: Node<Node.Properties>[] = []
-    // 拦截异常请求
-    const rejectNodes: [Node<Node.Properties>, string][] = []
-    // 指令
-    const directiveNodes: ActionGroup[] = []
+      // 记录要渲染的节点 边
+      const renderNodes: Node<Node.Properties>[] = []
+      // 有箭头的节点
+      const arrowNodes: Node<Node.Properties>[] = []
+      // 拦截异常请求
+      const rejectNodes: [Node<Node.Properties>, string][] = []
+      // 指令
+      const directiveNodes: ActionGroup[] = []
 
-    // 开始请求
-    let y = CANVAS_PADDING
-    const start = graph.createNode({
-      shape: 'terminal',
-      label: '开始请求',
-      x: TERMINAL_X,
-      y
-    })
-    renderNodes.push(start)
-    arrowNodes.push(start)
-    y += 16 + TERMINAL_HEIGHT
-
-    // 请求拦截
-    if (globalHookState.onRequest) {
-      const globalPreHookMetadata: Node.Metadata = {
-        shape: 'globalHook',
-        x: HOOK_X,
-        y
-      }
-      // 全局请求前置指令
-      const globalPreDirective = new ActionGroup(
-        globalPreHookMetadata,
-        [
-          {
-            shape: 'react-shape',
-            width: 114,
-            height: 20,
-            component: (
-              <StatusDirective
-                enabled={globalHookState.onRequest.enable}
-                label="onRequest"
-                onDoubleClick={() => setHook(globalHookState.onRequest)}
-              />
-            ),
-            x: 290,
-            y
-          }
-        ],
-        'arrow'
-      )
-      directiveNodes.push(globalPreDirective)
-      y += 10 + HOOK_HEIGHT
-    }
-
-    // 登录校验
-    // fromClaim会隐式要求登录
-    if (directiveState.fromClaim || apiSetting.authenticationRequired) {
-      const loggedValidation = graph.createNode({
-        shape: 'decision',
-        label: '登录校验?',
-        x: DECISION_X,
+      // 开始请求
+      let y = CANVAS_PADDING
+      const start = graph.createNode({
+        shape: 'terminal',
+        label: '开始请求',
+        x: TERMINAL_X,
         y
       })
-      arrowNodes.push(loggedValidation)
-      // 指令
-      if (directiveState.fromClaim) {
-        const fromClaimDirective = new ActionGroup(
+      renderNodes.push(start)
+      arrowNodes.push(start)
+      y += 16 + TERMINAL_HEIGHT
+
+      // 请求拦截
+      if (globalHookState.onRequest) {
+        const globalPreHookMetadata: Node.Metadata = {
+          shape: 'globalHook',
+          x: HOOK_X,
+          y
+        }
+        // 全局请求前置指令
+        const globalPreDirective = new ActionGroup(
+          globalPreHookMetadata,
+          [
+            {
+              shape: 'react-shape',
+              width: 114,
+              height: 20,
+              component: (
+                <StatusDirective
+                  enabled={globalHookState.onRequest.enable}
+                  label="onRequest"
+                  onDoubleClick={() => setHook(globalHookState.onRequest)}
+                />
+              ),
+              x: 290,
+              y
+            }
+          ],
+          'arrow'
+        )
+        directiveNodes.push(globalPreDirective)
+        y += 10 + HOOK_HEIGHT
+      }
+
+      // 登录校验
+      // fromClaim会隐式要求登录
+      if (directiveState.fromClaim || apiSetting.authenticationRequired) {
+        const loggedValidation = graph.createNode({
+          shape: 'decision',
+          label: '登录校验?',
+          x: DECISION_X,
+          y
+        })
+        arrowNodes.push(loggedValidation)
+        // 指令
+        if (directiveState.fromClaim) {
+          const fromClaimDirective = new ActionGroup(
+            {
+              shape: 'directiveTrigger',
+              label: '1',
+              x: 258,
+              y: y + 19
+            },
+            [
+              {
+                shape: 'directive',
+                label: '@fromClaim',
+                width: 84,
+                height: 16,
+                x: 290,
+                y: y + 17
+              }
+            ],
+            'linear'
+          )
+          directiveNodes.push(fromClaimDirective)
+        }
+        // yes
+        y += 7 + DECISION_HEIGHT
+        const y1 = graph.createNode({
+          shape: 'flowLabel',
+          label: 'Y',
+          width: LABEL_WIDTH,
+          height: LABEL_HEIGHT,
+          x: LABEL_X,
+          y
+        })
+        renderNodes.push(loggedValidation, y1)
+        rejectNodes.push([loggedValidation, '401'])
+        y += 8 + LABEL_HEIGHT
+      }
+
+      // 授权校验
+      if (directiveState.rbac) {
+        const authValidation = graph.createNode({
+          shape: 'decision',
+          label: '授权校验?',
+          x: DECISION_X,
+          y
+        })
+        arrowNodes.push(authValidation)
+        rejectNodes.push([authValidation, '401'])
+
+        // 授权指令
+        const authDirective = new ActionGroup(
           {
             shape: 'directiveTrigger',
             label: '1',
@@ -510,8 +562,55 @@ const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: F
           [
             {
               shape: 'directive',
-              label: '@fromClaim',
-              width: 84,
+              label: '@rbac',
+              width: 64,
+              height: 16,
+              x: 300,
+              y: y + 17
+            }
+          ],
+          'linear'
+        )
+        directiveNodes.push(authDirective)
+
+        // yes
+        y += 7 + DECISION_HEIGHT
+        const y2 = graph.createNode({
+          shape: 'flowLabel',
+          label: 'Y',
+          width: LABEL_WIDTH,
+          height: LABEL_HEIGHT,
+          x: LABEL_X,
+          y
+        })
+        renderNodes.push(authValidation, y2)
+      }
+
+      // 入参校验
+      if (directiveState.jsonSchema) {
+        y += 8 + LABEL_HEIGHT
+        const requestValidation = graph.createNode({
+          shape: 'decision',
+          label: '入参校验?',
+          x: DECISION_X,
+          y
+        })
+        arrowNodes.push(requestValidation)
+        rejectNodes.push([requestValidation, '400'])
+
+        // 入参指令
+        const argumentDirective = new ActionGroup(
+          {
+            shape: 'directiveTrigger',
+            label: '1',
+            x: 258,
+            y: y + 19
+          },
+          [
+            {
+              shape: 'directive',
+              label: '@jsonSchema',
+              width: 88,
               height: 16,
               x: 290,
               y: y + 17
@@ -519,338 +618,114 @@ const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: F
           ],
           'linear'
         )
-        directiveNodes.push(fromClaimDirective)
+        directiveNodes.push(argumentDirective)
+
+        // yes
+        y += 7 + DECISION_HEIGHT
+        const y3 = graph.createNode({
+          shape: 'flowLabel',
+          label: 'Y',
+          width: LABEL_WIDTH,
+          height: LABEL_HEIGHT,
+          x: LABEL_X,
+          y
+        })
+        renderNodes.push(requestValidation, y3)
+        y += 8 + LABEL_HEIGHT
       }
-      // yes
-      y += 7 + DECISION_HEIGHT
-      const y1 = graph.createNode({
-        shape: 'flowLabel',
-        label: 'Y',
-        width: LABEL_WIDTH,
-        height: LABEL_HEIGHT,
-        x: LABEL_X,
-        y
-      })
-      renderNodes.push(loggedValidation, y1)
-      rejectNodes.push([loggedValidation, '401'])
-      y += 8 + LABEL_HEIGHT
-    }
 
-    // 授权校验
-    if (directiveState.rbac) {
-      const authValidation = graph.createNode({
-        shape: 'decision',
-        label: '授权校验?',
-        x: DECISION_X,
-        y
-      })
-      arrowNodes.push(authValidation)
-      rejectNodes.push([authValidation, '401'])
-
-      // 授权指令
-      const authDirective = new ActionGroup(
-        {
-          shape: 'directiveTrigger',
-          label: '1',
-          x: 258,
-          y: y + 19
-        },
-        [
+      // 参数注入
+      if (
+        directiveState.injectCurrentDatetime ||
+        directiveState.injectEnvironmentVariable ||
+        directiveState.injectGeneratedUUID
+      ) {
+        const argsInjection = graph.createNode({
+          shape: 'process',
+          label: '参数注入',
+          x: PROCESS_X,
+          y
+        })
+        arrowNodes.push(argsInjection)
+        // 参数注入指令集
+        const injectDirective = new ActionGroup(
           {
-            shape: 'directive',
-            label: '@rbac',
-            width: 64,
-            height: 16,
-            x: 300,
-            y: y + 17
-          }
-        ],
-        'linear'
-      )
-      directiveNodes.push(authDirective)
-
-      // yes
-      y += 7 + DECISION_HEIGHT
-      const y2 = graph.createNode({
-        shape: 'flowLabel',
-        label: 'Y',
-        width: LABEL_WIDTH,
-        height: LABEL_HEIGHT,
-        x: LABEL_X,
-        y
-      })
-      renderNodes.push(authValidation, y2)
-    }
-
-    // 入参校验
-    if (directiveState.jsonSchema) {
-      y += 8 + LABEL_HEIGHT
-      const requestValidation = graph.createNode({
-        shape: 'decision',
-        label: '入参校验?',
-        x: DECISION_X,
-        y
-      })
-      arrowNodes.push(requestValidation)
-      rejectNodes.push([requestValidation, '400'])
-
-      // 入参指令
-      const argumentDirective = new ActionGroup(
-        {
-          shape: 'directiveTrigger',
-          label: '1',
-          x: 258,
-          y: y + 19
-        },
-        [
-          {
-            shape: 'directive',
-            label: '@jsonSchema',
-            width: 88,
-            height: 16,
-            x: 290,
-            y: y + 17
-          }
-        ],
-        'linear'
-      )
-      directiveNodes.push(argumentDirective)
-
-      // yes
-      y += 7 + DECISION_HEIGHT
-      const y3 = graph.createNode({
-        shape: 'flowLabel',
-        label: 'Y',
-        width: LABEL_WIDTH,
-        height: LABEL_HEIGHT,
-        x: LABEL_X,
-        y
-      })
-      renderNodes.push(requestValidation, y3)
-      y += 8 + LABEL_HEIGHT
-    }
-
-    // 参数注入
-    if (
-      directiveState.injectCurrentDatetime ||
-      directiveState.injectEnvironmentVariable ||
-      directiveState.injectGeneratedUUID
-    ) {
-      const argsInjection = graph.createNode({
-        shape: 'process',
-        label: '参数注入',
-        x: PROCESS_X,
-        y
-      })
-      arrowNodes.push(argsInjection)
-      // 参数注入指令集
-      const injectDirective = new ActionGroup(
-        {
-          shape: 'directiveTrigger',
-          label: '3',
-          x: 258,
-          y: y
-        },
-        [
-          {
-            shape: 'directive',
-            label: '@EnvironmentVariable',
-            width: 128,
-            height: 16,
-            x: 280,
-            y: y - 40
-          },
-          {
-            shape: 'directive',
-            label: '@GeneratedUUID',
-            width: 110,
-            height: 16,
-            x: 290,
+            shape: 'directiveTrigger',
+            label: '3',
+            x: 258,
             y: y
           },
-          {
-            shape: 'directive',
-            label: '@CurrentDatetime',
-            width: 110,
-            height: 16,
-            x: 290,
-            y: y + 40
-          }
-        ],
-        'linear'
-      )
-      directiveNodes.push(injectDirective)
-      y += 7 + PROCESS_HEIGHT
-      renderNodes.push(argsInjection)
-    }
+          [
+            {
+              shape: 'directive',
+              label: '@EnvironmentVariable',
+              width: 128,
+              height: 16,
+              x: 280,
+              y: y - 40
+            },
+            {
+              shape: 'directive',
+              label: '@GeneratedUUID',
+              width: 110,
+              height: 16,
+              x: 290,
+              y: y
+            },
+            {
+              shape: 'directive',
+              label: '@CurrentDatetime',
+              width: 110,
+              height: 16,
+              x: 290,
+              y: y + 40
+            }
+          ],
+          'linear'
+        )
+        directiveNodes.push(injectDirective)
+        y += 7 + PROCESS_HEIGHT
+        renderNodes.push(argsInjection)
+      }
 
-    // 路由器
-    const routerSwitch = graph.createNode({
-      shape: 'router',
-      x: (CANVAS_WIDTH - 24) / 2,
-      y,
-      attrs: {
-        image: {
-          'xlink:href': hookState.mockResolve.enable ? routerLeftImg : routerBottomImg
+      // 路由器
+      const routerSwitch = graph.createNode({
+        shape: 'router',
+        x: (CANVAS_WIDTH - 24) / 2,
+        y,
+        attrs: {
+          image: {
+            'xlink:href': hookState.mockResolve.enable ? routerLeftImg : routerBottomImg
+          }
         }
-      }
-    })
-    renderNodes.push(routerSwitch)
-    // 记录路由索引
-    const routerIndex = arrowNodes.push(routerSwitch) - 1
-    y += 12 + 24
-
-    // 执行前钩子
-    const preHookMetadata: Node.Metadata = {
-      shape: 'hook',
-      x: HOOK_X,
-      y
-    }
-
-    // 执行前置指令集
-    const preHookRefs: Node.Metadata[] = [
-      {
-        shape: 'react-shape',
-        width: 114,
-        height: 20,
-        component: (
-          <StatusDirective
-            enabled={hookState.preResolve.enable}
-            label="preResolve"
-            onDoubleClick={() => setHook(hookState.preResolve)}
-          />
-        ),
-        x: 290,
-        y: y - 32
-      },
-      {
-        shape: 'react-shape',
-        width: 114,
-        height: 20,
-        component: (
-          <StatusDirective
-            enabled={hookState.customResolve.enable}
-            label="customResolve"
-            onDoubleClick={() => setHook(hookState.customResolve)}
-          />
-        ),
-        x: 290,
-        y: y + 16
-      }
-    ]
-    // 根据是否支持 mutatingPreResolve 钩子现实
-    if (hookState.mutatingPreResolve.can) {
-      preHookRefs.splice(1, 0, {
-        shape: 'react-shape',
-        width: 114,
-        height: 20,
-        component: (
-          <StatusDirective
-            enabled={hookState.mutatingPreResolve.enable}
-            label="mutatingPreResolve"
-            onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
-          />
-        ),
-        x: 280,
-        y: y - 8
       })
-    }
-    const preOperationDirective = new ActionGroup(preHookMetadata, preHookRefs, 'arrow')
-    directiveNodes.push(preOperationDirective)
-    y += 14 + HOOK_HEIGHT
+      renderNodes.push(routerSwitch)
+      // 记录路由索引
+      const routerIndex = arrowNodes.push(routerSwitch) - 1
+      y += 12 + 24
 
-    // mockResolve
-    const mockResolve = graph.createNode({
-      shape: 'react-shape',
-      width: 88,
-      height: 20,
-      x: 30,
-      y: y + 14,
-      // attrs: {
-      //   body: { rx: 10, ry: 10 }
-      // },
-      component: (
-        <div
-          className="rounded-xl h-5 text-xs text-center px-1 leading-5 "
-          style={{
-            border: `1px solid rgb(233, 46, 94)`,
-            background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
-          }}
-          onDoubleClick={() => setHook(hookState.mockResolve)}
-        >
-          mockResolve
-        </div>
-      )
-    })
-
-    // 执行
-    const operation = graph.createNode({
-      shape: 'operation',
-      label: '执行\n(Operation)',
-      x: OPERATION_X,
-      y
-    })
-    renderNodes.push(operation)
-    arrowNodes.push(operation)
-    y += 12 + OPERATION_HEIGHT
-
-    // 响应转换
-    if (directiveState.transform) {
-      const responseTransform = graph.createNode({
-        shape: 'process',
-        label: '响应转换',
-        x: PROCESS_X,
+      // 执行前钩子
+      const preHookMetadata: Node.Metadata = {
+        shape: 'hook',
+        x: HOOK_X,
         y
-      })
-      renderNodes.push(responseTransform)
-      arrowNodes.push(responseTransform)
-      // 响应转换指令
-      const transformDirective = new ActionGroup(
-        {
-          shape: 'directiveTrigger',
-          label: '1',
-          x: 258,
-          y: y + 10
-        },
-        [
-          {
-            shape: 'directive',
-            label: '@transform',
-            width: 82,
-            height: 16,
-            x: 290,
-            y: y + 8
-          }
-        ],
-        'linear'
-      )
-      y += 12 + PROCESS_HEIGHT
-      directiveNodes.push(transformDirective)
-    }
+      }
 
-    // 响应后置钩子
-    const postHookMetadata: Node.Metadata = {
-      shape: 'hook',
-      x: HOOK_X,
-      y
-    }
-    // 后置指令
-    new ActionGroup(
-      postHookMetadata,
-      [
+      // 执行前置指令集
+      const preHookRefs: Node.Metadata[] = [
         {
           shape: 'react-shape',
           width: 114,
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.postResolve.enable}
-              label="postResolve"
-              onDoubleClick={() => setHook(hookState.postResolve)}
+              enabled={hookState.preResolve.enable}
+              label="preResolve"
+              onDoubleClick={() => setHook(hookState.preResolve)}
             />
           ),
           x: 290,
-          y: y - 12
+          y: y - 32
         },
         {
           shape: 'react-shape',
@@ -858,206 +733,337 @@ const FlowChart = ({ globalHookState, hookState, directiveState, apiSetting }: F
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.mutatingPostResolve.enable}
-              label="mutatingPostResolve"
-              onDoubleClick={() => setHook(hookState.mutatingPostResolve)}
+              enabled={hookState.customResolve.enable}
+              label="customResolve"
+              onDoubleClick={() => setHook(hookState.customResolve)}
+            />
+          ),
+          x: 290,
+          y: y + 16
+        }
+      ]
+      // 根据是否支持 mutatingPreResolve 钩子现实
+      if (hookState.mutatingPreResolve.can) {
+        preHookRefs.splice(1, 0, {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={hookState.mutatingPreResolve.enable}
+              label="mutatingPreResolve"
+              onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
             />
           ),
           x: 280,
-          y: y + 12
-        }
-      ],
-      'arrow'
-    ).addToGraph(graph)
-    y += 14 + HOOK_HEIGHT
+          y: y - 8
+        })
+      }
+      const preOperationDirective = new ActionGroup(preHookMetadata, preHookRefs, 'arrow')
+      directiveNodes.push(preOperationDirective)
+      y += 14 + HOOK_HEIGHT
 
-    // 全局后置钩子
-    const globalPostHookMetadata: Node.Metadata = {
-      shape: 'globalHook',
-      x: HOOK_X,
-      y
-    }
-    // 全局后置指令
-    const globalPostDirective = new ActionGroup(
-      globalPostHookMetadata,
-      [
-        {
-          shape: 'react-shape',
-          width: 114,
-          height: 20,
-          component: (
-            <StatusDirective
-              enabled={globalHookState.onResponse.enable}
-              label="onResponse"
-              onDoubleClick={() => setHook(globalHookState.onResponse)}
-            />
-          ),
-          x: 290,
+      // mockResolve
+      const mockResolve = graph.createNode({
+        shape: 'react-shape',
+        width: 88,
+        height: 20,
+        x: 30,
+        y: y + 14,
+        // attrs: {
+        //   body: { rx: 10, ry: 10 }
+        // },
+        component: (
+          <div
+            className="rounded-xl h-5 text-xs text-center px-1 leading-5 "
+            style={{
+              border: `1px solid rgb(233, 46, 94)`,
+              background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
+            }}
+            onDoubleClick={() => setHook(hookState.mockResolve)}
+          >
+            mockResolve
+          </div>
+        )
+      })
+
+      // 执行
+      const operation = graph.createNode({
+        shape: 'operation',
+        label: '执行\n(Operation)',
+        x: OPERATION_X,
+        y
+      })
+      renderNodes.push(operation)
+      arrowNodes.push(operation)
+      y += 12 + OPERATION_HEIGHT
+
+      // 响应转换
+      if (directiveState.transform) {
+        const responseTransform = graph.createNode({
+          shape: 'process',
+          label: '响应转换',
+          x: PROCESS_X,
           y
-        }
-      ],
-      'arrow'
-    )
-    directiveNodes.push(globalPostDirective)
-    y += 12 + HOOK_HEIGHT
-
-    // 发送响应到客户端
-    const sendResponse = graph.createNode({
-      shape: 'process',
-      label: '发送响应到客户端',
-      width: 144,
-      height: PROCESS_HEIGHT,
-      x: PROCESS_X - (144 - PROCESS_WIDTH) / 2,
-      y
-    })
-    renderNodes.push(sendResponse)
-    arrowNodes.push(sendResponse)
-
-    // 结束
-    y += 20 + PROCESS_HEIGHT
-    const end = graph.createNode({
-      shape: 'terminal',
-      label: '结束',
-      x: TERMINAL_X,
-      y
-    })
-    renderNodes.push(end)
-    arrowNodes.push(end)
-
-    // 主流程
-    graph.addNodes(renderNodes)
-
-    // mock 边
-    graph.addEdge({
-      shape: 'reject',
-      source: routerSwitch,
-      target: sendResponse,
-      router: {
-        name: 'oneSide',
-        args: {
-          side: 'left',
-          padding: 60
-        }
-      },
-
-      ...(hookState.mockResolve.enable
-        ? {
-            stroke: '#1034FF',
-            attrs: {
-              line: {
-                stroke: '#1034FF',
-                strokeWidth: 1,
-                strokeDasharray: '3 0',
-                targetMarker: ''
-              }
+        })
+        renderNodes.push(responseTransform)
+        arrowNodes.push(responseTransform)
+        // 响应转换指令
+        const transformDirective = new ActionGroup(
+          {
+            shape: 'directiveTrigger',
+            label: '1',
+            x: 258,
+            y: y + 10
+          },
+          [
+            {
+              shape: 'directive',
+              label: '@transform',
+              width: 82,
+              height: 16,
+              x: 290,
+              y: y + 8
             }
+          ],
+          'linear'
+        )
+        y += 12 + PROCESS_HEIGHT
+        directiveNodes.push(transformDirective)
+      }
+
+      // 响应后置钩子
+      const postHookMetadata: Node.Metadata = {
+        shape: 'hook',
+        x: HOOK_X,
+        y
+      }
+      // 后置指令
+      new ActionGroup(
+        postHookMetadata,
+        [
+          {
+            shape: 'react-shape',
+            width: 114,
+            height: 20,
+            component: (
+              <StatusDirective
+                enabled={hookState.postResolve.enable}
+                label="postResolve"
+                onDoubleClick={() => setHook(hookState.postResolve)}
+              />
+            ),
+            x: 290,
+            y: y - 12
+          },
+          {
+            shape: 'react-shape',
+            width: 114,
+            height: 20,
+            component: (
+              <StatusDirective
+                enabled={hookState.mutatingPostResolve.enable}
+                label="mutatingPostResolve"
+                onDoubleClick={() => setHook(hookState.mutatingPostResolve)}
+              />
+            ),
+            x: 280,
+            y: y + 12
           }
-        : {})
-    })
-    graph.addEdge({
-      shape: 'rejectArrow',
-      source: { x: 100, y: routerSwitch.getBBox().y + 12 },
-      target: { x: 96, y: routerSwitch.getBBox().y + 12 },
-      ...(hookState.mockResolve.enable
-        ? {
-            attrs: {
-              line: {
-                stroke: '#1034FF'
-              }
-            }
+        ],
+        'arrow'
+      ).addToGraph(graph)
+      y += 14 + HOOK_HEIGHT
+
+      // 全局后置钩子
+      const globalPostHookMetadata: Node.Metadata = {
+        shape: 'globalHook',
+        x: HOOK_X,
+        y
+      }
+      // 全局后置指令
+      const globalPostDirective = new ActionGroup(
+        globalPostHookMetadata,
+        [
+          {
+            shape: 'react-shape',
+            width: 114,
+            height: 20,
+            component: (
+              <StatusDirective
+                enabled={globalHookState.onResponse.enable}
+                label="onResponse"
+                onDoubleClick={() => setHook(globalHookState.onResponse)}
+              />
+            ),
+            x: 290,
+            y
           }
-        : {})
-    })
+        ],
+        'arrow'
+      )
+      directiveNodes.push(globalPostDirective)
+      y += 12 + HOOK_HEIGHT
 
-    graph.addNode(mockResolve)
+      // 发送响应到客户端
+      const sendResponse = graph.createNode({
+        shape: 'process',
+        label: '发送响应到客户端',
+        width: 144,
+        height: PROCESS_HEIGHT,
+        x: PROCESS_X - (144 - PROCESS_WIDTH) / 2,
+        y
+      })
+      renderNodes.push(sendResponse)
+      arrowNodes.push(sendResponse)
 
-    // 主流程边
-    graph.addEdges(
-      arrowNodes.reduce<(Edge | Edge.Metadata)[]>((arr, node, index) => {
-        if (index < arrowNodes.length - 1) {
-          arr.push({
-            shape: 'flowline',
-            source: node,
-            target: arrowNodes[index + 1],
-            // mock 开启，灰色
-            ...(hookState.mockResolve.enable &&
-            index >= routerIndex &&
-            index !== arrowNodes.length - 2
-              ? {
-                  attrs: {
-                    line: {
-                      stroke: '#787D8B',
-                      strokeWidth: 0.5,
-                      strokeDasharray: '3 3',
-                      targetMarker: ''
-                    }
-                  }
-                }
-              : index === routerIndex - 1
-              ? {
-                  attrs: {
-                    line: {
-                      targetMarker: ''
-                    }
-                  }
-                }
-              : {})
-          })
-        }
-        return arr
-      }, [])
-    )
+      // 结束
+      y += 20 + PROCESS_HEIGHT
+      const end = graph.createNode({
+        shape: 'terminal',
+        label: '结束',
+        x: TERMINAL_X,
+        y
+      })
+      renderNodes.push(end)
+      arrowNodes.push(end)
 
-    // 校验失败边
-    rejectNodes.forEach(node => {
-      const bbox = node[0].getBBox()
-      // 边
+      // 主流程
+      graph.addNodes(renderNodes)
+
+      // mock 边
       graph.addEdge({
         shape: 'reject',
-        source: node[0],
-        target: end
+        source: routerSwitch,
+        target: sendResponse,
+        router: {
+          name: 'oneSide',
+          args: {
+            side: 'left',
+            padding: 60
+          }
+        },
+
+        ...(hookState.mockResolve.enable
+          ? {
+              stroke: '#1034FF',
+              attrs: {
+                line: {
+                  stroke: '#1034FF',
+                  strokeWidth: 1,
+                  strokeDasharray: '3 0',
+                  targetMarker: ''
+                }
+              }
+            }
+          : {})
       })
-      // 状态码
-      graph.addNode({
-        shape: 'flowLabel',
-        label: node[1],
-        width: 24,
-        height: LABEL_HEIGHT,
-        x: 80,
-        y: bbox.y + 18
-      })
-      // 箭头
       graph.addEdge({
         shape: 'rejectArrow',
-        source: { x: 64, y: bbox.y + 25 },
-        target: { x: 60, y: bbox.y + 25 }
+        source: { x: 100, y: routerSwitch.getBBox().y + 12 },
+        target: { x: 96, y: routerSwitch.getBBox().y + 12 },
+        ...(hookState.mockResolve.enable
+          ? {
+              attrs: {
+                line: {
+                  stroke: '#1034FF'
+                }
+              }
+            }
+          : {})
       })
-    })
 
-    // 指令
-    directiveNodes.forEach(item => item.addToGraph(graph))
+      graph.addNode(mockResolve)
 
-    return () => {
-      console.log('dispose FlowChart')
-      graph.dispose()
-    }
-  }, [directiveState, hookState, globalHookState])
+      // 主流程边
+      graph.addEdges(
+        arrowNodes.reduce<(Edge | Edge.Metadata)[]>((arr, node, index) => {
+          if (index < arrowNodes.length - 1) {
+            arr.push({
+              shape: 'flowline',
+              source: node,
+              target: arrowNodes[index + 1],
+              // mock 开启，灰色
+              ...(hookState.mockResolve.enable &&
+              index >= routerIndex &&
+              index !== arrowNodes.length - 2
+                ? {
+                    attrs: {
+                      line: {
+                        stroke: '#787D8B',
+                        strokeWidth: 0.5,
+                        strokeDasharray: '3 3',
+                        targetMarker: ''
+                      }
+                    }
+                  }
+                : index === routerIndex - 1
+                ? {
+                    attrs: {
+                      line: {
+                        targetMarker: ''
+                      }
+                    }
+                  }
+                : {})
+            })
+          }
+          return arr
+        }, [])
+      )
 
-  return (
-    <>
-      <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
-      {hook ? (
-        <EditPanel
-          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={!!(apiDesc?.content ?? '').match(/\(\$\w+/)}
-          hook={hook}
-          onClose={() => setHook(null)}
-        />
-      ) : (
-        ''
-      )}
-    </>
-  )
-}
+      // 校验失败边
+      rejectNodes.forEach(node => {
+        const bbox = node[0].getBBox()
+        // 边
+        graph.addEdge({
+          shape: 'reject',
+          source: node[0],
+          target: end
+        })
+        // 状态码
+        graph.addNode({
+          shape: 'flowLabel',
+          label: node[1],
+          width: 24,
+          height: LABEL_HEIGHT,
+          x: 80,
+          y: bbox.y + 18
+        })
+        // 箭头
+        graph.addEdge({
+          shape: 'rejectArrow',
+          source: { x: 64, y: bbox.y + 25 },
+          target: { x: 60, y: bbox.y + 25 }
+        })
+      })
+
+      // 指令
+      directiveNodes.forEach(item => item.addToGraph(graph))
+
+      return () => {
+        console.log('dispose FlowChart')
+        graph.dispose()
+      }
+    }, [directiveState, hookState, globalHookState])
+
+    return (
+      <>
+        <div className="flex-shrink-0 min-h-175 w-102.5 !h-full" ref={containerRef} />
+        {hook ? (
+          <EditPanel
+            apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
+            hasParams={!!(apiDesc?.content ?? '').match(/\(\$\w+/)}
+            hook={hook}
+            onClose={() => setHook(null)}
+          />
+        ) : (
+          ''
+        )}
+      </>
+    )
+  },
+  (prev, next) => isEqual(prev, next)
+)
 
 export default FlowChart
