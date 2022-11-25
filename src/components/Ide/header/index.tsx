@@ -90,6 +90,7 @@ const IdeHeaderContainer: FC<Props> = props => {
   // 在线stackbliz调试
   const onlineDebug = useCallback(() => {
     setDebugOpenLoading(true)
+    // ${props.hostUrl.replace('http://', '')}
     requests
       .get(`/hook/dependFiles?hookName=${encodeURIComponent(props.hookPath)}`)
       .then(resp => {
@@ -191,7 +192,7 @@ const IdeHeaderContainer: FC<Props> = props => {
         }
       });
       frame.contentWindow.document
-        .write(\`<script>const ws = new WebSocket('ws://${props.hostUrl.replace('http://', '')}/ws');
+        .write(\`<script>const ws = new WebSocket('ws://localhost:9123/ws');
       ws.onopen = function () {
         ws.send('hook:ready');
       };
