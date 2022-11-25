@@ -110,11 +110,14 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
 
         <div
           className="w-4 h-4 cursor-pointer flex-0 text-0px"
-          onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
+          onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
           <img className="w-4 h-4" src="/assets/github.svg" alt="" />
         </div>
-        <div className={styles.helpIcon} onClick={() => navigate('/workbench/help')} />
+        <div
+          className={styles.helpIcon}
+          onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
+        />
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
         <div className={styles.avatar}>
           <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />
