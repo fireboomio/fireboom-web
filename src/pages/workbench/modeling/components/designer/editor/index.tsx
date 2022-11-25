@@ -1,3 +1,5 @@
+// import '@/monaco-prisma'
+
 import Editor, { loader } from '@monaco-editor/react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -46,7 +48,10 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
   return (
     <div className="h-full bg-red">
       <Editor
-        defaultLanguage="prisma"
+        language="prisma"
+        beforeMount={monaco => {
+          console.log(monaco.languages.prisma)
+        }}
         onMount={editor => {
           editorRef.current = editor
           editorRef.current.setValue(defaultContent)
