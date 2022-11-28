@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
 import { Button, Checkbox, Form, Input, Radio } from 'antd'
+import axios from 'axios'
 import type { ReactNode } from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -45,6 +46,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   )
   const [jwksObj, setjwksObj] = useState<Object>({})
   const [jwksJSON, setJwksJSON] = useState<string>('')
+  const [jwksUrl, setJwksUrl] = useState<string>('')
+  const [endPoint, setEndPoint] = useState<string>('')
+  const currentInspecting = useRef<string>('')
 
   useEffect(() => {
     try {
@@ -91,8 +95,32 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     setIsRadioShow(value == '1')
   }
 
+  const inspect = async (host: string) => {
+    const url = `${host.replace(/\/+$/, '')}/.well-known/openid-configuration`
+    try {
+      new URL(url)
+    } catch (e) {
+      return
+    }
+    // 当前url已经在解析，忽略本次请求
+    if (currentInspecting.current === url) {
+      return
+    }
+    currentInspecting.current = url
+    // 开始请求前，先清空现有数据
+    setJwksUrl('')
+    setEndPoint('')
+    const res = await axios.get(url)
+    // 如果当前url不是最新的，忽略本次请求
+    if (currentInspecting.current !== url) {
+      return
+    }
+    setJwksUrl(res.data.jwks_uri)
+    setEndPoint(res.data.userinfo_endpoint)
+  }
+
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    setInputValue(allValues.issuer)
+    void inspect(String(allValues.issuer))
     for (const key in allValues) {
       if ((allValues[key] as string) == undefined) {
         setDisabled(true)
@@ -200,7 +228,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Input placeholder="请输入..." value={inputValue} />
           </Form.Item>
           <Form.Item label="服务发现地址">
-            <Input value={`${inputValue as string}/.well-known/openid-configuration`} disabled />
+            <Input value={jwksUrl} disabled />
           </Form.Item>
           <Form.Item label="JWKS" name="jwks">
             <Radio.Group
@@ -234,7 +262,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Form.Item>
           )}
           <Form.Item label="用户端点">
-            <Input disabled value={`${inputValue as string}/me`} />
+            <Input disabled value={endPoint} />
           </Form.Item>
           <Form.Item label="是否开启" name="switchState">
             <Checkbox.Group options={options} />

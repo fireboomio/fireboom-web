@@ -39,6 +39,8 @@ interface Props {
   setShowType: Updater<ModelingShowTypeT>
 }
 
+const ModeKey = 'modeling_edit_mode'
+
 const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const { newMap } = useEntities()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
@@ -52,7 +54,11 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
 
-  const [mode, setMode] = useState<'editor' | 'designer'>('designer')
+  let initMode = localStorage.getItem(ModeKey)
+  if (initMode !== 'editor' && initMode !== 'design') {
+    initMode = 'design'
+  }
+  const [mode, setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
   // 编辑器当前内容
   const [editorContent, setEditorContent] = useState<string>()
   const [isEditing, setIsEditing] = useImmer(editType === 'add')
@@ -63,6 +69,14 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
 
   const [editTitle, setEditTitle] = useState<boolean>(false)
   const [titleValue, setTitleValue] = useState<string>('')
+
+  // 编辑模式 变更时存入本地存储中
+  useEffect(() => {
+    localStorage.setItem(ModeKey, mode)
+  }, [mode])
+  useEffect(() => {
+    setEditorContent(printSchema({ type: 'schema', list: blocks }))
+  }, [blocks])
 
   useEffect(() => {
     setTitleValue(currentEntity?.name || '')
@@ -77,7 +91,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }, [syncEditorFlag])
 
   // const ctx = useContext(PrismaSchemaContext)
-  const { handleClickEntity, inEdit } = panel || {}
+  const { handleClickEntity, inEdit, handleSetInEdit } = panel || {}
 
   const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
   id        Int       @id @default(autoincrement())
@@ -180,7 +194,6 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }
 
   if (mode !== 'editor' && !currentEntity) {
-    // setMode('editor')
     return (
       <div className="h-full flex flex-col">
         <div

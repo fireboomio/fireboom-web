@@ -39,6 +39,7 @@ export default function Index(props: PropsWithChildren) {
   const [version, setVersion] = useState<string>('--')
   const [env, setEnv] = useState<string>('--')
   const [showWindow, setShowWindow] = useState(false)
+  const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
   const listener = useRef<WorkbenchListener>()
 
@@ -148,6 +149,7 @@ export default function Index(props: PropsWithChildren) {
             <Window
               style={{ left: 0, right: 0, bottom: 0 }}
               toggleWindow={() => setShowWindow(!showWindow)}
+              defaultTab={defaultWindowTab}
             />
           ) : (
             <></>
@@ -162,7 +164,10 @@ export default function Index(props: PropsWithChildren) {
           startTime={info?.startTime}
           engineStatus={info?.engineStatus}
           hookStatus={info?.hookStatus}
-          toggleWindow={() => setShowWindow(!showWindow)}
+          toggleWindow={(defaultTab: string) => {
+            setDefaultWindowTab(defaultTab)
+            setShowWindow(!showWindow)
+          }}
         />
       </AFooter>
     </ALayout>

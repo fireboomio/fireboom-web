@@ -33,7 +33,7 @@ interface CRUDBodyProps {
   modelList?: DMFModel[]
   relationMap?: RelationMap
   dbName: string
-  dmf?: string
+  dmf?: string // graphql schema
 }
 
 const apiOptions = [
@@ -58,14 +58,18 @@ function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
   })
 }
 
-function findParamType(type: string, dmf: string): Record<string, string> {
-  const match = dmf.match(new RegExp(`input ${type}[\\s\\S]*?\\n}`))
+function findParamType(type: string, dmf: string, prefix: string): Record<string, string> {
+  const match = dmf.match(new RegExp(`input ${type}\\s\\{\\n[\\s\\S]*?\\n}`))
   const map: Record<string, string> = {}
   const str: string = match?.[0] ?? ''
   if (str) {
     ;(str.match(/(\w+):\s(\w+)/g) ?? []).forEach(pair => {
       const [key, value] = pair.split(': ')
-      map[key.trim()] = value.trim()
+      let type = value.trim()
+      if (dmf.match(new RegExp(`input ${type}\\s\\{\\n`))) {
+        type = prefix + type
+      }
+      map[key.trim()] = type
     })
   }
   return map
@@ -154,8 +158,15 @@ export default function CRUDBody(props: CRUDBodyProps) {
     omitForeignKey(model, props.relationMap!)
     expandForeignField(model, props.modelList || [], 3)
 
-    const createTypeMap = findParamType(`${model.name}CreateInput`, props.dmf ?? '')
-    const updateTypeMap = findParamType(`${model.name}UpdateInput`, props.dmf ?? '')
+    const createTypeMap = findParamType(
+      `${model.name}CreateInput`,
+      props.dmf ?? '',
+      `${props.dbName}_`
+    )
+    const updateTypeMap = {
+      ...findParamType(`${model.name}UpdateInput`, props.dmf ?? '', `${props.dbName}_`),
+      ...findParamType(`${model.name}WhereUniqueInput`, props.dmf ?? '', `${props.dbName}_`)
+    }
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {
       fields.forEach(field => {
@@ -169,8 +180,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
             kind: field.kind,
             name: field.name,
             type: field.type,
-            createType: `${props.dbName}_${createTypeMap[field.name]}`,
-            updateType: `${props.dbName}_${updateTypeMap[field.name]}`,
+            createType: createTypeMap[field.name],
+            updateType: updateTypeMap[field.name],
             detail: false,
             filter: false,
             list: false,

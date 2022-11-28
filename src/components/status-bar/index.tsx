@@ -19,7 +19,7 @@ interface Props {
   errorInfo?: ErrorInfo
   engineStatus?: ServiceStatus
   hookStatus?: ServiceStatus
-  toggleWindow: () => void
+  toggleWindow: (defaultTa: string) => void
 }
 const statusMap = {
   [ServiceStatus.Compiling]: '编译中',
@@ -88,7 +88,21 @@ const StatusBar: React.FC<Props> = ({
             <span>FB: </span>
             <span className="ml-2">{version}</span>
           </span>
-          <span onClick={toggleWindow} className="cursor-pointer flex items-center">
+
+          <span
+            onClick={() => {
+              toggleWindow('0')
+            }}
+            className={styles.errLabel + ' mr-2 cursor-pointer'}
+          >
+            <span>日志</span>
+          </span>
+          <span
+            onClick={() => {
+              toggleWindow('1')
+            }}
+            className="cursor-pointer flex items-center"
+          >
             <span className={styles.errLabel}>
               <img height={14} width={14} src="/assets/workbench/footer-error.png" alt="错误" />
               <span className="ml-2">{errorInfo?.errTotal ?? 0}</span>
@@ -98,7 +112,7 @@ const StatusBar: React.FC<Props> = ({
               <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
             </span>
           </span>
-          <span className="ml-18">引擎状态：</span>
+          <span className="ml-8">引擎状态：</span>
           <span className={styles.errLabel}>
             <div className="h-3px w-3px rounded-3px bg-[#50C772]" />
             <span className="ml-1 text-[#50C772]">

@@ -84,7 +84,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
               }
             } else if (val === '' || val === undefined || val === null) {
               message.error(requiredMsg)
-                throw new Error(requiredMsg)
+              throw new Error(requiredMsg)
             }
           }
           if (item.isList) {

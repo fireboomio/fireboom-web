@@ -43,10 +43,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
                   <a
                     className="text-[#f0f8ff]"
                     onClick={() => setOpen(false)}
-                    href="/api/v1/file/DownloadPostman"
-                    download="Postman"
+                    href="/api/v1/file/postToSwag"
+                    download="Swagger.json"
                   >
-                    下载 POSTMAN
+                    下载 swagger
                   </a>
                   <br />
                   <a

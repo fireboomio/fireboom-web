@@ -17,6 +17,8 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
   const [value, setValue] = useState<string>('')
   const { currentEntity } = useCurrentEntity()
   const lastScrollEntity = useRef<string>('')
+  // 用于当editor初始化未完成时记录defaultContent
+  const defaultRef = useRef<string>('')
   useEffect(() => {
     if (!currentEntity) return
     const key = `${currentEntity.type}_${currentEntity.id}`
@@ -37,8 +39,8 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
     }
   }, [currentEntity])
   useEffect(() => {
-    // console.log('====', defaultContent)
     setValue(defaultContent)
+    defaultRef.current = defaultContent
     if (editorRef.current) {
       if (editorRef.current.getValue() !== defaultContent) {
         editorRef.current.setValue(defaultContent)
@@ -50,11 +52,11 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
       <Editor
         language="prisma"
         beforeMount={monaco => {
-          console.log(monaco.languages.prisma)
+          // console.log(monaco.languages.prisma)
         }}
         onMount={editor => {
           editorRef.current = editor
-          editorRef.current.setValue(defaultContent)
+          editorRef.current.setValue(defaultRef.current)
         }}
         defaultValue={value}
         onChange={value => {
