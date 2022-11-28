@@ -69,7 +69,7 @@ const SingleArgumentInput = ({
       return (
         <Input.TextArea
           className="text-xs"
-          value={value as string}
+          value={typeof value === 'object' ? JSON.stringify(value) : value as string}
           onChange={e => onChange?.(e.target.value)}
         />
       )
@@ -101,13 +101,13 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
   return (
     <div className="flex flex-wrap">
       {(value as SingleInputValueType[] | undefined)?.map((val, index) => (
-        <div key={index} className="p-1 group hover:bg-gray-200">
+        <div key={index} className="flex w-full p-1 group items-center hover:bg-gray-200">
           <SingleArgumentInput
             type={argument.type}
             value={val}
             onChange={v => updateOne(v, index)}
           />
-          <DeleteOutlined className="mx-1 invisible group-hover:visible" onClick={() => deleteOne(index)} />
+          <DeleteOutlined className="mx-1 invisible hover:text-red-500 group-hover:visible" onClick={() => deleteOne(index)} />
         </div>
       ))}
       <PlusOutlined className="!leading-10 hover:text-primary" onClick={addOne} />
