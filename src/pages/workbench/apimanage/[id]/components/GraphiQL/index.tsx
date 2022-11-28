@@ -317,7 +317,7 @@ const GraphiInputAndResponse = ({
     }
   }, [actionRef])
   return (
-    <div className="h-full">
+    <div className="bg-white h-full">
       {activeKey === 'arguments' && (
         <div className="flex h-26px top-0px right-0px z-20 absolute">
           <div

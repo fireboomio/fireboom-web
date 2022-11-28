@@ -8,6 +8,7 @@
   margin: 0;
   overflow: hidden;
   background-color: hsl(var(--color-base));
+  z-index: 10;
 }
 
 .graphiql-container::before,
@@ -105,7 +106,7 @@
   margin-bottom: 12px;
   padding: 0 12px;
   padding-top: 2px;
-  background: rgb(95 98 105 / 5%);
+  background: #f7f7f7;
 }
 
 .graphiql-container .graphiql-editor-tool .ant-tabs-content-holder {

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 
-import { ExpandedIcon, ExpandIcon, UnselectedCheckbox } from '../icons'
-import { checkboxStyle } from '../utils'
+import { ExpandedIcon, ExpandIcon, UnselectedCheckbox } from './icons'
+import { checkboxStyle } from './utils'
 
 interface BaseViewProps {
   color: 'blue' | 'purple'

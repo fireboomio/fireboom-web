@@ -1,8 +1,6 @@
 .container {
-  @apply bg-white pt-3 pb-2 pl-3 z-2 relative;
+  @apply bg-white px-3 pt-3 pb-2 z-2 relative;
 
-  &.opened {
-    @apply h-20;
 
     &::before {
       position: absolute;
@@ -25,7 +23,6 @@
       background: rgb(95 98 105 / 10%);
       filter: blur(4px);
       content: '';
-    }
   }
 
   .select {

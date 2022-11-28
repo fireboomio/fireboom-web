@@ -1,7 +1,7 @@
 import type { GraphQLField } from 'graphql'
 import { isNonNullType, isObjectType, isScalarType } from 'graphql'
 
-import { arraySort } from '../utils'
+import { arraySort } from './utils'
 import ArgView from './ArgView'
 import BaseView from './BaseView'
 import { CommonViews } from './ViewFactory'
