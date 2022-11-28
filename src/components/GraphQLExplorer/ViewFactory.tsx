@@ -17,7 +17,7 @@ import {
   isUnionType
 } from 'graphql'
 
-import { arraySort, convertGraphiQLFieldMapToArray } from '../utils'
+import { arraySort, convertGraphiQLFieldMapToArray } from './utils'
 import BaseView from './BaseView'
 import FieldView from './FieldView'
 
