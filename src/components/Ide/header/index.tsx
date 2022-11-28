@@ -167,18 +167,74 @@ const IdeHeaderContainer: FC<Props> = props => {
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Document</title>
+      <script src="https://unpkg.com/json-formatter-js@2.3.4/dist/json-formatter.umd.js"></script>
+      <style>
+        body {
+          margin: 0;
+          padding: 1em;
+        }
+        .requests {
+          margin: 32px 0 0;
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #e8e8e8;
+          table-layout: fixed;
+        }
+        th {
+          text-align: left;
+        }
+        th,
+        td {
+          padding: 4px 6px;
+          border-right: 1px solid #e8e8e8;
+        }
+        th:last-child,
+        td:last-child {
+          border-right: none;
+        }
+        td {
+          border-top: 1px solid #e8e8e8;
+        }
+        td:last-child > .json-formatter-row {
+          overflow-x: auto;
+        }
+      </style>
     </head>
     <body>
+      <iframe id="frame" style="height: 0; border: 0; display: block"></iframe>
       请勿关闭当前窗口
-      <iframe id="frame" style="border:0;display:block"></iframe>
+      <table class="requests">
+        <thead>
+          <tr>
+            <th style="width: 28px">序</th>
+            <th style="width: 120px; overflow-x: auto">Method/Url</th>
+            <th>Query</th>
+            <th>Body</th>
+            <th>Response</th>
+          </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+      </table>
     </body>
     <script>
       const url = window.location.href;
       const frame = document.getElementById('frame');
+      const $tbody = document.querySelector('.tbody');
       window.addEventListener('message', async (e) => {
         const { type, ...args } = e.data;
         if (type === 'request') {
           try {
+            const $tr = document.createElement('tr');
+            $tr.innerHTML = \`<td>\${$tbody.children.length + 1}</td><td>[\${
+              args.method
+            }]\${args.url}</td><td></td><td></td><td></td>\`;
+            if (args.query) {
+              $tr.querySelector('td:nth-child(3)').appendChild(new JSONFormatter(args.query).render());
+            }
+            if (args.body) {
+              $tr.querySelector('td:nth-child(4)').appendChild(new JSONFormatter(args.body).render());
+            }
+            $tbody.appendChild($tr);
             const result = await fetch(args.url + (args.query ? '?' + Object.keys(args.query).map((k) => k + '=' + args.query[k]).join('&') : ''),
               {
                 method: args.method,
@@ -193,6 +249,9 @@ const IdeHeaderContainer: FC<Props> = props => {
               result,
               url: args.url,
             });
+            if (result) {
+              $tr.querySelector('td:last-child').appendChild(new JSONFormatter(result).render());
+            }
           } catch (error) {
             console.error(e);
             frame.contentWindow.postMessage({ type: 'error', error });
