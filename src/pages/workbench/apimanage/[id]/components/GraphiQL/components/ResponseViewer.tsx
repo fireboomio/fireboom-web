@@ -15,8 +15,10 @@ const ResponseViewer = () => {
   }, [resp.response])
 
   const collapsedDeepth = useMemo(() => {
-    if ('errors' in json) {
-      return false
+    if (typeof json === 'object') {
+      if ('errors' in json) {
+        return false
+      }
     }
     return 2
   }, [json])
