@@ -9,7 +9,7 @@ import IdeContainer from '@/components/Ide'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
 import RcTab from '@/components/rc-tab'
 import type { HookName, HookResp } from '@/interfaces/auth'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 
@@ -30,6 +30,8 @@ interface TabT {
 const { TabPane } = Tabs
 export const hookPath: Record<string, string> = {
   postAuthentication: 'auth/postAuthentication',
+  revalidate: 'auth/revalidate',
+  postLogout: 'auth/postLogout',
   mutatingPostAuthentication: 'auth/mutatingPostAuthentication'
 }
 export default function AuthRole() {
@@ -45,7 +47,9 @@ export default function AuthRole() {
 
   const tabs = [
     { key: 'postAuthentication', title: 'postAuthentication' },
-    { key: 'mutatingPostAuthentication', title: 'mutatingPostAuthentication' }
+    { key: 'revalidate', title: 'revalidate' },
+    { key: 'mutatingPostAuthentication', title: 'mutatingPostAuthentication' },
+    { key: 'postLogout', title: 'postLogout' }
   ]
 
   // 角色管理的相关函数
@@ -103,16 +107,6 @@ export default function AuthRole() {
       )
     }
   ]
-
-  // 身份鉴权相关
-  useEffect(() => {
-    getFetcher<HookResp[]>('/auth/hooks')
-      .then(res => setHooks(res))
-      .catch((err: Error) => {
-        throw err
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
 
   const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
   useEffect(() => {
@@ -250,7 +244,7 @@ export default function AuthRole() {
         <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
-            <RcTab tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
+            <RcTab className="mb-4" tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
             <IdeContainer
               key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}

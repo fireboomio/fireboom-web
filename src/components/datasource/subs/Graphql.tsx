@@ -1,5 +1,6 @@
 import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import {
+  AutoComplete,
   Button,
   Checkbox,
   Collapse,
@@ -66,6 +67,51 @@ const renderIcon = (kind: string) => (
 )
 
 const BASEPATH = '/static/upload/oas'
+
+const HEADER_SET = [
+  'Accept',
+  'Accept-Charset',
+  'Accept-Language',
+  'Access_-Control-Request-Headers',
+  'Access-Control-Request-Method',
+  'Authorization',
+  'Cache-Control',
+  'Content-MD5',
+  'Content-Length',
+  'Content-Transfer-Encoding',
+  'Content-Type',
+  'Cookie',
+  'Cookie 2',
+  'Date',
+  'Expect',
+  'From',
+  'Host',
+  'If-Match',
+  'If-Modified-Since',
+  'If-None-Match',
+  'If-Range',
+  'If-Unmodified-Since',
+  'Keep-Alive',
+  'Max-Forwards',
+  'Origin',
+  'Pragma',
+  'Proxy-Authorization',
+  'Range',
+  'Referer',
+  'TE',
+  'Trailer',
+  'Transfer-Encoding',
+  'Upgrade',
+  'User-Agent',
+  'Via',
+  'Warning',
+  'X-Requested-With',
+  'X-Do-Not-Track',
+  'DNT',
+  'x-api-key',
+  'Connection'
+]
+const HEADER_LIST = HEADER_SET.map(x => ({ label: x, value: x }))
 
 export default function Graphql({ content, type }: Props) {
   const navigate = useNavigate()
@@ -535,7 +581,13 @@ export default function Graphql({ content, type }: Props) {
                       {fields.map((field, idx) => (
                         <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
                           <Form.Item className="w-52.5" name={[field.name, 'key']}>
-                            <Input />
+                            <AutoComplete
+                              options={HEADER_LIST}
+                              filterOption={(inputValue, option) => {
+                                return (option?.label ?? '').includes(inputValue)
+                              }}
+                              placeholder="请输入..."
+                            />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select onChange={onValueChange}>

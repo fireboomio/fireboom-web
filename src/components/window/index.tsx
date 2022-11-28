@@ -11,17 +11,18 @@ import Log from './Log'
 import RcTab from './rc-tab'
 
 const tabs = [
-  { title: '终端', key: '0' },
+  { title: '日志', key: '0' },
   { title: '问题', key: '1' }
 ]
 interface Props {
   style: CSSProperties
+  defaultTab?: string
   toggleWindow: () => void
 }
 
 // eslint-disable-next-line react/prop-types
-const Window: React.FC<Props> = ({ style, toggleWindow }) => {
-  const [tabActiveKey, setTabActiveKey] = useState('0')
+const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
+  const [tabActiveKey, setTabActiveKey] = useState(defaultTab ?? '0')
   const logActionRef = useRef<LogAction>()
   const responseRef = useRef<Response>()
 

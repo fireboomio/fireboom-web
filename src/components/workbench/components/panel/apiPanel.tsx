@@ -27,7 +27,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const location = useLocation()
   const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
-  const [selectedKey, setSelectedKey] = useState<string>('')
+  // const [selectedKey, setSelectedKey] = useState<string>('')
+  // 多选状态，用于批量删除
+  const [multiSelection, setMultiSelection] = useState<Key[]>([])
   const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState('')
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
@@ -42,7 +44,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     return getNodeByKey(currEditingKey, treeData)
   }, [currEditingKey, treeData])
 
-  const selectedNode = useMemo(() => getNodeByKey(selectedKey, treeData), [selectedKey, treeData])
+  const selectedNode = useMemo(
+    () => getNodeByKey(multiSelection[0] as string, treeData),
+    [multiSelection, treeData]
+  )
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
@@ -52,7 +57,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   useEffect(() => {
     if (!location.pathname.match(/^\/workbench\/apimanage(?:\/\d*)?$/)) {
       isLocationPage.current = false
-      setSelectedKey('')
+      setMultiSelection([])
     } else {
       if (!isLocationPage.current) {
         // 如果是从其他页面跳转过来的，需要刷新一下尝试自动选中当前项
@@ -60,7 +65,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
           if (pathId) {
             const currentNode = getNodeById(pathId, treeData)
-            currentNode?.key && setSelectedKey(currentNode?.key)
+            if (currentNode) {
+              setMultiSelection([currentNode.key])
+            }
           }
         }
       }
@@ -85,10 +92,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     if (!panelOpened) return
 
     getFetcher<OperationResp[]>('/operateApi')
-      // .then(x => {
-      //   console.log('tree', convertToTree(x))
-      //   return x
-      // })
       .then(res => {
         const tree = convertToTree(res, '0')
 
@@ -98,7 +101,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (pathId) {
           const currentNode = getNodeById(pathId, tree)
           openApi(tree, pathId)
-          currentNode?.key && setSelectedKey(currentNode?.key)
+          if (currentNode) {
+            setMultiSelection([currentNode.key])
+          }
         }
       })
       .catch((err: Error) => {
@@ -133,25 +138,48 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // }, [selectedKey, action])
 
   const handleSelectTreeNode = useCallback(
-    (selectedKeys: Key[], { node }: { node: DirTreeNode }) => {
+    (selectedKeys: Key[], e: { node: DirTreeNode; nativeEvent: { shiftKey: boolean } }) => {
       ;(async () => {
+        let { node } = e
+        // 如果按下shift键，表示多选
+        if (e.nativeEvent.shiftKey) {
+          let selections
+          if (!multiSelection.includes(node.key)) {
+            selections = [...multiSelection, node.key]
+            setMultiSelection(selections)
+          } else {
+            selections = multiSelection.filter(x => x !== node.key)
+            setMultiSelection(selections)
+          }
+          if (selections.length !== 1) {
+            return
+          } else {
+            const targetNode = getNodeByKey(selections[0] as string, treeData)
+            if (!targetNode) {
+              return
+            }
+            node = targetNode
+          }
+        }
         if (!(await navCheck())) {
           return
         }
+        setMultiSelection([])
         if (node.isDir) {
           navigate(`/workbench/apimanage`, { replace: true })
         } else {
           navigate(`/workbench/apimanage/${node.id}`, { replace: true })
         }
-        if (selectedKeys[0] && selectedKeys[0] !== selectedKey) {
-          setSelectedKey(selectedKeys[0] as string)
+        if (node.key !== multiSelection[0]) {
+          setMultiSelection([node.key])
         } else {
-          setSelectedKey('')
+          setMultiSelection([])
         }
       })()
     },
-    [navCheck]
+    [navCheck, multiSelection]
   )
+  console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
     if (nodeData.legal) {
@@ -173,6 +201,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [])
 
   const handleAddNode = (action: ActionT) => {
+    if (multiSelection.length > 1) {
+      message.error('只能选择一个节点')
+      return
+    }
     if (!panelOpened) {
       setDelayAction(action)
       setPanelOpened(true)
@@ -180,7 +212,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
     setAction(action)
 
-    const { parent, curr } = getNodeFamily(selectedKey, treeData)
+    const { parent, curr } = getNodeFamily(multiSelection[0] as string, treeData)
 
     const node: DirTreeNode = {
       title: '',
@@ -228,6 +260,28 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       return false
     }
     return true
+  }
+
+  // 移除临时插入的节点
+  const removeNewNode = (tree?: DirTreeNode[]): DirTreeNode[] => {
+    if (tree) {
+      return tree.filter(x => {
+        if (x.children) {
+          x.children = removeNewNode(x.children)
+        }
+        return x.id !== undefined
+      })
+    } else {
+      setTreeData(
+        treeData.filter(x => {
+          if (x.children) {
+            x.children = removeNewNode(x.children)
+          }
+          return x.id !== undefined
+        })
+      )
+      return treeData
+    }
   }
 
   const handlePressEnter = () => {
@@ -451,7 +505,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 handlePressEnter()
               } else {
                 setCurrEditingKey(null)
-                setRefreshFlag(!refreshFlag)
+                removeNewNode()
               }
             }}
             onChange={handleInputChange}
@@ -514,57 +568,80 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         </>
       }
     >
-      <div className="flex flex-col justify-between h-full">
-        <div className={styles.treeContainer}>
-          {treeData.length ? (
-            <Tree
-              rootClassName="overflow-auto"
-              // @ts-ignore
-              titleRender={titleRender}
-              // draggable
-              showIcon
-              defaultExpandParent
-              expandedKeys={expandedKeys}
-              onExpand={setExpandedKeys}
-              // @ts-ignore
-              treeData={treeData}
-              selectedKeys={[selectedKey]}
-              // @ts-ignore
-              onSelect={handleSelectTreeNode}
-            />
-          ) : null}
-        </div>
-        <div className={styles.createRowWrapper}>
-          <div className={styles.createRow}>
-            <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
-              新建
-            </span>
-            <span> 或者 </span>
-            <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
-              批量新建
-            </span>
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item
+              onClick={() => {
+                setMultiSelection([])
+              }}
+            >
+              删除
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => {
+                setMultiSelection([])
+              }}
+            >
+              取消
+            </Menu.Item>
+          </Menu>
+        }
+        trigger={['contextMenu']}
+      >
+        <div className="flex flex-col justify-between h-full">
+          <div className={styles.treeContainer}>
+            {treeData.length ? (
+              <Tree
+                rootClassName="overflow-auto"
+                // @ts-ignore
+                titleRender={titleRender}
+                // draggable
+                showIcon
+                defaultExpandParent
+                expandedKeys={expandedKeys}
+                onExpand={setExpandedKeys}
+                // @ts-ignore
+                treeData={treeData}
+                multiple
+                selectedKeys={multiSelection}
+                // @ts-ignore
+                onSelect={handleSelectTreeNode}
+              />
+            ) : null}
           </div>
-          <div
-            className={styles.graphqlEntry}
-            onClick={() => {
-              const current = new URL(window.location.href)
-              if (config.apiHost) {
-                window.open(
-                  `${current.protocol}//localhost:${current.port}/app/main/graphql`,
-                  '_blank'
-                )
-              } else {
-                window.open(
-                  `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
-                  '_blank'
-                )
-              }
-            }}
-          >
-            <img alt="" src="/assets/icon/graphql2.svg" />
+          <div className={styles.createRowWrapper}>
+            <div className={styles.createRow}>
+              <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
+                新建
+              </span>
+              <span> 或者 </span>
+              <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+                批量新建
+              </span>
+            </div>
+            <div
+              className={styles.graphqlEntry}
+              onClick={() => {
+                const current = new URL(window.location.href)
+                if (config.apiHost) {
+                  window.open(
+                    `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                    '_blank'
+                  )
+                } else {
+                  window.open(
+                    `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
+                    '_blank'
+                  )
+                }
+              }}
+            >
+              <img alt="" src="/assets/icon/graphql2.svg" />
+            </div>
           </div>
         </div>
-      </div>
+      </Dropdown>
       <Modal
         title="API全局设置"
         open={isModalVisible}
