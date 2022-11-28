@@ -77,7 +77,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }, [syncEditorFlag])
 
   // const ctx = useContext(PrismaSchemaContext)
-  const { handleClickEntity, inEdit } = panel || {}
+  const { handleClickEntity, inEdit, handleSetInEdit } = panel || {}
 
   const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
   id        Int       @id @default(autoincrement())
