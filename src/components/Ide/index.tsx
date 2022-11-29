@@ -10,7 +10,9 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 
 import { dependLoader } from '@/components/Ide/dependLoader'
+import getDefaultCode from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { isInputKey } from '@/lib/helpers/utils'
 import {
   getHook,
   getTypes,
@@ -130,43 +132,46 @@ const IdeContainer: FC<Props> = props => {
   const [localDepend, setLocalDepend] = useState<string[]>([])
   const { config: globalConfig } = useContext(ConfigContext)
 
-  // 获取hook信息
-  const lastHookPath = useRef<string>()
-  const currentDefault = useRef<string>()
+  const [hookPath, setHookPath] = useState(props.hookPath)
+  // 将hookPath保存到本地， 用以支持动态更换
   useEffect(() => {
-    if (props.hookPath !== lastHookPath.current) {
-      currentDefault.current = props.defaultCode
-      lastHookPath.current = props.hookPath
-      void getHook<HookInfo>(props.hookPath).then(data => {
-        // 如果data中的script为空, 就用defaultCode
-        if ((data.script === '' || data.script === null) && currentDefault.current) {
-          setPayload({
-            type: 'passive',
-            status: AutoSaveStatus.DEFAULT
-          })
-          data.script = currentDefault.current || ''
-        } else {
-          setPayload({
-            type: 'passive',
-            status: AutoSaveStatus.LOADED
-          })
-        }
-        setHookInfo(data)
-      })
-    } else {
-      currentDefault.current = props.defaultCode
-      if ((hookInfo?.script === '' || hookInfo?.script === null) && currentDefault.current) {
+    setHookPath(hookPath)
+  }, [props.hookPath])
+
+  // 获取hook信息
+  useEffect(() => {
+    void getHook<HookInfo>(hookPath).then(async data => {
+      const defaultCode = await resolveDefaultCode(hookPath)
+      // 如果data中的script为空, 就用defaultCode
+      if (data.script === '' || (data.script === null && defaultCode)) {
         setPayload({
           type: 'passive',
           status: AutoSaveStatus.DEFAULT
         })
-        setHookInfo({
-          ...hookInfo,
-          script: currentDefault.current || ''
+        data.script = defaultCode
+      } else {
+        setPayload({
+          type: 'passive',
+          status: AutoSaveStatus.LOADED
         })
       }
+      setHookInfo(data)
+    })
+  }, [hookPath])
+
+  const resolveDefaultCode = async (path: string): string => {
+    const list = path.split('/')
+    const name = list.pop()
+    const apiName = list.pop() as string
+    if (path.startsWith('global/')) {
+      return getDefaultCode(`global.${name}`)
+    } else {
+      const tmplPath = `hook.WithInput.${name}`
+      return getDefaultCode(tmplPath).then((res: string) => {
+        return res.replaceAll('$HOOK_NAME$', apiName)
+      })
     }
-  }, [props.defaultCode, props.hookPath])
+  }
 
   useEffect(() => {
     // 监听键盘的ctrl+s事件
@@ -242,6 +247,11 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
     setMonaco(monaco)
+    monacoEditor.onKeyUp(e => {
+      if (isInputKey(e.keyCode)) {
+        monacoEditor.trigger('', 'editor.action.triggerSuggest', '')
+      }
+    })
   }
 
   // 保存内容(依赖和脚本)
@@ -261,7 +271,7 @@ const IdeContainer: FC<Props> = props => {
       })
       // 保存脚本内容
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      void saveHookScript(props.hookPath, editor.getValue()).then(() => {
+      void saveHookScript(hookPath, editor.getValue()).then(() => {
         setPayload({
           type,
           status: AutoSaveStatus.SAVED
@@ -277,7 +287,7 @@ const IdeContainer: FC<Props> = props => {
     const dependList = Object.entries(depend).map(([name, version]) => ({ name, version }))
     // 保存依赖
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await saveHookDepend(props.hookPath, dependList)
+    await saveHookDepend(hookPath, dependList)
     if (hookInfo) {
       setHookInfo({
         ...hookInfo,
@@ -286,6 +296,10 @@ const IdeContainer: FC<Props> = props => {
     }
   }
 
+  // 选择hooks
+  const selectHook = (hookPath: string) => {
+    setHookPath(hookPath)
+  }
   // dependchange回调
   const dependChange = (depend: Depend) => {
     // 在typings类中的原型上调用setVersions
@@ -327,7 +341,6 @@ const IdeContainer: FC<Props> = props => {
 
   // 代码改变回调
   const codeChange = (value?: string) => {
-    console.log('===111')
     if (hookInfo?.script === value) return
     if (hookInfo) {
       setHookInfo({
@@ -335,13 +348,11 @@ const IdeContainer: FC<Props> = props => {
         script: value ?? ''
       })
     }
-    console.log('===222')
     if (
       ![AutoSaveStatus.EDIT, AutoSaveStatus.SAVEING].includes(
         savePayload.status ?? AutoSaveStatus.LOADED
       )
     ) {
-      console.log('===333')
       setPayload({
         type: 'passive',
         status: AutoSaveStatus.EDIT
@@ -360,8 +371,8 @@ const IdeContainer: FC<Props> = props => {
   // 处理点击调试按钮
   const handleDebug = async (json: Input) => {
     // 保存input内容
-    void (await saveHookInput(props.hookPath, json))
-    const result = await runHook<RunHookResponse>(props.hookPath, {
+    void (await saveHookInput(hookPath, json))
+    const result = await runHook<RunHookResponse>(hookPath, {
       depend: hookInfo?.depend ?? [],
       script: hookInfo?.script ?? '',
       scriptType: 'typescript',
@@ -387,7 +398,8 @@ const IdeContainer: FC<Props> = props => {
         {/* 头部 */}
         <IdeHeaderContainer
           hideSwitch={props.hideSwitch ?? false}
-          hookPath={props.hookPath}
+          hookPath={hookPath}
+          hookInfo={hookInfo}
           hostUrl={globalConfig.apiHost}
           {...{
             savePayload,
@@ -399,7 +411,7 @@ const IdeContainer: FC<Props> = props => {
             onToggleHook: async value => {
               hookInfo && setHookInfo({ ...hookInfo, switch: value })
               props.onChangeEnable?.()
-              await updateHookSwitch(props.hookPath, value)
+              await updateHookSwitch(hookPath, value)
             },
             onFullScreen: () => {
               setFullScreen(!fullScreen)
@@ -426,6 +438,7 @@ const IdeContainer: FC<Props> = props => {
             <IdeDependList
               {...{
                 dependList: hookInfo?.depend || [],
+                onSelectHook: selectHook,
                 onChangeDependVersion: dependChange,
                 onFold: dependFold,
                 onDependChange: dependChange,

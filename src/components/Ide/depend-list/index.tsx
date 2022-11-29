@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { LoadingOutlined } from '@ant-design/icons'
 import type { SelectProps } from 'antd'
-import { Select, Spin } from 'antd'
+import { Select, Spin, Tree } from 'antd'
 import { debounce } from 'lodash'
+import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { getDependList, getDependVersions } from '@/lib/service/depend'
@@ -14,6 +15,9 @@ import iconRefresh from '../assets/refresh.svg'
 import iconRefreshDepend from '../assets/refresh-depend.svg'
 import iconUpAndDown from '../assets/up-and-down.svg'
 import type { Depend } from '../index'
+import iconFile from './assets/file.svg'
+import iconFold from './assets/fold.svg'
+import iconFoldOpen from './assets/fold-open.svg'
 import ideStyles from './index.module.less'
 
 export interface DebounceSelectProps<ValueType = any>
@@ -116,6 +120,8 @@ type DependListProps = {
   onRefreshLocalDepend?: () => void
   // 刷新外部依赖
   onDependRefresh?: (depend: Record<string, string>) => void
+  // 刷新外部依赖
+  onSelectHook?: (hookPath: string) => void
 }
 
 // 依赖列表
@@ -229,7 +235,6 @@ const DependList = (props: DependListProps) => {
     })
     // 默认设置一个null作为version, 为null的version其代表了暂时不显示
     dependList.set(name, null)
-    console.log('aha', dependList)
     setDependList(new Map([...dependList]))
   }
 
@@ -246,8 +251,70 @@ const DependList = (props: DependListProps) => {
     setDependList(new Map([...dependList]))
   }
 
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([])
+  const titleRender = (nodeData: any) => {
+    return (
+      <div
+        key={nodeData.name}
+        onClick={() => {
+          console.log(nodeData)
+          if (nodeData.path) {
+            props.onSelectHook?.(nodeData.path)
+          }
+        }}
+      >
+        <img
+          alt=""
+          className="w-3 mr-2"
+          src={
+            nodeData.children
+              ? expandedKeys.includes(nodeData.key)
+                ? iconFoldOpen
+                : iconFold
+              : iconFile
+          }
+        />
+        <span className="text-default">{nodeData.name}</span>
+      </div>
+    )
+  }
+  const treeData = [
+    {
+      key: '[0]',
+      name: 'parent 1',
+      children: [
+        {
+          key: '[0].chindren[0]',
+          name: 'mockResolve',
+          path: 'operations/CreateOneuser/mockResolve'
+        },
+        { key: '[0].chindren[1]', name: 'preResolve', path: 'operations/CreateOneuser/preResolve' }
+      ]
+    }
+  ]
+
   return (
     <div className={`${ideStyles['ide-container-depend-list']}`}>
+      <div className={ideStyles.treeContainer}>
+        <div className="title text-14px select-none w-full">文件</div>
+        <Tree
+          rootClassName="overflow-auto"
+          // @ts-ignore
+          titleRender={titleRender}
+          // draggable
+          switcherIcon={false}
+          defaultExpandParent
+          expandAction="click"
+          // expandedKeys={[]}
+          // @ts-ignore
+          onExpand={setExpandedKeys}
+          treeData={treeData}
+          // selectedKeys={[]}
+          // @ts-ignore
+          onSelect={() => {}}
+        />
+      </div>
+      <div className="bg-[rgba(95,98,105,0.1)] mx-10px h-1px mb-10px"></div>
       <div className="title-top flex justify-between items-center">
         <div className="title text-1xl select-none">全局依赖</div>
         <span
@@ -346,7 +413,7 @@ const DependList = (props: DependListProps) => {
           )
         })}
       </div>
-      <div className="p-14px">
+      <div className="p-10px">
         <div className="text-default font-500 flex cursor-pointer">
           <div
             className="w-4 h-5 bg-red flex items-center justify-center mr-1"

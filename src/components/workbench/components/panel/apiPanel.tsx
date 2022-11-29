@@ -573,7 +573,25 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <Menu>
             <Menu.Item
               onClick={() => {
+                if (!multiSelection.length) {
+                  message.info('请选择要删除的API')
+                  return
+                }
                 setMultiSelection([])
+                Modal.confirm({
+                  title: '是否确认删除选中的API？',
+                  onOk: () => {
+                    const ids = multiSelection
+                      .map(x => getNodeByKey(String(x), treeData)?.id)
+                      .filter(x => x)
+                    requests.post('operateApi/batchDelete', { ids }).then(() => {
+                      message.success('删除成功')
+                      setRefreshFlag(!refreshFlag)
+                    })
+                    // setEditFlag(false)
+                    // resolve(true)
+                  }
+                })
               }}
             >
               删除
