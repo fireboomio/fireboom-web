@@ -26,4 +26,8 @@ const formatDate = (date: string): string => {
   return moment(date).format(DATETIME_FORMAT)
 }
 
-export { capitalize, formatBytes, formatDate, isEmpty }
+const isInputKey = (keyCode: number): boolean => {
+  return keyCode >= 48 && keyCode <= 90
+}
+
+export { capitalize, formatBytes, formatDate, isEmpty, isInputKey }

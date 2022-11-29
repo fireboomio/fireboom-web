@@ -75,8 +75,13 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     localStorage.setItem(ModeKey, mode)
   }, [mode])
   useEffect(() => {
-    setEditorContent(printSchema({ type: 'schema', list: blocks }))
+    // 此处刷新会导致编辑器内容丢失
+    // setEditorContent(printSchema({ type: 'schema', list: blocks }))
   }, [blocks])
+  useEffect(() => {
+    // 此处刷新会导致编辑器内容丢失
+    setEditorContent(printSchema({ type: 'schema', list: blocks }))
+  }, [dbSourceId])
 
   useEffect(() => {
     setTitleValue(currentEntity?.name || '')

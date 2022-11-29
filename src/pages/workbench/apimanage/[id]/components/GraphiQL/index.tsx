@@ -214,9 +214,40 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     const variablesToType = collectVariables(schema!, schemaAST!)
     const jsonSchema = getVariablesJSONSchema(variablesToType)
     delete jsonSchema?.$schema
+
+    // 完整schema
+    const schemaList = [
+      {
+        uri: 'operation.json',
+        fileMatch: ['operation.json'],
+        schema: jsonSchema
+      }
+    ]
+    Object.keys(jsonSchema.properties!).forEach(key => {
+      const subSchema = jsonSchema.properties![key] as any
+      if (subSchema.type === 'array') {
+        schemaList.push({
+          uri: `operation_${key}.json`,
+          fileMatch: [`operation_${key}.json`],
+          schema: {
+            $ref: subSchema.items.$ref,
+            description: subSchema.description,
+            definitions: jsonSchema.definitions
+          }
+        })
+      } else {
+        schemaList.push({
+          uri: `operation_${key}.json`,
+          fileMatch: [`operation_${key}.json`],
+          schema: { ...subSchema, definitions: jsonSchema.definitions }
+        })
+      }
+    })
+    console.log('====,,', schemaList)
     monaco?.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
-      schemas: [{ uri: 'operation.json', fileMatch: ['operation.json'], schema: jsonSchema }]
+      schemas: schemaList
+      // schemas: [{ uri: 'operation.json', fileMatch: ['operation.json'], schema: jsonSchema }]
     })
   }, [schemaAST])
 
