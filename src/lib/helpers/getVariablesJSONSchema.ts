@@ -34,6 +34,13 @@ export type JSONSchemaOptions = {
    */
   useMarkdownDescription?: boolean
 }
+export type JSONSchemaRunningOptions = {
+  /**
+   * whether to append a non-json schema valid 'markdownDescription` for `monaco-json`
+   */
+  useMarkdownDescription?: boolean
+  defMap: Record<string, JSONSchema6Definition>
+}
 
 export const defaultJSONSchemaOptions = {
   useMarkdownDescription: false
@@ -97,10 +104,10 @@ class Marker {
   private set = new Set<string>()
   mark(name: string): boolean {
     if (this.set.has(name)) {
-      return false
+      return true
     } else {
       this.set.add(name)
-      return true
+      return false
     }
   }
 }
@@ -114,7 +121,7 @@ class Marker {
  */
 function getJSONSchemaFromGraphQLType(
   type: GraphQLInputType | GraphQLInputField,
-  options?: JSONSchemaOptions,
+  options?: JSONSchemaRunningOptions,
   definitionMarker: Marker = new Marker()
 ): DefinitionResult {
   let required = false
@@ -167,6 +174,8 @@ function getJSONSchemaFromGraphQLType(
     }
   }
   if (isInputObjectType(type) && definitionMarker.mark(type.name)) {
+    definition.$ref = `#/definitions/${type.name}`
+  } else if (isInputObjectType(type)) {
     definition.$ref = `#/definitions/${type.name}`
     const fields = type.getFields()
 
@@ -297,10 +306,14 @@ export function getVariablesJSONSchema(
     required: []
   }
 
+  const runningOptions: JSONSchemaRunningOptions = { ...options, defMap: {} }
   if (variableToType) {
     // I would use a reduce here, but I wanted it to be readable.
     Object.entries(variableToType).forEach(([variableName, type]) => {
-      const { definition, required, definitions } = getJSONSchemaFromGraphQLType(type, options)
+      const { definition, required, definitions } = getJSONSchemaFromGraphQLType(
+        type,
+        runningOptions
+      )
       jsonSchema.properties[variableName] = definition
       if (required) {
         jsonSchema.required?.push(variableName)
