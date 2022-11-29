@@ -74,6 +74,7 @@ export default function APIEditorContainer() {
   }))
   const editingContent = useRef(query)
   const contentUpdateTimeout = useRef<number>()
+  const isEditingRef = useRef(false)
 
   const tabs = useMemo(() => {
     return (
@@ -99,15 +100,33 @@ export default function APIEditorContainer() {
     )
   }, [operationType, params.id])
 
+  useEffect(() => {
+    const onKeydown = () => {
+      isEditingRef.current = true
+    }
+    const onKeyup = () => {
+      isEditingRef.current = false
+    }
+    document.addEventListener('keydown', onKeydown)
+    document.addEventListener('keyup', onKeyup)
+    return () => {
+      document.removeEventListener('keydown', onKeydown)
+      document.removeEventListener('keyup', onKeyup)
+    }
+  }, [])
+
   const onEditQuery = useCallback((v: string) => {
     editingContent.current = v
     if (contentUpdateTimeout.current) {
       clearTimeout(contentUpdateTimeout.current)
     }
-    // 节流设置值
-    contentUpdateTimeout.current = setTimeout(() => {
-      setQuery(editingContent.current)
-    }, 1500)
+    // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
+    if (!isEditingRef.current) {
+      // 节流设置值
+      contentUpdateTimeout.current = setTimeout(() => {
+        setQuery(editingContent.current)
+      }, 1500)
+    }
   }, [])
 
   const editor = useMemo(() => {

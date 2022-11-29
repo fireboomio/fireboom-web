@@ -1,6 +1,6 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
 import stackblizSDK from '@stackblitz/sdk'
-import { Button, Select, Switch } from 'antd'
+import { Button, Checkbox, Modal, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
@@ -39,6 +39,8 @@ interface DebugResp {
   dependVersion: Record<string, string>
 }
 
+const stackblitzRememberKey = 'stackblitz.remember'
+
 const IdeHeaderContainer: FC<Props> = props => {
   // 保存状态text文案
   const [saveStatusText, setSaveStatusText] = useState('')
@@ -46,6 +48,8 @@ const IdeHeaderContainer: FC<Props> = props => {
   const [toggleLoading, setToggleLoading] = useState(false)
   // 在线调试loading
   const [debugOpenLoading, setDebugOpenLoading] = useState(false)
+  // 是否确认下次不再提示
+  const [stackblitzRemember, setStackblitzRemember] = useState(false)
 
   useEffect(() => {
     let _text = ''
@@ -117,13 +121,10 @@ const IdeHeaderContainer: FC<Props> = props => {
   "name": "wundergraph-hooks",
   "version": "1.0.0",
   "scripts": {
-    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts --host ${
-      props.hostUrl
-    }"
+    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts"
   },
   "dependencies": {
     "@types/node": "^14.14.37",
-    "axios": "^1.1.3",
     "fireboom-wundersdk": "0.98.1-r5",
     "graphql": "^16.3.0",
     "typescript": "^4.1.3",
@@ -195,6 +196,10 @@ const IdeHeaderContainer: FC<Props> = props => {
         td {
           border-top: 1px solid #e8e8e8;
         }
+        td:nth-child(2) {
+          font-size: 12px;
+          word-break: break-all;
+        }
         td:last-child > .json-formatter-row {
           overflow-x: auto;
         }
@@ -229,7 +234,8 @@ const IdeHeaderContainer: FC<Props> = props => {
               args.method
             }]\${args.url}</td><td></td><td></td><td></td>\`;
             if (args.query) {
-              $tr.querySelector('td:nth-child(3)').appendChild(new JSONFormatter(args.query).render());
+              const query = typeof args.query === 'string' ? JSON.parse(args.query) : args.query
+              $tr.querySelector('td:nth-child(3)').appendChild(new JSONFormatter(query).render());
             }
             if (args.body) {
               $tr.querySelector('td:nth-child(4)').appendChild(new JSONFormatter(args.body).render());
@@ -305,6 +311,32 @@ const IdeHeaderContainer: FC<Props> = props => {
       .catch(() => setDebugOpenLoading(false))
   }, [])
 
+  const localDebug = useCallback(() => {
+    const remember = localStorage.getItem(stackblitzRememberKey)
+    if (remember) {
+      window.open('https://stackblitz.com/local')
+    } else {
+      Modal.info({
+        title: '在线调试使用指南',
+        width: 584,
+        content: <>
+        <img src="https://www.litmus.com/wp-content/uploads/2021/02/motion-tween-example.gif" className='w-120' />
+        <div className='mt-2'>
+          <Checkbox onChange={e => {
+            setStackblitzRemember(e.target.checked)
+          }}>下次不再提醒</Checkbox>
+        </div>
+        </>,
+        onOk() {
+          if (stackblitzRemember) {
+            localStorage.setItem(stackblitzRememberKey, '1')
+          }
+          window.open('https://stackblitz.com/local')
+        }
+      })
+    }
+  }, [])
+
   // 上一次已保存的时间
   return (
     <div className={`${ideStyles['ide-container-header']} flex justify-start items-center`}>
@@ -322,11 +354,14 @@ const IdeHeaderContainer: FC<Props> = props => {
       </div>
       <div className="flex flex-1 ide-container-header-right justify-between">
         <div className="flex items-center">
-          <Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>
+          <Button size="small" className="ml-4" onClick={localDebug}>
             调试
           </Button>
+          <Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>
+            在线调试
+          </Button>
           <Button
-            className="ml-2"
+            className="ml-4"
             onClick={props.onSave}
             size="small"
             disabled={props.savePayload.status !== AutoSaveStatus.EDIT}
