@@ -31,10 +31,13 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   const [values, setValues] = useState<Record<string, InputValueType>>({})
   const valuesRef = useRef<Record<string, InputValueType>>({})
 
+  
   const parsed = useMemo(() => {
     return parseParameters(props.arguments)
   }, [props.arguments])
 
+  const hasDirective = parsed?.some(item => item.directives?.length)
+  
   const updateValue = (v: InputValueType, key: string) => {
     const target = {
       ...values,
@@ -88,6 +91,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             if (val) {
               val = (val as SingleInputValueType[]).map(vItem => {
                 if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+                  if (typeof vItem === 'object') {
+                    return vItem
+                  }
                   try {
                     return JSON.parse(vItem as string)
                   } catch (error) {
@@ -168,7 +174,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             <th style={{ width: '20%', maxWidth: '112px' }}>类型</th>
             <th style={{ width: '56px' }}>必填</th>
             <th>指令</th>
-            <th style={{ width: '25%', maxWidth: '200px' }}>输入值</th>
+            <th style={{ width: hasDirective ? '25%' : '45%', minWidth: '200px' }}>输入值</th>
           </tr>
         </thead>
         <tbody>

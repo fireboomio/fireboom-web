@@ -121,7 +121,7 @@ export default function APIEditorContainer() {
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema])
+  }, [schema, query])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -173,7 +173,7 @@ export default function APIEditorContainer() {
             />
           </div>
           {editor}
-          <div className="h-full flex-shrink-0 w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
+          <div className="h-full w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
         </div>
       </div>
     </>
