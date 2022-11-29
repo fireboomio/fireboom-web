@@ -27,7 +27,7 @@ const formatDate = (date: string): string => {
 }
 
 const isInputKey = (keyCode: number): boolean => {
-  return keyCode >= 48 && keyCode <= 90
+  return (keyCode >= 48 && keyCode <= 90) || keyCode === 3
 }
 
 export { capitalize, formatBytes, formatDate, isEmpty, isInputKey }
