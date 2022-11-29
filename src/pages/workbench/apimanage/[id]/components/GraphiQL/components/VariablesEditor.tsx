@@ -4,6 +4,7 @@ import Editor, { loader } from '@monaco-editor/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { useDebounceEffect } from '@/hooks/debounce'
+import { isInputKey } from '@/lib/helpers/utils'
 // import testData from './testdata'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
@@ -71,10 +72,8 @@ const VariablesEditor = (props: VariablesEditorProps) => {
   useEffect(() => {
     if (props.apiID) {
       const storeKey = `_api_args_${props.apiID}`
-      console.log('storeKey', storeKey)
       try {
         const savedStr = localStorage.getItem(storeKey)
-        console.log('savedStr', savedStr)
         if (savedStr) {
           const saved = savedStr
           try {
@@ -118,11 +117,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
             editor.setValue(valuesRef.current)
           }
           editor.onKeyUp(e => {
-            const position = editor.getPosition()
-            // @ts-ignore
-            const text = editor.getModel().getLineContent(position.lineNumber).trim()
-            // @ts-ignore
-            if (e.keyCode === monacoRef.current.KeyCode.Enter && !text) {
+            if (isInputKey(e.keyCode)) {
               editor.trigger('', 'editor.action.triggerSuggest', '')
             }
           })

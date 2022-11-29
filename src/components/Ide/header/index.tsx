@@ -382,7 +382,7 @@ const IdeHeaderContainer: FC<Props> = props => {
               <div>
                 <Switch
                   checked={props.disabled === false}
-                  disabled={toggleLoading}
+                  disabled={toggleLoading || props.savePayload.status === AutoSaveStatus.DEFAULT}
                   onChange={onToggleHookChange}
                   unCheckedChildren="关"
                   checkedChildren="开"
