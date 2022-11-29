@@ -55,8 +55,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const newEntityId = getNextId()
 
   let initMode = localStorage.getItem(ModeKey)
-  if (initMode !== 'editor' && initMode !== 'design') {
-    initMode = 'design'
+  if (initMode !== 'editor' && initMode !== 'designer') {
+    initMode = 'designer'
   }
   const [mode, setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
   // 编辑器当前内容

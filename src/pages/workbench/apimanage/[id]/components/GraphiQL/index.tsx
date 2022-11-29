@@ -243,7 +243,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         })
       }
     })
-    console.log('====,,', schemaList)
     monaco?.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       schemas: schemaList
