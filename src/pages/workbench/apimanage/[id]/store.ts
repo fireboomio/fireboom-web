@@ -154,7 +154,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       return undefined
     },
     get saved() {
-      return get().lastSavedQuery === get().query
+      return !get().lastSavedQuery || get().lastSavedQuery === get().query
     }
   },
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => {

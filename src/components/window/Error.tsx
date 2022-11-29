@@ -30,9 +30,9 @@ export default function Error() {
           res[key].forEach((item: any) => {
             if (key === 'datasource') {
               if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(item.type)) {
-                item.icon = `/assets/icons/${item.type}.svg`
+                item.icon = `/assets/icon/${item.type}.svg`
               } else {
-                item.icon = `/assets/icons/db-other.svg`
+                item.icon = `/assets/icon/db-other.svg`
               }
             } else if (['api', 'storage'].includes(key)) {
               item.icon = '/assets/icon/file.svg'
