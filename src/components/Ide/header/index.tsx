@@ -11,7 +11,7 @@ import iconCloud from '../assets/cloud.svg'
 import iconFullscreen from '../assets/fullscreen.svg'
 import iconFullscreen2 from '../assets/fullscreen2.svg'
 import iconHelp from '../assets/help.svg'
-import type { AutoSavePayload } from './../index'
+import type { AutoSavePayload, HookInfo } from './../index'
 import { AutoSaveStatus } from './../index'
 import ideStyles from './index.module.less'
 import { useStackblitz } from '@/hooks/stackblitz'
@@ -33,6 +33,8 @@ interface Props {
   onToggleHook?: (value: boolean) => Promise<void>
   // 点击手动保存按钮
   onSave?: () => void
+  // hook内容信息
+  hookInfo?: HookInfo
 }
 
 interface DebugResp {
@@ -169,7 +171,11 @@ const IdeHeaderContainer: FC<Props> = props => {
               <div>
                 <Switch
                   checked={props.disabled === false}
-                  disabled={toggleLoading || props.savePayload.status === AutoSaveStatus.DEFAULT}
+                  disabled={
+                    toggleLoading ||
+                    props.savePayload.status === AutoSaveStatus.DEFAULT || // 示例代码状态下不允许启用
+                    !props.hookInfo?.script.trim() // 代码内容为空时不允许启用
+                  }
                   onChange={onToggleHookChange}
                   unCheckedChildren="关"
                   checkedChildren="开"
