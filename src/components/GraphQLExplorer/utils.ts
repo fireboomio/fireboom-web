@@ -1,7 +1,6 @@
-import type { GraphQLFieldMap } from 'graphql'
 import type { CSSProperties } from 'react'
 
-export function convertGraphiQLFieldMapToArray(map: undefined | GraphQLFieldMap<any, any>) {
+export function convertMapToArray<T extends Record<string | number, any>>(map?: T): (T extends Record<any, infer I> ? I : never)[] {
   return map ? Object.keys(map).map(key => map[key]) : []
 }
 

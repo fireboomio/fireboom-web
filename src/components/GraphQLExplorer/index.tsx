@@ -1,7 +1,9 @@
-import type { GraphQLFieldMap, GraphQLSchema } from 'graphql'
+import type { GraphQLField, GraphQLFieldMap, GraphQLSchema } from 'graphql'
 import { useMemo, useState } from 'react'
 
 import ExplorerFilter from './ExplorerFilter'
+import ResultField from './ResultField'
+import { arraySort, convertMapToArray } from './utils'
 import { MultipleFieldViews } from './ViewFactory'
 
 const filters = [
@@ -32,6 +34,7 @@ const GraphiqlExplorer = ({
   const [selectedDataSource, setSeletedDataSource] = useState<string>()
   const [selectedType, setSelectedType] = useState<FilterType>('')
 
+  // 按照类型过滤 按照分类筛选
   const visibleFields = useMemo(() => {
     let fields: GraphQLFieldMap<any, any> | undefined
     if (selectedType === 'query') {
@@ -61,9 +64,15 @@ const GraphiqlExplorer = ({
     return fields
   }, [schema, selectedType, selectedDataSource])
 
+  const fields = useMemo(() => {
+    if (visibleFields) {
+      return arraySort(convertMapToArray(visibleFields)) as GraphQLField<any, any>[]
+    }
+    return []
+  }, [visibleFields])
+
   return (
     <div className="flex flex-col h-full bg-[rgba(135,140,153,0.03)] min-w-64 w-full">
-      {/** eslint-disable-next-line */}
       <ExplorerFilter
         filters={filters}
         isLoading={isLoading}
@@ -81,7 +90,9 @@ const GraphiqlExplorer = ({
             fontFamily: 'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace'
           }}
         >
-          <MultipleFieldViews map={visibleFields} sort />
+          {fields.map(field => (
+            <ResultField key={field.name} field={field} />
+          ))}
         </div>
       )}
     </div>
