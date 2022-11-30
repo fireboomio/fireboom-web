@@ -1,6 +1,7 @@
 import { EditFilled } from '@ant-design/icons'
 import { Breadcrumb, Input, message, Switch, Tooltip } from 'antd'
 import copy from 'copy-to-clipboard'
+import type { OperationDefinitionNode } from 'graphql'
 import { Kind, OperationTypeNode } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
@@ -13,14 +14,17 @@ import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = () => {
-  const { apiDesc, schemaAST, updateAPI, updateContent, saved, query } = useAPIManager(state => ({
-    apiDesc: state.apiDesc,
-    schemaAST: state.schemaAST,
-    updateAPI: state.updateAPI,
-    updateContent: state.updateContent,
-    saved: state.computed.saved,
-    query: state.query
-  }))
+  const { apiDesc, schemaAST, updateAPI, updateContent, saved, query, apiID } = useAPIManager(
+    state => ({
+      apiDesc: state.apiDesc,
+      schemaAST: state.schemaAST,
+      updateAPI: state.updateAPI,
+      updateContent: state.updateContent,
+      saved: state.computed.saved,
+      apiID: state.apiID,
+      query: state.query
+    })
+  )
   const workbenchCtx = useContext(WorkbenchContext)
   const { config } = useContext(ConfigContext)
 
@@ -118,14 +122,45 @@ const APIHeader = () => {
       url.port = config.apiPort
       link = url.toString()
     }
-    let query = []
-    if (apiDesc?.liveQuery) {
-      query.push('liveQuery=true')
+    let query: string[] = []
+    let argValueMap: Record<string, any> = {}
+    try {
+      argValueMap = JSON.parse(localStorage.getItem(`_api_args_${apiID}`) || '{}')
+    } catch (e) {
+      // ignore
     }
-    if (query.length) {
-      link += '?' + query.join('&')
+    const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
+    const argNames = (def?.variableDefinitions || []).map(item => item.variable.name.value)
+    const isQuery = apiDesc?.operationType === 'queries'
+    if (isQuery) {
+      argNames.forEach((name, index) => {
+        let value = argValueMap[name] || ''
+        if (typeof value !== 'string') {
+          value = JSON.stringify(value)
+        }
+        query.push(`${name}=${value}`)
+      })
+
+      if (apiDesc?.liveQuery) {
+        query.push('liveQuery=true')
+      }
+      if (query.length) {
+        link += '?' + query.join('&')
+      }
+      copy(link)
+    } else {
+      const data: Record<string, any> = {}
+      argNames.forEach((name, index) => {
+        data[name] = argValueMap[name] || null
+      })
+      const curl = `curl '${link}' \\
+  -X POST  \\
+  -H 'Content-Type: application/json' \\
+  --data-raw '${JSON.stringify(data)}' \\
+  --compressed`
+      copy(curl)
     }
-    copy(link)
+
     message.success('URL 地址已复制')
   }
 
