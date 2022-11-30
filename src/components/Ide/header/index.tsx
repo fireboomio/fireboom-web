@@ -97,7 +97,7 @@ const IdeHeaderContainer: FC<Props> = props => {
 
   // 在线stackbliz调试
   const onlineDebug = useCallback(() => {
-    openHookServer(`.wundergraph/new_hook/${props.hookPath}.ts:L6`)
+    openHookServer(`${props.hookPath}.ts:L3`)
   }, [])
 
   const localDebug = useCallback(() => {

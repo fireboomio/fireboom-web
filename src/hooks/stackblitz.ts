@@ -30,17 +30,13 @@ export function useStackblitz() {
                   /@wundergraph\/sdk/g,
                   'fireboom-wundersdk'
                 )
-                // if (fileName === '.wundergraph/wundergraph.server.ts') {
-                //   // 注入socket
-                //   obj[fileName] = obj[fileName].replace('export default', `import { initSocket } from './socket'\nexport default`) + '\ninitSocket()\n'
-                // }
                 return obj
               }, {}),
               'package.json': `{
   "name": "wundergraph-hooks",
   "version": "1.0.0",
   "scripts": {
-    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=.wundergraph ts-node .wundergraph/wundergraph.server.ts"
+    "start": "INDEX_PAGE=./ START_HOOKS_SERVER=true WG_ABS_DIR=. ts-node wundergraph.server.ts"
   },
   "dependencies": {
     "@types/node": "^14.14.37",
@@ -73,12 +69,12 @@ export function useStackblitz() {
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "baseUrl": "./",
     "paths": {
-      "baseUrl": ["./"],
-      "generated/*": ["./.wundergraph/generated/*"]
+      "generated/*": ["./generated/*"]
     }
   },
-  "include": [".wundergraph/*.ts"]
+  "include": ["*.ts"]
 }`,
               'index.html': `<!DOCTYPE html>
   <html lang="en">
