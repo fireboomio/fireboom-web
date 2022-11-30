@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Switch } from 'antd'
+import { Button, Form, Input, Select, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -25,7 +25,6 @@ function AuthMainSetting() {
   const [redirectURLsShow, setRedirectURLsShow] = useImmer(false)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg = /^(http(s?)|):\/\/(.+)$/
   useEffect(() => {
     void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
       setRedirectURLs(res)
@@ -61,68 +60,80 @@ function AuthMainSetting() {
               <Form.List name="redirectURLs">
                 {(fields, { add, remove }, { errors }) => (
                   <>
-                    {fields.map((field, index) => (
-                      <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                        <Form.Item
-                          {...field}
-                          validateTrigger={['onChange', 'onBlur']}
-                          noStyle
-                          rules={[
-                            {
-                              pattern: urlReg,
-                              message: '请填写规范域名'
-                            }
-                          ]}
-                        >
-                          <div>
-                            <div>{'域名' + (index + 1).toString() + ':'}</div>
-                            <Input
-                              placeholder="请输入域名"
-                              style={{ width: '60%' }}
-                              defaultValue={redirectURLs[index]}
-                              onBlur={() => {
-                                void requests
-                                  .post('/auth/redirectUrl', {
-                                    redirectURLs: form.getFieldValue(
-                                      'redirectURLs'
-                                    ) as Array<string>
-                                  })
-                                  .then(() => {
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                              }}
-                              onPressEnter={() => {
-                                void requests
-                                  .post('/auth/redirectUrl', {
-                                    redirectURLs: form.getFieldValue(
-                                      'redirectURLs'
-                                    ) as Array<string>
-                                  })
-                                  .then(() => {
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                              }}
-                            />
-                            <IconFont
-                              type="icon-guanbi"
-                              className={`${styles['form-delete-icon']}`}
-                              onClick={() => {
-                                void requests
-                                  .post('/auth/redirectUrl', {
-                                    redirectURLs: (
-                                      form.getFieldValue('redirectURLs') as Array<string>
-                                    ).filter((_, i) => i != index)
-                                  })
-                                  .then(() => {
-                                    remove(index)
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                              }}
-                            />
-                          </div>
+                    {fields.map((field, index) => {
+                      const current = form.getFieldValue(['redirectURLs', field.name]) || 'https://'
+                      const setFieldValue = (part: 'protocol' | 'path', value: string) => {
+                        let [, protocol = 'https://', path = ''] =
+                          current?.match(/(^https?:\/\/)(.*)/) || []
+                        if (part === 'protocol') {
+                          protocol = value
+                        } else {
+                          path = value
+                        }
+                        const url = `${protocol}${path}`
+                        form.setFieldValue(['redirectURLs', field.name], url)
+                        if (part === 'protocol') {
+                          doSave()
+                        }
+                      }
+                      const doSave = () => {
+                        const urlList = (
+                          form.getFieldValue('redirectURLs') as Array<string>
+                        ).filter(url => url?.replace(/https?:\/\//, '').trim())
+                        // 不用过滤后的数据进行覆盖，以防止用户输入过程中的数据被丢弃
+                        // form.setFieldValue('redirectURLs', urlList)
+                        void requests
+                          .post('/auth/redirectUrl', {
+                            redirectURLs: urlList
+                          })
+                          .then(() => {
+                            setRefreshFlag(!refreshFlag)
+                          })
+                      }
+                      return (
+                        <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
+                          <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
+                            <div>
+                              <div>{'域名' + (index + 1).toString() + ':'}</div>
+                              <Input
+                                addonBefore={
+                                  <Select
+                                    defaultValue={current.match(/^https?:\/\//)?.[0]}
+                                    className="select-before"
+                                    onChange={e => setFieldValue('protocol', e)}
+                                  >
+                                    <Select.Option value="https://">https://</Select.Option>
+                                    <Select.Option value="http://">http://</Select.Option>
+                                  </Select>
+                                }
+                                placeholder="请输入域名"
+                                style={{ width: '60%' }}
+                                onChange={e => setFieldValue('path', e.target.value)}
+                                defaultValue={current.replace(/^https?:\/\//, '')}
+                                onBlur={doSave}
+                                onPressEnter={doSave}
+                              />
+                              <IconFont
+                                type="icon-guanbi"
+                                className={`${styles['form-delete-icon']}`}
+                                onClick={() => {
+                                  void requests
+                                    .post('/auth/redirectUrl', {
+                                      redirectURLs: (
+                                        form.getFieldValue('redirectURLs') as Array<string>
+                                      ).filter((_, i) => i != index)
+                                    })
+                                    .then(() => {
+                                      remove(index)
+                                      setRefreshFlag(!refreshFlag)
+                                    })
+                                }}
+                              />
+                            </div>
+                          </Form.Item>
                         </Form.Item>
-                      </Form.Item>
-                    ))}
+                      )
+                    })}
                     <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
                       <Button
                         type="dashed"
@@ -238,16 +249,12 @@ export default function SettingMainSecurity() {
                           {...field}
                           validateTrigger={['onChange', 'onBlur']}
                           noStyle
-                          rules={[
-                            {
-                              pattern: urlReg,
-                              message: '请填写规范域名'
-                            }
-                          ]}
+                          rules={[]}
                         >
                           <div className="">
                             <div>{'域名' + (index + 1).toString() + ':'}</div>
                             <Input
+                              addonBefore="http(s)://"
                               placeholder="请输入域名..."
                               style={{ width: '60%' }}
                               defaultValue={securConfig.allowedHosts[index]}

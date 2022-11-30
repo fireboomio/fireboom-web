@@ -120,7 +120,6 @@ function expandForeignField(
 
 export default function CRUDBody(props: CRUDBodyProps) {
   const [form] = Form.useForm()
-  const auth = Form.useWatch('auth', form)
   const table = Form.useWatch('table', form)
   // 当前选择的模型
   const [model, setModel] = useImmer<DMFModel | undefined>(void 0)
@@ -132,6 +131,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
   // api已存在提示内容
   const [confirmModal, setConfirmModal] = useState<React.ReactNode>()
+  // table展示哪些字段
+  const [showColMap, setShowColMap] = useState<Record<string, boolean>>()
   // api提示的promise对应的resolve，用于实现对话框promise化
   const confirmResolve = useRef<(value: unknown) => void>()
   const { data: roles } = useSWRImmutable<{ id: number; code: string; remark: string }[]>(
@@ -237,6 +238,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
       modelName: props?.model?.name,
       primaryKey: props.model.idField
     })
+
+    onApiListChange(Object.values(API))
     setModel(model)
   }, [props.model])
   useEffect(() => {
@@ -291,6 +294,38 @@ export default function CRUDBody(props: CRUDBodyProps) {
     )
   }
 
+  function onApiListChange(apis: any[]) {
+    const showColMap: Record<string, boolean> = {}
+    apis.forEach((api: API) => {
+      let exhaustive: never
+      switch (api) {
+        case API.Create:
+          showColMap.create = true
+          break
+        case API.Update:
+          showColMap.update = true
+          break
+        case API.Detail:
+          showColMap.detail = true
+          break
+        case API.List:
+          showColMap.list = true
+          showColMap.filter = true
+          showColMap.sort = true
+          break
+        case API.Export:
+          showColMap.list = true
+          break
+        case API.Delete:
+        case API.BatchDelete:
+          break
+        default:
+          exhaustive = api
+      }
+    })
+    setShowColMap(showColMap)
+  }
+
   const setTableFiled = (rowName: string, key: string, value: any) => {
     const table = form.getFieldValue('table')
     if (!table[rowName]) {
@@ -302,7 +337,6 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
   const onSelectCheck = (type: 'list' | 'detail', field: _DMFField, check: boolean) => {
     setTableFiled(field.tableId ?? '', type, check)
-    console.log(field.tableId ?? '', type, check)
     if (check) {
       // 如果是勾选，则递归向上将所有祖先勾选，同时则将自己的主键和第一个非主键子字段勾选
       let parent = field.parentField
@@ -356,6 +390,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '列表',
       dataIndex: 'list',
+      filterKey: 'list',
       render: (text: any, record: any) => {
         return (
           <Checkbox
@@ -371,6 +406,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '详情',
       dataIndex: 'detail',
+      filterKey: 'detail',
       render: (text: any, record: any) => {
         return (
           <Checkbox
@@ -386,6 +422,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '过滤',
       dataIndex: 'filter',
+      filterKey: 'filter',
       render: (text: any, record: any) => {
         return (
           !record.isForeign && (
@@ -403,6 +440,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '排序',
       dataIndex: 'sort',
+      filterKey: 'sort',
       render: (text: any, record: any) => {
         return (
           !record.isForeign && (
@@ -420,6 +458,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '默认排序',
       dataIndex: 'sortDirection',
+      filterKey: 'sort',
       render: (text: any, record: any) => {
         return (
           !record.isForeign &&
@@ -443,6 +482,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '创建',
       dataIndex: 'create',
+      filterKey: 'create',
       render: (text: any, record: any) => {
         return (
           !record.isForeign && (
@@ -452,7 +492,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
               disabled={
                 record.tableId === model.idField ||
                 record.required ||
-                record.createType === undefined
+                table?.[record.tableId]?.createType === undefined
               }
               options={[
                 { label: '无', value: KeyType.Hidden },
@@ -470,11 +510,15 @@ export default function CRUDBody(props: CRUDBodyProps) {
     {
       title: '更新',
       dataIndex: 'update',
+      filterKey: 'update',
       render: (text: any, record: any) => {
         return (
           !record.isForeign && (
             <Select
-              disabled={record.tableId === model.idField || record.updateType === undefined}
+              disabled={
+                record.tableId === model.idField ||
+                table?.[record.tableId]?.updateType === undefined
+              }
               value={table?.[record.tableId]?.update ?? 'choose'}
               options={[
                 { label: '无', value: KeyType.Hidden },
@@ -489,7 +533,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
         )
       }
     }
-  ]
+  ].filter(column => !column.filterKey || showColMap?.[column.filterKey ?? ''])
 
   return (
     <div className="common-form flex-1 pt-4 px-8 overflow-y-auto">
@@ -508,7 +552,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
           <Select options={field} />
         </Form.Item>
         <Form.Item name="apiList" label="生成接口">
-          <Checkbox.Group options={apiOptions} />
+          <Checkbox.Group onChange={onApiListChange} options={apiOptions} />
         </Form.Item>
         <Form.Item
           name="prefix"

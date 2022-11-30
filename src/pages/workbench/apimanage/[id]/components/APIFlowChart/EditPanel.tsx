@@ -18,6 +18,7 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
   const apiContainerRef = useRef<HTMLDivElement>(document.querySelector('#api-editor-container'))
   const { refreshAPI } = useAPIManager()
   const [defaultCode, setDefaultCode] = useState<string>()
+  const [title, setTitle] = useState<string>()
   useEffect(() => {
     if (hook.path.startsWith('global/')) {
       getDefaultCode(`global.${hook.name}`).then(res => {
@@ -29,6 +30,7 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
         setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
       })
     }
+    setTitle(hook.path)
   }, [hook.name])
   return apiContainerRef.current ? (
     <Drawer
@@ -46,11 +48,12 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
             返回文件
           </div>
           <div className={styles.split} />
-          <div className={styles.title}>{hook.path.split('/').pop()}</div>
+          <div className={styles.title}>{title}</div>
         </div>
       }
     >
       <IdeContainer
+        onSelectHook={setTitle}
         onChangeEnable={refreshAPI}
         hookPath={hook.path}
         defaultCode={defaultCode}

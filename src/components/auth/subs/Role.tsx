@@ -7,7 +7,6 @@ import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
-import RcTab from '@/components/rc-tab'
 import type { HookName, HookResp } from '@/interfaces/auth'
 import requests from '@/lib/fetchers'
 
@@ -144,7 +143,7 @@ export default function AuthRole() {
   }
   const [tab, setTab] = useState<string>('role')
   return (
-    <div className="relative">
+    <div className={'relative h-full flex ' + styles.roleContainer}>
       {tab === 'role' ? (
         <div className="top-2px right-0 absolute">
           <Button
@@ -160,6 +159,7 @@ export default function AuthRole() {
         ''
       )}
       <Tabs
+        className="h-full w-full"
         renderTabBar={(props, DefaultTabBar) => {
           return <DefaultTabBar className={styles.pillTab} {...props} />
         }}
@@ -244,7 +244,6 @@ export default function AuthRole() {
         <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
           <div>
             {/* @ts-ignore */}
-            <RcTab className="mb-4" tabs={tabs} onTabClick={setActiveKey} activeKey={activeKey} />
             <IdeContainer
               key={hookPath[activeKey]}
               hookPath={hookPath[activeKey]}

@@ -96,7 +96,7 @@ export default function Designer() {
             {category.items.map(x => (
               <div
                 key={x.name}
-                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-3.5 pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg"
+                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg flex items-center"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onClick={() => handleClick(x.sourceType, x.dbType, x.name)}
