@@ -306,7 +306,13 @@
 //     color: rgba(175, 176, 180, 0.5);
 //   }
 // }
-
+.roleContainer {
+  :global {
+    .ant-tabs-content-holder {
+      overflow-y: scroll;
+    }
+  }
+}
 .pillTab {
   height: 36px;
   background: #f0f1f4;

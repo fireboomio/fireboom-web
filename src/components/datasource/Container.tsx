@@ -95,7 +95,10 @@ export default function DatasourceContainer({ content, showType }: Props) {
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
-      <div className="bg-white flex flex-0 h-54px pl-11 items-center">
+      <div
+        className="bg-white flex flex-0 h-54px pl-11 items-center"
+        style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
+      >
         {showType === 'setting' ? (
           <>
             <div className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly">
@@ -165,7 +168,14 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : null}
       </div>
-      <div className="bg-white rounded-4px flex-1 mx-3 mt-3 min-h-0 px-8 pt-5 overflow-y-auto">
+      <div
+        className="bg-white  flex-1 mx-3 mt-3 min-h-0 px-8 pt-5 overflow-y-auto"
+        style={{
+          border: '1px solid rgba(95,98,105,0.1)',
+          borderBottom: 'none',
+          borderRadius: '4px 4px 0 0'
+        }}
+      >
         {content.sourceType === 1 ? (
           <DB content={content} type={showType} />
         ) : content.sourceType === 2 ? (

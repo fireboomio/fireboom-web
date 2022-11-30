@@ -2,10 +2,11 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import type { SelectProps } from 'antd'
 import { Select, Spin, Tree } from 'antd'
-import { debounce } from 'lodash'
+import { debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import requests from '@/lib/fetchers'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
 import iconCross from '../assets/cross.svg'
@@ -50,6 +51,15 @@ function DebounceSelect<
     return debounce(loadOptions, debounceTimeout)
   }, [fetchOptions, debounceTimeout])
 
+  const mappedOptions = useMemo(() => {
+    return options.map(opt => {
+      return {
+        label: opt.label,
+        value: `${opt.label}@${opt.value}`,
+        version: opt.value
+      }
+    })
+  }, [options])
   return (
     <Select
       className="test"
@@ -61,7 +71,7 @@ function DebounceSelect<
       onSearch={debounceFetcher}
       notFoundContent={fetching ? <Spin size="small" /> : null}
       {...props}
-      onChange={(value, options) => {
+      onChange={(value, options: any) => {
         if (props.onChange && selectRef.current) {
           // 调用blur
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
@@ -69,7 +79,7 @@ function DebounceSelect<
           props.onChange(value, options)
         }
       }}
-      options={options}
+      options={mappedOptions}
     />
   )
 }
@@ -92,6 +102,7 @@ const SearchDepend = (props: SearchDependProps) => {
         placeholder="搜索依赖"
         fetchOptions={getDependList}
         onChange={newValue => {
+          console.log(newValue)
           if (Array.isArray(newValue) && newValue.length > 0) {
             props.onAddDepend(newValue[0].label)
           }
@@ -108,6 +119,7 @@ type DependListProps = {
   // 本地依赖
   localDepend: string[]
   dependList: Depend[]
+  hookPath: string
   // 点击缩起依赖区域
   onFold: () => void
   // 依赖变化回调
@@ -255,10 +267,10 @@ const DependList = (props: DependListProps) => {
   const titleRender = (nodeData: any) => {
     return (
       <div
+        className="flex overflow-hidden"
         key={nodeData.name}
         onClick={() => {
-          console.log(nodeData)
-          if (nodeData.path) {
+          if (!nodeData.isDir) {
             props.onSelectHook?.(nodeData.path)
           }
         }}
@@ -267,31 +279,81 @@ const DependList = (props: DependListProps) => {
           alt=""
           className="w-3 mr-2"
           src={
-            nodeData.children
+            nodeData.isDir
               ? expandedKeys.includes(nodeData.key)
                 ? iconFoldOpen
                 : iconFold
               : iconFile
           }
         />
-        <span className="text-default">{nodeData.name}</span>
+        <span
+          className="text-default flex-1 min-w-0 "
+          style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}
+        >
+          {nodeData.name}
+        </span>
       </div>
     )
   }
-  const treeData = [
-    {
-      key: '[0]',
-      name: 'parent 1',
-      children: [
-        {
-          key: '[0].chindren[0]',
-          name: 'mockResolve',
-          path: 'operations/CreateOneuser/mockResolve'
-        },
-        { key: '[0].chindren[1]', name: 'preResolve', path: 'operations/CreateOneuser/preResolve' }
-      ]
+  const [treeData, setTreeData] = useState<any[]>([])
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([])
+
+  useEffect(() => {
+    // 自动选中当前钩子
+    setSelectedKeys([props.hookPath])
+    // 自动展开父目录
+    const parents = []
+    const block = props.hookPath.split('/')
+    while (block.length) {
+      parents.push(block.join('/'))
+      block.pop()
     }
-  ]
+    setExpandedKeys(union(expandedKeys, parents))
+  }, [props.hookPath])
+  useEffect(() => {
+    requests.get<unknown, any[]>('hook/model').then(res => {
+      const markKey = (data: any, key: string) => {
+        return data.filter((item: any, index: number) => {
+          // 临时移除path开头的前缀，后续接口更新后可以移除该操作
+          item.path = item.path.replace('custom-ts/', '')
+          item.key = item.path
+          item.title = item.name
+          if (item.children) {
+            item.children = markKey(item.children || [], item.key)
+          }
+          return !item.isDir || item.children?.length
+        })
+      }
+      // 检查当前树中是否有当前hook对应的节点，如果没有则添加
+      const blocks = props.hookPath.split('/')
+      let list = res
+      for (let i = 0; i < blocks.length; i++) {
+        const isDir = i !== blocks.length - 1
+        const curPath = blocks.slice(0, i + 1).join('/')
+        const found = list.find(item => item.path === curPath)
+        // 如果找到当前层级的节点
+        if (found) {
+          if (isDir) {
+            found.children = found.children || []
+          }
+          list = found.children
+        } else {
+          const newNode = {
+            isDir: isDir,
+            name: blocks[i],
+            path: curPath,
+            children: !isDir ? undefined : []
+          }
+          list.push(newNode)
+          if (isDir) {
+            list = newNode.children!
+          }
+        }
+      }
+      res = markKey(res, '')
+      setTreeData(res)
+    })
+  }, [])
 
   return (
     <div className={`${ideStyles['ide-container-depend-list']}`}>
@@ -299,19 +361,15 @@ const DependList = (props: DependListProps) => {
         <div className="title text-14px select-none w-full">文件</div>
         <Tree
           rootClassName="overflow-auto"
-          // @ts-ignore
           titleRender={titleRender}
-          // draggable
           switcherIcon={false}
-          defaultExpandParent
           expandAction="click"
-          // expandedKeys={[]}
+          // @ts-ignore
+          treeData={treeData}
+          selectedKeys={selectedKeys}
+          expandedKeys={expandedKeys}
           // @ts-ignore
           onExpand={setExpandedKeys}
-          treeData={treeData}
-          // selectedKeys={[]}
-          // @ts-ignore
-          onSelect={() => {}}
         />
       </div>
       <div className="bg-[rgba(95,98,105,0.1)] mx-10px h-1px mb-10px"></div>

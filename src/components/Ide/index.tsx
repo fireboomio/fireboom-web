@@ -97,6 +97,7 @@ interface Props {
   defaultLanguage?: string
   onChange?: (value?: string) => void
   onChangeEnable?: (value?: string) => void
+  onSelectHook?: (value: string) => void
 }
 
 /**
@@ -159,7 +160,7 @@ const IdeContainer: FC<Props> = props => {
     })
   }, [hookPath])
 
-  const resolveDefaultCode = async (path: string): string => {
+  const resolveDefaultCode = async (path: string): Promise<string> => {
     const list = path.split('/')
     const name = list.pop()
     const apiName = list.pop() as string
@@ -299,6 +300,7 @@ const IdeContainer: FC<Props> = props => {
   // 选择hooks
   const selectHook = (hookPath: string) => {
     setHookPath(hookPath)
+    props.onSelectHook?.(hookPath)
   }
   // dependchange回调
   const dependChange = (depend: Depend) => {
@@ -438,6 +440,7 @@ const IdeContainer: FC<Props> = props => {
             <IdeDependList
               {...{
                 dependList: hookInfo?.depend || [],
+                hookPath: hookPath,
                 onSelectHook: selectHook,
                 onChangeDependVersion: dependChange,
                 onFold: dependFold,

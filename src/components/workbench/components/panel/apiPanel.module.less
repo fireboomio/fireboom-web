@@ -135,6 +135,15 @@
       );
       border-radius: 4px;
     }
+    .ant-tree-node-selected {
+      :local {
+        .treeItem {
+          .title {
+            font-weight: 500;
+          }
+        }
+      }
+    }
   }
 
   .treeItem {
@@ -210,7 +219,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 400;
       color: #333333;
       margin-left: 9px;
     }
@@ -218,7 +227,7 @@
     .suffix {
       flex: 0 0 auto;
       font-size: 12px;
-      color: #999;
+      color: rgba(153, 153, 153, 0.6);
 
       .errLabel {
         // 为了突破最小字号进行了2倍放大后缩放50%，并通过负margin进行补偿

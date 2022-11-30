@@ -362,7 +362,10 @@ export default function StorageExplorer({ bucketId }: Props) {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0">
+      <div
+        className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0"
+        style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
+      >
         <div className="flex flex-1 min-w-0">
           {breads.map((x, idx) => (
             <div key={x.value} className={x.isLeaf ? styles.leafBread : styles.bread}>
@@ -450,7 +453,14 @@ export default function StorageExplorer({ bucketId }: Props) {
         </Cascader>
       ) : null}
 
-      <div className={styles.container}>
+      <div
+        className={styles.container}
+        style={{
+          border: '1px solid rgba(95,98,105,0.1)',
+          borderBottom: 'none',
+          borderRadius: '4px 4px 0 0'
+        }}
+      >
         <div ref={containerEle} className={styles.cascadeContainer} />
         {visible ? (
           <div className={styles.fileDetail}>
