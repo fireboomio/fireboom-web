@@ -153,7 +153,8 @@ export function useStackblitz() {
               $tr.querySelector('td:nth-child(3)').appendChild(new JSONFormatter(query).render());
             }
             if (args.body) {
-              $tr.querySelector('td:nth-child(4)').appendChild(new JSONFormatter(args.body).render());
+              const body = typeof args.body === 'string' ? JSON.parse(args.body) : args.body
+              $tr.querySelector('td:nth-child(4)').appendChild(new JSONFormatter(body).render());
             }
             $tbody.appendChild($tr);
             const result = await fetch(args.url + (args.query ? '?' + Object.keys(args.query).map((k) => k + '=' + args.query[k]).join('&') : ''),
