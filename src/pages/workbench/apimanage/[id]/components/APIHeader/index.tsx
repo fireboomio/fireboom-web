@@ -14,17 +14,17 @@ import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = () => {
-  const { apiDesc, schemaAST, updateAPI, updateContent, saved, query, apiID } = useAPIManager(
-    state => ({
+  const { apiDesc, schemaAST, updateAPI, updateAPIName, updateContent, saved, query, apiID } =
+    useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
       updateAPI: state.updateAPI,
+      updateAPIName: state.updateAPIName,
       updateContent: state.updateContent,
       saved: state.computed.saved,
       apiID: state.apiID,
       query: state.query
-    })
-  )
+    }))
   const workbenchCtx = useContext(WorkbenchContext)
   const { config } = useContext(ConfigContext)
 
@@ -46,7 +46,9 @@ const APIHeader = () => {
       const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
         try {
-          await updateAPI({ path: targetPath })
+          if (apiDesc?.id) {
+            await updateAPIName(apiDesc?.id, targetPath)
+          }
           setIsEditingName(false)
         } catch (error) {
           //

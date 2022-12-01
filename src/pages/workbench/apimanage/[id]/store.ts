@@ -83,6 +83,7 @@ export interface APIState {
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => void
   autoSave: () => boolean | Promise<boolean>
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
+  updateAPIName: (id: number, path: string) => Promise<void>
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
   refreshAPI: () => void
   refreshSchema: () => void
@@ -164,6 +165,13 @@ export const useAPIManager = create<APIState>((set, get) => ({
   updateAPI: (newAPI: Partial<APIDesc>) => {
     return requests.put(`/operateApi/${get().apiID}`, newAPI).then(resp => {
       get().pureUpdateAPI(newAPI)
+      // 刷新api列表
+      get()._workbenchContext?.onRefreshMenu('api')
+    })
+  },
+  updateAPIName: (id, path) => {
+    return requests.put(`/operateApi/rename/${get().apiID}`, { path }).then(resp => {
+      get().pureUpdateAPI({ path })
       // 刷新api列表
       get()._workbenchContext?.onRefreshMenu('api')
     })

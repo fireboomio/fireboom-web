@@ -1,14 +1,16 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch } from 'antd'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 
 interface SecurConfig {
+  allowedHostsEnable: boolean
   enableGraphQLEndpoint: boolean
   allowedHosts: Array<string>
 }
@@ -113,8 +115,8 @@ function AuthMainSetting() {
                                 onBlur={doSave}
                                 onPressEnter={doSave}
                               />
-                              <IconFont
-                                type="icon-guanbi"
+
+                              <span
                                 className={`${styles['form-delete-icon']}`}
                                 onClick={() => {
                                   void requests
@@ -128,7 +130,9 @@ function AuthMainSetting() {
                                       setRefreshFlag(!refreshFlag)
                                     })
                                 }}
-                              />
+                              >
+                                <img src="/assets/deleteIcon.svg" alt=" " />
+                              </span>
                             </div>
                           </Form.Item>
                         </Form.Item>
@@ -162,18 +166,8 @@ export default function SettingMainSecurity() {
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const urlReg = /^(http(s?)|):\/\/(.+)$/
+  const { config: globalConfig } = useContext(ConfigContext)
 
-  const onFinish = (_values: SecurConfig) => {
-    void requests
-      .post('/global', {
-        key: 'enableGraphQLEndpoint',
-        val: 0
-      })
-      .then(() => {
-        setRefreshFlag(!refreshFlag)
-      })
-    // void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
-  }
   const postRequest = async (key: string, value: string | Array<string> | number | boolean) => {
     await requests.post('/global', {
       key: key,
@@ -199,7 +193,6 @@ export default function SettingMainSecurity() {
               allowedHosts: securConfig?.allowedHosts,
               enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint
             }}
-            onFinish={onFinish}
             labelAlign="left"
             labelCol={{
               xs: { span: 4 },
@@ -218,6 +211,7 @@ export default function SettingMainSecurity() {
                 required
               >
                 <Switch
+                  disabled={globalConfig.devSwitch}
                   className={styles['switch-edit-btn']}
                   checked={securConfig.enableGraphQLEndpoint}
                   size="small"
@@ -233,88 +227,110 @@ export default function SettingMainSecurity() {
                 <span>https://loacalhost:9991/api/main/graphql</span>
               </span>
             </Form.Item>
+
             <Form.Item
-              label="允许域名"
+              label="访问白名单"
               wrapperCol={{
                 xs: { span: 2 },
                 sm: { span: 20 }
               }}
             >
-              <Form.List name="allowedHosts">
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => (
-                      <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                        <Form.Item
-                          {...field}
-                          validateTrigger={['onChange', 'onBlur']}
-                          noStyle
-                          rules={[]}
-                        >
-                          <div className="">
-                            <div>{'域名' + (index + 1).toString() + ':'}</div>
-                            <Input
-                              addonBefore="http(s)://"
-                              placeholder="请输入域名..."
-                              style={{ width: '60%' }}
-                              defaultValue={securConfig.allowedHosts[index]}
-                              onBlur={e => {
-                                if (e.target.value == '') return
-                                void postRequest(
-                                  'allowedHosts',
-                                  form.getFieldValue('allowedHosts') as Array<string>
-                                ).then(() => {
-                                  setRefreshFlag(!refreshFlag)
-                                })
-                              }}
-                              onPressEnter={e => {
-                                // @ts-ignore
-                                if (e.target.value == '') return
-                                void postRequest(
-                                  'allowedHosts',
-                                  form.getFieldValue('allowedHosts') as Array<string>
-                                ).then(() => {
-                                  setRefreshFlag(!refreshFlag)
-                                })
-                              }}
-                            />
-
-                            <IconFont
-                              type="icon-guanbi"
-                              className={`${styles['form-delete-icon']}`}
-                              onClick={() => {
-                                void requests
-                                  .post('/global', {
-                                    key: 'allowedHosts',
-                                    val: (
-                                      form.getFieldValue('allowedHosts') as Array<string>
-                                    ).filter((_, i) => i != index)
-                                  })
-                                  .then(() => {
-                                    remove(index)
-                                  })
-                              }}
-                            />
-                          </div>
-                        </Form.Item>
-                      </Form.Item>
-                    ))}
-                    <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
-                      <Button
-                        type="dashed"
-                        style={{ width: '48%' }}
-                        onClick={() => add()}
-                        icon={<PlusOutlined />}
-                        className="text-gray-500/60"
-                      >
-                        新增域名
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
+              <Switch
+                className={styles['switch-edit-btn']}
+                checked={securConfig.allowedHostsEnable}
+                size="small"
+                onChange={isChecked => {
+                  void postRequest('allowedHostsEnable', isChecked).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
+                }}
+              />
+              <span className="ml-4 text-default">允许所有域名</span>
             </Form.Item>
+            {!securConfig.allowedHostsEnable && (
+              <Form.Item
+                wrapperCol={{
+                  offset: 4,
+                  xs: { span: 2 },
+                  sm: { span: 20 }
+                }}
+              >
+                <Form.List name="allowedHosts">
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => (
+                        <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
+                          <Form.Item
+                            {...field}
+                            validateTrigger={['onChange', 'onBlur']}
+                            noStyle
+                            rules={[]}
+                          >
+                            <div className="">
+                              <div>{'域名' + (index + 1).toString() + ':'}</div>
+                              <Input
+                                addonBefore="http(s)://"
+                                placeholder="请输入域名..."
+                                style={{ width: '60%' }}
+                                defaultValue={securConfig.allowedHosts[index]}
+                                onBlur={e => {
+                                  if (e.target.value == '') return
+                                  void postRequest(
+                                    'allowedHosts',
+                                    form.getFieldValue('allowedHosts') as Array<string>
+                                  ).then(() => {
+                                    setRefreshFlag(!refreshFlag)
+                                  })
+                                }}
+                                onPressEnter={e => {
+                                  // @ts-ignore
+                                  if (e.target.value == '') return
+                                  void postRequest(
+                                    'allowedHosts',
+                                    form.getFieldValue('allowedHosts') as Array<string>
+                                  ).then(() => {
+                                    setRefreshFlag(!refreshFlag)
+                                  })
+                                }}
+                              />
+                              <span
+                                className={`${styles['form-delete-icon']}`}
+                                onClick={() => {
+                                  void requests
+                                    .post('/global', {
+                                      key: 'allowedHosts',
+                                      val: (
+                                        form.getFieldValue('allowedHosts') as Array<string>
+                                      ).filter((_, i) => i != index)
+                                    })
+                                    .then(() => {
+                                      remove(index)
+                                    })
+                                }}
+                              >
+                                <img src="/assets/deleteIcon.svg" alt=" " />
+                              </span>
+                            </div>
+                          </Form.Item>
+                        </Form.Item>
+                      ))}
+                      <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
+                        <Button
+                          type="dashed"
+                          style={{ width: '48%' }}
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                          className="text-gray-500/60"
+                        >
+                          新增域名
+                        </Button>
+                        <Form.ErrorList errors={errors} />
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
+            )}
           </Form>
         </div>
       ) : null}

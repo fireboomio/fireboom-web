@@ -43,8 +43,8 @@ export type TableAttr = {
   name: string
   kind: string
   type: string
-  createType: string
-  updateType: string
+  createType: { isSet: boolean; name: string }
+  updateType: { isSet: boolean; name: string }
   detail: boolean
   isDirectField: boolean
   list: boolean

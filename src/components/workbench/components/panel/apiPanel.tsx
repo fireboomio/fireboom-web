@@ -179,7 +179,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [navCheck, multiSelection]
   )
-  console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
     if (nodeData.legal) {
@@ -305,8 +304,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             message.error('接口名称必须大写开头')
             return
           }
+          console.log('====111')
           void renameApi(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
+            console.log(res, '====222')
             if (res) {
               events.emit({
                 event: 'titleChange',
@@ -753,8 +754,7 @@ function renameNode(node: DirTreeNode, value: string) {
   })
 }
 function renameApi(node: DirTreeNode, value: string) {
-  return requests.put<any, DirTreeNode>(`/operateApi/${node.id}`, {
-    ...node,
+  return requests.put(`/operateApi/rename/${node.id}`, {
     path: `${node.baseDir}/${value}`
   })
 }

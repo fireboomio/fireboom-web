@@ -61,22 +61,28 @@
     }
   }
   .list {
-    .item {
+    .item,
+    .static-item {
       .DependRowPadding();
       height: 40px;
       font-size: 14px;
       color: #222222;
       transition: all 0.3s;
+
       .name {
         width: 60%;
       }
+
       .version {
         color: #adadad;
         font-size: 14px;
+
         .select-icon {
           display: none;
         }
       }
+    }
+    .item {
       &:hover {
         .HoverItem();
       }
@@ -125,6 +131,10 @@ body :global {
   border-left: 3px solid transparent;
 }
 
+.gray {
+  filter: grayscale(1) opacity(0.5);
+}
+
 .treeContainer {
   padding: 0 10px 10px;
   :global {
@@ -138,7 +148,7 @@ body :global {
       position: relative;
       height: 26px;
       display: flex;
-      width: 130px;
+      width: 100%;
     }
     .ant-tree-node-content-wrapper {
       flex: 1 1 0;

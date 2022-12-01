@@ -41,6 +41,9 @@ export default function SettingMainVersion() {
             </div>
           </Descriptions.Item>
           <Descriptions.Item label="prisma版本">{verConfig.prismaVersion}</Descriptions.Item>
+          <Descriptions.Item label="prisma引擎版本">
+            {verConfig.prismaEngineVersion}
+          </Descriptions.Item>
           <Descriptions.Item label="版权">{verConfig.copyright}</Descriptions.Item>
         </Descriptions>
       </div>

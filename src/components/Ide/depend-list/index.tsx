@@ -6,6 +6,7 @@ import { debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import CollapsePanel from '@/components/collapsePanel'
 import requests from '@/lib/fetchers'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
@@ -66,7 +67,7 @@ function DebounceSelect<
       labelInValue
       ref={selectRef}
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      getPopupContainer={triggerNode => triggerNode.parentElement}
+      getPopupContainer={() => document.body}
       filterOption={false}
       onSearch={debounceFetcher}
       notFoundContent={fetching ? <Spin size="small" /> : null}
@@ -119,6 +120,7 @@ type DependListProps = {
   // 本地依赖
   localDepend: string[]
   dependList: Depend[]
+  devDependList: Depend[]
   hookPath: string
   // 点击缩起依赖区域
   onFold: () => void
@@ -265,6 +267,7 @@ const DependList = (props: DependListProps) => {
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
   const titleRender = (nodeData: any) => {
+    const isGary = !nodeData.enable && !nodeData.isDir
     return (
       <div
         className="flex overflow-hidden"
@@ -277,7 +280,7 @@ const DependList = (props: DependListProps) => {
       >
         <img
           alt=""
-          className="w-3 mr-2"
+          className={'w-3 mr-2 ' + (isGary ? ideStyles.gray : '')}
           src={
             nodeData.isDir
               ? expandedKeys.includes(nodeData.key)
@@ -287,7 +290,7 @@ const DependList = (props: DependListProps) => {
           }
         />
         <span
-          className="text-default flex-1 min-w-0 "
+          className={'text-default flex-1 min-w-0 ' + (isGary ? ideStyles.gray : '')}
           style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}
         >
           {nodeData.name}
@@ -356,150 +359,158 @@ const DependList = (props: DependListProps) => {
   }, [])
 
   return (
-    <div className={`${ideStyles['ide-container-depend-list']}`}>
-      <div className={ideStyles.treeContainer}>
-        <div className="title text-14px select-none w-full">文件</div>
-        <Tree
-          rootClassName="overflow-auto"
-          titleRender={titleRender}
-          switcherIcon={false}
-          expandAction="click"
-          // @ts-ignore
-          treeData={treeData}
-          selectedKeys={selectedKeys}
-          expandedKeys={expandedKeys}
-          // @ts-ignore
-          onExpand={setExpandedKeys}
-        />
-      </div>
-      <div className="bg-[rgba(95,98,105,0.1)] mx-10px h-1px mb-10px"></div>
-      <div className="title-top flex justify-between items-center">
-        <div className="title text-1xl select-none">全局依赖</div>
-        <span
-          className="cursor-pointer"
-          onClick={() => {
-            props.onFold()
-          }}
-        >
-          <img src={iconDoubleLeft} alt="折叠" />
-        </span>
-      </div>
-      {/* 搜索 */}
-      <SearchDepend onAddDepend={addDepend} />
-      {/* 列表 */}
-      <div className="list">
-        {/* 迭代depend map */}
-        {[...dependList.entries()].map(([name, version], index) => {
-          return (
-            <div
-              id="item"
-              className={'item flex justify-between items-center cursor-pointer'}
-              key={index}
-            >
-              <div
-                className={`name ${
-                  showSelectVersion === index ? 'show-select-version-name' : ''
-                } truncate`}
-              >
-                {name}
-              </div>
-              <div className="version flex">
-                {showSelectVersion === -1 && (
-                  <span
-                    style={{ whiteSpace: 'nowrap' }}
-                    id="version-flag"
-                    onClick={() => {
-                      void getVersions(name, index)
-                    }}
-                  >
-                    {version}
-                  </span>
-                )}
-                {/* 在进行选择版本时, 现有版本消失 */}
-                <div className="select" id="version-select">
-                  {/* loading */}
-                  {versionLoading === index && <LoadingOutlined color="#ADADAD;" />}
-                  {versionLoading !== index && showSelectVersion === index && (
-                    <Select
-                      popupClassName="version-select"
-                      virtual={false}
-                      open
-                      filterOption={(input, option) =>
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                      }
-                      optionFilterProp="children"
-                      showSearch
-                      labelInValue
-                      size="small"
-                      options={versionList[name]}
-                      defaultValue={{
-                        label: version,
-                        value: version === 'latest' ? versionList[name][0].value : version
-                      }}
-                      onBlur={() => {
-                        setShowSelectVersion(index)
-                      }}
-                      onChange={item => {
-                        updateDepend(name, item.value as string)
-                        setShowSelectVersion(-1)
-                      }}
-                    />
-                  )}
-                  {versionLoading !== index && showSelectVersion === -1 && (
-                    <div className="select-icon">
-                      <img src={iconUpAndDown} alt="选择版本" />
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* 悬停操作区域 */}
-              <div
-                className={`hover-area ${
-                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                  showSelectVersion === index && 'show-select-version'
-                } flex justify-between`}
-              >
-                {/*<img src={iconUpAndDown} alt="选择版本" />*/}
-                <span onClick={() => version && props.onDependRefresh?.({ [name]: version })}>
-                  <img src={iconRefresh} alt="刷新" />
-                </span>
-                <span className="ml-2" onClick={() => removeDepend(name)}>
-                  <img src={iconCross} alt="移除" />
-                </span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-      <div className="p-10px">
-        <div className="text-default font-500 flex cursor-pointer">
-          <div
-            className="w-4 h-5 bg-red flex items-center justify-center mr-1"
-            onClick={() => setHideLocalDepend(!hideLocalDepend)}
-          >
-            <div
-              className={ideStyles.triangle}
-              style={{ transform: hideLocalDepend ? 'rotate(180deg)' : '' }}
-            ></div>
+    <div className={`${ideStyles['ide-container-depend-list']} relative`}>
+      <span
+        className="cursor-pointer absolute right-2 z-50"
+        onClick={() => {
+          console.log(123123)
+          props.onFold()
+        }}
+      >
+        <img src={iconDoubleLeft} alt="折叠" />
+      </span>
+      <CollapsePanel>
+        <CollapsePanel.Block title="文件" defaultOpen>
+          <div className={ideStyles.treeContainer}>
+            <Tree
+              rootClassName="overflow-auto"
+              titleRender={titleRender}
+              switcherIcon={false}
+              expandAction="click"
+              // @ts-ignore
+              treeData={treeData}
+              selectedKeys={selectedKeys}
+              expandedKeys={expandedKeys}
+              // @ts-ignore
+              onExpand={setExpandedKeys}
+            />
           </div>
-          <span className="text-[#5F6269]" onClick={() => setHideLocalDepend(!hideLocalDepend)}>
-            内部依赖
-          </span>
-          <span className="ml-auto cursor-pointer" onClick={() => props.onRefreshLocalDepend?.()}>
-            <img src={iconRefreshDepend} alt="刷新" />
-          </span>
-        </div>
-        {!hideLocalDepend &&
-          props.localDepend.map(item => (
-            <div
-              onDoubleClick={() => props.onInsertLocalDepend?.(item)}
-              key={item}
-              className="truncate text-[#333] font-14px leading-24px cursor-pointer"
-            >
-              {item}
-            </div>
-          ))}
-      </div>
+        </CollapsePanel.Block>
+        <CollapsePanel.Block title="全局依赖">
+          {/* 搜索 */}
+          <SearchDepend onAddDepend={addDepend} />
+          {/* 列表 */}
+          <div className="list">
+            {/* 迭代depend map */}
+            {[...dependList.entries()].map(([name, version], index) => {
+              return (
+                <div
+                  id="item"
+                  className={'item flex justify-between items-center cursor-pointer'}
+                  key={index}
+                >
+                  <div
+                    className={`name ${
+                      showSelectVersion === index ? 'show-select-version-name' : ''
+                    } truncate`}
+                  >
+                    {name}
+                  </div>
+                  <div className="version flex">
+                    {showSelectVersion === -1 && (
+                      <span
+                        style={{ whiteSpace: 'nowrap' }}
+                        id="version-flag"
+                        onClick={() => {
+                          void getVersions(name, index)
+                        }}
+                      >
+                        {version}
+                      </span>
+                    )}
+                    {/* 在进行选择版本时, 现有版本消失 */}
+                    <div className="select" id="version-select">
+                      {/* loading */}
+                      {versionLoading === index && <LoadingOutlined color="#ADADAD;" />}
+                      {versionLoading !== index && showSelectVersion === index && (
+                        <Select
+                          popupClassName="version-select"
+                          virtual={false}
+                          open
+                          filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                          }
+                          optionFilterProp="children"
+                          showSearch
+                          labelInValue
+                          size="small"
+                          options={versionList[name]}
+                          defaultValue={{
+                            label: version,
+                            value: version === 'latest' ? versionList[name][0].value : version
+                          }}
+                          onBlur={() => {
+                            setShowSelectVersion(index)
+                          }}
+                          onChange={item => {
+                            updateDepend(name, item.value as string)
+                            setShowSelectVersion(-1)
+                          }}
+                        />
+                      )}
+                      {versionLoading !== index && showSelectVersion === -1 && (
+                        <div className="select-icon">
+                          <img src={iconUpAndDown} alt="选择版本" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* 悬停操作区域 */}
+                  <div
+                    className={`hover-area ${
+                      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                      showSelectVersion === index && 'show-select-version'
+                    } flex justify-between`}
+                  >
+                    {/*<img src={iconUpAndDown} alt="选择版本" />*/}
+                    <span onClick={() => version && props.onDependRefresh?.({ [name]: version })}>
+                      <img src={iconRefresh} alt="刷新" />
+                    </span>
+                    <span className="ml-2" onClick={() => removeDepend(name)}>
+                      <img src={iconCross} alt="移除" />
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+            {props.devDependList.map((depend, index) => {
+              return (
+                <div
+                  id="item"
+                  className={'static-item flex justify-between items-center cursor-pointer'}
+                  key={'dev_' + index}
+                >
+                  <div className={`name truncate`}>{depend.name}</div>
+                  <div className="version flex">
+                    <span style={{ whiteSpace: 'nowrap' }}>{depend.version}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </CollapsePanel.Block>
+        <CollapsePanel.Block
+          title="内部依赖"
+          action={
+            <span className="ml-auto cursor-pointer" onClick={() => props.onRefreshLocalDepend?.()}>
+              <img src={iconRefreshDepend} alt="刷新" />
+            </span>
+          }
+        >
+          <div className="px-10px">
+            {!hideLocalDepend &&
+              props.localDepend.map(item => (
+                <div
+                  onDoubleClick={() => props.onInsertLocalDepend?.(item)}
+                  key={item}
+                  className="truncate text-[#333] font-14px leading-24px cursor-pointer"
+                >
+                  {item}
+                </div>
+              ))}
+          </div>
+        </CollapsePanel.Block>
+      </CollapsePanel>
     </div>
   )
 }
