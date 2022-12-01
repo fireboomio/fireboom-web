@@ -1,3 +1,4 @@
+@sideWidth: 230px;
 .wrapper {
   padding: 12px 12px 0;
   height: 100%;
@@ -39,7 +40,7 @@
 }
 
 .sider {
-  width: 230px;
+  width: @sideWidth;
   flex: 0 0 auto;
   padding: 12px 9px 0;
   display: flex;
@@ -86,4 +87,13 @@
       text-overflow: ellipsis;
     }
   }
+}
+
+.successInfo {
+  position: absolute;
+  left: @sideWidth;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: white;
 }

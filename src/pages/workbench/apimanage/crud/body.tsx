@@ -11,9 +11,10 @@ import {
   Select,
   Table
 } from 'antd'
-import { cloneDeep, keyBy, mapValues } from 'lodash'
+import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -24,6 +25,10 @@ import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
 
+import failIcon from './assets/fail-icon.svg'
+import failPic from './assets/fail-pic.svg'
+import successIcon from './assets/success-icon.svg'
+import successPic from './assets/success-pic.svg'
 import styles from './index.module.less'
 import type { _DMFField, _DMFModel, ApiOptions, TableAttr } from './interface'
 import { API, AuthOptions, AuthType, KeyType, SortDirection } from './interface'
@@ -58,22 +63,6 @@ function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
   })
 }
 
-function findParamType(type: string, dmf: string, prefix: string): Record<string, string> {
-  const match = dmf.match(new RegExp(`input ${type}\\s\\{\\n[\\s\\S]*?\\n}`))
-  const map: Record<string, string> = {}
-  const str: string = match?.[0] ?? ''
-  if (str) {
-    ;(str.match(/(\w+):\s(\w+)/g) ?? []).forEach(pair => {
-      const [key, value] = pair.split(': ')
-      let type = value.trim()
-      if (dmf.match(new RegExp(`input ${type}\\s\\{\\n`))) {
-        type = prefix + type
-      }
-      map[key.trim()] = type
-    })
-  }
-  return map
-}
 type FieldMap = Record<string, { isSet: boolean; name: string }>
 type TypeMap = Record<string, FieldMap>
 function genTypeMap(dmf: string, prefix: string): TypeMap {
@@ -150,6 +139,7 @@ function expandForeignField(
 }
 
 export default function CRUDBody(props: CRUDBodyProps) {
+  const navigate = useNavigate()
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)
   // 当前选择的模型
@@ -160,8 +150,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [field, setField] = useImmer<{ value: string; label: string }[]>([])
   // 展开状态表，用于标记外键展开状态
   const [expandRowKey, setExpandRowKey] = useImmer<string[]>([])
+  // 结果显示
+  const [resultPanel, setResultPanel] = useState<React.ReactNode>()
   // api已存在提示内容
   const [confirmModal, setConfirmModal] = useState<React.ReactNode>()
+  const [existPathFlag, setExistPathFlag] = useState<boolean>()
   // table展示哪些字段
   const [showColMap, setShowColMap] = useState<Record<string, boolean>>()
   // api提示的promise对应的resolve，用于实现对话框promise化
@@ -268,6 +261,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
     onApiListChange(Object.values(API))
     setModel(model)
+    setResultPanel(undefined)
   }, [props.model])
   useEffect(() => {
     form.resetFields()
@@ -286,38 +280,73 @@ export default function CRUDBody(props: CRUDBodyProps) {
         params: { paths: JSON.stringify(pathList) }
       }
     )
-    const pathIdMap = mapValues(keyBy(existPathList, 'Path'), 'ID')
+    const pathMap = keyBy(existPathList, 'Path')
     hideCheck()
-    if (existPathList.length) {
-      const result = await new Promise(resolve => {
-        confirmResolve.current = resolve
-        setConfirmModal(
-          existPathList.map(item => {
-            return <div key={item.Path}>{item.Path}</div>
-          })
-        )
-      })
-      if (result === 0) {
-        return
-      } else if (result === 1) {
-        apiList = apiList.filter(item => !pathIdMap[item.path])
-      }
+    const genType = await new Promise(resolve => {
+      confirmResolve.current = resolve
+      setExistPathFlag(!!existPathList.length)
+      setConfirmModal(
+        pathList.map(path => {
+          return (
+            <div key={path} className="flex">
+              <span className="w-3/5">{path}</span>
+              {pathMap[path] ? <span className="text-[#f21212]">已存在</span> : <span>不存在</span>}
+            </div>
+          )
+        })
+      )
+    })
+    if (genType === 0) {
+      return
+    } else if (genType === 1) {
+      apiList = apiList.filter(item => !pathMap[item.path])
+    }
+    if (apiList.length === 0) {
+      return
     }
     const hide = message.loading('正在生成')
 
     // 处理登录鉴权
-    const result = await requests.post<unknown, { Code: number; Path: string }[]>(
-      `/operateApi/batch`,
-      {
-        list: apiList
-      }
-    )
+    let result
+    try {
+      result = await requests.post<unknown, { Code: number; Path: string; ID: string }[]>(
+        `/operateApi/batch`,
+        {
+          list: apiList
+        }
+      )
+    } catch (e) {
+      console.error(e)
+    }
     hide()
     onRefreshMenu('api')
-    message.success(
-      `执行结束，成功${result.filter(x => !x.Code).length}条，失败${
-        result.filter(x => x.Code).length
-      }条`
+    setResultPanel(
+      <div className={styles.successInfo}>
+        <img
+          src={result ? successPic : failPic}
+          alt=""
+          className="m-auto block mt-30 relative left-3"
+        />
+        <div className="text-center mt-8 font-500 text-default">
+          {result ? `本次成功生成${result.filter(x => !x.Code).length}条API` : '生成失败'}
+        </div>
+        {result && (
+          <div className="w-140 py-4 bg-[#FAFAFC] mx-auto mt-6 rounded-2">
+            {result.map(row => (
+              <div key={row.Path} className="flex leading-5 my-2.5 pl-21 pr-27 items-center">
+                <img src={row.Code === 0 ? successIcon : failIcon} alt="" className="flex-0" />
+                <span className="ml-1.5 text-default flex-1">{row.Path}</span>
+                <a
+                  className="ml-1.5 text-default text-[#649FFF]"
+                  onClick={() => navigate(`/workbench/apimanage/${row.ID}`)}
+                >
+                  查看
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     )
   }
 
@@ -683,7 +712,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       </Form>
       <Modal
         open={!!confirmModal}
-        title="检测到以下API已存在，是否覆盖？"
+        title="批量新建预览"
         onCancel={() => {
           setConfirmModal(undefined)
         }}
@@ -698,15 +727,17 @@ export default function CRUDBody(props: CRUDBodyProps) {
             >
               取消
             </Button>
-            <Button
-              className="btn-save"
-              onClick={() => {
-                setConfirmModal(undefined)
-                confirmResolve.current?.(1)
-              }}
-            >
-              跳过已有API
-            </Button>
+            {existPathFlag && (
+              <Button
+                className="btn-save"
+                onClick={() => {
+                  setConfirmModal(undefined)
+                  confirmResolve.current?.(1)
+                }}
+              >
+                跳过已有API
+              </Button>
+            )}
             <Button
               className="btn-save"
               onClick={() => {
@@ -714,13 +745,14 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 confirmResolve.current?.(2)
               }}
             >
-              全部覆盖
+              {existPathFlag ? '全部覆盖' : '全部创建'}
             </Button>
           </div>
         }
       >
         {confirmModal}
       </Modal>
+      {resultPanel}
     </div>
   )
 }
