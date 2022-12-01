@@ -4,8 +4,7 @@
 
 import 'graphiql/graphiql.css'
 
-import { ReloadOutlined } from '@ant-design/icons'
-import { message, Tabs, Tooltip } from 'antd'
+import { message, Tabs } from 'antd'
 // @ts-ignore
 import GraphiqlExplorer1 from '@/components/GraphQLExplorer'
 import { debounce } from 'lodash'
@@ -55,6 +54,7 @@ export default function APIEditorContainer() {
   const {
     query,
     schema,
+    schemaAST,
     setQuery,
     refreshSchema,
     setID,
@@ -65,6 +65,7 @@ export default function APIEditorContainer() {
     operationType
   } = useAPIManager(state => ({
     query: state.query,
+    schemaAST: state.schemaAST,
     schema: state.schema,
     setQuery: state.setQuery,
     refreshSchema: state.refreshSchema,
@@ -198,8 +199,8 @@ export default function APIEditorContainer() {
                 isLoading={isRefreshing}
                 dataSourceList={dataSourceList}
                 query={query}
-                explorerIsOpen={true}
-                onEdit={setQuery}
+                queryAST={schemaAST}
+                onChange={setQuery}
                 onRefresh={onRefreshSchema}
               />
             </div>

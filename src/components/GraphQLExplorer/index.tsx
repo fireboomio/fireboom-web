@@ -1,10 +1,21 @@
-import type { GraphQLField, GraphQLFieldMap, GraphQLSchema } from 'graphql'
-import { useMemo, useState } from 'react'
+import {
+  DefinitionNode,
+  DocumentNode,
+  GraphQLField,
+  GraphQLFieldMap,
+  GraphQLSchema,
+  Kind,
+  OperationDefinitionNode,
+  OperationTypeNode,
+  print
+} from 'graphql'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useImmer } from 'use-immer'
+import { GraphQLExplorerContext } from './context'
 
 import ExplorerFilter from './ExplorerFilter'
 import ResultField from './ResultField'
 import { arraySort, convertMapToArray } from './utils'
-import { MultipleFieldViews } from './ViewFactory'
 
 const filters = [
   { label: '全部', value: '' },
@@ -18,21 +29,45 @@ type FilterType = typeof values[number]
 
 interface GraphiqlExplorerProps {
   isLoading?: boolean
+  query?: string
+  queryAST?: DocumentNode
   schema?: GraphQLSchema
   dataSourceList: string[]
-  onSelect?: () => void
+  onChange?: (v: string) => void
   onRefresh?: () => void
 }
+
+type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
 const GraphiqlExplorer = ({
   isLoading,
   dataSourceList,
   schema,
-  onSelect,
+  query,
+  queryAST,
+  onChange,
   onRefresh
 }: GraphiqlExplorerProps) => {
   const [selectedDataSource, setSeletedDataSource] = useState<string>()
-  const [selectedType, setSelectedType] = useState<FilterType>('')
+  const [selectedType, setSelectedType] = useState<FilterType>('query')
+
+  const fieldTypeMap = useMemo(() => {
+    if (!schema) return {}
+    const queries = schema.getQueryType()?.getFields() ?? {}
+    const mutations = schema.getMutationType()?.getFields() ?? {}
+    const subscriptions = schema.getSubscriptionType()?.getFields() ?? {}
+    const ret: Record<string, OperationTypeNode> = {}
+    Object.keys(queries).forEach(q => {
+      ret[q] = OperationTypeNode.QUERY
+    })
+    Object.keys(mutations).forEach(q => {
+      ret[q] = OperationTypeNode.MUTATION
+    })
+    Object.keys(subscriptions).forEach(q => {
+      ret[q] = OperationTypeNode.SUBSCRIPTION
+    })
+    return ret
+  }, [schema])
 
   // 按照类型过滤 按照分类筛选
   const visibleFields = useMemo(() => {
@@ -71,6 +106,35 @@ const GraphiqlExplorer = ({
     return []
   }, [visibleFields])
 
+  const _queryAST = useMemo(() => {
+    // @ts-ignore
+    let ast: Writeable<DocumentNode> = queryAST
+    if (!ast) {
+      ast = { kind: Kind.DOCUMENT, definitions: [] }
+    }
+    const queryType = OperationTypeNode.QUERY
+    if (!ast.definitions.length) {
+      ast.definitions = [
+        {
+          directives: [],
+          kind: Kind.OPERATION_DEFINITION,
+          name: { kind: Kind.NAME, value: '' },
+          operation: queryType,
+          selectionSet: { kind: Kind.SELECTION_SET, selections: [] },
+          variableDefinitions: []
+        }
+      ]
+    }
+    return ast
+  }, [queryAST])
+
+  const updateAST = useCallback(() => {
+    const targetQuery = print(_queryAST)
+    if (targetQuery !== query) {
+      onChange?.(targetQuery)
+    }
+  }, [_queryAST, onChange])
+
   return (
     <div className="flex flex-col h-full bg-[rgba(135,140,153,0.03)] min-w-64 w-full">
       <ExplorerFilter
@@ -90,9 +154,25 @@ const GraphiqlExplorer = ({
             fontFamily: 'Consolas, Inconsolata, "Droid Sans Mono", Monaco, monospace'
           }}
         >
-          {fields.map(field => (
-            <ResultField key={field.name} field={field} />
-          ))}
+          <GraphQLExplorerContext.Provider
+            value={{
+              queryAST: _queryAST,
+              schema,
+              fieldTypeMap,
+              updateAST
+            }}
+          >
+            {fields.map(field => (
+              <ResultField
+                key={field.name}
+                field={field}
+                // @ts-ignore
+                selections={
+                  (_queryAST?.definitions[0] as OperationDefinitionNode).selectionSet.selections
+                }
+              />
+            ))}
+          </GraphQLExplorerContext.Provider>
         </div>
       )}
     </div>

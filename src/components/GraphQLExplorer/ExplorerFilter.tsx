@@ -35,7 +35,7 @@ const ExplorerFilter = ({
       <div className="flex items-center">
         <AutoComplete
           className={styles.select}
-          placeholder="数据源分类"
+          placeholder="筛选"
           options={dataSourceList.map(item => ({ label: item, value: item }))}
           value={selectedDataSource}
           onChange={onSeletedDataSource}
