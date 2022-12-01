@@ -7,5 +7,6 @@ export interface SettingType {
 export interface VersionConfig {
   versionNum: string
   prismaVersion: string
+  prismaEngineVersion: string
   copyright: string
 }

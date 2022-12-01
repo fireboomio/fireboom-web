@@ -8,6 +8,7 @@ import { debounce } from 'lodash'
 import type { FC } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
+import { useImmer } from 'use-immer'
 
 import { dependLoader } from '@/components/Ide/dependLoader'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
@@ -16,9 +17,7 @@ import { isInputKey } from '@/lib/helpers/utils'
 import {
   getHook,
   getTypes,
-  runHook,
   saveHookDepend,
-  saveHookInput,
   saveHookScript,
   updateHookSwitch
 } from '@/lib/service/hook'
@@ -51,7 +50,7 @@ export type HookInfo = {
   scriptType: string
   type: string
   path: string
-  depend: Depend[] | null
+  depend: { dependencies: Depend[]; devDependencies: Depend[] }
   input: Input | null
   switch: boolean
 }
@@ -119,7 +118,7 @@ const IdeContainer: FC<Props> = props => {
   const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
   const typingsRef = useRef<any>(null)
   // hook详情
-  const [hookInfo, setHookInfo] = useState<HookInfo>()
+  const [hookInfo, setHookInfo] = useImmer<HookInfo | undefined>(undefined)
   // 是否展开输入和输出区域
   const [expandAction, setExpandAction] = useState(false)
   // 是否全屏显示
@@ -191,7 +190,10 @@ const IdeContainer: FC<Props> = props => {
 
   useEffect(() => {
     if (editor && monaco) {
-      hookInfo?.depend?.forEach((item, index) => {
+      hookInfo?.depend?.dependencies?.forEach((item, index) => {
+        dependLoader(item.name, item.version, monaco)
+      })
+      hookInfo?.depend?.devDependencies?.forEach((item, index) => {
         dependLoader(item.name, item.version, monaco)
       })
       // depend['@angular/cdk'] = '14.2.5'
@@ -290,9 +292,10 @@ const IdeContainer: FC<Props> = props => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await saveHookDepend(hookPath, dependList)
     if (hookInfo) {
-      setHookInfo({
-        ...hookInfo,
-        depend: dependList
+      setHookInfo(hookInfo => {
+        if (hookInfo) {
+          hookInfo.depend.dependencies = dependList
+        }
       })
     }
   }
@@ -370,21 +373,6 @@ const IdeContainer: FC<Props> = props => {
     setSmallDepend(true)
   }
 
-  // 处理点击调试按钮
-  const handleDebug = async (json: Input) => {
-    // 保存input内容
-    void (await saveHookInput(hookPath, json))
-    const result = await runHook<RunHookResponse>(hookPath, {
-      depend: hookInfo?.depend ?? [],
-      script: hookInfo?.script ?? '',
-      scriptType: 'typescript',
-      input: json
-    })
-    // result为json
-    setRunResult(result)
-    return result
-  }
-
   return (
     <div className={`${ideStyles['ide-container']}`}>
       {/*<FullScreen*/}
@@ -439,7 +427,8 @@ const IdeContainer: FC<Props> = props => {
           ) : (
             <IdeDependList
               {...{
-                dependList: hookInfo?.depend || [],
+                dependList: hookInfo?.depend?.dependencies || [],
+                devDependList: hookInfo?.depend?.devDependencies || [],
                 hookPath: hookPath,
                 onSelectHook: selectHook,
                 onChangeDependVersion: dependChange,

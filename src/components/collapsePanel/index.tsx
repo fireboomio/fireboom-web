@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useEffect, useState } from 'react'
 
-import styles from './sidePanel.module.less'
+import styles from './index.module.less'
 
 export interface CollapsePanelBlockProps {
   title: string
@@ -11,10 +11,15 @@ export interface CollapsePanelBlockProps {
   defaultOpen?: boolean
   onOpen?: (flag: boolean) => void
 }
-export default function CollapsePanel({ children }: { children: React.ReactNode[] }) {
-  return <div>{children}</div>
+export default function CollapsePanel({
+  children
+}: {
+  children: React.ReactNode[] | React.ReactNode
+}) {
+  return <div className={styles.collapse}>{children}</div>
 }
-export function Block(props: CollapsePanelBlockProps) {
+
+CollapsePanel.Block = function CollapsePanelBlock(props: CollapsePanelBlockProps) {
   const [open, setOpen] = useState(false)
   useEffect(() => {
     if (props.open !== undefined) {
@@ -30,7 +35,7 @@ export function Block(props: CollapsePanelBlockProps) {
   }
 
   return (
-    <div className={`${styles.container} ${open ? styles.active : ''}`}>
+    <div className={`${styles.block} ${open ? styles.active : ''}`}>
       <div
         className={`${styles.header} ${open ? styles.headerOpen : ''}`}
         onClick={_ => handelOpen(!open)}

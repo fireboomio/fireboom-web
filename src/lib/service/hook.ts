@@ -36,9 +36,10 @@ export const saveHookInput = (path: string, input: Record<string, string>) => {
 
 // 更新hook依赖
 export const saveHookDepend = (path: string, depend: Record<string, string>[]) => {
+  console.log(depend)
   return requests.post('/hook/depend', {
     path,
-    depend
+    depend: { dependencies: depend }
   })
 }
 
