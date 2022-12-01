@@ -131,8 +131,10 @@
 .switch-edit-btn {
   width: 32px;
   height: 16px;
-  background-color: #8abe2a;
   border-radius: 12px;
+  &:global(.ant-switch-checked) {
+    background-color: #8abe2a;
+  }
 }
 
 .edit-btn {
@@ -191,21 +193,11 @@
 .form-delete-icon {
   position: relative;
   top: 4px;
-  margin: 0 8px;
-  color: #ff9378;
-  font-size: 24px;
+  right: 24px;
+  width: 12px;
+  height: 12px;
   cursor: pointer;
-  transition: all 0.3s;
-  fill: currentcolor;
-
-  &:hover {
-    color: #777;
-  }
-
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
+  z-index: 99;
 }
 
 .envTable {

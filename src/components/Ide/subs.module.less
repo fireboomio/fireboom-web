@@ -66,15 +66,6 @@
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s;
-
-  &:hover {
-    color: #777;
-  }
-
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 }
 
 .form-item-icon {
@@ -138,11 +129,11 @@
 .switch-edit-btn {
   width: 32px;
   height: 16px;
-  margin-left: 12px;
-  background-color: #8abe2a;
   border-radius: 12px;
+  &:global(.ant-switch-checked) {
+    background-color: #8abe2a;
+  }
 }
-
 // auth更多设置style
 
 .form-contain :global {

@@ -357,6 +357,10 @@ const DependList = (props: DependListProps) => {
 
   return (
     <div className={`${ideStyles['ide-container-depend-list']}`}>
+      {/*<CollapsePanel>*/}
+      {/*  <CollapsePanel.Bl>*/}
+      {/*</CollapsePanel.Bl>*/}
+
       <div className={ideStyles.treeContainer}>
         <div className="title text-14px select-none w-full">文件</div>
         <Tree

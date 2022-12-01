@@ -257,6 +257,12 @@ export default function SettingMainVersion() {
               <Radio.Group
                 value={systemConfig.devSwitch}
                 onChange={e => {
+                  if (e.target.value) {
+                    requests.post('/global', {
+                      key: 'enableGraphQLEndpoint',
+                      val: true
+                    })
+                  }
                   onChange(e, 'devSwitch')
                 }}
               >

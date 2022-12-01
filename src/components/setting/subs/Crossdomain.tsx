@@ -14,6 +14,7 @@ interface CorsConfiguration {
   allowedMethods: Array<string>
   allowedHeaders: Array<string>
   allowCredentials: boolean
+  allowedOriginsEnable: boolean
   exposedHeaders: Array<string>
   maxAge: number
 }
@@ -77,99 +78,126 @@ export default function SettingCrossdomain() {
                 sm: { span: 20 }
               }}
             >
-              <Form.List name="allowedOrigins" initialValue={corsConfig.allowedOrigins}>
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => {
-                      const current =
-                        form.getFieldValue(['allowedOrigins', field.name]) || 'https://'
-                      const setFieldValue = (part: 'protocol' | 'path', value: string) => {
-                        let [, protocol = 'https://', path = ''] =
-                          current?.match(/(^https?:\/\/)(.*)/) || []
-                        if (part === 'protocol') {
-                          protocol = value
-                        } else {
-                          path = value
-                        }
-                        const url = `${protocol}${path}`
-                        form.setFieldValue(['allowedOrigins', field.name], url)
-                        if (part === 'protocol') {
-                          doSave()
-                        }
-                      }
-                      const doSave = () => {
-                        const urlList = (
-                          form.getFieldValue('allowedOrigins') as Array<string>
-                        ).filter(url => url?.replace(/https?:\/\//, '').trim())
-                        // 不用过滤后的数据进行覆盖，以防止用户输入过程中的数据被丢弃
-                        // form.setFieldValue('allowedOrigins', urlList)
-                        void postRequest(
-                          'allowedOrigins',
-                          form.getFieldValue('allowedOrigins') as Array<string>
-                        ).then(() => {
-                          setRefreshFlag(!refreshFlag)
-                        })
-                      }
-                      return (
-                        <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                          <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
-                            <div>
-                              <div>{'域名' + (index + 1).toString() + ':'}</div>
-                              <Input
-                                addonBefore={
-                                  <Select
-                                    defaultValue={current.match(/^https?:\/\//)?.[0]}
-                                    className="select-before"
-                                    onChange={e => setFieldValue('protocol', e)}
-                                  >
-                                    <Select.Option value="https://">https://</Select.Option>
-                                    <Select.Option value="http://">http://</Select.Option>
-                                  </Select>
-                                }
-                                placeholder="请输入域名"
-                                style={{ width: '60%' }}
-                                onChange={e => setFieldValue('path', e.target.value)}
-                                defaultValue={current.replace(/^https?:\/\//, '')}
-                                onBlur={doSave}
-                                onPressEnter={doSave}
-                              />
-                              <IconFont
-                                type="icon-guanbi"
-                                className={`${styles['form-delete-icon']}`}
-                                onClick={() => {
-                                  void requests
-                                    .post('/global', {
-                                      key: 'allowedOrigins',
-                                      val: (
-                                        form.getFieldValue('allowedOrigins') as Array<string>
-                                      ).filter((_, i) => i != index)
-                                    })
-                                    .then(() => {
-                                      remove(index)
-                                    })
-                                }}
-                              />
-                            </div>
-                          </Form.Item>
-                        </Form.Item>
-                      )
-                    })}
-                    <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
-                      <Button
-                        type="dashed"
-                        style={{ width: '48%' }}
-                        icon={<PlusOutlined />}
-                        className="text-gray-500/60"
-                        onClick={() => add()}
-                      >
-                        新增域名
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
+              <Switch
+                className={styles['switch-edit-btn']}
+                checked={corsConfig.allowedOriginsEnable}
+                size="small"
+                onChange={isChecked => {
+                  void postRequest('allowedOriginsEnable', isChecked).then(() => {
+                    setRefreshFlag(!refreshFlag)
+                  })
+                }}
+              />
+              <span className="ml-4 text-default">允许所有域名</span>
             </Form.Item>
+            {!corsConfig.allowedOriginsEnable && (
+              <Form.Item
+                wrapperCol={{
+                  offset: 3,
+                  xs: { span: 20 },
+                  sm: { span: 20 }
+                }}
+              >
+                <Form.List name="allowedOrigins" initialValue={corsConfig.allowedOrigins}>
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => {
+                        const current =
+                          form.getFieldValue(['allowedOrigins', field.name]) || 'https://'
+                        const setFieldValue = (part: 'protocol' | 'path', value: string) => {
+                          let [, protocol = 'https://', path = ''] =
+                            current?.match(/(^https?:\/\/)(.*)/) || []
+                          if (part === 'protocol') {
+                            protocol = value
+                          } else {
+                            path = value
+                          }
+                          const url = `${protocol}${path}`
+                          form.setFieldValue(['allowedOrigins', field.name], url)
+                          if (part === 'protocol') {
+                            doSave()
+                          }
+                        }
+                        const doSave = () => {
+                          const urlList = (
+                            form.getFieldValue('allowedOrigins') as Array<string>
+                          ).filter(url => url?.replace(/https?:\/\//, '').trim())
+                          // 不用过滤后的数据进行覆盖，以防止用户输入过程中的数据被丢弃
+                          // form.setFieldValue('allowedOrigins', urlList)
+                          void postRequest(
+                            'allowedOrigins',
+                            form.getFieldValue('allowedOrigins') as Array<string>
+                          ).then(() => {
+                            setRefreshFlag(!refreshFlag)
+                          })
+                        }
+                        return (
+                          <Form.Item
+                            {...formItemLayoutWithOutLabel}
+                            required={false}
+                            key={field.key}
+                          >
+                            <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
+                              <div>
+                                <div>{'域名' + (index + 1).toString() + ':'}</div>
+                                <Input
+                                  addonBefore={
+                                    <Select
+                                      defaultValue={current.match(/^https?:\/\//)?.[0]}
+                                      className="select-before"
+                                      onChange={e => setFieldValue('protocol', e)}
+                                    >
+                                      <Select.Option value="https://">https://</Select.Option>
+                                      <Select.Option value="http://">http://</Select.Option>
+                                    </Select>
+                                  }
+                                  placeholder="请输入域名"
+                                  style={{ width: '60%' }}
+                                  onChange={e => setFieldValue('path', e.target.value)}
+                                  defaultValue={current.replace(/^https?:\/\//, '')}
+                                  onBlur={doSave}
+                                  onPressEnter={doSave}
+                                />
+
+                                <span
+                                  className={`${styles['form-delete-icon']}`}
+                                  onClick={() => {
+                                    void requests
+                                      .post('/global', {
+                                        key: 'allowedOrigins',
+                                        val: (
+                                          form.getFieldValue('allowedOrigins') as Array<string>
+                                        ).filter((_, i) => i != index)
+                                      })
+                                      .then(() => {
+                                        remove(index)
+                                      })
+                                  }}
+                                >
+                                  <img src="/assets/deleteIcon.svg" alt=" " />
+                                </span>
+                              </div>
+                            </Form.Item>
+                          </Form.Item>
+                        )
+                      })}
+                      <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
+                        <Button
+                          type="dashed"
+                          style={{ width: '48%' }}
+                          icon={<PlusOutlined />}
+                          className="text-gray-500/60"
+                          onClick={() => add()}
+                        >
+                          新增域名
+                        </Button>
+                        <Form.ErrorList errors={errors} />
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
+            )}
             <Form.Item name="allowedMethods" label="允许方法" className="-mt-3">
               <Select
                 style={{ width: '90%' }}
@@ -181,7 +209,7 @@ export default function SettingCrossdomain() {
                   })
                 }}
               >
-                {['GET', 'POST', 'PUT', 'DELETE'].map(item => (
+                {['GET', 'POST'].map(item => (
                   <Select.Option key={item} value={item}>
                     {item}
                   </Select.Option>
