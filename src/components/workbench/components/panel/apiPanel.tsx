@@ -179,7 +179,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [navCheck, multiSelection]
   )
-  console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
     if (nodeData.legal) {

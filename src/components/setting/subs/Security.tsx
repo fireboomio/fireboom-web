@@ -168,17 +168,6 @@ export default function SettingMainSecurity() {
   const urlReg = /^(http(s?)|):\/\/(.+)$/
   const { config: globalConfig } = useContext(ConfigContext)
 
-  const onFinish = (_values: SecurConfig) => {
-    void requests
-      .post('/global', {
-        key: 'enableGraphQLEndpoint',
-        val: 0
-      })
-      .then(() => {
-        setRefreshFlag(!refreshFlag)
-      })
-    // void requests.post('/global', { key: 'cors.allowedHosts', val: values.allowedHosts })
-  }
   const postRequest = async (key: string, value: string | Array<string> | number | boolean) => {
     await requests.post('/global', {
       key: key,
@@ -204,7 +193,6 @@ export default function SettingMainSecurity() {
               allowedHosts: securConfig?.allowedHosts,
               enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint
             }}
-            onFinish={onFinish}
             labelAlign="left"
             labelCol={{
               xs: { span: 4 },

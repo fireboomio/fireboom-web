@@ -74,6 +74,37 @@ function findParamType(type: string, dmf: string, prefix: string): Record<string
   }
   return map
 }
+type FieldMap = Record<string, { isSet: boolean; name: string }>
+type TypeMap = Record<string, FieldMap>
+function genTypeMap(dmf: string, prefix: string): TypeMap {
+  const allTypeMap: TypeMap = {}
+  for (const [subStr, type] of dmf.matchAll(/input (\w+)\s\{\n[\s\S]*?\n}/g)) {
+    const fieldMap: FieldMap = {}
+    ;(subStr.match(/(\w+):\s(\w+)/g) ?? []).forEach(pair => {
+      const [key, value] = pair.split(': ')
+      fieldMap[key.trim()] = { isSet: false, name: value.trim() }
+    })
+    allTypeMap[type] = fieldMap
+  }
+  // 再次遍历，给所有非标量增加前缀，将所有set类型解包
+  Object.keys(allTypeMap).forEach(type => {
+    const fieldMap = allTypeMap[type]
+    Object.keys(fieldMap).forEach(fieldKey => {
+      const field = fieldMap[fieldKey]
+      const refType = allTypeMap[field.name]
+      // 如果当前字段对应的是set类型，则将其set内容提取出来
+      if (refType && Object.keys(refType).join(',') === 'set') {
+        field.isSet = true
+        field.name = refType.set.name
+      }
+      // 增加类型前缀
+      if (allTypeMap[field.name]) {
+        field.name = prefix + field.name
+      }
+    })
+  })
+  return allTypeMap
+}
 
 /**
  * 将model中的外键字段展开为级联model，会修改入参model
@@ -158,15 +189,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
     omitForeignKey(model, props.relationMap!)
     expandForeignField(model, props.modelList || [], 3)
-
-    const createTypeMap = findParamType(
-      `${model.name}CreateInput`,
-      props.dmf ?? '',
-      `${props.dbName}_`
-    )
+    const typeMap = genTypeMap(props.dmf ?? '', `${props.dbName}_`)
+    const createTypeMap = typeMap[`${model.name}CreateInput`]
     const updateTypeMap = {
-      ...findParamType(`${model.name}UpdateInput`, props.dmf ?? '', `${props.dbName}_`),
-      ...findParamType(`${model.name}WhereUniqueInput`, props.dmf ?? '', `${props.dbName}_`)
+      ...typeMap[`${model.name}UpdateInput`]
+      // ...typeMap[`${model.name}WhereUniqueInput`]
     }
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {

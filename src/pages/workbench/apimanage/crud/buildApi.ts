@@ -7,8 +7,6 @@ export default function buildApi(
   options: ApiOptions
 ): { path: string; content: string; setting?: string }[] {
   let setting: string | undefined = undefined
-  console.log(options.auth)
-  console.log(options)
   if (options.auth === AuthOptions.enable) {
     setting = `{"enable":true,"authenticationRequired":true,"settingType":1}`
   } else if (options.auth === AuthOptions.disable) {
@@ -90,7 +88,7 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
         //   type = `${options.dbName}_${type}`
         // }
         const type = field.createType
-        return `$${key}: ${type}${options.table[key].create === KeyType.Required ? '!' : ''}`
+        return `$${key}: ${type.name}${options.table[key].create === KeyType.Required ? '!' : ''}`
       })
       .join(', ')
     const dataStr = createFields
@@ -129,22 +127,27 @@ mutation ${options.prefix}DeleteOne${
   },
   update(options: ApiOptions) {
     const primaryKey = options.primaryKey
-    const updateFields = Object.keys(options.table).filter(
-      key => options.table[key].update !== KeyType.Hidden && options.table[key].isDirectField
-    )
+    const updateFields = Object.keys(options.table)
+      .filter(
+        key => options.table[key].update !== KeyType.Hidden && options.table[key].isDirectField
+      )
+      .map(key => ({
+        key,
+        ...options.table[key].updateType
+      }))
     const paramStr =
-      `$${primaryKey}: ${options.table[primaryKey].updateType}!, ` +
+      `$${primaryKey}: ${options.table[primaryKey].type}!, ` +
       updateFields
         .map(
-          key =>
-            `$${key}: ${options.table[key].updateType}${
-              options.table[key].update === KeyType.Required ? '!' : ''
+          field =>
+            `$${field.key}: ${field.name}${
+              options.table[field.key].update === KeyType.Required ? '!' : ''
             }`
         )
         .join(', ')
     const updateStr = updateFields
-      .map(key => {
-        return `${key}: $${key}`
+      .map(field => {
+        return `${field.key}: ${field.isSet ? `{set: $${field.key}}` : `$${field.key}`}`
       })
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
