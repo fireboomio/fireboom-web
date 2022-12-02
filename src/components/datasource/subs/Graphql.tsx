@@ -350,7 +350,7 @@ export default function Graphql({ content, type }: Props) {
                       <div>
                         <span className={styles['label-style']}>
                           {key}
-                          <FormToolTip title="test" />
+                          <FormToolTip title={key} />
                         </span>
                       </div>
                     }

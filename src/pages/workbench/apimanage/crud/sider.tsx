@@ -89,10 +89,6 @@ export default function CRUDSider(props: CRUDSiderProps) {
           onChange={value => {
             setCurrentDataSourceId(value)
           }}
-          showSearch
-          filterOption={(input, option) => {
-            return (option?.name ?? '').toLowerCase().includes(input.toLowerCase())
-          }}
           className="flex-1"
           options={dataSourceList.map(x => {
             let svg = '/assets/icon/db-other.svg'

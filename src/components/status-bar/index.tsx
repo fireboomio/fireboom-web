@@ -81,12 +81,12 @@ const StatusBar: React.FC<Props> = ({
         <span className={styles['info']}>
           <span className={styles.gitIcon} />
           <span className="mr-12">CONNECT GIT (BETA)</span>
-          <span className={styles['info-env']}>
+          <span className={styles['info-env'] + ' mr-2'}>
             <span>{env}</span>
           </span>
-          <span className={styles['info-version']}>
-            <span>FB: </span>
-            <span className="ml-2">{version}</span>
+          <span className={styles['info-version'] + ' mr-2'}>
+            <span>FB:</span>
+            <span className="">{version}</span>
           </span>
 
           <span
