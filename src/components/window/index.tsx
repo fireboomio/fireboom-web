@@ -68,7 +68,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
 
   return (
     <div
-      className="bg-[#fff] border-gray-500/50 min-h-80px py-5 px-7 bottom-36px z-200  absolute"
+      className="bg-[#fff] border-gray-500/50 min-h-80px pb-5 px-7 bottom-36px z-200  absolute"
       style={{
         borderTop: '1px solid #EFEFEFFF',
         borderRadius: '12px 12px 0 0',
@@ -77,10 +77,11 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
       }}
     >
       <Resizable
-        className="flex flex-col h-full"
+        className="flex flex-col h-full pt-5"
         defaultSize={{ width: '100%', height: 348 }}
         minWidth="100%"
         maxWidth="100%"
+        enable={{ top: true }}
       >
         <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
         <div className={`w-full overflow-auto ${tabActiveKey === '0' ? '' : 'hidden'}`}>

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useDebounceEffect } from '@/hooks/debounce'
 import { isInputKey } from '@/lib/helpers/utils'
+import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 // import testData from './testdata'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
@@ -23,6 +24,9 @@ interface VariablesEditorProps {
 }
 
 const VariablesEditor = (props: VariablesEditorProps) => {
+  const { schemaAST } = useAPIManager(state => ({
+    schemaAST: state.schemaAST
+  }))
   const editorContext = useEditorContext()
   const [values, setValues] = useState<string>('')
   const valuesRef = useRef<string>('')
@@ -78,7 +82,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
           const saved = savedStr
           try {
             valuesRef.current = JSON.stringify(JSON.parse(saved), null, 2)
-            editorRef.current?.setValue(saved)
+            editorRef.current?.setValue(valuesRef.current)
           } catch (e) {
             console.error(e)
           }
@@ -87,7 +91,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
         //
       }
     }
-  }, [props.apiID])
+  }, [props.apiID, schemaAST]) // 增加schemaAST的监听，以解决切换api时被setValue清空的问题
 
   return (
     <div className="h-full">
