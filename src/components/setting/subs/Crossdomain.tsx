@@ -4,9 +4,11 @@ import { Button, Form, Input, Select, Switch } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
+import FormToolTip from '@/components/common/FormTooltip'
 import IconFont from '@/components/iconfont'
 import requests from '@/lib/fetchers'
 
+import tipCros from './assets/tip-cros.png'
 import styles from './subs.module.less'
 
 interface CorsConfiguration {
@@ -72,7 +74,15 @@ export default function SettingCrossdomain() {
             }}
           >
             <Form.Item
-              label="允许源"
+              label={
+                <div>
+                  <span>允许源</span>
+                  <FormToolTip
+                    className="!left-4"
+                    title={<img src={tipCros} className="max-w-60vw max-h-60vh" alt="" />}
+                  />
+                </div>
+              }
               wrapperCol={{
                 xs: { span: 20 },
                 sm: { span: 20 }

@@ -1,12 +1,14 @@
 import { Image, Tooltip } from 'antd'
 
 interface Props {
-  title: string
+  title: React.ReactNode
+  className: string
 }
 
 const FormToolTip = (props: Props) => {
   return (
     <div
+      className={props.className}
       style={{
         width: 0,
         position: 'relative',
@@ -17,7 +19,7 @@ const FormToolTip = (props: Props) => {
         fontSize: 0
       }}
     >
-      <Tooltip title={props.title} arrowPointAtCenter>
+      <Tooltip overlayClassName="!max-w-100vh !max-h-100vw" title={props.title} arrowPointAtCenter>
         <div
           style={{
             position: 'absolute',

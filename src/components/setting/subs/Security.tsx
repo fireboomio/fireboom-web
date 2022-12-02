@@ -3,10 +3,12 @@ import { Button, Form, Input, Select, Switch } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
+import FormToolTip from '@/components/common/FormTooltip'
 import IconFont from '@/components/iconfont'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 
+import tipGraphql from './assets/tip-graphql.png'
 import styles from './subs.module.less'
 
 interface SecurConfig {
@@ -229,7 +231,15 @@ export default function SettingMainSecurity() {
             </Form.Item>
 
             <Form.Item
-              label="允许主机"
+              label={
+                <div>
+                  <span>允许主机</span>
+                  <FormToolTip
+                    className="!left-4"
+                    title={<img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />}
+                  />
+                </div>
+              }
               wrapperCol={{
                 xs: { span: 2 },
                 sm: { span: 20 }

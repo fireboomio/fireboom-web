@@ -13,7 +13,6 @@ import { useImmer } from 'use-immer'
 import { dependLoader } from '@/components/Ide/dependLoader'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import { isInputKey } from '@/lib/helpers/utils'
 import {
   getHook,
   getTypes,
@@ -250,11 +249,6 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
     setMonaco(monaco)
-    monacoEditor.onKeyUp(e => {
-      if (isInputKey(e.keyCode)) {
-        monacoEditor.trigger('', 'editor.action.triggerSuggest', '')
-      }
-    })
   }
 
   // 保存内容(依赖和脚本)
