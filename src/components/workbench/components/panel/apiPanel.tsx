@@ -307,7 +307,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           console.log('====111')
           void renameApi(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
-            console.log(res, '====222')
             if (res) {
               events.emit({
                 event: 'titleChange',
@@ -754,9 +753,13 @@ function renameNode(node: DirTreeNode, value: string) {
   })
 }
 function renameApi(node: DirTreeNode, value: string) {
-  return requests.put(`/operateApi/rename/${node.id}`, {
-    path: `${node.baseDir}/${value}`
-  })
+  return requests
+    .put(`/operateApi/rename/${node.id}`, {
+      path: `${node.baseDir}/${value}`
+    })
+    .catch(e => {
+      console.error(e)
+    })
 }
 
 function getNodeFamily(key: string, data?: DirTreeNode[]) {

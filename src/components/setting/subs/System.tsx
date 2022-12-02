@@ -244,13 +244,13 @@ export default function SettingMainVersion() {
                   onChange(e, 'logLevel')
                 }}
               >
-                <Radio value={'1'} className="mr-15 ">
+                <Radio value={1} className="mr-15 ">
                   info
                 </Radio>
-                <Radio value={'2'} className="mr-15">
+                <Radio value={2} className="mr-15">
                   debug
                 </Radio>
-                <Radio value={'3'}> error </Radio>
+                <Radio value={3}> error </Radio>
               </Radio.Group>
             </Descriptions.Item>
             <Descriptions.Item label="开发环境">

@@ -136,7 +136,7 @@ const APIHeader = () => {
     const isQuery = apiDesc?.operationType === 'queries'
     if (isQuery) {
       argNames.forEach((name, index) => {
-        let value = argValueMap[name] || ''
+        let value = argValueMap[name] ?? ''
         if (typeof value !== 'string') {
           value = JSON.stringify(value)
         }
@@ -144,7 +144,7 @@ const APIHeader = () => {
       })
 
       if (apiDesc?.liveQuery) {
-        query.push('liveQuery=true')
+        query.push('wg_live=true')
       }
       if (query.length) {
         link += '?' + query.join('&')

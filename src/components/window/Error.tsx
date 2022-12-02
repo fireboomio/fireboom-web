@@ -15,7 +15,7 @@ type Block = {
     dbType: string
     name: string
     icon: string
-    errMsg: string
+    reasonMsg: string
     switch: boolean
   }[]
 }
@@ -86,7 +86,7 @@ export default function Error() {
               <img src={item.icon} className={styles.icon} alt="" />
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
-                <span>{item.errMsg}</span>
+                <span>{item.reasonMsg}</span>
                 {block.key === 'datasource' && (
                   <>
                     <span>
