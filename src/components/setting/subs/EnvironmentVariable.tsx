@@ -16,6 +16,7 @@ interface DataType {
   isDel: number
   updateTime: string
   key: string
+  oldKey?: string
   devEnv?: string
   proEnv?: string
 }
@@ -37,6 +38,9 @@ export default function SettingMainEnvironmentVariable() {
 
   useEffect(() => {
     void requests.get<unknown, DataType[]>('/env').then(res => {
+      res.forEach(item => {
+        item.oldKey = item.key
+      })
       setEnvironmentConfig(res)
       setSystem(
         res.filter(item => {
@@ -63,8 +67,8 @@ export default function SettingMainEnvironmentVariable() {
     console.log('Failed:', errorInfo)
   }
 
-  const handleDeleteEnvVariable = (id: number) => {
-    void requests.delete(`/env/${id}`).then(() => {
+  const handleDeleteEnvVariable = (key: string) => {
+    void requests.delete(`/env/${key}`).then(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
@@ -149,13 +153,13 @@ export default function SettingMainEnvironmentVariable() {
       title: '操作',
       dataIndex: 'action',
       width: 200,
-      render: (_, { id, key, devEnv, proEnv }) => (
+      render: (_, { id, key, devEnv, proEnv, oldKey }) => (
         <div>
           <IconFont
             type="icon-zhongmingming"
             onClick={() => {
               setIsVariableVisible(true)
-              form.setFieldsValue({ key, devEnv, proEnv })
+              form.setFieldsValue({ key, devEnv, proEnv, oldKey })
               setID(id)
             }}
             className="mr-3"
@@ -167,7 +171,7 @@ export default function SettingMainEnvironmentVariable() {
             onConfirm={e => {
               // @ts-ignore
               e.stopPropagation()
-              handleDeleteEnvVariable(id)
+              handleDeleteEnvVariable(key)
             }}
             onCancel={e => {
               // @ts-ignore
@@ -269,6 +273,7 @@ export default function SettingMainEnvironmentVariable() {
             >
               <Input />
             </Form.Item>
+            <Form.Item name="oldKey" hidden></Form.Item>
             <Form.Item
               label="开发环境"
               name="devEnv"

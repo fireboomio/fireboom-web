@@ -53,7 +53,7 @@ function AuthMainSetting() {
             }}
           >
             <Form.Item
-              label="配置重定向URL"
+              label="重定向URL"
               wrapperCol={{
                 xs: { span: 20 },
                 sm: { span: 20 }
@@ -146,7 +146,7 @@ function AuthMainSetting() {
                         className="text-gray-500/60"
                         onClick={() => add()}
                       >
-                        新增域名
+                        新增URL
                       </Button>
                       <Form.ErrorList errors={errors} />
                     </Form.Item>
@@ -224,12 +224,12 @@ export default function SettingMainSecurity() {
               </Form.Item>
               <span className={styles.setTitle}>
                 <IconFont type="icon-zhuyi" className="mr-1 text-[14px]" />
-                <span>https://loacalhost:9991/api/main/graphql</span>
+                <span>https://localhost:9991/api/main/graphql</span>
               </span>
             </Form.Item>
 
             <Form.Item
-              label="访问白名单"
+              label="允许主机"
               wrapperCol={{
                 xs: { span: 2 },
                 sm: { span: 20 }
@@ -245,7 +245,7 @@ export default function SettingMainSecurity() {
                   })
                 }}
               />
-              <span className="ml-4 text-default">允许所有域名</span>
+              <span className="ml-4 text-default">允许全部</span>
             </Form.Item>
             {!securConfig.allowedHostsEnable && (
               <Form.Item
@@ -270,7 +270,7 @@ export default function SettingMainSecurity() {
                               <div>{'域名' + (index + 1).toString() + ':'}</div>
                               <Input
                                 addonBefore="http(s)://"
-                                placeholder="请输入域名..."
+                                placeholder="localhost:9991"
                                 style={{ width: '60%' }}
                                 defaultValue={securConfig.allowedHosts[index]}
                                 onBlur={e => {
@@ -322,7 +322,7 @@ export default function SettingMainSecurity() {
                           icon={<PlusOutlined />}
                           className="text-gray-500/60"
                         >
-                          新增域名
+                          新增HOST
                         </Button>
                         <Form.ErrorList errors={errors} />
                       </Form.Item>

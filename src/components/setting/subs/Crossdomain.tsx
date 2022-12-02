@@ -72,7 +72,7 @@ export default function SettingCrossdomain() {
             }}
           >
             <Form.Item
-              label="允许域名"
+              label="允许源"
               wrapperCol={{
                 xs: { span: 20 },
                 sm: { span: 20 }
@@ -88,7 +88,7 @@ export default function SettingCrossdomain() {
                   })
                 }}
               />
-              <span className="ml-4 text-default">允许所有域名</span>
+              <span className="ml-4 text-default">允许全部</span>
             </Form.Item>
             {!corsConfig.allowedOriginsEnable && (
               <Form.Item
@@ -151,7 +151,7 @@ export default function SettingCrossdomain() {
                                       <Select.Option value="http://">http://</Select.Option>
                                     </Select>
                                   }
-                                  placeholder="请输入域名"
+                                  placeholder="对应请求响应中的: Access-Control-Allow-Origin"
                                   style={{ width: '60%' }}
                                   onChange={e => setFieldValue('path', e.target.value)}
                                   defaultValue={current.replace(/^https?:\/\//, '')}
@@ -189,7 +189,7 @@ export default function SettingCrossdomain() {
                           className="text-gray-500/60"
                           onClick={() => add()}
                         >
-                          新增域名
+                          新增Origin
                         </Button>
                         <Form.ErrorList errors={errors} />
                       </Form.Item>
