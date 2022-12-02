@@ -77,13 +77,19 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
       }}
     >
       <Resizable
-        className="flex flex-col h-full pt-5"
+        className="flex flex-col h-full pt-2.5"
         defaultSize={{ width: '100%', height: 348 }}
         minWidth="100%"
         maxWidth="100%"
         enable={{ top: true }}
       >
-        <RcTab tabs={tabs} onTabClick={setTabActiveKey} activeKey={tabActiveKey} extra={extra} />
+        <RcTab
+          tabs={tabs}
+          onTabClick={setTabActiveKey}
+          activeKey={tabActiveKey}
+          extra={extra}
+          className="pb-2.5"
+        />
         <div className={`w-full overflow-auto ${tabActiveKey === '0' ? '' : 'hidden'}`}>
           <Log actionRef={logActionRef} />{' '}
         </div>

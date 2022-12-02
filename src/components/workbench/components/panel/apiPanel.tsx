@@ -377,6 +377,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   const handleDelete = (node: DirTreeNode) => {
+    setAction(null)
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
@@ -465,18 +466,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       {
         key: 'delete',
         label: (
-          <Popconfirm
-            title="确定删除吗?"
-            onConfirm={() => handleDelete(nodeData)}
-            okText="删除"
-            cancelText="取消"
-            placement="right"
-          >
-            <a href="#" onClick={e => e.stopPropagation()}>
+          <div onClick={e => e.stopPropagation()}>
+            <Popconfirm
+              title="确定删除吗?"
+              onConfirm={() => handleDelete(nodeData)}
+              okText="删除"
+              cancelText="取消"
+              placement="right"
+            >
               <IconFont type="icon-shanchu" />
               <span className="ml-1.5">删除</span>
-            </a>
-          </Popconfirm>
+            </Popconfirm>
+          </div>
         )
       }
     ]
@@ -517,7 +518,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <>
             <div className={styles.title}>{nodeData.title}</div>
             <div className={styles.suffix}>{miniStatus}</div>
-            <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+            <Dropdown destroyPopupOnHide overlay={menu} trigger={['click']} placement="bottomRight">
               <div className={styles.more} onClick={e => e.stopPropagation()} />
             </Dropdown>
           </>

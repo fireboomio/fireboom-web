@@ -82,7 +82,7 @@ function genTypeMap(dmf: string, prefix: string): TypeMap {
       const field = fieldMap[fieldKey]
       const refType = allTypeMap[field.name]
       // 如果当前字段对应的是set类型，则将其set内容提取出来
-      if (refType && Object.keys(refType).join(',') === 'set') {
+      if (refType && refType.set) {
         field.isSet = true
         field.name = refType.set.name
       }
@@ -162,12 +162,14 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const { data: roles } = useSWRImmutable<{ id: number; code: string; remark: string }[]>(
     '/role',
     (url: string) =>
-      requests.get<unknown, { id: number; code: string; remark: string }[]>(url).then(res => {
-        res.forEach(item => {
-          item.remark = item.remark || item.code
+      requests
+        .get<unknown, { id: number; code: string; remark: string; full: string }[]>(url)
+        .then(res => {
+          res.forEach(item => {
+            item.full = item.code + ' ' + item.remark
+          })
+          return res
         })
-        return res
-      })
   )
 
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -653,7 +655,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 mode="multiple"
                 showArrow
                 options={roles ?? []}
-                fieldNames={{ label: 'remark', value: 'code' }}
+                fieldNames={{ label: 'full', value: 'code' }}
+                optionLabelProp="code"
               />
             </Form.Item>
             <Form.Item
