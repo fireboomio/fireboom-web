@@ -1,18 +1,15 @@
-import {
-  DefinitionNode,
+import type {
   DocumentNode,
   GraphQLField,
   GraphQLFieldMap,
   GraphQLSchema,
-  Kind,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  print
+  OperationDefinitionNode
 } from 'graphql'
+import { Kind, OperationTypeNode, print } from 'graphql'
+import type { MutableRefObject } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useImmer } from 'use-immer'
-import { GraphQLExplorerContext } from './context'
 
+import { GraphQLExplorerContext } from './context'
 import ExplorerFilter from './ExplorerFilter'
 import ResultField from './ResultField'
 import { arraySort, convertMapToArray } from './utils'
@@ -27,7 +24,11 @@ const filters = [
 const values = filters.map(item => item.value)
 type FilterType = typeof values[number]
 
+export interface GraphiqlExplorerAction {
+  manualExpand: () => void
+}
 interface GraphiqlExplorerProps {
+  actionRef?: MutableRefObject<GraphiqlExplorerAction | undefined>
   isLoading?: boolean
   query?: string
   queryAST?: DocumentNode
@@ -40,6 +41,7 @@ interface GraphiqlExplorerProps {
 type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
 const GraphiqlExplorer = ({
+  actionRef,
   isLoading,
   dataSourceList,
   schema,
@@ -50,6 +52,7 @@ const GraphiqlExplorer = ({
 }: GraphiqlExplorerProps) => {
   const [selectedDataSource, setSeletedDataSource] = useState<string>()
   const [selectedType, setSelectedType] = useState<FilterType>('query')
+  const [k, setK] = useState(+new Date())
 
   const fieldTypeMap = useMemo(() => {
     if (!schema) return {}
@@ -133,7 +136,17 @@ const GraphiqlExplorer = ({
     if (targetQuery !== query) {
       onChange?.(targetQuery)
     }
-  }, [_queryAST, onChange])
+  }, [_queryAST, onChange, query])
+
+  useEffect(() => {
+    if (actionRef) {
+      actionRef.current = {
+        manualExpand() {
+          setK(+new Date())
+        }
+      }
+    }
+  }, [actionRef])
 
   return (
     <div className="flex flex-col h-full bg-[rgba(135,140,153,0.03)] min-w-64 w-full">
@@ -161,6 +174,7 @@ const GraphiqlExplorer = ({
               fieldTypeMap,
               updateAST
             }}
+            key={k}
           >
             {fields.map(field => (
               <ResultField

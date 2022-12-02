@@ -248,7 +248,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
       schemas: schemaList
       // schemas: [{ uri: 'operation.json', fileMatch: ['operation.json'], schema: jsonSchema }]
     })
-  }, [schemaAST])
+  }, [schema, schemaAST])
 
   // API 变更后需要刷新输入输出
   useEffect(() => {

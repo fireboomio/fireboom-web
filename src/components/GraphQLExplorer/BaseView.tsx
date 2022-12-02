@@ -1,29 +1,37 @@
-import { ReactNode, useCallback } from 'react'
-import { useState } from 'react'
+import type { ReactNode } from 'react'
+import { useCallback, useState } from 'react'
 
 import { ExpandedIcon, ExpandIcon, SelectedCheckbox, UnselectedCheckbox } from './icons'
 import { checkboxStyle } from './utils'
 
 interface BaseViewProps {
-  color: 'blue' | 'purple'
+  isArg: boolean
   name: string
+  defaultExpanded?: boolean
   checked?: boolean
   selectable: boolean
   children?: ReactNode
+  argChecked?: boolean
+  valueNode?: ReactNode
   onClick?: (expanded: boolean) => void
   onCheck?: (checked: boolean) => void
+  onToggleAsArgument?: () => void
 }
 
 const BaseView = ({
+  isArg,
+  argChecked,
   name,
-  color,
+  defaultExpanded,
   checked,
   selectable,
   children,
+  valueNode,
   onClick,
-  onCheck
+  onCheck,
+  onToggleAsArgument
 }: BaseViewProps) => {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(defaultExpanded ?? false)
 
   const toggleExpand = useCallback(() => {
     setExpanded(!expanded)
@@ -31,7 +39,7 @@ const BaseView = ({
 
   const toggleCheck = useCallback(() => {
     onCheck?.(!checked)
-  }, [checked])
+  }, [checked, onCheck])
 
   const onClickName = useCallback(() => {
     setExpanded(!expanded)
@@ -40,14 +48,14 @@ const BaseView = ({
     } else {
       onClick?.(!expanded)
     }
-  }, [expanded, onClick])
+  }, [expanded, onClick, selectable, toggleCheck])
 
   const Checkbox = checked ? SelectedCheckbox : UnselectedCheckbox
   const Expand = expanded ? ExpandedIcon : ExpandIcon
 
   return (
     <>
-      <div className="flex py-2px items-center">
+      <div className="flex py-2px items-center group">
         {selectable ? (
           <Checkbox
             className="cursor-pointer flex-shrink-0"
@@ -58,11 +66,21 @@ const BaseView = ({
           <Expand className="cursor-pointer flex-shrink-0" onClick={toggleExpand} />
         )}
         <span
-          className={`cursor-pointer ${color === 'blue' ? 'text-[#1f61a0]' : 'text-[#8b2bb9]'}`}
+          className={`mr-2 cursor-pointer ${isArg ? 'text-[#8b2bb9]' : 'text-[#1f61a0]'}`}
           onClick={onClickName}
         >
           {name}
         </span>
+        {isArg && (
+          <button
+            className="border border-solid rounded cursor-pointer bg-gray-100 border-gray-300 mr-2 py-0 px-3px text-[10px] text-[#397d13] hidden appearance-none group-hover:inline-block"
+            title={argChecked ? '取消' : '指定为 GraphQL 参数'}
+            onClick={onToggleAsArgument}
+          >
+            $
+          </button>
+        )}
+        {valueNode}
       </div>
       {expanded && <div className="pl-4">{children}</div>}
     </>

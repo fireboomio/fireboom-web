@@ -1,26 +1,38 @@
-import {
+import type {
   ArgumentNode,
   GraphQLArgument,
   GraphQLField,
-  GraphQLNonNull,
   GraphQLNullableType,
+  ObjectFieldNode,
+  ObjectValueNode,
+  OperationDefinitionNode,
+  ValueNode,
+  VariableDefinitionNode
+} from 'graphql'
+import {
+  GraphQLNonNull,
+  isEnumType,
+  isInputObjectType,
   isInputType,
+  isListType,
   isNonNullType,
   isNullableType,
   isObjectType,
-  Kind,
-  ObjectFieldNode,
-  ObjectValueNode,
-  ValueNode
+  isScalarType,
+  Kind
 } from 'graphql'
-import { isEnumType, isInputObjectType, isListType, isScalarType } from 'graphql'
 import { useCallback, useMemo } from 'react'
+
+import type { Writeable } from '@/interfaces/common'
+
+import ArgumentValue from './ArgumentValue'
 import BaseView from './BaseView'
 import { useExplorer } from './context'
 import { arraySort, convertMapToArray } from './utils'
 
 interface ArgumentViewProps {
   arg: GraphQLArgument | GraphQLField<any, any>
+  isObject?: boolean
   selections?: (ArgumentNode | ObjectFieldNode)[]
   ensureSelection: () => void
 }
@@ -36,25 +48,25 @@ const findSelectionIndex = (
   )
 }
 
-const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) => {
-  console.log(
-    arg.name,
-    'isListType',
-    isListType(arg.type),
-    'inInputList',
-    isListType(arg.type) ? isScalarType(arg.type.ofType) || isEnumType(arg.type.ofType) : '',
-    'isEnumType',
-    isEnumType(arg.type),
-    'isNonNullType',
-    isNonNullType(arg.type),
-    'isInputType',
-    isInputType(arg.type),
-    'isInputObjectType',
-    isInputObjectType(arg.type),
-    'isObjectType',
-    isObjectType(arg.type)
-  )
-  const { updateAST } = useExplorer()
+const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentViewProps) => {
+  // console.log(
+  //   arg.name,
+  //   'isListType',
+  //   isListType(arg.type),
+  //   'inInputList',
+  //   isListType(arg.type) ? isScalarType(arg.type.ofType) || isEnumType(arg.type.ofType) : '',
+  //   'isEnumType',
+  //   isEnumType(arg.type),
+  //   'isNonNullType',
+  //   isNonNullType(arg.type),
+  //   'isInputType',
+  //   isInputType(arg.type),
+  //   'isInputObjectType',
+  //   isInputObjectType(arg.type),
+  //   'isObjectType',
+  //   isObjectType(arg.type)
+  // )
+  const { queryAST, updateAST } = useExplorer()
   const selectable = useMemo(() => {
     // 基本类型
     return (
@@ -74,6 +86,19 @@ const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) =
       }
     }
   }, [selections, arg])
+
+  // 当前是否是作为参数的
+  const isAsArgument = useMemo(() => {
+    const variables = (queryAST.definitions[0] as OperationDefinitionNode)
+      .variableDefinitions! as VariableDefinitionNode[]
+    const index = variables.findIndex(va => {
+      if (isInputObjectType(arg.type)) {
+        return va.variable.name.value === arg.type.name
+      }
+      return false
+    })
+    return index > -1
+  }, [arg, queryAST])
 
   const getDefaultArgValue = useCallback<() => ValueNode>(() => {
     if (isScalarType(arg.type)) {
@@ -100,12 +125,12 @@ const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) =
     ensureSelection()
     if (!currentSelection) {
       selections!.push({
-        kind: Kind.ARGUMENT,
+        kind: isObject ? Kind.OBJECT_FIELD : Kind.ARGUMENT,
         name: { kind: Kind.NAME, value: arg.name },
         value: getDefaultArgValue()
       })
     }
-  }, [currentSelection, selections, ensureSelection, getDefaultArgValue])
+  }, [ensureSelection, currentSelection, selections, isObject, arg.name, getDefaultArgValue])
 
   const onClick = useCallback(
     (expanded: boolean) => {
@@ -120,7 +145,7 @@ const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) =
         }
       }
     },
-    [selections, _ensureSelection, updateAST]
+    [_ensureSelection, updateAST, selections, arg]
   )
 
   const onCheck = useCallback(() => {
@@ -131,21 +156,58 @@ const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) =
       _ensureSelection()
     }
     updateAST()
-  }, [selections, _ensureSelection, updateAST])
+  }, [selections, arg, updateAST, _ensureSelection])
+
+  const onToggleAsArgument = useCallback(() => {
+    const variables = (queryAST.definitions[0] as OperationDefinitionNode)
+      .variableDefinitions! as VariableDefinitionNode[]
+    const index = variables.findIndex(va => {
+      if (isObjectType(arg.type)) {
+        return va.variable.name.value === arg.type.name
+      }
+      return true
+    })
+    if (index > -1) {
+      variables.splice(index, 1)
+    } else {
+      const va: Writeable<VariableDefinitionNode> = {
+        kind: Kind.VARIABLE_DEFINITION,
+        variable: {
+          kind: Kind.VARIABLE,
+          name: {
+            kind: Kind.NAME,
+            value: arg.name
+          }
+        },
+        type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: '' } }
+        // TODO defaultValue
+      }
+      if (isInputObjectType(arg.type)) {
+        // @ts-ignore
+        va.type.name.value = arg.type.name
+        va.defaultValue = { kind: Kind.OBJECT, fields: [] }
+      }
+      variables.push(va)
+    }
+    updateAST()
+  }, [arg.name, arg.type, queryAST.definitions, updateAST])
 
   const child = useMemo(() => {
     if (isListType(arg.type)) {
       if (isScalarType(arg.type.ofType) || isEnumType(arg.type.ofType)) {
         return null
       }
-      return (
-        <TypedArgumentView
-          type={arg.type.ofType}
-          // @ts-ignore
-          selections={(currentSelection?.value as ObjectValueNode).fields}
-          ensureSelection={_ensureSelection}
-        />
-      )
+      if (isInputType(arg.type)) {
+        return (
+          <TypedArgumentView
+            type={arg.type.ofType}
+            isObject
+            // @ts-ignore
+            selections={(currentSelection?.value as ObjectValueNode)?.fields}
+            ensureSelection={_ensureSelection}
+          />
+        )
+      }
     }
     if (isInputObjectType(arg.type)) {
       const fields = arg.type.getFields()
@@ -163,16 +225,20 @@ const ArgumentView = ({ arg, selections, ensureSelection }: ArgumentViewProps) =
       return <TypedArgumentView type={arg.type} />
     }
     return null
-  }, [arg.type])
+  }, [_ensureSelection, arg.type, currentSelection?.value])
 
   return (
     <BaseView
-      color="purple"
+      isArg
       name={arg.name}
+      defaultExpanded={!!currentSelection}
       checked={!!currentSelection}
       selectable={selectable}
+      valueNode={<ArgumentValue argChecked={isAsArgument} />}
       onClick={onClick}
       onCheck={onCheck}
+      argChecked={isAsArgument}
+      onToggleAsArgument={onToggleAsArgument}
     >
       {child}
     </BaseView>
@@ -183,10 +249,12 @@ export default ArgumentView
 
 export const TypedArgumentView = ({
   type,
+  isObject,
   selections,
   ensureSelection
 }: {
   type: GraphQLNullableType
+  isObject?: boolean
   selections?: ObjectFieldNode[]
   ensureSelection: () => void
 }) => {
@@ -198,6 +266,7 @@ export const TypedArgumentView = ({
           <ArgumentView
             key={field.name}
             arg={field}
+            isObject={isObject}
             selections={selections}
             ensureSelection={ensureSelection}
           />

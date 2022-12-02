@@ -1,24 +1,28 @@
-import {
+import type {
   ArgumentNode,
   GraphQLArgument,
   GraphQLField,
+  OperationDefinitionNode,
+  SelectionNode
+} from 'graphql'
+import {
   isEnumType,
   isInputObjectType,
   isInputType,
   isListType,
+  isNonNullType,
+  isObjectType,
+  isScalarType,
   Kind,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  SelectionNode
+  OperationTypeNode
 } from 'graphql'
-import { isNonNullType, isObjectType, isScalarType } from 'graphql'
-
-import { arraySort } from './utils'
-import BaseView from './BaseView'
 import { useCallback, useMemo } from 'react'
+
 import ArgumentView from './ArgumentView'
-import TypeFactory from './TypeFactory'
+import BaseView from './BaseView'
 import { useExplorer } from './context'
+import TypeFactory from './TypeFactory'
+import { arraySort } from './utils'
 
 interface ResultFieldProps {
   field: GraphQLField<any, any>
@@ -30,6 +34,15 @@ const DEFAULT_QUERY_NAME = {
   [OperationTypeNode.QUERY]: `MyQuery`,
   [OperationTypeNode.MUTATION]: `MyMutation`,
   [OperationTypeNode.SUBSCRIPTION]: `MySubscription`
+}
+
+const findSelectionIndex = (
+  selections: SelectionNode[] | undefined,
+  field: GraphQLField<any, any>
+) => {
+  return selections
+    ? selections.findIndex(sel => sel.kind === Kind.FIELD && sel.name.value === field.name)
+    : -1
 }
 
 /**
@@ -66,18 +79,23 @@ const ResultField = ({ field, selections, ensureSelection }: ResultFieldProps) =
   }, [field.type])
 
   const currentSelection = useMemo(() => {
-    return selections?.find(sel => sel.kind === Kind.FIELD && sel.name.value === field.name)
+    const index = findSelectionIndex(selections, field)
+    return index > -1 ? selections![index] : undefined
   }, [selections, field])
 
   const _ensureSelection = useCallback(() => {
-    ensureSelection?.()
+    const sel = ensureSelection?.()
     if (!currentSelection) {
-      selections!.push({
+      const _selections = selections ?? sel
+      _selections!.push({
         kind: Kind.FIELD,
         name: { kind: Kind.NAME, value: field.name },
         arguments: [],
         directives: [],
-        selectionSet: undefined
+        selectionSet: {
+          kind: Kind.SELECTION_SET,
+          selections: []
+        }
       })
       // 如果没有设置query type 和 query name
       const def = queryAST.definitions[0] as OperationDefinitionNode
@@ -95,35 +113,81 @@ const ResultField = ({ field, selections, ensureSelection }: ResultFieldProps) =
         // @ts-ignore
         def.name!.value = DEFAULT_QUERY_NAME[def.operation!]
       }
-    }
-  }, [currentSelection, selections, queryAST])
-
-  const onClick = useCallback((expanded: boolean) => {
-    if (expanded) {
-      _ensureSelection()
-      updateAST()
+      return _selections
     } else {
-      const index = selections ? selections.findIndex(sel => sel.kind === Kind.FIELD && sel.name.value === field.name) : -1
-      if (index > -1) {
-        selections!.splice(index, 1)
-        updateAST()
+      if (currentSelection.kind === Kind.FIELD && !currentSelection.selectionSet) {
+        currentSelection.selectionSet = { kind: Kind.SELECTION_SET, selections: [] }
+        return currentSelection.selectionSet?.selections
       }
     }
-  }, [selections, updateAST, _ensureSelection])
+  }, [
+    ensureSelection,
+    currentSelection,
+    selections,
+    field.name,
+    queryAST.definitions,
+    fieldTypeMap
+  ])
+
+  const onClick = useCallback(
+    (expanded: boolean) => {
+      if (expanded) {
+        _ensureSelection()
+        updateAST()
+      } else {
+        const index = selections
+          ? selections.findIndex(sel => sel.kind === Kind.FIELD && sel.name.value === field.name)
+          : -1
+        if (index > -1) {
+          selections!.splice(index, 1)
+          updateAST()
+        }
+      }
+    },
+    [_ensureSelection, updateAST, selections, field.name]
+  )
+
+  const onCheck = useCallback(() => {
+    const index = findSelectionIndex(selections, field)
+    if (index > -1) {
+      selections!.splice(index, 1)
+    } else {
+      _ensureSelection()
+    }
+    updateAST()
+  }, [selections, field, updateAST, _ensureSelection])
 
   return (
-    <BaseView color="blue" name={field.name} selectable={selectable} onClick={onClick}>
+    <BaseView
+      isArg={false}
+      name={field.name}
+      selectable={selectable}
+      defaultExpanded={!!currentSelection}
+      checked={!!currentSelection}
+      onClick={onClick}
+      onCheck={onCheck}
+    >
       {args.map(arg => (
         <ArgumentView
           selections={
-            currentSelection?.kind === Kind.FIELD ? currentSelection.arguments as ArgumentNode[] : undefined
+            currentSelection?.kind === Kind.FIELD
+              ? (currentSelection.arguments as ArgumentNode[])
+              : undefined
           }
           arg={arg}
           key={arg.name}
           ensureSelection={_ensureSelection}
         />
       ))}
-      <TypeFactory type={field.type} />
+      <TypeFactory
+        type={field.type}
+        selections={
+          currentSelection && currentSelection.kind === Kind.FIELD
+            ? currentSelection.selectionSet?.selections
+            : undefined
+        }
+        ensureSelection={_ensureSelection}
+      />
     </BaseView>
   )
 }

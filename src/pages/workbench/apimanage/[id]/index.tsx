@@ -5,17 +5,19 @@
 import 'graphiql/graphiql.css'
 
 import { message, Tabs } from 'antd'
-// @ts-ignore
-import GraphiqlExplorer1 from '@/components/GraphQLExplorer'
 import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
+// @ts-ignore
+import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
+import GraphiqlExplorer1 from '@/components/GraphQLExplorer'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
+import requests from '@/lib/fetchers'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
@@ -23,7 +25,6 @@ import { GraphiQL } from './components/GraphiQL'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import styles from './index.module.less'
 import { useAPIManager } from './store'
-import requests from '@/lib/fetchers'
 
 async function fetcher(rec: Record<string, unknown>) {
   console.log('rec', JSON.stringify(rec).length)
@@ -79,6 +80,7 @@ export default function APIEditorContainer() {
   const editingContent = useRef(query)
   const contentUpdateTimeout = useRef<number>()
   const isEditingRef = useRef(false)
+  const explorerRef = useRef<GraphiqlExplorerAction>()
 
   const tabs = useMemo(() => {
     return (
@@ -119,19 +121,22 @@ export default function APIEditorContainer() {
     }
   }, [])
 
-  const onEditQuery = useCallback((v: string) => {
-    editingContent.current = v
-    if (contentUpdateTimeout.current) {
-      clearTimeout(contentUpdateTimeout.current)
-    }
-    // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
-    if (!isEditingRef.current) {
-      // 节流设置值
-      contentUpdateTimeout.current = setTimeout(() => {
-        setQuery(editingContent.current)
-      }, 1500)
-    }
-  }, [])
+  const onEditQuery = useCallback(
+    (v: string) => {
+      editingContent.current = v
+      if (contentUpdateTimeout.current) {
+        clearTimeout(contentUpdateTimeout.current)
+      }
+      // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
+      if (!isEditingRef.current) {
+        // 节流设置值
+        contentUpdateTimeout.current = setTimeout(() => {
+          setQuery(editingContent.current)
+        }, 1500)
+      }
+    },
+    [setQuery]
+  )
 
   const editor = useMemo(() => {
     return (
@@ -144,14 +149,14 @@ export default function APIEditorContainer() {
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema, query])
+  }, [schema, query, onEditQuery])
 
   const onRefreshSchema = useCallback(async () => {
     setIsRefreshing(true)
     await refreshSchema()
     setIsRefreshing(false)
     message.success('已刷新')
-  }, [])
+  }, [refreshSchema])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -163,12 +168,15 @@ export default function APIEditorContainer() {
     // 3秒后自动保存
     const save = debounce(autoSave, 3000)
     if (!saved) {
+      console.log('auto saved')
       save()
     }
   }, [autoSave, saved])
 
   useEffect(() => {
-    setID(params.id!)
+    setID(params.id!).then(() => {
+      explorerRef.current?.manualExpand()
+    })
   }, [params.id, setID])
 
   useEffect(() => {
@@ -195,6 +203,7 @@ export default function APIEditorContainer() {
             <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
             <div className="h-full w-full relative overflow-x-auto">
               <GraphiqlExplorer1
+                actionRef={explorerRef}
                 schema={schema}
                 isLoading={isRefreshing}
                 dataSourceList={dataSourceList}

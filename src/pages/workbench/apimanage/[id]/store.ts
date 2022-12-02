@@ -68,8 +68,9 @@ export interface APIDesc {
 
 export interface APIState {
   apiID: string
-  setID: (id: string) => void
+  setID: (id: string) => Promise<void>
   apiDesc?: APIDesc
+  originSchema: IntrospectionQuery | undefined
   schema: GraphQLSchema | undefined
   query: string
   lastSavedQuery: string
@@ -115,18 +116,22 @@ export const useAPIManager = create<APIState>((set, get) => ({
     // 第一次加载
     if (!get().schema) {
       // 获取 graphql 集合
-      fetch('/app/main/graphql', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ query: getIntrospectionQuery() })
-      })
-        .then(resp => resp.json())
-        .then(res => {
-          set({ schema: buildClientSchema(res.data as IntrospectionQuery) })
+      try {
+        const res = await fetch('/app/main/graphql', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query: getIntrospectionQuery() })
+        }).then(resp => resp.json())
+        set({
+          originSchema: res.data as IntrospectionQuery,
+          schema: buildClientSchema(res.data as IntrospectionQuery)
         })
+      } catch (e) {
+        //
+      }
     }
   },
   setQuery(query) {
@@ -142,6 +147,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // debugger
     }
   },
+  originSchema: undefined,
   schema: undefined,
   schemaAST: undefined,
   _workbenchContext: undefined,
@@ -219,7 +225,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
     }
   },
   refreshSchema: () => {
-    fetch('/app/main/graphql', {
+    return fetch('/app/main/graphql', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -229,10 +235,11 @@ export const useAPIManager = create<APIState>((set, get) => ({
     })
       .then(resp => resp.json())
       .then(res => {
-        const newSchema = buildClientSchema(res.data as IntrospectionQuery)
-        if (!isEqual(get().schema, newSchema)) {
+        const newOriginSchema = res.data as IntrospectionQuery
+        if (!isEqual(get().originSchema, newOriginSchema)) {
           console.log('schema changed')
-          set({ schema: newSchema })
+          const newSchema = buildClientSchema(newOriginSchema)
+          set({ originSchema: newOriginSchema, schema: newSchema })
         }
       })
   },

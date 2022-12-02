@@ -1,4 +1,14 @@
-import { GraphQLField, GraphQLOutputType, isEnumType, isInputObjectType, isInputType, isListType, isNonNullType, isObjectType, isScalarType } from 'graphql'
+import type { GraphQLField, GraphQLOutputType, SelectionNode } from 'graphql'
+import {
+  isEnumType,
+  isInputObjectType,
+  isInputType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  isScalarType
+} from 'graphql'
+
 import ResultField from './ResultField'
 import { arraySort, convertMapToArray } from './utils'
 
@@ -18,14 +28,18 @@ interface TypeFactoryProps {
   //     | GraphQLList<GraphQLOutputType>
   //   >;
   type: GraphQLOutputType
+  selections?: SelectionNode[]
+  ensureSelection?: () => void
 }
 
-const TypeFactory = ({ type }: TypeFactoryProps) => {
+const TypeFactory = ({ type, selections, ensureSelection }: TypeFactoryProps) => {
   if (isListType(type)) {
     if (isScalarType(type.ofType) || isEnumType(type.ofType)) {
       return null
     }
-    return <TypeFactory type={type.ofType} />
+    return (
+      <TypeFactory type={type.ofType} selections={selections} ensureSelection={ensureSelection} />
+    )
   }
   // if (isInputObjectType(type)) {
   //   const fields = type.getFields()
@@ -43,13 +57,20 @@ const TypeFactory = ({ type }: TypeFactoryProps) => {
     return (
       <>
         {(arraySort(convertMapToArray(fields)) as GraphQLField<any, any>[]).map(field => (
-          <ResultField key={field.name} field={field} />
+          <ResultField
+            key={field.name}
+            field={field}
+            selections={selections}
+            ensureSelection={ensureSelection}
+          />
         ))}
       </>
     )
   }
   if (isNonNullType(type)) {
-    return <TypeFactory type={type.ofType} />
+    return (
+      <TypeFactory type={type.ofType} selections={selections} ensureSelection={ensureSelection} />
+    )
   }
   return <></>
 }
