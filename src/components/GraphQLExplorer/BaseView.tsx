@@ -74,7 +74,7 @@ const BaseView = ({
         {isArg && (
           <button
             className="border border-solid rounded cursor-pointer bg-gray-100 border-gray-300 mr-2 py-0 px-3px text-[10px] text-[#397d13] hidden appearance-none group-hover:inline-block"
-            title={argChecked ? '取消' : '指定为 GraphQL 参数'}
+            title={argChecked ? '取消参数' : '指定为 GraphQL 参数'}
             onClick={onToggleAsArgument}
           >
             $

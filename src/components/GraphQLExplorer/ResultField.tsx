@@ -80,6 +80,7 @@ const ResultField = ({ field, selections, ensureSelection }: ResultFieldProps) =
 
   const currentSelection = useMemo(() => {
     const index = findSelectionIndex(selections, field)
+    // console.log('index', index, index > -1 ? selections![index] : undefined)
     return index > -1 ? selections![index] : undefined
   }, [selections, field])
 

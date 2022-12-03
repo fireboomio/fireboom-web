@@ -94,6 +94,8 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     const index = variables.findIndex(va => {
       if (isInputObjectType(arg.type)) {
         return va.variable.name.value === arg.type.name
+      } else if (isListType(arg.type)) {
+        return va.variable.name.value === arg.name
       }
       return false
     })
@@ -121,16 +123,19 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     return { kind: Kind.OBJECT, fields: [] }
   }, [arg])
 
-  const _ensureSelection = useCallback(() => {
-    ensureSelection()
-    if (!currentSelection) {
-      selections!.push({
-        kind: isObject ? Kind.OBJECT_FIELD : Kind.ARGUMENT,
-        name: { kind: Kind.NAME, value: arg.name },
-        value: getDefaultArgValue()
-      })
-    }
-  }, [ensureSelection, currentSelection, selections, isObject, arg.name, getDefaultArgValue])
+  const _ensureSelection = useCallback(
+    (val?: any) => {
+      ensureSelection()
+      if (!currentSelection) {
+        selections!.push({
+          kind: isObject ? Kind.OBJECT_FIELD : Kind.ARGUMENT,
+          name: { kind: Kind.NAME, value: arg.name },
+          value: val ?? getDefaultArgValue()
+        })
+      }
+    },
+    [ensureSelection, currentSelection, selections, isObject, arg.name, getDefaultArgValue]
+  )
 
   const onClick = useCallback(
     (expanded: boolean) => {
@@ -186,11 +191,17 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
         // @ts-ignore
         va.type.name.value = arg.type.name
         va.defaultValue = { kind: Kind.OBJECT, fields: [] }
+      } else if (isListType(arg.type)) {
+        if (isEnumType(arg.type.ofType)) {
+          va.type.name.value = `[${arg.type.ofType.name}]`
+          // va.defaultValue = { kind: Kind.ENUM, value: `'${arg.type.ofType.getValues()[0].value}'` }
+          _ensureSelection({ kind: Kind.ENUM, value: `$${arg.name}` })
+        }
       }
       variables.push(va)
     }
     updateAST()
-  }, [arg.name, arg.type, queryAST.definitions, updateAST])
+  }, [arg.name, arg.type, queryAST.definitions, updateAST, _ensureSelection])
 
   const child = useMemo(() => {
     if (isListType(arg.type)) {
@@ -230,14 +241,29 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
   return (
     <BaseView
       isArg
+      argChecked={isAsArgument}
       name={arg.name}
       defaultExpanded={!!currentSelection}
       checked={!!currentSelection}
       selectable={selectable}
-      valueNode={<ArgumentValue argChecked={isAsArgument} />}
+      valueNode={
+        <ArgumentValue
+          name={arg.name}
+          argChecked={!!currentSelection}
+          value=""
+          onChange={console.log}
+          isInput={false}
+          isEnum={false}
+          enumValues={[
+            { label: '11', value: 11 },
+            { label: '22', value: '22' }
+          ]}
+          isNumber={false}
+          isObject={true}
+        />
+      }
       onClick={onClick}
       onCheck={onCheck}
-      argChecked={isAsArgument}
       onToggleAsArgument={onToggleAsArgument}
     >
       {child}
