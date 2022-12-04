@@ -1,9 +1,9 @@
 interface ArgumentValueProps {
   name: string
-  argChecked?: boolean
+  isChecked?: boolean
   isInput?: boolean
   isEnum?: boolean
-  enumValues?: any[]
+  enumValues?: () => { label: string; value: any }[]
   isNumber?: boolean
   isObject?: boolean
   value: any
@@ -12,7 +12,7 @@ interface ArgumentValueProps {
 
 const ArgumentValue = ({
   name,
-  argChecked,
+  isChecked,
   value,
   onChange,
   isInput,
@@ -21,35 +21,35 @@ const ArgumentValue = ({
   isNumber,
   isObject
 }: ArgumentValueProps) => {
-  if (!argChecked) {
+  if (!isChecked) {
     return <></>
   }
   if (isInput || isNumber) {
     return (
       <>
-        <span>&apos;</span>
+        <span>&quot;</span>
         <input
           value={value}
           autoFocus
           onChange={e => onChange?.(e.target.value)}
-          className="border-none outline-none border-gray-500 w-4"
+          className="border-none outline-none border-gray-500 w-10"
           style={{
             background: 'none',
             borderBottom: `1px solid`
           }}
         />
-        <span>&apos;</span>
+        <span>&quot;</span>
       </>
     )
   }
   if (isEnum) {
     return (
       <select
-        className="outline-none border-gray-500 max-w-40"
+        className="outline-none border-gray-500 max-w-30"
         value={value}
         onChange={e => onChange?.(e.target.value)}
       >
-        {enumValues?.map(item => (
+        {enumValues?.()?.map(item => (
           <option value={item.value} key={item.value}>
             {item.label}
           </option>

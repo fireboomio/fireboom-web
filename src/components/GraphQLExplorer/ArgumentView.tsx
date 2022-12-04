@@ -1,7 +1,9 @@
 import type {
   ArgumentNode,
   GraphQLArgument,
+  GraphQLEnumType,
   GraphQLField,
+  GraphQLList,
   GraphQLNullableType,
   ObjectFieldNode,
   ObjectValueNode,
@@ -92,12 +94,10 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     const variables = (queryAST.definitions[0] as OperationDefinitionNode)
       .variableDefinitions! as VariableDefinitionNode[]
     const index = variables.findIndex(va => {
-      if (isInputObjectType(arg.type)) {
-        return va.variable.name.value === arg.type.name
-      } else if (isListType(arg.type)) {
-        return va.variable.name.value === arg.name
-      }
-      return false
+      // if (isInputObjectType(arg.type)) {
+      //   return va.variable.name.value === arg.type.name
+      // }
+      return va.variable.name.value === arg.name
     })
     return index > -1
   }, [arg, queryAST])
@@ -115,6 +115,9 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     } else if (isEnumType(arg.type)) {
       return { kind: Kind.ENUM, value: arg.type.getValues()[0].value }
     } else if (isListType(arg.type)) {
+      if (isEnumType(arg.type.ofType)) {
+        return { kind: Kind.ENUM, value: arg.type.ofType.getValues()[0].value }
+      }
       if (isInputType(arg.type)) {
         return { kind: Kind.OBJECT, fields: [] }
       }
@@ -124,7 +127,7 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
   }, [arg])
 
   const _ensureSelection = useCallback(
-    (val?: any) => {
+    (val?: ValueNode) => {
       ensureSelection()
       if (!currentSelection) {
         selections!.push({
@@ -170,7 +173,7 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
       if (isObjectType(arg.type)) {
         return va.variable.name.value === arg.type.name
       }
-      return true
+      return va.variable.name.value === arg.name
     })
     if (index > -1) {
       variables.splice(index, 1)
@@ -187,21 +190,34 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
         type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: '' } }
         // TODO defaultValue
       }
-      if (isInputObjectType(arg.type)) {
+      if (isScalarType(arg.type)) {
+        va.type.name.value = arg.type.name
+        va.defaultValue = getDefaultArgValue()
+      } else if (isInputObjectType(arg.type)) {
         // @ts-ignore
         va.type.name.value = arg.type.name
         va.defaultValue = { kind: Kind.OBJECT, fields: [] }
       } else if (isListType(arg.type)) {
         if (isEnumType(arg.type.ofType)) {
           va.type.name.value = `[${arg.type.ofType.name}]`
-          // va.defaultValue = { kind: Kind.ENUM, value: `'${arg.type.ofType.getValues()[0].value}'` }
-          _ensureSelection({ kind: Kind.ENUM, value: `$${arg.name}` })
         }
       }
+      _ensureSelection({
+        kind: Kind.VARIABLE,
+        name: { kind: Kind.NAME, value: arg.name }
+      })
       variables.push(va)
     }
     updateAST()
-  }, [arg.name, arg.type, queryAST.definitions, updateAST, _ensureSelection])
+  }, [queryAST.definitions, updateAST, arg.type, arg.name, _ensureSelection, getDefaultArgValue])
+
+  const onChangeValue = useCallback(
+    (val: any) => {
+      currentSelection!.value.value = val
+      updateAST()
+    },
+    [currentSelection, updateAST]
+  )
 
   const child = useMemo(() => {
     if (isListType(arg.type)) {
@@ -226,7 +242,7 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
         <ArgumentView
           key={field.name}
           arg={field}
-          selections={[]}
+          selections={currentSelection?.value.fields}
           ensureSelection={_ensureSelection}
         />
       ))
@@ -244,22 +260,25 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
       argChecked={isAsArgument}
       name={arg.name}
       defaultExpanded={!!currentSelection}
+      expandable={!isAsArgument}
       checked={!!currentSelection}
       selectable={selectable}
       valueNode={
         <ArgumentValue
           name={arg.name}
-          argChecked={!!currentSelection}
-          value=""
-          onChange={console.log}
-          isInput={false}
-          isEnum={false}
-          enumValues={[
-            { label: '11', value: 11 },
-            { label: '22', value: '22' }
-          ]}
-          isNumber={false}
-          isObject={true}
+          isChecked={!!currentSelection}
+          value={currentSelection?.value?.value}
+          onChange={onChangeValue}
+          isInput={isScalarType(arg.type) && arg.type.name === 'String'}
+          isEnum={isListType(arg.type) && isEnumType(arg.type.ofType)}
+          enumValues={() =>
+            (arg.type as GraphQLList<GraphQLEnumType>).ofType.getValues().map(item => ({
+              label: item.name,
+              value: item.value
+            }))
+          }
+          isNumber={isScalarType(arg.type) && arg.type.name !== 'String'}
+          isObject={isInputObjectType(arg.type)}
         />
       }
       onClick={onClick}

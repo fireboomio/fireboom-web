@@ -8,6 +8,7 @@ interface BaseViewProps {
   isArg: boolean
   name: string
   defaultExpanded?: boolean
+  expandable?: boolean
   checked?: boolean
   selectable: boolean
   children?: ReactNode
@@ -22,6 +23,7 @@ const BaseView = ({
   isArg,
   argChecked,
   name,
+  expandable = true,
   defaultExpanded,
   checked,
   selectable,
@@ -34,8 +36,10 @@ const BaseView = ({
   const [expanded, setExpanded] = useState(defaultExpanded ?? false)
 
   const toggleExpand = useCallback(() => {
-    setExpanded(!expanded)
-  }, [expanded])
+    if (expandable) {
+      setExpanded(!expanded)
+    }
+  }, [expanded, expandable])
 
   const toggleCheck = useCallback(() => {
     onCheck?.(!checked)
@@ -51,7 +55,7 @@ const BaseView = ({
   }, [expanded, onClick, selectable, toggleCheck])
 
   const Checkbox = checked ? SelectedCheckbox : UnselectedCheckbox
-  const Expand = expanded ? ExpandedIcon : ExpandIcon
+  const Expand = expandable && expanded ? ExpandedIcon : ExpandIcon
 
   return (
     <>
@@ -82,7 +86,7 @@ const BaseView = ({
         )}
         {valueNode}
       </div>
-      {expanded && <div className="pl-4">{children}</div>}
+      {expandable && expanded && <div className="pl-4">{children}</div>}
     </>
   )
 }
