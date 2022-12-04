@@ -179,6 +179,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [navCheck, multiSelection]
   )
+  // console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
     if (nodeData.legal) {
@@ -608,7 +609,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }
         trigger={['contextMenu']}
       >
-        <div className="flex flex-col justify-between h-full">
+        <div className="flex flex-col h-full justify-between">
           <div className={styles.treeContainer}>
             {treeData.length ? (
               <Tree

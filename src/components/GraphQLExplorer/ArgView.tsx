@@ -9,8 +9,8 @@ import {
 } from 'graphql'
 import { useState } from 'react'
 
-import { ExpandedIcon, ExpandIcon, UnselectedCheckbox } from '../icons'
-import { checkboxStyle } from '../utils'
+import { ExpandedIcon, ExpandIcon, UnselectedCheckbox } from './icons'
+import { checkboxStyle } from './utils'
 import BaseView from './BaseView'
 import { CommonViews, generateCommonViews } from './ViewFactory'
 

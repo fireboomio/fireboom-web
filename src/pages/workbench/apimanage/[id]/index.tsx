@@ -4,19 +4,20 @@
 
 import 'graphiql/graphiql.css'
 
-import { ReloadOutlined } from '@ant-design/icons'
-import { message, Tabs, Tooltip } from 'antd'
-// @ts-ignore
-import GraphiqlExplorer1 from 'graphiql-explorer'
+import { message, Tabs } from 'antd'
 import { debounce } from 'lodash'
-import { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
+// @ts-ignore
+import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
+import GraphiqlExplorer1 from '@/components/GraphQLExplorer'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
+import requests from '@/lib/fetchers'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
@@ -49,9 +50,12 @@ export default function APIEditorContainer() {
   const params = useParams()
   const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
   const workbenchCtx = useContext(WorkbenchContext)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [dataSourceList, setDataSourceList] = useState<string[]>([])
   const {
     query,
     schema,
+    schemaAST,
     setQuery,
     refreshSchema,
     setID,
@@ -62,6 +66,7 @@ export default function APIEditorContainer() {
     operationType
   } = useAPIManager(state => ({
     query: state.query,
+    schemaAST: state.schemaAST,
     schema: state.schema,
     setQuery: state.setQuery,
     refreshSchema: state.refreshSchema,
@@ -75,6 +80,7 @@ export default function APIEditorContainer() {
   const editingContent = useRef(query)
   const contentUpdateTimeout = useRef<number>()
   const isEditingRef = useRef(false)
+  const explorerRef = useRef<GraphiqlExplorerAction>()
 
   const tabs = useMemo(() => {
     return (
@@ -115,19 +121,22 @@ export default function APIEditorContainer() {
     }
   }, [])
 
-  const onEditQuery = useCallback((v: string) => {
-    editingContent.current = v
-    if (contentUpdateTimeout.current) {
-      clearTimeout(contentUpdateTimeout.current)
-    }
-    // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
-    if (!isEditingRef.current) {
-      // 节流设置值
-      contentUpdateTimeout.current = setTimeout(() => {
-        setQuery(editingContent.current)
-      }, 1500)
-    }
-  }, [])
+  const onEditQuery = useCallback(
+    (v: string) => {
+      editingContent.current = v
+      if (contentUpdateTimeout.current) {
+        clearTimeout(contentUpdateTimeout.current)
+      }
+      // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
+      if (!isEditingRef.current) {
+        // 节流设置值
+        contentUpdateTimeout.current = setTimeout(() => {
+          setQuery(editingContent.current)
+        }, 1500)
+      }
+    },
+    [setQuery]
+  )
 
   const editor = useMemo(() => {
     return (
@@ -140,7 +149,14 @@ export default function APIEditorContainer() {
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema, query])
+  }, [schema, query, onEditQuery])
+
+  const onRefreshSchema = useCallback(async () => {
+    setIsRefreshing(true)
+    await refreshSchema()
+    setIsRefreshing(false)
+    message.success('已刷新')
+  }, [refreshSchema])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -152,17 +168,27 @@ export default function APIEditorContainer() {
     // 3秒后自动保存
     const save = debounce(autoSave, 3000)
     if (!saved) {
+      console.log('auto saved')
       save()
     }
   }, [autoSave, saved])
 
   useEffect(() => {
-    setID(params.id!)
+    setID(params.id!).then(() => {
+      explorerRef.current?.manualExpand()
+    })
   }, [params.id, setID])
 
   useEffect(() => {
     setWorkbenchContext(workbenchCtx)
   }, [setWorkbenchContext, workbenchCtx])
+
+  useEffect(() => {
+    requests('/dataSource').then(res => {
+      // @ts-ignore
+      setDataSourceList(res.map(item => item.name))
+    })
+  }, [])
 
   return (
     <>
@@ -175,21 +201,18 @@ export default function APIEditorContainer() {
           {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
           <div className="h-full relative" ref={elRef}>
             <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
-            <Tooltip title="刷新">
-              <ReloadOutlined
-                onClick={async () => {
-                  await refreshSchema()
-                  message.success('已刷新')
-                }}
-                className="top-3 right-4 absolute"
+            <div className="h-full w-full relative overflow-x-auto">
+              <GraphiqlExplorer1
+                actionRef={explorerRef}
+                schema={schema}
+                isLoading={isRefreshing}
+                dataSourceList={dataSourceList}
+                query={query}
+                queryAST={schemaAST}
+                onChange={setQuery}
+                onRefresh={onRefreshSchema}
               />
-            </Tooltip>
-            <GraphiqlExplorer1
-              schema={schema}
-              query={query}
-              explorerIsOpen={true}
-              onEdit={setQuery}
-            />
+            </div>
           </div>
           {editor}
           <div className="h-full w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
