@@ -26,7 +26,7 @@ interface Props {
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
   basePath: string
-  upType: number
+  upType: number // 1: json yaml yml
 }
 
 export default function FileList({
