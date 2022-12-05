@@ -16,7 +16,7 @@ import iconDoubleLeft from '../assets/double-left.svg'
 import iconRefresh from '../assets/refresh.svg'
 import iconRefreshDepend from '../assets/refresh-depend.svg'
 import iconUpAndDown from '../assets/up-and-down.svg'
-import type { Depend } from '../index'
+import type { Depend, HookInfo } from '../index'
 import iconFile from './assets/file.svg'
 import iconFold from './assets/fold.svg'
 import iconFoldOpen from './assets/fold-open.svg'
@@ -90,6 +90,16 @@ type SearchDependProps = {
   onAddDepend: (depend: string) => void
 }
 
+type TreeNode = {
+  name: string
+  title: string
+  path: string
+  key: string
+  isDir?: boolean
+  enable: boolean
+  children?: TreeNode[]
+}
+
 // 搜索依赖
 const SearchDepend = (props: SearchDependProps) => {
   type Depend = { label: string; value: string }
@@ -120,6 +130,7 @@ type DependListProps = {
   // 本地依赖
   localDepend: string[]
   dependList: Depend[]
+  hookInfo?: HookInfo
   devDependList: Depend[]
   hookPath: string
   // 点击缩起依赖区域
@@ -266,8 +277,11 @@ const DependList = (props: DependListProps) => {
   }
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
-  const titleRender = (nodeData: any) => {
-    const isGary = !nodeData.enable && !nodeData.isDir
+  const titleRender = (nodeData: TreeNode) => {
+    let isGary = !nodeData.enable && !nodeData.isDir
+    if (nodeData.path === props.hookInfo?.path) {
+      isGary = props.hookInfo?.switch === false
+    }
     return (
       <div
         className="flex overflow-hidden"
@@ -299,6 +313,7 @@ const DependList = (props: DependListProps) => {
     )
   }
   const [treeData, setTreeData] = useState<any[]>([])
+  const [currentNode, setCurrentNode] = useState<any>([])
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
   useEffect(() => {
@@ -315,8 +330,8 @@ const DependList = (props: DependListProps) => {
   }, [props.hookPath])
   useEffect(() => {
     requests.get<unknown, any[]>('hook/model').then(res => {
-      const markKey = (data: any, key: string) => {
-        return data.filter((item: any, index: number) => {
+      const markKey = (data: TreeNode[], key: string): TreeNode[] => {
+        return data.filter((item: TreeNode, index: number) => {
           // 临时移除path开头的前缀，后续接口更新后可以移除该操作
           item.path = item.path.replace('custom-ts/', '')
           item.key = item.path
@@ -357,6 +372,19 @@ const DependList = (props: DependListProps) => {
       setTreeData(res)
     })
   }, [])
+
+  // 当hookInfo更新时，自动更新钩子树中对应钩子的状态
+  useEffect(() => {
+    if (!treeData.length || !props.hookInfo) {
+      return
+    }
+    const currentNode = findNodeInTree(treeData, props.hookInfo?.path)
+    if (!currentNode) {
+      return
+    }
+    currentNode.enable = props.hookInfo?.switch
+    setTreeData([...treeData])
+  }, [props.hookInfo])
 
   return (
     <div className={`${ideStyles['ide-container-depend-list']} relative`}>
@@ -516,3 +544,14 @@ const DependList = (props: DependListProps) => {
 }
 
 export default DependList
+
+function findNodeInTree(treeData: TreeNode[], path: string) {
+  for (let i = 0; i < treeData.length; i++) {
+    if (path.startsWith(treeData[i].path)) {
+      if (path === treeData[i].path) {
+        return treeData[i]
+      }
+      return findNodeInTree(treeData[i].children ?? [], path)
+    }
+  }
+}

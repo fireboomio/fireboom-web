@@ -632,33 +632,36 @@ export default function CRUDBody(props: CRUDBodyProps) {
           className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
         >
           <Collapse.Panel header="更多设置" key="1" forceRender>
-            <Form.Item name="authApiList" label="接口角色">
-              <Checkbox.Group options={apiOptions} />
-            </Form.Item>
-            <Form.Item name="auth" label="登录鉴权">
-              <Radio.Group>
-                <Radio value={-1}>默认</Radio>
-                <Radio value={1}>开启</Radio>
-                <Radio value={0}>关闭</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-              <Radio.Group>
-                <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
-                <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
-                <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
-                <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-              <Select
-                mode="multiple"
-                showArrow
-                options={roles ?? []}
-                fieldNames={{ label: 'full', value: 'code' }}
-                optionLabelProp="code"
-              />
-            </Form.Item>
+            <div className={styles.authContainer}>
+              <Form.Item name="authApiList" label="接口角色">
+                <Checkbox.Group options={apiOptions} />
+              </Form.Item>
+              <Form.Item name="auth" label="登录鉴权">
+                <Radio.Group>
+                  <Radio value={-1}>默认</Radio>
+                  <Radio value={1}>开启</Radio>
+                  <Radio value={0}>关闭</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+                <Radio.Group>
+                  <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
+                  <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
+                  <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
+                  <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+                <Select
+                  className="disable-common-select"
+                  mode="multiple"
+                  showArrow
+                  options={roles ?? []}
+                  fieldNames={{ label: 'full', value: 'code' }}
+                  optionLabelProp="code"
+                />
+              </Form.Item>
+            </div>
             <Form.Item
               name="alias"
               label="别名"
