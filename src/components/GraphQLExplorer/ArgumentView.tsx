@@ -20,6 +20,7 @@ import {
   isNonNullType,
   isNullableType,
   isObjectType,
+  isRequiredInputField,
   isScalarType,
   Kind
 } from 'graphql'
@@ -51,6 +52,7 @@ const findSelectionIndex = (
 }
 
 const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentViewProps) => {
+  console.log('arg', arg.name, isRequiredInputField(arg.type))
   // console.log(
   //   arg.name,
   //   'isListType',
@@ -70,13 +72,19 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
   // )
   const { queryAST, updateAST } = useExplorer()
   const selectable = useMemo(() => {
-    // 基本类型
     return (
+      // 基本类型
       isScalarType(arg.type) ||
       // 枚举
       isEnumType(arg.type) ||
       // 子类型是基本类型或枚举
-      (isListType(arg.type) && (isScalarType(arg.type.ofType) || isEnumType(arg.type.ofType)))
+      (isListType(arg.type) && (isScalarType(arg.type.ofType) || isEnumType(arg.type.ofType))) ||
+      // NonNull
+      (isNonNullType(arg.type) &&
+        (isScalarType(arg.type.ofType) ||
+          isEnumType(arg.type.ofType) ||
+          (isListType(arg.type.ofType) &&
+            (isScalarType(arg.type.ofType.ofType) || isEnumType(arg.type.ofType.ofType)))))
     )
   }, [arg.type])
 
@@ -115,6 +123,13 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     } else if (isEnumType(arg.type)) {
       return { kind: Kind.ENUM, value: arg.type.getValues()[0].value }
     } else if (isListType(arg.type)) {
+      if (isScalarType(arg.type.ofType)) {
+        return {
+          kind: Kind.ENUM,
+          value:
+            arg.type.ofType.name === 'String' ? '' : arg.type.ofType.name === 'Boolean' ? true : 10
+        }
+      }
       if (isEnumType(arg.type.ofType)) {
         return { kind: Kind.ENUM, value: arg.type.ofType.getValues()[0].value }
       }
@@ -198,18 +213,41 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
         va.type.name.value = arg.type.name
         va.defaultValue = { kind: Kind.OBJECT, fields: [] }
       } else if (isListType(arg.type)) {
-        if (isEnumType(arg.type.ofType)) {
+        if (isScalarType(arg.type.ofType)) {
+          va.type.name.value = arg.type.ofType.name
+        } else if (isEnumType(arg.type.ofType)) {
           va.type.name.value = `[${arg.type.ofType.name}]`
         }
       }
-      _ensureSelection({
+      // 强制修改当前参数
+      ensureSelection()
+      const value: ValueNode = {
         kind: Kind.VARIABLE,
         name: { kind: Kind.NAME, value: arg.name }
-      })
+      }
+      if (!currentSelection) {
+        selections!.push({
+          kind: isObject ? Kind.OBJECT_FIELD : Kind.ARGUMENT,
+          name: { kind: Kind.NAME, value: arg.name },
+          value
+        })
+      } else {
+        currentSelection.value = value
+      }
       variables.push(va)
     }
     updateAST()
-  }, [queryAST.definitions, updateAST, arg.type, arg.name, _ensureSelection, getDefaultArgValue])
+  }, [
+    queryAST.definitions,
+    updateAST,
+    arg.type,
+    arg.name,
+    ensureSelection,
+    currentSelection,
+    getDefaultArgValue,
+    selections,
+    isObject
+  ])
 
   const onChangeValue = useCallback(
     (val: any) => {
@@ -247,10 +285,6 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
         />
       ))
     }
-    if (isObjectType(arg.type)) {
-      // return <ArgumentView arg={arg.type.ofType} />
-      return <TypedArgumentView type={arg.type} />
-    }
     return null
   }, [_ensureSelection, arg.type, currentSelection?.value])
 
@@ -258,7 +292,7 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
     <BaseView
       isArg
       argChecked={isAsArgument}
-      name={arg.name}
+      name={isNonNullType(arg.type) ? `${arg.name}*` : arg.name}
       defaultExpanded={!!currentSelection}
       expandable={!isAsArgument}
       checked={!!currentSelection}
@@ -268,6 +302,7 @@ const ArgumentView = ({ arg, isObject, selections, ensureSelection }: ArgumentVi
           name={arg.name}
           isChecked={!!currentSelection}
           value={currentSelection?.value?.value}
+          isArg={isAsArgument}
           onChange={onChangeValue}
           isInput={isScalarType(arg.type) && arg.type.name === 'String'}
           isEnum={isListType(arg.type) && isEnumType(arg.type.ofType)}
