@@ -280,7 +280,7 @@ export default function SettingMainSecurity() {
                               <div>{'域名' + (index + 1).toString() + ':'}</div>
                               <Input
                                 addonBefore="http(s)://"
-                                placeholder="localhost:9991"
+                                placeholder="OIDC跳转的回调地址"
                                 style={{ width: '60%' }}
                                 defaultValue={securConfig.allowedHosts[index]}
                                 onBlur={e => {
