@@ -1,4 +1,4 @@
-import { Button, Image, notification, Switch } from 'antd'
+import { Button, Image, message, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -8,7 +8,6 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
-import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'
@@ -61,35 +60,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const testLink = (placement: NotificationPlacement) => {
-    if (content.sourceType === 1) {
-      void requests
-        .post('/checkDBConn', {
-          // @ts-ignore
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          data: { sourceType: content.sourceType, config: content.config }
-        })
-        .then(x => {
-          if (x.msg === '连接成功') {
-            notification.open({
-              message: <IconFont type="icon-bixu" />,
-              description: <h1>连接成功</h1>,
-              placement
-            })
-          } else {
-            notification.open({
-              message: <IconFont type="icon-xingzhuangjiehe" />,
-              description: <h1>连接失败</h1>,
-              placement
-            })
-          }
-        })
-    } else if (content.sourceType === 2) {
-      console.log(content)
-
-      window.open(`/#/workbench/rapi-test?url=${content.config.baseURL}`, '_blank')
-    } else if (content.sourceType === 3) {
-      window.open(content.config.url, '_blank')
-    }
+    void requests.post('/checkDBConn', { ...content }).then((x: any) => {
+      if (x?.status) {
+        message.success('连接成功')
+      } else {
+        message.error(x?.msg || '连接失败')
+      }
+    })
   }
 
   return (

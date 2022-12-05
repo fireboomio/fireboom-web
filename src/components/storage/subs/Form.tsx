@@ -41,7 +41,19 @@ export default function StorageForm({ content }: Props) {
   }
 
   const handleTest = () => {
-    // TODO 测试接口
+    const values = form.getFieldsValue()
+    void requests
+      .post('/s3Upload/checkConn', {
+        config: { ...values },
+        name: values.name
+      })
+      .then((x: any) => {
+        if (x?.status) {
+          message.success('连接成功')
+        } else {
+          message.error(x?.msg || '连接失败')
+        }
+      })
   }
 
   return (

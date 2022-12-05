@@ -421,6 +421,7 @@ const IdeContainer: FC<Props> = props => {
           ) : (
             <IdeDependList
               {...{
+                hookInfo,
                 dependList: hookInfo?.depend?.dependencies || [],
                 devDependList: hookInfo?.depend?.devDependencies || [],
                 hookPath: hookPath,

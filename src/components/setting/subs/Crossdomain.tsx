@@ -6,6 +6,7 @@ import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import IconFont from '@/components/iconfont'
+import { HttpRequestHeaders } from '@/lib/constant'
 import requests from '@/lib/fetchers'
 
 import tipCros from './assets/tip-cros.png'
@@ -59,8 +60,8 @@ export default function SettingCrossdomain() {
             initialValues={{
               allowedMethods: corsConfig.allowedMethods,
               maxAge: corsConfig.maxAge,
-              allowedHeaders: corsConfig.allowedHeaders.join(','),
-              exposedHeaders: corsConfig.exposedHeaders.join(','),
+              allowedHeaders: corsConfig.allowedHeaders,
+              exposedHeaders: corsConfig.exposedHeaders,
               allowCredentials: corsConfig.allowCredentials
             }}
             labelAlign="left"
@@ -227,42 +228,22 @@ export default function SettingCrossdomain() {
               </Select>
             </Form.Item>
             <Form.Item name="allowedHeaders" label="允许头">
-              <Input
-                placeholder="请输入..."
-                onBlur={() => {
-                  void postRequest(
-                    'allowedHeaders',
-                    (form.getFieldValue('allowedHeaders') as string).split(',')
-                  ).then(() => {
-                    setRefreshFlag(!refreshFlag)
-                  })
-                }}
-                onPressEnter={() => {
-                  void postRequest(
-                    'allowedHeaders',
-                    (form.getFieldValue('allowedHeaders') as string).split(',')
-                  ).then(() => {
+              <Select
+                mode="tags"
+                options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
+                onChange={(values: string) => {
+                  void postRequest('allowedHeaders', values).then(() => {
                     setRefreshFlag(!refreshFlag)
                   })
                 }}
               />
             </Form.Item>
             <Form.Item name="exposedHeaders" label="排除头">
-              <Input
-                placeholder="请输入..."
-                onBlur={() => {
-                  void postRequest(
-                    'exposedHeaders',
-                    (form.getFieldValue('exposedHeaders') as string).split(',')
-                  ).then(() => {
-                    setRefreshFlag(!refreshFlag)
-                  })
-                }}
-                onPressEnter={() => {
-                  void postRequest(
-                    'exposedHeaders',
-                    (form.getFieldValue('exposedHeaders') as string).split(',')
-                  ).then(() => {
+              <Select
+                mode="tags"
+                options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
+                onChange={(values: string) => {
+                  void postRequest('exposedHeaders', values).then(() => {
                     setRefreshFlag(!refreshFlag)
                   })
                 }}
@@ -288,6 +269,7 @@ export default function SettingCrossdomain() {
                 ]}
               >
                 <Input
+                  addonAfter="秒"
                   onBlur={() => {
                     void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
                       () => {
@@ -304,11 +286,12 @@ export default function SettingCrossdomain() {
                   }}
                 />
               </Form.Item>
-              <span className="ml-2">秒</span>
             </Form.Item>
             <Form.Item label="允许证书">
               <Form.Item valuePropName="checked" name="allowCredentials" noStyle required>
                 <Switch
+                  size="small"
+                  className={styles['switch-edit-btn']}
                   checked={corsConfig.allowCredentials}
                   onChange={isChecked => {
                     void postRequest('allowCredentials', isChecked).then(() => {

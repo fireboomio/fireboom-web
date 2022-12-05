@@ -640,25 +640,27 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 批量新建
               </span>
             </div>
-            <div
-              className={styles.graphqlEntry}
-              onClick={() => {
-                const current = new URL(window.location.href)
-                if (config.apiHost) {
-                  window.open(
-                    `${current.protocol}//localhost:${current.port}/app/main/graphql`,
-                    '_blank'
-                  )
-                } else {
-                  window.open(
-                    `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
-                    '_blank'
-                  )
-                }
-              }}
-            >
-              <img alt="" src="/assets/icon/graphql2.svg" />
-            </div>
+            <Tooltip title="测试">
+              <div
+                className={styles.graphqlEntry}
+                onClick={() => {
+                  const current = new URL(window.location.href)
+                  if (config.apiHost) {
+                    window.open(
+                      `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                      '_blank'
+                    )
+                  } else {
+                    window.open(
+                      `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
+                      '_blank'
+                    )
+                  }
+                }}
+              >
+                <img alt="" src="/assets/icon/graphql2.svg" />
+              </div>
+            </Tooltip>
           </div>
         </div>
       </Dropdown>
