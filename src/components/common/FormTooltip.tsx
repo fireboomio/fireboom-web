@@ -19,7 +19,7 @@ const FormToolTip = (props: Props) => {
         fontSize: 0
       }}
     >
-      <Tooltip overlayClassName="!max-w-100vh !max-h-100vw" title={props.title} arrowPointAtCenter>
+      <Tooltip overlayClassName="!max-w-100vw !max-h-100vh" title={props.title} arrowPointAtCenter>
         <div
           style={{
             position: 'absolute',
