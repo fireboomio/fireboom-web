@@ -175,6 +175,7 @@ export default function APIEditorContainer() {
 
   useEffect(() => {
     setID(params.id!).then(() => {
+      console.log('expand')
       explorerRef.current?.manualExpand()
     })
   }, [params.id, setID])

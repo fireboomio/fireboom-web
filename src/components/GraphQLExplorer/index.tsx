@@ -51,7 +51,7 @@ const GraphiqlExplorer = ({
   onRefresh
 }: GraphiqlExplorerProps) => {
   const [selectedDataSource, setSeletedDataSource] = useState<string>()
-  const [selectedType, setSelectedType] = useState<FilterType>('query')
+  const [selectedType, setSelectedType] = useState<FilterType>('')
   const [k, setK] = useState(+new Date())
 
   const fieldTypeMap = useMemo(() => {

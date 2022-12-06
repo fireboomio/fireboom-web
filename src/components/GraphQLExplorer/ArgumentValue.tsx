@@ -1,6 +1,7 @@
 interface ArgumentValueProps {
   name: string
   isChecked?: boolean
+  isArg?: boolean
   isInput?: boolean
   isEnum?: boolean
   enumValues?: () => { label: string; value: any }[]
@@ -13,6 +14,7 @@ interface ArgumentValueProps {
 const ArgumentValue = ({
   name,
   isChecked,
+  isArg,
   value,
   onChange,
   isInput,
@@ -24,10 +26,13 @@ const ArgumentValue = ({
   if (!isChecked) {
     return <></>
   }
+  if (isArg) {
+    return <span className="text-[#397d13]">{`$${name}`}</span>
+  }
   if (isInput || isNumber) {
     return (
       <>
-        <span>&quot;</span>
+        {!isNumber && <span>&quot;</span>}
         <input
           value={value}
           autoFocus
@@ -38,7 +43,7 @@ const ArgumentValue = ({
             borderBottom: `1px solid`
           }}
         />
-        <span>&quot;</span>
+        {!isNumber && <span>&quot;</span>}
       </>
     )
   }
