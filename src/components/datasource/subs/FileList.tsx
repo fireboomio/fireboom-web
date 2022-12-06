@@ -70,13 +70,15 @@ export default function FileList({
   }
 
   useEffect(() => {
-    void requests.get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`).then(x => {
-      if (upType === 1) {
-        setData(x.files.filter(f => f.name.endsWith('.json') || f.name.endsWith('.yaml')))
-      } else {
-        setData(x.files)
-      }
-    })
+    void requests
+      .get<unknown, { path: string; files: TableType[] }>(`/file/${upType}?name=*.yaml`)
+      .then(x => {
+        if (upType === 1) {
+          setData(x.files.filter(f => f.name.endsWith('.json') || f.name.endsWith('.yaml')))
+        } else {
+          setData(x.files)
+        }
+      })
   }, [refreshFlag, upType])
 
   function rmFile(fname: string) {

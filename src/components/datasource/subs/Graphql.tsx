@@ -24,6 +24,7 @@ import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import IconFont from '@/components/iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 
@@ -68,50 +69,7 @@ const renderIcon = (kind: string) => (
 
 const BASEPATH = '/static/upload/oas'
 
-const HEADER_SET = [
-  'Accept',
-  'Accept-Charset',
-  'Accept-Language',
-  'Access_-Control-Request-Headers',
-  'Access-Control-Request-Method',
-  'Authorization',
-  'Cache-Control',
-  'Content-MD5',
-  'Content-Length',
-  'Content-Transfer-Encoding',
-  'Content-Type',
-  'Cookie',
-  'Cookie 2',
-  'Date',
-  'Expect',
-  'From',
-  'Host',
-  'If-Match',
-  'If-Modified-Since',
-  'If-None-Match',
-  'If-Range',
-  'If-Unmodified-Since',
-  'Keep-Alive',
-  'Max-Forwards',
-  'Origin',
-  'Pragma',
-  'Proxy-Authorization',
-  'Range',
-  'Referer',
-  'TE',
-  'Trailer',
-  'Transfer-Encoding',
-  'Upgrade',
-  'User-Agent',
-  'Via',
-  'Warning',
-  'X-Requested-With',
-  'X-Do-Not-Track',
-  'DNT',
-  'x-api-key',
-  'Connection'
-]
-const HEADER_LIST = HEADER_SET.map(x => ({ label: x, value: x }))
+const HEADER_LIST = HttpRequestHeaders.map(x => ({ label: x, value: x }))
 
 export default function Graphql({ content, type }: Props) {
   const navigate = useNavigate()
