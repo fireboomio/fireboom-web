@@ -27,6 +27,14 @@ const initData = [
       { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'SQLite' }
     ]
   },
+  {
+    name: '消息队列',
+    items: [
+      { name: 'RabbitMQ', logo: 'icon-shujuyuantubiao2', comingSoon: true },
+      { name: 'RocketMQ', logo: 'icon-shujuyuantubiao2', comingSoon: true },
+      { name: '阿里云物联网平台', logo: 'icon-shujuyuantubiao2', comingSoon: true }
+    ]
+  },
   { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] }
 ]
 

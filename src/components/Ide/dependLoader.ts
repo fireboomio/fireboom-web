@@ -3,31 +3,32 @@ import { difference } from 'lodash'
 
 import requests, { NPM_RESOLVE_HOSE } from '@/lib/fetchers'
 
-export async function dependLoader(name: string, version: string, monaco: Monaco) {
-  const result = await requests.get<
-    unknown,
-    { types: string; dependencies: Record<string, string>; dtsFiles: Record<string, string> }
-  >(`${NPM_RESOLVE_HOSE}/loadPkgTypes`, {
-    params: { name, version },
-    timeout: 60000
-  })
+const STORAGE_KEY = '_dts_cache_'
 
-  Object.keys(result.dtsFiles).forEach(key => {
-    inject(monaco, name + '/' + key, result.dtsFiles[key])
-  })
-  Object.keys(result.dependencies || {}).forEach(key => {
-    dependLoader(key, result.dependencies[key], monaco)
-  })
+const loadMap = new Map<string, Promise<LoadResponse | void>>() // 请求缓存，用于防止重复请求
+const memoryCacheMap = new Map<string, LoadResponse>()
+function readCache(key: string) {
+  // 如果memoryCacheMap中有缓存，则直接返回
+  const memoryCache = memoryCacheMap.get(key)
+  if (memoryCache) {
+    return memoryCache
+  }
+  // 如果localStorage中有缓存，则写入loadMap并返回
+  const cache = localStorage.getItem(STORAGE_KEY + key)
+  if (cache) {
+    loadMap.set(key, JSON.parse(cache))
+    return loadMap.get(key)
+  }
+  return null
+}
+function saveCache(key: string, value: LoadResponse) {
+  memoryCacheMap.set(key, value)
+  localStorage.setItem(STORAGE_KEY + key, JSON.stringify(value))
 }
 
-function inject(monaco: Monaco, key: string, lib: string) {
-  const libUri = `inmemory://model/node_modules/${key}`
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(lib, libUri)
-  // const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
-  // if (currentModel) {
-  //   currentModel.dispose()
-  // }
-  // monaco.editor.createModel(lib, 'typescript', monaco.Uri.parse(libUri))
+function removeCache(key: string) {
+  memoryCacheMap.delete(key)
+  localStorage.removeItem(STORAGE_KEY + key)
 }
 
 type Lib = {
@@ -46,26 +47,21 @@ export type LocalLib = {
   content: string
 }
 
-enum DependStatus {
-  LOADING = 'loading',
-  LOADED = 'loaded',
-  ERROR = 'error'
-}
-
 type LoadResponse = {
   types: string
   dependencies: Record<string, string>
   dtsFiles: Record<string, string>
 }
-const loadMap = new Map<string, Promise<LoadResponse | void>>() // 正在加载的模块或子模块
 
-async function _loadOneDepend(
-  name: string,
-  version: string,
-  force: boolean
-): Promise<LoadResponse | void> {
+async function _loadOneDepend(name: string, version: string): Promise<LoadResponse | void> {
   const key = `${name}@${version}`
-  if (!loadMap.has(key) || force) {
+  // 如果内存或者localStorage中有缓存，则直接返回
+  const cache = readCache(key)
+  if (cache) {
+    return cache
+  }
+  // 如果有相同的请求正在进行，则直接返回进行中的请求，不重复发起
+  if (!loadMap.has(key)) {
     const promise = requests
       .get<unknown, LoadResponse>(`${NPM_RESOLVE_HOSE}/loadPkgTypes`, {
         params: { name, version },
@@ -76,15 +72,21 @@ async function _loadOneDepend(
         console.error(e)
       })
     loadMap.set(key, promise)
+    // 请求完成后则从promiseMap中删除，以保证下次请求能正常发起
+    promise.then(res => {
+      loadMap.delete(key)
+      // 如果有返回值，则加入缓存
+      if (res) {
+        saveCache(key, res)
+      }
+    })
   }
   return loadMap.get(key)
 }
 async function loadDepend(
   name: string,
-  version: string,
-  force = false
+  version: string
 ): Promise<{ dtsFiles: Record<string, string>; fails: string[] }> {
-  const key = `${name}@${version}`
   const { dtsFiles, fails } = await loader(name, version)
   return { dtsFiles, fails }
 
@@ -92,7 +94,7 @@ async function loadDepend(
     name: string,
     version: string
   ): Promise<{ dtsFiles: Record<string, string>; fails: string[] }> {
-    const result = await _loadOneDepend(name, version, force)
+    const result = await _loadOneDepend(name, version)
     const dtsFiles: Record<string, string> = {}
     const fails: string[] = []
     if (!result) {
@@ -184,12 +186,12 @@ export class DependManager {
             // 已经存在的依赖不再加载，而是增加引用
             const existLib = this.libMap.get(filePath)
             if (existLib) {
-              existLib.importSources.push(dtsKey)
+              existLib.importSources.push(key)
               return
             }
             const lib = {
               filePath: filePath,
-              importSources: [dtsKey],
+              importSources: [key],
               content: dtsFiles[dtsKey]
             }
             this.libs.push(lib)
@@ -218,7 +220,10 @@ export class DependManager {
   addDepend(name: string, version: string, force = false) {
     this.dependMap[name] = version
     if (force) {
+      // 强制刷新，清空加载的标记
       delete this.loadMap[name]
+      // 清空请求缓存
+      removeCache(`${name}@${version}`)
     }
     this.checkForLoading()
   }
