@@ -13,7 +13,7 @@ import { useAPIManager } from '../../store'
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
-const APIHeader = () => {
+const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const { apiDesc, schemaAST, updateAPI, updateAPIName, updateContent, saved, query, apiID } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
@@ -168,7 +168,8 @@ const APIHeader = () => {
 
   const save = async () => {
     try {
-      if (await updateContent(query)) {
+      const q = onGetQuery() ?? query
+      if (await updateContent(q)) {
         message.success('已保存')
       }
     } catch (error) {

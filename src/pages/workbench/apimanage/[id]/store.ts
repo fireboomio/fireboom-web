@@ -73,7 +73,7 @@ export interface APIState {
   originSchema: IntrospectionQuery | undefined
   schema: GraphQLSchema | undefined
   query: string
-  lastSavedQuery: string
+  lastSavedQuery: string | undefined
   setQuery: (v: string) => void
   schemaAST: DocumentNode | undefined
   _workbenchContext: WorkbenchContextType | undefined
@@ -108,7 +108,7 @@ function isQueryHasContent(query: string) {
 export const useAPIManager = create<APIState>((set, get) => ({
   apiDesc: undefined,
   query: DEFAULT_QUERY,
-  lastSavedQuery: '',
+  lastSavedQuery: undefined,
   apiID: '',
   setID: async (id: string) => {
     set({ apiID: id })
@@ -161,7 +161,10 @@ export const useAPIManager = create<APIState>((set, get) => ({
       return undefined
     },
     get saved() {
-      return !get().lastSavedQuery || get().lastSavedQuery === get().query
+      const { query, lastSavedQuery } = get()
+      if (lastSavedQuery === undefined) return true
+      if (query === DEFAULT_QUERY && !lastSavedQuery) return true
+      return lastSavedQuery === query
     }
   },
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => {

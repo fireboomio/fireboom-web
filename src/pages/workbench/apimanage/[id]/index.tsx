@@ -13,7 +13,8 @@ import { useParams } from 'react-router-dom'
 import ApiConfig from '@/components/apiConfig'
 // @ts-ignore
 import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
-import GraphiqlExplorer1 from '@/components/GraphQLExplorer'
+import GraphiqlExplorer from '@/components/GraphQLExplorer'
+// import GraphiqlExplorer from '@/components/GraphQLExplorer/origin'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
@@ -107,8 +108,11 @@ export default function APIEditorContainer() {
   }, [operationType, params.id])
 
   useEffect(() => {
-    const onKeydown = () => {
-      isEditingRef.current = true
+    const onKeydown = (e: KeyboardEvent) => {
+      // 忽略关联按键
+      if (!(e.altKey || e.ctrlKey || e.shiftKey)) {
+        isEditingRef.current = true
+      }
     }
     const onKeyup = () => {
       isEditingRef.current = false
@@ -127,13 +131,16 @@ export default function APIEditorContainer() {
       if (contentUpdateTimeout.current) {
         clearTimeout(contentUpdateTimeout.current)
       }
-      // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
-      if (!isEditingRef.current) {
-        // 节流设置值
-        contentUpdateTimeout.current = setTimeout(() => {
-          setQuery(editingContent.current)
-        }, 1500)
-      }
+      // 加个延迟 让鼠标事件先执行
+      setTimeout(() => {
+        // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
+        if (!isEditingRef.current) {
+          // 节流设置值
+          contentUpdateTimeout.current = setTimeout(() => {
+            setQuery(editingContent.current)
+          }, 1500)
+        }
+      }, 100)
     },
     [setQuery]
   )
@@ -197,13 +204,13 @@ export default function APIEditorContainer() {
         <title>GraphiQL</title>
       </Helmet>
       <div className="bg-white flex flex-col h-full" id="api-editor-container">
-        <APIHeader />
+        <APIHeader onGetQuery={() => editingContent.current} />
         <div className={styles.wrapper}>
           {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
           <div className="h-full relative" ref={elRef}>
             <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
             <div className="h-full w-full relative overflow-x-auto">
-              <GraphiqlExplorer1
+              <GraphiqlExplorer
                 actionRef={explorerRef}
                 schema={schema}
                 isLoading={isRefreshing}
@@ -213,6 +220,16 @@ export default function APIEditorContainer() {
                 onChange={setQuery}
                 onRefresh={onRefreshSchema}
               />
+              {/* <GraphiqlExplorer
+                schema={schema}
+                query={query}
+                onEdit={setQuery}
+                onRunOperation={operationName => console.log(operationName)}
+                explorerIsOpen={true}
+                // onToggleExplorer={this._handleToggleExplorer}
+                // getDefaultScalarArgValue={getDefaultScalarArgValue}
+                // makeDefaultArg={makeDefaultArg}
+              /> */}
             </div>
           </div>
           {editor}
