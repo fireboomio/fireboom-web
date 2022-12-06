@@ -1,32 +1,34 @@
 import type { Monaco } from '@swordjs/monaco-editor-react'
+import { difference } from 'lodash'
 
 import requests, { NPM_RESOLVE_HOSE } from '@/lib/fetchers'
 
-export async function dependLoader(name: string, version: string, monaco: Monaco) {
-  const result = await requests.get<
-    unknown,
-    { types: string; dependencies: Record<string, string>; dtsFiles: Record<string, string> }
-  >(`${NPM_RESOLVE_HOSE}/loadPkgTypes`, {
-    params: { name, version },
-    timeout: 60000
-  })
+const STORAGE_KEY = '_dts_cache_'
 
-  Object.keys(result.dtsFiles).forEach(key => {
-    inject(monaco, name + '/' + key, result.dtsFiles[key])
-  })
-  Object.keys(result.dependencies || {}).forEach(key => {
-    dependLoader(key, result.dependencies[key], monaco)
-  })
+const loadMap = new Map<string, Promise<LoadResponse | void>>() // 请求缓存，用于防止重复请求
+const memoryCacheMap = new Map<string, LoadResponse>()
+function readCache(key: string) {
+  // 如果memoryCacheMap中有缓存，则直接返回
+  const memoryCache = memoryCacheMap.get(key)
+  if (memoryCache) {
+    return memoryCache
+  }
+  // 如果localStorage中有缓存，则写入loadMap并返回
+  const cache = localStorage.getItem(STORAGE_KEY + key)
+  if (cache) {
+    loadMap.set(key, JSON.parse(cache))
+    return loadMap.get(key)
+  }
+  return null
+}
+function saveCache(key: string, value: LoadResponse) {
+  memoryCacheMap.set(key, value)
+  localStorage.setItem(STORAGE_KEY + key, JSON.stringify(value))
 }
 
-function inject(monaco: Monaco, key: string, lib: string) {
-  const libUri = `inmemory://model/node_modules/${key}`
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(lib, libUri)
-  // const currentModel = monaco.editor.getModel(monaco.Uri.parse(libUri))
-  // if (currentModel) {
-  //   currentModel.dispose()
-  // }
-  // monaco.editor.createModel(lib, 'typescript', monaco.Uri.parse(libUri))
+function removeCache(key: string) {
+  memoryCacheMap.delete(key)
+  localStorage.removeItem(STORAGE_KEY + key)
 }
 
 type Lib = {
@@ -38,17 +40,11 @@ type Lib = {
   content: string
 }
 
-type LocalLib = {
+export type LocalLib = {
   // 资源访问地址
   filePath: string
   // 内容
   content: string
-}
-
-enum DependStatus {
-  LOADING = 'loading',
-  LOADED = 'loaded',
-  ERROR = 'error'
 }
 
 type LoadResponse = {
@@ -56,34 +52,41 @@ type LoadResponse = {
   dependencies: Record<string, string>
   dtsFiles: Record<string, string>
 }
-const loadingMap = new Map<string, Promise<LoadResponse | void>>() // 正在加载的模块或子模块
 
-async function _loadOneDepend(
-  name: string,
-  version: string,
-  force: boolean
-): Promise<LoadResponse | void> {
+async function _loadOneDepend(name: string, version: string): Promise<LoadResponse | void> {
   const key = `${name}@${version}`
-  if (!loadingMap.has(key) || force) {
+  // 如果内存或者localStorage中有缓存，则直接返回
+  const cache = readCache(key)
+  if (cache) {
+    return cache
+  }
+  // 如果有相同的请求正在进行，则直接返回进行中的请求，不重复发起
+  if (!loadMap.has(key)) {
     const promise = requests
       .get<unknown, LoadResponse>(`${NPM_RESOLVE_HOSE}/loadPkgTypes`, {
         params: { name, version },
         timeout: 3 * 60000
       })
       .catch(e => {
-        loadingMap.delete(key)
+        loadMap.delete(key)
         console.error(e)
       })
-    loadingMap.set(key, promise)
+    loadMap.set(key, promise)
+    // 请求完成后则从promiseMap中删除，以保证下次请求能正常发起
+    promise.then(res => {
+      loadMap.delete(key)
+      // 如果有返回值，则加入缓存
+      if (res) {
+        saveCache(key, res)
+      }
+    })
   }
-  return loadingMap.get(key)
+  return loadMap.get(key)
 }
 async function loadDepend(
   name: string,
-  version: string,
-  force = false
+  version: string
 ): Promise<{ dtsFiles: Record<string, string>; fails: string[] }> {
-  const key = `${name}@${version}`
   const { dtsFiles, fails } = await loader(name, version)
   return { dtsFiles, fails }
 
@@ -91,7 +94,7 @@ async function loadDepend(
     name: string,
     version: string
   ): Promise<{ dtsFiles: Record<string, string>; fails: string[] }> {
-    const result = await _loadOneDepend(name, version, force)
+    const result = await _loadOneDepend(name, version)
     const dtsFiles: Record<string, string> = {}
     const fails: string[] = []
     if (!result) {
@@ -122,20 +125,25 @@ async function loadDepend(
 
 export class DependManager {
   private monaco: Monaco
-  private dependMap: Map<string, DependStatus>
+  // 依赖的模块和版本map
+  private dependMap: Record<string, string>
+  // 正在加载或已加载成功的版本
+  private loadMap: Record<string, string>
+  // private dependMap: Map<string, DependStatus>
   private localLibs: LocalLib[]
   private libs: Lib[]
   private libMap: Map<string, Lib>
 
   constructor(monaco: Monaco, localLibs: LocalLib[]) {
     this.monaco = monaco
-    this.dependMap = new Map()
+    this.dependMap = {}
+    this.loadMap = {}
     this.libs = []
     this.libMap = new Map<string, Lib>()
     this.localLibs = localLibs
   }
-  async removeDepend(name: string) {
-    this.dependMap.delete(name)
+  removeDepend(name: string) {
+    delete this.dependMap[name]
     this.libs = this.libs.filter(lib => {
       lib.importSources = lib.importSources.filter(source => source !== name)
       if (lib.importSources.length === 0) {
@@ -149,51 +157,75 @@ export class DependManager {
       ...this.localLibs
     ])
   }
-  async addDepend(name: string, version: string, force = false) {
-    try {
-      console.log(111)
-      const key = `${name}@${version}`
-      if (this.dependMap.has(key) && !force) {
-        return
-      }
-      this.dependMap.set(key, DependStatus.LOADING)
-      const { dtsFiles, fails } = await loadDepend(name, version, force)
-      console.log(222)
-      // 如果依赖已经被移除，则放弃加载
-      if (!this.dependMap.has(key)) {
-        return
-      }
-      if (fails.length) {
-        // TODO: 依赖加载失败
-      }
-      console.log(333, dtsFiles)
-      Object.keys(dtsFiles).forEach(key => {
-        const filePath = `inmemory://model/node_modules/${name}/${key}`
-        // 已经存在的依赖不再加载，而是增加引用
-        const existLib = this.libMap.get(filePath)
-        if (existLib) {
-          existLib.importSources.push(name)
-          return
-        }
-        const lib = {
-          filePath: filePath,
-          importSources: [name],
-          content: dtsFiles[key]
-        }
-        this.libs.push(lib)
-        this.libMap.set(filePath, lib)
-      })
+  async doLoading(name: string, version: string): Promise<Record<string, string>> {
+    const { dtsFiles } = await loadDepend(name, version)
+    return dtsFiles
+  }
 
-      this.dependMap.set(key, DependStatus.LOADED)
-      console.log('addDepend', this.dependMap, this.libs)
-      this.monaco.languages.typescript.typescriptDefaults.setExtraLibs([
-        ...this.libs,
-        ...this.localLibs
-      ])
-    } catch (e) {
-      this.dependMap.set(name, DependStatus.ERROR)
-      console.error(e)
+  checkForLoading() {
+    const needRemove = difference(Object.keys(this.loadMap), Object.keys(this.dependMap))
+    needRemove.forEach(key => {
+      this.removeDepend(key)
+    })
+    Object.keys(this.dependMap).forEach(key => {
+      // 加载中，直接返回
+      if (this.loadMap[key] === this.dependMap[key]) {
+        return
+      }
+      this.loadMap[key] = this.dependMap[key]
+      const currentVersion = this.dependMap[key]
+      console.log('触发加载', key, currentVersion)
+      this.doLoading(key, currentVersion)
+        .then(dtsFiles => {
+          // 当前请求已过期
+          if (this.dependMap[key] !== currentVersion) {
+            return
+          }
+          Object.keys(dtsFiles).forEach(dtsKey => {
+            const filePath = `inmemory://model/node_modules/${key}/${dtsKey}`
+            // 已经存在的依赖不再加载，而是增加引用
+            const existLib = this.libMap.get(filePath)
+            if (existLib) {
+              existLib.importSources.push(key)
+              return
+            }
+            const lib = {
+              filePath: filePath,
+              importSources: [key],
+              content: dtsFiles[dtsKey]
+            }
+            this.libs.push(lib)
+            this.libMap.set(filePath, lib)
+          })
+
+          console.log('加载成功', key, currentVersion)
+          this.monaco.languages.typescript.typescriptDefaults.setExtraLibs([
+            ...this.libs,
+            ...this.localLibs
+          ])
+        })
+        .catch(e => {
+          console.error(e)
+          // 如果当前请求失败，则清空加载中的标记
+          if (this.loadMap[key] === currentVersion) {
+            delete this.loadMap[key]
+          }
+        })
+    })
+  }
+  setDepends(dependMap: Record<string, string>) {
+    this.dependMap = dependMap
+    this.checkForLoading()
+  }
+  addDepend(name: string, version: string, force = false) {
+    this.dependMap[name] = version
+    if (force) {
+      // 强制刷新，清空加载的标记
+      delete this.loadMap[name]
+      // 清空请求缓存
+      removeCache(`${name}@${version}`)
     }
+    this.checkForLoading()
   }
   setLocalLibs(libs: LocalLib[]) {
     this.localLibs = libs
