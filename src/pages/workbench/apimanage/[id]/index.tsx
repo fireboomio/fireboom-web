@@ -194,7 +194,7 @@ export default function APIEditorContainer() {
   useEffect(() => {
     requests('/dataSource').then(res => {
       // @ts-ignore
-      setDataSourceList(res.map(item => item.name))
+      setDataSourceList(res.filter(item => item.switch === 1).map(item => item.name))
     })
   }, [])
 
