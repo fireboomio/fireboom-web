@@ -71,7 +71,9 @@ export default function FileList({
 
   useEffect(() => {
     void requests
-      .get<unknown, { path: string; files: TableType[] }>(`/file/${upType}?name=*.yaml`)
+      .get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`, {
+        params: { names: ['.json', '.yaml', '.yml'] }
+      })
       .then(x => {
         if (upType === 1) {
           setData(x.files.filter(f => f.name.endsWith('.json') || f.name.endsWith('.yaml')))

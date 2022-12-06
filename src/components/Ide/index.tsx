@@ -10,7 +10,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 import { useImmer } from 'use-immer'
 
-import { dependLoader } from '@/components/Ide/dependLoader'
+import type { LocalLib } from '@/components/Ide/dependLoader'
+import { DependManager } from '@/components/Ide/dependLoader'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import {
@@ -113,6 +114,7 @@ const IdeContainer: FC<Props> = props => {
   const [editor, setEditor] = useState<any>()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [monaco, setMonaco] = useState<any>()
+  const dependManager = useRef<DependManager>()
   // 运行结果
   const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
   const typingsRef = useRef<any>(null)
@@ -129,6 +131,7 @@ const IdeContainer: FC<Props> = props => {
     status: null
   })
   const [localDepend, setLocalDepend] = useState<string[]>([])
+  const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
   const { config: globalConfig } = useContext(ConfigContext)
 
   const [hookPath, setHookPath] = useState(props.hookPath)
@@ -190,10 +193,10 @@ const IdeContainer: FC<Props> = props => {
   useEffect(() => {
     if (editor && monaco) {
       hookInfo?.depend?.dependencies?.forEach((item, index) => {
-        dependLoader(item.name, item.version, monaco)
+        dependManager.current?.addDepend(item.name, item.version)
       })
       hookInfo?.depend?.devDependencies?.forEach((item, index) => {
-        dependLoader(item.name, item.version, monaco)
+        dependManager.current?.addDepend(item.name, item.version)
       })
       // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
@@ -213,31 +216,19 @@ const IdeContainer: FC<Props> = props => {
 
   const refreshLocalDepend = async (_monaco = monaco) => {
     return getTypes<Record<string, string>>().then(res => {
-      // 循环types
-      const localLibList = Object.keys(res).map(key => {
-        const libUri = `inmemory://model${key.replace(/^@?/, '/node_modules/')}`
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        // if (!_monaco.languages.typescript.typescriptDefaults.getExtraLibs()[libUri]) {
-        _monaco.languages.typescript.typescriptDefaults.addExtraLib(res[key], libUri)
-        // } else {
-        //   _monaco.languages.typescript.typescriptDefaults.set
-        // }
-        try {
-          const currentModel = _monaco.editor.getModel(_monaco.Uri.parse(libUri))
-          if (currentModel) {
-            currentModel.dispose()
-          }
-          _monaco.editor.createModel(res[key], 'typescript', _monaco.Uri.parse(libUri))
-        } catch (e) {
-          console.error(e)
-        }
-        return key.replace(/^@?/, '').replace(/\.ts$/, '')
-      })
-      setLocalDepend(localLibList)
+      const list = Object.keys(res).map(key => ({
+        filePath: `inmemory://model${key.replace(/^@?/, '/node_modules/')}`,
+        content: res[key]
+      }))
+      if (dependManager.current) {
+        dependManager.current?.setLocalLibs(list)
+      }
+      setLocalDepends(list)
     })
   }
 
   const handleEditorBeforeMount: BeforeMount = monaco => {
+    dependManager.current = new DependManager(monaco, localDepends ?? [])
     refreshLocalDepend(monaco).then(() => {
       monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
@@ -282,6 +273,15 @@ const IdeContainer: FC<Props> = props => {
   const handleDependChange = async (depend: Depend) => {
     // 把depend对象转换为name, version的数组
     const dependList = Object.entries(depend).map(([name, version]) => ({ name, version }))
+
+    // 更新ide语法提示
+    const loadTarget = { ...depend }
+    hookInfo?.depend?.devDependencies?.forEach(item => {
+      loadTarget[item.name] = item.version
+    })
+    console.log('===loadTarget', loadTarget)
+    dependManager.current?.setDepends(loadTarget)
+
     // 保存依赖
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await saveHookDepend(hookPath, dependList)
@@ -306,7 +306,7 @@ const IdeContainer: FC<Props> = props => {
   }
   const dependRefresh = (depend: Depend) => {
     Object.keys(depend).forEach(key => {
-      dependLoader(key, depend[key], monaco)
+      dependManager.current?.addDepend(key, depend[key], true)
     })
   }
 

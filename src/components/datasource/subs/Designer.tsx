@@ -8,9 +8,22 @@ import {
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 
+import iconAli from '../assets/ali.svg'
+import iconRabbitMQ from '../assets/RabbitMQ.svg'
+import iconRocketMQ from '../assets/RocketMQ.svg'
 import styles from './Designer.module.less'
 
-const initData = [
+const initData: {
+  name: string
+  items: {
+    name: string
+    logo?: string
+    icon?: string
+    sourceType?: number
+    dbType?: string
+    coming?: boolean
+  }[]
+}[] = [
   {
     name: 'API',
     items: [
@@ -25,6 +38,14 @@ const initData = [
       { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'MySQL' },
       { name: 'MongoDB', logo: 'icon-shujuyuantubiao4', sourceType: 1, dbType: 'MongoDB' },
       { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'SQLite' }
+    ]
+  },
+  {
+    name: '消息队列',
+    items: [
+      { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true },
+      { name: 'RocketMQ', icon: iconRocketMQ, coming: true },
+      { name: '阿里云物联网平台', icon: iconAli, coming: true }
     ]
   },
   { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] }
@@ -96,10 +117,10 @@ export default function Designer() {
             {category.items.map(x => (
               <div
                 key={x.name}
-                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg flex items-center"
+                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg flex items-center relative"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onClick={() => handleClick(x.sourceType, x.dbType, x.name)}
+                onClick={() => !x.coming && handleClick(x.sourceType, x.dbType, x.name)}
               >
                 {/* <Image
                     height={28}
@@ -109,9 +130,14 @@ export default function Designer() {
                     preview={false}
                   /> */}
                 <div className="bg-white rounded-3xl h-7 shadow w-7 inline-flex items-center justify-center">
-                  <IconFont type={x.logo} style={{ fontSize: '16px' }} />
+                  {x.logo ? (
+                    <IconFont type={x.logo} style={{ fontSize: '16px' }} />
+                  ) : (
+                    <img alt="" src={x.icon} />
+                  )}
                 </div>
-                <span className="ml-3">{x.name}</span>
+                <span className={'ml-3' + (x.coming ? ' text-[#787D8B]' : '')}>{x.name}</span>
+                {x.coming && <div className={styles.coming}>即将</div>}
               </div>
             ))}
           </div>
