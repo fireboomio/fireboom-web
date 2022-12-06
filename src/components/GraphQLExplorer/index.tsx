@@ -3,9 +3,10 @@ import type {
   GraphQLField,
   GraphQLFieldMap,
   GraphQLSchema,
-  OperationDefinitionNode
+  OperationDefinitionNode,
+  OperationTypeNode
 } from 'graphql'
-import { Kind, OperationTypeNode, print } from 'graphql'
+import { Kind, print } from 'graphql'
 import type { MutableRefObject } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -61,13 +62,13 @@ const GraphiqlExplorer = ({
     const subscriptions = schema.getSubscriptionType()?.getFields() ?? {}
     const ret: Record<string, OperationTypeNode> = {}
     Object.keys(queries).forEach(q => {
-      ret[q] = OperationTypeNode.QUERY
+      ret[q] = 'query'
     })
     Object.keys(mutations).forEach(q => {
-      ret[q] = OperationTypeNode.MUTATION
+      ret[q] = 'mutation'
     })
     Object.keys(subscriptions).forEach(q => {
-      ret[q] = OperationTypeNode.SUBSCRIPTION
+      ret[q] = 'subscription'
     })
     return ret
   }, [schema])
@@ -115,7 +116,7 @@ const GraphiqlExplorer = ({
     if (!ast) {
       ast = { kind: Kind.DOCUMENT, definitions: [] }
     }
-    const queryType = OperationTypeNode.QUERY
+    const queryType: OperationTypeNode = 'query'
     if (!ast.definitions.length) {
       ast.definitions = [
         {

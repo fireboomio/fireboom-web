@@ -36,7 +36,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   }, [apiID])
 
   return (
-    <span className={`h-7 w-7 relative ${className || ''}`}>
+    <span className={`h-7 w-7 relative select-none ${className || ''}`}>
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <img {...props} src={RunIcon} width="28" height="28" alt="run" onClick={toggleExecute} />
 

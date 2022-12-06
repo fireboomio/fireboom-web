@@ -1,8 +1,8 @@
-import { type CheckboxOptionType, Radio, Select, Tooltip, AutoComplete } from 'antd'
-
-import { RefreshIcon } from './icons'
-import styles from './filter.module.less'
+import { type CheckboxOptionType, AutoComplete, Radio, Tooltip } from 'antd'
 import { useCallback } from 'react'
+
+import styles from './filter.module.less'
+import { RefreshIcon } from './icons'
 
 interface ExplorerFilterProps {
   filters: ReadonlyArray<CheckboxOptionType>

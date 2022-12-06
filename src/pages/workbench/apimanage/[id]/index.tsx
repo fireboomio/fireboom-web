@@ -13,8 +13,8 @@ import { useParams } from 'react-router-dom'
 import ApiConfig from '@/components/apiConfig'
 // @ts-ignore
 import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
-import GraphiqlExplorer from '@/components/GraphQLExplorer'
-// import GraphiqlExplorer from '@/components/GraphQLExplorer/origin'
+// import GraphiqlExplorer from '@/components/GraphQLExplorer'
+import GraphiqlExplorer from '@/components/GraphQLExplorer/origin'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
@@ -205,12 +205,11 @@ export default function APIEditorContainer() {
       </Helmet>
       <div className="bg-white flex flex-col h-full" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />
-        <div className={styles.wrapper}>
-          {/* <GraphiQLExplorer schema={schema} query={query} explorerIsOpen={true} onEdit={setQuery} /> */}
+        <div className="flex flex-1 items-stretch overflow-hidden">
           <div className="h-full relative" ref={elRef}>
             <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
             <div className="h-full w-full relative overflow-x-auto">
-              <GraphiqlExplorer
+              {/* <GraphiqlExplorer
                 actionRef={explorerRef}
                 schema={schema}
                 isLoading={isRefreshing}
@@ -219,17 +218,19 @@ export default function APIEditorContainer() {
                 queryAST={schemaAST}
                 onChange={setQuery}
                 onRefresh={onRefreshSchema}
-              />
-              {/* <GraphiqlExplorer
+              /> */}
+              <GraphiqlExplorer
                 schema={schema}
                 query={query}
                 onEdit={setQuery}
-                onRunOperation={operationName => console.log(operationName)}
-                explorerIsOpen={true}
+                isLoading={isRefreshing}
+                dataSourceList={dataSourceList}
+                explorerIsOpen
+                onRefresh={onRefreshSchema}
                 // onToggleExplorer={this._handleToggleExplorer}
                 // getDefaultScalarArgValue={getDefaultScalarArgValue}
                 // makeDefaultArg={makeDefaultArg}
-              /> */}
+              />
             </div>
           </div>
           {editor}
