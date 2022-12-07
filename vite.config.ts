@@ -38,9 +38,11 @@ const plugins: PluginOption[] = [
         .find(route => route.path === 'workbench')
         ?.children.find((route: { path: string }) => route.path === 'modeling')
       if (modeling) {
-        const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
-        newRoute.path = ':id'
-        modeling.children.push(newRoute)
+        if (!modeling.children.find((route: { path: string }) => route.path === ':id')) {
+          const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
+          newRoute.path = ':id'
+          modeling.children.push(newRoute)
+        }
       }
       return routes
     }

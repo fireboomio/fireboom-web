@@ -1,5 +1,5 @@
 import { getSchema, printSchema } from '@mrleebo/prisma-ast'
-import { Empty, Input, message, Popover, Radio } from 'antd'
+import { Button, Empty, Input, message, Popover, Radio } from 'antd'
 import { cloneDeep, isEqual } from 'lodash'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
@@ -68,6 +68,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [newEnums, setNewEnums] = useImmer<Enum[]>([])
 
   const [editTitle, setEditTitle] = useState<boolean>(false)
+  const [editorValidate, setEditorValidate] = useState<boolean>(true) // 当前编辑器内容是否合法
   const [titleValue, setTitleValue] = useState<string>('')
 
   // 编辑模式 变更时存入本地存储中
@@ -208,10 +209,11 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           <div className={styles.resetBtn} onClick={onCancel}>
             重置
           </div>
-          <div className={styles.saveBtn} onClick={onSave}>
+          <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
             迁移
-          </div>
+          </Button>
           <Radio.Group
+            disabled={!editorValidate}
             className={styles.modeRadio}
             value={mode}
             onChange={e => {
@@ -406,10 +408,11 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         <div className={styles.resetBtn} onClick={onCancel}>
           重置
         </div>
-        <div className={styles.saveBtn} onClick={onSave}>
+        <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
           迁移
-        </div>
+        </Button>
         <Radio.Group
+          disabled={!editorValidate}
           className={styles.modeRadio}
           value={mode}
           onChange={e => {
@@ -458,6 +461,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         ) : (
           <div style={{ flex: '1 1 0' }}>
             <ModelEditor
+              onUpdateValidate={setEditorValidate}
               onChange={value => {
                 setEditorContent(value)
                 applyLocalSchema(value)
