@@ -19,6 +19,7 @@ import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'

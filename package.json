@@ -37,6 +37,7 @@
     "graphiql-explorer": "^0.9.0",
     "graphql": "^16.6.0",
     "graphql-language-service": "^5.0.6",
+    "hotkeys-js": "^3.10.1",
     "js-levenshtein": "1.1.6",
     "klona": "2.0.5",
     "lodash": "^4.17.21",

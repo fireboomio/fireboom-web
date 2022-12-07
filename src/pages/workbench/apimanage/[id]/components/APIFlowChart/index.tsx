@@ -8,19 +8,22 @@ import { parseParameters } from '@/lib/gql-parser'
 import { useAPIManager } from '../../store'
 import type { FlowChartProps } from './FlowChart'
 import FlowChart from './FlowChart'
+import InternalOperationChart from './InternalOperation'
 
 type DirectiveState = FlowChartProps['directiveState']
 type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { apiDesc, schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(state => ({
-    apiDesc: state.apiDesc,
-    schemaAST: state.schemaAST,
-    query: state.query,
-    appendToAPIRefresh: state.appendToAPIRefresh,
-    dispendToAPIRefresh: state.dispendToAPIRefresh
-  }))
+  const { apiDesc, schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(
+    state => ({
+      apiDesc: state.apiDesc,
+      schemaAST: state.schemaAST,
+      query: state.query,
+      appendToAPIRefresh: state.appendToAPIRefresh,
+      dispendToAPIRefresh: state.dispendToAPIRefresh
+    })
+  )
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
 
@@ -30,11 +33,15 @@ const APIFlowChart = ({ id }: { id: string }) => {
         (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
         []
       const variables = parseParameters(defs)
+      const globalDirectives = (
+        schemaAST?.definitions[0] as OperationDefinitionNode | undefined
+      )?.directives?.map(dir => dir.name.value)
       const allDirectives = variables.reduce<string[]>((arr, item) => {
         arr.push(...(item.directives?.map(dir => dir.name) ?? []))
         return arr
       }, [])
       const state: DirectiveState = {
+        isInternal: globalDirectives.includes('internalOperation'),
         fromClaim: allDirectives.includes('fromClaim'),
         injectCurrentDatetime: allDirectives.includes('injectCurrentDatetime'),
         injectEnvironmentVariable: allDirectives.includes('injectEnvironmentVariable'),
@@ -120,12 +127,16 @@ const APIFlowChart = ({ id }: { id: string }) => {
   }, [appendToAPIRefresh, loadHook, dispendToAPIRefresh])
 
   return globalState && hookState ? (
-    <FlowChart
-      globalHookState={globalState}
-      hookState={hookState}
-      directiveState={directiveState}
-      apiSetting={apiDesc!.setting}
-    />
+    directiveState!.isInternal ? (
+      <InternalOperationChart />
+    ) : (
+      <FlowChart
+        globalHookState={globalState}
+        hookState={hookState}
+        directiveState={directiveState}
+        apiSetting={apiDesc!.setting}
+      />
+    )
   ) : (
     <></>
   )

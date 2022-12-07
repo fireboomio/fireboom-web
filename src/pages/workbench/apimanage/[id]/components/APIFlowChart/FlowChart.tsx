@@ -66,6 +66,7 @@ export interface FlowChartProps {
     }
   }
   directiveState: {
+    isInternal: boolean
     fromClaim: boolean
     rbac: boolean
     jsonSchema: boolean
