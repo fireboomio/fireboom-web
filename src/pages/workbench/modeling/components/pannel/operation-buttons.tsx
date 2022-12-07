@@ -1,7 +1,8 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconER from '../../assets/er.svg'
 import iconSwitch from '../../assets/modeling-switch.svg'
@@ -22,9 +23,17 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
   if (!currentEntity) {
     title = '数据建模'
   }
+
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+t', () => {
+      handleSetInEdit(!inEdit)
+    })
+  }, [handleSetInEdit, inEdit])
+
   return (
     <div className={styles.actions}>
-      <span className="text-[#333] text-14px font-500 mr-auto">{title}</span>
+      <span className="mr-auto font-500 text-[#333] text-14px">{title}</span>
       <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
         <img src={iconSwitch} alt="switch" />
       </div>

@@ -2,6 +2,8 @@ import { useExecutionContext } from '@graphiql/react'
 import type { ImgHTMLAttributes } from 'react'
 import { useEffect } from 'react'
 
+import { registerHotkeyHandler } from '@/services/hotkey'
+
 import { useAPIManager } from '../../../store'
 import RunIcon from '../assets/run.svg'
 
@@ -34,6 +36,11 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiID])
+
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+r', toggleExecute)
+  }, [])
 
   return (
     <span className={`h-7 w-7 relative select-none ${className || ''}`}>

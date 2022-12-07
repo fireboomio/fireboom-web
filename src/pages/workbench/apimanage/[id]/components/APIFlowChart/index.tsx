@@ -41,7 +41,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
         return arr
       }, [])
       const state: DirectiveState = {
-        isInternal: globalDirectives.includes('internalOperation'),
+        isInternal: globalDirectives?.includes('internalOperation') ?? false,
         fromClaim: allDirectives.includes('fromClaim'),
         injectCurrentDatetime: allDirectives.includes('injectCurrentDatetime'),
         injectEnvironmentVariable: allDirectives.includes('injectEnvironmentVariable'),

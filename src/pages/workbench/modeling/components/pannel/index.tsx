@@ -1,7 +1,7 @@
 import { AppleOutlined } from '@ant-design/icons'
 import { printSchema } from '@mrleebo/prisma-ast'
 import { Menu } from 'antd'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import type { Updater } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
@@ -12,6 +12,7 @@ import { buildBlocks } from '@/lib/helpers/ModelingHelpers'
 import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import DBSourceSelect from './db-source-select'
 import ModelEntityItem from './entity-item'
@@ -99,15 +100,22 @@ const ModelPannel = ({
     }, 100)
   }
 
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+n', () => {
+      addNewModelHandler()
+    })
+  }, [])
+
   return (
-    <div className="flex-1 flex flex-col min-h-0">
+    <div className="flex flex-col flex-1 min-h-0">
       <div className={styles.pannel}>
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
         <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
       </div>
 
-      <div className="mt-1 flex-1 overflow-y-auto">
+      <div className="flex-1 mt-1 overflow-y-auto">
         {entities.map(entity => (
           <ModelEntityItem
             editFlag={editMap[entity.name]}
@@ -121,7 +129,7 @@ const ModelPannel = ({
         ))}
       </div>
       {Object.keys(delMap).length ? (
-        <div className="bg-[#f7f7f7] m-2 rounded-4px text-[#666] leading-32px px-3">{`已删除${
+        <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">{`已删除${
           Object.keys(delMap).length
         }个模块`}</div>
       ) : null}

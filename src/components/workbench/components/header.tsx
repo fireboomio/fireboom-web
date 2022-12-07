@@ -1,10 +1,11 @@
 import { message, Popover } from 'antd'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderDeploy from '../assets/header-deploy.png'
@@ -20,6 +21,20 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
 
   const compiling =
     props.engineStatus === ServiceStatus.Compiling || props.engineStatus === ServiceStatus.Starting
+
+  const doCompile = () => {
+    if (compiling) {
+      return
+    }
+    void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
+  }
+
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+c', () => {
+      doCompile()
+    })
+  }, [])
 
   return (
     <>
@@ -81,15 +96,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            <div
-              className={styles.headBtn}
-              onClick={() => {
-                if (compiling) {
-                  return
-                }
-                void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
-              }}
-            >
+            <div className={styles.headBtn} onClick={doCompile}>
               {!compiling ? (
                 <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
               ) : (
@@ -110,10 +117,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         <div className={styles.splitLine} style={{ margin: '0 26px' }} />
 
         <div
-          className="w-4 h-4 cursor-pointer flex-0 text-0px"
+          className="cursor-pointer flex-0 h-4 text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
-          <img className="w-4 h-4" src="/assets/github.svg" alt="" />
+          <img className="h-4 w-4" src="/assets/github.svg" alt="" />
         </div>
         <div
           className={styles.helpIcon}
