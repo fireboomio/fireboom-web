@@ -592,7 +592,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                     })
                     // setEditFlag(false)
                     // resolve(true)
-                  }
+                  },
+                  okText: '确认',
+                  cancelText: '取消'
                 })
               }}
             >
