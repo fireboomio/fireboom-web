@@ -1,6 +1,7 @@
 import { Checkbox, Dropdown, Radio, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 
+import RoleDiagram from '@/components/RoleDiagram'
 import type { Role } from '@/interfaces/user'
 import requests from '@/lib/fetchers'
 
@@ -71,7 +72,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
   }, [])
 
   return (
-    <div className="bg-white rounded shadow">
+    <div className="bg-white rounded shadow w-143">
       <div className="bg-[rgba(95,98,105,0.05)] py-2.5 px-3">
         <Radio.Group
           className={styles.radioGroup}
@@ -86,8 +87,14 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
           onChange={e => onSetRule(e.target.value)}
         />
       </div>
-      <div className="py-2.5 px-3">
-        <div className="flex flex-wrap gap-x-2 gap-y-2 roles">
+      <div className="flex py-2.5 px-3">
+        {rule && <RoleDiagram className="mr-6" rule={rule} />}
+        <div className="flex flex-wrap flex-1 gap-x-2 gap-y-2 roles">
+          {!selected.length && (
+            <div className="flex h-full w-full text-gray-500 items-center justify-center">
+              没有选定角色，请点击下方加号添加
+            </div>
+          )}
           {selected.map((role, index) => (
             <div
               key={role}
@@ -101,12 +108,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
             </div>
           ))}
         </div>
-        {!selected.length && (
-          <div className="flex h-6.5 text-gray-500 items-center justify-center">
-            没有选定角色，请点击下方加号添加
-          </div>
-        )}
-        <div className="flex mt-2 items-center justify-end">
+        <div className="flex flex-col ml-2 items-center justify-end">
           <CircleRemoveOutlined className="cursor-pointer" onClick={clearSelected} />
           <Dropdown
             trigger={['click']}
@@ -144,10 +146,10 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
           >
             {!rule ? (
               <Tooltip title="请先选择匹配模式">
-                <PlusCircleFilled className="cursor-pointer ml-2" />
+                <PlusCircleFilled className="cursor-pointer mt-2" />
               </Tooltip>
             ) : (
-              <PlusCircleFilled className="cursor-pointer ml-2" />
+              <PlusCircleFilled className="cursor-pointer mt-2" />
             )}
           </Dropdown>
         </div>
