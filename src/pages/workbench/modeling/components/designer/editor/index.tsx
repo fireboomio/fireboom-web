@@ -9,11 +9,12 @@ import init from '@/lib/prisma/prismaInit'
 
 interface Props {
   onChange?: (value: string) => void
+  onUpdateValidate?: (flag: boolean) => void
   defaultContent: string
 }
 
 loader.config({ monaco })
-const ModelEditor = ({ onChange, defaultContent }: Props) => {
+const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
   const editorRef = useRef<any>()
 
   const [value, setValue] = useState<string>('')
@@ -54,6 +55,9 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
       <Editor
         language="prisma"
         defaultLanguage="prisma"
+        onValidate={markers => {
+          onUpdateValidate?.(!markers.length)
+        }}
         beforeMount={monaco => {
           // console.log(monaco.languages.prisma)
         }}
