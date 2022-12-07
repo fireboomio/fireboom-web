@@ -87,6 +87,7 @@ export default defineConfig({
     alias: [
       { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
       { find: 'os', replacement: 'rollup-plugin-node-polyfills/polyfills/os' },
+      { find: 'util', replacement: 'rollup-plugin-node-polyfills/polyfills/util' },
       {
         find: '@',
         replacement: path.resolve(__dirname, './src')
@@ -94,6 +95,10 @@ export default defineConfig({
       {
         find: '@antv/x6',
         replacement: '@antv/x6/dist/x6.js'
+      },
+      {
+        find: '@prisma/prisma-fmt-wasm',
+        replacement: './src/lib/prisma/@prisma/prisma-fmt-wasm'
       }
       //  {
       //     find: '@antv/x6-react-shape',
