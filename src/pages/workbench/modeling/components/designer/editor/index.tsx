@@ -1,16 +1,18 @@
-// import '@/monaco-prisma'
+import '@/lib/prisma/client'
 
 import Editor, { loader } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
 
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
+import init from '@/lib/prisma/prismaInit'
 
 interface Props {
   onChange?: (value: string) => void
   defaultContent: string
 }
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ monaco })
 const ModelEditor = ({ onChange, defaultContent }: Props) => {
   const editorRef = useRef<any>()
 
@@ -51,10 +53,12 @@ const ModelEditor = ({ onChange, defaultContent }: Props) => {
     <div className="h-full bg-red">
       <Editor
         language="prisma"
+        defaultLanguage="prisma"
         beforeMount={monaco => {
           // console.log(monaco.languages.prisma)
         }}
         onMount={editor => {
+          init(monaco, editor)
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
         }}

@@ -1,43 +1,29 @@
+import '@/lib/prisma/client'
+
 import Editor, { loader } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import { useRef } from 'react'
 
-import { setupSchema } from '@/lib/helpers/jsonManage'
-
+import init from '@/lib/prisma/prismaInit'
 // import testData from './testdata'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ monaco })
 
 export default function MyGraphQLIDE() {
   const editorRef = useRef<any>(null)
-  const modelRef = useRef<any>(null)
+  const monacoRef = useRef<any>(null)
 
-  console.log('****')
   return (
     <Editor
-      defaultLanguage="json"
-      defaultPath="test.json"
+      defaultLanguage="prisma"
       beforeMount={monaco => {
-        setupSchema(
-          monaco,
-          'test.json',
-          {
-            type: 'object',
-            properties: {
-              p1: {
-                enum: ['v1', 'v2']
-              }
-            }
-          },
-          JSON.stringify({ a: 1 }, null, 2)
-        )
+        monacoRef.current = monaco
       }}
       onMount={editor => {
-        // editor.setModel(modelRef.current)
+        init(monacoRef.current, editor)
         editorRef.current = editor
         // editor.onKeyUp(e => {
-        //   const position = editor.getPosition()
-        //   const text = editor.getModel().getLineContent(position.lineNumber).trim()
-        //   if (e.keyCode === monaco?.KeyCode.Enter && !text) {
+        //   if (isInputKey(e.keyCode)) {
         //     editor.trigger('', 'editor.action.triggerSuggest', '')
         //   }
         // })
