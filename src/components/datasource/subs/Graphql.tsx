@@ -8,11 +8,13 @@ import {
   Form,
   Image,
   Input,
+  message,
   Modal,
   Select,
   Space,
   Switch,
-  Tag
+  Tag,
+  Upload
 } from 'antd'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { Rule } from 'antd/lib/form'
@@ -765,7 +767,14 @@ export default function Graphql({ content, type }: Props) {
           basePath={BASEPATH}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={1}
+          upType={3}
+          beforeUpload={file => {
+            const isAllowed = file.name.endsWith('.graphql')
+            if (!isAllowed) {
+              message.error('只允许上传 json 或 yaml 格式文件')
+            }
+            return isAllowed || Upload.LIST_IGNORE
+          }}
         />
       </Modal>
 

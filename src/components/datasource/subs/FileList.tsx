@@ -26,7 +26,7 @@ interface Props {
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
   basePath: string
-  upType: number // 1: json yaml yml
+  upType: number // 1: json yaml yml 2: db
 }
 
 export default function FileList({
@@ -70,9 +70,17 @@ export default function FileList({
   }
 
   useEffect(() => {
+    let filter
+    if (upType === 1) {
+      filter = ['.json', '.yaml', '.yml']
+    } else if (upType === 2) {
+      filter = ['.db']
+    } else if (upType === 3) {
+      filter = ['.graphql']
+    }
     void requests
       .get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`, {
-        params: { names: ['.json', '.yaml', '.yml'] }
+        params: { names: filter }
       })
       .then(x => {
         if (upType === 1) {
