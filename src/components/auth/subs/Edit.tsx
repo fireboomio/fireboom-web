@@ -36,6 +36,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
+  const issuer = Form.useWatch('issuer', form)
   const [value, setValue] = useImmer('')
   const config = content.config as unknown as Config
   const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
@@ -108,15 +109,15 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     }
     currentInspecting.current = url
     // 开始请求前，先清空现有数据
-    setJwksUrl('')
-    setEndPoint('')
+    // setJwksUrl('')
+    // setEndPoint('')
     const res = await axios.get(url)
     // 如果当前url不是最新的，忽略本次请求
     if (currentInspecting.current !== url) {
       return
     }
-    setJwksUrl(res.data.jwks_uri)
-    setEndPoint(res.data.userinfo_endpoint)
+    form.setFieldValue('jwksURL', res.data.jwks_uri)
+    form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
   }
 
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
@@ -138,6 +139,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         issuer: config.issuer,
         jwks: config.jwks,
         jwksJSON: config.jwksJSON,
+        jwksURL: config.jwksURL,
+        userInfoEndpoint: config.userInfoEndpoint,
         switchState: content.switchState
       }
     : {
@@ -147,6 +150,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         issuer: '',
         jwks: 0,
         jwksJSON: '',
+        jwksURL: '',
+        userInfoEndpoint: '',
         switchState: []
       }
 
@@ -213,10 +218,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               }
             ]}
           >
-            <Input placeholder="请输入..." value={inputValue} />
+            <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item label="服务发现地址">
-            <Input value={jwksUrl} disabled />
+            <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />
           </Form.Item>
           <Form.Item label="JWKS" name="jwks">
             <Radio.Group
@@ -241,16 +246,12 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               />
             </Form.Item>
           ) : (
-            <Form.Item label="jwksURL">
-              <Input
-                disabled
-                value={`${inputValue as string}/.well-known/jwks.json`}
-                suffix="浏览"
-              />
+            <Form.Item label="jwksURL" name="jwksURL">
+              <Input disabled suffix="浏览" />
             </Form.Item>
           )}
-          <Form.Item label="用户端点">
-            <Input disabled value={endPoint} />
+          <Form.Item label="用户端点" name="userInfoEndpoint">
+            <Input disabled />
           </Form.Item>
           <Form.Item label="是否开启" name="switchState">
             <Checkbox.Group options={options} />
