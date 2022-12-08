@@ -4,12 +4,13 @@ import operationImg from './assets/internal-operation.png'
 const InternalOperationChart = () => {
   return (
     <div
-      className="text-center"
+      className="h-full text-center pt-10"
       style={{
-        background: `url("${gridImg}") 22px 22px #F8F9FD repeat`
+        background: `url("${gridImg}") #F8F9FD repeat`,
+        backgroundSize: `22px 22px`
       }}
     >
-      <img className="w-74" src={operationImg} alt="internal operation" />
+      <img className="w-80" src={operationImg} alt="internal operation" />
     </div>
   )
 }

@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/apiConfig'
 // @ts-ignore
-import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
+// import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'
 import GraphiqlExplorer from '@/components/GraphQLExplorer/origin'
 import { useDragResize } from '@/hooks/resize'
@@ -82,7 +82,7 @@ export default function APIEditorContainer() {
   const editingContent = useRef(query)
   const contentUpdateTimeout = useRef<number>()
   const isEditingRef = useRef(false)
-  const explorerRef = useRef<GraphiqlExplorerAction>()
+  const explorerRef = useRef<any>()
 
   const tabs = useMemo(() => {
     return (
@@ -221,6 +221,7 @@ export default function APIEditorContainer() {
                 onRefresh={onRefreshSchema}
               /> */}
               <GraphiqlExplorer
+                ref={explorerRef}
                 schema={schema}
                 query={query}
                 onEdit={setQuery}

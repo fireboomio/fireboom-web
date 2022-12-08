@@ -2985,6 +2985,7 @@ type FilterType = typeof values[number]
 class ExplorerWrapper extends React.PureComponent<
   Props,
   {
+    k: number
     selectedType: FilterType
     selectedDataSource: string | undefined
   }
@@ -2997,7 +2998,10 @@ class ExplorerWrapper extends React.PureComponent<
   // }
 
   /// Add
+
+  /// Add
   state = {
+    k: +new Date(),
     selectedType: '',
     selectedDataSource: undefined
   }
@@ -3015,12 +3019,19 @@ class ExplorerWrapper extends React.PureComponent<
       selectedDataSource: v
     })
   }
+  
+  manualExpand() {
+    // 切换时清空缓存
+    parseQueryMemoize = null
+    this.state.k = +new Date()
+  }
 
   render() {
     return (
       <div
         // Updated
         className="h-full min-w-64 w-full docExplorerWrap"
+        key={this.state.k} 
         style={{
           zIndex: 7,
           display: this.props.explorerIsOpen ? 'flex' : 'none',
@@ -3030,6 +3041,7 @@ class ExplorerWrapper extends React.PureComponent<
       >
         {/* Add */}
         <ExplorerFilter
+          // key={this.state.k}
           filters={filters}
           isLoading={this.props.isLoading}
           selectedType={this.state.selectedType}

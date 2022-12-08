@@ -3,6 +3,12 @@ import hotkeys from 'hotkeys-js'
 
 const hotkeyMap: Record<string, ((e: KeyboardEvent, handler: HotkeysEvent) => void)[]> = {}
 
+hotkeys.filter = function (event) {
+  const target = event.target || event.srcElement;
+  const tagName = target?.tagName;
+  return !(target?.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+}
+
 export function registerHotkeyHandler(
   hotkey: string,
   handler: (e: KeyboardEvent, handler: HotkeysEvent) => void
