@@ -1,0 +1,8 @@
+{
+  "name": "socket-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite -c vite.config.worker.ts build"
+  }
+}

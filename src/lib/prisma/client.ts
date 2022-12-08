@@ -79,8 +79,8 @@ function createLanguageClient(transports: MessageTransports): MonacoLanguageClie
 // install Monaco language client services
 MonacoServices.install()
 
-// const serverModule = new URL('/modules/prisma/server-es.js', window.location.href).href
-const serverModule = new URL('/src/lib/prisma/server.ts', window.location.href).href
+const serverModule = new URL('/modules/prisma/server-es.js', window.location.href).href
+// const serverModule = new URL('/src/lib/prisma/server.ts', window.location.href).href
 
 const worker = new Worker(serverModule, {
   type: 'module'
