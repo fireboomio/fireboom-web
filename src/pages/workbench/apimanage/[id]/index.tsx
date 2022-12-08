@@ -19,7 +19,6 @@ import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
-import { registerHotkeyHandler } from '@/services/hotkey'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
@@ -137,7 +136,7 @@ export default function APIEditorContainer() {
         // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
         if (!isEditingRef.current) {
           // 节流设置值
-          contentUpdateTimeout.current = setTimeout(() => {
+          contentUpdateTimeout.current = window.setTimeout(() => {
             setQuery(editingContent.current)
           }, 1500)
         }

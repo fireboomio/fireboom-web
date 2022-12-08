@@ -39,7 +39,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+r', toggleExecute)
+    return registerHotkeyHandler('alt+r,^+r', toggleExecute)
   }, [])
 
   return (

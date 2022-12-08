@@ -26,7 +26,7 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+t', () => {
+    return registerHotkeyHandler('alt+t,^+t', () => {
       handleSetInEdit(!inEdit)
     })
   }, [handleSetInEdit, inEdit])

@@ -180,11 +180,11 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   // 快捷键
   useEffect(() => {
-    const unbind1 = registerHotkeyHandler('alt+shift+d', e => {
+    const unbind1 = registerHotkeyHandler('alt+shift+d,^+shift+d', e => {
       e.preventDefault()
       copyAPI()
     })
-    const unbind2 = registerHotkeyHandler('alt+shift+c', e => {
+    const unbind2 = registerHotkeyHandler('alt+shift+c,^+shift+c', e => {
       e.preventDefault()
       copyLink()
     })

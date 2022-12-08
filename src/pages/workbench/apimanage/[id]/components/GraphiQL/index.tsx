@@ -350,7 +350,7 @@ const GraphiInputAndResponse = ({
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+shift+t', () => {
+    return registerHotkeyHandler('alt+shift+t,^+shift+t', () => {
       setVariableMode(variableMode === 'form' ? 'json' : 'form')
     })
   }, [variableMode])

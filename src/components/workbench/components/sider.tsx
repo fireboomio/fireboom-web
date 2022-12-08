@@ -23,7 +23,7 @@ export default function Sider() {
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+m', () => {
+    return registerHotkeyHandler('alt+m,^+m', () => {
       if (location.pathname.startsWith('/workbench/modeling')) {
         navigate('/workbench')
       } else {

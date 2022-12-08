@@ -102,7 +102,7 @@ const ModelPannel = ({
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+n', () => {
+    return registerHotkeyHandler('alt+n,^+n', () => {
       addNewModelHandler()
     })
   }, [])

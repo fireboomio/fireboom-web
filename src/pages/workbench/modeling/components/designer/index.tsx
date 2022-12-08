@@ -202,7 +202,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+shift+t', () => {
+    return registerHotkeyHandler('alt+shift+t,^+shift+t', () => {
       setMode(mode === 'designer' ? 'editor' : 'designer')
     })
   }, [mode])

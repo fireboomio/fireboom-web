@@ -31,7 +31,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
 
   // 快捷键
   useEffect(() => {
-    return registerHotkeyHandler('alt+c', () => {
+    return registerHotkeyHandler('alt+c,^+c', () => {
       doCompile()
     })
   }, [])

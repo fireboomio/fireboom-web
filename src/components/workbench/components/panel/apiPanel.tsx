@@ -56,10 +56,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   // 快捷键
   useEffect(() => {
-    const unbind1 = registerHotkeyHandler('alt+n', () => {
+    const unbind1 = registerHotkeyHandler('alt+n,^+n', () => {
       handleAddNode('创建文件')
     })
-    const unbind2 = registerHotkeyHandler('alt+b', () => {
+    const unbind2 = registerHotkeyHandler('alt+b,^+b', () => {
       navigate(`/workbench/apimanage/crud`)
     })
     return () => {
