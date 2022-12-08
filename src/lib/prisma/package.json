@@ -1,0 +1,8 @@
+{
+  "name": "browser-lsp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite -c vite.config.worker.ts build"
+  }
+}
