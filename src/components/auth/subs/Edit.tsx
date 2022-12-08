@@ -190,26 +190,14 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           <Form.Item
             label="App ID"
             name="clientId"
-            rules={[
-              { required: true, message: 'App ID不能为空' },
-              {
-                pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线'
-              }
-            ]}
+            rules={[{ required: true, message: 'App ID不能为空' }]}
           >
             <Input placeholder="请输入..." />
           </Form.Item>
           <Form.Item
             label="App Secret"
             name="clientSecret"
-            rules={[
-              { required: true, message: 'App Secret不能为空' },
-              {
-                pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线'
-              }
-            ]}
+            rules={[{ required: true, message: 'App Secret不能为空' }]}
           >
             <Input.Password placeholder="请输入..." />
           </Form.Item>
