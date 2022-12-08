@@ -9,8 +9,20 @@ import {
 import requests from '@/lib/fetchers'
 
 import iconAli from '../assets/ali.svg'
+import iconCockroachDB from '../assets/CockRoachDB.svg'
+import iconFaas from '../assets/Faas.svg'
+import iconGraphalAPI from '../assets/GraphalAPI.svg'
+import iconMariaDB from '../assets/MariaDB.svg'
+import iconMongoDB from '../assets/MongoDB.svg'
+import iconMySQL from '../assets/MySQL.svg'
+import iconNode from '../assets/node.js.svg'
+import iconPlanetscale from '../assets/Planetscale.svg'
+import iconPostgreSQL from '../assets/PostgreSQL.svg'
 import iconRabbitMQ from '../assets/RabbitMQ.svg'
+import iconRESTAPI from '../assets/RESTAPI.svg'
 import iconRocketMQ from '../assets/RocketMQ.svg'
+import iconSQLite from '../assets/SQLite.svg'
+import iconSQLServer from '../assets/SQLServer.svg'
 import styles from './Designer.module.less'
 
 const initData: {
@@ -27,17 +39,45 @@ const initData: {
   {
     name: 'API',
     items: [
-      { name: 'REST API', logo: 'icon-shujuyuantubiao3', sourceType: 2 },
-      { name: 'GraphQL API', logo: 'icon-QLweixuanzhong1', sourceType: 3 }
+      { name: 'REST API', icon: iconRESTAPI, sourceType: 2 },
+      { name: 'GraphQL API', icon: iconGraphalAPI, sourceType: 3 }
     ]
   },
   {
     name: '数据库',
     items: [
-      { name: 'PostgreSQL', logo: 'icon-shujuyuantubiao2', sourceType: 1, dbType: 'PostgreSQL' },
-      { name: 'MySQL', logo: 'icon-shujuyuantubiao1', sourceType: 1, dbType: 'MySQL' },
-      { name: 'MongoDB', logo: 'icon-shujuyuantubiao4', sourceType: 1, dbType: 'MongoDB' },
-      { name: 'Sqlite', logo: 'icon-shujuyuantubiao3', sourceType: 1, dbType: 'SQLite' }
+      { name: 'PostgreSQL', icon: iconPostgreSQL, sourceType: 1, dbType: 'PostgreSQL' },
+      { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
+      { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB' },
+      { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
+      {
+        name: 'CockroachDB',
+        icon: iconCockroachDB,
+        sourceType: 1,
+        dbType: 'CockroachDB',
+        coming: true
+      },
+      {
+        name: 'SQL Server',
+        icon: iconSQLServer,
+        sourceType: 1,
+        dbType: 'SQL Server',
+        coming: true
+      },
+      {
+        name: 'Plantscale',
+        icon: iconPlanetscale,
+        sourceType: 1,
+        dbType: 'Plantscale',
+        coming: true
+      },
+      {
+        name: 'MariaDB',
+        icon: iconMariaDB,
+        sourceType: 1,
+        dbType: 'MariaDB',
+        coming: true
+      }
     ]
   },
   {
@@ -48,7 +88,13 @@ const initData: {
       { name: '阿里云物联网平台', icon: iconAli, coming: true }
     ]
   },
-  { name: '自定义', items: [{ name: '自定义', logo: 'icon-wenjian', sourceType: 4 }] }
+  {
+    name: '自定义',
+    items: [
+      { name: 'node.js', icon: iconNode, sourceType: 4 },
+      { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
+    ]
+  }
 ]
 
 export default function Designer() {
