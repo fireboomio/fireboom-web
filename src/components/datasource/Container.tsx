@@ -7,6 +7,7 @@ import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { updateHookSwitch } from '@/lib/service/hook'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -43,6 +44,11 @@ export default function DatasourceContainer({ content, showType }: Props) {
     content.switch ^= 1
     if (content) {
       void (await requests.put('/dataSource', content))
+    }
+    // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
+    if (content.sourceType === 4) {
+      console.log(content)
+      updateHookSwitch(`customize/${content.name}`, !!content.switch)
     }
     onRefreshMenu('dataSource')
   }

@@ -9,7 +9,7 @@ import {
 import requests from '@/lib/fetchers'
 
 import iconAli from '../assets/ali.svg'
-import iconCockroachDB from '../assets/CockRoachDB.svg'
+import iconCockroachDB from '../assets/CockroachDB.svg'
 import iconFaas from '../assets/Faas.svg'
 import iconGraphalAPI from '../assets/GraphalAPI.svg'
 import iconMariaDB from '../assets/MariaDB.svg'

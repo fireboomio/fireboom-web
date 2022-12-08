@@ -45,6 +45,16 @@ monaco.languages.register({
   // mimetypes: ['text/plain']
 })
 
+/**
+ * 2022-12-08
+ * 由于默认分词问题，monaco在分词时会把指令的@单独分出去，导致指令的语法提醒无法和分词结果匹配
+ * 比如输入[@un]时会触发提示[@unique]但是分词结果是[un]，导致无法匹配，无法触发提示
+ * 为了解决这个问题，我们需要自定义分词器，把@也作为分词结果的一部分
+ */
+monaco.languages.setLanguageConfiguration('prisma', {
+  wordPattern: /(-?\d*\.\d\w*)|([^`~!#%^&*()\-=+[{\]}\\|;:'",.<>/?\s]+)/g
+})
+
 function createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
   return new MonacoLanguageClient({
     name: 'Sample Language Client',
@@ -69,8 +79,8 @@ function createLanguageClient(transports: MessageTransports): MonacoLanguageClie
 // install Monaco language client services
 MonacoServices.install()
 
-const serverModule = new URL('/modules/prisma/server-es.js', window.location.href).href
-// const serverModule = new URL('/src/lib/prisma/server.ts', window.location.href).href
+// const serverModule = new URL('/modules/prisma/server-es.js', window.location.href).href
+const serverModule = new URL('/src/lib/prisma/server.ts', window.location.href).href
 
 const worker = new Worker(serverModule, {
   type: 'module'
