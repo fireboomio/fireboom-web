@@ -1,5 +1,5 @@
-import { message, Popover } from 'antd'
-import { useContext, useEffect, useState } from 'react'
+import { message, Popover, Tooltip } from 'antd'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -28,6 +28,16 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     }
     void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
   }
+
+  // TODO
+  const generatePrismaSDK = useCallback(() => {
+    // requests.post('/')
+  }, [])
+
+  // TODO
+  const showHotkey = useCallback(() => {
+    //
+  }, [])
 
   // 快捷键
   useEffect(() => {
@@ -115,9 +125,13 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         )}
         <div className={styles.splitLine} style={{ margin: '0 26px' }} />
-
+        <Tooltip title="生成prisma sdk"> 
+          <svg className='cursor-pointer' width="1em" height="1em" viewBox="0 0 32 32" onClick={generatePrismaSDK}>
+            <path fill="#0c344b" fillRule="evenodd" d="m25.21 24.21l-12.471 3.718a.525.525 0 0 1-.667-.606l4.456-21.511a.43.43 0 0 1 .809-.094l8.249 17.661a.6.6 0 0 1-.376.832Zm2.139-.878L17.8 2.883A1.531 1.531 0 0 0 16.491 2a1.513 1.513 0 0 0-1.4.729L4.736 19.648a1.592 1.592 0 0 0 .018 1.7l5.064 7.909a1.628 1.628 0 0 0 1.83.678l14.7-4.383a1.6 1.6 0 0 0 1-2.218Z"></path>
+          </svg>
+        </Tooltip>
         <div
-          className="cursor-pointer flex-0 h-4 text-0px w-4"
+          className="cursor-pointer flex-0 h-4 ml-4 text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
           <img className="h-4 w-4" src="/assets/github.svg" alt="" />
@@ -126,6 +140,11 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           className={styles.helpIcon}
           onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
         />
+        <Tooltip title="快捷键">
+          <svg className='cursor-pointer ml-4' onClick={showHotkey} width="1.25em" height="1.25em" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M20 3H4c-1.1 0-1.99.9-1.99 2L2 15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12H4V5h16v10zm-9-9h2v2h-2zm0 3h2v2h-2zM8 6h2v2H8zm0 3h2v2H8zM5 9h2v2H5zm0-3h2v2H5zm3 6h8v2H8zm6-3h2v2h-2zm0-3h2v2h-2zm3 3h2v2h-2zm0-3h2v2h-2zm-5 17l4-4H8z"></path>
+          </svg>
+        </Tooltip>
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
         <div className={styles.avatar}>
           <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />
