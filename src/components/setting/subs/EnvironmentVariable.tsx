@@ -54,11 +54,13 @@ export default function SettingMainEnvironmentVariable() {
     if (id == -1) {
       void requests.post('/env', values).then(() => {
         setRefreshFlag(!refreshFlag)
+        setIsVariableVisible(false)
       })
     } else {
       const newValues = { ...values, id }
       void requests.put('/env', newValues).then(() => {
         setRefreshFlag(!refreshFlag)
+        setIsVariableVisible(false)
       })
     }
   }
@@ -216,11 +218,7 @@ export default function SettingMainEnvironmentVariable() {
             margin: '12px auto'
           }}
           open={isVariableVisible}
-          onOk={() => setIsVariableVisible(false)}
           onCancel={() => setIsVariableVisible(false)}
-          okButtonProps={{
-            disabled: disabled
-          }}
           okText={
             <span
               className={styles['save-env-btn']}
@@ -261,8 +259,11 @@ export default function SettingMainEnvironmentVariable() {
                 },
                 {
                   validator: (rule, value) => {
-                    const index = environmentConfig.findIndex(item => item.key == value)
-                    if (index != -1) {
+                    if (value === form.getFieldValue('oldKey')) {
+                      return Promise.resolve()
+                    }
+                    const existItem = environmentConfig.find(item => item.key == value)
+                    if (existItem) {
                       return Promise.reject('名称重复')
                     } else {
                       return Promise.resolve()
