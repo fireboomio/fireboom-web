@@ -6,12 +6,6 @@ const hotkeyMap: Record<string, (e: KeyboardEvent, handler: HotkeysEvent) => voi
 hotkeys.filter = function (event) {
   const target = event.target || event.srcElement
   const tagName = target?.tagName
-  console.log(
-    !(
-      (target?.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT')
-      // tagName == 'TEXTAREA'
-    )
-  )
   return !(
     (target?.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT')
     // tagName == 'TEXTAREA'
