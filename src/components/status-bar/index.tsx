@@ -2,6 +2,7 @@
 import { Input, message, Radio, Space } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
+import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
@@ -9,7 +10,6 @@ import calcTime from '@/lib/helpers/calcTime'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
-import { useStackblitz } from '@/hooks/stackblitz'
 
 interface Props {
   className?: string
@@ -177,6 +177,7 @@ const StatusBar: React.FC<Props> = ({
                     </Space>
                   </Radio.Group>
                   <Input
+                    addonBefore="http(s)://"
                     className={styles.hookInput}
                     value={hooksServerURL}
                     onChange={e => setHooksServerURL(e.target.value)}
