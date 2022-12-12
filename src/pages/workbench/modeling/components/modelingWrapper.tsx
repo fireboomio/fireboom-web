@@ -70,22 +70,23 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     // setShowType('preview')
   }
 
+  /**
+   * 2022-12-12 移除了是否是自动触发的判断，以解决请求到数据后，未自动选中第一项的问题，后续如有优化需要注意保证自动选择逻辑不会失效
+   * @param entity
+   * @param auto
+   */
   const handleClickEntity = (entity: Entity, auto = false) => {
     if (!entity) {
       return
     }
-    if (!auto) {
-      setCurrentEntity(entity)
-    }
+    setCurrentEntity(entity)
     if (inEdit) {
       setShowType(entity.type === 'model' ? 'editModel' : 'editEnum')
     } else {
       setShowType(entity?.type === 'enum' ? 'editEnum' : 'preview')
       dispatch(updatePreviewFiltersAction([]))
     }
-    if (!auto) {
-      dispatch(updateCurrentEntityIdAction(entity.id))
-    }
+    dispatch(updateCurrentEntityIdAction(entity.id))
   }
 
   const handleToggleDesigner = handleClickEntity

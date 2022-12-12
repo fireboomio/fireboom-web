@@ -72,6 +72,8 @@ export const fetchAndSaveToPrismaSchemaContext = (
         console.info('数据库id已改变，不再执行后续操作')
         return
       }
+      // 获取到schema之后，默认选中第一个model
+      console.log('blocks', selectedDataSource)
       dispatch(createApolloClient(dataSourceId))
     })
     .catch((err: Error) => {

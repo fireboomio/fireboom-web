@@ -2,7 +2,7 @@ import { Image, Tooltip } from 'antd'
 
 interface Props {
   title: React.ReactNode
-  className: string
+  className?: string
 }
 
 const FormToolTip = (props: Props) => {

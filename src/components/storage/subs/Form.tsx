@@ -73,8 +73,12 @@ export default function StorageForm({ content }: Props) {
         <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
           <Input placeholder="请输入..." />
         </Form.Item>
-        <Form.Item label="服务地址" name="endpoint">
-          <Input placeholder="请输入..." />
+        <Form.Item
+          label="服务地址"
+          name="endpoint"
+          rules={[{ required: true, message: '请输入服务地址' }]}
+        >
+          <Input addonBefore="http(s)://" placeholder="请输入..." />
         </Form.Item>
         <Form.Item
           label="App ID"
@@ -90,10 +94,18 @@ export default function StorageForm({ content }: Props) {
         >
           <Input.Password placeholder="请输入..." />
         </Form.Item>
-        <Form.Item label="区域" name="bucketLocation">
+        <Form.Item
+          label="区域"
+          name="bucketLocation"
+          rules={[{ required: true, message: '请输入区域' }]}
+        >
           <Input placeholder="请输入..." />
         </Form.Item>
-        <Form.Item label="bucketName" name="bucketName">
+        <Form.Item
+          label="bucketName"
+          name="bucketName"
+          rules={[{ required: true, message: '请输入bucketName' }]}
+        >
           <Input placeholder="请输入..." />
         </Form.Item>
         <Form.Item

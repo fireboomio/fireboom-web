@@ -33,6 +33,7 @@ const Experience: React.FC = () => {
   // const { connectorDispatch } = useContext(ConnectorContext)
   const [tabActiveKey, setTabActiveKey] = useState('0')
   const [brandData, setBrandData] = useState<BrandType>()
+  const [previewData, setPreviewData] = useState<BrandType>()
   const [otherData, setOtherData] = useState<OtherType>()
   const [refreshFlag, setRefreshFlag] = useState(false)
 
@@ -86,7 +87,7 @@ const Experience: React.FC = () => {
 
       <div className="flex">
         {tabActiveKey === '0' ? (
-          <Brand data={brandData} />
+          <Brand data={brandData} onPreview={setPreviewData} />
         ) : tabActiveKey === '1' ? (
           <>
             {experienceData && (
@@ -97,7 +98,7 @@ const Experience: React.FC = () => {
           <Other data={otherData} />
         )}
 
-        <ExperiencePreview />
+        <ExperiencePreview previewData={previewData} />
       </div>
     </>
   )
