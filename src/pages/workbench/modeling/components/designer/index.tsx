@@ -264,12 +264,13 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           await refreshBlocks()
           hide()
         }
-      } else if (type === 'model') {
-        // @ts-ignore
-        await ModelDesignerRef?.current?.handleSaveModel?.()
       } else {
-        // @ts-ignore
-        await EnumDesignerRef?.current?.handleSaveEnum?.()
+        const hide = message.loading('保存中...')
+        await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
+          schema: transferToEditor()
+        })
+        await refreshBlocks()
+        hide()
       }
     } catch (e) {
       console.error(e)
@@ -302,22 +303,22 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
 
   const transferToEditor = () => {
     // 在这里 将 新增的枚举 添加进去
-    let newBlocks = PrismaSchemaBlockOperator(blocks).addEnums(newEnums)
-    // @ts-ignore
-    let model = ModelDesignerRef?.current?.currentModel as Model
-    if (titleValue && new RegExp(ENTITY_NAME_REGEX).test(titleValue)) {
-      model = { ...model, name: titleValue }
-    } else {
-      void message.error('实体名不合法')
-    }
-    PrismaSchemaBlockOperator(newBlocks).updateModel(model)
-    // 兼容代码，避免printSchema报错
-    newBlocks.forEach(block => {
-      if (block.type === 'model' && !block.properties) {
-        block.properties = []
-      }
-    })
-    return printSchema({ type: 'schema', list: newBlocks })
+    // let newBlocks = PrismaSchemaBlockOperator(blocks).addEnums(newEnums)
+    // // @ts-ignore
+    // let model = ModelDesignerRef?.current?.currentModel as Model
+    // if (titleValue && new RegExp(ENTITY_NAME_REGEX).test(titleValue)) {
+    //   model = { ...model, name: titleValue }
+    // } else {
+    //   void message.error('实体名不合法')
+    // }
+    // PrismaSchemaBlockOperator(newBlocks).updateModel(model)
+    // // 兼容代码，避免printSchema报错
+    // newBlocks.forEach(block => {
+    //   if (block.type === 'model' && !block.properties) {
+    //     block.properties = []
+    //   }
+    // })
+    return printSchema({ type: 'schema', list: blocks })
   }
 
   const handelEditTitle = (title: string) => {
