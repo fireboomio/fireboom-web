@@ -40,6 +40,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [delayAction, setDelayAction] = useState<ActionT>() // 面板展开后执行新增操作
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([])
+  const [dropDownId, setDropDownId] = useState<string>() // 当前下拉列表的对象id
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
     return getNodeByKey(currEditingKey, treeData)
@@ -485,7 +486,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <div onClick={e => e.stopPropagation()}>
             <Popconfirm
               title="确定删除吗?"
-              onConfirm={() => handleDelete(nodeData)}
+              onConfirm={() => {
+                handleDelete(nodeData)
+                setDropDownId(undefined)
+              }}
+              onCancel={() => {
+                setDropDownId(undefined)
+              }}
               okText="删除"
               cancelText="取消"
               placement="right"
@@ -502,6 +509,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
     const menu = (
       <Menu
+        onClick={e => {
+          if (e.key !== 'delete') {
+            setDropDownId(undefined)
+          }
+        }}
         // onClick={menuInfo => handleMenuClick(menuInfo, nodeData)}
         items={menuItems}
       />
@@ -534,9 +546,21 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <>
             <div className={styles.title}>{nodeData.title}</div>
             <div className={styles.suffix}>{miniStatus}</div>
-            <Dropdown destroyPopupOnHide overlay={menu} trigger={['click']} placement="bottomRight">
-              <div className={styles.more} onClick={e => e.stopPropagation()} />
-            </Dropdown>
+            <div onClick={e => e.stopPropagation()}>
+              <Dropdown
+                open={dropDownId === nodeData.key}
+                onOpenChange={flag => {
+                  setDropDownId(flag ? nodeData.key : undefined)
+                  console.log(dropDownId)
+                }}
+                destroyPopupOnHide
+                overlay={menu}
+                trigger={['click']}
+                placement="bottomRight"
+              >
+                <div className={styles.more} onClick={e => e.preventDefault()} />
+              </Dropdown>
+            </div>
           </>
         )}
       </div>

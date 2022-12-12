@@ -68,7 +68,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
 
   return (
     <div
-      className="bg-[#fff] border-gray-500/50 min-h-80px pb-5 px-7 bottom-36px z-200  absolute"
+      className="bg-[#fff] border-gray-500/50 min-h-80px pb-5 px-7 bottom-36px z-1200  absolute"
       style={{
         borderTop: '1px solid #EFEFEFFF',
         borderRadius: '12px 12px 0 0',

@@ -136,13 +136,13 @@ export default function Rest({ content, type }: Props) {
       .get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`)
       .then(res => {
         const servers = get(res, 'data.servers') ?? []
-        form.setFieldsValue({
-          baseURL: servers[0]?.url ?? ''
-        })
+        if (!form.getFieldValue('baseURL')) {
+          form.setFieldsValue({
+            baseURL: servers[0]?.url ?? ''
+          })
+        }
         setBaseURLOptions(
-          servers
-            .map((item: any) => ({ label: item?.url ?? '', value: item?.url ?? '' }))
-            .concat([{ label: 'custom', value: 'custom' }])
+          servers.map((item: any) => ({ label: item?.url ?? '', value: item?.url ?? '' }))
         )
       })
       .catch(err => {
@@ -564,7 +564,7 @@ export default function Rest({ content, type }: Props) {
                     <FormToolTip title="Rest 端点" />
                   </>
                 }
-                // rules={[{ type: 'url', message: '只允许输入链接' }]}
+                rules={[{ required: true, type: 'url', message: '只允许输入链接' }]}
                 name="baseURL"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -572,7 +572,7 @@ export default function Rest({ content, type }: Props) {
                 <AutoComplete
                   options={baseURLOptions}
                   filterOption={(inputValue, option) => {
-                    return (option?.value ?? '').includes(inputValue)
+                    return true
                   }}
                   placeholder="请输入..."
                 />

@@ -3,7 +3,6 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BarsOutlined,
-  SearchOutlined,
   SyncOutlined
 } from '@ant-design/icons'
 import {
@@ -376,18 +375,17 @@ export default function StorageExplorer({ bucketId }: Props) {
         <div className="flex flex-0 justify-center items-center">
           {isSerach ? (
             <Tooltip title="serach">
-              <Button
-                className="mr-4"
-                shape="circle"
-                icon={<SearchOutlined />}
-                onClick={changeSerachState}
-              />
+              <div className="mr-4 cursor-pointer" onClick={changeSerachState}>
+                <img alt="" src="/assets/search.svg" />
+              </div>
             </Tooltip>
           ) : (
             <Input
               status="error"
               prefix={
-                <SearchOutlined onClick={changeSerachState} className={styles['form-item-icon']} />
+                <div className="cursor-pointer" onClick={changeSerachState}>
+                  <img alt="" src="/assets/search.svg" />
+                </div>
               }
               className="mr-4"
             />
@@ -499,11 +497,11 @@ export default function StorageExplorer({ bucketId }: Props) {
                 </Panel>
                 <div className="flex flex-col">
                   <a className="flex" href={target?.url} download={target?.value}>
-                    <Button className="m-1.5 flex-1">下载</Button>
+                    <Button className="m-1.5 flex-1 !border-[#efeff0] rounded-4px">下载</Button>
                   </a>
                   <Button
                     onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
-                    className="m-1.5"
+                    className="m-1.5 !border-[#efeff0] rounded-4px"
                   >
                     复制URL
                   </Button>
@@ -513,7 +511,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                     okText="删除"
                     cancelText="取消"
                   >
-                    <Button className="m-1.5">
+                    <Button className="m-1.5 !border-[#efeff0] rounded-4px">
                       <span className="text-[#F21212]">删除</span>
                     </Button>
                   </Popconfirm>

@@ -1,15 +1,4 @@
-import {
-  Button,
-  Descriptions,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Radio,
-  Select,
-  Upload
-} from 'antd'
+import { Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -83,13 +72,14 @@ export default function DB({ content, type }: Props) {
     switch (value) {
       case '0':
         setIsValue(true)
-        setRulesObj({ pattern: /^.{1,128}$/g, message: '请输入长度不大于128的非空值' })
         form.setFieldValue(['databaseUrl', 'val'], '')
+        void form.validateFields()
         return
       case '1':
         setIsValue(false)
         setEnvVal(envOpts.at(0)?.label ?? '')
         form.setFieldValue(['databaseUrl', 'val'], '')
+        void form.validateFields()
         return
       default:
         setIsValue(false)
@@ -110,6 +100,25 @@ export default function DB({ content, type }: Props) {
       .then(x => setEnvOpts(x))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  console.log(content)
+  const urlRule = {
+    mysql: {
+      pattern: /^mysql:\/\/.{1,120}$/g,
+      message: '以 mysql:// 开头，不超过128位',
+      required: true
+    },
+    postgresql: {
+      pattern: /^postgresql:\/\/.{1,115}$/g,
+      message: '以 postgresql:// 开头，不超过128位',
+      required: true
+    },
+    mongodb: {
+      pattern: /^mongodb:\/\/.{1,118}$/g,
+      message: '以 mongodb:// 开头，不超过128位',
+      required: true
+    }
+  }[String(content?.config.dbType).toLowerCase()]
 
   const initForm =
     dbType === 'SQLite' ? (
@@ -143,11 +152,16 @@ export default function DB({ content, type }: Props) {
             </Select>
           </Form.Item>
           {isValue ? (
-            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+            <Form.Item
+              key={1}
+              name={['databaseUrl', 'val']}
+              noStyle
+              rules={urlRule ? [urlRule] : []}
+            >
               <Input style={{ width: '80%' }} placeholder="请输入" />
             </Form.Item>
           ) : (
-            <Form.Item name={['databaseUrl', 'val']} noStyle rules={[rulesObj]}>
+            <Form.Item key={2} name={['databaseUrl', 'val']} noStyle rules={[]}>
               <Select
                 className="w-1/5"
                 style={{ width: '80%' }}
@@ -297,25 +311,24 @@ export default function DB({ content, type }: Props) {
 
   //测试连接 成功与失败提示
   const testLink = (placement: NotificationPlacement) => {
+    const newValues = { ...config, ...form.getFieldsValue() }
+    if (newValues.databaseUrl === undefined) {
+      newValues.databaseUrl = {}
+    } else if (newValues.databaseUrl.kind === undefined) {
+      newValues.databaseUrl.kind = '0'
+    }
     void requests
       .post('/checkDBConn', {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: { sourceType: content.sourceType, config: config }
+        sourceType: content.sourceType,
+        config: newValues
       })
       .then(x => {
-        if (x.msg === '连接成功') {
-          notification.open({
-            message: <IconFont type="icon-bixu" />,
-            description: <h1>连接成功</h1>,
-            placement
-          })
+        if (x?.status) {
+          message.success('连接成功')
         } else {
-          notification.open({
-            message: <IconFont type="icon-xingzhuangjiehe" />,
-            description: <h1>连接失败</h1>,
-            placement
-          })
+          message.error(x?.msg || '连接失败')
         }
       })
   }
@@ -524,7 +537,7 @@ export default function DB({ content, type }: Props) {
                 >
                   <span>取消</span>
                 </Button>
-                <Button className="btn-test ml-4" onClick={() => testLink('bottomLeft')}>
+                <Button className="btn-test ml-4" onClick={() => testLink()}>
                   测试
                 </Button>
                 <Button

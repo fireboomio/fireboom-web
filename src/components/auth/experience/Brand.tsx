@@ -8,15 +8,17 @@ import requests from '@/lib/fetchers'
 interface Props {
   data?: BrandType
   // handleTopToggleDesigner: (authType: AuthListType) => void
+  onPreview: (values: BrandType) => void
 }
 
 // eslint-disable-next-line react/prop-types
-const Brand: React.FC<Props> = ({ data }) => {
+const Brand: React.FC<Props> = ({ data, onPreview }) => {
   const [state, setState] = useState<BrandType | undefined>(data)
   const [form] = Form.useForm()
 
   useEffect(() => {
     setState(data)
+    data && onPreview(data)
   }, [data])
 
   function handleFinish(values: BrandType) {
@@ -38,7 +40,13 @@ const Brand: React.FC<Props> = ({ data }) => {
 
   return (
     <div className="w-1/2 pr-6">
-      <Form form={form} name="basic" initialValues={state} onFinish={handleFinish}>
+      <Form
+        onChange={() => onPreview(form.getFieldsValue())}
+        form={form}
+        name="basic"
+        initialValues={state}
+        onFinish={handleFinish}
+      >
         <div className="text-xs text-[#AFB0B4] mb-4.5">颜色</div>
         <div className="text-sm mb-2">
           <span className="text-[#E13D5BFF]">{'//'}</span> 品牌颜色
