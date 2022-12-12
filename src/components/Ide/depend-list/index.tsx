@@ -128,7 +128,7 @@ const SearchDepend = (props: SearchDependProps) => {
 
 type DependListProps = {
   // 本地依赖
-  localDepend: string[]
+  localDepends: string[]
   dependList: Depend[]
   hookInfo?: HookInfo
   devDependList: Depend[]
@@ -159,7 +159,6 @@ const DependList = (props: DependListProps) => {
     Record<string, { label: string; value: string }[]>
   >({})
   const [versionLoading, setVersionLoading] = useState<number>(-1)
-  const [hideLocalDepend, setHideLocalDepend] = useState<boolean>(false)
   const firstUpload = useRef(true)
   const firstSetDependList = useRef(false)
 
@@ -526,16 +525,15 @@ const DependList = (props: DependListProps) => {
           }
         >
           <div className="px-10px">
-            {!hideLocalDepend &&
-              props.localDepend.map(item => (
-                <div
-                  onDoubleClick={() => props.onInsertLocalDepend?.(item)}
-                  key={item}
-                  className="truncate text-[#333] font-14px leading-24px cursor-pointer"
-                >
-                  {item}
-                </div>
-              ))}
+            {props.localDepends.map(item => (
+              <div
+                onDoubleClick={() => props.onInsertLocalDepend?.(item)}
+                key={item}
+                className="truncate text-[#333] font-14px leading-24px cursor-pointer"
+              >
+                {item}
+              </div>
+            ))}
           </div>
         </CollapsePanel.Block>
       </CollapsePanel>

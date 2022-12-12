@@ -45,6 +45,7 @@ export type LocalLib = {
   filePath: string
   // 内容
   content: string
+  name: string
 }
 
 type LoadResponse = {

@@ -130,7 +130,6 @@ const IdeContainer: FC<Props> = props => {
     type: 'passive',
     status: null
   })
-  const [localDepend, setLocalDepend] = useState<string[]>([])
   const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
   const { config: globalConfig } = useContext(ConfigContext)
 
@@ -218,7 +217,8 @@ const IdeContainer: FC<Props> = props => {
     return getTypes<Record<string, string>>().then(res => {
       const list = Object.keys(res).map(key => ({
         filePath: `inmemory://model${key.replace(/^@?/, '/node_modules/')}`,
-        content: res[key]
+        content: res[key],
+        name: key
       }))
       if (dependManager.current) {
         dependManager.current?.setLocalLibs(list)
@@ -434,7 +434,7 @@ const IdeContainer: FC<Props> = props => {
                 onDependDelete: dependRemove,
                 onInsertLocalDepend: insertLocalDepend
               }}
-              localDepend={localDepend}
+              localDepends={localDepends.map(item => item.name)}
             />
           )}
           <div className={`${ideStyles['code-wrapper']} ${smallDepend ? 'flex-1' : ''}`}>
