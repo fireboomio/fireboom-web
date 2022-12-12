@@ -30,7 +30,7 @@ const initData: {
   items: {
     name: string
     logo?: string
-    icon?: string
+    icon: string
     sourceType?: number
     dbType?: string
     coming?: boolean
@@ -97,6 +97,13 @@ const initData: {
   }
 ]
 
+const iconMap: Record<string, string> = {}
+initData.forEach(({ items }) => {
+  items.forEach(({ sourceType, dbType, icon }) => {
+    iconMap[`${sourceType}_${dbType ?? ''}`.toLowerCase()] = icon
+  })
+})
+
 export default function Designer() {
   const dispatch = useContext(DatasourceDispatchContext)
   const { handleToggleDesigner, handleCreate } = useContext(DatasourceToggleContext)
@@ -119,7 +126,7 @@ export default function Designer() {
           return {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             name: x.config.name,
-            logo: 'icon-QLweixuanzhong1',
+            icon: iconMap[`${x.config.sourceType}_${x.config.config.dbType ?? ''}`.toLowerCase()],
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             sourceType: x.config.sourceType,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
