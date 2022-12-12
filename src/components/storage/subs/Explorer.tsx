@@ -301,9 +301,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   const deleteFile = () => {
+    const hide = message.loading('删除中')
     void requests
       .post('/s3Upload/remove', { bucketID: bucketId, fileName: target?.name })
       .then(() => {
+        hide()
+        setVisible(false)
         void message.success('删除成功')
         setRefreshFlag(!refreshFlag)
       })
