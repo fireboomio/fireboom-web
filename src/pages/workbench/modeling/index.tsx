@@ -52,6 +52,8 @@ const Modeling = () => {
   //   dispatch(updateCurrentEntityIdAction(entity.id))
   // }
 
+  console.log('====showTYpe', showType)
+
   if (error) return <Empty className="pt-20" description="数据加载失败！" />
   if (!dataSources) return <Empty className="pt-20" description="无可用数据源列表！" />
 

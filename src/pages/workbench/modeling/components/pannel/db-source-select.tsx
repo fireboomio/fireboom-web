@@ -2,9 +2,10 @@ import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import type { DBSourceResp } from '@/interfaces/modeling'
-import { MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
+import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
 
 import refreshIcon from '../../assets/refresh.svg'
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
+  const { mutate } = useSWRConfig()
   const { id } = useDBSource()
   const navigate = useNavigate()
 
@@ -97,7 +99,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
       <div
         className={styles.refreshBtn}
         onClick={() => {
-          // mutate(DATABASE_SOURCE)
+          void mutate(DATABASE_SOURCE)
           onChangeSource(id)
         }}
       >
