@@ -129,9 +129,9 @@ const ModelPannel = ({
         ))}
       </div>
       {Object.keys(delMap).length ? (
-        <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">{`已删除${
-          Object.keys(delMap).length
-        }个模块`}</div>
+        <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">
+          系统检测到您可能删除或重命名了模型，迁移后将导致数据丢失，请谨慎操作
+        </div>
       ) : null}
     </div>
   )
