@@ -41,13 +41,13 @@ export default function CRUDSider(props: CRUDSiderProps) {
     }
     const hide = message.loading('正在加载模型列表')
     try {
-      const nativeDMF = await requests.get<unknown, string>(
-        `/prisma/nativeDMF/${currentDataSourceId}`,
+      const nativeSDL = await requests.get<unknown, string>(
+        `/prisma/nativeSDL/${currentDataSourceId}`,
         {
           timeout: 15e3
         }
       )
-      setDmf(nativeDMF)
+      setDmf(nativeSDL)
       const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
         `/prisma/dmf/${currentDataSourceId}`,
         { timeout: 15e3 }
