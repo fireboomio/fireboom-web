@@ -6,8 +6,9 @@ import AttributeArgHelper from './AttributeArgHelper'
 import AttributeArgSelector from './AttributeArgSelector'
 
 const AttributeFunctions = ['auto', 'autoincrement', 'cuid', 'uuid', 'now']
+const AttributeBoolean = ['true', 'false']
 
-const FieldDefaultAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersProp) => {
+const FieldDefaultAttributeArg = ({ args, updateAttrArgs, field }: AttributeHandlersProp) => {
   const handleDataChange = (values: string | string[]) => {
     const value = values as string
     const argValue: Value = AttributeFunctions.includes(value)
@@ -25,7 +26,7 @@ const FieldDefaultAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersPro
     ])
   }
   const argValue = AttributeArgHelper.extractDefaultAttrArgs(args)
-
+  const showAttr = field?.fieldType === 'Boolean' ? AttributeBoolean : AttributeFunctions
   return (
     <span className="flex flex-row">
       <span>(</span>
@@ -34,7 +35,7 @@ const FieldDefaultAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersPro
           inputable={true}
           handleDataChange={handleDataChange}
           argIsFunction={AttributeFunctions.includes(argValue)}
-          options={AttributeFunctions.map(f => ({ label: f, value: f }))}
+          options={showAttr.map(f => ({ label: f, value: f }))}
           selectedOptionsValue={argValue ? [argValue] : []}
         />
       </span>
