@@ -126,21 +126,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
-                {content.sourceType === 2 ? (
-                  <a
-                    href={`/#/workbench/rapi/${encodeURIComponent(
-                      `/api/v1/file/downloadFile?type=1&fileName=${content.config.filePath}` ?? ''
-                    )}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button className={'btn-test ml-4 mr-4'}>测试</Button>
-                  </a>
-                ) : (
-                  <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
-                    测试
-                  </Button>
-                )}
+                <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
+                  测试
+                </Button>
                 <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
                   编辑
                 </Button>

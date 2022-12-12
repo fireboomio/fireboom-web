@@ -1,4 +1,4 @@
-import { Button, Switch } from 'antd'
+import { Button } from 'antd'
 import { useContext } from 'react'
 
 import type { StorageResp } from '@/interfaces/storage'
@@ -39,12 +39,6 @@ export default function StorageContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            <Switch
-              checked={content?.switch === 1}
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
-              onChange={handleToggleBucket}
-            />
             <Button
               className={'btn-save  ml-4 mr-11'}
               onClick={() => handleSwitch('form', content?.id)}
