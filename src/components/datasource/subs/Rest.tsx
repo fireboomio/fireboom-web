@@ -222,6 +222,17 @@ export default function Rest({ content, type }: Props) {
     }
   }
 
+  const test =  ()=>{
+    const values = form.getFieldsValue()
+    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+    void requests.post('/checkDBConn', values).then((x: any) => {
+      if (x?.status) {
+        message.success('连接成功')
+      } else {
+        message.error(x?.msg || '连接失败')
+      }
+    })
+  }
   //表单上传成功回调
   const onFinish = async (values: FromValues) => {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
@@ -839,6 +850,14 @@ export default function Rest({ content, type }: Props) {
                     }}
                   >
                     <span>取消</span>
+                  </Button>
+                  <Button
+                    className={'btn-test ml-4'}
+                    onClick={() => {
+                      test()
+                    }}
+                  >
+                    测试
                   </Button>
                   <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
                     {content.name == '' ? '创建' : '保存'}

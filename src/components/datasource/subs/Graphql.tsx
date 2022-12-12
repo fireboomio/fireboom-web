@@ -205,7 +205,15 @@ export default function Graphql({ content, type }: Props) {
   }
 
   function testGql() {
-    setIsModalVisible(true)
+    const values = form.getFieldsValue()
+    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+    void requests.post('/checkDBConn', values).then((x: any) => {
+      if (x?.status) {
+        message.success('连接成功')
+      } else {
+        message.error(x?.msg || '连接失败')
+      }
+    })
   }
 
   const setUploadPath = (v: string) => {
@@ -738,6 +746,14 @@ export default function Graphql({ content, type }: Props) {
                   }}
                 >
                   <span>取消</span>
+                </Button>
+                <Button
+                  className={'btn-test ml-4'}
+                  onClick={() => {
+                    testGql()
+                  }}
+                >
+                  测试
                 </Button>
                 <Button
                   className={'btn-save ml-4'}
