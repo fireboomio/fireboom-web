@@ -68,6 +68,10 @@ export default defineConfig({
       '^/upload': {
         target: backendUrl,
         changeOrigin: true
+      },
+      '^/d': {
+        target: backendUrl,
+        changeOrigin: true
       }
     }
   },
