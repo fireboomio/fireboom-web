@@ -87,7 +87,7 @@ export function useStackblitz() {
     <script type="importmap">
       {
         "imports": {
-          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+          "vue": "https://unpkg.zhimg.com/vue@3.2.45/dist/vue.esm-browser.js"
         }
       }
     </script>
