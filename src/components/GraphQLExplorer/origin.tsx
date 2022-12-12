@@ -123,10 +123,12 @@ type Props = {
   externalFragments?: FragmentDefinitionNode[]
 }
 type OperationType = 'query' | 'mutation' | 'subscription' | 'fragment'
-type NewOperationType = 'query' | 'mutation' | 'subscription'
+/// remove
+// type NewOperationType = 'query' | 'mutation' | 'subscription'
 type State = {
   operation: OperationDefinitionNode | null | undefined
-  newOperationType: NewOperationType
+  /// remove
+  // newOperationType: NewOperationType
   operationToScrollTo: string | null | undefined
 }
 type Selections = ReadonlyArray<SelectionNode>
@@ -2145,7 +2147,8 @@ type RootViewProps = {
   schema: GraphQLSchema
   isLast: boolean
   fields: GraphQLFieldMap<any, any> | null | undefined
-  operationType: OperationType
+  /// Remove
+  // operationType: OperationType
   name: string | null | undefined
   onTypeName: string | null | undefined
   definition: FragmentDefinitionNode | OperationDefinitionNode
@@ -2172,12 +2175,14 @@ type RootViewProps = {
 class RootView extends React.PureComponent<
   RootViewProps,
   {
-    newOperationType: NewOperationType
+    /// remove
+    // newOperationType: NewOperationType
     displayTitleActions: boolean
   }
 > {
   state = {
-    newOperationType: 'query',
+    /// remove
+    // newOperationType: 'query',
     displayTitleActions: false
   }
   _previousOperationDef:
@@ -2240,8 +2245,10 @@ class RootView extends React.PureComponent<
     }
   }
   _rootViewElId = () => {
-    const { operationType, name } = this.props
-    const rootViewElId = `${operationType}-${name || 'unknown'}`
+    const { name } = this.props
+    /// Update
+    // const rootViewElId = `${operationType}-${name || 'unknown'}`
+    const rootViewElId = `${name || 'unknown'}`
     return rootViewElId
   }
 
@@ -2252,7 +2259,9 @@ class RootView extends React.PureComponent<
   }
 
   render() {
-    const { operationType, definition, schema, getDefaultFieldNames, styleConfig } = this.props
+    /// Update
+    // const { operationType, definition, schema, getDefaultFieldNames, styleConfig } = this.props
+    const { definition, schema, getDefaultFieldNames } = this.props
 
     const rootViewElId = this._rootViewElId()
 
@@ -2413,7 +2422,8 @@ class Explorer extends React.PureComponent<
     getDefaultScalarArgValue: defaultGetDefaultScalarArgValue
   }
   state = {
-    newOperationType: 'query',
+    /// remove
+    // newOperationType: 'query',
     operation: null,
     operationToScrollTo: null
   }
@@ -2431,11 +2441,12 @@ class Explorer extends React.PureComponent<
   }
 
   _onEdit = (query: string): void => this.props.onEdit(query)
-  _setAddOperationType = (value: NewOperationType) => {
-    this.setState({
-      newOperationType: value
-    })
-  }
+  /// remove
+  // _setAddOperationType = (value: NewOperationType) => {
+  //   this.setState({
+  //     newOperationType: value
+  //   })
+  // }
   _handleRootViewMount = (rootViewElId: string) => {
     if (!!this.state.operationToScrollTo && this.state.operationToScrollTo === rootViewElId) {
       var selector = `.graphiql-explorer-root #${rootViewElId}`
@@ -2798,10 +2809,11 @@ class Explorer extends React.PureComponent<
         {relevantOperations.map(
           (operation: OperationDefinitionNode | FragmentDefinitionNode, index) => {
             const operationName = operation && operation.name && operation.name.value
-            const operationType =
-              operation.kind === 'FragmentDefinition'
-                ? 'fragment'
-                : (operation && operation.operation) || 'query'
+            /// Remove
+            // const operationType =
+            //   operation.kind === 'FragmentDefinition'
+            //     ? 'fragment'
+            //     : (operation && operation.operation) || 'query'
 
             /// Remove
             // const onOperationRename = newName => {
@@ -2852,7 +2864,7 @@ class Explorer extends React.PureComponent<
                 fields={visibleFields}
                 /// Remove
                 // fields={fields}
-                operationType={operationType}
+                // operationType={operationType}
                 name={operationName}
                 definition={operation}
                 /// Remove
@@ -2996,8 +3008,6 @@ class ExplorerWrapper extends React.PureComponent<
   //   width: 320,
   //   title: 'Explorer'
   // }
-
-  /// Add
 
   /// Add
   state = {
