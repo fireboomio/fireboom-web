@@ -19,6 +19,7 @@ import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import IconFont from '@/components/iconfont'
+import RoleDiagram from '@/components/RoleDiagram'
 import type { DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -327,19 +328,19 @@ export default function CRUDBody(props: CRUDBodyProps) {
         <img
           src={result ? successPic : failPic}
           alt=""
-          className="m-auto block mt-30 relative left-3"
+          className="m-auto mt-30 left-3 block relative"
         />
-        <div className="text-center mt-8 font-500 text-default">
+        <div className="font-500 mt-8 text-center text-default">
           {result ? `本次成功生成${result.filter(x => !x.Code).length}条API` : '生成失败'}
         </div>
         {result && (
-          <div className="w-140 py-4 bg-[#FAFAFC] mx-auto mt-6 rounded-2">
+          <div className="bg-[#FAFAFC] mx-auto rounded-2 mt-6 py-4 w-140">
             {result.map(row => (
-              <div key={row.Path} className="flex leading-5 my-2.5 pl-21 pr-27 items-center">
+              <div key={row.Path} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
                 <img src={row.Code === 0 ? successIcon : failIcon} alt="" className="flex-0" />
-                <span className="ml-1.5 text-default flex-1">{row.Path}</span>
+                <span className="flex-1 text-default ml-1.5">{row.Path}</span>
                 <a
-                  className="ml-1.5 text-default text-[#649FFF]"
+                  className="text-default ml-1.5 text-[#649FFF]"
                   onClick={() => navigate(`/workbench/apimanage/${row.ID}`)}
                 >
                   查看
@@ -594,7 +595,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
   ].filter(column => !column.filterKey || showColMap?.[column.filterKey ?? ''])
 
   return (
-    <div className="common-form flex-1 pt-4 px-8 overflow-y-auto">
+    <div className="flex-1 px-8 pt-4 common-form overflow-y-auto">
       <Form
         labelCol={{ span: 4, xs: 5 }}
         wrapperCol={{ span: 20, xs: 19 }}
@@ -645,10 +646,30 @@ export default function CRUDBody(props: CRUDBodyProps) {
               </Form.Item>
               <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
                 <Radio.Group>
-                  <Radio value={AuthType.RequireMatchAll}>requireMatchAll</Radio>
-                  <Radio value={AuthType.RequireMatchAny}>requireMatchAny</Radio>
-                  <Radio value={AuthType.DenyMatchAll}>denyMatchAll</Radio>
-                  <Radio value={AuthType.DenyMatchAny}>denyMatchAny</Radio>
+                  <Radio value={AuthType.RequireMatchAll}>
+                    <div>
+                      requireMatchAll
+                      <RoleDiagram className="mt-1" rule="requireMatchAll" />
+                    </div>
+                  </Radio>
+                  <Radio value={AuthType.RequireMatchAny}>
+                    <div>
+                      requireMatchAny
+                      <RoleDiagram className="mt-1" rule="requireMatchAny" />
+                    </div>
+                  </Radio>
+                  <Radio value={AuthType.DenyMatchAll}>
+                    <div>
+                      denyMatchAll
+                      <RoleDiagram className="mt-1" rule="denyMatchAll" />
+                    </div>
+                  </Radio>
+                  <Radio value={AuthType.DenyMatchAny}>
+                    <div>
+                      denyMatchAny
+                      <RoleDiagram className="mt-1" rule="denyMatchAny" />
+                    </div>
+                  </Radio>
                 </Radio.Group>
               </Form.Item>
               <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
@@ -696,14 +717,14 @@ export default function CRUDBody(props: CRUDBodyProps) {
         <Form.Item wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
           <>
             <Button
-              className="btn-cancel mr-4"
+              className="mr-4 btn-cancel"
               onClick={() => {
                 form.resetFields()
               }}
             >
               重置
             </Button>
-            <Button className="btn-save mr-4" htmlType="submit">
+            <Button className="mr-4 btn-save" htmlType="submit">
               创建
             </Button>
           </>

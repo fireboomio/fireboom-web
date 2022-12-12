@@ -1,15 +1,67 @@
-import { message, Popover } from 'antd'
-import { useContext, useState } from 'react'
+import { message, Modal, Popover, Tooltip } from 'antd'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderDeploy from '../assets/header-deploy.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
+
+const hotkeys = [
+  {
+    keys: ['alt/^', 'h'],
+    desc: '打开快捷键提示'
+  },
+  {
+    keys: ['alt/^', 'n'],
+    desc: '新建APi/新建模型'
+  },
+  {
+    keys: ['alt/^', 'b'],
+    desc: '批量新建API'
+  },
+  {
+    keys: ['alt/^', 'c'],
+    desc: '编译'
+  },
+  {
+    keys: ['alt/^', 'm'],
+    desc: '切换API设计和模型设计'
+  },
+  // {
+  //   keys: ['alt/^', '+'],
+  //   desc: '打开入参指令'
+  // },
+  // {
+  //   keys: ['alt/^', '-'],
+  //   desc: '插入响应转换'
+  // },
+  {
+    keys: ['alt/^', 'r'],
+    desc: '运行当前Operation'
+  },
+  {
+    keys: ['alt/^', 't'],
+    desc: '模型设计页切换设计/数据视图'
+  },
+  {
+    keys: ['alt/^', 'shift', 'd'],
+    desc: '创建当前API的拷贝'
+  },
+  {
+    keys: ['alt/^', 'shift', 'c'],
+    desc: '复制当前API请求链接'
+  },
+  {
+    keys: ['alt/^', 'shift', 't'],
+    desc: 'API编辑页切换Json/表单模式，模型设计页切换设计/代码模式'
+  }
+]
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const navigate = useNavigate()
@@ -20,6 +72,56 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
 
   const compiling =
     props.engineStatus === ServiceStatus.Compiling || props.engineStatus === ServiceStatus.Starting
+
+  const doCompile = () => {
+    if (compiling) {
+      return
+    }
+    void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
+  }
+
+  // TODO
+  const generatePrismaSDK = useCallback(() => {
+    // requests.post('/')
+  }, [])
+
+  const showHotkey = useCallback(() => {
+    Modal.info({
+      width: '800px',
+      icon: null,
+      title: '页面快捷键',
+      content: (
+        <div className="flex flex-wrap">
+          {hotkeys.map(keymap => (
+            <div key={keymap.desc} className="flex pt-1 pr-4 pb-3 pl-1 w-1/2 items-start">
+              <div className="flex-shrink-0 w-40">
+                {keymap.keys.map(k => (
+                  <kbd className="rounded bg-true-gray-200 text-sm mr-1.5 py-1 px-1.5" key={k}>
+                    {k}
+                  </kbd>
+                ))}
+              </div>
+              <span>{keymap.desc}</span>
+            </div>
+          ))}
+        </div>
+      )
+    })
+  }, [])
+
+  // 快捷键
+  useEffect(() => {
+    const unbind1 = registerHotkeyHandler('alt+c,^+c', () => {
+      doCompile()
+    })
+    const unbind2 = registerHotkeyHandler('alt+h,^+h', () => {
+      showHotkey()
+    })
+    return () => {
+      unbind1()
+      unbind2()
+    }
+  }, [])
 
   return (
     <>
@@ -81,15 +183,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            <div
-              className={styles.headBtn}
-              onClick={() => {
-                if (compiling) {
-                  return
-                }
-                void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
-              }}
-            >
+            <div className={styles.headBtn} onClick={doCompile}>
               {!compiling ? (
                 <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
               ) : (
@@ -108,17 +202,45 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         )}
         <div className={styles.splitLine} style={{ margin: '0 26px' }} />
-
+        {/* <Tooltip title="生成prisma sdk">
+          <svg
+            className="cursor-pointer"
+            width="1em"
+            height="1em"
+            viewBox="0 0 32 32"
+            onClick={generatePrismaSDK}
+          >
+            <path
+              fill="#0c344b"
+              fillRule="evenodd"
+              d="m25.21 24.21l-12.471 3.718a.525.525 0 0 1-.667-.606l4.456-21.511a.43.43 0 0 1 .809-.094l8.249 17.661a.6.6 0 0 1-.376.832Zm2.139-.878L17.8 2.883A1.531 1.531 0 0 0 16.491 2a1.513 1.513 0 0 0-1.4.729L4.736 19.648a1.592 1.592 0 0 0 .018 1.7l5.064 7.909a1.628 1.628 0 0 0 1.83.678l14.7-4.383a1.6 1.6 0 0 0 1-2.218Z"
+            ></path>
+          </svg>
+        </Tooltip> */}
         <div
-          className="w-4 h-4 cursor-pointer flex-0 text-0px"
+          className="cursor-pointer flex-0 h-4 text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
-          <img className="w-4 h-4" src="/assets/github.svg" alt="" />
+          <img className="h-4 w-4" src="/assets/github.svg" alt="" />
         </div>
         <div
           className={styles.helpIcon}
           onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
         />
+        <Tooltip title="快捷键">
+          <svg
+            className="cursor-pointer ml-4"
+            onClick={showHotkey}
+            width="1.25em"
+            height="1.25em"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M20 3H4c-1.1 0-1.99.9-1.99 2L2 15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12H4V5h16v10zm-9-9h2v2h-2zm0 3h2v2h-2zM8 6h2v2H8zm0 3h2v2H8zM5 9h2v2H5zm0-3h2v2H5zm3 6h8v2H8zm6-3h2v2h-2zm0-3h2v2h-2zm3 3h2v2h-2zm0-3h2v2h-2zm-5 17l4-4H8z"
+            ></path>
+          </svg>
+        </Tooltip>
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
         <div className={styles.avatar}>
           <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />

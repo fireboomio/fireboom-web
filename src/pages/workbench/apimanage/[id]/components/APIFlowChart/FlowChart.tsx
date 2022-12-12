@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unassigned-import
 import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
-import type { Edge, Node } from '@antv/x6'
+import { Edge, Node, Shape } from '@antv/x6'
 import { Graph } from '@antv/x6'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -15,8 +15,10 @@ import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
 import hookImg from './assets/hook.png'
-import routerBottomImg from './assets/tee_bottom.svg'
-import routerLeftImg from './assets/tee_left.svg'
+import routerBottomImg from './assets/tee-bottom.png'
+import routerLeftImg from './assets/tee-left.png'
+import loopImg from './assets/loop.png'
+import loopInactiveImg from './assets/loop-inactive.png'
 import StatusDirective from './StatusDirective'
 
 export interface FlowChartProps {
@@ -66,6 +68,7 @@ export interface FlowChartProps {
     }
   }
   directiveState: {
+    isInternal: boolean
     fromClaim: boolean
     rbac: boolean
     jsonSchema: boolean
@@ -692,10 +695,12 @@ const FlowChart = React.memo(
       // 路由器
       const routerSwitch = graph.createNode({
         shape: 'router',
-        x: (CANVAS_WIDTH - 24) / 2,
+        x: (CANVAS_WIDTH - 54) / 2,
         y,
         attrs: {
           image: {
+            width: 54,
+            height: 36,
             'xlink:href': hookState.mockResolve.enable ? routerLeftImg : routerBottomImg
           }
         }
@@ -703,7 +708,9 @@ const FlowChart = React.memo(
       renderNodes.push(routerSwitch)
       // 记录路由索引
       const routerIndex = arrowNodes.push(routerSwitch) - 1
-      y += 12 + 24
+      y += 12 + 36
+
+      const loopStartPoint = y - 6
 
       // 执行前钩子
       const preHookMetadata: Node.Metadata = {
@@ -743,7 +750,7 @@ const FlowChart = React.memo(
           y: y + 16
         }
       ]
-      // 根据是否支持 mutatingPreResolve 钩子现实
+      // 根据是否支持 mutatingPreResolve 钩子显示
       if (hookState.mutatingPreResolve.can) {
         preHookRefs.splice(1, 0, {
           shape: 'react-shape',
@@ -770,7 +777,7 @@ const FlowChart = React.memo(
         width: 88,
         height: 20,
         x: 30,
-        y: y + 14,
+        y: y + 94,
         // attrs: {
         //   body: { rx: 10, ry: 10 }
         // },
@@ -839,6 +846,7 @@ const FlowChart = React.memo(
         x: HOOK_X,
         y
       }
+
       // 后置指令
       new ActionGroup(
         postHookMetadata,
@@ -875,6 +883,131 @@ const FlowChart = React.memo(
         'arrow'
       ).addToGraph(graph)
       y += 14 + HOOK_HEIGHT
+
+      const loopEndPoint = y - 6
+
+      // 轮询
+      if (apiSetting.liveQueryEnable) {
+        const centerY = (loopEndPoint - loopStartPoint) / 2 + loopStartPoint
+        const flowHook = hookState.mockResolve.enable
+        // 开始
+        const s = new Shape.Rect({
+          x: HOOK_X,
+          y: loopStartPoint,
+          // visible: false,
+          width: 0,
+          height: 0
+        })
+        // 中间
+        const c1 = new Shape.Rect({
+          x: PROCESS_X - 40,
+          y: centerY - 12,
+          width: 0,
+          height: 0
+        })
+        const c2 = new Shape.Rect({
+          x: PROCESS_X - 40,
+          y: centerY + 12,
+          width: 0,
+          height: 0
+        })
+        // 结束
+        const e = new Shape.Rect({
+          x: HOOK_X,
+          y: loopEndPoint,
+          // visible: false,
+          width: 0,
+          height: 0
+        })
+        graph.addNodes([s, e, c1, c2])
+        graph.addEdge({
+          source: s,
+          target: c1,
+          connector: {
+            name: 'rounded',
+            args: {
+              radius: 100
+            }
+          },
+          vertices: [{ x: c1.getBBox().x, y: loopStartPoint }],
+          attrs: {
+            line: {
+              stroke: {
+                type: 'linearGradient',
+                attrs: { x1: '0%', y1: '0%', x2: '100%', y2: '0%' },
+                stops: [
+                  { offset: '0%', color: flowHook ? 'rgba(179, 186, 204, 0.2)' : 'rgba(71, 143, 255, 0.2)' },
+                  { offset: '100%', color: flowHook ? 'rgba(179, 186, 204, 0.5)' : 'rgba(71, 143, 255, 0.5)' }
+                ]
+              },
+              strokeWidth: 2,
+              targetMarker: ''
+            }
+          }
+        })
+        graph.addEdge({
+          source: c2,
+          target: e,
+          connector: {
+            name: 'rounded',
+            args: {
+              radius: 100
+            }
+          },
+          vertices: [{ x: c2.getBBox().x, y: loopEndPoint }],
+          attrs: {
+            line: {
+              stroke: {
+                type: 'linearGradient',
+                attrs: { x1: '0%', y1: '0%', x2: '100%', y2: '0%' },
+                stops: [
+                  { offset: '0%', color: flowHook ? 'rgba(179, 186, 204, 0.5)' : 'rgba(71, 143, 255, 0.5)' },
+                  { offset: '100%', color: flowHook ? 'rgba(179, 186, 204, 1)' : 'rgba(71, 143, 255, 1)' }
+                ]
+              },
+              strokeWidth: 2,
+              targetMarker: {
+                name: 'block',
+                fill: flowHook ? '#B3BACC' : '#478FFF',
+                width: 9,
+                height: 12
+              }
+            }
+          }
+        })
+        graph.addNode({
+          inherit: 'rect',
+          x: c1.getBBox().x - 23,
+          y: c1.getBBox().y + 6,
+          width: 47,
+          height: 16,
+          markup: [{ tagName: 'image' }],
+          attrs: {
+            image: {
+              height: 16,
+              width: 47,
+              'xlink:href': flowHook ? loopInactiveImg : loopImg
+            }
+          }
+        })
+        graph.addNode({
+          x: c1.getBBox().x - 20,
+          y: c1.getBBox().y,
+          width: 40,
+          height: 12,
+          attrs: {
+            body: {
+              fill: 'transparent',
+              stroke: 'transparent'
+            },
+            label: {
+              fontSize: 11,
+              stroke: flowHook ? '#B3BACC' : '#478FFF',
+              text: `${apiSetting.liveQueryPollingIntervalSeconds}s`
+            }
+          }
+        })
+      }
 
       // 全局后置钩子
       const globalPostHookMetadata: Node.Metadata = {
@@ -961,8 +1094,8 @@ const FlowChart = React.memo(
       })
       graph.addEdge({
         shape: 'rejectArrow',
-        source: { x: 100, y: routerSwitch.getBBox().y + 12 },
-        target: { x: 96, y: routerSwitch.getBBox().y + 12 },
+        source: { x: 100, y: routerSwitch.getBBox().y + 18 },
+        target: { x: 96, y: routerSwitch.getBBox().y + 18 },
         ...(hookState.mockResolve.enable
           ? {
               attrs: {

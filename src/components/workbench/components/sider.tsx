@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import ModelPannel from '@/pages/workbench/modeling/components/pannel'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import ApiPanel from './panel/apiPanel'
 import CommonPanel from './panel/commonPanel'
@@ -19,6 +20,19 @@ export default function Sider() {
   const location = useLocation()
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
+
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+m,^+m', () => {
+      if (location.pathname.startsWith('/workbench/modeling')) {
+        navigate('/workbench')
+      } else {
+        navigate('/workbench/modeling')
+      }
+      setTab(tab)
+    })
+  }, [])
+
   useEffect(() => {
     const tab = location.pathname.startsWith('/workbench/modeling') ? 'data' : 'api'
     setTab(tab)

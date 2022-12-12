@@ -31,6 +31,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useDragResize } from '@/hooks/resize'
 import { getVariablesJSONSchema } from '@/lib/helpers/getVariablesJSONSchema'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../store'
 import ArgumentsEditor from './components/ArgumentsEditor'
@@ -346,6 +347,14 @@ const GraphiInputAndResponse = ({
       }
     }
   }, [actionRef])
+
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+shift+t,^+shift+t', () => {
+      setVariableMode(variableMode === 'form' ? 'json' : 'form')
+    })
+  }, [variableMode])
+
   return (
     <div className="bg-white h-full">
       {activeKey === 'arguments' && (
@@ -382,27 +391,6 @@ const GraphiInputAndResponse = ({
           </div>
         </div>
       )}
-      {/*{activeKey === 'arguments' && (*/}
-      {/*  <Radio.Group*/}
-      {/*    size="small"*/}
-      {/*    className="top-2px right-10px z-10 absolute "*/}
-      {/*    value={variableMode}*/}
-      {/*    onChange={e => {*/}
-      {/*      setVariableMode(e.target.value)*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <Popover content="表单模式" trigger="hover">*/}
-      {/*      <Radio.Button value="form">*/}
-      {/*        <img src={iconDesignModeActive} alt="" />*/}
-      {/*      </Radio.Button>*/}
-      {/*    </Popover>*/}
-      {/*    <Popover content="编辑器模式" trigger="hover">*/}
-      {/*      <Radio.Button value="json">*/}
-      {/*        <img src={iconEditMode} alt="" />*/}
-      {/*      </Radio.Button>*/}
-      {/*    </Popover>*/}
-      {/*  </Radio.Group>*/}
-      {/*)}*/}
       <Tabs
         className="graphiql-editor-tool-tabs"
         activeKey={activeKey}

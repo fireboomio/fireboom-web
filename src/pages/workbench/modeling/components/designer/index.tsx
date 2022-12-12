@@ -17,6 +17,7 @@ import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useDBSource from '@/lib/hooks/useDBSource'
 import useEntities from '@/lib/hooks/useEntities'
 import useLocalStorage from '@/lib/hooks/useLocalStorage'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconAdd from '../../assets/add.svg'
 import iconAt from '../../assets/at.svg'
@@ -199,11 +200,18 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     // setNewEnums([...newEnums.filter(e => e.name !== newEnum.name), newEnum])
   }
 
+  // 快捷键
+  useEffect(() => {
+    return registerHotkeyHandler('alt+shift+t,^+shift+t', () => {
+      setMode(mode === 'designer' ? 'editor' : 'designer')
+    })
+  }, [mode])
+
   if (mode !== 'editor' && !currentEntity) {
     return (
-      <div className="h-full flex flex-col">
+      <div className="flex flex-col h-full">
         <div
-          className="flex justify-end items-center h-10 bg-white pl-7 pr-4"
+          className="bg-white flex h-10 pr-4 pl-7 justify-end items-center"
           style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
         >
           <div className={styles.resetBtn} onClick={onCancel}>
@@ -321,14 +329,14 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col h-full">
       <div
-        className="flex justify-start items-center h-10 bg-white pl-7 pr-4"
+        className="bg-white flex h-10 pr-4 pl-7 justify-start items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
         {currentEntity ? (
           <>
-            <span className="text-lg font-medium text-16px common-form">
+            <span className="font-medium text-lg text-16px common-form">
               {/*{editType === 'edit' ? currentEntity.name : '新增'}*/}
               {editTitle ? (
                 <Input
@@ -351,15 +359,15 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
                   setEditTitle(!editTitle)
                   setTitleValue(currentEntity.name)
                 }}
-                className="ml-1 cursor-pointer"
+                className="cursor-pointer ml-1"
                 type="icon-zhongmingming"
               />
               {/*{isEditing && '(未保存)'}*/}
             </span>
-            <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">
+            <span className="mr-auto font-400 text-lg ml-12px text-[#118AD1] text-14px">
               {type}
             </span>
-            <div className="flex items-center flex-0">
+            <div className="flex flex-0 items-center">
               {mode === 'designer' && type === 'model' ? (
                 <>
                   <div

@@ -57,8 +57,7 @@ export default function Index(props: PropsWithChildren) {
       setVersion(res.version)
       setEnv(res.env)
     })
-  }, [])
-  useEffect(() => {
+
     const controller = new AbortController()
     const signal = controller.signal
     fetch(`/api/v1/wdg/state`, { signal }).then(res => {

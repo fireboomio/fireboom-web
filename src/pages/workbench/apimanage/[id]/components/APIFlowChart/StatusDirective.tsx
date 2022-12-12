@@ -1,5 +1,5 @@
-import statusOff from './assets/status-off.png'
-import statusOn from './assets/status-on.png'
+import statusOff from './assets/status-off.svg'
+import statusOn from './assets/status-on.svg'
 
 interface StatusDirectiveProps {
   enabled: boolean
@@ -23,8 +23,9 @@ const StatusDirective = ({ enabled, label, onDoubleClick }: StatusDirectiveProps
         boxShadow: '0 2px 4px #F8F9FD',
         color: '#333',
         fontSize: '12px',
-        height: '20px'
-        // lineHeight: '20px'
+        height: '20px',
+        opacity: enabled ? 'unset' : '0.75'
+        // lineHeight: '20px',
       }}
     >
       <img

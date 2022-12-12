@@ -12,6 +12,7 @@ import { Kind } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../../store'
 import { ExitFullscreenOutlined, FullscreenOutlined } from '../../icons'
@@ -280,6 +281,22 @@ const GraphiQLToolbar = () => {
       return !!internalDirective
     }
   }, [schemaAST])
+
+  // 快捷键
+  useEffect(() => {
+    const unbind1 = registerHotkeyHandler('alt-shift-+,⌃-shift-+', { splitKey: '-' }, e => {
+      e.preventDefault()
+      setArgOpen(true)
+    })
+    const unbind2 = registerHotkeyHandler('alt+shift+-,⌃+shift+-', e => {
+      e.preventDefault()
+      injectTransform()
+    })
+    return () => {
+      unbind1()
+      unbind2()
+    }
+  }, [])
 
   return (
     <div className="graphiql-toolbar">

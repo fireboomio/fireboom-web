@@ -8,6 +8,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../store'
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
@@ -176,6 +177,22 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       //
     }
   }
+
+  // 快捷键
+  useEffect(() => {
+    const unbind1 = registerHotkeyHandler('alt+shift+d,^+shift+d', e => {
+      e.preventDefault()
+      copyAPI()
+    })
+    const unbind2 = registerHotkeyHandler('alt+shift+c,^+shift+c', e => {
+      e.preventDefault()
+      copyLink()
+    })
+    return () => {
+      unbind1()
+      unbind2()
+    }
+  }, [])
 
   return (
     <div

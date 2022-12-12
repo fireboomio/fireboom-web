@@ -15,6 +15,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
+import { registerHotkeyHandler } from '@/services/hotkey'
 
 // import GraphiQLApp from '@/pages/graphiql'
 import styles from './apiPanel.module.less'
@@ -53,6 +54,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
   const isLocationPage = useRef<boolean>()
+
+  // 快捷键
+  useEffect(() => {
+    const unbind1 = registerHotkeyHandler('alt+n,^+n', () => {
+      handleAddNode('创建文件')
+    })
+    const unbind2 = registerHotkeyHandler('alt+b,^+b', () => {
+      navigate(`/workbench/apimanage/crud`)
+    })
+    return () => {
+      unbind1()
+      unbind2()
+    }
+  }, [])
 
   // 监听location变化，及时清空选中状态
   useEffect(() => {
