@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Switch } from 'antd'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
@@ -21,6 +21,7 @@ export default function StorageForm({ content }: Props) {
   const config = useMemo(() => content?.config, [content])
 
   const [form] = Form.useForm()
+  const [testing, setTesting] = useState(false)
 
   const onFinish = async (values: StorageConfig) => {
     const payload = { name: values.name, config: values, useSSL: true }
@@ -41,6 +42,7 @@ export default function StorageForm({ content }: Props) {
   }
 
   const handleTest = () => {
+    setTesting(true)
     const values = form.getFieldsValue()
     void requests
       .post('/s3Upload/checkConn', {
@@ -53,6 +55,9 @@ export default function StorageForm({ content }: Props) {
         } else {
           message.error(x?.msg || '连接失败')
         }
+      })
+      .finally(() => {
+        setTesting(false)
       })
   }
 
@@ -130,7 +135,7 @@ export default function StorageForm({ content }: Props) {
           >
             <span>取消</span>
           </Button>
-          <Button className="btn-test ml-4" onClick={() => handleTest()}>
+          <Button className="btn-test ml-4" onClick={() => handleTest()} loading={testing}>
             测试
           </Button>
           <Button className="btn-save ml-4" onClick={() => form.submit()}>
