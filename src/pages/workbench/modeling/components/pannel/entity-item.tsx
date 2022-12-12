@@ -172,7 +172,7 @@ const ModelEntityItem = ({
       placeholder="请输入实体名"
     />
   ) : (
-    <div className="text-sm font-normal leading-4">{entity.name}</div>
+    <div className={'text-sm font-normal leading-4 ' + styles.name}>{entity.name}</div>
   )
 
   return (
