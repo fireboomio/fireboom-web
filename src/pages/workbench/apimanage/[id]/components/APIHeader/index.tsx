@@ -42,13 +42,13 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiDesc?.path])
 
-  const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement> | { key: string}) => {
     if (e.key === 'Enter') {
       const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
         try {
           if (apiDesc?.id) {
-            await updateAPIName(apiDesc?.id, targetPath)
+            await updateAPIName(targetPath)
           }
           setIsEditingName(false)
         } catch (error) {
@@ -73,16 +73,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }
 
   const isLive = useMemo(() => {
-    // if (apiDesc?.setting.liveQueryEnable) {
-    //   return true
-    // }
-    // if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {
-    //   if (schemaAST.definitions[0].operation === OperationTypeNode.SUBSCRIPTION) {
-    //     return true
-    //   }
-    // }
     return apiDesc?.liveQuery
-    // }, [apiDesc?.setting.liveQueryEnable, schemaAST])
   }, [apiDesc?.liveQuery])
 
   const method = useMemo(() => {
