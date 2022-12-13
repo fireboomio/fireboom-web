@@ -89,6 +89,8 @@ export const editorOptions: EditorProps['options'] = {
 const SAVE_DELAY = 1000
 
 interface Props {
+  // api是否有参数，用来判断默认code类型
+  hasParams?: boolean
   hideSwitch?: boolean
   hookPath: string
   defaultCode?: string
@@ -167,7 +169,7 @@ const IdeContainer: FC<Props> = props => {
     if (path.startsWith('global/')) {
       return getDefaultCode(`global.${name}`)
     } else {
-      const tmplPath = `hook.WithInput.${name}`
+      const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return getDefaultCode(tmplPath).then((res: string) => {
         return res.replaceAll('$HOOK_NAME$', apiName)
       })

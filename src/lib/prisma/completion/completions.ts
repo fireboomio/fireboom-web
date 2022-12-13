@@ -1,65 +1,67 @@
-import { klona } from 'klona'
-import type { CompletionItem, CompletionList, Position } from 'vscode-languageserver'
-import { CompletionItemKind, InsertTextFormat, MarkupKind } from 'vscode-languageserver'
+import {
+  CompletionItem,
+  CompletionList,
+  CompletionItemKind,
+  Position,
+  MarkupKind,
+  InsertTextFormat,
+} from 'vscode-languageserver'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-
+import { klona } from 'klona'
+import {
+  blockAttributes,
+  fieldAttributes,
+  allowedBlockTypes,
+  corePrimitiveTypes,
+  supportedDataSourceFields,
+  supportedGeneratorFields,
+  relationArguments,
+  dataSourceUrlArguments,
+  dataSourceProviders,
+  dataSourceProviderArguments,
+  generatorProviders,
+  generatorProviderArguments,
+  engineTypes,
+  engineTypeArguments,
+  givenBlockAttributeParams,
+  givenFieldAttributeParams,
+  sortLengthProperties,
+  filterSortLengthBasedOnInput,
+  toCompletionItems,
+  filterSuggestionsForBlock,
+  removeInvalidFieldSuggestions,
+  getNativeTypes,
+  handlePreviewFeatures,
+  relationModeValues,
+  filterSuggestionsForLine,
+} from './completionUtils'
 import listAllAvailablePreviewFeatures from '../prisma-fmt/listAllAvailablePreviewFeatures'
-import type { BlockType } from '../util'
 import {
   Block,
+  BlockType,
+  getModelOrTypeOrEnumBlock,
   declaredNativeTypes,
-  getAllPreviewFeaturesFromGenerators,
   getAllRelationNames,
-  getCompositeTypeFieldsRecursively,
+  isInsideAttribute,
+  isInsideQuotationMark,
+  isInsideFieldArgument,
+  isInsideGivenProperty,
+  getFirstDatasourceName,
+  getFirstDatasourceProvider,
+  getAllPreviewFeaturesFromGenerators,
   getFieldsFromCurrentBlock,
   getFieldType,
   getFieldTypesFromCurrentBlock,
-  getFirstDatasourceName,
-  getFirstDatasourceProvider,
-  getModelOrTypeOrEnumBlock,
   getValuesInsideSquareBrackets,
-  isInsideAttribute,
-  isInsideFieldArgument,
-  isInsideGivenProperty,
-  isInsideQuotationMark
+  getCompositeTypeFieldsRecursively,
 } from '../util'
-import {
-  allowedBlockTypes,
-  blockAttributes,
-  corePrimitiveTypes,
-  dataSourceProviderArguments,
-  dataSourceProviders,
-  dataSourceUrlArguments,
-  engineTypeArguments,
-  engineTypes,
-  fieldAttributes,
-  filterSortLengthBasedOnInput,
-  generatorProviderArguments,
-  generatorProviders,
-  getNativeTypes,
-  givenBlockAttributeParams,
-  givenFieldAttributeParams,
-  handlePreviewFeatures,
-  relationArguments,
-  relationModeValues,
-  removeInvalidAttributeSuggestions,
-  removeInvalidFieldSuggestions,
-  sortLengthProperties,
-  supportedDataSourceFields,
-  supportedGeneratorFields,
-  toCompletionItems
-} from './completionUtils'
 
 function getSuggestionForModelBlockAttribute(block: Block, lines: string[]): CompletionItem[] {
   if (block.type !== 'model') {
     return []
   }
   // create deep copy
-  const suggestions: CompletionItem[] = removeInvalidAttributeSuggestions(
-    klona(blockAttributes),
-    block,
-    lines
-  )
+  const suggestions: CompletionItem[] = filterSuggestionsForBlock(klona(blockAttributes), block, lines)
 
   // We can filter on the datasource
   const datasourceProvider = getFirstDatasourceProvider(lines)
@@ -71,12 +73,12 @@ function getSuggestionForModelBlockAttribute(block: Block, lines: string[]): Com
   const isFullTextAvailable = Boolean(
     datasourceProvider &&
       ['mysql', 'mongodb'].includes(datasourceProvider) &&
-      previewFeatures?.includes('fulltextindex')
+      previewFeatures?.includes('fulltextindex'),
   )
 
   if (isFullTextAvailable === false) {
     // fullTextIndex is not available, we need to filter it out
-    return suggestions.filter(arg => arg.label !== '@@fulltext')
+    return suggestions.filter((arg) => arg.label !== '@@fulltext')
   }
 
   return suggestions
@@ -86,7 +88,7 @@ export function getSuggestionForNativeTypes(
   foundBlock: Block,
   lines: string[],
   wordsBeforePosition: string[],
-  document: TextDocument
+  document: TextDocument,
 ): CompletionList | undefined {
   const activeFeatureFlag = declaredNativeTypes(document)
   if (
@@ -99,10 +101,7 @@ export function getSuggestionForNativeTypes(
   }
 
   const datasourceName = getFirstDatasourceName(lines)
-  if (
-    !datasourceName ||
-    wordsBeforePosition[wordsBeforePosition.length - 1] !== `@${datasourceName}`
-  ) {
+  if (!datasourceName || wordsBeforePosition[wordsBeforePosition.length - 1] !== `@${datasourceName}`) {
     return undefined
   }
 
@@ -112,95 +111,87 @@ export function getSuggestionForNativeTypes(
 
   return {
     items: suggestions,
-    isIncomplete: true
+    isIncomplete: true,
   }
 }
 
+/**
+ * Should suggest all field attributes for a given field
+ * EX: id Int |> @id, @default, @datasourceName, ...etc
+ *
+ * If `@datasourceName.` |> suggests nativeTypes
+ * @param block
+ * @param currentLine
+ * @param lines
+ * @param wordsBeforePosition
+ * @param document
+ * @returns
+ */
 export function getSuggestionForFieldAttribute(
   block: Block,
   currentLine: string,
   lines: string[],
   wordsBeforePosition: string[],
-  document: TextDocument
+  document: TextDocument,
 ): CompletionList | undefined {
   // TODO type? suggestions for "@..." for type?
   if (block.type !== 'model') {
     return
   }
+
+  const fieldType = getFieldType(currentLine)
+  // If we don't find a field type (e.g. String, Int...), return no suggestion
+  if (!fieldType) {
+    return
+  }
+
   let suggestions: CompletionItem[] = []
 
-  const enabledNativeTypes = declaredNativeTypes(document)
   // Because @.?
-  if (enabledNativeTypes && wordsBeforePosition.length >= 2) {
+  if (wordsBeforePosition.length >= 2) {
     const datasourceName = getFirstDatasourceName(lines)
     const prismaType = wordsBeforePosition[1]
     const nativeTypeSuggestions = getNativeTypes(document, prismaType)
 
-    if (datasourceName && nativeTypeSuggestions.length !== 0) {
-      if (!currentLine.includes('@' + datasourceName)) {
+    if (datasourceName) {
+      if (!currentLine.includes(`@${datasourceName}`)) {
         suggestions.push({
           // https://code.visualstudio.com/docs/editor/intellisense#_types-of-completions
           kind: CompletionItemKind.Property,
           label: '@' + datasourceName,
           documentation:
             'Defines a native database type that should be used for this field. See https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#native-types-mapping',
-          insertText: '@db.$0',
-          insertTextFormat: InsertTextFormat.Snippet
+          insertText: `@${datasourceName}$0`,
+          insertTextFormat: InsertTextFormat.Snippet,
         })
-      } else if (
-        // Check that we are not separated by a space like `@db. |`
-        wordsBeforePosition[wordsBeforePosition.length - 1] === `@${datasourceName}`
-      ) {
-        suggestions.push(...nativeTypeSuggestions)
-        return {
-          items: suggestions,
-          isIncomplete: false
+      }
+
+      if (nativeTypeSuggestions.length !== 0) {
+        if (
+          // Check that we are not separated by a space like `@db. |`
+          wordsBeforePosition[wordsBeforePosition.length - 1] === `@${datasourceName}`
+        ) {
+          suggestions.push(...nativeTypeSuggestions)
+          return {
+            items: suggestions,
+            isIncomplete: false,
+          }
         }
       }
-    } else {
-      console.log('Did not receive any native type suggestions from prisma-fmt call.')
     }
   }
 
   suggestions.push(...fieldAttributes)
 
-  const fieldType = getFieldType(currentLine?.trim())
-  // If we don't find a field type (e.g. String, Int...), return no suggestion
-  if (!fieldType) {
-    return
-  }
-
   const modelOrTypeOrEnum = getModelOrTypeOrEnumBlock(fieldType, lines)
-  if (modelOrTypeOrEnum?.type === 'type') {
-    // @default & @relation are invalid on field referencing a composite type
-    // we filter them out
-    suggestions = suggestions.filter(
-      sugg => sugg.label !== '@default' && sugg.label !== '@relation'
-    )
-  }
 
-  // Tom: I think we allow ids on basically everything except relation fields
-  // so it doesn't need to be restricted to Int and String.
-  // These are terrible, terrible ideas of course, but you can have id DateTime @id or id Float @id.
-  // TODO: decide if we want to only suggest things that make most sense or everything that is technically possible.
-  const isAtIdAllowed =
-    fieldType === 'Int' || fieldType === 'String' || modelOrTypeOrEnum?.type === 'enum'
-  if (!isAtIdAllowed) {
-    // id not allowed
-    suggestions = suggestions.filter(sugg => sugg.label !== '@id')
-  }
+  suggestions = filterSuggestionsForLine(suggestions, currentLine, fieldType, modelOrTypeOrEnum?.type)
 
-  const isUpdatedAtAllowed = fieldType === 'DateTime'
-  if (!isUpdatedAtAllowed) {
-    // updatedAt not allowed
-    suggestions = suggestions.filter(sugg => sugg.label !== '@updatedAt')
-  }
-
-  suggestions = removeInvalidAttributeSuggestions(suggestions, block, lines)
+  suggestions = filterSuggestionsForBlock(suggestions, block, lines)
 
   return {
     items: suggestions,
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
@@ -208,14 +199,14 @@ export function getSuggestionsForFieldTypes(
   foundBlock: Block,
   lines: string[],
   position: Position,
-  currentLineUntrimmed: string
+  currentLineUntrimmed: string,
 ): CompletionList {
   const suggestions: CompletionItem[] = []
 
   const datasourceProvider = getFirstDatasourceProvider(lines)
   // MongoDB doesn't support Decimal
   if (datasourceProvider === 'mongodb') {
-    suggestions.push(...corePrimitiveTypes.filter(s => s.label !== 'Decimal'))
+    suggestions.push(...corePrimitiveTypes.filter((s) => s.label !== 'Decimal'))
   } else {
     suggestions.push(...corePrimitiveTypes)
   }
@@ -228,64 +219,63 @@ export function getSuggestionsForFieldTypes(
 
   const wordsBeforePosition = currentLineUntrimmed.slice(0, position.character).split(' ')
   const wordBeforePosition = wordsBeforePosition[wordsBeforePosition.length - 1]
-  const completeSuggestions = suggestions.filter(s => s.label.length === wordBeforePosition.length)
+  const completeSuggestions = suggestions.filter((s) => s.label.length === wordBeforePosition.length)
   if (completeSuggestions.length !== 0) {
     for (const sugg of completeSuggestions) {
       suggestions.push(
         {
           label: `${sugg.label}?`,
           kind: sugg.kind,
-          documentation: sugg.documentation
+          documentation: sugg.documentation,
         },
         {
           label: `${sugg.label}[]`,
           kind: sugg.kind,
-          documentation: sugg.documentation
-        }
+          documentation: sugg.documentation,
+        },
       )
     }
   }
 
   return {
     items: suggestions,
-    isIncomplete: true
+    isIncomplete: true,
   }
 }
 
-function getSuggestionForDataSourceField(
-  block: Block,
-  lines: string[],
-  position: Position
-): CompletionItem[] {
+function getSuggestionForDataSourceField(block: Block, lines: string[], position: Position): CompletionItem[] {
   // create deep copy
-  const suggestions: CompletionItem[] = klona(supportedDataSourceFields)
+  let suggestions: CompletionItem[] = klona(supportedDataSourceFields)
+
+  const postgresExtensionsEnabled = getAllPreviewFeaturesFromGenerators(lines)?.includes('postgresqlextensions')
+  const isPostgres = getFirstDatasourceProvider(lines)?.includes('postgres')
+
+  if (!(postgresExtensionsEnabled && isPostgres)) {
+    suggestions = suggestions.filter((item) => item.label !== 'extensions')
+  }
 
   const labels: string[] = removeInvalidFieldSuggestions(
-    suggestions.map(item => item.label),
+    suggestions.map((item) => item.label),
     block,
     lines,
-    position
+    position,
   )
 
-  return suggestions.filter(item => labels.includes(item.label))
+  return suggestions.filter((item) => labels.includes(item.label))
 }
 
-function getSuggestionForGeneratorField(
-  block: Block,
-  lines: string[],
-  position: Position
-): CompletionItem[] {
+function getSuggestionForGeneratorField(block: Block, lines: string[], position: Position): CompletionItem[] {
   // create deep copy
   const suggestions: CompletionItem[] = klona(supportedGeneratorFields)
 
   const labels = removeInvalidFieldSuggestions(
-    suggestions.map(item => item.label),
+    suggestions.map((item) => item.label),
     block,
     lines,
-    position
+    position,
   )
 
-  return suggestions.filter(item => labels.includes(item.label))
+  return suggestions.filter((item) => labels.includes(item.label))
 }
 
 /**
@@ -295,7 +285,7 @@ export function getSuggestionForFirstInsideBlock(
   blockType: BlockType,
   lines: string[],
   position: Position,
-  block: Block
+  block: Block,
 ): CompletionList {
   let suggestions: CompletionItem[] = []
   switch (blockType) {
@@ -315,7 +305,7 @@ export function getSuggestionForFirstInsideBlock(
 
   return {
     items: suggestions,
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
@@ -338,14 +328,14 @@ export function getSuggestionForBlockTypes(lines: string[]): CompletionList {
         suggestions.pop()
       }
     }
-    if (!suggestions.map(sugg => sugg.label).includes('enum')) {
+    if (!suggestions.map((sugg) => sugg.label).includes('enum')) {
       break
     }
   }
 
   return {
     items: suggestions,
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
@@ -356,7 +346,7 @@ export function suggestEqualSymbol(blockType: BlockType): CompletionList | undef
   const equalSymbol: CompletionItem = { label: '=' }
   return {
     items: [equalSymbol],
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
@@ -366,14 +356,14 @@ export function getSuggestionForSupportedFields(
   currentLine: string,
   currentLineUntrimmed: string,
   position: Position,
-  lines: string[]
+  lines: string[],
 ): CompletionList | undefined {
   let suggestions: string[] = []
   const isInsideQuotation: boolean = isInsideQuotationMark(currentLineUntrimmed, position)
   // We can filter on the datasource
   const datasourceProvider = getFirstDatasourceProvider(lines)
   // We can filter on the previewFeatures enabled
-  const previewFeatures = getAllPreviewFeaturesFromGenerators(lines)
+  // const previewFeatures = getAllPreviewFeaturesFromGenerators(lines)
 
   switch (blockType) {
     case 'generator':
@@ -383,12 +373,12 @@ export function getSuggestionForSupportedFields(
         if (isInsideQuotation) {
           return {
             items: providers,
-            isIncomplete: true
+            isIncomplete: true,
           }
         } else {
           return {
             items: generatorProviderArguments,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
       }
@@ -396,12 +386,7 @@ export function getSuggestionForSupportedFields(
       else if (currentLine.startsWith('previewFeatures')) {
         const generatorPreviewFeatures: string[] = listAllAvailablePreviewFeatures()
         if (generatorPreviewFeatures.length > 0) {
-          return handlePreviewFeatures(
-            generatorPreviewFeatures,
-            position,
-            currentLineUntrimmed,
-            isInsideQuotation
-          )
+          return handlePreviewFeatures(generatorPreviewFeatures, position, currentLineUntrimmed, isInsideQuotation)
         }
       }
       // engineType
@@ -410,12 +395,12 @@ export function getSuggestionForSupportedFields(
         if (isInsideQuotation) {
           return {
             items: engineTypesCompletion,
-            isIncomplete: true
+            isIncomplete: true,
           }
         } else {
           return {
             items: engineTypeArguments,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
       }
@@ -428,12 +413,12 @@ export function getSuggestionForSupportedFields(
         if (isInsideQuotation) {
           return {
             items: providers,
-            isIncomplete: true
+            isIncomplete: true,
           }
         } else {
           return {
             items: dataSourceProviderArguments,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
         // url
@@ -444,61 +429,55 @@ export function getSuggestionForSupportedFields(
         } else {
           if (currentLine.includes('env')) {
             return {
-              items: dataSourceUrlArguments.filter(a => !a.label.includes('env')),
-              isIncomplete: true
+              items: dataSourceUrlArguments.filter((a) => !a.label.includes('env')),
+              isIncomplete: true,
             }
           }
           return {
             items: dataSourceUrlArguments,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
       }
       // `relationMode` can only be set for SQL databases
-      // TODO remove conditional on preview feature flag when going GA
-      else if (
-        previewFeatures?.includes('referentialintegrity') &&
-        currentLine.startsWith('relationMode') &&
-        datasourceProvider !== 'mongodb'
-      ) {
+      else if (currentLine.startsWith('relationMode') && datasourceProvider !== 'mongodb') {
         const relationModeValuesSuggestion: CompletionItem[] = relationModeValues
         // values inside quotes `"value"`
-        const relationModeValuesSuggestionWithQuotes: CompletionItem[] = klona(
-          relationModeValuesSuggestion
-        ).map(suggestion => {
-          suggestion.label = `"${suggestion.label}"`
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          suggestion.insertText = `"${suggestion.insertText!}"`
-          return suggestion
-        })
+        const relationModeValuesSuggestionWithQuotes: CompletionItem[] = klona(relationModeValuesSuggestion).map(
+          (suggestion) => {
+            suggestion.label = `"${suggestion.label}"`
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            suggestion.insertText = `"${suggestion.insertText!}"`
+            return suggestion
+          },
+        )
 
         if (isInsideQuotation) {
           return {
             items: relationModeValuesSuggestion,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
         // If line ends with `"`, a value is already set.
         else if (!currentLine.endsWith('"')) {
           return {
             items: relationModeValuesSuggestionWithQuotes,
-            isIncomplete: true
+            isIncomplete: true,
           }
         }
       }
-      break
   }
 
   return {
     items: toCompletionItems(suggestions, CompletionItemKind.Constant),
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
 function getDefaultValues({
   currentLine,
   lines,
-  wordsBeforePosition
+  wordsBeforePosition,
 }: {
   currentLine: string
   lines: string[]
@@ -509,7 +488,7 @@ function getDefaultValues({
 
   // Completions for sequence(|)
   if (datasourceProvider === 'cockroachdb') {
-    if (wordsBeforePosition.some(a => a.includes('sequence('))) {
+    if (wordsBeforePosition.some((a) => a.includes('sequence('))) {
       const sequenceProperties = ['virtual', 'minValue', 'maxValue', 'cache', 'increment', 'start']
 
       // No suggestions if virtual is present
@@ -518,13 +497,13 @@ function getDefaultValues({
       }
 
       // Only suggests if empty
-      if (!sequenceProperties.some(it => currentLine.includes(it))) {
+      if (!sequenceProperties.some((it) => currentLine.includes(it))) {
         suggestions.push({
           label: 'virtual',
           insertText: 'virtual',
           kind: CompletionItemKind.Property,
           documentation:
-            'Virtual sequences are sequences that do not generate monotonically increasing values and instead produce values like those generated by the built-in function unique_rowid(). They are intended for use in combination with SERIAL-typed columns.'
+            'Virtual sequences are sequences that do not generate monotonically increasing values and instead produce values like those generated by the built-in function unique_rowid(). They are intended for use in combination with SERIAL-typed columns.',
         })
       }
 
@@ -533,7 +512,7 @@ function getDefaultValues({
           label: 'minValue',
           insertText: 'minValue: $0',
           kind: CompletionItemKind.Property,
-          documentation: 'The new minimum value of the sequence.'
+          documentation: 'The new minimum value of the sequence.',
         })
       }
       if (!currentLine.includes('maxValue')) {
@@ -541,7 +520,7 @@ function getDefaultValues({
           label: 'maxValue',
           insertText: 'maxValue: $0',
           kind: CompletionItemKind.Property,
-          documentation: 'The new maximum value of the sequence.'
+          documentation: 'The new maximum value of the sequence.',
         })
       }
       if (!currentLine.includes('cache')) {
@@ -550,7 +529,7 @@ function getDefaultValues({
           insertText: 'cache: $0',
           kind: CompletionItemKind.Property,
           documentation:
-            'The number of sequence values to cache in memory for reuse in the session. A cache size of 1 means that there is no cache, and cache sizes of less than 1 are not valid.'
+            'The number of sequence values to cache in memory for reuse in the session. A cache size of 1 means that there is no cache, and cache sizes of less than 1 are not valid.',
         })
       }
       if (!currentLine.includes('increment')) {
@@ -559,7 +538,7 @@ function getDefaultValues({
           insertText: 'increment: $0',
           kind: CompletionItemKind.Property,
           documentation:
-            'The new value by which the sequence is incremented. A negative number creates a descending sequence. A positive number creates an ascending sequence.'
+            'The new value by which the sequence is incremented. A negative number creates a descending sequence. A positive number creates an ascending sequence.',
         })
       }
       if (!currentLine.includes('start')) {
@@ -568,7 +547,7 @@ function getDefaultValues({
           insertText: 'start: $0',
           kind: CompletionItemKind.Property,
           documentation:
-            'The value the sequence starts at if you RESTART or if the sequence hits the MAXVALUE and CYCLE is set.'
+            'The value the sequence starts at if you RESTART or if the sequence hits the MAXVALUE and CYCLE is set.',
         })
       }
 
@@ -583,7 +562,7 @@ function getDefaultValues({
       kind: CompletionItemKind.Function,
       documentation: 'Represents default values that are automatically generated by the database.',
       insertText: 'auto()',
-      insertTextFormat: InsertTextFormat.Snippet
+      insertTextFormat: InsertTextFormat.Snippet,
     })
   } else {
     suggestions.push({
@@ -592,7 +571,7 @@ function getDefaultValues({
       documentation:
         'The SQL definition of the default value which is generated by the database. This is not validated by Prisma.',
       insertText: 'dbgenerated("$0")',
-      insertTextFormat: InsertTextFormat.Snippet
+      insertTextFormat: InsertTextFormat.Snippet,
     })
   }
 
@@ -610,7 +589,7 @@ function getDefaultValues({
           label: 'sequence()',
           kind: CompletionItemKind.Function,
           documentation:
-            'Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.'
+            'Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.',
         })
 
         if (fieldType === 'Int') {
@@ -623,7 +602,7 @@ function getDefaultValues({
         label: 'autoincrement()',
         kind: CompletionItemKind.Function,
         documentation:
-          'Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.'
+          'Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.',
       })
       break
     case 'DateTime':
@@ -632,8 +611,8 @@ function getDefaultValues({
         kind: CompletionItemKind.Function,
         documentation: {
           kind: MarkupKind.Markdown,
-          value: 'Set a timestamp of the time when a record is created.'
-        }
+          value: 'Set a timestamp of the time when a record is created.',
+        },
       })
       break
     case 'String':
@@ -644,8 +623,8 @@ function getDefaultValues({
           documentation: {
             kind: MarkupKind.Markdown,
             value:
-              'Generate a globally unique identifier based on the [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) spec.'
-          }
+              'Generate a globally unique identifier based on the [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) spec.',
+          },
         },
         {
           label: 'cuid()',
@@ -653,15 +632,15 @@ function getDefaultValues({
           documentation: {
             kind: MarkupKind.Markdown,
             value:
-              'Generate a globally unique identifier based on the [cuid](https://github.com/ericelliott/cuid) spec.'
-          }
-        }
+              'Generate a globally unique identifier based on the [cuid](https://github.com/ericelliott/cuid) spec.',
+          },
+        },
       )
       break
     case 'Boolean':
       suggestions.push(
         { label: 'true', kind: CompletionItemKind.Value },
-        { label: 'false', kind: CompletionItemKind.Value }
+        { label: 'false', kind: CompletionItemKind.Value },
       )
       break
   }
@@ -673,7 +652,7 @@ function getDefaultValues({
       insertText: '[$0]',
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: 'Set a default value on the list field',
-      kind: CompletionItemKind.Value
+      kind: CompletionItemKind.Value,
     })
   }
 
@@ -681,7 +660,7 @@ function getDefaultValues({
   if (modelOrEnum && modelOrEnum.type === 'enum') {
     // get fields from enum block for suggestions
     const values: string[] = getFieldsFromCurrentBlock(lines, modelOrEnum)
-    values.forEach(v => suggestions.push({ label: v, kind: CompletionItemKind.Value }))
+    values.forEach((v) => suggestions.push({ label: v, kind: CompletionItemKind.Value }))
   }
 
   return suggestions
@@ -694,7 +673,7 @@ function getSuggestionsForAttribute(
     untrimmedCurrentLine,
     lines,
     block,
-    position
+    position,
   }: {
     attribute?: '@relation'
     wordsBeforePosition: string[]
@@ -702,12 +681,11 @@ function getSuggestionsForAttribute(
     lines: string[]
     block: Block
     position: Position
-  } // eslint-disable-line @typescript-eslint/no-unused-vars
+  }, // eslint-disable-line @typescript-eslint/no-unused-vars
 ): CompletionList | undefined {
   const firstWordBeforePosition = wordsBeforePosition[wordsBeforePosition.length - 1]
   const secondWordBeforePosition = wordsBeforePosition[wordsBeforePosition.length - 2]
-  const wordBeforePosition =
-    firstWordBeforePosition === '' ? secondWordBeforePosition : firstWordBeforePosition
+  const wordBeforePosition = firstWordBeforePosition === '' ? secondWordBeforePosition : firstWordBeforePosition
 
   let suggestions: CompletionItem[] = []
 
@@ -719,7 +697,7 @@ function getSuggestionsForAttribute(
   if (attribute === '@relation') {
     if (datasourceProvider === 'mongodb') {
       suggestions = relationArguments.filter(
-        arg => arg.label !== 'map' && arg.label !== 'onDelete' && arg.label !== 'onUpdate'
+        (arg) => arg.label !== 'map' && arg.label !== 'onDelete' && arg.label !== 'onUpdate',
       )
     } else {
       suggestions = relationArguments
@@ -729,18 +707,15 @@ function getSuggestionsForAttribute(
     if (wordBeforePosition.includes('@relation')) {
       return {
         items: suggestions,
-        isIncomplete: false
+        isIncomplete: false,
       }
     }
 
     // TODO check fields with [] shortcut
     if (isInsideGivenProperty(untrimmedCurrentLine, wordsBeforePosition, 'fields', position)) {
       return {
-        items: toCompletionItems(
-          getFieldsFromCurrentBlock(lines, block, position),
-          CompletionItemKind.Field
-        ),
-        isIncomplete: false
+        items: toCompletionItems(getFieldsFromCurrentBlock(lines, block, position), CompletionItemKind.Field),
+        isIncomplete: false,
       }
     }
 
@@ -754,11 +729,8 @@ function getSuggestionsForAttribute(
         return
       }
       return {
-        items: toCompletionItems(
-          getFieldsFromCurrentBlock(lines, referencedBlock),
-          CompletionItemKind.Field
-        ),
-        isIncomplete: false
+        items: toCompletionItems(getFieldsFromCurrentBlock(lines, referencedBlock), CompletionItemKind.Field),
+        isIncomplete: false,
       }
     }
   } else {
@@ -772,19 +744,18 @@ function getSuggestionsForAttribute(
     // @unique, @@unique and @@index fields.
     // Additionally, SQL Server also allows it on @id and @@id.
 
-    let attribute: '@@unique' | '@unique' | '@@id' | '@id' | '@@index' | '@@fulltext' | undefined =
-      undefined
-    if (wordsBeforePosition.some(a => a.includes('@@id'))) {
+    let attribute: '@@unique' | '@unique' | '@@id' | '@id' | '@@index' | '@@fulltext' | undefined = undefined
+    if (wordsBeforePosition.some((a) => a.includes('@@id'))) {
       attribute = '@@id'
-    } else if (wordsBeforePosition.some(a => a.includes('@id'))) {
+    } else if (wordsBeforePosition.some((a) => a.includes('@id'))) {
       attribute = '@id'
-    } else if (wordsBeforePosition.some(a => a.includes('@@unique'))) {
+    } else if (wordsBeforePosition.some((a) => a.includes('@@unique'))) {
       attribute = '@@unique'
-    } else if (wordsBeforePosition.some(a => a.includes('@unique'))) {
+    } else if (wordsBeforePosition.some((a) => a.includes('@unique'))) {
       attribute = '@unique'
-    } else if (wordsBeforePosition.some(a => a.includes('@@index'))) {
+    } else if (wordsBeforePosition.some((a) => a.includes('@@index'))) {
       attribute = '@@index'
-    } else if (wordsBeforePosition.some(a => a.includes('@@fulltext'))) {
+    } else if (wordsBeforePosition.some((a) => a.includes('@@fulltext'))) {
       attribute = '@@fulltext'
     }
 
@@ -797,11 +768,7 @@ function getSuggestionsForAttribute(
      * field attribute: slug String @unique(sort: Desc, length: 42) @db.VarChar(3000)
      * block attribute: @@id([title(length: 100, sort: Desc), abstract(length: 10)])
      */
-    if (
-      attribute &&
-      attribute !== '@@fulltext' &&
-      isInsideAttribute(untrimmedCurrentLine, position, '[]')
-    ) {
+    if (attribute && attribute !== '@@fulltext' && isInsideAttribute(untrimmedCurrentLine, position, '[]')) {
       if (isInsideFieldArgument(untrimmedCurrentLine, position)) {
         // extendedIndexes
         const items: CompletionItem[] = []
@@ -812,7 +779,7 @@ function getSuggestionsForAttribute(
             insertText: 'ops: $0',
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Property,
-            documentation: 'Specify the operator class for an indexed field.'
+            documentation: 'Specify the operator class for an indexed field.',
           })
         }
 
@@ -822,13 +789,13 @@ function getSuggestionsForAttribute(
             previewFeatures,
             datasourceProvider,
             wordBeforePosition,
-            sortLengthProperties
-          )
+            sortLengthProperties,
+          ),
         )
 
         return {
           items,
-          isIncomplete: false
+          isIncomplete: false,
         }
       }
 
@@ -840,11 +807,7 @@ function getSuggestionsForAttribute(
        * @@unique([address.|]) or @@unique(fields: [address.|])
        * @@index([address.|]) or @@index(fields: [address.|])
        */
-      if (
-        datasourceProvider === 'mongodb' &&
-        fieldsFromLine &&
-        firstWordBeforePosition.endsWith('.')
-      ) {
+      if (datasourceProvider === 'mongodb' && fieldsFromLine && firstWordBeforePosition.endsWith('.')) {
         const getFieldName = (text: string): string => {
           const [_, __, value] = new RegExp(/(.*\[)?(.+)/).exec(text) || []
           let name = value
@@ -864,21 +827,17 @@ function getSuggestionsForAttribute(
         if (!currentFieldName) {
           return {
             isIncomplete: false,
-            items: []
+            items: [],
           }
         }
 
         const currentCompositeAsArray = currentFieldName.split('.')
         const fieldTypesFromCurrentBlock = getFieldTypesFromCurrentBlock(lines, block)
 
-        const fields = getCompositeTypeFieldsRecursively(
-          lines,
-          currentCompositeAsArray,
-          fieldTypesFromCurrentBlock
-        )
+        const fields = getCompositeTypeFieldsRecursively(lines, currentCompositeAsArray, fieldTypesFromCurrentBlock)
         return {
           items: toCompletionItems(fields, CompletionItemKind.Field),
-          isIncomplete: false
+          isIncomplete: false,
         }
       }
 
@@ -889,12 +848,12 @@ function getSuggestionsForAttribute(
         if (firstWordBeforePosition.includes('.')) {
           return {
             isIncomplete: false,
-            items: []
+            items: [],
           }
         }
 
         // Remove items already used
-        fieldsFromCurrentBlock = fieldsFromCurrentBlock.filter(s => !fieldsFromLine.includes(s))
+        fieldsFromCurrentBlock = fieldsFromCurrentBlock.filter((s) => !fieldsFromLine.includes(s))
 
         // Return fields
         // `onCompletionResolve` will take care of filtering the partial matches
@@ -905,14 +864,14 @@ function getSuggestionsForAttribute(
         ) {
           return {
             items: toCompletionItems(fieldsFromCurrentBlock, CompletionItemKind.Field),
-            isIncomplete: false
+            isIncomplete: false,
           }
         }
       }
 
       return {
         items: toCompletionItems(fieldsFromCurrentBlock, CompletionItemKind.Field),
-        isIncomplete: false
+        isIncomplete: false,
       }
     }
 
@@ -923,28 +882,28 @@ function getSuggestionsForAttribute(
         blockAttribute: '@@unique',
         wordBeforePosition,
         datasourceProvider,
-        previewFeatures
+        previewFeatures,
       })
     } else if (attribute === '@@id') {
       blockAtrributeArguments = givenBlockAttributeParams({
         blockAttribute: '@@id',
         wordBeforePosition,
         datasourceProvider,
-        previewFeatures
+        previewFeatures,
       })
     } else if (attribute === '@@index') {
       blockAtrributeArguments = givenBlockAttributeParams({
         blockAttribute: '@@index',
         wordBeforePosition,
         datasourceProvider,
-        previewFeatures
+        previewFeatures,
       })
     } else if (attribute === '@@fulltext') {
       blockAtrributeArguments = givenBlockAttributeParams({
         blockAttribute: '@@fulltext',
         wordBeforePosition,
         datasourceProvider,
-        previewFeatures
+        previewFeatures,
       })
     }
 
@@ -958,14 +917,14 @@ function getSuggestionsForAttribute(
           '@unique',
           previewFeatures,
           datasourceProvider,
-          wordBeforePosition
+          wordBeforePosition,
         )
       } else if (attribute === '@id') {
         fieldAtrributeArguments = givenFieldAttributeParams(
           '@id',
           previewFeatures,
           datasourceProvider,
-          wordBeforePosition
+          wordBeforePosition,
         )
       }
       suggestions = fieldAtrributeArguments
@@ -974,7 +933,7 @@ function getSuggestionsForAttribute(
 
   // Check which attributes are already present
   // so we can filter them out from the suggestions
-  const attributesFound = new Set<string>()
+  const attributesFound: Set<string> = new Set()
 
   for (const word of wordsBeforePosition) {
     if (word.includes('references')) {
@@ -1017,7 +976,7 @@ function getSuggestionsForAttribute(
 
       return accumulator
     },
-    []
+    [],
   )
 
   // nothing to present any more, return
@@ -1027,7 +986,7 @@ function getSuggestionsForAttribute(
 
   return {
     items: filteredSuggestions,
-    isIncomplete: false
+    isIncomplete: false,
   }
 }
 
@@ -1036,23 +995,20 @@ export function getSuggestionsForInsideRoundBrackets(
   lines: string[],
   document: TextDocument,
   position: Position,
-  block: Block
+  block: Block,
 ): CompletionList | undefined {
-  const wordsBeforePosition = untrimmedCurrentLine
-    .slice(0, position.character)
-    .trimLeft()
-    .split(/\s+/)
+  const wordsBeforePosition = untrimmedCurrentLine.slice(0, position.character).trimLeft().split(/\s+/)
 
-  if (wordsBeforePosition.some(a => a.includes('@default'))) {
+  if (wordsBeforePosition.some((a) => a.includes('@default'))) {
     return {
       items: getDefaultValues({
         currentLine: lines[position.line],
         lines,
-        wordsBeforePosition
+        wordsBeforePosition,
       }),
-      isIncomplete: false
+      isIncomplete: false,
     }
-  } else if (wordsBeforePosition.some(a => a.includes('@relation'))) {
+  } else if (wordsBeforePosition.some((a) => a.includes('@relation'))) {
     return getSuggestionsForAttribute({
       attribute: '@relation',
       wordsBeforePosition,
@@ -1060,18 +1016,14 @@ export function getSuggestionsForInsideRoundBrackets(
       lines,
       // document,
       block,
-      position
+      position,
     })
   } else if (
     // matches
     // @id, @unique
     // @@id, @@unique, @@index, @@fulltext
     wordsBeforePosition.some(
-      a =>
-        a.includes('@unique') ||
-        a.includes('@id') ||
-        a.includes('@@index') ||
-        a.includes('@@fulltext')
+      (a) => a.includes('@unique') || a.includes('@id') || a.includes('@@index') || a.includes('@@fulltext'),
     )
   ) {
     return getSuggestionsForAttribute({
@@ -1080,12 +1032,12 @@ export function getSuggestionsForInsideRoundBrackets(
       lines,
       // document,
       block,
-      position
+      position,
     })
   } else {
     return {
       items: toCompletionItems([], CompletionItemKind.Field),
-      isIncomplete: false
+      isIncomplete: false,
     }
   }
 }

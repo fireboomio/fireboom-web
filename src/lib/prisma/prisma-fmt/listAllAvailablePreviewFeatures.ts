@@ -1,8 +1,7 @@
 import prismaFmt from '@prisma/prisma-fmt-wasm'
 
-export default function listAllAvailablePreviewFeatures(
-  onError?: (errorMessage: string) => void
-): string[] {
+export default function listAllAvailablePreviewFeatures(onError?: (errorMessage: string) => void): string[] {
+  console.log('running preview_features() from prisma-fmt')
   try {
     const result = prismaFmt.preview_features()
     return JSON.parse(result) as string[]

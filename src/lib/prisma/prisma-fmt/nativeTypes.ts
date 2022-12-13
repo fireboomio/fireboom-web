@@ -9,7 +9,7 @@ export interface NativeTypeConstructors {
 
 export default function nativeTypeConstructors(
   text: string,
-  onError?: (errorMessage: string) => void
+  onError?: (errorMessage: string) => void,
 ): NativeTypeConstructors[] {
   try {
     const result = prismaFmt.native_types(text)
@@ -18,7 +18,7 @@ export default function nativeTypeConstructors(
     if (onError) {
       onError(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `prisma-fmt error'd during getting available native types. ${err}`
+        `prisma-fmt error'd during getting available native types. ${err}`,
       )
     }
 
