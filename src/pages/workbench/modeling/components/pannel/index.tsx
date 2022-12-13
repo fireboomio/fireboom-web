@@ -5,7 +5,6 @@ import { useContext, useEffect } from 'react'
 import type { Updater } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
-import { updateCurrentEntityIdAction } from '@/lib/actions/PrismaSchemaActions'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { buildBlocks } from '@/lib/helpers/ModelingHelpers'
@@ -42,6 +41,7 @@ const ModelPannel = ({
   const { entities, editMap, newMap, delMap } = useEntities()
   const { changeToEntityById } = useCurrentEntity()
   const { panel, triggerSyncEditor, dispatch } = useContext(PrismaSchemaContext)
+  const { handleClickEntity } = panel
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
 
@@ -65,7 +65,7 @@ const ModelPannel = ({
 
   const { blocks, applyLocalSchema, applyLocalBlocks } = useBlocks()
 
-  const addNewModelHandler = () => {
+  const addNewModelHandler = async () => {
     const newName = `${UNTITLED_NEW_ENTITY}${
       Math.max(
         0,
@@ -91,12 +91,9 @@ const ModelPannel = ({
     applyLocalBlocks(newBlocks)
     // 触发编辑器同步
     triggerSyncEditor()
-    // 如果当前不是编辑模式，切换到编辑模式
-    if (!inEdit) {
-      handleSetInEdit(true)
-    }
     setTimeout(() => {
-      dispatch(updateCurrentEntityIdAction(newBlocks[newBlocks.length - 1].id))
+      handleClickEntity(newBlocks[newBlocks.length - 1])
+      handleSetInEdit(true)
     }, 100)
   }
 
@@ -129,9 +126,9 @@ const ModelPannel = ({
         ))}
       </div>
       {Object.keys(delMap).length ? (
-        <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">{`已删除${
-          Object.keys(delMap).length
-        }个模块`}</div>
+        <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">
+          系统检测到您可能删除或重命名了模型，迁移后将导致数据丢失，请谨慎操作
+        </div>
       ) : null}
     </div>
   )
