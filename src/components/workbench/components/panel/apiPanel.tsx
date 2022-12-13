@@ -64,7 +64,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [treeData])
 
   const selectedNode: DirTreeNode[] = useMemo(() => {
-    return multiSelection.map(key => keyMap[key])
+    return multiSelection.map(key => keyMap[key]).filter(x => x)
   }, [multiSelection, keyMap])
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
@@ -457,6 +457,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }
 
+  async function batchSwitch(flag: boolean) {
+    await requests.post('operateApi/batchOnline', {
+      Ids: selectedNode.map(x => x.id),
+      enable: flag
+    })
+    message.success('操作成功')
+    setRefreshFlag(!refreshFlag)
+  }
+
   const titleRender = (nodeData: DirTreeNode) => {
     const miniStatus = calcMiniStatus(nodeData)
     let itemTypeClass
@@ -624,7 +633,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 label: (
                   <div
                     onClick={() => {
-                      console.log('===上线')
+                      void batchSwitch(true)
                     }}
                   >
                     上线
@@ -637,7 +646,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 label: (
                   <div
                     onClick={() => {
-                      console.log('===下线')
+                      void batchSwitch(true)
                     }}
                   >
                     下线
