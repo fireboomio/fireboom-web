@@ -65,15 +65,13 @@ export default function AuthMainCheck({ content }: Props) {
           </Descriptions.Item>
           <Descriptions.Item label="JWKS">{config.jwks == 0 ? 'URL' : 'JSON'}</Descriptions.Item>
           {config.jwks === 0 ? (
-            <Descriptions.Item label="jwksURL">
-              {`${config.issuer as string}/.well-known/jwks.json`}
-            </Descriptions.Item>
+            <Descriptions.Item label="jwksURL">{config.jwksURL}</Descriptions.Item>
           ) : (
             <Descriptions.Item label="jwksJSON">
               <pre>{config.jwksJSON}</pre>
             </Descriptions.Item>
           )}
-          <Descriptions.Item label="用户端点">{`${config.issuer as string}/me`}</Descriptions.Item>
+          <Descriptions.Item label="用户端点">{config.userInfoEndpoint}</Descriptions.Item>
           <Descriptions.Item label="是否开启">{switchState}</Descriptions.Item>
         </Descriptions>
       </div>

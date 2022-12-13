@@ -29,7 +29,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<DirTreeNode[]>([])
   // const [selectedKey, setSelectedKey] = useState<string>('')
-  // 多选状态，用于批量删除
+  // 多选状态，用于批量操作
   const [multiSelection, setMultiSelection] = useState<Key[]>([])
   const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState('')
@@ -46,10 +46,28 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     return getNodeByKey(currEditingKey, treeData)
   }, [currEditingKey, treeData])
 
-  const selectedNode = useMemo(
-    () => getNodeByKey(multiSelection[0] as string, treeData),
-    [multiSelection, treeData]
-  )
+  // key到树节点的map
+  const keyMap: Record<string, DirTreeNode> = useMemo(() => {
+    const map: Record<string, DirTreeNode> = {}
+    const nodes = [...treeData]
+    while (nodes.length) {
+      const node: DirTreeNode | undefined = nodes.pop()
+      if (!node) {
+        continue
+      }
+      if (node.children?.length) {
+        nodes.push(...node.children)
+      }
+      map[node.key as string] = node
+    }
+    return map
+  }, [treeData])
+
+  console.log(multiSelection)
+
+  const selectedNode: DirTreeNode[] = useMemo(() => {
+    return multiSelection.map(key => keyMap[key])
+  }, [multiSelection, keyMap])
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
@@ -359,15 +377,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }
 
-  // function handleEdit() {
-  //   if (!selectedNode?.path) return
-  //
-  //   void getFetcher<OperationResp>(`/operateApi/${selectedNode.id}`).then(res => {
-  //     setQuery(res.content)
-  //   })
-  //   setIsModalVisible(true)
-  // }
-
   const handleSaveGql = () => {
     if (action === '创建文件') {
       if (!currEditingNode) return
@@ -611,42 +620,75 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     >
       <Dropdown
         overlay={
-          <Menu>
-            <Menu.Item
-              onClick={() => {
-                if (!multiSelection.length) {
-                  message.info('请选择要删除的API')
-                  return
-                }
-                setMultiSelection([])
-                Modal.confirm({
-                  title: '是否确认删除选中的API？',
-                  onOk: () => {
-                    const ids = multiSelection
-                      .map(x => getNodeByKey(String(x), treeData)?.id)
-                      .filter(x => x)
-                    requests.post('operateApi/batchDelete', { ids }).then(() => {
-                      message.success('删除成功')
-                      setRefreshFlag(!refreshFlag)
-                    })
-                    // setEditFlag(false)
-                    // resolve(true)
-                  },
-                  okText: '确认',
-                  cancelText: '取消'
-                })
-              }}
-            >
-              删除
-            </Menu.Item>
-            <Menu.Item
-              onClick={() => {
-                setMultiSelection([])
-              }}
-            >
-              取消
-            </Menu.Item>
-          </Menu>
+          <Menu
+            items={[
+              {
+                disabled: !selectedNode.some(x => !x.enable),
+                key: 'enable',
+                label: (
+                  <div
+                    onClick={() => {
+                      console.log('===上线')
+                    }}
+                  >
+                    上线
+                  </div>
+                )
+              },
+              {
+                disabled: !selectedNode.some(x => x.enable),
+                key: 'disable',
+                label: (
+                  <div
+                    onClick={() => {
+                      console.log('===下线')
+                    }}
+                  >
+                    下线
+                  </div>
+                )
+              },
+              {
+                disabled: !selectedNode.length,
+                key: 'delete',
+                label: (
+                  <div
+                    onClick={() => {
+                      setMultiSelection([])
+                      Modal.confirm({
+                        title: '是否确认删除选中的API？',
+                        onOk: () => {
+                          const ids = selectedNode.map(x => x.id).filter(x => x)
+                          requests.post('operateApi/batchDelete', { ids }).then(() => {
+                            message.success('删除成功')
+                            setRefreshFlag(!refreshFlag)
+                          })
+                          // setEditFlag(false)
+                          // resolve(true)
+                        },
+                        okText: '确认',
+                        cancelText: '取消'
+                      })
+                    }}
+                  >
+                    删除
+                  </div>
+                )
+              },
+              {
+                key: 'cancel',
+                label: (
+                  <div
+                    onClick={() => {
+                      setMultiSelection([])
+                    }}
+                  >
+                    取消
+                  </div>
+                )
+              }
+            ]}
+          />
         }
         trigger={['contextMenu']}
       >
