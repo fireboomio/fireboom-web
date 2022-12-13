@@ -2,7 +2,6 @@ import { Drawer } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import IdeContainer from '@/components/Ide'
-import getDefaultCode from '@/components/Ide/getDefaultCode'
 
 import { useAPIManager } from '../../store'
 import backArrow from './assets/back-arrow.svg'
@@ -17,19 +16,8 @@ interface Props {
 export default function EditPanel({ onClose, hook, apiName, hasParams = false }: Props) {
   const apiContainerRef = useRef<HTMLDivElement>(document.querySelector('#api-editor-container'))
   const { refreshAPI } = useAPIManager()
-  const [defaultCode, setDefaultCode] = useState<string>()
   const [title, setTitle] = useState<string>()
   useEffect(() => {
-    if (hook.path.startsWith('global/')) {
-      getDefaultCode(`global.${hook.name}`).then(res => {
-        setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
-      })
-    } else {
-      const tmplPath = `hook.${hasParams ? 'WithInput' : 'WithoutInput'}.${hook.name}`
-      getDefaultCode(tmplPath).then(res => {
-        setDefaultCode(res.replaceAll('$HOOK_NAME$', apiName))
-      })
-    }
     setTitle(hook.path)
   }, [hook.name])
   return apiContainerRef.current ? (
@@ -56,7 +44,7 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
         onSelectHook={setTitle}
         onChangeEnable={refreshAPI}
         hookPath={hook.path}
-        defaultCode={defaultCode}
+        hasParams={hasParams}
         defaultLanguage="typescript"
       />
     </Drawer>

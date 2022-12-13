@@ -35,6 +35,7 @@ export const hookPath: Record<string, string> = {
 }
 export default function AuthRole() {
   const [form] = Form.useForm()
+  const formId = Form.useWatch('id', form)
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
   const [roleFlag, setRoleFlag] = useState<boolean>()
@@ -65,7 +66,8 @@ export default function AuthRole() {
   }, [roleFlag])
 
   const onFinish = async (values: RoleProvResp) => {
-    await requests.post('/role', values)
+    await requests[values.id ? 'put' : 'post']('/role', { ...values })
+    setModal1Visible(false)
     setRoleFlag(!roleFlag)
   }
 
@@ -92,17 +94,28 @@ export default function AuthRole() {
     {
       title: '操作',
       key: 4,
-      render: (_, { id }) => (
-        <Popconfirm
-          title="确定要删除?"
-          okText="确定"
-          cancelText="取消"
-          onConfirm={() => {
-            void handleDeleteRole(id)
-          }}
-        >
-          <span className="cursor-pointer pl-0 text-red-500">删除</span>
-        </Popconfirm>
+      render: (_, row) => (
+        <>
+          <span
+            className="cursor-pointer pl-0 text-red-500 mr-1"
+            onClick={() => {
+              form.setFieldsValue(row)
+              setModal1Visible(true)
+            }}
+          >
+            编辑
+          </span>
+          <Popconfirm
+            title="确定要删除?"
+            okText="确定"
+            cancelText="取消"
+            onConfirm={() => {
+              void handleDeleteRole(row.id)
+            }}
+          >
+            <span className="cursor-pointer pl-0 text-red-500">删除</span>
+          </Popconfirm>
+        </>
       )
     }
   ]
@@ -149,6 +162,7 @@ export default function AuthRole() {
           <Button
             className="h-7.5 py-0 px-4"
             onClick={() => {
+              form.setFieldsValue({ id: undefined, code: '', remark: '' })
               setModal1Visible(true)
             }}
           >
@@ -164,96 +178,110 @@ export default function AuthRole() {
           return <DefaultTabBar className={styles.pillTab} {...props} />
         }}
         onChange={setTab}
-      >
-        <TabPane tab="角色管理" key="role" className={styles.tabContent}>
-          <Modal
-            mask={false}
-            title="添加"
-            style={{ top: '200px' }}
-            width={549}
-            transitionName=""
-            open={modal1Visible}
-            onOk={() => setModal1Visible(false)}
-            onCancel={() => setModal1Visible(false)}
-            okText={
-              <Button
-                className={styles['save-btn']}
-                onClick={() => {
-                  form.submit()
-                }}
-              >
-                <span>保存</span>
-              </Button>
-            }
-            okType="text"
-            cancelText="取消"
-          >
-            <Form
-              name="roleList"
-              form={form}
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 16 }}
-              initialValues={{ remember: true }}
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              onFinish={values => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                void onFinish(values)
-              }}
-              autoComplete="off"
-              labelAlign="left"
-              className="h-30 mt-8 ml-8"
-            >
-              <Form.Item
-                label="角色code"
-                name="code"
-                rules={[
-                  { required: true, message: '请输入角色编码' },
-                  {
-                    pattern: /^[_a-zA-Z][_a-zA-Z\d]*$/g,
-                    message: '请输入数字、字母或下划线，第一位不能是数字'
-                  }
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item label="角色描述" name="remark">
-                <Input />
-              </Form.Item>
-            </Form>
-          </Modal>
-          <div className={styles['role-container-table']}>
-            {roleData.length > 0 ? (
-              <Table
-                columns={columns}
-                dataSource={roleData}
-                rowKey={record => record.id}
-                rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
-                pagination={false}
-              />
-            ) : (
-              <Table
-                columns={columns}
-                dataSource={[]}
-                rowKey={record => record.id}
-                rowClassName={(record, index) => (index % 2 === 1 ? styles['role-table'] : '')}
-                pagination={false}
-              />
-            )}
-          </div>
-        </TabPane>
-        <TabPane tab="身份鉴权" key="auth" className={styles.tabContent}>
-          <div>
-            {/* @ts-ignore */}
-            <IdeContainer
-              key={hookPath[activeKey]}
-              hookPath={hookPath[activeKey]}
-              defaultLanguage="typescript"
-              onChange={console.log}
-              defaultCode={defaultCodeMap[activeKey]}
-            />
-          </div>
-        </TabPane>
-      </Tabs>
+        items={[
+          {
+            label: '角色管理',
+            key: 'role',
+            children: (
+              <div className={styles.tabContent}>
+                {modal1Visible && (
+                  <Modal
+                    open
+                    mask={false}
+                    title={formId ? '编辑角色' : '添加角色'}
+                    style={{ top: '200px' }}
+                    width={549}
+                    transitionName=""
+                    onOk={() => {
+                      form.submit()
+                    }}
+                    onCancel={() => setModal1Visible(false)}
+                    okText="保存"
+                    okButtonProps={{ className: styles['save-btn'] }}
+                    okType="text"
+                    cancelText="取消"
+                  >
+                    <Form
+                      name="roleList"
+                      form={form}
+                      labelCol={{ span: 6 }}
+                      wrapperCol={{ span: 16 }}
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                      onFinish={values => {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                        void onFinish({ ...values })
+                      }}
+                      autoComplete="off"
+                      labelAlign="left"
+                      className="h-30 mt-8 ml-8"
+                    >
+                      <Form.Item
+                        label="角色code"
+                        name="code"
+                        rules={[
+                          { required: true, message: '请输入角色编码' },
+                          {
+                            pattern: /^[_a-zA-Z][_a-zA-Z\d]*$/g,
+                            message: '请输入数字、字母或下划线，第一位不能是数字'
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item label="角色描述" name="remark">
+                        <Input />
+                      </Form.Item>
+                      <Form.Item name="id"></Form.Item>
+                      <Form.Item name="createTime"></Form.Item>
+                    </Form>
+                  </Modal>
+                )}
+                <div className={styles['role-container-table']}>
+                  {roleData.length > 0 ? (
+                    <Table
+                      columns={columns}
+                      dataSource={roleData}
+                      rowKey={record => record.id}
+                      rowClassName={(record, index) =>
+                        index % 2 === 1 ? styles['role-table'] : ''
+                      }
+                      pagination={false}
+                    />
+                  ) : (
+                    <Table
+                      columns={columns}
+                      dataSource={[]}
+                      rowKey={record => record.id}
+                      rowClassName={(record, index) =>
+                        index % 2 === 1 ? styles['role-table'] : ''
+                      }
+                      pagination={false}
+                    />
+                  )}
+                </div>
+              </div>
+            )
+          },
+          {
+            label: '身份鉴权',
+            key: 'auth',
+            children: (
+              <div className={styles.tabContent}>
+                <div>
+                  {/* @ts-ignore */}
+                  <IdeContainer
+                    key={hookPath[activeKey]}
+                    hookPath={hookPath[activeKey]}
+                    defaultLanguage="typescript"
+                    onChange={console.log}
+                    defaultCode={defaultCodeMap[activeKey]}
+                  />
+                </div>
+              </div>
+            )
+          }
+        ]}
+      ></Tabs>
     </div>
   )
 }

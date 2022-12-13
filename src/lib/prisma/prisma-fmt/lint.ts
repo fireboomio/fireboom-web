@@ -7,10 +7,8 @@ export interface LinterError {
   is_warning: boolean
 }
 
-export default function lint(
-  text: string,
-  onError?: (errorMessage: string) => void
-): LinterError[] {
+export default function lint(text: string, onError?: (errorMessage: string) => void): LinterError[] {
+  console.log('running lint() from prisma-fmt')
   try {
     const result = prismaFmt.lint(text)
     return JSON.parse(result) // eslint-disable-line @typescript-eslint/no-unsafe-return

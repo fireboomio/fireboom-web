@@ -1,15 +1,14 @@
-import type { Position } from 'vscode-languageserver'
-import type { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
-
-import type { Block } from '../util'
+import { Position } from 'vscode-languageserver'
+import { TextEdit, TextDocument } from 'vscode-languageserver-textdocument'
 import {
-  extractFirstWord,
-  getAllRelationNames,
-  getBlockAtPosition,
+  Block,
   getCurrentLine,
-  getFieldTypesFromCurrentBlock,
+  getWordAtPosition,
+  getBlockAtPosition,
   getValuesInsideSquareBrackets,
-  getWordAtPosition
+  getAllRelationNames,
+  getFieldTypesFromCurrentBlock,
+  extractFirstWord,
 } from '../util'
 
 function getType(currentLine: string): string {
@@ -35,7 +34,7 @@ export function isValidFieldName(
   currentLine: string,
   position: Position,
   currentBlock: Block,
-  document: TextDocument
+  document: TextDocument,
 ): boolean {
   if (
     currentBlock.type !== 'model' ||
@@ -55,8 +54,7 @@ export function isValidFieldName(
   const indexOfFirstWord = currentLineUntrimmed.indexOf(firstWord)
 
   const isFieldName: boolean =
-    indexOfFirstWord <= position.character &&
-    indexOfFirstWord + firstWord.length >= position.character
+    indexOfFirstWord <= position.character && indexOfFirstWord + firstWord.length >= position.character
 
   if (!isFieldName) {
     return false
@@ -67,12 +65,7 @@ export function isValidFieldName(
   return type !== '' && type !== undefined
 }
 
-export function isModelName(
-  position: Position,
-  block: Block,
-  lines: string[],
-  document: TextDocument
-): boolean {
+export function isModelName(position: Position, block: Block, lines: string[], document: TextDocument): boolean {
   if (block.type !== 'model') {
     return false
   }
@@ -84,12 +77,7 @@ export function isModelName(
   return renameModelOrEnumWhereUsedAsType(block, lines, document, position, 'model')
 }
 
-export function isEnumName(
-  position: Position,
-  block: Block,
-  lines: string[],
-  document: TextDocument
-): boolean {
+export function isEnumName(position: Position, block: Block, lines: string[], document: TextDocument): boolean {
   if (block.type === 'enum' && position.line === block.range.start.line) {
     return position.character > 4
   }
@@ -102,7 +90,7 @@ function renameModelOrEnumWhereUsedAsType(
   lines: string[],
   document: TextDocument,
   position: Position,
-  blockType: string
+  blockType: string,
 ): boolean {
   // TODO type?
   if (block.type !== 'model') {
@@ -115,7 +103,7 @@ function renameModelOrEnumWhereUsedAsType(
   if (!isRelation) {
     return false
   }
-  const indexOfRelation = lines.findIndex(l => l.startsWith(blockType) && l.includes(currentName))
+  const indexOfRelation = lines.findIndex((l) => l.startsWith(blockType) && l.includes(currentName))
   return indexOfRelation !== -1
 }
 
@@ -123,7 +111,7 @@ export function isEnumValue(
   currentLine: string,
   position: Position,
   currentBlock: Block,
-  document: TextDocument
+  document: TextDocument,
 ): boolean {
   return (
     currentBlock.type === 'enum' &&
@@ -139,7 +127,7 @@ export function printLogMessage(
   isEnumRename: boolean,
   isModelRename: boolean,
   isFieldRename: boolean,
-  isEnumValueRename: boolean
+  isEnumValueRename: boolean,
 ): void {
   const message = `'${currentName}' was renamed to '${newName}'`
   let typeOfRename = ''
@@ -152,6 +140,7 @@ export function printLogMessage(
   } else if (isEnumValueRename) {
     typeOfRename = 'Enum value '
   }
+  console.log(typeOfRename + message)
 }
 
 function insertInlineRename(currentName: string, line: number): TextEdit {
@@ -159,14 +148,14 @@ function insertInlineRename(currentName: string, line: number): TextEdit {
     range: {
       start: {
         line: line,
-        character: Number.MAX_VALUE
+        character: Number.MAX_VALUE,
       },
       end: {
         line: line,
-        character: Number.MAX_VALUE
-      }
+        character: Number.MAX_VALUE,
+      },
     },
-    newText: ` @map("${currentName}")`
+    newText: ` @map("${currentName}")`,
   }
 }
 
@@ -175,11 +164,11 @@ function insertMapBlockAttribute(oldName: string, block: Block): TextEdit {
     range: {
       start: {
         line: block.range.end.line,
-        character: 0
+        character: 0,
       },
-      end: block.range.end
+      end: block.range.end,
     },
-    newText: `\t@@map("${oldName}")\n}`
+    newText: `\t@@map("${oldName}")\n}`,
   }
 }
 
@@ -187,9 +176,7 @@ function positionIsNotInsideSearchedBlocks(line: number, searchedBlocks: Block[]
   if (searchedBlocks.length === 0) {
     return true
   }
-  return !searchedBlocks.some(
-    block => line >= block.range.start.line && line <= block.range.end.line
-  )
+  return !searchedBlocks.some((block) => line >= block.range.start.line && line <= block.range.end.line)
 }
 
 /**
@@ -203,7 +190,7 @@ export function renameReferencesForFieldValue(
   document: TextDocument,
   lines: string[],
   block: Block,
-  isRelationFieldRename: boolean
+  isRelationFieldRename: boolean,
 ): TextEdit[] {
   const edits: TextEdit[] = []
   const searchStringsSameBlock = ['@@index', '@@id', '@@unique']
@@ -224,8 +211,7 @@ export function renameReferencesForFieldValue(
       // search for fields references
       const currentLineUntrimmed = getCurrentLine(document, key)
       const indexOfFieldsStart = currentLineUntrimmed.indexOf('fields:')
-      const indexOfFieldEnd =
-        currentLineUntrimmed.slice(indexOfFieldsStart).indexOf(']') + indexOfFieldsStart
+      const indexOfFieldEnd = currentLineUntrimmed.slice(indexOfFieldsStart).indexOf(']') + indexOfFieldsStart
       const fields = currentLineUntrimmed.slice(indexOfFieldsStart, indexOfFieldEnd + 1)
       const indexOfFoundValue = fields.indexOf(currentValue)
       const fieldValues = getValuesInsideSquareBrackets(fields)
@@ -235,19 +221,19 @@ export function renameReferencesForFieldValue(
           range: {
             start: {
               line: key,
-              character: indexOfFieldsStart + indexOfFoundValue
+              character: indexOfFieldsStart + indexOfFoundValue,
             },
             end: {
               line: key,
-              character: indexOfFieldsStart + indexOfFoundValue + currentValue.length
-            }
+              character: indexOfFieldsStart + indexOfFoundValue + currentValue.length,
+            },
           },
-          newText: newName
+          newText: newName,
         })
       }
     }
     // search for references in index, id and unique block attributes
-    if (searchStringsSameBlock.some(s => item.includes(s)) && item.includes(currentValue)) {
+    if (searchStringsSameBlock.some((s) => item.includes(s)) && item.includes(currentValue)) {
       const currentLineUntrimmed = getCurrentLine(document, key)
       const valuesInsideBracket = getValuesInsideSquareBrackets(currentLineUntrimmed)
       if (valuesInsideBracket.includes(currentValue)) {
@@ -256,14 +242,14 @@ export function renameReferencesForFieldValue(
           range: {
             start: {
               line: key,
-              character: indexOfCurrentValue
+              character: indexOfCurrentValue,
             },
             end: {
               line: key,
-              character: indexOfCurrentValue + currentValue.length
-            }
+              character: indexOfCurrentValue + currentValue.length,
+            },
           },
-          newText: newName
+          newText: newName,
         })
       }
     }
@@ -271,16 +257,11 @@ export function renameReferencesForFieldValue(
 
   // search for references in other model blocks
   for (const [index, value] of lines.entries()) {
-    if (
-      value.includes(block.name) &&
-      value.includes(currentValue) &&
-      value.includes(relationAttribute)
-    ) {
+    if (value.includes(block.name) && value.includes(currentValue) && value.includes(relationAttribute)) {
       const currentLineUntrimmed = getCurrentLine(document, index)
       // get the index of the second word
       const indexOfReferences = currentLineUntrimmed.indexOf('references:')
-      const indexOfReferencesEnd =
-        currentLineUntrimmed.slice(indexOfReferences).indexOf(']') + indexOfReferences
+      const indexOfReferencesEnd = currentLineUntrimmed.slice(indexOfReferences).indexOf(']') + indexOfReferences
       const references = currentLineUntrimmed.slice(indexOfReferences, indexOfReferencesEnd + 1)
       const indexOfFoundValue = references.indexOf(currentValue)
       const referenceValues = getValuesInsideSquareBrackets(references)
@@ -289,14 +270,14 @@ export function renameReferencesForFieldValue(
           range: {
             start: {
               line: index,
-              character: indexOfReferences + indexOfFoundValue
+              character: indexOfReferences + indexOfFoundValue,
             },
             end: {
               line: index,
-              character: indexOfReferences + indexOfFoundValue + currentValue.length
-            }
+              character: indexOfReferences + indexOfFoundValue + currentValue.length,
+            },
           },
-          newText: newName
+          newText: newName,
         })
       }
     }
@@ -313,7 +294,7 @@ export function renameReferencesForEnumValue(
   newName: string,
   document: TextDocument,
   lines: string[],
-  enumName: string
+  enumName: string,
 ): TextEdit[] {
   const edits: TextEdit[] = []
   const searchString = `@default(${currentValue})`
@@ -327,14 +308,14 @@ export function renameReferencesForEnumValue(
         range: {
           start: {
             line: index,
-            character: indexOfCurrentName
+            character: indexOfCurrentName,
           },
           end: {
             line: index,
-            character: indexOfCurrentName + searchString.length
-          }
+            character: indexOfCurrentName + searchString.length,
+          },
         },
-        newText: `@default(${newName})`
+        newText: `@default(${newName})`,
       })
     }
   }
@@ -348,7 +329,7 @@ export function renameReferencesForModelName(
   currentName: string,
   newName: string,
   document: TextDocument,
-  lines: string[]
+  lines: string[],
 ): TextEdit[] {
   const searchedBlocks = []
   const edits: TextEdit[] = []
@@ -376,20 +357,20 @@ export function renameReferencesForModelName(
               const indexOfFirstWord = currentLineUntrimmed.indexOf(wordsInLine[0])
               const indexOfCurrentName = currentLineUntrimmed.indexOf(
                 currentName,
-                indexOfFirstWord + wordsInLine[0].length
+                indexOfFirstWord + wordsInLine[0].length,
               )
               edits.push({
                 range: {
                   start: {
                     line: lineIndex,
-                    character: indexOfCurrentName
+                    character: indexOfCurrentName,
                   },
                   end: {
                     line: lineIndex,
-                    character: indexOfCurrentName + currentName.length
-                  }
+                    character: indexOfCurrentName + currentName.length,
+                  },
                 },
-                newText: newName
+                newText: newName,
               })
             }
           }
@@ -427,7 +408,7 @@ export function insertBasicRename(
   newName: string,
   currentName: string,
   document: TextDocument,
-  line: number
+  line: number,
 ): TextEdit {
   const currentLineUntrimmed = getCurrentLine(document, line)
   const indexOfCurrentName = currentLineUntrimmed.indexOf(currentName)
@@ -436,14 +417,14 @@ export function insertBasicRename(
     range: {
       start: {
         line: line,
-        character: indexOfCurrentName
+        character: indexOfCurrentName,
       },
       end: {
         line: line,
-        character: indexOfCurrentName + currentName.length
-      }
+        character: indexOfCurrentName + currentName.length,
+      },
     },
-    newText: newName
+    newText: newName,
   }
 }
 
@@ -451,7 +432,7 @@ export function mapExistsAlready(
   currentLine: string,
   lines: string[],
   block: Block,
-  isModelOrEnumRename: boolean
+  isModelOrEnumRename: boolean,
 ): boolean {
   if (isModelOrEnumRename) {
     return mapBlockAttributeExistsAlready(block, lines)
@@ -464,7 +445,7 @@ export function insertMapAttribute(
   currentName: string,
   position: Position,
   block: Block,
-  isModelOrEnumRename: boolean
+  isModelOrEnumRename: boolean,
 ): TextEdit {
   if (isModelOrEnumRename) {
     return insertMapBlockAttribute(currentName, block)
@@ -479,7 +460,7 @@ export function extractCurrentName(
   isEnumValueRename: boolean,
   isFieldRename: boolean,
   document: TextDocument,
-  position: Position
+  position: Position,
 ): string {
   if (isModelOrEnumRename) {
     const currentLineUntrimmed = getCurrentLine(document, position.line)
