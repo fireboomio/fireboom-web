@@ -1699,6 +1699,7 @@ class FieldView extends React.PureComponent<
       }
     ]
 
+    // 同级可共存的操作和不可共存操作数量
     let exclusiveCount = 0
     let otherCount = 0
     nextSelections.forEach(selection => {
@@ -1710,6 +1711,7 @@ class FieldView extends React.PureComponent<
         otherCount++
       }
     })
+    // 不可共存操作数量大于1、或可共存和不可共存操作同时存在则报错
     if ((exclusiveCount && otherCount) || exclusiveCount > 1) {
       this.props.notifyError?.('当前操作与已选内容不相容')
       return
@@ -2778,7 +2780,7 @@ class Explorer extends React.PureComponent<
     // 按照类型过滤 按照分类筛选
     const { visibleFields, operationTypeMap } = (() => {
       let fields: GraphQLFieldMap<any, any> | undefined
-      let operationTypeMap: OperationTypeMap = {}
+      let operationTypeMap: OperationTypeMap = {} // 用于判断指定operation的类型
       if (this.props.selectedType === 'query') {
         fields = schema?.getQueryType()?.getFields()
         fields && Object.keys(fields).forEach(key => (operationTypeMap[key] = 'query'))
