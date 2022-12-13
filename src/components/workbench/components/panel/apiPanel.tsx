@@ -63,8 +63,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     return map
   }, [treeData])
 
-  console.log(multiSelection)
-
   const selectedNode: DirTreeNode[] = useMemo(() => {
     return multiSelection.map(key => keyMap[key])
   }, [multiSelection, keyMap])
@@ -339,7 +337,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             message.error('接口名称必须大写开头')
             return
           }
-          console.log('====111')
           void renameApi(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
             if (res) {
@@ -560,7 +557,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 open={dropDownId === nodeData.key}
                 onOpenChange={flag => {
                   setDropDownId(flag ? nodeData.key : undefined)
-                  console.log(dropDownId)
                 }}
                 destroyPopupOnHide
                 overlay={menu}

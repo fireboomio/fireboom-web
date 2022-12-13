@@ -51,6 +51,8 @@ import {
 import * as React from 'react'
 
 import ExplorerFilter from './ExplorerFilter'
+
+type OperationTypeMap = Record<string, 'query' | 'mutation' | 'subscription'>
 type Field = GraphQLField<any, any>
 type GetDefaultScalarArgValue = (
   parentField: Field,
@@ -121,6 +123,7 @@ type Props = {
   // showAttribution: boolean
   hideActions?: boolean
   externalFragments?: FragmentDefinitionNode[]
+  notifyError?: (msg: string) => void
 }
 type OperationType = 'query' | 'mutation' | 'subscription' | 'fragment'
 /// remove
@@ -1512,6 +1515,8 @@ class FragmentView extends React.PureComponent<FragmentViewProps, {}> {
 
 type FieldViewProps = {
   field: Field
+  operationTypeMap?: OperationTypeMap
+  notifyError?: (msg: string) => void
   selections: Selections
   modifySelections: (
     selections: Selections,
@@ -1677,6 +1682,7 @@ class FieldView extends React.PureComponent<
     this.props.modifySelections(nextSelections)
   }
   _addFieldToSelections = rawSubfields => {
+    // 当目前内容不为空时不允许插入mutation操作
     const nextSelections = [
       ...this.props.selections,
       this._previousSelection || {
@@ -1692,11 +1698,27 @@ class FieldView extends React.PureComponent<
         )
       }
     ]
+
+    let exclusiveCount = 0
+    let otherCount = 0
+    nextSelections.forEach(selection => {
+      // @ts-ignore
+      const type = this.props.operationTypeMap?.[selection?.name?.value] ?? ''
+      if (type === 'mutation') {
+        exclusiveCount++
+      } else if (['query', 'subscription'].includes(type)) {
+        otherCount++
+      }
+    })
+    if ((exclusiveCount && otherCount) || exclusiveCount > 1) {
+      this.props.notifyError?.('当前操作与已选内容不相容')
+      return
+    }
+
     this.props.modifySelections(nextSelections)
   }
   _handleUpdateSelections = event => {
     const selection = this._getSelection()
-
     if (selection && !event.altKey) {
       this._removeFieldFromSelections()
     } else {
@@ -2147,6 +2169,9 @@ type RootViewProps = {
   schema: GraphQLSchema
   isLast: boolean
   fields: GraphQLFieldMap<any, any> | null | undefined
+  operationTypeMap: OperationTypeMap
+
+  notifyError?: (msg: string) => void
   /// Remove
   // operationType: OperationType
   name: string | null | undefined
@@ -2359,6 +2384,8 @@ class RootView extends React.PureComponent<
             <FieldView
               key={fieldName}
               field={fields[fieldName]}
+              notifyError={this.props.notifyError}
+              operationTypeMap={this.props.operationTypeMap}
               selections={selections}
               modifySelections={this._modifySelections}
               schema={schema}
@@ -2749,33 +2776,49 @@ class Explorer extends React.PureComponent<
 
     /// Add
     // 按照类型过滤 按照分类筛选
-    const visibleFields = (() => {
+    const { visibleFields, operationTypeMap } = (() => {
       let fields: GraphQLFieldMap<any, any> | undefined
+      let operationTypeMap: OperationTypeMap = {}
       if (this.props.selectedType === 'query') {
         fields = schema?.getQueryType()?.getFields()
+        fields && Object.keys(fields).forEach(key => (operationTypeMap[key] = 'query'))
       } else if (this.props.selectedType === 'mutation') {
         fields = schema?.getMutationType()?.getFields()
+        fields && Object.keys(fields).forEach(key => (operationTypeMap[key] = 'mutation'))
       } else if (this.props.selectedType === 'subscription') {
         fields = schema?.getSubscriptionType()?.getFields()
+        fields && Object.keys(fields).forEach(key => (operationTypeMap[key] = 'subscription'))
       } else {
+        const queryFields = schema?.getQueryType()?.getFields()
+        const mutationFields = schema?.getMutationType()?.getFields()
+        const subscriptionFields = schema?.getSubscriptionType()?.getFields()
+        queryFields && Object.keys(queryFields).forEach(key => (operationTypeMap[key] = 'query'))
+        mutationFields &&
+          Object.keys(mutationFields).forEach(key => (operationTypeMap[key] = 'mutation'))
+        subscriptionFields &&
+          Object.keys(subscriptionFields).forEach(key => (operationTypeMap[key] = 'subscription'))
         fields = {
-          ...schema?.getQueryType()?.getFields(),
-          ...schema?.getMutationType()?.getFields(),
-          ...schema?.getSubscriptionType()?.getFields()
+          ...queryFields,
+          ...mutationFields,
+          ...subscriptionFields
         }
       }
       if (!this.props.selectedDataSource) {
-        return fields
+        return { visibleFields: fields, operationTypeMap }
       }
       if (fields) {
-        return Object.keys(fields).reduce<GraphQLFieldMap<any, any>>((obj, key) => {
-          if (fields![key].name.includes(this.props.selectedDataSource!)) {
-            obj[key] = fields![key]
-          }
-          return obj
-        }, {})
+        return {
+          operationTypeMap,
+          visibleFields: Object.keys(fields).reduce<GraphQLFieldMap<any, any>>((obj, key) => {
+            if (fields![key].name.includes(this.props.selectedDataSource!)) {
+              obj[key] = fields![key]
+            }
+            return obj
+          }, {})
+        }
       }
-      return fields
+
+      return { visibleFields: fields, operationTypeMap }
     })()
 
     /// Remove
@@ -2862,6 +2905,8 @@ class Explorer extends React.PureComponent<
                 key={index}
                 isLast={index === relevantOperations.length - 1}
                 fields={visibleFields}
+                operationTypeMap={operationTypeMap}
+                notifyError={this.props.notifyError}
                 /// Remove
                 // fields={fields}
                 // operationType={operationType}
@@ -3029,7 +3074,7 @@ class ExplorerWrapper extends React.PureComponent<
       selectedDataSource: v
     })
   }
-  
+
   manualExpand() {
     // 切换时清空缓存
     parseQueryMemoize = null
@@ -3041,7 +3086,7 @@ class ExplorerWrapper extends React.PureComponent<
       <div
         // Updated
         className="h-full min-w-64 w-full docExplorerWrap"
-        key={this.state.k} 
+        key={this.state.k}
         style={{
           zIndex: 7,
           display: this.props.explorerIsOpen ? 'flex' : 'none',

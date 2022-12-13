@@ -231,6 +231,7 @@ export default function APIEditorContainer() {
                 // onToggleExplorer={this._handleToggleExplorer}
                 // getDefaultScalarArgValue={getDefaultScalarArgValue}
                 // makeDefaultArg={makeDefaultArg}
+                notifyError={msg => message.error(msg)}
               />
             </div>
           </div>
