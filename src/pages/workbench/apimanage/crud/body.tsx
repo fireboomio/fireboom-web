@@ -76,6 +76,10 @@ function genTypeMap(dmf: string, prefix: string): TypeMap {
     })
     allTypeMap[type] = fieldMap
   }
+  const enumMap: Record<string, boolean> = {}
+  for (const [subStr, type] of dmf.matchAll(/enum (\w+)\s\{\n[\s\S]*?\n}/g)) {
+    enumMap[type] = true
+  }
   // 再次遍历，给所有非标量增加前缀，将所有set类型解包
   Object.keys(allTypeMap).forEach(type => {
     const fieldMap = allTypeMap[type]
@@ -87,8 +91,9 @@ function genTypeMap(dmf: string, prefix: string): TypeMap {
         field.isSet = true
         field.name = refType.set.name
       }
+      console.log('====', field.name, allTypeMap[field.name])
       // 增加类型前缀
-      if (allTypeMap[field.name]) {
+      if (allTypeMap[field.name] || enumMap[field.name]) {
         field.name = prefix + field.name
       }
     })
