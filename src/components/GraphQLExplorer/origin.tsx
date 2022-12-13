@@ -1525,7 +1525,8 @@ type FieldViewProps = {
           commit: boolean
         }
       | null
-      | undefined
+      | undefined,
+    operationType?: string
   ) => DocumentNode | null
   schema: GraphQLSchema
   getDefaultFieldNames: (type: GraphQLObjectType) => Array<string>
@@ -1702,13 +1703,16 @@ class FieldView extends React.PureComponent<
     // 同级可共存的操作和不可共存操作数量
     let exclusiveCount = 0
     let otherCount = 0
+    let operationType = ''
     nextSelections.forEach(selection => {
       // @ts-ignore
       const type = this.props.operationTypeMap?.[selection?.name?.value] ?? ''
-      if (type === 'mutation') {
+      if (['mutation', 'subscription'].includes(type)) {
+        operationType = type
         exclusiveCount++
-      } else if (['query', 'subscription'].includes(type)) {
+      } else if (['query'].includes(type)) {
         otherCount++
+        operationType = type
       }
     })
     // 不可共存操作数量大于1、或可共存和不可共存操作同时存在则报错
@@ -1717,7 +1721,7 @@ class FieldView extends React.PureComponent<
       return
     }
 
-    this.props.modifySelections(nextSelections)
+    this.props.modifySelections(nextSelections, undefined, operationType)
   }
   _handleUpdateSelections = event => {
     const selection = this._getSelection()
@@ -2222,7 +2226,8 @@ class RootView extends React.PureComponent<
           commit: boolean
         }
       | null
-      | undefined
+      | undefined,
+    operationType: string
   ): DocumentNode => {
     let operationDef: FragmentDefinitionNode | OperationDefinitionNode = this.props.definition
 
@@ -2258,7 +2263,8 @@ class RootView extends React.PureComponent<
 
       newOperationDef = {
         ...operationDef,
-        selectionSet: { ...operationDef.selectionSet, selections: cleanedSelections }
+        selectionSet: { ...operationDef.selectionSet, selections: cleanedSelections },
+        operation: operationType || 'query'
       }
     }
 
