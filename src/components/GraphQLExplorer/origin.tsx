@@ -2259,14 +2259,20 @@ class RootView extends React.PureComponent<
             }
           }
         ]
+        // 展示placeholder时强制转回query类型
+        operationDef.operation = 'query'
       }
 
       newOperationDef = {
         ...operationDef,
-        selectionSet: { ...operationDef.selectionSet, selections: cleanedSelections },
-        operation: operationType || 'query'
+        selectionSet: { ...operationDef.selectionSet, selections: cleanedSelections }
+      }
+      // 如果当前操作指定了操作类型，则使用指定的操作类型
+      if (operationType) {
+        newOperationDef.operation = operationType
       }
     }
+    console.log('=====operationType', operationType)
 
     return this.props.onEdit(newOperationDef, options)
   }

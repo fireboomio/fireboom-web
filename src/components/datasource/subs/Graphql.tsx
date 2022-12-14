@@ -787,7 +787,7 @@ export default function Graphql({ content, type }: Props) {
           beforeUpload={file => {
             const isAllowed = file.name.endsWith('.graphql')
             if (!isAllowed) {
-              message.error('只允许上传 json 或 yaml 格式文件')
+              message.error('只允许上传 graphql 格式文件')
             }
             return isAllowed || Upload.LIST_IGNORE
           }}

@@ -60,7 +60,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     initMode = 'designer'
   }
   const [mode, setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
-  // 编辑器当前内容
+  // 编辑器当前内容, 仅用于向编辑器传值，并不代表编辑器实时内容
   const [editorContent, setEditorContent] = useState<string>()
   const [isEditing, setIsEditing] = useImmer(editType === 'add')
   const ModelDesignerRef = useRef<typeof ModelDesigner>(null)
@@ -256,19 +256,25 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   async function onSave() {
     try {
       if (mode === 'editor') {
-        if (editorContent !== undefined) {
-          const hide = message.loading('保存中...')
-          await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
+        const hide = message.loading('保存中...')
+        await requests.post<unknown, DMFResp>(
+          `/prisma/migrate/${dbSourceId ?? ''}`,
+          {
             schema: editorContent
-          })
-          await refreshBlocks()
-          hide()
-        }
+          },
+          { timeout: 30e3 }
+        )
+        await refreshBlocks()
+        hide()
       } else {
         const hide = message.loading('保存中...')
-        await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
-          schema: transferToEditor()
-        })
+        await requests.post<unknown, DMFResp>(
+          `/prisma/migrate/${dbSourceId ?? ''}`,
+          {
+            schema: transferToEditor()
+          },
+          { timeout: 30e3 }
+        )
         await refreshBlocks()
         hide()
       }
@@ -472,7 +478,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             <ModelEditor
               onUpdateValidate={setEditorValidate}
               onChange={value => {
-                setEditorContent(value)
+                // setEditorContent(value)
                 applyLocalSchema(value)
               }}
               defaultContent={editorContent ?? ''}
@@ -490,7 +496,6 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             savedEnum={editType === 'edit' ? (currentEntity as Enum) : (newEntity as Enum)}
             saveEnum={handleSaveEnum}
             saveModify={(entity: any) => {
-              console.log(entity, 'asasdasd')
               if (entity) {
                 const old = blocks.find(block => block.type === 'enum' && block.id === entity.id)
                 if (isEqual(old, entity)) {
@@ -505,7 +510,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           <div style={{ flex: '1 1 0' }}>
             <ModelEditor
               onChange={value => {
-                setEditorContent(value)
+                // setEditorContent(value)
                 applyLocalSchema(value)
               }}
               defaultContent={editorContent ?? ''}
