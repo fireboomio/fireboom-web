@@ -104,298 +104,6 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-// 起止
-Graph.registerNode('terminal', {
-  inherit: 'rect',
-  width: TERMINAL_WIDTH,
-  height: TERMINAL_HEIGHT,
-  attrs: {
-    body: {
-      strokeWidth: 0.5,
-      stroke: 'rgba(95, 98, 105, 0.6)',
-      fill: '#F3F9FD',
-      rx: 14,
-      ry: 14
-    },
-    text: {
-      fontSize: 14,
-      fill: '#333333'
-    }
-  }
-})
-
-// 流程箭头
-Graph.registerEdge('flowline', {
-  zIndex: -1,
-  attrs: {
-    line: {
-      stroke: '#1034FF',
-      targetMarker: {
-        name: 'block',
-        width: 3,
-        height: 4
-      }
-    }
-  }
-})
-
-// 拒绝流程里的箭头
-Graph.registerEdge('rejectArrow', {
-  attrs: {
-    line: {
-      stroke: '#787D8B',
-      targetMarker: {
-        name: 'block',
-        width: 3,
-        height: 4
-      }
-    }
-  }
-})
-
-// 决策判断
-Graph.registerNode('decision', {
-  inherit: 'polygon',
-  width: DECISION_WIDTH,
-  height: DECISION_HEIGHT,
-  attrs: {
-    body: {
-      strokeWidth: 0.5,
-      stroke: '#F2B241',
-      fill: '#ffffff',
-      refPoints: '0,10 10,0 20,10 10,20'
-    },
-    text: {
-      fontSize: 14,
-      fill: '#F3B13F'
-    }
-  }
-})
-
-// 程序
-Graph.registerNode('process', {
-  inherit: 'rect',
-  width: PROCESS_WIDTH,
-  height: PROCESS_HEIGHT,
-  attrs: {
-    body: {
-      strokeWidth: 0.5,
-      stroke: 'rgba(95, 98, 105, 0.6)',
-      fill: '#ffffff',
-      rx: 4,
-      ry: 4
-    },
-    text: {
-      fontSize: 14,
-      fill: '#333333'
-    }
-  }
-})
-
-// 执行
-Graph.registerNode('operation', {
-  inherit: 'rect',
-  width: OPERATION_WIDTH,
-  height: OPERATION_HEIGHT,
-  attrs: {
-    body: {
-      strokeWidth: 0.5,
-      stroke: {
-        type: 'linearGradient',
-        attrs: { x1: '100%', y1: '100%', x2: '0%', y2: '0%' },
-        stops: [
-          { offset: '0%', color: '#FF9378' },
-          { offset: '100%', color: '#E13D5B' }
-        ]
-      },
-      fill: {
-        type: 'linearGradient',
-        attrs: { x1: '100%', y1: '0%', x2: '0%', y2: '100%' },
-        stops: [
-          { offset: '0%', color: '#FFF3F8' },
-          { offset: '100%', color: '#FFDBDD' }
-        ]
-      },
-      rx: 4,
-      ry: 4
-    },
-    text: {
-      fontSize: 14,
-      fill: '#E92E5E'
-    }
-  }
-})
-
-// 全局钩子
-Graph.registerNode('globalHook', {
-  inherit: 'rect',
-  width: HOOK_WIDTH,
-  height: HOOK_HEIGHT,
-  markup: [{ tagName: 'image' }],
-  attrs: {
-    image: {
-      'xlink:href': globalHookImg,
-      width: HOOK_WIDTH,
-      height: HOOK_HEIGHT,
-      refX: 0,
-      refY: 0,
-      filter: {
-        name: 'dropShadow',
-        args: {
-          color: 'rgba(202,83,206,0.33)',
-          dx: 0,
-          dy: 2,
-          blur: 7
-        }
-      }
-    }
-  }
-})
-
-// API钩子
-Graph.registerNode('hook', {
-  inherit: 'rect',
-  width: HOOK_WIDTH,
-  height: HOOK_HEIGHT,
-  markup: [{ tagName: 'image' }],
-  attrs: {
-    image: {
-      'xlink:href': hookImg,
-      width: HOOK_WIDTH,
-      height: HOOK_HEIGHT,
-      refX: 0,
-      refY: 0,
-      filter: {
-        name: 'dropShadow',
-        args: {
-          color: 'rgba(56,110,252,0.23)',
-          dx: 0,
-          dy: 2,
-          blur: 4
-        }
-      }
-    }
-  }
-})
-
-// 自定义流程标签
-Graph.registerNode('flowLabel', {
-  inherit: 'rect',
-  height: LABEL_HEIGHT,
-  attrs: {
-    body: {
-      fill: '#fff',
-      strokeWidth: 0.3,
-      stroke: 'rgba(175, 176, 180, 0.6)',
-      rx: 7,
-      ry: 7
-    },
-    text: {
-      fontSize: 12,
-      fill: '#6f6f6f'
-    }
-  }
-})
-
-// 路由器
-Graph.registerNode('router', {
-  inherit: 'rect',
-  width: 24,
-  height: 24,
-  markup: [{ tagName: 'image' }],
-  attrs: {
-    image: {
-      // 'xlink:href': routerImg,
-      width: 24,
-      height: 24,
-      refX: 0,
-      refY: 0,
-      filter: {
-        name: 'dropShadow',
-        args: {
-          color: 'rgba(69, 211, 142, 0.4)',
-          dx: 0,
-          dy: 3,
-          blur: 6
-        }
-      }
-    }
-  }
-})
-
-// 异常流程
-Graph.registerEdge('reject', {
-  router: {
-    name: 'oneSide',
-    args: {
-      side: 'left',
-      padding: 128
-    }
-  },
-  attrs: {
-    line: {
-      stroke: '#787D8B',
-      strokeWidth: 0.5,
-      strokeDasharray: '3 3',
-      targetMarker: ''
-    }
-  }
-})
-
-// 可交互的指令
-Graph.registerNode('directiveTrigger', {
-  inherit: 'circle',
-  zIndex: 200,
-  width: 12,
-  height: 12,
-  attrs: {
-    body: {
-      fill: {
-        type: 'linearGradient',
-        attrs: { x1: '0', y1: '0%', x2: '100%', y2: '100%' },
-        stops: [
-          { offset: '0%', color: '#7CD4FC' },
-          { offset: '100%', color: '#478FFF' }
-        ]
-      },
-      stroke: '',
-      filter: {
-        name: 'dropShadow',
-        args: {
-          color: 'rgba(105,187,253,0.43)',
-          dx: 0,
-          dy: 2,
-          blur: 3
-        }
-      }
-    },
-    text: {
-      fontSize: 12,
-      fill: '#fff'
-    }
-  }
-})
-
-// 指令
-Graph.registerNode('directive', {
-  inherit: 'rect',
-  width: 100,
-  height: 16,
-  attrs: {
-    body: {
-      height: 16,
-      rx: 8,
-      ry: 8,
-      fill: '#A4BEE1',
-      stroke: ''
-    },
-    text: {
-      fontSize: 12,
-      fill: '#fff'
-    }
-  }
-})
-
 // eslint-disable-next-line react/display-name
 const FlowChart = React.memo(
   ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
@@ -410,6 +118,316 @@ const FlowChart = React.memo(
     useEffect(() => {
       setHook(undefined)
     }, [id])
+
+    useEffect(() => {
+      // 起止
+      Graph.registerNode('terminal', {
+        inherit: 'rect',
+        width: TERMINAL_WIDTH,
+        height: TERMINAL_HEIGHT,
+        attrs: {
+          body: {
+            strokeWidth: 0.5,
+            stroke: 'rgba(95, 98, 105, 0.6)',
+            fill: '#F3F9FD',
+            rx: 14,
+            ry: 14
+          },
+          text: {
+            fontSize: 14,
+            fill: '#333333'
+          }
+        }
+      })
+
+      // 流程箭头
+      Graph.registerEdge('flowline', {
+        zIndex: -1,
+        attrs: {
+          line: {
+            stroke: '#1034FF',
+            targetMarker: {
+              name: 'block',
+              width: 3,
+              height: 4
+            }
+          }
+        }
+      })
+
+      // 拒绝流程里的箭头
+      Graph.registerEdge('rejectArrow', {
+        attrs: {
+          line: {
+            stroke: '#787D8B',
+            targetMarker: {
+              name: 'block',
+              width: 3,
+              height: 4
+            }
+          }
+        }
+      })
+
+      // 决策判断
+      Graph.registerNode('decision', {
+        inherit: 'polygon',
+        width: DECISION_WIDTH,
+        height: DECISION_HEIGHT,
+        attrs: {
+          body: {
+            strokeWidth: 0.5,
+            stroke: '#F2B241',
+            fill: '#ffffff',
+            refPoints: '0,10 10,0 20,10 10,20'
+          },
+          text: {
+            fontSize: 14,
+            fill: '#F3B13F'
+          }
+        }
+      })
+
+      // 程序
+      Graph.registerNode('process', {
+        inherit: 'rect',
+        width: PROCESS_WIDTH,
+        height: PROCESS_HEIGHT,
+        attrs: {
+          body: {
+            strokeWidth: 0.5,
+            stroke: 'rgba(95, 98, 105, 0.6)',
+            fill: '#ffffff',
+            rx: 4,
+            ry: 4
+          },
+          text: {
+            fontSize: 14,
+            fill: '#333333'
+          }
+        }
+      })
+
+      // 执行
+      Graph.registerNode('operation', {
+        inherit: 'rect',
+        width: OPERATION_WIDTH,
+        height: OPERATION_HEIGHT,
+        attrs: {
+          body: {
+            strokeWidth: 0.5,
+            stroke: {
+              type: 'linearGradient',
+              attrs: { x1: '100%', y1: '100%', x2: '0%', y2: '0%' },
+              stops: [
+                { offset: '0%', color: '#FF9378' },
+                { offset: '100%', color: '#E13D5B' }
+              ]
+            },
+            fill: {
+              type: 'linearGradient',
+              attrs: { x1: '100%', y1: '0%', x2: '0%', y2: '100%' },
+              stops: [
+                { offset: '0%', color: '#FFF3F8' },
+                { offset: '100%', color: '#FFDBDD' }
+              ]
+            },
+            rx: 4,
+            ry: 4
+          },
+          text: {
+            fontSize: 14,
+            fill: '#E92E5E'
+          }
+        }
+      })
+
+      // 全局钩子
+      Graph.registerNode('globalHook', {
+        inherit: 'rect',
+        width: HOOK_WIDTH,
+        height: HOOK_HEIGHT,
+        markup: [{ tagName: 'image' }],
+        attrs: {
+          image: {
+            'xlink:href': globalHookImg,
+            width: HOOK_WIDTH,
+            height: HOOK_HEIGHT,
+            refX: 0,
+            refY: 0,
+            filter: {
+              name: 'dropShadow',
+              args: {
+                color: 'rgba(202,83,206,0.33)',
+                dx: 0,
+                dy: 2,
+                blur: 7
+              }
+            }
+          }
+        }
+      })
+
+      // API钩子
+      Graph.registerNode('hook', {
+        inherit: 'rect',
+        width: HOOK_WIDTH,
+        height: HOOK_HEIGHT,
+        markup: [{ tagName: 'image' }],
+        attrs: {
+          image: {
+            'xlink:href': hookImg,
+            width: HOOK_WIDTH,
+            height: HOOK_HEIGHT,
+            refX: 0,
+            refY: 0,
+            filter: {
+              name: 'dropShadow',
+              args: {
+                color: 'rgba(56,110,252,0.23)',
+                dx: 0,
+                dy: 2,
+                blur: 4
+              }
+            }
+          }
+        }
+      })
+
+      // 自定义流程标签
+      Graph.registerNode('flowLabel', {
+        inherit: 'rect',
+        height: LABEL_HEIGHT,
+        attrs: {
+          body: {
+            fill: '#fff',
+            strokeWidth: 0.3,
+            stroke: 'rgba(175, 176, 180, 0.6)',
+            rx: 7,
+            ry: 7
+          },
+          text: {
+            fontSize: 12,
+            fill: '#6f6f6f'
+          }
+        }
+      })
+
+      // 路由器
+      Graph.registerNode('router', {
+        inherit: 'rect',
+        width: 24,
+        height: 24,
+        markup: [{ tagName: 'image' }],
+        attrs: {
+          image: {
+            // 'xlink:href': routerImg,
+            width: 24,
+            height: 24,
+            refX: 0,
+            refY: 0,
+            filter: {
+              name: 'dropShadow',
+              args: {
+                color: 'rgba(69, 211, 142, 0.4)',
+                dx: 0,
+                dy: 3,
+                blur: 6
+              }
+            }
+          }
+        }
+      })
+
+      // 异常流程
+      Graph.registerEdge('reject', {
+        router: {
+          name: 'oneSide',
+          args: {
+            side: 'left',
+            padding: 128
+          }
+        },
+        attrs: {
+          line: {
+            stroke: '#787D8B',
+            strokeWidth: 0.5,
+            strokeDasharray: '3 3',
+            targetMarker: ''
+          }
+        }
+      })
+
+      // 可交互的指令
+      Graph.registerNode('directiveTrigger', {
+        inherit: 'circle',
+        zIndex: 200,
+        width: 12,
+        height: 12,
+        attrs: {
+          body: {
+            fill: {
+              type: 'linearGradient',
+              attrs: { x1: '0', y1: '0%', x2: '100%', y2: '100%' },
+              stops: [
+                { offset: '0%', color: '#7CD4FC' },
+                { offset: '100%', color: '#478FFF' }
+              ]
+            },
+            stroke: '',
+            filter: {
+              name: 'dropShadow',
+              args: {
+                color: 'rgba(105,187,253,0.43)',
+                dx: 0,
+                dy: 2,
+                blur: 3
+              }
+            }
+          },
+          text: {
+            fontSize: 12,
+            fill: '#fff'
+          }
+        }
+      })
+
+      // 指令
+      Graph.registerNode('directive', {
+        inherit: 'rect',
+        width: 100,
+        height: 16,
+        attrs: {
+          body: {
+            height: 16,
+            rx: 8,
+            ry: 8,
+            fill: '#A4BEE1',
+            stroke: ''
+          },
+          text: {
+            fontSize: 12,
+            fill: '#fff'
+          }
+        }
+      })
+
+      return () => {
+        Graph.unregisterNode('terminal')
+        Graph.unregisterNode('flowline')
+        Graph.unregisterNode('rejectArrow')
+        Graph.unregisterNode('decision')
+        Graph.unregisterNode('process')
+        Graph.unregisterNode('operation')
+        Graph.unregisterNode('globalHook')
+        Graph.unregisterNode('hook')
+        Graph.unregisterNode('flowLabel')
+        Graph.unregisterNode('router')
+        Graph.unregisterNode('reject')
+        Graph.unregisterNode('directiveTrigger')
+        Graph.unregisterNode('directive')
+      }
+    }, [])
 
     useEffect(() => {
       // 初始化画布

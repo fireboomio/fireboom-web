@@ -1,5 +1,5 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
@@ -7,23 +7,26 @@ import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../store'
 import type { FlowChartProps } from './FlowChart'
-import FlowChart from './FlowChart'
+// import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
 
 type DirectiveState = FlowChartProps['directiveState']
 type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
+const FlowChart = lazy(() => import('./FlowChart'))
+const SubscriptionChart = lazy(() => import('./SubscriptionChart'))
+
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { apiDesc, schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(
-    state => ({
+  const { apiDesc, schemaAST, query, operationType, appendToAPIRefresh, dispendToAPIRefresh } =
+    useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
       query: state.query,
+      operationType: state.computed.operationType,
       appendToAPIRefresh: state.appendToAPIRefresh,
       dispendToAPIRefresh: state.dispendToAPIRefresh
-    })
-  )
+    }))
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
 
@@ -129,6 +132,8 @@ const APIFlowChart = ({ id }: { id: string }) => {
   return globalState && hookState ? (
     directiveState!.isInternal ? (
       <InternalOperationChart />
+    ) : operationType === 'subscription' ? (
+      <SubscriptionChart />
     ) : (
       <FlowChart
         globalHookState={globalState}
