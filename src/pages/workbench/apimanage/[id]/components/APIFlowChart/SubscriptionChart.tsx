@@ -1,17 +1,52 @@
 // eslint-disable-next-line import/no-unassigned-import
 import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
-import { Edge, Node, Shape } from '@antv/x6'
-import { Graph } from '@antv/x6'
+import { Edge, Graph, Node, Shape } from '@antv/x6'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 
+import type { APIDesc } from '../../store'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
 import hookImg from './assets/hook.png'
 
 export interface SubscriptionChartProps {
-
+  globalHookState: {
+    onConnectionInit: {
+      name: string
+      enable: boolean
+      path: string
+    }
+  }
+  hookState: {
+    preResolve: {
+      name: string
+      enable: boolean
+      path: string
+    }
+    mutatingPreResolve: {
+      can: boolean
+      name: string
+      enable: boolean
+      path: string
+    }
+    postResolve: {
+      name: string
+      enable: boolean
+      path: string
+    }
+    mutatingPostResolve: {
+      name: string
+      enable: boolean
+      path: string
+    }
+  }
+  directiveState: {
+    fromClaim: boolean
+    rbac: boolean
+    jsonSchema: boolean
+  }
+  apiSetting: APIDesc['setting']
 }
 
 const CANVAS_PADDING = 20
@@ -22,9 +57,14 @@ const ENDPOINT_WIDTH = 320
 // 计算图形 x 值
 const ENDPOINT_X = (CANVAS_WIDTH - ENDPOINT_WIDTH) / 2
 
-const SubscriptionChart = React.memo((props: SubscriptionChartProps) => {
+const _Chart = ({
+  globalHookState,
+  hookState,
+  directiveState,
+  apiSetting
+}: SubscriptionChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  
+
   useEffect(() => {
     // 端点
     Graph.registerNode('endpoint', {
@@ -234,13 +274,28 @@ const SubscriptionChart = React.memo((props: SubscriptionChartProps) => {
       y: CANVAS_PADDING,
       ports: {
         groups: {
-          g1: {
+          bottom: {
             size: {
               width: 0,
               height: 0
-            }
+            },
+            position: 'bottom'
           }
-        }
+        },
+        items: [
+          {
+            id: 'b1',
+            group: 'bottom'
+          },
+          {
+            id: 'b2',
+            group: 'bottom'
+          },
+          {
+            id: 'b3',
+            group: 'bottom'
+          }
+        ]
       }
     })
 
@@ -250,6 +305,50 @@ const SubscriptionChart = React.memo((props: SubscriptionChartProps) => {
       label: 'Subscription Operation',
       x: ENDPOINT_X,
       y: 450,
+      ports: {
+        groups: {
+          top: {
+            size: {
+              width: 0,
+              height: 0
+            },
+            position: 'top'
+          },
+          bottom: {
+            size: {
+              width: 0,
+              height: 0
+            },
+            position: 'bottom'
+          }
+        },
+        items: [
+          {
+            id: 't1',
+            group: 'top'
+          },
+          {
+            id: 't2',
+            group: 'top'
+          },
+          {
+            id: 't3',
+            group: 'top'
+          },
+          {
+            id: 'b1',
+            group: 'bottom'
+          },
+          {
+            id: 'b2',
+            group: 'bottom'
+          },
+          {
+            id: 'b3',
+            group: 'bottom'
+          }
+        ]
+      }
     })
 
     // 事件源
@@ -258,19 +357,134 @@ const SubscriptionChart = React.memo((props: SubscriptionChartProps) => {
       label: '事件源',
       x: ENDPOINT_X,
       y: 700,
+      ports: {
+        groups: {
+          top: {
+            size: {
+              width: 0,
+              height: 0
+            }
+          }
+        },
+        items: [
+          {
+            id: 't1',
+            group: 'top'
+          },
+          {
+            id: 't2',
+            group: 'top'
+          },
+          {
+            id: 't3',
+            group: 'top'
+          }
+        ]
+      }
     })
-    
-    // graph.addEdges([
-    //   {
-    //     shape: 'orange',
-    //   }
-    // ])
 
-    graph.addNodes([
-      client,
-      operation,
-      source
+    // 流程线
+    graph.addEdges([
+      {
+        shape: 'orange',
+        source: {
+          cell: client,
+          port: 'b1'
+        },
+        target: {
+          cell: operation,
+          port: 't1'
+        }
+      },
+      {
+        shape: 'blue',
+        source: {
+          cell: client,
+          port: 'b2'
+        },
+        target: {
+          cell: operation,
+          port: 't2'
+        }
+      },
+      {
+        shape: 'orange',
+        source: {
+          cell: client,
+          port: 'b3'
+        },
+        target: {
+          cell: operation,
+          port: 't3'
+        }
+      },
+      {
+        shape: 'orange',
+        source: {
+          cell: operation,
+          port: 'b1'
+        },
+        target: {
+          cell: source,
+          port: 't1'
+        }
+      },
+      {
+        shape: 'blue',
+        source: {
+          cell: operation,
+          port: 'b2'
+        },
+        target: {
+          cell: source,
+          port: 't2'
+        }
+      },
+      {
+        shape: 'orange',
+        source: {
+          cell: operation,
+          port: 'b3'
+        },
+        target: {
+          cell: source,
+          port: 't3'
+        }
+      }
     ])
+
+    // 主节点
+    graph.addNodes([client, operation, source])
+
+    // fromClaim会隐式要求登录
+    if (directiveState.fromClaim || apiSetting.authenticationRequired) {
+      graph.addNode({
+        shape: 'decision',
+        label: '登录校验?',
+        x: 110,
+        y: 80
+      })
+    }
+
+    // 授权校验
+    if (directiveState.rbac) {
+      graph.addNode({
+        shape: 'decision',
+        label: '授权校验?',
+        x: 110,
+        y: 160
+      })
+    }
+
+    // 入参校验
+    if (directiveState.jsonSchema) {
+      graph.addNode({
+        shape: 'decision',
+        label: '入参校验?',
+        x: 110,
+        y: 236
+      })
+    }
   }, [])
 
   return (
@@ -278,7 +492,8 @@ const SubscriptionChart = React.memo((props: SubscriptionChartProps) => {
       <div className="flex-1 min-h-175 min-w-102" ref={containerRef} />
     </div>
   )
-},
-(prev, next) => isEqual(prev, next))
+}
+
+const SubscriptionChart = React.memo(_Chart, (prev, next) => isEqual(prev, next))
 
 export default SubscriptionChart
