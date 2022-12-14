@@ -20,6 +20,7 @@ import {
   Tooltip,
   Upload
 } from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -78,7 +79,9 @@ const FILE_ICON = {
 export default function StorageExplorer({ bucketId }: Props) {
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
-  const [isArrowUP, setIsArrowUP] = useImmer(false)
+  const [sortField, setSortField] = useImmer('name') // 排序字段
+  const [sortAsc, setSortAsc] = useImmer(true) // 是否升序
+  const [searchBase, setSearchBase] = useImmer('') // 搜索内容
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [options, setOptions] = useImmer<Option[]>(null!)
   const [target, setTarget] = useImmer<Option | undefined>(undefined)
@@ -99,16 +102,34 @@ export default function StorageExplorer({ bucketId }: Props) {
     setTarget(undefined)
     setVisible(false)
     inited.current = false
-    loadMenu('').then(() => {
+    loadMenu(searchBase, { forceRoot: true }).then(() => {
       inited.current = true
     })
-  }, [bucketId])
+  }, [bucketId, searchBase])
   useEffect(() => {
     if (!inited.current) {
       return
     }
     refresh()
   }, [refreshFlag])
+  // 当排序规则变化时，对现有内容进行重排序
+  useEffect(() => {
+    setOptions(options => {
+      const sortQueue: Option[][] = [options]
+      while (sortQueue.length) {
+        const target = sortQueue.pop()
+        if (!target) {
+          continue
+        }
+        sortOptions(target)
+        target.forEach(option => {
+          if (option?.children?.length) {
+            sortQueue.push(option.children)
+          }
+        })
+      }
+    })
+  }, [sortAsc, sortField])
 
   /*
    * 刷新列表
@@ -116,7 +137,7 @@ export default function StorageExplorer({ bucketId }: Props) {
    */
   const refresh = (refreshChild: boolean = false) => {
     const refreshTarget = refreshChild ? target : target?.parent
-    loadMenu(refreshTarget?.name ?? '')
+    loadMenu(refreshTarget?.name ?? searchBase)
   }
 
   const changeSerachState = () => {
@@ -148,31 +169,69 @@ export default function StorageExplorer({ bucketId }: Props) {
     />
   )
 
+  const setSort = (field: string) => {
+    if (field === sortField) {
+      setSortAsc(!sortAsc)
+    } else {
+      setSortField(field)
+      setSortAsc(true)
+    }
+  }
+
   const orderMenu = (
     <Menu
       items={[
         {
           key: '0',
           label: (
-            <div onClick={() => setIsArrowUP(!isArrowUP)}>
+            <div onClick={() => setSort('name')}>
               按名称
-              <span className="ml-2 text-red-500">
-                {isArrowUP ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              </span>
+              {sortField === 'name' && (
+                <span className="ml-2 text-red-500">
+                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                </span>
+              )}
             </div>
           )
         },
         {
           key: '1',
-          label: <div>按文件大小</div>
+          label: (
+            <div onClick={() => setSort('size')}>
+              按文件大小
+              {sortField === 'size' && (
+                <span className="ml-2 text-red-500">
+                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                </span>
+              )}
+            </div>
+          )
         },
         {
           key: '2',
-          label: <div>按创建时间</div>
+          label: (
+            <div onClick={() => setSort('createTime')}>
+              按创建时间
+              {sortField === 'createTime' && (
+                <span className="ml-2 text-red-500">
+                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                </span>
+              )}
+            </div>
+          )
         },
         {
           key: '3',
-          label: <div>按修改时间</div>
+          label: (
+            <div onClick={() => setSort('updateTime')}>
+              按修改时间
+              {sortField === 'updateTime' && (
+                <span className="ml-2 text-red-500">
+                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                </span>
+              )}
+            </div>
+          )
         }
       ]}
     />
@@ -181,7 +240,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const onChange = (value: string[], selectedOptions: Option[]) => {
     setBreads(
       selectedOptions.map(item => ({
-        value: item.isLeaf ? item.value : item.value.replace(/\/$/, ''),
+        value: item.isLeaf ? item.value : item.name.replace(/\/$/, ''),
         isLeaf: !!item.isLeaf
       }))
     )
@@ -212,10 +271,27 @@ export default function StorageExplorer({ bucketId }: Props) {
   //   }
   //   return undefined
   // }
+  const sortOptions = (options: any[]) => {
+    options.sort((a, b) => {
+      let flag
+      if (sortField === 'name') {
+        flag = a.value.localeCompare(b.value)
+      } else if (sortField === 'size') {
+        flag = (a?.size ?? 0) - (b?.size ?? 0)
+      } else if (sortField === 'createTime') {
+        flag = dayjs(a.createTime).valueOf() - dayjs(b.createTime).valueOf()
+      } else {
+        flag = dayjs(a.updateTime).valueOf() - dayjs(b.updateTime).valueOf()
+      }
+      return sortAsc ? flag : -flag
+    })
+  }
+
   /**
    * 根据path匹配options中的节点并刷新
    */
-  const loadMenu = async (path: string) => {
+  const loadMenu = async (path: string, { forceRoot = false } = {}) => {
+    console.log('loadMenu', path)
     if (!bucketId) return
     const hide = message.loading('加载中', 0)
     try {
@@ -236,8 +312,9 @@ export default function StorageExplorer({ bucketId }: Props) {
         }
       }
       // 构造一个虚拟的root节点，用于统一根目录刷新和子目录刷新逻辑
-      const root: Option = { label: '', name: '', value: '', children: options }
-      let loadTarget = matchNode(root)
+      const root: Option = { label: '', name: searchBase, value: '', children: options }
+      // 找到需要刷新的节点，如果forceRoot为真则跳过
+      let loadTarget = !forceRoot && matchNode(root)
       if (!loadTarget) {
         loadTarget = root
       }
@@ -252,6 +329,8 @@ export default function StorageExplorer({ bucketId }: Props) {
       })
       const oldChildMap = new Map(loadTarget.children?.map(x => [x.name, x]) ?? [])
 
+      // 目录前缀
+      const replacePrefix = loadPath.replace(/[^/]*$/, '')
       const fileOpts = files
         .sort(sortFile)
         .filter(x => x.name !== loadPath)
@@ -259,33 +338,62 @@ export default function StorageExplorer({ bucketId }: Props) {
           children: oldChildMap.get(x.name)?.children,
           parent: loadTarget,
           label: (
-            <>
-              <span>
-                {x.isDir ? (
-                  <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
-                ) : (
-                  <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
-                )}
-              </span>
-              <Popover
-                content={
-                  <div className="max-w-[50vw] overflow-clip break-all">
-                    {x.name.replace(loadPath, '')}
-                  </div>
-                }
-                placement="topLeft"
-              >
-                <span className={`ml-2.5 ${x.isDir ? 'isDir' : 'isLeaf'}`}>
-                  {x.name.replace(loadPath, '')}
+            <Dropdown
+              trigger={['contextMenu']}
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: 'rename',
+                      label: '重命名',
+                      onClick: e => {
+                        e.domEvent.stopPropagation()
+                        doRename(x.name)
+                      }
+                    },
+                    {
+                      key: 'delete',
+                      label: '删除',
+                      onClick: e => {
+                        e.domEvent.stopPropagation()
+                        deleteFile(x as Option)
+                      }
+                    }
+                  ]}
+                />
+              }
+            >
+              <div className="flex">
+                <span>
+                  {x.isDir ? (
+                    <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+                  ) : (
+                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
+                  )}
                 </span>
-              </Popover>
-            </>
+
+                <Popover
+                  content={
+                    <div className="max-w-[50vw] overflow-clip break-all">
+                      {x.name.replace(replacePrefix, '')}
+                    </div>
+                  }
+                  placement="topLeft"
+                >
+                  <span className={`ml-2.5 ${styles.ellipsis} ${x.isDir ? 'isDir' : 'isLeaf'}`}>
+                    {x.name.replace(replacePrefix, '')}
+                  </span>
+                </Popover>
+              </div>
+            </Dropdown>
           ),
-          value: x.name.replace(loadPath, ''),
+          value: x.name.replace(replacePrefix, ''),
           isLeaf: !x.isDir,
           ...x
         }))
 
+      sortOptions(fileOpts)
+      console.log(root)
       loadTarget.children = fileOpts
       setOptions([...root.children!])
     } catch (e) {
@@ -300,10 +408,44 @@ export default function StorageExplorer({ bucketId }: Props) {
     await loadMenu(path)
   }
 
-  const deleteFile = () => {
+  const doRename = (name: string) => {
+    inputValue.current = ''
+    Modal.info({
+      title: '请输入名称',
+      content: (
+        <Input
+          autoFocus
+          placeholder="请输入"
+          onChange={e => {
+            inputValue.current = e.target.value
+          }}
+        />
+      ),
+      okText: '创建',
+      onOk: () => {
+        if (!inputValue.current) {
+          return
+        }
+        const hide = message.loading('保存中')
+        requests
+          .post('/api/v1/s3Upload/rename', {
+            bucketID: bucketId,
+            oldName: name,
+            newName: name.replace(/[^/]*(?=$|\/$)/, inputValue.current)
+          })
+          .then(() => {
+            hide()
+            setVisible(false)
+            void message.success('保存成功')
+            setRefreshFlag(!refreshFlag)
+          })
+      }
+    })
+  }
+  const deleteFile = (file = target) => {
     const hide = message.loading('删除中')
     void requests
-      .post('/s3Upload/remove', { bucketID: bucketId, fileName: target?.name })
+      .post('/s3Upload/remove', { bucketID: bucketId, fileName: file?.name })
       .then(() => {
         hide()
         setVisible(false)
@@ -314,6 +456,7 @@ export default function StorageExplorer({ bucketId }: Props) {
 
   const inputValue = useRef<string>()
   const createFold = () => {
+    inputValue.current = ''
     Modal.info({
       title: '请输入文件夹名称',
       content: (
@@ -384,6 +527,8 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Tooltip>
           ) : (
             <Input
+              onPressEnter={e => setSearchBase(e.currentTarget.value)}
+              autoFocus
               status="error"
               prefix={
                 <div className="cursor-pointer" onClick={changeSerachState}>

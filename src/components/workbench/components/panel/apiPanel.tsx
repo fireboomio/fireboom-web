@@ -404,6 +404,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
+      localStorage.removeItem(`_api_args_${node.id}`)
       if (`/workbench/apimanage/${node.id}` === location.pathname) {
         const findList = [...treeData]
         for (;;) {
@@ -665,6 +666,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                         onOk: () => {
                           const ids = selectedNode.map(x => x.id).filter(x => x)
                           requests.post('operateApi/batchDelete', { ids }).then(() => {
+                            ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
                             message.success('删除成功')
                             setRefreshFlag(!refreshFlag)
                           })

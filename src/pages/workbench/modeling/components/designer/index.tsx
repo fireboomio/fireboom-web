@@ -258,17 +258,25 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       if (mode === 'editor') {
         if (editorContent !== undefined) {
           const hide = message.loading('保存中...')
-          await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
-            schema: editorContent
-          })
+          await requests.post<unknown, DMFResp>(
+            `/prisma/migrate/${dbSourceId ?? ''}`,
+            {
+              schema: editorContent
+            },
+            { timeout: 30e3 }
+          )
           await refreshBlocks()
           hide()
         }
       } else {
         const hide = message.loading('保存中...')
-        await requests.post<unknown, DMFResp>(`/prisma/migrate/${dbSourceId ?? ''}`, {
-          schema: transferToEditor()
-        })
+        await requests.post<unknown, DMFResp>(
+          `/prisma/migrate/${dbSourceId ?? ''}`,
+          {
+            schema: transferToEditor()
+          },
+          { timeout: 30e3 }
+        )
         await refreshBlocks()
         hide()
       }

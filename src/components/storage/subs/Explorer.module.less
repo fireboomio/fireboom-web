@@ -80,7 +80,7 @@
     }
   }
   .ant-cascader-menu-item {
-    padding-left: 10px;
+    padding: 0;
     width: 188px;
     min-height: 36px;
     display: flex;
@@ -88,6 +88,9 @@
     color: #333;
     &:hover {
       font-weight: 400;
+    }
+    > .ant-cascader-menu-item-content {
+      padding: 5px 12px 5px 10px;
     }
   }
   .ant-cascader-menu-item-active {
@@ -100,10 +103,13 @@
   }
   .ant-cascader-menu-item-content {
     width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
+}
+
+.ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fileDetail {
