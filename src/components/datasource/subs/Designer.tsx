@@ -1,6 +1,8 @@
-import { useContext, useEffect, useState } from 'react'
+import { Input, Modal } from 'antd'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
+import getDefaultCode from '@/components/Ide/getDefaultCode'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -109,6 +111,7 @@ export default function Designer() {
   const { handleToggleDesigner, handleCreate } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
   const [examples, setExamples] = useState([])
+  const inputValue = useRef<string>('')
 
   useEffect(() => {
     void requests
@@ -140,7 +143,39 @@ export default function Designer() {
       })
   }, [])
 
+  function createCustom() {
+    Modal.info({
+      title: '请输入文件夹名称',
+      content: (
+        <Input
+          autoFocus
+          placeholder="请输入"
+          onChange={e => {
+            inputValue.current = e.target.value
+          }}
+        />
+      ),
+      okText: '创建',
+      onOk: async () => {
+        if (!inputValue.current) {
+          return
+        }
+        let data = {
+          id: Date.now(),
+          name: inputValue.current,
+          config: { apiNamespace: inputValue.current, serverName: inputValue.current },
+          sourceType: 4,
+          switch: 0
+        } as DatasourceResp
+        data.id = Date.now()
+        handleCreate(data)
+      }
+    })
+  }
   function handleClick(sourceType: number, dbType: string, name: string) {
+    if (sourceType === 4) {
+      return createCustom()
+    }
     let data = {
       id: Date.now(),
       name: '',

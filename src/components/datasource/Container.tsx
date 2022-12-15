@@ -1,7 +1,8 @@
-import { Button, Image, message, Switch } from 'antd'
+import { Button, Image, Input, message, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -9,6 +10,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { updateHookSwitch } from '@/lib/service/hook'
 
+import IconFont from '../iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'
@@ -21,8 +23,10 @@ interface Props {
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
+  const { mutate } = useSWRConfig()
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { onRefreshMenu } = useContext(WorkbenchContext)
+  const [isEditing, setIsEditing] = React.useState(false)
 
   const navigate = useNavigate()
   if (!content) {
@@ -75,6 +79,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
     })
   }
 
+  const handleEdit = async (name: string) => {
+    if (!name.match(/^\w[a-zA-Z0-9_]*$/)) {
+      message.error('请输入字母、数字或下划线')
+      return
+    }
+    const saveData = { ...content, name }
+    await requests.put('/dataSource', saveData)
+    onRefreshMenu('dataSource')
+    setIsEditing(false)
+    await mutate(['/dataSource', String(content.id)])
+  }
+
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
@@ -100,7 +116,26 @@ export default function DatasourceContainer({ content, showType }: Props) {
               alt="数据源"
             />
             {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
-            {content?.name}
+
+            {isEditing ? (
+              <Input
+                onBlur={e => handleEdit(e.target.value)}
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                onPressEnter={e => handleEdit(e.target.value)}
+                style={{ width: '200px' }}
+                defaultValue={content?.name}
+                autoFocus
+                placeholder="请输入数据源名"
+              />
+            ) : (
+              <>
+                {content?.name}
+                <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
+                  <IconFont type="icon-bianji" />
+                </span>
+              </>
+            )}
           </>
         )}
 

@@ -31,6 +31,7 @@ export interface _DMFModel extends DMFModel {
   fields: _DMFField[]
 }
 export interface _DMFField extends DMFField {
+  hasDefault?: boolean
   isPrimaryKey?: boolean
   parentField?: _DMFField
   isForeign?: boolean
