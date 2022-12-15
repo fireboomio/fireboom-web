@@ -14,16 +14,24 @@ export class ActionGroup {
     this.linkType = linkType
   }
 
-  public addToGraph(graph: Graph) {
+  public addToGraph(
+    graph: Graph,
+    {
+      position = 'right'
+    }: {
+      position?: 'right' | 'left'
+    } = {}
+  ) {
+    const revertPosition = position === 'right' ? 'left' : 'right'
     this.trigger = graph.createNode({
       ...this._trigger,
       ports: {
         groups: {
-          right: {
-            position: 'right',
+          [position!]: {
+            position: position,
             attrs: {
               circle: {
-                r: 1,
+                r: 0,
                 style: { visibility: 'hidden' }
               }
             }
@@ -31,8 +39,8 @@ export class ActionGroup {
         },
         items: [
           {
-            id: 'right',
-            group: 'right'
+            id: position,
+            group: position
           }
         ]
       }
@@ -42,11 +50,11 @@ export class ActionGroup {
         ...ref,
         ports: {
           groups: {
-            left: {
-              position: 'left',
+            [revertPosition]: {
+              position: revertPosition,
               attrs: {
                 circle: {
-                  r: 1,
+                  r: 0,
                   style: { visibility: 'hidden' }
                 }
               }
@@ -54,8 +62,8 @@ export class ActionGroup {
           },
           items: [
             {
-              id: 'left',
-              group: 'left'
+              id: revertPosition,
+              group: revertPosition
             }
           ]
         }
@@ -69,11 +77,11 @@ export class ActionGroup {
             return graph.createEdge({
               source: {
                 cell: this.trigger,
-                port: 'right'
+                port: position
               },
               target: {
                 cell: ref,
-                port: 'left'
+                port: revertPosition
               },
               attrs: {
                 line: {
@@ -88,11 +96,11 @@ export class ActionGroup {
             return graph.createEdge({
               source: {
                 cell: this.trigger,
-                port: 'right'
+                port: position
               },
               target: {
                 cell: ref,
-                port: 'left'
+                port: revertPosition
               },
               connector: 'smooth',
               attrs: {

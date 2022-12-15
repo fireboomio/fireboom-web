@@ -1,12 +1,14 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { lazy, useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, useCallback, useEffect, useState } from 'react'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../store'
+import EditPanel from './EditPanel'
 import type { FlowChartProps } from './FlowChart'
+import type { SubscriptionGlobalHookState } from './interface'
 // import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
 
@@ -29,6 +31,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
     }))
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
+  const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
 
   const directiveState = useDebounceMemo(
     () => {
@@ -79,6 +82,12 @@ const APIFlowChart = ({ id }: { id: string }) => {
             name: 'onResponse',
             enable: globalHooks.onResponse?.switch ?? false,
             path: globalHooks.onResponse?.path ?? ''
+          },
+          // @ts-ignore
+          onConnectionInit: {
+            name: 'onConnectionInit',
+            enable: globalHooks.onConnectionInit?.switch ?? false,
+            path: globalHooks.onConnectionInit?.path ?? ''
           }
         })
         const defs =
@@ -129,21 +138,44 @@ const APIFlowChart = ({ id }: { id: string }) => {
     }
   }, [appendToAPIRefresh, loadHook, dispendToAPIRefresh])
 
-  return globalState && hookState ? (
-    directiveState!.isInternal ? (
-      <InternalOperationChart />
-    ) : operationType === 'subscription' ? (
-      <SubscriptionChart />
-    ) : (
-      <FlowChart
-        globalHookState={globalState}
-        hookState={hookState}
-        directiveState={directiveState}
-        apiSetting={apiDesc!.setting}
-      />
-    )
-  ) : (
-    <></>
+  // 监听路由变化，当路由变化时自动关闭钩子编辑器
+  useEffect(() => {
+    setEditingHook(null)
+  }, [id])
+
+  return (
+    <>
+      {globalState && hookState ? (
+        directiveState!.isInternal ? (
+          <InternalOperationChart />
+        ) : operationType === 'subscription' ? (
+          <SubscriptionChart
+            globalHookState={globalState as unknown as SubscriptionGlobalHookState}
+            hookState={hookState}
+            directiveState={directiveState}
+            apiSetting={apiDesc!.setting}
+            onEditHook={hook => setEditingHook(hook)}
+          />
+        ) : (
+          <FlowChart
+            globalHookState={globalState}
+            hookState={hookState}
+            directiveState={directiveState}
+            apiSetting={apiDesc!.setting}
+          />
+        )
+      ) : (
+        <></>
+      )}
+      {editingHook && (
+        <EditPanel
+          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
+          hasParams={!!(query ?? '').match(/\(\$\w+/)}
+          hook={editingHook}
+          onClose={() => setEditingHook(null)}
+        />
+      )}
+    </>
   )
 }
 

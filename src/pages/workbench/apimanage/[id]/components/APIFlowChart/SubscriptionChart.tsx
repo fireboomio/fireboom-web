@@ -1,55 +1,24 @@
 // eslint-disable-next-line import/no-unassigned-import
 import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
-import { Edge, Graph, Node, Shape } from '@antv/x6'
+import type { Node } from '@antv/x6'
+import { Graph } from '@antv/x6'
 import { isEqual } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
-import type { APIDesc } from '../../store'
+import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
 import hookImg from './assets/hook.png'
+import IndexNode from './IndexNode'
+import type { CommonChartProps, SubscriptionGlobalHookState } from './interface'
+import StatusDirective from './StatusDirective'
 
-export interface SubscriptionChartProps {
-  globalHookState: {
-    onConnectionInit: {
-      name: string
-      enable: boolean
-      path: string
-    }
-  }
-  hookState: {
-    preResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    mutatingPreResolve: {
-      can: boolean
-      name: string
-      enable: boolean
-      path: string
-    }
-    postResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    mutatingPostResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-  }
-  directiveState: {
-    fromClaim: boolean
-    rbac: boolean
-    jsonSchema: boolean
-  }
-  apiSetting: APIDesc['setting']
+export type SubscriptionChartProps = CommonChartProps & {
+  globalHookState: SubscriptionGlobalHookState
 }
 
-const CANVAS_PADDING = 20
+const CANVAS_PADDING = 30
 const CANVAS_WIDTH = 410
 
 const ENDPOINT_WIDTH = 320
@@ -61,7 +30,8 @@ const _Chart = ({
   globalHookState,
   hookState,
   directiveState,
-  apiSetting
+  apiSetting,
+  onEditHook
 }: SubscriptionChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -223,14 +193,51 @@ const _Chart = ({
       }
     })
 
+    // 自定义流程标签
+    Graph.registerNode('flowLabel', {
+      inherit: 'rect',
+      height: 14,
+      attrs: {
+        body: {
+          fill: '#fff',
+          strokeWidth: 0.3,
+          stroke: 'rgba(175, 176, 180, 0.6)',
+          rx: 7,
+          ry: 7
+        },
+        text: {
+          fontSize: 12,
+          fill: '#6f6f6f'
+        }
+      }
+    })
+
+    // 异常流程
+    Graph.registerEdge('rejectLine', {
+      attrs: {
+        line: {
+          stroke: '#787D8B',
+          strokeWidth: 0.5,
+          strokeDasharray: '3 3',
+          targetMarker: {
+            name: 'block',
+            width: 3,
+            height: 5
+          }
+        }
+      }
+    })
+
     return () => {
       Graph.unregisterNode('endpoint')
       Graph.unregisterNode('decision')
       Graph.unregisterNode('operation')
       Graph.unregisterNode('globalHook')
       Graph.unregisterNode('hook')
+      Graph.unregisterNode('flowLabel')
       Graph.unregisterEdge('orange')
       Graph.unregisterEdge('blue')
+      Graph.unregisterEdge('rejectLine')
     }
   }, [])
 
@@ -271,32 +278,7 @@ const _Chart = ({
       shape: 'endpoint',
       label: '客户端',
       x: ENDPOINT_X,
-      y: CANVAS_PADDING,
-      ports: {
-        groups: {
-          bottom: {
-            size: {
-              width: 0,
-              height: 0
-            },
-            position: 'bottom'
-          }
-        },
-        items: [
-          {
-            id: 'b1',
-            group: 'bottom'
-          },
-          {
-            id: 'b2',
-            group: 'bottom'
-          },
-          {
-            id: 'b3',
-            group: 'bottom'
-          }
-        ]
-      }
+      y: CANVAS_PADDING
     })
 
     // operation
@@ -304,51 +286,7 @@ const _Chart = ({
       shape: 'operation',
       label: 'Subscription Operation',
       x: ENDPOINT_X,
-      y: 450,
-      ports: {
-        groups: {
-          top: {
-            size: {
-              width: 0,
-              height: 0
-            },
-            position: 'top'
-          },
-          bottom: {
-            size: {
-              width: 0,
-              height: 0
-            },
-            position: 'bottom'
-          }
-        },
-        items: [
-          {
-            id: 't1',
-            group: 'top'
-          },
-          {
-            id: 't2',
-            group: 'top'
-          },
-          {
-            id: 't3',
-            group: 'top'
-          },
-          {
-            id: 'b1',
-            group: 'bottom'
-          },
-          {
-            id: 'b2',
-            group: 'bottom'
-          },
-          {
-            id: 'b3',
-            group: 'bottom'
-          }
-        ]
-      }
+      y: 416
     })
 
     // 事件源
@@ -356,105 +294,51 @@ const _Chart = ({
       shape: 'endpoint',
       label: '事件源',
       x: ENDPOINT_X,
-      y: 700,
-      ports: {
-        groups: {
-          top: {
-            size: {
-              width: 0,
-              height: 0
-            }
-          }
-        },
-        items: [
-          {
-            id: 't1',
-            group: 'top'
-          },
-          {
-            id: 't2',
-            group: 'top'
-          },
-          {
-            id: 't3',
-            group: 'top'
-          }
-        ]
-      }
+      y: 587
     })
+
+    // 主节点
+    graph.addNodes([client, operation, source])
 
     // 流程线
     graph.addEdges([
       {
         shape: 'orange',
-        source: {
-          cell: client,
-          port: 'b1'
-        },
-        target: {
-          cell: operation,
-          port: 't1'
-        }
+        source: { x: 166, y: 58 },
+        target: { x: 166, y: 416 }
       },
       {
         shape: 'blue',
-        source: {
-          cell: client,
-          port: 'b2'
-        },
-        target: {
-          cell: operation,
-          port: 't2'
-        }
+        source: { x: 234, y: 58 },
+        target: { x: 234, y: 416 }
       },
       {
         shape: 'orange',
-        source: {
-          cell: client,
-          port: 'b3'
-        },
-        target: {
-          cell: operation,
-          port: 't3'
-        }
+        source: { x: 315, y: 58 },
+        target: { x: 315, y: 416 }
       },
       {
         shape: 'orange',
-        source: {
-          cell: operation,
-          port: 'b1'
-        },
-        target: {
-          cell: source,
-          port: 't1'
-        }
+        // source: { x: 142, y: 450 },
+        // target: { x: 142, y: 587 }
+        source: { x: 166, y: 450 },
+        target: { x: 166, y: 587 }
       },
       {
         shape: 'blue',
-        source: {
-          cell: operation,
-          port: 'b2'
-        },
-        target: {
-          cell: source,
-          port: 't2'
-        }
+        // source: { x: 210, y: 450 },
+        // target: { x: 210, y: 587 }
+        source: { x: 234, y: 450 },
+        target: { x: 234, y: 587 }
       },
       {
         shape: 'orange',
-        source: {
-          cell: operation,
-          port: 'b3'
-        },
-        target: {
-          cell: source,
-          port: 't3'
-        }
+        // source: { x: 281, y: 450 },
+        // target: { x: 281, y: 587 }
+        source: { x: 315, y: 450 },
+        target: { x: 315, y: 587 }
       }
     ])
-
-    // 主节点
-    graph.addNodes([client, operation, source])
 
     // fromClaim会隐式要求登录
     if (directiveState.fromClaim || apiSetting.authenticationRequired) {
@@ -463,6 +347,19 @@ const _Chart = ({
         label: '登录校验?',
         x: 110,
         y: 80
+      })
+      graph.addEdge({
+        shape: 'rejectLine',
+        source: { x: 110, y: 106 },
+        target: { x: 41, y: 106 }
+      })
+      graph.addNode({
+        shape: 'flowLabel',
+        label: '401',
+        width: 26,
+        height: 14,
+        x: 72,
+        y: 98
       })
     }
 
@@ -474,6 +371,19 @@ const _Chart = ({
         x: 110,
         y: 160
       })
+      graph.addEdge({
+        shape: 'rejectLine',
+        source: { x: 110, y: 186 },
+        target: { x: 41, y: 186 }
+      })
+      graph.addNode({
+        shape: 'flowLabel',
+        label: '401',
+        width: 26,
+        height: 14,
+        x: 72,
+        y: 178
+      })
     }
 
     // 入参校验
@@ -484,8 +394,233 @@ const _Chart = ({
         x: 110,
         y: 236
       })
+      graph.addEdge({
+        shape: 'rejectLine',
+        source: { x: 110, y: 262 },
+        target: { x: 41, y: 262 }
+      })
+      graph.addNode({
+        shape: 'flowLabel',
+        label: '400',
+        width: 26,
+        height: 14,
+        x: 72,
+        y: 254
+      })
     }
-  }, [])
+
+    // 结束
+    if (
+      directiveState.fromClaim ||
+      apiSetting.authenticationRequired ||
+      directiveState.rbac ||
+      directiveState.jsonSchema
+    ) {
+      graph.addNode({
+        shape: 'rect',
+        label: '结\n\n\n束',
+        x: 20,
+        y: 82,
+        width: 21,
+        height: 212,
+        attrs: {
+          body: {
+            stroke: '#E9EBF3',
+            strokeWidth: 3,
+            fill: 'none'
+          },
+          text: {
+            fill: '#B6BACC',
+            fontSize: 12
+          }
+        }
+      })
+    }
+
+    // 钩子
+    // onConnectionInit
+    new ActionGroup(
+      {
+        shape: 'globalHook',
+        // x: 132,
+        x: 156,
+        y: 520
+      },
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={globalHookState.onConnectionInit.enable}
+              label="onConnectionInit"
+              onDoubleClick={() => {
+                onEditHook?.(globalHookState.onConnectionInit)
+              }}
+            />
+          ),
+          // x: 24,
+          // y: 543
+          x: 10,
+          y: 536
+        }
+      ],
+      'arrow'
+    ).addToGraph(graph, { position: 'left' })
+
+    // pre 钩子
+    const preHooks: Node.Metadata[] = [
+      {
+        shape: 'react-shape',
+        width: 114,
+        height: 20,
+        component: (
+          <StatusDirective
+            enabled={hookState.preResolve.enable}
+            label="preResolve"
+            onDoubleClick={() => {
+              onEditHook?.(hookState.preResolve)
+            }}
+          />
+        ),
+        x: 14,
+        y: 323
+      }
+    ]
+    // 根据是否支持 mutatingPreResolve 钩子显示
+    if (hookState.mutatingPreResolve.can) {
+      preHooks.push({
+        shape: 'react-shape',
+        width: 114,
+        height: 20,
+        component: (
+          <StatusDirective
+            enabled={hookState.mutatingPreResolve.enable}
+            label="mutatingPreResolve"
+            onDoubleClick={() => {
+              onEditHook?.(hookState.mutatingPreResolve)
+            }}
+          />
+        ),
+        x: 14,
+        y: 354
+      })
+    }
+    new ActionGroup(
+      {
+        shape: 'hook',
+        x: 156,
+        y: 315
+      },
+      preHooks,
+      'arrow'
+    ).addToGraph(graph, { position: 'left' })
+
+    // post 钩子
+    new ActionGroup(
+      { shape: 'hook', x: 225, y: 315 },
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={hookState.mutatingPostResolve.enable}
+              label="mutatingPostResolve"
+              onDoubleClick={() => {
+                onEditHook?.(hookState.mutatingPostResolve)
+              }}
+            />
+          ),
+          x: 282,
+          y: 292
+        },
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={hookState.postResolve.enable}
+              label="postResolve"
+              onDoubleClick={() => {
+                onEditHook?.(hookState.postResolve)
+              }}
+            />
+          ),
+          x: 282,
+          y: 332
+        }
+      ],
+      'arrow'
+    ).addToGraph(graph)
+
+    // 流程顺序
+    const steps: Node.Metadata[] = [
+      {
+        shape: 'react-shape',
+        // x: 108,
+        x: 139,
+        y: 482,
+        component: <IndexNode index="1" text="订阅" />
+      },
+      {
+        shape: 'react-shape',
+        x: 139,
+        y: 375,
+        component: <IndexNode index="2" text="订阅" />
+      },
+      {
+        shape: 'react-shape',
+        // x: 181,
+        x: 206,
+        y: 482,
+        component: <IndexNode index="3" text="推送" />
+      },
+      {
+        shape: 'react-shape',
+        x: 206,
+        y: 204,
+        component: <IndexNode index="4" text="推送" />
+      },
+      {
+        shape: 'react-shape',
+        // x: 253,
+        x: 287,
+        y: 482,
+        component: <IndexNode index="5" text="取消" />
+      },
+      {
+        shape: 'react-shape',
+        x: 287,
+        y: 375,
+        component: <IndexNode index="6" text="取消" />
+      }
+    ]
+    steps.forEach(step => {
+      graph.addNode(step)
+    })
+
+    // 备注
+    graph.addNode({
+      shape: 'rect',
+      x: 286,
+      y: 632,
+      label: '注：2 → 3 → 4 → 5 重复执行',
+      attrs: {
+        body: {
+          fill: 'none',
+          stroke: 'none'
+        },
+        text: {
+          fill: '#9296A0',
+          fontSize: 12
+        }
+      }
+    })
+  }, [apiSetting, directiveState, globalHookState, hookState, onEditHook])
 
   return (
     <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">

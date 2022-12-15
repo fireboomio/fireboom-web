@@ -7,10 +7,8 @@ import { isEqual } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
-import type { APIDesc } from '@/pages/workbench/apimanage/[id]/store'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
-
+import EditPanel from '../../components/APIFlowChart/EditPanel'
+import { useAPIManager } from '../../store'
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
@@ -19,65 +17,11 @@ import loopImg from './assets/loop.png'
 import loopInactiveImg from './assets/loop-inactive.png'
 import routerBottomImg from './assets/tee-bottom.png'
 import routerLeftImg from './assets/tee-left.png'
+import type { CommonChartProps, NormalGlobalHookState } from './interface'
 import StatusDirective from './StatusDirective'
 
-export interface FlowChartProps {
-  globalHookState: {
-    onRequest: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    onResponse: {
-      name: string
-      enable: boolean
-      path: string
-    }
-  }
-  hookState: {
-    preResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    mutatingPreResolve: {
-      can: boolean
-      name: string
-      enable: boolean
-      path: string
-    }
-    customResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    postResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    mutatingPostResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-    mockResolve: {
-      name: string
-      enable: boolean
-      path: string
-    }
-  }
-  directiveState: {
-    isInternal: boolean
-    fromClaim: boolean
-    rbac: boolean
-    jsonSchema: boolean
-    injectGeneratedUUID: boolean
-    injectCurrentDatetime: boolean
-    injectEnvironmentVariable: boolean
-    transform: boolean
-  }
-  apiSetting: APIDesc['setting']
+export type FlowChartProps = CommonChartProps & {
+  globalHookState: NormalGlobalHookState
 }
 
 const CANVAS_PADDING = 20
@@ -104,18 +48,14 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: FlowChartProps) => {
+const _Chart = ({
+  globalHookState,
+  hookState,
+  directiveState,
+  apiSetting,
+  onEditHook
+}: FlowChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [hook, setHook] = useState<{ name: string; path: string } | null>()
-  const { apiDesc } = useAPIManager(state => ({
-    apiDesc: state.apiDesc
-  }))
-
-  const { id } = useParams()
-  // 监听路由变化，当路由变化时自动关闭钩子编辑器
-  useEffect(() => {
-    setHook(undefined)
-  }, [id])
 
   useEffect(() => {
     // 起止
@@ -499,7 +439,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
               <StatusDirective
                 enabled={globalHookState.onRequest.enable}
                 label="onRequest"
-                onDoubleClick={() => setHook(globalHookState.onRequest)}
+                onDoubleClick={() => onEditHook?.(globalHookState.onRequest)}
               />
             ),
             x: 290,
@@ -745,7 +685,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
           <StatusDirective
             enabled={hookState.preResolve.enable}
             label="preResolve"
-            onDoubleClick={() => setHook(hookState.preResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.preResolve)}
           />
         ),
         x: 290,
@@ -759,7 +699,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
           <StatusDirective
             enabled={hookState.customResolve.enable}
             label="customResolve"
-            onDoubleClick={() => setHook(hookState.customResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.customResolve)}
           />
         ),
         x: 290,
@@ -776,7 +716,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
           <StatusDirective
             enabled={hookState.mutatingPreResolve.enable}
             label="mutatingPreResolve"
-            onDoubleClick={() => setHook(hookState.mutatingPreResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.mutatingPreResolve)}
           />
         ),
         x: 280,
@@ -804,7 +744,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
             border: `1px solid rgb(233, 46, 94)`,
             background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
           }}
-          onDoubleClick={() => setHook(hookState.mockResolve)}
+          onDoubleClick={() => onEditHook?.(hookState.mockResolve)}
         >
           mockResolve
         </div>
@@ -875,7 +815,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
             <StatusDirective
               enabled={hookState.postResolve.enable}
               label="postResolve"
-              onDoubleClick={() => setHook(hookState.postResolve)}
+              onDoubleClick={() => onEditHook?.(hookState.postResolve)}
             />
           ),
           x: 290,
@@ -889,7 +829,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
             <StatusDirective
               enabled={hookState.mutatingPostResolve.enable}
               label="mutatingPostResolve"
-              onDoubleClick={() => setHook(hookState.mutatingPostResolve)}
+              onDoubleClick={() => onEditHook?.(hookState.mutatingPostResolve)}
             />
           ),
           x: 280,
@@ -1055,7 +995,7 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
             <StatusDirective
               enabled={globalHookState.onResponse.enable}
               label="onResponse"
-              onDoubleClick={() => setHook(globalHookState.onResponse)}
+              onDoubleClick={() => onEditHook?.(globalHookState.onResponse)}
             />
           ),
           x: 290,
@@ -1207,24 +1147,12 @@ const _Chart = ({ globalHookState, hookState, directiveState, apiSetting }: Flow
       console.log('dispose FlowChart')
       graph.dispose()
     }
-  }, [directiveState, hookState, globalHookState])
+  }, [directiveState, hookState, globalHookState, apiSetting, onEditHook])
 
   return (
-    <>
-      <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">
-        <div className="flex-1 min-h-175 min-w-102" ref={containerRef} />
-      </div>
-      {hook ? (
-        <EditPanel
-          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={!!(apiDesc?.content ?? '').match(/\(\$\w+/)}
-          hook={hook}
-          onClose={() => setHook(null)}
-        />
-      ) : (
-        ''
-      )}
-    </>
+    <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">
+      <div className="flex-1 min-h-175 min-w-102" ref={containerRef} />
+    </div>
   )
 }
 const FlowChart = React.memo(_Chart, (prev, next) => isEqual(prev, next))
