@@ -9,7 +9,7 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { lazy, useContext, useEffect, useMemo, useState } from 'react'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
@@ -22,6 +22,8 @@ import CrossOriginPopup from './CrossOriginPopup'
 import ExecuteButton from './ExecuteButton'
 import InternalPopup from './InternalPopup'
 import RBACPopup from './RBACPopup'
+
+const SequenceDiagram = lazy(() => import('./SequenceDiagram'))
 
 const GraphiQLToolbar = () => {
   const [argOpen, setArgOpen] = useState(false)
@@ -328,7 +330,10 @@ const GraphiQLToolbar = () => {
       <Dropdown overlay={<CrossOriginPopup />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">跨源关联</button>
       </Dropdown>
-      <span className="graphiql-toolbar-sequence-chart">时序图</span>
+      <Dropdown overlay={<SequenceDiagram />} trigger={['click']} placement="bottomRight">
+        <span className="graphiql-toolbar-sequence-chart">时序图</span>
+      </Dropdown>
+
       <span className="graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
         {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}
       </span>
