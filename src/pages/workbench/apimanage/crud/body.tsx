@@ -232,13 +232,15 @@ export default function CRUDBody(props: CRUDBodyProps) {
             list: true,
             filter: true,
             sortDirection: SortDirection.Asc,
-            create:
-              field.name === props.model?.idField
-                ? KeyType.Hidden
-                : field.required
-                ? KeyType.Required
-                : KeyType.Optional,
+            create: field.required ? KeyType.Required : KeyType.Optional,
             update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
+          }
+          if (field.name === props.model?.idField) {
+            if (field.hasDefault) {
+              data.create = KeyType.Hidden
+            } else {
+              data.create = KeyType.Required
+            }
           }
           if (data.createType === undefined) {
             data.create = KeyType.Hidden
