@@ -162,6 +162,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
             hookState={hookState}
             directiveState={directiveState}
             apiSetting={apiDesc!.setting}
+            onEditHook={hook => setEditingHook(hook)}
           />
         )
       ) : (
