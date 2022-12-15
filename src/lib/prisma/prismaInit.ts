@@ -34,4 +34,12 @@ export default async function init(monaco: any, editor: any) {
 
   await wireTmGrammars(monaco, registry, grammars, editor)
   console.log('prisma高亮——完成')
+  console.log('monaco', monaco)
+  console.log('editor', editor)
+  console.log('registry', registry)
+  console.log('grammars', grammars)
+
+  await new Promise(resolve => setTimeout(resolve, 500))
+  await wireTmGrammars(monaco, registry, grammars, editor)
+  console.log('prisma高亮——二次执行完成')
 }
