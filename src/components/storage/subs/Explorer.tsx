@@ -91,9 +91,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const uploadingTip = useRef<Function>()
 
   const uploadPath = useMemo(() => {
-    const rv = target?.isLeaf ? target.parent?.name ?? '' : target?.name ?? ''
-    console.log('uploadPath', rv)
-    return rv
+    return target?.isLeaf ? target.parent?.name ?? '' : target?.name ?? ''
   }, [target])
 
   const inited = useRef(false)
@@ -240,7 +238,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const onChange = (value: string[], selectedOptions: Option[]) => {
     setBreads(
       selectedOptions.map(item => ({
-        value: item.isLeaf ? item.value : item.name.replace(/\/$/, ''),
+        value: item.isLeaf ? item.value : (item.name ?? '').replace(/\/$/, ''),
         isLeaf: !!item.isLeaf
       }))
     )
@@ -353,10 +351,18 @@ export default function StorageExplorer({ bucketId }: Props) {
                     },
                     {
                       key: 'delete',
-                      label: '删除',
+                      label: (
+                        <Popconfirm
+                          title="确定删除吗?"
+                          onConfirm={() => deleteFile(x as Option)}
+                          okText="删除"
+                          cancelText="取消"
+                        >
+                          删除
+                        </Popconfirm>
+                      ),
                       onClick: e => {
                         e.domEvent.stopPropagation()
-                        deleteFile(x as Option)
                       }
                     }
                   ]}
@@ -421,14 +427,14 @@ export default function StorageExplorer({ bucketId }: Props) {
           }}
         />
       ),
-      okText: '创建',
+      okText: '确定',
       onOk: () => {
         if (!inputValue.current) {
           return
         }
         const hide = message.loading('保存中')
         requests
-          .post('/api/v1/s3Upload/rename', {
+          .post('/s3Upload/rename', {
             bucketID: bucketId,
             oldName: name,
             newName: name.replace(/[^/]*(?=$|\/$)/, inputValue.current)
@@ -456,6 +462,7 @@ export default function StorageExplorer({ bucketId }: Props) {
 
   const inputValue = useRef<string>()
   const createFold = () => {
+    let dir = uploadPath
     inputValue.current = ''
     Modal.info({
       title: '请输入文件夹名称',
@@ -473,10 +480,20 @@ export default function StorageExplorer({ bucketId }: Props) {
         if (!inputValue.current) {
           return
         }
-        requests.post('/api/v1/s3Upload/upload', {
-          bucketID: bucketId,
-          path: `${inputValue.current}/`
-        })
+        const hide = message.loading('创建中')
+        requests
+          .post('/s3Upload/createDir', {
+            bucketID: bucketId,
+            path: `${dir}${inputValue.current}/`
+          })
+          .then(() => {
+            hide()
+            setVisible(false)
+            void message.success('创建成功')
+            // setRefreshFlag(!refreshFlag)
+            // 刷新创建文件夹所在的目录
+            loadMenu(uploadPath)
+          })
       }
     })
     // requests.post('/api/v1/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
