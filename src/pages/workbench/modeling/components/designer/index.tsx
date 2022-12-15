@@ -62,6 +62,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [mode, setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
   // 编辑器当前内容, 仅用于向编辑器传值，并不代表编辑器实时内容
   const [editorContent, setEditorContent] = useState<string>()
+  // 编辑器当前内容, 仅用于向编辑器传值，并不代表编辑器实时内容
+  const [currentEditorValue, setCurrentEditorValue] = useState<string>()
   const [isEditing, setIsEditing] = useImmer(editType === 'add')
   const ModelDesignerRef = useRef<typeof ModelDesigner>(null)
   const EnumDesignerRef = useRef<typeof EnumDesigner>(null)
@@ -260,7 +262,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         await requests.post<unknown, DMFResp>(
           `/prisma/migrate/${dbSourceId ?? ''}`,
           {
-            schema: editorContent
+            schema: currentEditorValue
           },
           { timeout: 30e3 }
         )
@@ -478,7 +480,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             <ModelEditor
               onUpdateValidate={setEditorValidate}
               onChange={value => {
-                // setEditorContent(value)
+                setCurrentEditorValue(value)
                 applyLocalSchema(value)
               }}
               defaultContent={editorContent ?? ''}
@@ -510,7 +512,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           <div style={{ flex: '1 1 0' }}>
             <ModelEditor
               onChange={value => {
-                // setEditorContent(value)
+                setCurrentEditorValue(value)
                 applyLocalSchema(value)
               }}
               defaultContent={editorContent ?? ''}
