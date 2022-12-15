@@ -647,7 +647,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 label: (
                   <div
                     onClick={() => {
-                      void batchSwitch(true)
+                      void batchSwitch(false)
                     }}
                   >
                     下线
