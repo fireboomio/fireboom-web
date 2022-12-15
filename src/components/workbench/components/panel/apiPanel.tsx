@@ -634,6 +634,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 label: (
                   <div
                     onClick={() => {
+                      if (!selectedNode.some(x => !x.enable)) return
                       void batchSwitch(true)
                     }}
                   >
@@ -647,6 +648,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 label: (
                   <div
                     onClick={() => {
+                      if (!selectedNode.some(x => x.enable)) return
                       void batchSwitch(false)
                     }}
                   >
