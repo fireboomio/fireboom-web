@@ -25,5 +25,6 @@
       "customResolve": "import { HookRequest } from 'generated/fireboom.hooks'\nimport { $HOOK_NAME$Response } from 'generated/models'\n\nexport default async function customResolve(hook: HookRequest)\n  //: Promise<void | $HOOK_NAME$Response>{ // 取消注释以使用严格的返回类型\n  : Promise<any>{\n\t// TODO: 在此处添加代码\n}",
       "mutatingPostResolve": "import { HookRequest, HookRequestWithResponse } from 'generated/fireboom.hooks'\nimport { $HOOK_NAME$Response } from 'generated/models'\n\nexport default async function mutatingPostResolve(hook: HookRequest & HookRequestWithResponse<$HOOK_NAME$Response>)\n  //: Promise<$HOOK_NAME$Response>{ // 取消注释以使用严格的返回类型\n  : Promise<any>{\n\t// TODO: 在此处添加代码\n\treturn hook.response\n}"
     }
-  }
+  },
+  "custom": "import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';\n\nexport default new GraphQLSchema({\n  query: new GraphQLObjectType({\n    name: 'Query',\n    fields: {\n      hello: {\n        type: GraphQLString,\n        resolve() {\n          return 'world';\n        },\n      },\n    },\n  }),\n})"
 }

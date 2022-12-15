@@ -1,9 +1,8 @@
 import { loader } from '@monaco-editor/react'
-import { Descriptions, Input, message, Switch } from 'antd'
+import { message } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
 import IdeContainer from '@/components/Ide'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
@@ -11,8 +10,6 @@ import {
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
-
-import styles from './Custom.module.less'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -94,49 +91,6 @@ export default function Custom({ content }: Props) {
   }
 
   return (
-    <>
-      <div className="flex justify-center">
-        <Descriptions bordered column={1} size="small" className="w-full mt-4">
-          <Descriptions.Item label="连接名" className="h-12">
-            <>
-              {isEditing ? (
-                <Input
-                  onBlur={e => handleEdit(e.target.value)}
-                  // @ts-ignore
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                  onPressEnter={e => handleEdit(e.target.value)}
-                  style={{ width: '200px' }}
-                  defaultValue={config.serverName}
-                  autoFocus
-                  placeholder="请输入外部数据源名"
-                />
-              ) : (
-                <>
-                  {config.apiNamespace}
-                  <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
-                    <IconFont type="icon-bianji" />
-                  </span>
-                </>
-              )}
-            </>
-          </Descriptions.Item>
-        </Descriptions>
-      </div>
-      <div className="mt-10 flex items-center justify-between">
-        <span className="ml-2 text-xs text-gray-500/80">
-          <IconFont type="icon-zhuyi" className="mr-2" />
-          主要用于日志等副作用操作
-        </span>
-      </div>
-      {content.name ? (
-        <IdeContainer
-          hookPath={`customize/${content.name}`}
-          defaultLanguage="typescript"
-          hideSwitch
-        />
-      ) : (
-        ''
-      )}
-    </>
+    <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" hideSwitch />
   )
 }

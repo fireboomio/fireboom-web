@@ -168,6 +168,8 @@ const IdeContainer: FC<Props> = props => {
     const apiName = list.pop() as string
     if (path.startsWith('global/')) {
       return getDefaultCode(`global.${name}`)
+    } else if (path.startsWith('customize/')) {
+      return getDefaultCode('custom')
     } else {
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return getDefaultCode(tmplPath).then((res: string) => {
