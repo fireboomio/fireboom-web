@@ -2,7 +2,6 @@ import { Input, Modal } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 
 import IconFont from '@/components/iconfont'
-import getDefaultCode from '@/components/Ide/getDefaultCode'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -108,7 +107,7 @@ initData.forEach(({ items }) => {
 
 export default function Designer() {
   const dispatch = useContext(DatasourceDispatchContext)
-  const { handleToggleDesigner, handleCreate } = useContext(DatasourceToggleContext)
+  const { handleToggleDesigner, handleCreate, handleSave } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
   const [examples, setExamples] = useState([])
   const inputValue = useRef<string>('')
@@ -145,7 +144,7 @@ export default function Designer() {
 
   function createCustom() {
     Modal.info({
-      title: '请输入文件夹名称',
+      title: '请输入数据源名称',
       content: (
         <Input
           autoFocus
@@ -161,14 +160,14 @@ export default function Designer() {
           return
         }
         let data = {
-          id: Date.now(),
           name: inputValue.current,
           config: { apiNamespace: inputValue.current, serverName: inputValue.current },
           sourceType: 4,
           switch: 0
-        } as DatasourceResp
-        data.id = Date.now()
-        handleCreate(data)
+        } as any
+        const result = await requests.post<unknown, number>('/dataSource', data)
+        data.id = result
+        handleSave(data)
       }
     })
   }
