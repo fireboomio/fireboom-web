@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Input, message, Radio, Space } from 'antd'
+import { Input, message, Radio, Select, Space } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
 import { useStackblitz } from '@/hooks/stackblitz'
@@ -11,6 +11,7 @@ import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
 
+const { Option } = Select
 interface Props {
   className?: string
   env?: string
@@ -44,12 +45,15 @@ const StatusBar: React.FC<Props> = ({
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookSwitch, setHookSwitch] = useState<boolean>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
+  const [hooksServerProtocol, setHooksServerProtocol] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   const { openHookServer, loading: hookServerLoading } = useStackblitz()
 
   useEffect(() => {
+    const [_, protocol, url] = config?.hooksServerURL?.match(/^(https?:\/\/)?(.*)$/) || []
     setHookSwitch(!!config.hooksServerURL)
-    setHooksServerURL(config.hooksServerURL)
+    setHooksServerURL(url)
+    setHooksServerProtocol(protocol === 'http://' ? 'http://' : 'https://')
   }, [config.hooksServerURL, showHookSetting])
 
   useEffect(() => {
@@ -176,24 +180,35 @@ const StatusBar: React.FC<Props> = ({
                       <Radio value={true}>手动设置</Radio>
                     </Space>
                   </Radio.Group>
-                  <Input
-                    addonBefore="http(s)://"
-                    className={styles.hookInput}
-                    value={hooksServerURL}
-                    onChange={e => setHooksServerURL(e.target.value)}
-                    onPressEnter={() => {
-                      if (hookSwitch) {
-                        void saveHookServerURL(hooksServerURL ?? '')
-                        setShowHookSetting(false)
-                      }
-                    }}
-                    onBlur={() => {
-                      if (hookSwitch) {
-                        void saveHookServerURL(hooksServerURL ?? '')
-                        setShowHookSetting(false)
-                      }
-                    }}
-                  />
+                  <Input.Group compact>
+                    <Select
+                      className="w-2/5"
+                      popupClassName="!z-13000"
+                      value={hooksServerProtocol}
+                      onChange={setHooksServerProtocol}
+                    >
+                      <Option value="https://">https://</Option>
+                      <Option value="http://">http://</Option>
+                    </Select>
+                    <Input
+                      style={{ width: '60%' }}
+                      className={styles.hookInput}
+                      value={hooksServerURL}
+                      onChange={e => setHooksServerURL(e.target.value)}
+                      onPressEnter={() => {
+                        if (hookSwitch) {
+                          void saveHookServerURL(`${hooksServerProtocol}${hooksServerURL ?? ''}`)
+                          setShowHookSetting(false)
+                        }
+                      }}
+                      onBlur={() => {
+                        if (hookSwitch) {
+                          void saveHookServerURL(`${hooksServerProtocol}${hooksServerURL ?? ''}`)
+                          setShowHookSetting(false)
+                        }
+                      }}
+                    />
+                  </Input.Group>
                 </div>
               </>
             )}
