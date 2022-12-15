@@ -107,9 +107,10 @@ const IdeHeaderContainer: FC<Props> = props => {
     } else {
       Modal.info({
         title: '在线调试使用指南',
-        width: 584,
+        width: 720,
+        icon: null,
         content: <>
-        <img src="https://www.litmus.com/wp-content/uploads/2021/02/motion-tween-example.gif" className='w-120' />
+        <img src="/gifs/stackblitz-local-debug.gif" className='w-164' />
         <div className='mt-2'>
           <Checkbox onChange={e => {
             setStackblitzRemember(e.target.checked)

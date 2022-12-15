@@ -1,31 +1,37 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, useCallback, useEffect, useState } from 'react'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../store'
+import EditPanel from './EditPanel'
 import type { FlowChartProps } from './FlowChart'
-import FlowChart from './FlowChart'
+import type { SubscriptionGlobalHookState } from './interface'
+// import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
 
 type DirectiveState = FlowChartProps['directiveState']
 type GlobalState = FlowChartProps['globalHookState']
 type HookState = FlowChartProps['hookState']
 
+const FlowChart = lazy(() => import('./FlowChart'))
+const SubscriptionChart = lazy(() => import('./SubscriptionChart'))
+
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { apiDesc, schemaAST, query, appendToAPIRefresh, dispendToAPIRefresh } = useAPIManager(
-    state => ({
+  const { apiDesc, schemaAST, query, operationType, appendToAPIRefresh, dispendToAPIRefresh } =
+    useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
       query: state.query,
+      operationType: state.computed.operationType,
       appendToAPIRefresh: state.appendToAPIRefresh,
       dispendToAPIRefresh: state.dispendToAPIRefresh
-    })
-  )
+    }))
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
+  const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
 
   const directiveState = useDebounceMemo(
     () => {
@@ -76,6 +82,12 @@ const APIFlowChart = ({ id }: { id: string }) => {
             name: 'onResponse',
             enable: globalHooks.onResponse?.switch ?? false,
             path: globalHooks.onResponse?.path ?? ''
+          },
+          // @ts-ignore
+          onConnectionInit: {
+            name: 'onConnectionInit',
+            enable: globalHooks.onConnectionInit?.switch ?? false,
+            path: globalHooks.onConnectionInit?.path ?? ''
           }
         })
         const defs =
@@ -126,19 +138,44 @@ const APIFlowChart = ({ id }: { id: string }) => {
     }
   }, [appendToAPIRefresh, loadHook, dispendToAPIRefresh])
 
-  return globalState && hookState ? (
-    directiveState!.isInternal ? (
-      <InternalOperationChart />
-    ) : (
-      <FlowChart
-        globalHookState={globalState}
-        hookState={hookState}
-        directiveState={directiveState}
-        apiSetting={apiDesc!.setting}
-      />
-    )
-  ) : (
-    <></>
+  // 监听路由变化，当路由变化时自动关闭钩子编辑器
+  useEffect(() => {
+    setEditingHook(null)
+  }, [id])
+
+  return (
+    <>
+      {globalState && hookState ? (
+        directiveState!.isInternal ? (
+          <InternalOperationChart />
+        ) : operationType === 'subscription' ? (
+          <SubscriptionChart
+            globalHookState={globalState as unknown as SubscriptionGlobalHookState}
+            hookState={hookState}
+            directiveState={directiveState}
+            apiSetting={apiDesc!.setting}
+            onEditHook={hook => setEditingHook(hook)}
+          />
+        ) : (
+          <FlowChart
+            globalHookState={globalState}
+            hookState={hookState}
+            directiveState={directiveState}
+            apiSetting={apiDesc!.setting}
+          />
+        )
+      ) : (
+        <></>
+      )}
+      {editingHook && (
+        <EditPanel
+          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
+          hasParams={!!(query ?? '').match(/\(\$\w+/)}
+          hook={editingHook}
+          onClose={() => setEditingHook(null)}
+        />
+      )}
+    </>
   )
 }
 
