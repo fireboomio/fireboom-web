@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import StorageExplorer from '@/components/storage/subs/Explorer'
 import type { StorageResp } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
+
+import StorageExplorer from '../components/subs/Explorer'
 
 export default function FileStorage() {
   const { id } = useParams()

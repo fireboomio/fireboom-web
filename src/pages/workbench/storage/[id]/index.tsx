@@ -3,10 +3,11 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import { StorageContainer } from '@/components/storage'
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import requests from '@/lib/fetchers'
+
+import StorageContainer from '../components/Container'
 
 export default function FileStorage() {
   const { id } = useParams()

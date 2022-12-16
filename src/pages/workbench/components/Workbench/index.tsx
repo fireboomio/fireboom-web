@@ -4,11 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-// import {wi} from 'react-router-dom'
-// import { Router } from 'react-router-dom'
-// Route.LifeR
-import StatusBar from '@/components/status-bar'
-import Window from '@/components/window'
 import type { Info } from '@/interfaces/common'
 import type {
   MenuName,
@@ -21,11 +16,13 @@ import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import Window from '@/pages/workbench/components/Workbench/subs/Window'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
-import Header from './components/Header'
-import Sider from './components/Sider'
 import styles from './index.module.less'
+import Header from './subs/Header'
+import Sider from './subs/Sider'
+import StatusBar from './subs/StatusBar'
 
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
