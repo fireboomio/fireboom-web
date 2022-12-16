@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'

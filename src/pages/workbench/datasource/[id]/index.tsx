@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import { DatasourceContainer } from '@/components/datasource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -14,6 +13,8 @@ import {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
+
+import DatasourceContainer from '../components/Container'
 
 export default function Datasource() {
   const navigate = useNavigate()

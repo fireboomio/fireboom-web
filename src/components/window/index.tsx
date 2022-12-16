@@ -8,7 +8,7 @@ import { matchJson } from '@/lib/utils'
 import Error from './Error'
 import type { LogAction } from './Log'
 import Log from './Log'
-import RcTab from './rc-tab'
+import RcTab from './RcTab'
 
 const tabs = [
   { title: '日志', key: '0' },

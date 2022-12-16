@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import { HttpRequestHeaders } from '@/lib/constant'
 import requests from '@/lib/fetchers'
 

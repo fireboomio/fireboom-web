@@ -7,7 +7,7 @@ import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'

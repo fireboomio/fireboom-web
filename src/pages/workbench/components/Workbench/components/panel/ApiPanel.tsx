@@ -6,9 +6,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import IconFont from '@/components/iconfont'
-import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
-import SidePanel from '@/components/workbench/components/panel/sidePanel'
+import IconFont from '@/components/Iconfont'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -18,7 +16,9 @@ import { isEmpty, isUpperCase } from '@/lib/utils'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 // import GraphiQLApp from '@/pages/graphiql'
-import styles from './apiPanel.module.less'
+import styles from './ApiPanel.module.less'
+import type { SidePanelProps } from './SidePanel'
+import SidePanel from './SidePanel'
 
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 

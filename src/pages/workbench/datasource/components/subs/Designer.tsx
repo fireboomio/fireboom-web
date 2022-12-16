@@ -1,7 +1,7 @@
 import { Input, Modal } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,

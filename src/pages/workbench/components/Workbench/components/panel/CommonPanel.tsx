@@ -4,8 +4,7 @@ import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import IconFont from '@/components/iconfont'
-import SidePanel from '@/components/workbench/components/panel/sidePanel'
+import IconFont from '@/components/Iconfont'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import type { StorageResp } from '@/interfaces/storage'
@@ -14,7 +13,8 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
 
-import styles from './commonPanel.module.less'
+import styles from './CommonPanel.module.less'
+import SidePanel from './SidePanel'
 
 interface PanelConfig {
   title: string

@@ -3,7 +3,7 @@ import { Dropdown, Input, Menu, Popconfirm } from 'antd'
 import { useContext } from 'react'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceCurrDBContext,

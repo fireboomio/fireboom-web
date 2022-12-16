@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DMFResp } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
 import { ENTITY_NAME_REGEX, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'

@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 

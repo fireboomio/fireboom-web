@@ -1,9 +1,9 @@
 import type { Field } from '@mrleebo/prisma-ast'
 
-import FieldTypeSelector from '@/components/components/FieldType/FieldTypeSelector'
 import type { Enum, Model } from '@/interfaces/modeling'
 import { PRISMA_BASE_TYPES } from '@/lib/constants/prismaConstants'
 import useEntities from '@/lib/hooks/useEntities'
+import FieldTypeSelector from '@/pages/workbench/modeling/components/FieldType/FieldTypeSelector'
 
 interface Props {
   index: number

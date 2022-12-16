@@ -24,7 +24,7 @@ import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'

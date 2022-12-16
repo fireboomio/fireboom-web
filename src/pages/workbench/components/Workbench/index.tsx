@@ -23,8 +23,8 @@ import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
-import Header from './components/header'
-import Sider from './components/sider'
+import Header from './components/Header'
+import Sider from './components/Sider'
 import styles from './index.module.less'
 
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout

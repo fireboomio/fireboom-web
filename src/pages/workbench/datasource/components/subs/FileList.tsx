@@ -5,7 +5,7 @@ import type { ColumnsType } from 'antd/lib/table'
 import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './FileList.module.less'

@@ -10,7 +10,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { updateHookSwitch } from '@/lib/service/hook'
 
-import IconFont from '../iconfont'
+import IconFont from '@/components/Iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'

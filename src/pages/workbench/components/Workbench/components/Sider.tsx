@@ -6,9 +6,9 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import ModelPannel from '@/pages/workbench/modeling/components/pannel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
-import ApiPanel from './panel/apiPanel'
-import CommonPanel from './panel/commonPanel'
-import styles from './sider.module.less'
+import ApiPanel from './panel/ApiPanel'
+import CommonPanel from './panel/CommonPanel'
+import styles from './Sider.module.less'
 
 const tapPathMap: Record<string, string> = {
   api: '/workbench',

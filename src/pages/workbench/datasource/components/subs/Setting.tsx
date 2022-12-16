@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import type { SettingType } from '@/interfaces/setting'
 
 import styles from './Pannel.module.less'

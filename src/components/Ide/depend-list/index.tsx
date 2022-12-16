@@ -6,7 +6,7 @@ import { debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import CollapsePanel from '@/components/collapsePanel'
+import CollapsePanel from '@/components/CollapsePanel'
 import requests from '@/lib/fetchers'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
