@@ -173,7 +173,8 @@ export const useAPIManager = create<APIState>((set, get) => ({
     return requests.put(`/operateApi/content/${get().apiID}`, { content }).then(resp => {
       if (resp) {
         const query = content ?? ''
-        get().setQuery(query)
+        // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
+        // get().setQuery(query)
         set({ lastSavedQuery: query })
         // @ts-ignore
         // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
