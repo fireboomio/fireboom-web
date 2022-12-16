@@ -4,11 +4,8 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 import type { Edge, Node } from '@antv/x6'
 import { Graph, Shape } from '@antv/x6'
 import { isEqual } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useRef } from 'react'
 
-import EditPanel from '../../components/APIFlowChart/EditPanel'
-import { useAPIManager } from '../../store'
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
 import gridImg from './assets/grid.png'
@@ -352,8 +349,8 @@ const _Chart = ({
 
     return () => {
       Graph.unregisterNode('terminal')
-      Graph.unregisterNode('flowline')
-      Graph.unregisterNode('rejectArrow')
+      Graph.unregisterEdge('flowline')
+      Graph.unregisterEdge('rejectArrow')
       Graph.unregisterNode('decision')
       Graph.unregisterNode('process')
       Graph.unregisterNode('operation')
@@ -361,7 +358,7 @@ const _Chart = ({
       Graph.unregisterNode('hook')
       Graph.unregisterNode('flowLabel')
       Graph.unregisterNode('router')
-      Graph.unregisterNode('reject')
+      Graph.unregisterEdge('reject')
       Graph.unregisterNode('directiveTrigger')
       Graph.unregisterNode('directive')
     }
