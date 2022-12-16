@@ -2,9 +2,11 @@ import { Col } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import { SettingContainer, SettingPannel } from '@/components/setting'
 import type { SettingType } from '@/interfaces/setting'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+
+import Container from './components/Container'
+import Pannel from './components/Pannel'
 
 export default function Setting() {
   const { setFullscreen } = useContext(WorkbenchContext)
@@ -32,10 +34,10 @@ export default function Setting() {
       </div>
       <div className="flex flex-1 min-h-0">
         <Col className="w-188px flex-0">
-          <SettingPannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
+          <Pannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
         </Col>
         <Col className="flex-1 min-w-0 h-full overflow-y-auto bg-white">
-          <SettingContainer showType={showType} />
+          <Container showType={showType} />
         </Col>
       </div>
     </div>
