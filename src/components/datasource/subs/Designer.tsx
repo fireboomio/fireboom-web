@@ -143,7 +143,7 @@ export default function Designer() {
   }, [])
 
   function createCustom() {
-    Modal.info({
+    Modal.confirm({
       title: '请输入数据源名称',
       content: (
         <Input
@@ -155,6 +155,7 @@ export default function Designer() {
         />
       ),
       okText: '创建',
+      cancelText: '取消',
       onOk: async () => {
         if (!inputValue.current) {
           return

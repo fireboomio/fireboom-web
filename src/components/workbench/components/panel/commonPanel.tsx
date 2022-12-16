@@ -143,17 +143,6 @@ const panelMap: Record<string, PanelConfig> = {
               svg: '/assets/icon/github-fill.svg'
             }
           })
-          rows.unshift({
-            disableMenu: true,
-            svg: '/assets/icon/github-fill.svg',
-            switch: 1,
-            icon: 'other',
-            name: '默认认证器',
-            _row: { name: '' },
-            id: 0,
-            tip: '前往>',
-            openInNewPage: '#/auth/userManage'
-          })
           dispatch({
             type: 'fetched',
             data: rows

@@ -17,8 +17,6 @@ dayjs.extend(duration)
 interface systemConfig {
   apiHost: string
   apiPort: string
-  oidcHost: string
-  oidcPort: string
   debugSwitch: boolean
   devSwitch: boolean
   forcedJumpSwitch: boolean
@@ -35,9 +33,6 @@ interface Runtime {
 export default function SettingMainVersion() {
   const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
-  const [isOidcHostEditing, setIsOidcHostEditing] = useImmer(false)
-  const [isOidcPortEditing, setIsOidcPortEditing] = useImmer(false)
-  const [isMidPortEditing, setIsMidPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
   const [refreshFlag, setRefreshFlag] = useState<boolean | null | undefined>()
@@ -82,7 +77,7 @@ export default function SettingMainVersion() {
   }
 
   const editPort = (key: string, value: string) => {
-    if (value == '' && !['apiHost', 'oidcHost'].includes(key)) return
+    if (value == '' && !['apiHost'].includes(key)) return
     void requests.post('/setting', { key: key, val: value }).then(() => {
       setRefreshFlag(!refreshFlag)
     })
@@ -101,60 +96,6 @@ export default function SettingMainVersion() {
           >
             <Descriptions.Item label="运行时长:">
               {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
-            </Descriptions.Item>
-            <Descriptions.Item label="认证器域名:" className="w-20">
-              {isOidcHostEditing ? (
-                <Input
-                  defaultValue={systemConfig.oidcHost}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setIsOidcHostEditing(!isOidcHostEditing)
-                    void editPort('oidcHost', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsOidcHostEditing(!isOidcHostEditing)
-                    void editPort('oidcHost', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.oidcHost}</span>
-              )}
-              <IconFont
-                type="icon-bianji"
-                className="ml-2"
-                onClick={() => {
-                  setIsOidcHostEditing(!isOidcHostEditing)
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item label="认证器端口:" className="w-20">
-              {isOidcPortEditing ? (
-                <Input
-                  defaultValue={systemConfig.oidcPort}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setIsOidcPortEditing(!isOidcPortEditing)
-                    void editPort('oidcPort', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsOidcPortEditing(!isOidcPortEditing)
-                    void editPort('oidcPort', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.oidcPort}</span>
-              )}
-              <IconFont
-                type="icon-bianji"
-                className="ml-2"
-                onClick={() => {
-                  setIsOidcPortEditing(!isOidcPortEditing)
-                }}
-              />
             </Descriptions.Item>
             <Descriptions.Item label="API域名:" className="w-20">
               {isApiHostEditing ? (
