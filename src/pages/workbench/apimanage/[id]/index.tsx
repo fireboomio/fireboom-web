@@ -10,7 +10,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
-import ApiConfig from '@/components/apiConfig'
+import ApiConfig from '@/components/ApiConfig'
 // @ts-ignore
 // import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'

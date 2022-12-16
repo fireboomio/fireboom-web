@@ -5,7 +5,7 @@ import type React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import ApiConfig from '@/components/apiConfig'
+import ApiConfig from '@/components/ApiConfig'
 import IconFont from '@/components/iconfont'
 import type { SidePanelProps } from '@/components/workbench/components/panel/sidePanel'
 import SidePanel from '@/components/workbench/components/panel/sidePanel'
