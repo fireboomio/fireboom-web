@@ -1,6 +1,7 @@
 import { EditFilled } from '@ant-design/icons'
 import { Card, Col, Row, Switch } from 'antd'
-import { useRef, useState } from 'react'
+import type { KeyboardEventHandler } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface SDKTemplateProps {}
 
@@ -25,22 +26,22 @@ const SDKTemplate = ({}: SDKTemplateProps) => {
 
 export default SDKTemplate
 
-const SDKTemplateItem = () => {
-  const inputRef = useRef<HTMLInputElement>(null)
+const SDKTemplateItem = ({ value }: { value?: string }) => {
   const [editing, setEditing] = useState(false)
+  const editingValue = useRef(value)
 
-  const enableEditing = () => {
-    setEditing(true)
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 100)
-  }
-
-  const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'esc') {
-      //
+  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = e => {
+    if (e.key === 'Escape') {
+      editingValue.current = e.currentTarget.value
+      setEditing(false)
+    } else if (e.key === 'Enter') {
+      // save
     }
   }
+
+  useEffect(() => {
+    editingValue.current = value
+  }, [value])
 
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">
@@ -63,15 +64,13 @@ const SDKTemplateItem = () => {
         <input
           value="generated/fireboom.client.ts"
           readOnly={!editing}
-          ref={inputRef}
           className="border rounded h-full outline-none border-[rgba(95,98,105,0.1)] text-sm w-full px-3 text-[#5F6269] focus:border-[rgba(95,98,105,0.8)]"
+          onClick={() => setEditing(true)}
+          onBlur={() => setEditing(false)}
           onKeyDown={onKeyDown}
+          onInput={e => (editingValue.current = e.currentTarget.value)}
         />
-        <EditFilled
-          className="cursor-pointer top-2 right-3 absolute"
-          size={12}
-          onClick={enableEditing}
-        />
+        <EditFilled className="cursor-pointer top-2 right-3 absolute" size={8} />
       </div>
     </div>
   )
