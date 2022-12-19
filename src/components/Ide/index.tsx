@@ -168,6 +168,8 @@ const IdeContainer: FC<Props> = props => {
     const apiName = list.pop() as string
     if (path.startsWith('global/')) {
       return getDefaultCode(`global.${name}`)
+    } else if (path.startsWith('auth/')) {
+      return getDefaultCode(`auth.${name}`)
     } else if (path.startsWith('customize/')) {
       return getDefaultCode('custom')
     } else {
@@ -270,7 +272,7 @@ const IdeContainer: FC<Props> = props => {
         })
       })
     }, 1000),
-    [editor]
+    [editor, hookPath]
   )
 
   // depend变更时，保存依赖
@@ -319,6 +321,7 @@ const IdeContainer: FC<Props> = props => {
     typingsRef.current.removePackage(name)
   }
   const insertLocalDepend = (name: string) => {
+    name = name.replace(/.ts$/, '')
     if (!hookInfo) {
       return
     }
