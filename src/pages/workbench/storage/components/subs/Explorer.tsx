@@ -399,7 +399,6 @@ export default function StorageExplorer({ bucketId }: Props) {
         }))
 
       sortOptions(fileOpts)
-      console.log(root)
       loadTarget.children = fileOpts
       setOptions([...root.children!])
     } catch (e) {
@@ -674,7 +673,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   </Button>
                   <Popconfirm
                     title="确定删除吗?"
-                    onConfirm={deleteFile}
+                    onConfirm={() => deleteFile(target)}
                     okText="删除"
                     cancelText="取消"
                   >
