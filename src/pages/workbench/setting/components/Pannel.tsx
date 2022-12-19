@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import IconFont from '@/components/Iconfont'
 import type { SettingType } from '@/interfaces/setting'
 
-import styles from './Pannel.module.less'
+// import styles from './Pannel.module.less'
 import SettingItem from './subs/PannelItem'
 
 interface Props {
@@ -38,6 +38,11 @@ const settingTypeList: SettingType[] = [
   //   icon: <IconFont type="icon-a-APItoken" />,
   // },
   {
+    name: 'SDK 模板',
+    type: 'sdk',
+    icon: <IconFont type="icon-huanjingbianliang" />
+  },
+  {
     name: '环境变量',
     type: 'path',
     icon: <IconFont type="icon-huanjingbianliang" />
@@ -56,7 +61,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
   }, [])
 
   return (
-    <div className="bg-[#f8f8f8] h-full pt-5.5 px-4">
+    <div className="h-full bg-[#f8f8f8] px-4 pt-5.5">
       {settingTypeList.map(settingType => (
         <SettingItem
           active={showType === settingType.type}

@@ -5,6 +5,7 @@ import { useImmer } from 'use-immer'
 import SettingMainAppearance from './subs/Appearance'
 import SettingMainCrossdomain from './subs/Crossdomain'
 import SettingMainEnvironmentVariable from './subs/EnvironmentVariable'
+import SDKTemplate from './subs/SDKTemplate'
 import SettingMainSecurity from './subs/Security'
 import SettingMainSystem from './subs/System'
 import SettingMainVersion from './subs/Version'
@@ -42,6 +43,10 @@ export default function SettingContainer({ showType }: Props) {
       //   setTitle('API Token')
       //   setViewer(<div>Api Token</div>)
       //   break
+      case 'sdk':
+        setTitle('SDK模板')
+        setViewer(<SDKTemplate />)
+        break
       case 'path':
         setTitle('环境变量')
         setViewer(<SettingMainEnvironmentVariable />)
