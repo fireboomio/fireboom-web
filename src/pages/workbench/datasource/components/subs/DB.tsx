@@ -101,7 +101,6 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(content)
   const urlRule = {
     mysql: {
       pattern: /^mysql:\/\/.{1,120}$/g,
