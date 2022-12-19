@@ -84,26 +84,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
     set({ apiID: id })
     await get().refreshAPI()
     refreshFns.forEach(fn => fn())
-    // 第一次加载
-    if (!get().schema) {
-      // 获取 graphql 集合
-      try {
-        const res = await fetch('/app/main/graphql', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ query: getIntrospectionQuery() })
-        }).then(resp => resp.json())
-        set({
-          originSchema: res.data as IntrospectionQuery,
-          schema: buildClientSchema(res.data as IntrospectionQuery)
-        })
-      } catch (e) {
-        //
-      }
-    }
   },
   setQuery(query) {
     set({ query: query || DEFAULT_QUERY })
