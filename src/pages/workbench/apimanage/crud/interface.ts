@@ -92,3 +92,8 @@ export enum ServiceStatus {
   CompileFail = 4,
   StartFail = 5
 }
+
+export enum HookStatus {
+  Running = 1,
+  Stopped = 2
+}

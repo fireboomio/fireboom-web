@@ -117,18 +117,14 @@ export default function FileList({
             okText="是"
             cancelText="否"
           >
-            <IconFont
-              onClick={e => e?.stopPropagation()}
-              type="icon-shanchu"
+            <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}}
               className="cursor-pointer"
               style={{ fontSize: '16px', color: '#f6595b' }}
             />
           </Popconfirm>
 
           <a href={`/api/v1/file/downloadFile?type=${upType}&fileName=${rcd.name}`}>
-            <IconFont
-              onClick={e => e.stopPropagation()}
-              type="icon-xiazai"
+            <img alt="xiazai" src="assets/iconfont/xiazai.svg" style={{height:'1em', width: '1em'}}
               className="cursor-pointer"
               style={{ fontSize: '22px' }}
             />

@@ -79,7 +79,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           key: '1',
           label: (
             <div onClick={() => setIsEditing(!isEditing)}>
-              <IconFont type="icon-zhongmingming" />
+              <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-1.5">重命名</span>
             </div>
           )
@@ -88,7 +88,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
           key: '2',
           label: (
             <div onClick={() => handleToggleDesigner('form', datasourceItem.id)}>
-              <IconFont type="icon-bianji" />
+              <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-1.5">编辑</span>
             </div>
           )
@@ -107,7 +107,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
               okType={'danger'}
             >
               <div>
-                <IconFont type="icon-a-shanchu2" />
+                <img alt="a-shanchu2" src="assets/iconfont/a-shanchu2.svg" style={{height:'1em', width: '1em'}} />
                 <span className="ml-1.5">删除</span>
               </div>
             </Popconfirm>
@@ -128,29 +128,16 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
       onClick={() => onClickItem(datasourceItem)}
     >
       <div className="flex items-center cursor-pointer">
-        <IconFont
-          type="icon-tuozhuai-xuanzhong"
+        <img alt="tuozhuai-xuanzhong" src="assets/iconfont/tuozhuai-xuanzhong.svg" style={{height:'1em', width: '1em'}}
           className="-ml-3 mr-1"
           style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
         {datasourceItem.sourceType == 1 ? (
-          <IconFont
-            type={
-              config.dbType == 'SQLite'
-                ? 'icon-shujuyuantubiao2'
-                : config.dbType == 'PostgreSQL'
-                ? 'icon-shujuyuantubiao3'
-                : config.dbType == 'MongoDB'
-                ? 'icon-shujuyuantubiao4'
-                : 'icon-shujuyuantubiao1'
-            }
-          />
-        ) : datasourceItem.sourceType == 2 ? (
-          <IconFont type="icon-wenjian1" className="text-[16px]" />
+          <img alt="wenjian1" src="assets/iconfont/wenjian1.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
         ) : datasourceItem.sourceType == 3 ? (
-          <IconFont type="icon-QLweixuanzhong1" className="text-[16px]" />
+          <img alt="QLweixuanzhong1" src="assets/iconfont/QLweixuanzhong1.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
         ) : (
-          <IconFont type="icon-wenjian" className="text-[16px]" />
+          <img alt="wenjian" src="assets/iconfont/wenjian.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
         )}
 
         {isEditing ? (
@@ -194,8 +181,7 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
             leaveItem(v)
           }}
         >
-          <IconFont
-            type="icon-gengduo-shu-xuanzhong"
+          <img alt="gengduo-shu-xuanzhong" src="assets/iconfont/gengduo-shu-xuanzhong.svg" style={{height:'1em', width: '1em'}}
             onClick={e => e.stopPropagation()}
             className="m-auto mr-0 pr-2"
             style={{ visibility: isHovering ? 'visible' : 'hidden' }}

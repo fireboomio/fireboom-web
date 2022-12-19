@@ -198,7 +198,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
             className={`${styles['btn']} flex items-center justify-evenly cursor-pointer`}
             onClick={save}
           >
-            <IconFont type="icon-baocun" style={{ color: '#5F6269' }} />
+            <img alt="baocun" src="assets/iconfont/baocun.svg" style={{height:'1em', width: '1em'}} style={{ color: '#5F6269' }} />
             <span className="text-sm">保存</span>
           </Button>
         </div>
@@ -279,10 +279,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
                     />
                   </td>
                   <td>
-                    <IconFont
-                      className={`cursor-pointer ${hoverIdx === idx ? 'visible' : 'invisible'}`}
-                      style={{ color: '#F21212FF' }}
-                      type="icon-shanchu"
+                    <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}}
                       onClick={() => handleDelete(x)}
                     />
                   </td>

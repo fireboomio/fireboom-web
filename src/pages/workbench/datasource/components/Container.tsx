@@ -132,7 +132,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               <>
                 {content?.name}
                 <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
-                  <IconFont type="icon-bianji" />
+                  <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}} />
                 </span>
               </>
             )}
