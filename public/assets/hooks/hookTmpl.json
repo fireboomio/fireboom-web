@@ -4,10 +4,10 @@
     "onResponse": "import { HttpTransportHookRequestWithResponse, SKIP, CANCEL } from 'generated/fireboom.hooks'\nimport type { WunderGraphResponse } from 'fireboom-wundersdk'\n\nexport default async function onOriginResponse(hook: HttpTransportHookRequestWithResponse) : Promise<WunderGraphResponse | SKIP | CANCEL>{\n\t// TODO: 在此处添加代码\n\treturn hook.response\n}"
   },
   "auth": {
-    "postAuthentication": "import { AuthenticationHookRequest } from 'generated/fireboom.hooks'\n\nexport default async function postAuthentication(hook: AuthenticationHookRequest) : Promise<void>{\n\t// TODO: 在此处添加代码\n}",
-    "mutatingPostAuthentication": "import { AuthenticationHookRequest, AuthenticationResponse } from 'generated/fireboom.hooks'\n\nexport default async function mutatingPostAuthentication(hook: AuthenticationHookRequest) : Promise<AuthenticationResponse>{\n\t// TODO: 在此处添加代码\n\treturn {\n\t\tstatus:'deny',\n\t\tmessage: 'string'\n\t}\n}",
-    "revalidate": "import { AuthenticationHookRequest, AuthenticationResponse } from 'generated/fireboom.hooks'\n\nexport default async function revalidate(hook: AuthenticationHookRequest) : Promise<AuthenticationResponse>{\n\t// TODO: 在此处添加代码\n\treturn {\n\t\tstatus:'deny',\n\t\tmessage: 'string'\n\t}\n}",
-    "postLogout": "import { AuthenticationHookRequest, AuthenticationResponse } from 'generated/fireboom.hooks'\n\nexport default async function postLogout(hook: AuthenticationHookRequest) : Promise<AuthenticationResponse>{\n\t// TODO: 在此处添加代码\n\treturn {\n\t\tstatus:'deny',\n\t\tmessage: 'string'\n\t}\n}"
+    "postAuthentication": "import { AuthenticationHookRequest } from 'fireboom-wundersdk'\n\nexport default async function postAuthentication(hook: AuthenticationHookRequest) : Promise<void>{\n\t// TODO: 在此处添加代码\n}",
+    "mutatingPostAuthentication": "import { AuthenticationHookRequest, AuthenticationResponse } from 'fireboom-wundersdk'\nimport type { User } from \"generated/fireboom.server\"\nexport default async function mutatingPostAuthentication(hook: AuthenticationHookRequest) : Promise<AuthenticationResponse<User>>{\n\t// TODO: 在此处添加代码\n\treturn {\n\t\tstatus:'deny',\n\t\tmessage: 'string'\n\t}\n}",
+    "revalidate": "import { AuthenticationHookRequest, AuthenticationResponse } from 'fireboom-wundersdk'\nimport type { User } from \"generated/fireboom.server\"\nexport default async function revalidate(hook: AuthenticationHookRequest) : Promise<AuthenticationResponse<User>>{\n  // TODO: 在此处添加代码\n  return {\n    status:'deny',\n    message: 'string'\n  }\n}",
+    "postLogout": "import { AuthenticationHookRequest, AuthenticationResponse } from 'fireboom-wundersdk'\n\nexport default async function postLogout(hook: AuthenticationHookRequest) : Promise<void>{\n\t// TODO: 在此处添加代码\n}"
   },
   "hook": {
     "WithInput": {

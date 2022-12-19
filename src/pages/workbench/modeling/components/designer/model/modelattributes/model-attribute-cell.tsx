@@ -2,12 +2,12 @@ import type { Field, ModelAttribute } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { message, Select } from 'antd'
 
-import ModelIndexAttributeArg from '@/components/components/AttributeArg/ModelIndexAttributeArg'
-import ModelMapAttributeArg from '@/components/components/AttributeArg/ModelMapAttributeArg'
 import type { Model } from '@/interfaces/modeling'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
 import { PrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
 import useDBSource from '@/lib/hooks/useDBSource'
+import ModelIndexAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelIndexAttributeArg'
+import ModelMapAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelMapAttributeArg'
 
 const { Option } = Select
 

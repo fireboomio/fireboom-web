@@ -25,6 +25,7 @@ const IdeCodeContainer: FC<Props> = props => {
       } ${props.fullScreen ? ideStyles['code-container-full-screen'] : ''}`}
     >
       <Editor
+        path="inmemory://model/src/hook.ts"
         language={props.defaultLanguage ?? 'typescript'}
         value={props.value}
         onChange={value => {

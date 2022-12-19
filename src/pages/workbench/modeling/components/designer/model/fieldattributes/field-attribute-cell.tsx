@@ -2,17 +2,17 @@ import type { Attribute, Field } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { message, Select } from 'antd'
 
-import FieldDefaultAttributeArg from '@/components/components/AttributeArg/FieldDefaultAttributeArg'
-import FieldNormalAttributeArg from '@/components/components/AttributeArg/FieldNormalAttributeArg'
-import FieldRelationAttributeArg from '@/components/components/AttributeArg/FieldRelationAttributeArg'
-import ModelMapAttributeArg from '@/components/components/AttributeArg/ModelMapAttributeArg'
-import RemoveButton from '@/components/components/RemoveButton'
 import type { Entity } from '@/interfaces/modeling'
 import { PRISMA_BASE_TYPES } from '@/lib/constants/prismaConstants'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
 import { PrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
 import useDBSource from '@/lib/hooks/useDBSource'
 import useEntities from '@/lib/hooks/useEntities'
+import FieldDefaultAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/FieldDefaultAttributeArg'
+import FieldNormalAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/FieldNormalAttributeArg'
+import FieldRelationAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/FieldRelationAttributeArg'
+import ModelMapAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelMapAttributeArg'
+import RemoveButton from '@/pages/workbench/modeling/components/RemoveButton'
 
 interface FieldAttributeHandlers {
   display: (props: AttributeHandlersProp) => JSX.Element

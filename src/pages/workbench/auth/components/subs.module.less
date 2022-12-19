@@ -1,0 +1,403 @@
+.save-btn {
+  width: 64px;
+  padding: 0;
+  font-size: 14px;
+  background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+  border-radius: 2px;
+
+  &:hover,
+  &:focus {
+    color: rgb(233 92 127);
+    background: linear-gradient(56deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+
+  span {
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+  }
+}
+
+.center-btn {
+  width: 62px;
+  height: 28px;
+  margin-right: 16px;
+  margin-left: 24px;
+  padding: 0;
+  border: 1px solid rgb(0 0 0 / 10%);
+  border-radius: 2px;
+}
+
+.switch-check-btn {
+  width: 60px;
+  height: 24px;
+  margin-right: 24px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+.add-btn {
+  color: #fff;
+  background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(28deg, #ff9378 0%, #e13d5b 100%);
+    border-color: #e13d5b;
+  }
+}
+
+.switch-set-btn {
+  width: 32px;
+  height: 16px;
+  margin-left: 12px;
+  background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+.form-delete-icon {
+  position: relative;
+  top: 4px;
+  margin: 0 8px;
+  color: #ff9378;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    color: #777;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.form-item-icon {
+  width: 14px;
+  height: 14px;
+  color: #5f6269;
+}
+
+.role-container-table :global {
+  .ant-table-cell {
+    height: 10px;
+    padding: 10px;
+    padding-left: 43px;
+  }
+
+  .ant-table-cell::before {
+    display: none;
+  }
+}
+
+.role-table {
+  background-color: #fafafa;
+}
+
+.edit-form-contain :global {
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  .key-modal-request > div {
+    z-index: 1;
+  }
+}
+
+.db-check-setting {
+  color: #e92e5e;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, 'PingFang SC';
+  line-height: 20px;
+}
+
+.auth-head {
+  height: 17px;
+  color: rgb(0 0 0 / 25%);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+// 角色配置
+.auth-btn {
+  button {
+    padding: 0 auto;
+    color: #e92e5e;
+  }
+}
+
+.switch-edit-btn {
+  width: 32px;
+  height: 16px;
+  margin-left: 12px;
+
+  // background-color: #8abe2a;
+  border-radius: 12px;
+}
+
+// auth更多设置style
+
+.form-contain :global {
+  .ant-form-item-label {
+    padding: 0;
+  }
+
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+
+  input {
+    width: 90%;
+  }
+}
+
+.monaco {
+  height: 300px;
+  padding: 0;
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-radius: 4px;
+}
+
+.monaco-edit {
+  height: 150px;
+  padding: 0;
+  border: 1px solid rgb(95 98 105 / 10%);
+  border-radius: 4px;
+}
+
+// user-style
+.connect-check-btn-common {
+  height: 28px;
+  padding: 0;
+  background: #fff;
+  border-radius: 2px;
+
+  span {
+    font-size: 14px;
+    line-height: 18px;
+  }
+}
+
+.tabs-style :global {
+  .ant-tabs-nav-list {
+    margin: 0 auto;
+  }
+
+  .ant-tabs-tab-btn {
+    height: 17px;
+    margin: 0 auto;
+    color: #e92e5e;
+    font-size: 12px;
+    line-height: 17px;
+  }
+
+  .ant-tabs-tab {
+    width: 135px;
+    height: 22px;
+    border-color: #e92e5e !important;
+  }
+
+  .ant-tabs-tab-active {
+    background-color: #e74e61 !important;
+
+    .ant-tabs-tab-btn {
+      color: #fff !important;
+    }
+  }
+}
+
+// user-style
+.right-style {
+  width: 72px;
+  padding: 0;
+
+  span {
+    color: #e92e5e;
+    font-weight: 500;
+    font-size: 20px;
+  }
+}
+
+.btn-style :global {
+  .ant-btn {
+    color: #e92e5e;
+    border-color: #e92e5e;
+  }
+}
+
+.modal-divider {
+  height: 30px;
+  margin: 0 20px;
+}
+
+// webhooks-style
+.dialog-form :global {
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+
+  .ant-radio-wrapper {
+    margin-right: 72px;
+  }
+
+  .ant-checkbox-wrapper {
+    width: 45%;
+    margin-bottom: 14px;
+  }
+}
+
+// UserDetails-style
+.user-info {
+  height: 20px;
+  margin-top: 24px;
+  margin-bottom: 14px;
+  color: #afb0b4;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.form-style :global {
+  .ant-form-item {
+    margin-right: 66px;
+  }
+}
+
+.mid-word :global {
+  span {
+    width: 84px;
+    height: 20px;
+    color: #afb0b4;
+    font-weight: 500;
+    line-height: 20px;
+  }
+}
+
+.right-word {
+  span {
+    width: 28px;
+    height: 20px;
+    color: #e92e5e;
+    line-height: 20px;
+  }
+}
+
+.ant-picker-input {
+  width: 232px;
+}
+
+// .select-styles {
+//   span:nth-child(1) {
+//     display: block;
+//     height: 20px;
+//     margin-right: 8px;
+//     color: rgba(0, 0, 0, 0.85);
+//     line-height: 20px;
+//   }
+//   span:last-child {
+//     display: block;
+//     height: 12px;
+//     font-weight: 300;
+//     color: rgba(175, 176, 180, 0.5);
+//   }
+// }
+.roleContainer {
+  :global {
+    .ant-tabs-content-holder {
+      overflow-y: scroll;
+    }
+    .ant-tabs-content,
+    .ant-tabs-tabpane {
+      height: 100%;
+    }
+  }
+}
+.pillTab {
+  height: 36px;
+  background: #f0f1f4;
+  border-radius: 4px;
+  align-self: flex-start;
+  :global {
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+    .ant-tabs-nav-list {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      padding: 0 6px;
+    }
+    .ant-tabs-tab {
+      margin: 0;
+      width: 97px;
+      height: 26px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #787d8b;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .ant-tabs-tab-active {
+      background: white;
+      box-shadow: 0px 1px 4px 0px rgba(211, 211, 222, 0.84);
+      .ant-tabs-tab-btn {
+        color: #333 !important;
+      }
+    }
+  }
+
+  .tab {
+    &__active {
+      color: #333;
+      font-weight: 500;
+      background: white;
+      box-shadow: 0px 1px 4px 0px rgba(211, 211, 222, 0.84);
+
+      .apiIcon {
+        width: 12px;
+        height: 10px;
+        margin-right: 7px;
+        background: url(/assets/workbench/sider-api-active.png) no-repeat center/contain !important;
+      }
+
+      .dataIcon {
+        width: 12px;
+        height: 10px;
+        margin-right: 7px;
+        background: url(/assets/workbench/sider-data-active.png) no-repeat center/contain !important;
+      }
+    }
+  }
+
+  .apiIcon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    background: url(/assets/workbench/sider-api.png) no-repeat center/contain;
+  }
+
+  .dataIcon {
+    width: 14px;
+    height: 15px;
+    margin-right: 6px;
+    background: url(/assets/workbench/sider-data.png) no-repeat center/contain;
+  }
+}
+
+.tabContent {
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid rgba(95, 98, 105, 0.1);
+  padding: 16px;
+  height: 100%;
+  > div {
+    height: 100%;
+  }
+}

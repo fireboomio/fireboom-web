@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
-import { Guide } from '@/components/home/Guide'
-import { Notice } from '@/components/home/Notice'
 import requests from '@/lib/fetchers'
+import { Guide } from '@/pages/workbench/index/components/Guide'
+import { Notice } from '@/pages/workbench/index/components/Notice'
 
 import styles from './index.module.less'
 

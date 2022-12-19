@@ -10,11 +10,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
-import ApiConfig from '@/components/apiConfig'
-// @ts-ignore
-// import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
-// import GraphiqlExplorer from '@/components/GraphQLExplorer'
-import GraphiqlExplorer from '@/components/GraphQLExplorer/origin'
+import ApiConfig from '@/components/ApiConfig'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
@@ -23,6 +19,10 @@ import requests from '@/lib/fetchers'
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
+// @ts-ignore
+// import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
+// import GraphiqlExplorer from '@/components/GraphQLExplorer'
+import GraphiqlExplorer from './components/GraphQLExplorer/origin'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import styles from './index.module.less'
 import { useAPIManager } from './store'

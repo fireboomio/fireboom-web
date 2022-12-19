@@ -8,6 +8,7 @@ const STORAGE_KEY = '_dts_cache_'
 const loadMap = new Map<string, Promise<LoadResponse | void>>() // 请求缓存，用于防止重复请求
 const memoryCacheMap = new Map<string, LoadResponse>()
 function readCache(key: string) {
+  console.log(memoryCacheMap, 'memoryCacheMap')
   // 如果memoryCacheMap中有缓存，则直接返回
   const memoryCache = memoryCacheMap.get(key)
   if (memoryCache) {
@@ -16,8 +17,8 @@ function readCache(key: string) {
   // 如果localStorage中有缓存，则写入loadMap并返回
   const cache = localStorage.getItem(STORAGE_KEY + key)
   if (cache) {
-    loadMap.set(key, JSON.parse(cache))
-    return loadMap.get(key)
+    memoryCacheMap.set(key, JSON.parse(cache))
+    return memoryCacheMap.get(key)
   }
   return null
 }
@@ -105,7 +106,9 @@ async function loadDepend(
 
     // 当前包的依赖和描述文件
     const { dependencies, dtsFiles: _files } = result
-    Object.assign(dtsFiles, _files)
+    Object.keys(_files).forEach(key => {
+      dtsFiles[`${name}/${key}`] = _files[key]
+    })
 
     // 等待子包加载完成
     const promiseList = Object.keys(dependencies || {}).map(async key => {
@@ -183,7 +186,7 @@ export class DependManager {
             return
           }
           Object.keys(dtsFiles).forEach(dtsKey => {
-            const filePath = `inmemory://model/node_modules/${key}/${dtsKey}`
+            const filePath = `inmemory://model/node_modules/${dtsKey}`
             // 已经存在的依赖不再加载，而是增加引用
             const existLib = this.libMap.get(filePath)
             if (existLib) {
@@ -234,5 +237,14 @@ export class DependManager {
       ...this.libs,
       ...this.localLibs
     ])
+    this.localLibs.forEach(lib => {
+      const uri = this.monaco.Uri.parse(lib.filePath.replace('/node_modules', ''))
+      const currentModel = this.monaco.editor.getModel(uri)
+      if (currentModel) {
+        currentModel.setValue(lib.content)
+      } else {
+        this.monaco.editor.createModel(lib.content, 'typescript', uri)
+      }
+    })
   }
 }

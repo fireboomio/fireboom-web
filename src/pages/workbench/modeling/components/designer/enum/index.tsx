@@ -6,9 +6,9 @@ import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
-import NormalInputCell from '@/components/components/NormalInputCell'
 import type { Enum } from '@/interfaces/modeling'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
+import NormalInputCell from '@/pages/workbench/modeling/components/NormalInputCell'
 
 import styles from '../index.module.less'
 

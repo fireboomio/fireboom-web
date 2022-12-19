@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/iconfont'
+import IconFont from '@/components/Iconfont'
 import RoleDiagram from '@/components/RoleDiagram'
 import type { DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
