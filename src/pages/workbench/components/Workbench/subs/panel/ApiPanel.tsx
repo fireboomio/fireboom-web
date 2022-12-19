@@ -459,10 +459,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   async function batchSwitch(flag: boolean) {
-    await requests.post('operateApi/batchOnline', {
-      Ids: selectedNode.map(x => x.id),
-      enable: flag
-    })
+    const hide = message.loading('执行中...')
+    try {
+      await requests.post('operateApi/batchOnline', {
+        Ids: selectedNode.map(x => x.id),
+        enable: flag
+      })
+    } finally {
+      hide()
+    }
     message.success('操作成功')
     setRefreshFlag(!refreshFlag)
   }

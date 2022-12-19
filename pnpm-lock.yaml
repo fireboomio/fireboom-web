@@ -10,7 +10,7 @@ specifiers:
   '@graphiql/react': ^0.13.2
   '@graphiql/toolkit': ^0.8.0
   '@monaco-editor/react': ^4.4.5
-  '@mrleebo/prisma-ast': ^0.3.1
+  '@mrleebo/prisma-ast': git://github.com/woodensail/prisma-ast.git#dist
   '@paljs/types': ^4.0.18
   '@stackblitz/sdk': ^1.8.1
   '@swordjs/monaco-editor': '*'
@@ -97,7 +97,7 @@ dependencies:
   '@graphiql/react': registry.npmmirror.com/@graphiql/react/0.13.2_ouejo6lkdhr4kyndhmb64knniq
   '@graphiql/toolkit': registry.npmmirror.com/@graphiql/toolkit/0.8.0_dcccpntirzjd6qjbtfbncv4bru
   '@monaco-editor/react': registry.npmmirror.com/@monaco-editor/react/4.4.5_6vrjaj6ridxbohi43n7zt4gn7q
-  '@mrleebo/prisma-ast': registry.npmmirror.com/@mrleebo/prisma-ast/0.3.1
+  '@mrleebo/prisma-ast': github.com/woodensail/prisma-ast/b0b7974366dc10007e7ef263caf47c9a14a23979
   '@stackblitz/sdk': registry.npmmirror.com/@stackblitz/sdk/1.8.1
   '@swordjs/monaco-editor': registry.npmmirror.com/@swordjs/monaco-editor/0.34.8
   '@swordjs/monaco-editor-auto-typings': registry.npmmirror.com/@swordjs/monaco-editor-auto-typings/0.5.1_oztbn2efcrbjhpncy77qiqrlqa
@@ -181,6 +181,17 @@ devDependencies:
   windicss: registry.npmmirror.com/windicss/3.5.6
 
 packages:
+
+  github.com/woodensail/prisma-ast/b0b7974366dc10007e7ef263caf47c9a14a23979:
+    resolution: {tarball: https://codeload.github.com/woodensail/prisma-ast/tar.gz/b0b7974366dc10007e7ef263caf47c9a14a23979}
+    name: '@mrleebo/prisma-ast'
+    version: 0.4.2
+    engines: {node: '>=12'}
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      chevrotain: registry.npmmirror.com/chevrotain/10.4.2
+    dev: false
 
   registry.npmmirror.com/@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@ampproject/remapping/-/remapping-2.2.0.tgz}
@@ -654,16 +665,35 @@ packages:
       to-fast-properties: registry.npmmirror.com/to-fast-properties/2.0.0
     dev: true
 
-  registry.npmmirror.com/@chevrotain/types/9.1.0:
-    resolution: {integrity: sha512-3hbCD1CThkv9gnaSIPq0GUXwKni68e0ph6jIHwCvcWiQ4JB2xi8bFxBain0RF04qHUWuDjgnZLj4rLgimuGO+g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/types/-/types-9.1.0.tgz}
-    name: '@chevrotain/types'
-    version: 9.1.0
+  registry.npmmirror.com/@chevrotain/cst-dts-gen/10.4.2:
+    resolution: {integrity: sha512-0+4bNjlndNWMoVLH/+y4uHnf6GrTipsC+YTppJxelVJo+xeRVQ0s2PpkdDCVTsu7efyj+8r1gFiwVXsp6JZ0iQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/cst-dts-gen/-/cst-dts-gen-10.4.2.tgz}
+    name: '@chevrotain/cst-dts-gen'
+    version: 10.4.2
+    dependencies:
+      '@chevrotain/gast': registry.npmmirror.com/@chevrotain/gast/10.4.2
+      '@chevrotain/types': registry.npmmirror.com/@chevrotain/types/10.4.2
+      lodash: registry.npmmirror.com/lodash/4.17.21
     dev: false
 
-  registry.npmmirror.com/@chevrotain/utils/9.1.0:
-    resolution: {integrity: sha512-llLJZ8OAlZrjGlBvamm6Zdo/HmGAcCLq5gx7cSwUX8No+n/8ip+oaC4x33IdZIif8+Rh5dQUIZXmfbSghiOmNQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/utils/-/utils-9.1.0.tgz}
+  registry.npmmirror.com/@chevrotain/gast/10.4.2:
+    resolution: {integrity: sha512-4ZAn8/mjkmYonilSJ60gGj1tAF0cVWYUMlIGA0e4ATAc3a648aCnvpBw7zlPHDQjFp50XC13iyWEgWAKiRKTOA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/gast/-/gast-10.4.2.tgz}
+    name: '@chevrotain/gast'
+    version: 10.4.2
+    dependencies:
+      '@chevrotain/types': registry.npmmirror.com/@chevrotain/types/10.4.2
+      lodash: registry.npmmirror.com/lodash/4.17.21
+    dev: false
+
+  registry.npmmirror.com/@chevrotain/types/10.4.2:
+    resolution: {integrity: sha512-QzSCjg6G4MvIoLeIgOiMR0IgzkGEQqrNJJIr3T5ETRa7l4Av4AMIiEctV99mvDr57iXwwk0/kr3RJxiU36Nevw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/types/-/types-10.4.2.tgz}
+    name: '@chevrotain/types'
+    version: 10.4.2
+    dev: false
+
+  registry.npmmirror.com/@chevrotain/utils/10.4.2:
+    resolution: {integrity: sha512-V34dacxWLwKcvcy32dx96ADJVdB7kOJLm7LyBkBQw5u5HC9WdEFw2G17zml+U3ivavGTrGPJHl8o9/UJm0PlUw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@chevrotain/utils/-/utils-10.4.2.tgz}
     name: '@chevrotain/utils'
-    version: 9.1.0
+    version: 10.4.2
     dev: false
 
   registry.npmmirror.com/@codemirror/language/0.20.2:
@@ -1038,15 +1068,6 @@ packages:
       prop-types: registry.npmmirror.com/prop-types/15.8.1
       react: registry.npmmirror.com/react/18.2.0
       react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
-    dev: false
-
-  registry.npmmirror.com/@mrleebo/prisma-ast/0.3.1:
-    resolution: {integrity: sha512-3XTyPAXVuQM0HenWauQRAjUuhOu8C5/+Uf1kUWsJoVZA2rGySur/9cwgnrgyy8wwMjWWfRVAAgDw2R7q2QZVBg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@mrleebo/prisma-ast/-/prisma-ast-0.3.1.tgz}
-    name: '@mrleebo/prisma-ast'
-    version: 0.3.1
-    engines: {node: '>=10'}
-    dependencies:
-      chevrotain: registry.npmmirror.com/chevrotain/9.1.0
     dev: false
 
   registry.npmmirror.com/@mrmlnc/readdir-enhanced/2.2.1:
@@ -2843,13 +2864,16 @@ packages:
     version: 1.1.4
     dev: true
 
-  registry.npmmirror.com/chevrotain/9.1.0:
-    resolution: {integrity: sha512-A86/55so63HCfu0dgGg3j9u8uuuBOrSqly1OhBZxRu2x6sAKILLzfVjbGMw45kgier6lz45EzcjjWtTRgoT84Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/chevrotain/-/chevrotain-9.1.0.tgz}
+  registry.npmmirror.com/chevrotain/10.4.2:
+    resolution: {integrity: sha512-gzF5GxE0Ckti5kZVuKEZycLntB5X2aj9RVY0r4/220GwQjdnljU+/t3kP74/FMWC7IzCDDEjQ9wsFUf0WCdSHg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/chevrotain/-/chevrotain-10.4.2.tgz}
     name: chevrotain
-    version: 9.1.0
+    version: 10.4.2
     dependencies:
-      '@chevrotain/types': registry.npmmirror.com/@chevrotain/types/9.1.0
-      '@chevrotain/utils': registry.npmmirror.com/@chevrotain/utils/9.1.0
+      '@chevrotain/cst-dts-gen': registry.npmmirror.com/@chevrotain/cst-dts-gen/10.4.2
+      '@chevrotain/gast': registry.npmmirror.com/@chevrotain/gast/10.4.2
+      '@chevrotain/types': registry.npmmirror.com/@chevrotain/types/10.4.2
+      '@chevrotain/utils': registry.npmmirror.com/@chevrotain/utils/10.4.2
+      lodash: registry.npmmirror.com/lodash/4.17.21
       regexp-to-ast: registry.npmmirror.com/regexp-to-ast/0.5.0
     dev: false
 
