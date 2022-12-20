@@ -340,7 +340,7 @@ export default function Graphql({ content, type }: Props) {
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
               <img alt='xiala' src='assets/iconfont/xiala.svg'
-                   style={{ height: '1em', width: '1em', isActive: '':'rotate(-90deg)'}} />
+                   style={{ height: '1em', width: '1em', isActive? '' : 'rotate(-90deg)'}} />
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
