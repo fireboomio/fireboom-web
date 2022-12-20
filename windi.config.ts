@@ -1,4 +1,5 @@
 import { defineConfig } from 'windicss/helpers'
+import lineClampPlugin from 'windicss/plugin/line-clamp'
 
 export default defineConfig({
   extract: {
@@ -12,5 +13,8 @@ export default defineConfig({
         default: '#333'
       }
     }
-  }
+  },
+    plugins: [
+      lineClampPlugin
+    ],
 })

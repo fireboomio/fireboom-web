@@ -27,6 +27,7 @@ const SequenceDiagram = lazy(() => import('./SequenceDiagram'))
 
 const GraphiQLToolbar = () => {
   const [argOpen, setArgOpen] = useState(false)
+  const [seqOpen, setSeqOpen] = useState(false)
   const { query, schemaAST, setQuery } = useAPIManager(state => ({
     query: state.query,
     schemaAST: state.schemaAST,
@@ -259,6 +260,10 @@ const GraphiQLToolbar = () => {
     setArgOpen(e)
   }
 
+  const onSeqOpenChange = (e: boolean) => {
+    setSeqOpen(e)
+  }
+
   const selectedRole = useMemo(() => {
     if (schemaAST?.definitions?.[0].kind === Kind.OPERATION_DEFINITION) {
       const { directives = [] } = schemaAST.definitions[0]
@@ -330,7 +335,13 @@ const GraphiQLToolbar = () => {
       <Dropdown overlay={<CrossOriginPopup />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">跨源关联</button>
       </Dropdown>
-      <Dropdown overlay={<SequenceDiagram />} trigger={['click']} placement="bottomRight">
+      <Dropdown
+        open={seqOpen}
+        overlay={seqOpen ? <SequenceDiagram /> : <></>}
+        trigger={['click']}
+        placement="bottomRight"
+        onOpenChange={onSeqOpenChange}
+      >
         <span className="graphiql-toolbar-sequence-chart">时序图</span>
       </Dropdown>
 

@@ -304,32 +304,32 @@ const _Chart = ({
     graph.addEdges([
       {
         shape: 'orange',
-        source: { x: 166, y: 58 },
-        target: { x: 166, y: 416 }
+        source: { x: 160, y: 58 },
+        target: { x: 160, y: 416 }
       },
       {
         shape: 'blue',
-        source: { x: 234, y: 58 },
-        target: { x: 234, y: 416 }
+        source: { x: 232, y: 58 },
+        target: { x: 232, y: 416 }
       },
       {
         shape: 'orange',
-        source: { x: 315, y: 58 },
-        target: { x: 315, y: 416 }
+        source: { x: 300, y: 58 },
+        target: { x: 300, y: 416 }
       },
       {
         shape: 'orange',
         // source: { x: 142, y: 450 },
         // target: { x: 142, y: 587 }
-        source: { x: 166, y: 450 },
-        target: { x: 166, y: 587 }
+        source: { x: 176, y: 450 },
+        target: { x: 176, y: 587 }
       },
       {
         shape: 'blue',
         // source: { x: 210, y: 450 },
         // target: { x: 210, y: 587 }
-        source: { x: 234, y: 450 },
-        target: { x: 234, y: 587 }
+        source: { x: 248, y: 450 },
+        target: { x: 248, y: 587 }
       },
       {
         shape: 'orange',
@@ -345,20 +345,20 @@ const _Chart = ({
       graph.addNode({
         shape: 'decision',
         label: '登录校验?',
-        x: 110,
+        x: 95,
         y: 80
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 110, y: 106 },
-        target: { x: 41, y: 106 }
+        source: { x: 95, y: 106 },
+        target: { x: 32, y: 106 }
       })
       graph.addNode({
         shape: 'flowLabel',
         label: '401',
         width: 26,
         height: 14,
-        x: 72,
+        x: 57,
         y: 98
       })
     }
@@ -368,20 +368,20 @@ const _Chart = ({
       graph.addNode({
         shape: 'decision',
         label: '授权校验?',
-        x: 110,
+        x: 95,
         y: 160
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 110, y: 186 },
-        target: { x: 41, y: 186 }
+        source: { x: 95, y: 186 },
+        target: { x: 32, y: 186 }
       })
       graph.addNode({
         shape: 'flowLabel',
         label: '401',
         width: 26,
         height: 14,
-        x: 72,
+        x: 57,
         y: 178
       })
     }
@@ -391,20 +391,20 @@ const _Chart = ({
       graph.addNode({
         shape: 'decision',
         label: '入参校验?',
-        x: 110,
+        x: 95,
         y: 236
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 110, y: 262 },
-        target: { x: 41, y: 262 }
+        source: { x: 95, y: 262 },
+        target: { x: 32, y: 262 }
       })
       graph.addNode({
         shape: 'flowLabel',
         label: '400',
         width: 26,
         height: 14,
-        x: 72,
+        x: 57,
         y: 254
       })
     }
@@ -419,7 +419,7 @@ const _Chart = ({
       graph.addNode({
         shape: 'rect',
         label: '结\n\n\n束',
-        x: 20,
+        x: 11,
         y: 82,
         width: 21,
         height: 212,
@@ -443,7 +443,7 @@ const _Chart = ({
       {
         shape: 'globalHook',
         // x: 132,
-        x: 156,
+        x: 166,
         y: 520
       },
       [
@@ -484,8 +484,8 @@ const _Chart = ({
             }}
           />
         ),
-        x: 14,
-        y: 323
+        x: 4,
+        y: 292
       }
     ]
     // 根据是否支持 mutatingPreResolve 钩子显示
@@ -503,14 +503,14 @@ const _Chart = ({
             }}
           />
         ),
-        x: 14,
-        y: 354
+        x: 4,
+        y: 336
       })
     }
     new ActionGroup(
       {
         shape: 'hook',
-        x: 156,
+        x: 150,
         y: 315
       },
       preHooks,
@@ -519,7 +519,7 @@ const _Chart = ({
 
     // post 钩子
     new ActionGroup(
-      { shape: 'hook', x: 225, y: 315 },
+      { shape: 'hook', x: 222, y: 315 },
       [
         {
           shape: 'react-shape',
@@ -534,7 +534,7 @@ const _Chart = ({
               }}
             />
           ),
-          x: 282,
+          x: 280,
           y: 292
         },
         {
@@ -550,8 +550,8 @@ const _Chart = ({
               }}
             />
           ),
-          x: 282,
-          y: 332
+          x: 280,
+          y: 336
         }
       ],
       'arrow'
@@ -562,26 +562,26 @@ const _Chart = ({
       {
         shape: 'react-shape',
         // x: 108,
-        x: 139,
+        x: 148,
         y: 482,
         component: <IndexNode index="1" text="订阅" />
       },
       {
         shape: 'react-shape',
-        x: 139,
+        x: 132,
         y: 375,
         component: <IndexNode index="2" text="订阅" />
       },
       {
         shape: 'react-shape',
         // x: 181,
-        x: 206,
+        x: 218,
         y: 482,
         component: <IndexNode index="3" text="推送" />
       },
       {
         shape: 'react-shape',
-        x: 206,
+        x: 204,
         y: 204,
         component: <IndexNode index="4" text="推送" />
       },
@@ -594,7 +594,7 @@ const _Chart = ({
       },
       {
         shape: 'react-shape',
-        x: 287,
+        x: 272,
         y: 375,
         component: <IndexNode index="6" text="取消" />
       }
