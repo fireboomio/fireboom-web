@@ -22,7 +22,7 @@ export default function StorageDetail({ content }: Props) {
       <div className="pr-110px">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>
-          <Descriptions.Item label="服务地址">{config?.endpoint}</Descriptions.Item>
+          <Descriptions.Item label="服务地址">http(s)://{config?.endPoint}</Descriptions.Item>
           <Descriptions.Item label="APP ID">{config?.accessKeyID?.val} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span>
