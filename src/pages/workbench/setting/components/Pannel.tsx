@@ -15,22 +15,30 @@ const settingTypeList: SettingType[] = [
   {
     name: '外观',
     type: 'colorTheme',
-    icon: <img alt='xxx' src='assets/iconfont/waiguan.svg' style={{width:'1em',height:'1em'}} />
+    icon: (
+      <img alt="xxx" src="assets/iconfont/waiguan.svg" style={{ width: '1em', height: '1em' }} />
+    )
   },
   {
     name: '系统',
     type: 'system',
-    icon: <img alt="xitong" src="assets/iconfont/xitong.svg" style={{height:'1em', width: '1em'}} />
+    icon: (
+      <img alt="xitong" src="assets/iconfont/xitong.svg" style={{ height: '1em', width: '1em' }} />
+    )
   },
   {
     name: '安全',
     type: 'secure',
-    icon: <img alt="anquan" src="assets/iconfont/anquan.svg" style={{height:'1em', width: '1em'}} />
+    icon: (
+      <img alt="anquan" src="assets/iconfont/anquan.svg" style={{ height: '1em', width: '1em' }} />
+    )
   },
   {
     name: '跨域',
     type: 'cors',
-    icon: <img alt="kuayu" src="assets/iconfont/kuayu.svg" style={{height:'1em', width: '1em'}} />
+    icon: (
+      <img alt="kuayu" src="assets/iconfont/kuayu.svg" style={{ height: '1em', width: '1em' }} />
+    )
   },
   // {
   //   name: 'API Token',
@@ -40,17 +48,31 @@ const settingTypeList: SettingType[] = [
   {
     name: 'SDK 模板',
     type: 'sdk',
-    icon: <IconFont type="icon-huanjingbianliang" />
+    icon: (
+      <img
+        alt="huanjingbianliang"
+        src="assets/iconfont/huanjingbianliang.svg"
+        style={{ height: '1em', width: '1em' }}
+      />
+    )
   },
   {
     name: '环境变量',
     type: 'path',
-    icon: <img alt="huanjingbianliang" src="assets/iconfont/huanjingbianliang.svg" style={{height:'1em', width: '1em'}} />
+    icon: (
+      <img
+        alt="huanjingbianliang"
+        src="assets/iconfont/huanjingbianliang.svg"
+        style={{ height: '1em', width: '1em' }}
+      />
+    )
   },
   {
     name: '版本',
     type: 'version',
-    icon: <img alt="banben" src="assets/iconfont/banben.svg" style={{height:'1em', width: '1em'}} />
+    icon: (
+      <img alt="banben" src="assets/iconfont/banben.svg" style={{ height: '1em', width: '1em' }} />
+    )
   }
 ]
 

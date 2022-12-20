@@ -2,7 +2,7 @@ import { Tooltip } from 'antd'
 import type React from 'react'
 import { useEffect, useState } from 'react'
 
-import styles from './sidePanel.module.less'
+import styles from './SidePanel.module.less'
 
 export interface SidePanelProps {
   title: string
