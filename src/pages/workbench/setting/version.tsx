@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer'
 import type { VersionConfig } from '@/interfaces/setting'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.less'
+import styles from './components/subs/subs.module.less'
 
 export default function SettingMainVersion() {
   const [verConfig, setVerConfig] = useImmer({} as VersionConfig)

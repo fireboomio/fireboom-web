@@ -177,7 +177,7 @@ export default function Designer() {
       return createCustom()
     }
     let data = {
-      id: Date.now(),
+      id: 0,
       name: '',
       config: { dbType: dbType },
       sourceType: sourceType,
@@ -189,7 +189,6 @@ export default function Designer() {
       data = examples.find(x => x.name === name)
     }
 
-    data.id = Date.now()
     handleCreate(data)
   }
 

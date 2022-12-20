@@ -35,7 +35,7 @@ export default function StorageContainer({ content, showType }: Props) {
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
         <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
-        {content?.name}
+        {content?.name || '创建文件存储'}
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>

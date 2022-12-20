@@ -1,6 +1,6 @@
 import { Image } from 'antd'
 
-import styles from './subs.module.less'
+import styles from './components/subs/subs.module.less'
 
 export default function SettingMainAppearance() {
   return (

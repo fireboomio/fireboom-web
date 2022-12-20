@@ -342,7 +342,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                     open={dropDownId === item.id}
                     onOpenChange={flag => {
                       setDropDownId(flag ? item.id : undefined)
-                      console.log(dropDownId)
                     }}
                     placement="bottomRight"
                   >

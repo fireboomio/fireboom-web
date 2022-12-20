@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.less'
+import styles from './components/subs/subs.module.less'
 
 interface DataType {
   createTime: string
@@ -116,12 +116,12 @@ export default function SettingMainEnvironmentVariable() {
       render: (_, { id, key, devEnv, proEnv, oldKey }) => (
         <div>
           <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}}
-            onClick={() => {
+               onClick={() => {
               setIsVariableVisible(true)
               form.setFieldsValue({ key, devEnv, proEnv, oldKey })
               setID(id)
             }}
-            className="mr-3"
+               className="mr-3"
           />
           <Popconfirm
             title="确定要删除?"

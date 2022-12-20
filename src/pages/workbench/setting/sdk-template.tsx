@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 interface SDKTemplateProps {}
 
-const SDKTemplate = ({}: SDKTemplateProps) => {
+const SdkTemplate = ({}: SDKTemplateProps) => {
   const list = [1, 2, 3, 4, 5, 6]
   return (
     <Card>
@@ -24,7 +24,7 @@ const SDKTemplate = ({}: SDKTemplateProps) => {
   )
 }
 
-export default SDKTemplate
+export default SdkTemplate
 
 const SDKTemplateItem = ({ value }: { value?: string }) => {
   const [editing, setEditing] = useState(false)

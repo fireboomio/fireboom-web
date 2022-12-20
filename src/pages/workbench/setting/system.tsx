@@ -10,7 +10,7 @@ import { useImmer } from 'use-immer'
 import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
-import styles from './subs.module.less'
+import styles from './components/subs/subs.module.less'
 
 dayjs.extend(duration)
 
@@ -117,8 +117,8 @@ export default function SettingMainVersion() {
                 <span>{systemConfig.apiHost}</span>
               )}
               <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
-                className="ml-2"
-                onClick={() => {
+                   className="ml-2"
+                   onClick={() => {
                   setIsApiHostEditing(!isApiHostEditing)
                 }}
               />
@@ -143,8 +143,8 @@ export default function SettingMainVersion() {
                 <span>{systemConfig.apiPort}</span>
               )}
               <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
-                className="ml-2"
-                onClick={() => {
+                   className="ml-2"
+                   onClick={() => {
                   setIsApiPortEditing(!isApiPortEditing)
                 }}
               />
