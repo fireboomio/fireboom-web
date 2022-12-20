@@ -300,7 +300,12 @@ export default function Graphql({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  <img alt="wenjian1" src="assets/iconfont/wenjian1.svg" style={{height:'1em', width: '1em'}} /> {config.loadSchemaFromString}
+                  <img
+                    alt="wenjian1"
+                    src="assets/iconfont/wenjian1.svg"
+                    style={{ height: '1em', width: '1em' }}
+                  />{' '}
+                  {config.loadSchemaFromString}
                 </Descriptions.Item>
               ) : (
                 ''
@@ -339,8 +344,11 @@ export default function Graphql({ content, type }: Props) {
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
-              <img alt='xiala' src='assets/iconfont/xiala.svg'
-                   style={{ height: '1em', width: '1em', isActive? '' : 'rotate(-90deg)'}} />
+              <img
+                alt="xiala"
+                src="assets/iconfont/xiala.svg"
+                style={{ height: '1em', width: '1em', transform: isActive ? '' : 'rotate(-90deg)' }}
+              />
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
