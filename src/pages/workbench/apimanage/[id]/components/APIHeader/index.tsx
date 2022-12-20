@@ -15,11 +15,11 @@ import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
-  const { apiDesc, schemaAST, updateAPI, updateAPIName, updateContent, saved, query, apiID } =
+  const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiID } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
-      updateAPI: state.updateAPI,
+      changeEnable: state.changeEnable,
       updateAPIName: state.updateAPIName,
       updateContent: state.updateContent,
       saved: state.computed.saved,
@@ -62,10 +62,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const toggleEnable = async (checked: boolean) => {
     try {
-      await updateAPI({
-        enable: checked
-        // path: apiDesc!.path
-      })
+      await changeEnable(checked)
       message.success(checked ? '已开启' : '已关闭')
     } catch (error) {
       //

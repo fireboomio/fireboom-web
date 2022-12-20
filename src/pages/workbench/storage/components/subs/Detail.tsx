@@ -23,12 +23,12 @@ export default function StorageDetail({ content }: Props) {
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="名称">{content?.name}</Descriptions.Item>
           <Descriptions.Item label="服务地址">{config?.endpoint}</Descriptions.Item>
-          <Descriptions.Item label="APP ID">{config?.accessKeyID} </Descriptions.Item>
+          <Descriptions.Item label="APP ID">{config?.accessKeyID?.val} </Descriptions.Item>
           <Descriptions.Item label="APP Secret">
             <span>
               {isShowSecret ? (
                 <div>
-                  {config?.secretAccessKey}
+                  {config?.secretAccessKey?.val ?? ''}
                   <EyeOutlined
                     className="ml-6 cursor-pointer"
                     onClick={() => setIsShowSecret(!isShowSecret)}
@@ -36,7 +36,7 @@ export default function StorageDetail({ content }: Props) {
                 </div>
               ) : (
                 <div>
-                  {config?.secretAccessKey.replaceAll(/./g, '*')}
+                  {(config?.secretAccessKey?.val ?? '').replaceAll(/./g, '*')}
                   <EyeInvisibleOutlined
                     className="ml-6 cursor-pointer"
                     onClick={() => setIsShowSecret(!isShowSecret)}

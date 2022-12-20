@@ -285,7 +285,6 @@ const IdeContainer: FC<Props> = props => {
     hookInfo?.depend?.devDependencies?.forEach(item => {
       loadTarget[item.name] = item.version
     })
-    console.log('===loadTarget', loadTarget)
     dependManager.current?.setDepends(loadTarget)
 
     // 保存依赖

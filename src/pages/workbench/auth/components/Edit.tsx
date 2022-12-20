@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
-import { Button, Checkbox, Form, Input, Radio } from 'antd'
+import { Button, Checkbox, Form, Input, Radio, Select } from 'antd'
 import axios from 'axios'
 import type { ReactNode } from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -14,6 +14,9 @@ import { AuthDispatchContext, AuthToggleContext } from '@/lib/context/auth-conte
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
+import useSWRImmutable from 'swr/immutable'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import UrlInput from '@/components/UrlInput'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -37,19 +40,19 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
   const issuer = Form.useWatch('issuer', form)
+  const clientIdKind = Form.useWatch(['clientId', 'kind'], form)
+  const clientSecretKind = Form.useWatch(['clientSecret', 'kind'], form)
+  const jwksURL = Form.useWatch('jwksURL', form)
   const [value, setValue] = useImmer('')
   const config = content.config as unknown as Config
   const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
   const [disabled, setDisabled] = useImmer(false)
   const navigate = useNavigate()
-  const [inputValue, setInputValue] = useImmer(
-    '' as string | number | readonly string[] | undefined
-  )
   const [jwksObj, setjwksObj] = useState<Object>({})
   const [jwksJSON, setJwksJSON] = useState<string>('')
-  const [jwksUrl, setJwksUrl] = useState<string>('')
-  const [endPoint, setEndPoint] = useState<string>('')
   const currentInspecting = useRef<string>('')
+
+  const envOptions = useEnvOptions()
 
   useEffect(() => {
     try {
@@ -134,8 +137,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const initialValues = content.name
     ? {
         id: config.id,
-        clientId: config.clientId,
-        clientSecret: config.clientSecret,
+
+        clientId: config.clientId || { kind: '0' },
+        clientSecret: config.clientSecret || { kind: '0' },
         issuer: config.issuer,
         jwks: config.jwks,
         jwksJSON: config.jwksJSON,
@@ -145,8 +149,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       }
     : {
         id: '',
-        clientId: '',
-        clientSecret: '',
+        clientId: { kind: '0' },
+        clientSecret: { kind: '0' },
         issuer: '',
         jwks: 0,
         jwksJSON: '',
@@ -192,19 +196,48 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           >
             <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
           </Form.Item>
-          <Form.Item
-            label="App ID"
-            name="clientId"
-            rules={[{ required: true, message: 'App ID不能为空' }]}
-          >
-            <Input placeholder="请输入..." />
+
+          <Form.Item label="App ID">
+            <Input.Group compact className="!flex">
+              <Form.Item name={['clientId', 'kind']} noStyle>
+                <Select className="w-100px flex-0">
+                  <Select.Option value="0">值</Select.Option>
+                  <Select.Option value="1">环境变量</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name={['clientId', 'val']}
+                noStyle
+                rules={[{ required: true, message: 'App ID不能为空' }]}
+              >
+                {clientIdKind === '0' ? (
+                  <Input className="flex-1" placeholder="请输入" />
+                ) : (
+                  <Select className="flex-1" options={envOptions} />
+                )}
+              </Form.Item>
+            </Input.Group>
           </Form.Item>
-          <Form.Item
-            label="App Secret"
-            name="clientSecret"
-            rules={[{ required: true, message: 'App Secret不能为空' }]}
-          >
-            <Input.Password placeholder="请输入..." />
+          <Form.Item label="App Secret">
+            <Input.Group compact className="!flex">
+              <Form.Item name={['clientSecret', 'kind']} noStyle>
+                <Select className="w-100px flex-0">
+                  <Select.Option value="0">值</Select.Option>
+                  <Select.Option value="1">环境变量</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name={['clientSecret', 'val']}
+                noStyle
+                rules={[{ required: true, message: 'App Secret不能为空' }]}
+              >
+                {clientSecretKind === '0' ? (
+                  <Input className="flex-1" placeholder="请输入" />
+                ) : (
+                  <Select className="flex-1" options={envOptions} />
+                )}
+              </Form.Item>
+            </Input.Group>
           </Form.Item>
           <Form.Item
             label="Issuer"
@@ -218,7 +251,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               }
             ]}
           >
-            <Input placeholder="请输入..." />
+            <UrlInput placeholder="请输入..." />
           </Form.Item>
           <Form.Item label="服务发现地址">
             <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />
@@ -247,7 +280,19 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Form.Item>
           ) : (
             <Form.Item label="jwksURL" name="jwksURL">
-              <Input disabled suffix="浏览" />
+              <Input
+                disabled
+                suffix={
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      window.open(jwksURL, '_blank')
+                    }}
+                  >
+                    浏览
+                  </div>
+                }
+              />
             </Form.Item>
           )}
           <Form.Item label="用户端点" name="userInfoEndpoint">

@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Switch } from 'antd'
+import { Button, Form, Input, message, Select, Switch } from 'antd'
 import { useContext, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -8,6 +8,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 interface Props {
   content?: StorageResp
@@ -21,7 +22,10 @@ export default function StorageForm({ content }: Props) {
   const config = useMemo(() => content?.config, [content])
 
   const [form] = Form.useForm()
+  const accessKeyIDKind = Form.useWatch(['accessKeyID', 'kind'], form)
+  const secretAccessKeyKind = Form.useWatch(['secretAccessKey', 'kind'], form)
   const [testing, setTesting] = useState(false)
+  const envOptions = useEnvOptions()
 
   const onFinish = async (values: StorageConfig) => {
     const payload = { name: values.name, config: values, useSSL: true }
@@ -73,7 +77,7 @@ export default function StorageForm({ content }: Props) {
         autoComplete="off"
         validateTrigger="onBlur"
         className="ml-3"
-        initialValues={{ ...config }}
+        initialValues={{ accessKeyID: { kind: '0' }, secretAccessKey: { kind: '0' }, ...config }}
       >
         <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
           <Input placeholder="请输入..." />
@@ -85,19 +89,47 @@ export default function StorageForm({ content }: Props) {
         >
           <Input addonBefore="http(s)://" placeholder="请输入..." />
         </Form.Item>
-        <Form.Item
-          label="App ID"
-          rules={[{ required: true, message: '请输入 App ID' }]}
-          name="accessKeyID"
-        >
-          <Input placeholder="请输入..." />
+        <Form.Item label="App ID">
+          <Input.Group compact className="!flex">
+            <Form.Item name={['accessKeyID', 'kind']} noStyle>
+              <Select className="w-100px flex-0">
+                <Select.Option value="0">值</Select.Option>
+                <Select.Option value="1">环境变量</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={['accessKeyID', 'val']}
+              noStyle
+              rules={[{ required: true, message: 'App ID不能为空' }]}
+            >
+              {accessKeyIDKind === '0' ? (
+                <Input className="flex-1" placeholder="请输入" />
+              ) : (
+                <Select className="flex-1" options={envOptions} />
+              )}
+            </Form.Item>
+          </Input.Group>
         </Form.Item>
-        <Form.Item
-          label="App Secret"
-          rules={[{ required: true, message: '请输入 App Secret' }]}
-          name="secretAccessKey"
-        >
-          <Input.Password placeholder="请输入..." />
+        <Form.Item label="App Secret">
+          <Input.Group compact className="!flex">
+            <Form.Item name={['secretAccessKey', 'kind']} noStyle>
+              <Select className="w-100px flex-0">
+                <Select.Option value="0">值</Select.Option>
+                <Select.Option value="1">环境变量</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={['secretAccessKey', 'val']}
+              noStyle
+              rules={[{ required: true, message: 'App Secret不能为空' }]}
+            >
+              {secretAccessKeyKind === '0' ? (
+                <Input className="flex-1" placeholder="请输入" />
+              ) : (
+                <Select className="flex-1" options={envOptions} />
+              )}
+            </Form.Item>
+          </Input.Group>
         </Form.Item>
         <Form.Item
           label="区域"

@@ -9,7 +9,7 @@ export const PRISMA_PREVIEW_GRAPHQL_URL = '/model/graphql/'
 export const UNTITLED_NEW_ENTITY = 'Untitled'
 export const ENTITY_NAME_REGEX = '^[A-Za-z][A-Za-z0-9_]*$'
 
-export const MANAGE_DATASOURCE_URL = '/workbench/datasource/new'
+export const MANAGE_DATASOURCE_URL = '/workbench/data-source/new'
 
 export const MAGIC_DELETE_ENTITY_NAME = 'fb_delete'
 export const MAGIC_DELETE_ENTITY: Model = {

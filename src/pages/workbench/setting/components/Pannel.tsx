@@ -14,7 +14,7 @@ interface Props {
 const settingTypeList: SettingType[] = [
   {
     name: '外观',
-    type: 'colorTheme',
+    type: 'appearance',
     icon: (
       <img alt="xxx" src="assets/iconfont/waiguan.svg" style={{ width: '1em', height: '1em' }} />
     )
@@ -28,14 +28,14 @@ const settingTypeList: SettingType[] = [
   },
   {
     name: '安全',
-    type: 'secure',
+    type: 'security',
     icon: (
       <img alt="anquan" src="assets/iconfont/anquan.svg" style={{ height: '1em', width: '1em' }} />
     )
   },
   {
     name: '跨域',
-    type: 'cors',
+    type: 'cross-domain',
     icon: (
       <img alt="kuayu" src="assets/iconfont/kuayu.svg" style={{ height: '1em', width: '1em' }} />
     )
@@ -47,7 +47,7 @@ const settingTypeList: SettingType[] = [
   // },
   {
     name: 'SDK 模板',
-    type: 'sdk',
+    type: 'sdk-template',
     icon: (
       <img
         alt="huanjingbianliang"
@@ -58,7 +58,7 @@ const settingTypeList: SettingType[] = [
   },
   {
     name: '环境变量',
-    type: 'path',
+    type: 'environment-variable',
     icon: (
       <img
         alt="huanjingbianliang"

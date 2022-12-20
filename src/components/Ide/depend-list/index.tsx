@@ -21,6 +21,7 @@ import iconFile from './assets/file.svg'
 import iconFold from './assets/fold.svg'
 import iconFoldOpen from './assets/fold-open.svg'
 import ideStyles from './index.module.less'
+import banDependList from '../banDependList'
 
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -166,7 +167,9 @@ const DependList = (props: DependListProps) => {
     if (props.dependList.length !== 0) {
       const map = new Map<string, string | null>()
       props.dependList.forEach(item => {
-        map.set(item.name, item.version)
+        if (!banDependList.includes(item.name)) {
+          map.set(item.name, item.version)
+        }
       })
       setDependList(map)
       firstSetDependList.current = true

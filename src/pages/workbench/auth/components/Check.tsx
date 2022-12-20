@@ -13,7 +13,7 @@ import { AuthToggleContext } from '@/lib/context/auth-context'
 interface Props {
   content: AuthProvResp
 }
-type Config = Record<string, ReactNode>
+type Config = Record<string, any>
 
 export default function AuthMainCheck({ content }: Props) {
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
@@ -41,15 +41,15 @@ export default function AuthMainCheck({ content }: Props) {
       <div className="mt-8">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="供应商ID">{config.id}</Descriptions.Item>
-          <Descriptions.Item label="App ID">{config.clientId}</Descriptions.Item>
+          <Descriptions.Item label="App ID">{config.clientId?.val ?? ''}</Descriptions.Item>
           <Descriptions.Item label="App Secret">
             <span onClick={handleToggleSecret}>
               {isShowSecret ? (
                 <div>
-                  {config.clientSecret}
+                  {config.clientSecret?.val ?? ''}
                   <EyeOutlined className="ml-6" />
                 </div>
-              ) : config.clientSecret ? (
+              ) : config.clientSecret?.val ? (
                 <div>
                   ***********
                   <EyeInvisibleOutlined className="ml-6" />

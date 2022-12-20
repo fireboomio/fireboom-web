@@ -8,8 +8,8 @@ import IconFont from '@/components/Iconfont'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 
-import tipGraphql from './assets/tip-graphql.png'
-import styles from './subs.module.less'
+import tipGraphql from './components/subs/assets/tip-graphql.png'
+import styles from './components/subs/subs.module.less'
 
 interface SecurConfig {
   allowedHostsEnable: boolean

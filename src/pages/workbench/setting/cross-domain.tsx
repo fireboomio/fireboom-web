@@ -9,8 +9,8 @@ import IconFont from '@/components/Iconfont'
 import { HttpRequestHeaders } from '@/lib/constant'
 import requests from '@/lib/fetchers'
 
-import tipCros from './assets/tip-cros.png'
-import styles from './subs.module.less'
+import tipCros from './components/subs/assets/tip-cros.png'
+import styles from './components/subs/subs.module.less'
 
 interface CorsConfiguration {
   allowedOrigins: Array<string>

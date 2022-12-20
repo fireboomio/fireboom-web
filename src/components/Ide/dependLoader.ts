@@ -1,14 +1,14 @@
 import type { Monaco } from '@swordjs/monaco-editor-react'
-import { difference } from 'lodash'
+import { difference, omit } from 'lodash'
 
 import requests, { NPM_RESOLVE_HOSE } from '@/lib/fetchers'
+import banDependList from './banDependList'
 
 const STORAGE_KEY = '_dts_cache_'
 
 const loadMap = new Map<string, Promise<LoadResponse | void>>() // 请求缓存，用于防止重复请求
 const memoryCacheMap = new Map<string, LoadResponse>()
 function readCache(key: string) {
-  console.log(memoryCacheMap, 'memoryCacheMap')
   // 如果memoryCacheMap中有缓存，则直接返回
   const memoryCache = memoryCacheMap.get(key)
   if (memoryCache) {
@@ -178,7 +178,6 @@ export class DependManager {
       }
       this.loadMap[key] = this.dependMap[key]
       const currentVersion = this.dependMap[key]
-      console.log('触发加载', key, currentVersion)
       this.doLoading(key, currentVersion)
         .then(dtsFiles => {
           // 当前请求已过期
@@ -217,11 +216,16 @@ export class DependManager {
         })
     })
   }
+
   setDepends(dependMap: Record<string, string>) {
-    this.dependMap = dependMap
+    this.dependMap = omit(dependMap, banDependList)
     this.checkForLoading()
   }
+
   addDepend(name: string, version: string, force = false) {
+    if (banDependList.includes(name)) {
+      return
+    }
     this.dependMap[name] = version
     if (force) {
       // 强制刷新，清空加载的标记

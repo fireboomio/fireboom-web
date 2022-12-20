@@ -30,16 +30,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
 
   const navigate = useNavigate()
   if (!content) {
-    return (
-      <div className="h-full p-3 pb-0">
-        <div className="bg-white h-full pt-5.5 pl-5.5 overflow-auto">
-          {/* <div className="flex mb-24px justify-start  items-center">
-            <span className="flex-grow font-bold text-base text-[18px]">外部数据源 / 选择数据源</span>
-          </div> */}
-          <Designer />
-        </div>
-      </div>
-    )
+    return null
   }
 
   const toggleOpen = async () => {
@@ -117,24 +108,32 @@ export default function DatasourceContainer({ content, showType }: Props) {
             />
             {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
 
-            {isEditing ? (
-              <Input
-                onBlur={e => handleEdit(e.target.value)}
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onPressEnter={e => handleEdit(e.target.value)}
-                style={{ width: '200px' }}
-                defaultValue={content?.name}
-                autoFocus
-                placeholder="请输入数据源名"
-              />
+            {showType === 'detail' ? (
+              isEditing ? (
+                <Input
+                  onBlur={e => handleEdit(e.target.value)}
+                  // @ts-ignore
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                  onPressEnter={e => handleEdit(e.target.value)}
+                  style={{ width: '200px' }}
+                  defaultValue={content?.name}
+                  autoFocus
+                  placeholder="请输入数据源名"
+                />
+              ) : (
+                <>
+                  {content?.name}
+                  <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
+                    <img
+                      alt="bianji"
+                      src="assets/iconfont/bianji.svg"
+                      style={{ height: '1em', width: '1em' }}
+                    />
+                  </span>
+                </>
+              )
             ) : (
-              <>
-                {content?.name}
-                <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
-                  <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}} />
-                </span>
-              </>
+              content?.name || '新建数据源'
             )}
           </>
         )}

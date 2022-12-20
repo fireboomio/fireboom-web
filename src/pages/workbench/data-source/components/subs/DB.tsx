@@ -13,13 +13,14 @@ import requests, { getFetcher } from '@/lib/fetchers'
 import styles from './DB.module.less'
 import FileList from './FileList'
 import Setting from './Setting'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 interface Props {
   content: DatasourceResp
   type: ShowType
 }
 
-type Config = Record<string, string | any[]>
+type Config = Record<string, any>
 
 type FromValues = Record<string, number | string | boolean>
 
@@ -51,6 +52,9 @@ export default function DB({ content, type }: Props) {
   const [_disabled, setDisabled] = useImmer(false)
   const [isSecretShow, setIsSecretShow] = useImmer(false)
   const [form] = Form.useForm()
+  const userNameKind = Form.useWatch(['userName', 'kind'], form)
+  const passwordKind = Form.useWatch(['password', 'kind'], form)
+
   const config = content.config as Config
   const [rulesObj, setRulesObj] = useImmer({})
   const [isValue, setIsValue] = useImmer(true)
@@ -59,6 +63,7 @@ export default function DB({ content, type }: Props) {
 
   const [visible, setVisible] = useImmer(false)
   // const [uploadPath, setUploadPath] = useImmer(BASEPATH)
+  const envOptions = useEnvOptions()
 
   const dbType = config.dbType
 
@@ -209,28 +214,55 @@ export default function DB({ content, type }: Props) {
       >
         <Input placeholder="请输入..." />
       </Form.Item>
-      <Form.Item
-        label="用户:"
-        name="userName"
-        rules={[
-          { required: true, message: '用户名不能为空' },
-          {
-            pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
-          }
-        ]}
-      >
-        <Input placeholder="请输入..." />
+
+      <Form.Item label="用户:">
+        <Input.Group compact className="!flex">
+          <Form.Item name={['userName', 'kind']} noStyle>
+            <Select className="w-100px flex-0">
+              <Select.Option value="0">值</Select.Option>
+              <Select.Option value="1">环境变量</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name={['userName', 'val']}
+            noStyle
+            rules={[
+              { required: true, message: '用户名不能为空' },
+              {
+                pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+              }
+            ]}
+          >
+            {String(userNameKind) !== '1' ? (
+              <Input className="flex-1" placeholder="请输入" />
+            ) : (
+              <Select className="flex-1" options={envOptions} />
+            )}
+          </Form.Item>
+        </Input.Group>
       </Form.Item>
-      <Form.Item
-        label="密码:"
-        name="password"
-        // rules={[
-        //   { required: true, message: '密码不能为空' },
-        //   { pattern: passwordReg, message: '请输入4-64位包含数字、字母的组合' }
-        // ]}
-      >
-        <Input.Password placeholder="请输入..." />
+
+      <Form.Item label="密码:">
+        <Input.Group compact className="!flex">
+          <Form.Item name={['password', 'kind']} noStyle>
+            <Select className="w-100px flex-0">
+              <Select.Option value="0">值</Select.Option>
+              <Select.Option value="1">环境变量</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name={['password', 'val']}
+            noStyle
+            rules={[{ required: true, message: 'App ID不能为空' }]}
+          >
+            {String(passwordKind) !== '1' ? (
+              <Input className="flex-1" placeholder="请输入" />
+            ) : (
+              <Select className="flex-1" options={envOptions} />
+            )}
+          </Form.Item>
+        </Input.Group>
       </Form.Item>
     </>
   )
@@ -245,6 +277,10 @@ export default function DB({ content, type }: Props) {
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
+  useEffect(() => {
+    setViewerForm(config.appendType == '1' ? paramForm : initForm)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userNameKind, passwordKind])
 
   // 连接URL，值和环境变量切换,对应选择框切换，重新渲染获取数据
   useEffect(() => {
@@ -415,19 +451,25 @@ export default function DB({ content, type }: Props) {
                       <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
                       <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
                       <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
-                      <Descriptions.Item label="用户">{config.userName}</Descriptions.Item>
+                      <Descriptions.Item label="用户">{config.userName?.val}</Descriptions.Item>
                       <Descriptions.Item label="密码">
                         {isSecretShow ? (
                           <span>
-                            {config.password}
-                            <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}}
+                            {config.password?.val}
+                            <img
+                              alt="xiaoyanjing-chakan"
+                              src="assets/iconfont/xiaoyanjing-chakan.svg"
+                              style={{ height: '1em', width: '1em' }}
                               onClick={() => setIsSecretShow(!isSecretShow)}
                             />
                           </span>
                         ) : (
                           <span>
                             **********
-                            <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
+                            <img
+                              alt="xiaoyanjing-yincang"
+                              src="assets/iconfont/xiaoyanjing-yincang.svg"
+                              style={{ height: '1em', width: '1em' }}
                               onClick={() => setIsSecretShow(!isSecretShow)}
                             />
                           </span>
@@ -470,8 +512,8 @@ export default function DB({ content, type }: Props) {
                 host: config.host,
                 dbName: config.dbName,
                 port: config.port,
-                userName: config.userName,
-                password: config.password,
+                userName: config.userName || { kind: '0' },
+                password: config.password || { kind: '0' },
                 databaseUrl: {
                   kind:
                     (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
@@ -526,7 +568,7 @@ export default function DB({ content, type }: Props) {
                     if (content.name && content.name !== 'example_pgsql') {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
-                      navigate('/workbench/dataSource/new')
+                      navigate('/workbench/data-source/new')
                     }
                   }}
                 >

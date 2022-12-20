@@ -93,7 +93,7 @@ export default function Error() {
                       ，可
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/datasource/${item.id}`)}
+                        onClick={() => navigate(`/workbench/data-source/${item.id}`)}
                       >
                         前往
                       </span>

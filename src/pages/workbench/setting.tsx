@@ -5,12 +5,14 @@ import { useImmer } from 'use-immer'
 import type { SettingType } from '@/interfaces/setting'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
-import Container from './components/Container'
-import Pannel from './components/Pannel'
+import Container from './setting/components/Container'
+import Pannel from './setting/components/Pannel'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 export default function Setting() {
+  const location = useLocation()
   const { setFullscreen } = useContext(WorkbenchContext)
-  const [showType, setShowType] = useImmer('data')
+  const navigate = useNavigate()
 
   // 进入设置页面时，自动全屏
   useEffect(() => {
@@ -19,8 +21,16 @@ export default function Setting() {
 
   // TODO: need refine
 
+  const showType = location.pathname.match(/^\/workbench\/setting\/.+$/)?.[0]
+  useEffect(() => {
+    console.log('showType', showType)
+    if (!showType) {
+      navigate('/workbench/setting/appearance', { replace: true })
+    }
+  }, [showType])
+
   function handleToggleDesigner(settingType: SettingType) {
-    setShowType(settingType.type)
+    navigate(`/workbench/setting/${settingType.type}`, { replace: true })
   }
 
   return (
@@ -37,7 +47,7 @@ export default function Setting() {
           <Pannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
         </Col>
         <Col className="flex-1 min-w-0 h-full overflow-y-auto bg-white">
-          <Container showType={showType} />
+          <Outlet />
         </Col>
       </div>
     </div>
