@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -13,8 +13,6 @@ import {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
-
-import DatasourceContainer from '../components/Container'
 
 export default function Datasource() {
   const navigate = useNavigate()
@@ -63,18 +61,17 @@ export default function Datasource() {
   }
 
   // if (error) return <div>failed to load</div>
-  if (!datasource) return <div>loading...</div>
 
   // TODO: need refine
+  console.log('content', content)
 
   return (
     <>
-      <Helmet>
-        <title>FireBoom - 数据来源</title>
-      </Helmet>
       <DatasourceDispatchContext.Provider value={dispatch}>
         <DatasourceToggleContext.Provider
           value={{
+            showType,
+            content,
             handleToggleDesigner,
             handleSave: content => {
               onRefreshMenu('dataSource')
@@ -89,7 +86,7 @@ export default function Datasource() {
             }
           }}
         >
-          <DatasourceContainer showType={showType} content={content} />
+          <Outlet />
         </DatasourceToggleContext.Provider>
       </DatasourceDispatchContext.Provider>
     </>

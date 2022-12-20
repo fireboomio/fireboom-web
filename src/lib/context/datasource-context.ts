@@ -12,6 +12,9 @@ interface DatasourceToggleContext {
   handleToggleDesigner: (type: ShowType, id?: number, sourceType?: number) => void
   handleSave: (content: DatasourceResp) => void
   handleCreate: (content: DatasourceResp) => void
+
+  showType: ShowType
+  content: DatasourceResp | undefined
 }
 export const DatasourceContext = createContext([] as DatasourceResp[])
 export const DatasourceDispatchContext = createContext({} as Dispatch<DatasourceAction>)

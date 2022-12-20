@@ -104,50 +104,11 @@ export default function SettingMainEnvironmentVariable() {
       width: 200
     },
     {
-      title: '开发环境',
+      title: '变量值',
       dataIndex: 'devEnv',
       key: 'devEnv',
       width: 200
     },
-    {
-      title: '生产环境',
-      key: 'proEnv',
-      dataIndex: 'proEnv',
-      width: 200,
-      render: (_, { key, proEnv }) => {
-        const isThisLine = isCheckShow(key)
-        return isThisLine ? (
-          isProEnvVisible ? (
-            <div>
-              <span>{proEnv}</span>{' '}
-              <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}}
-                className="ml-6"
-                onClick={() => handleToggleProEnv(key)}
-              />{' '}
-            </div>
-          ) : (
-            <div>
-              {' '}
-              <span>**************</span>{' '}
-              <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
-                className="ml-6"
-                onClick={() => handleToggleProEnv(key)}
-              />
-            </div>
-          )
-        ) : (
-          <div>
-            {' '}
-            <span>**************</span>{' '}
-            <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
-              className="ml-6"
-              onClick={() => handleToggleProEnv(key)}
-            />
-          </div>
-        )
-      }
-    },
-
     {
       title: '操作',
       dataIndex: 'action',
@@ -210,7 +171,7 @@ export default function SettingMainEnvironmentVariable() {
           transitionName=""
           bodyStyle={{
             width: '549px',
-            height: '200px',
+            height: '150px',
             margin: '12px auto'
           }}
           open={isVariableVisible}
@@ -272,21 +233,10 @@ export default function SettingMainEnvironmentVariable() {
             </Form.Item>
             <Form.Item name="oldKey" hidden></Form.Item>
             <Form.Item
-              label="开发环境"
+              label="值"
               name="devEnv"
               rules={[
-                { required: true, message: '开发环境不能为空' },
-                { pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="生产环境"
-              name="proEnv"
-              rules={[
-                { required: true, message: '生产环境不能为空' },
-                { pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
+                { required: true, pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
               ]}
             >
               <Input />

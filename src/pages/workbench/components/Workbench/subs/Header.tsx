@@ -132,8 +132,8 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         />
         <div className={styles.logo} onClick={() => navigate('/workbench')} />
         <div className={styles.splitLine} />
-        <div className={styles.title}>后台管理系统</div>
-        <div className={styles.titleIcon} />
+        <div className={styles.title}>飞布控制台</div>
+        {/*<div className={styles.titleIcon} />*/}
         <div className="flex-1" />
         {pathname === '/workbench/rapi' ? (
           <>

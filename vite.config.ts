@@ -33,17 +33,7 @@ const plugins: PluginOption[] = [
     importMode: 'async',
     dirs: 'src/pages',
     onRoutesGenerated: routes => {
-      // 数据建模支持id参数
-      const modeling = routes
-        .find(route => route.path === 'workbench')
-        ?.children.find((route: { path: string }) => route.path === 'modeling')
-      if (modeling) {
-        if (!modeling.children.find((route: { path: string }) => route.path === ':id')) {
-          const newRoute = modeling.children.find((route: { path: string }) => route.path === '')
-          newRoute.path = ':id'
-          modeling.children.push(newRoute)
-        }
-      }
+      console.log(JSON.stringify(routes, null, 2))
       return routes
     }
   })
