@@ -185,8 +185,7 @@ export default function DB({ content, type }: Props) {
         label="主机:"
         name="host"
         rules={[
-          { required: true, message: '主机名不能为空' },
-          { pattern: domainReg || ipReg, message: '请填写规范域名或者ip' }
+          { required: true, message: '主机名不能为空' }
         ]}
       >
         <Input placeholder="请输入..." />
@@ -254,7 +253,6 @@ export default function DB({ content, type }: Props) {
           <Form.Item
             name={['password', 'val']}
             noStyle
-            rules={[{ required: true, message: 'App ID不能为空' }]}
           >
             {String(passwordKind) !== '1' ? (
               <Input className="flex-1" placeholder="请输入" />
