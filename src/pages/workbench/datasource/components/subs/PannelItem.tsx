@@ -128,16 +128,33 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
       onClick={() => onClickItem(datasourceItem)}
     >
       <div className="flex items-center cursor-pointer">
-        <img alt="tuozhuai-xuanzhong" src="assets/iconfont/tuozhuai-xuanzhong.svg" style={{height:'1em', width: '1em'}}
+        <img
+          alt="tuozhuai-xuanzhong"
+          src="assets/iconfont/tuozhuai-xuanzhong.svg"
+          style={{ height: '1em', width: '1em', visibility: isHovering ? 'visible' : 'hidden' }}
           className="-ml-3 mr-1"
-          style={{ visibility: isHovering ? 'visible' : 'hidden' }}
         />
         {datasourceItem.sourceType == 1 ? (
-          <img alt="wenjian1" src="assets/iconfont/wenjian1.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
+          <img
+            alt="wenjian1"
+            src="assets/iconfont/wenjian1.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[16px]"
+          />
         ) : datasourceItem.sourceType == 3 ? (
-          <img alt="QLweixuanzhong1" src="assets/iconfont/QLweixuanzhong1.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
+          <img
+            alt="QLweixuanzhong1"
+            src="assets/iconfont/QLweixuanzhong1.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[16px]"
+          />
         ) : (
-          <img alt="wenjian" src="assets/iconfont/wenjian.svg" style={{height:'1em', width: '1em'}} className="text-[16px]" />
+          <img
+            alt="wenjian"
+            src="assets/iconfont/wenjian.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[16px]"
+          />
         )}
 
         {isEditing ? (
@@ -181,10 +198,12 @@ export default function PannelItem({ datasourceItem, onClickItem }: Props) {
             leaveItem(v)
           }}
         >
-          <img alt="gengduo-shu-xuanzhong" src="assets/iconfont/gengduo-shu-xuanzhong.svg" style={{height:'1em', width: '1em'}}
+          <img
+            alt="gengduo-shu-xuanzhong"
+            src="assets/iconfont/gengduo-shu-xuanzhong.svg"
+            style={{ height: '1em', width: '1em', visibility: isHovering ? 'visible' : 'hidden' }}
             onClick={e => e.stopPropagation()}
             className="m-auto mr-0 pr-2"
-            style={{ visibility: isHovering ? 'visible' : 'hidden' }}
           />
         </Dropdown>
       </div>

@@ -117,16 +117,20 @@ export default function FileList({
             okText="是"
             cancelText="否"
           >
-            <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}}
+            <img
+              alt="shanchu"
+              src="assets/iconfont/shanchu.svg"
+              style={{ height: '1em', width: '1em', fontSize: '16px', color: '#f6595b' }}
               className="cursor-pointer"
-              style={{ fontSize: '16px', color: '#f6595b' }}
             />
           </Popconfirm>
 
           <a href={`/api/v1/file/downloadFile?type=${upType}&fileName=${rcd.name}`}>
-            <img alt="xiazai" src="assets/iconfont/xiazai.svg" style={{height:'1em', width: '1em'}}
+            <img
+              alt="xiazai"
+              src="assets/iconfont/xiazai.svg"
+              style={{ height: '1em', width: '1em', fontSize: '22px' }}
               className="cursor-pointer"
-              style={{ fontSize: '22px' }}
             />
           </a>
         </div>
