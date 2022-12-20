@@ -526,7 +526,7 @@ export default function DB({ content, type }: Props) {
                     if (content.name && content.name !== 'example_pgsql') {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
-                      navigate('/workbench/dataSource/new')
+                      navigate('/workbench/data-source/new')
                     }
                   }}
                 >

@@ -750,7 +750,7 @@ export default function Graphql({ content, type }: Props) {
                     if (content.name && content.name !== 'example_graphqlApi') {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
-                      navigate('/workbench/dataSource/new')
+                      navigate('/workbench/data-source/new')
                     }
                   }}
                 >

@@ -37,8 +37,8 @@ interface PanelConfig {
 const panelMap: Record<string, PanelConfig> = {
   dataSource: {
     title: '数据源',
-    openItem: id => `/workbench/dataSource/${id}`,
-    newItem: '/workbench/dataSource/new',
+    openItem: id => `/workbench/data-source/${id}`,
+    newItem: '/workbench/data-source/new',
     request: {
       getList: dispatch => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {

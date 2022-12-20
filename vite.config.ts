@@ -31,11 +31,7 @@ const plugins: PluginOption[] = [
     exclude: ['**/components/**/*.*', '**/blocks/**/*.*', '**/hooks/**/*.*', '**/_*.*'],
     routeStyle: 'next',
     importMode: 'async',
-    dirs: 'src/pages',
-    onRoutesGenerated: routes => {
-      console.log(JSON.stringify(routes, null, 2))
-      return routes
-    }
+    dirs: 'src/pages'
   })
 ]
 if (argv[2] === 'build' && argv[3] === '--' && argv[4] === 'report') {
