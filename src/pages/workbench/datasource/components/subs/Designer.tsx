@@ -218,11 +218,7 @@ export default function Designer() {
                     preview={false}
                   /> */}
                 <div className="bg-white rounded-3xl h-7 shadow w-7 inline-flex items-center justify-center">
-                  {x.logo ? (
-                    <IconFont type={x.logo} style={{ fontSize: '16px' }} />
-                  ) : (
-                    <img alt="" src={x.icon} />
-                  )}
+                  <img alt="" src={x.icon} />
                 </div>
                 <span className={'ml-3' + (x.coming ? ' text-[#787D8B]' : '')}>{x.name}</span>
                 {x.coming && <div className={styles.coming}>即将</div>}

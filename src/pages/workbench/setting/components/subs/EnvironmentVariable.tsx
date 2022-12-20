@@ -120,8 +120,7 @@ export default function SettingMainEnvironmentVariable() {
           isProEnvVisible ? (
             <div>
               <span>{proEnv}</span>{' '}
-              <IconFont
-                type="icon-xiaoyanjing-chakan"
+              <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}}
                 className="ml-6"
                 onClick={() => handleToggleProEnv(key)}
               />{' '}
@@ -130,8 +129,7 @@ export default function SettingMainEnvironmentVariable() {
             <div>
               {' '}
               <span>**************</span>{' '}
-              <IconFont
-                type="icon-xiaoyanjing-yincang"
+              <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
                 className="ml-6"
                 onClick={() => handleToggleProEnv(key)}
               />
@@ -141,8 +139,7 @@ export default function SettingMainEnvironmentVariable() {
           <div>
             {' '}
             <span>**************</span>{' '}
-            <IconFont
-              type="icon-xiaoyanjing-yincang"
+            <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
               className="ml-6"
               onClick={() => handleToggleProEnv(key)}
             />
@@ -157,8 +154,7 @@ export default function SettingMainEnvironmentVariable() {
       width: 200,
       render: (_, { id, key, devEnv, proEnv, oldKey }) => (
         <div>
-          <IconFont
-            type="icon-zhongmingming"
+          <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}}
             onClick={() => {
               setIsVariableVisible(true)
               form.setFieldsValue({ key, devEnv, proEnv, oldKey })
@@ -180,7 +176,7 @@ export default function SettingMainEnvironmentVariable() {
               e.stopPropagation()
             }}
           >
-            <IconFont type="icon-shanchu" onClick={e => e.stopPropagation()} />
+            <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}} onClick={e => e.stopPropagation()} />
           </Popconfirm>
         </div>
       )
@@ -326,12 +322,12 @@ export default function SettingMainEnvironmentVariable() {
                 {isShowSecret ? (
                   <div>
                     {system[0]?.devEnv}
-                    <IconFont type="icon-xiaoyanjing-chakan" className="ml-6" />
+                    <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}} className="ml-6" />
                   </div>
                 ) : (
                   <div>
                     <span>**************</span>
-                    <IconFont type="icon-xiaoyanjing-yincang" className="ml-6" />
+                    <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}} className="ml-6" />
                   </div>
                 )}
               </span>

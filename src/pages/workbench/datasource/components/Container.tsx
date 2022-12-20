@@ -4,13 +4,13 @@ import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { updateHookSwitch } from '@/lib/service/hook'
 
-import IconFont from '@/components/Iconfont'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 import Designer from './subs/Designer'
@@ -132,7 +132,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               <>
                 {content?.name}
                 <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
-                  <IconFont type="icon-bianji" />
+                  <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}} />
                 </span>
               </>
             )}
@@ -142,13 +142,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            <Switch
-              checked={content?.switch === 1}
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
-              onChange={toggleOpen}
-              className="mr-4"
-            />
+            {content.sourceType !== 4 ? (
+              <Switch
+                checked={content?.switch === 1}
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+                onChange={toggleOpen}
+                className="mr-4"
+              />
+            ) : null}
             {content.sourceType === 1 ? (
               <Button
                 className={'btn-test ml-4 '}

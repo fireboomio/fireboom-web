@@ -63,11 +63,11 @@ const columns: ColumnsType<DataType> = [
     render: (_, { kind, val }) => (
       <div className="flex items-center">
         {kind == '0' ? (
-          <IconFont type="icon-zhi" className="text-[24px]" />
+          <img alt="zhi" src="assets/iconfont/zhi.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
         ) : kind == '1' ? (
-          <IconFont type="icon-shifoubixu2" className="text-[24px]" />
+          <img alt="shifoubixu2" src="assets/iconfont/shifoubixu2.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
         ) : (
-          <IconFont type="icon-biangeng1" className="text-[24px]" />
+          <img alt="biangeng1" src="assets/iconfont/biangeng1.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
         )}
         <span className="ml-2">{val}</span>
       </div>
@@ -317,7 +317,7 @@ export default function Rest({ content, type }: Props) {
         <>
           {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
             <div>
-              <IconFont type="icon-shujuyuantubiao1" />
+              <img alt="shujuyuantubiao1" src="assets/iconfont/shujuyuantubiao1.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-2">
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
@@ -457,12 +457,12 @@ export default function Rest({ content, type }: Props) {
                               <span className="mr-5">
                                 {(config.secret as unknown as DataType)?.val}
                               </span>
-                              <IconFont type="icon-xiaoyanjing-chakan" onClick={changeEyeState} />
+                              <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}} onClick={changeEyeState} />
                             </>
                           ) : (
                             <>
                               <span className="mr-5">********</span>
-                              <IconFont type="icon-xiaoyanjing-yincang" onClick={changeEyeState} />
+                              <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}} onClick={changeEyeState} />
                             </>
                           )}
                         </Descriptions.Item>
@@ -686,7 +686,7 @@ export default function Rest({ content, type }: Props) {
                                     />
                                   )}
                                 </Form.Item>
-                                <IconFont type="icon-guanbi" onClick={() => remove(index)} />
+                                <img alt="guanbi" src="assets/iconfont/guanbi.svg" style={{height:'1em', width: '1em'}} onClick={() => remove(index)} />
                               </Space>
                             ))}
 
@@ -713,7 +713,7 @@ export default function Rest({ content, type }: Props) {
                     tab={
                       <div>
                         <span>授权</span>
-                        <IconFont type="icon-wenhao" className={`${styles['form-icon']} ml-1`} />
+                        <img alt="wenhao" src="assets/iconfont/wenhao.svg" style={{height:'1em', width: '1em'}} className={`${styles['form-icon']} ml-1`} />
                       </div>
                     }
                     key="2"
@@ -793,8 +793,7 @@ export default function Rest({ content, type }: Props) {
                           label={
                             <>
                               <span>Token 端点</span>
-                              <IconFont
-                                type="icon-wenhao"
+                              <img alt="wenhao" src="assets/iconfont/wenhao.svg" style={{height:'1em', width: '1em'}}
                                 className={`${styles['form-icon']} ml-1`}
                               />
                             </>

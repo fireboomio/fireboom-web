@@ -101,7 +101,6 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(content)
   const urlRule = {
     mysql: {
       pattern: /^mysql:\/\/.{1,120}$/g,
@@ -421,18 +420,14 @@ export default function DB({ content, type }: Props) {
                         {isSecretShow ? (
                           <span>
                             {config.password}
-                            <IconFont
-                              className="ml-2"
-                              type="icon-xiaoyanjing-chakan"
+                            <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}}
                               onClick={() => setIsSecretShow(!isSecretShow)}
                             />
                           </span>
                         ) : (
                           <span>
                             **********
-                            <IconFont
-                              className="ml-2"
-                              type="icon-xiaoyanjing-yincang"
+                            <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}}
                               onClick={() => setIsSecretShow(!isSecretShow)}
                             />
                           </span>

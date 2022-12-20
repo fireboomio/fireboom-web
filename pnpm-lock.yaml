@@ -10,7 +10,7 @@ specifiers:
   '@graphiql/react': ^0.13.2
   '@graphiql/toolkit': ^0.8.0
   '@monaco-editor/react': ^4.4.5
-  '@mrleebo/prisma-ast': git://github.com/woodensail/prisma-ast.git#dist
+  '@mrleebo/prisma-ast': https://github.com/woodensail/prisma-ast.git#dist
   '@paljs/types': ^4.0.18
   '@stackblitz/sdk': ^1.8.1
   '@swordjs/monaco-editor': '*'

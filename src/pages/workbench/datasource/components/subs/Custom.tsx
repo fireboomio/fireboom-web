@@ -90,7 +90,5 @@ export default function Custom({ content }: Props) {
       .then(() => void message.success('保存成功!'))
   }
 
-  return (
-    <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" hideSwitch />
-  )
+  return <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" />
 }

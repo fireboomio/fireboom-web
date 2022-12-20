@@ -225,7 +225,7 @@ export default function SettingMainSecurity() {
                 />
               </Form.Item>
               <span className={styles.setTitle}>
-                <IconFont type="icon-zhuyi" className="mr-1 text-[14px]" />
+                <img alt="zhuyi" src="assets/iconfont/zhuyi.svg" style={{height:'1em', width: '1em'}} className="mr-1 text-[14px]" />
                 <span>https://localhost:9991/api/main/graphql</span>
               </span>
             </Form.Item>

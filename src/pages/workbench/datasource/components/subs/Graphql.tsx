@@ -231,7 +231,7 @@ export default function Graphql({ content, type }: Props) {
         <>
           {/* <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
             <div>
-              <IconFont type="icon-shujuyuantubiao1" />
+              <img alt="shujuyuantubiao1" src="assets/iconfont/shujuyuantubiao1.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-2">
                 {content.name} <span className="text-xs text-gray-500/80">GET</span>
               </span>
@@ -300,7 +300,7 @@ export default function Graphql({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  <IconFont type="icon-wenjian1" /> {config.loadSchemaFromString}
+                  <img alt="wenjian1" src="assets/iconfont/wenjian1.svg" style={{height:'1em', width: '1em'}} /> {config.loadSchemaFromString}
                 </Descriptions.Item>
               ) : (
                 ''
@@ -339,7 +339,7 @@ export default function Graphql({ content, type }: Props) {
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
-              <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />
+              <img alt="xiala" src="assets/iconfont/xiala.svg" style={{height:'1em', width: '1em'}} rotate={isActive ? 0 : -90} />
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >

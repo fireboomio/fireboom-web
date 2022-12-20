@@ -301,7 +301,7 @@ export default function SettingCrossdomain() {
                 />
               </Form.Item>
               <span className="ml-4 text-gray-500 inline-block h-6">
-                <IconFont type="icon-zhuyi" className="text-[14px]" /> 是否允许证书
+                <img alt="zhuyi" src="assets/iconfont/zhuyi.svg" style={{height:'1em', width: '1em'}} className="text-[14px]" /> 是否允许证书
               </span>
             </Form.Item>
           </Form>

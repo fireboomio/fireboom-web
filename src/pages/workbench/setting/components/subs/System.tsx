@@ -116,8 +116,7 @@ export default function SettingMainVersion() {
               ) : (
                 <span>{systemConfig.apiHost}</span>
               )}
-              <IconFont
-                type="icon-bianji"
+              <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
                 className="ml-2"
                 onClick={() => {
                   setIsApiHostEditing(!isApiHostEditing)
@@ -143,8 +142,7 @@ export default function SettingMainVersion() {
               ) : (
                 <span>{systemConfig.apiPort}</span>
               )}
-              <IconFont
-                type="icon-bianji"
+              <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
                 className="ml-2"
                 onClick={() => {
                   setIsApiPortEditing(!isApiPortEditing)
@@ -170,8 +168,7 @@ export default function SettingMainVersion() {
             {/*  ) : (*/}
             {/*    <span>{systemConfig.middlewarePort}</span>*/}
             {/*  )}*/}
-            {/*  <IconFont*/}
-            {/*    type="icon-bianji"*/}
+            {/*  <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}*/}
             {/*    className="ml-2"*/}
             {/*    onClick={() => {*/}
             {/*      setIsMidPortEditing(!isMidPortEditing)*/}

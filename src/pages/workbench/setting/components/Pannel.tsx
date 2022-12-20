@@ -15,27 +15,27 @@ const settingTypeList: SettingType[] = [
   {
     name: '外观',
     type: 'colorTheme',
-    icon: <IconFont type="icon-waiguan" />
+    icon: <img alt='xxx' src='assets/iconfont/waiguan.svg' style={{width:'1em',height:'1em'}} />
   },
   {
     name: '系统',
     type: 'system',
-    icon: <IconFont type="icon-xitong" />
+    icon: <img alt="xitong" src="assets/iconfont/xitong.svg" style={{height:'1em', width: '1em'}} />
   },
   {
     name: '安全',
     type: 'secure',
-    icon: <IconFont type="icon-anquan" />
+    icon: <img alt="anquan" src="assets/iconfont/anquan.svg" style={{height:'1em', width: '1em'}} />
   },
   {
     name: '跨域',
     type: 'cors',
-    icon: <IconFont type="icon-kuayu" />
+    icon: <img alt="kuayu" src="assets/iconfont/kuayu.svg" style={{height:'1em', width: '1em'}} />
   },
   // {
   //   name: 'API Token',
   //   type: 'API Token',
-  //   icon: <IconFont type="icon-a-APItoken" />,
+  //   icon: <img alt="a-APItoken" src="assets/iconfont/a-APItoken.svg" style={{height:'1em', width: '1em'}} />,
   // },
   {
     name: 'SDK 模板',
@@ -45,12 +45,12 @@ const settingTypeList: SettingType[] = [
   {
     name: '环境变量',
     type: 'path',
-    icon: <IconFont type="icon-huanjingbianliang" />
+    icon: <img alt="huanjingbianliang" src="assets/iconfont/huanjingbianliang.svg" style={{height:'1em', width: '1em'}} />
   },
   {
     name: '版本',
     type: 'version',
-    icon: <IconFont type="icon-banben" />
+    icon: <img alt="banben" src="assets/iconfont/banben.svg" style={{height:'1em', width: '1em'}} />
   }
 ]
 
