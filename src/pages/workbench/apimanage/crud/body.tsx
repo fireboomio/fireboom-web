@@ -636,7 +636,13 @@ export default function CRUDBody(props: CRUDBodyProps) {
           ghost
           bordered={false}
           defaultActiveKey={[]}
-          expandIcon={({ isActive }) => <IconFont type="icon-xiala" rotate={isActive ? 0 : -90} />}
+          expandIcon={({ isActive }) => (
+            <img
+              alt="xiala"
+              src="assets/iconfont/xiala.svg"
+              style={{ height: '1em', width: '1em', transform: isActive ? '' : 'rotate(-90deg)' }}
+            />
+          )}
           className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
         >
           <Collapse.Panel header="更多设置" key="1" forceRender>

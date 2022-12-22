@@ -15,11 +15,11 @@ import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
-  const { apiDesc, schemaAST, updateAPI, updateAPIName, updateContent, saved, query, apiID } =
+  const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiID } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
-      updateAPI: state.updateAPI,
+      changeEnable: state.changeEnable,
       updateAPIName: state.updateAPIName,
       updateContent: state.updateContent,
       saved: state.computed.saved,
@@ -42,7 +42,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiDesc?.path])
 
-  const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement> | { key: string}) => {
+  const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement> | { key: string }) => {
     if (e.key === 'Enter') {
       const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
@@ -62,10 +62,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const toggleEnable = async (checked: boolean) => {
     try {
-      await updateAPI({
-        enable: checked
-        // path: apiDesc!.path
-      })
+      await changeEnable(checked)
       message.success(checked ? '已开启' : '已关闭')
     } catch (error) {
       //
@@ -125,8 +122,8 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
     const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
     const argNames = (def?.variableDefinitions || []).map(item => item.variable.name.value)
-    const isQuery = apiDesc?.operationType === 'queries'
-    if (isQuery) {
+    const operationType = def?.operation ?? 'query'
+    if (operationType === 'query' || operationType === 'subscription') {
       argNames.forEach((name, index) => {
         let value = argValueMap[name] ?? ''
         if (typeof value !== 'string') {
@@ -135,6 +132,11 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         query.push(`${name}=${value}`)
       })
 
+      // 对于订阅接口，增加wg_sse
+      if (operationType === 'subscription') {
+        query.push('wg_sse=true')
+      }
+      // 对于实时接口需要添加wg_live
       if (apiDesc?.liveQuery) {
         query.push('wg_live=true')
       }
@@ -142,7 +144,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         link += '?' + query.join('&')
       }
       copy(link)
-    } else {
+    } else if (operationType === 'mutation') {
       const data: Record<string, any> = {}
       argNames.forEach((name, index) => {
         data[name] = argValueMap[name] || null
@@ -153,6 +155,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   --data-raw '${JSON.stringify(data)}' \\
   --compressed`
       copy(curl)
+    } else if (operationType === 'subscription') {
     }
 
     message.success('URL 地址已复制')

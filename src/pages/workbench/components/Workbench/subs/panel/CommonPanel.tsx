@@ -37,8 +37,8 @@ interface PanelConfig {
 const panelMap: Record<string, PanelConfig> = {
   dataSource: {
     title: '数据源',
-    openItem: id => `/workbench/dataSource/${id}`,
-    newItem: '/workbench/dataSource/new',
+    openItem: id => `/workbench/data-source/${id}`,
+    newItem: '/workbench/data-source/new',
     request: {
       getList: dispatch => {
         void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
@@ -109,7 +109,7 @@ const panelMap: Record<string, PanelConfig> = {
     mutateKey: id => ['/dataSource', String(id)],
     navMenu: [
       {
-        icon: 'icon-wenjian1',
+        icon: 'assets/iconfont/wenjian1.svg',
         name: '查看',
         menuPath: id => `/workbench/storage/${id}`
       }
@@ -181,7 +181,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         key: 'rename',
         label: (
           <div onClick={() => setEditTarget(row)}>
-            <IconFont type="icon-zhongmingming" />
+            <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}} />
             <span className="ml-1.5">重命名</span>
           </div>
         )
@@ -199,7 +199,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             okType={'danger'}
           >
             <div>
-              <IconFont type="icon-a-shanchu2" />
+              <img alt="a-shanchu2" src="assets/iconfont/a-shanchu2.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-1.5">删除</span>
             </div>
           </Popconfirm>
@@ -212,7 +212,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           key: item.name,
           label: (
             <div key={row.id} onClick={() => navigate(item.menuPath(row.id))}>
-              <IconFont type={item.icon} />
+              <img alt="" src={item.icon} style={{ height: '1em', width: '1em' }} />
               <span className="ml-1.5">{item.name}</span>
             </div>
           )
@@ -342,7 +342,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                     open={dropDownId === item.id}
                     onOpenChange={flag => {
                       setDropDownId(flag ? item.id : undefined)
-                      console.log(dropDownId)
                     }}
                     placement="bottomRight"
                   >

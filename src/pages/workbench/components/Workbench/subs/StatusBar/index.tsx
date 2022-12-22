@@ -7,7 +7,7 @@ import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
-import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus, HookStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
 
@@ -19,7 +19,7 @@ interface Props {
   startTime?: string
   errorInfo?: ErrorInfo
   engineStatus?: ServiceStatus
-  hookStatus?: ServiceStatus
+  hookStatus?: HookStatus
   toggleWindow: (defaultTa: string) => void
 }
 const statusMap = {
@@ -28,6 +28,10 @@ const statusMap = {
   [ServiceStatus.Running]: '已启动',
   [ServiceStatus.CompileFail]: '编译失败',
   [ServiceStatus.StartFail]: '启动失败'
+}
+const hookStatusMap = {
+  [HookStatus.Running]: '已启动',
+  [HookStatus.Stopped]: '未启动'
 }
 
 // eslint-disable-next-line react/prop-types
@@ -137,7 +141,7 @@ const StatusBar: React.FC<Props> = ({
             >
               <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
               <span className="ml-1 text-[#50C772]">
-                {statusMap[hookStatus as ServiceStatus] ?? ''}
+                {hookStatusMap[hookStatus as HookStatus] ?? ''}
               </span>
             </div>
             <div className={styles.split} />

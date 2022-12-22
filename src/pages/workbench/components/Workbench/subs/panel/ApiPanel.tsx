@@ -496,7 +496,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               setAction('重命名')
             }}
           >
-            <IconFont type="icon-zhongmingming" />
+            <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}} />
             <span className="ml-1.5">重命名</span>
           </div>
         )
@@ -518,7 +518,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               cancelText="取消"
               placement="right"
             >
-              <IconFont type="icon-shanchu" />
+              <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-1.5">删除</span>
             </Popconfirm>
           </div>

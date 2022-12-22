@@ -52,6 +52,8 @@ export interface APIState {
     saved: boolean
   }
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => void
+
+  changeEnable: (enable: boolean) => void
   autoSave: () => boolean | Promise<boolean>
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
   updateAPIName: (path: string) => Promise<void>
@@ -84,26 +86,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
     set({ apiID: id })
     await get().refreshAPI()
     refreshFns.forEach(fn => fn())
-    // 第一次加载
-    if (!get().schema) {
-      // 获取 graphql 集合
-      try {
-        const res = await fetch('/app/main/graphql', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ query: getIntrospectionQuery() })
-        }).then(resp => resp.json())
-        set({
-          originSchema: res.data as IntrospectionQuery,
-          schema: buildClientSchema(res.data as IntrospectionQuery)
-        })
-      } catch (e) {
-        //
-      }
-    }
   },
   setQuery(query) {
     set({ query: query || DEFAULT_QUERY })
@@ -144,6 +126,13 @@ export const useAPIManager = create<APIState>((set, get) => ({
   updateAPI: (newAPI: Partial<APIDesc>) => {
     return requests.put(`/operateApi/${get().apiID}`, newAPI).then(resp => {
       get().pureUpdateAPI(newAPI)
+      // 刷新api列表
+      get()._workbenchContext?.onRefreshMenu('api')
+    })
+  },
+  changeEnable: (enable: boolean) => {
+    return requests.put(`/operateApi/switch/${get().apiID}`, { enable }).then(resp => {
+      get().pureUpdateAPI({ enable })
       // 刷新api列表
       get()._workbenchContext?.onRefreshMenu('api')
     })

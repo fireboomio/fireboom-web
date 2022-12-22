@@ -15,7 +15,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
-import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus, HookStatus } from '@/pages/workbench/apimanage/crud/interface'
 import Window from '@/pages/workbench/components/Workbench/subs/Window'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 

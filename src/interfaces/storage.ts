@@ -14,8 +14,8 @@ export interface StorageT {
 
 export interface StorageConfig {
   name: string
-  accessKeyID: string
-  secretAccessKey: string
+  accessKeyID: { kind: string; val: string }
+  secretAccessKey: { kind: string; val: string }
   bucketLocation: string
   bucketName: string
   endpoint: string

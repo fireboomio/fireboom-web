@@ -399,7 +399,6 @@ export default function StorageExplorer({ bucketId }: Props) {
         }))
 
       sortOptions(fileOpts)
-      console.log(root)
       loadTarget.children = fileOpts
       setOptions([...root.children!])
     } catch (e) {
@@ -647,12 +646,14 @@ export default function StorageExplorer({ bucketId }: Props) {
                 ghost={true}
                 className={styles.collapse}
               >
-                <Panel header="基本信息" key="1">
-                  <p>类型：{target?.mime ?? '未知'}</p>
-                  <p>大小：{formatBytes(target?.size)}</p>
-                  <p>创建于：{target?.createTime ?? ''}</p>
-                  <p>修改于：{target?.updateTime ?? ''}</p>
-                </Panel>
+                {!target?.isDir && (
+                  <Panel header="基本信息" key="1">
+                    <p>类型：{target?.mime ?? '未知'}</p>
+                    <p>大小：{formatBytes(target?.size)}</p>
+                    <p>创建于：{target?.createTime ?? ''}</p>
+                    <p>修改于：{target?.updateTime ?? ''}</p>
+                  </Panel>
+                )}
                 <Panel header="预览" key="2">
                   <div
                     className={`${styles['panel-style']} flex-col justify-center items-center flex`}
@@ -672,7 +673,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   </Button>
                   <Popconfirm
                     title="确定删除吗?"
-                    onConfirm={deleteFile}
+                    onConfirm={() => deleteFile(target)}
                     okText="删除"
                     cancelText="取消"
                   >

@@ -163,6 +163,11 @@ export default function APIEditorContainer() {
     message.success('已刷新')
   }, [refreshSchema])
 
+  // 进入页面时，立刻请求一次graphql schema
+  useEffect(() => {
+    refreshSchema()
+  }, [])
+
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
   })

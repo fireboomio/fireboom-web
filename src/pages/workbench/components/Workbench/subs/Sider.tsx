@@ -82,7 +82,7 @@ export default function Sider() {
           <ApiPanel defaultOpen={location.pathname.startsWith('/workbench/apimanage/')} />
           <CommonPanel
             type="dataSource"
-            defaultOpen={location.pathname.startsWith('/workbench/dataSource/')}
+            defaultOpen={location.pathname.startsWith('/workbench/data-source/')}
           />
           <CommonPanel type="auth" defaultOpen={location.pathname.startsWith('/workbench/auth/')} />
           <CommonPanel

@@ -362,13 +362,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               ) : (
                 titleValue
               )}
-              <IconFont
-                onClick={() => {
-                  setEditTitle(!editTitle)
-                  setTitleValue(currentEntity.name)
-                }}
-                className="cursor-pointer ml-1"
-                type="icon-zhongmingming"
+              <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}}
               />
               {/*{isEditing && '(未保存)'}*/}
             </span>
