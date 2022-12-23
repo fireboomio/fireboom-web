@@ -15,7 +15,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
-import { ServiceStatus, HookStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import Window from '@/pages/workbench/components/Workbench/subs/Window'
 import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
@@ -39,6 +39,7 @@ export default function Index(props: PropsWithChildren) {
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
   const listener = useRef<WorkbenchListener>()
+  const prevStatus = useRef<any>()
 
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
@@ -73,14 +74,18 @@ export default function Index(props: PropsWithChildren) {
             const status = matchJson(res).pop()
             if (status) {
               setInfo(status)
-              if (status.engineStatus === ServiceStatus.Running) {
-                events.emit({ event: 'compileFinish' })
-              } else if (
-                status.engineStatus === ServiceStatus.CompileFail ||
-                status.engineStatus === ServiceStatus.StartFail
-              ) {
-                events.emit({ event: 'compileFail' })
+              // 发生变化才通知
+              if (prevStatus.current) {
+                if (status.engineStatus === ServiceStatus.Running) {
+                  events.emit({ event: 'compileFinish' })
+                } else if (
+                  status.engineStatus === ServiceStatus.CompileFail ||
+                  status.engineStatus === ServiceStatus.StartFail
+                ) {
+                  events.emit({ event: 'compileFail' })
+                }
               }
+              prevStatus.current = status
             }
           })
         } catch (error) {
