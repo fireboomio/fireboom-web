@@ -9,7 +9,9 @@
     "serve": "vite preview",
     "lint": "pnpm lint:ts && pnpm lint:css",
     "lint:ts": "eslint ./src --fix",
-    "lint:css": "stylelint ./src --fix --color"
+    "lint:css": "stylelint ./src --fix --color",
+    "intl:extract": "formatjs extract \"src/**/*.ts*\" --ignore=\"**/*.d.ts\" --out-file lang/zh-CN.json --id-interpolation-pattern [sha512:contenthash:base64:6]",
+    "intl:compile": "formatjs compile lang/zh-CN.json --out-file public/lang/zh-CN.json"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -56,6 +58,7 @@
     "react-draggable": "^4.4.5",
     "react-full-screen": "^1.1.1",
     "react-helmet": "^6.1.0",
+    "react-intl": "^6.2.5",
     "react-json-editor-ajrm": "^2.5.13",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.4.1",
@@ -72,6 +75,7 @@
   "devDependencies": {
     "@apollo/client": "^3.7.0",
     "@doremijs/stylelint-config": "^0.1.5",
+    "@formatjs/cli": "^5.1.12",
     "@paljs/types": "^4.0.18",
     "@types/json-schema": "7.0.9",
     "@types/lodash": "^4.14.185",

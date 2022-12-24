@@ -7,3 +7,10 @@
 export NODE_OPTIONS='--max-old-space-size=7680'
 # 7680 = 8 * 1024 - 512
 ```
+
+## 国际化
+
+```bash
+npm run intl:extract
+npm run intl:compile
+```
