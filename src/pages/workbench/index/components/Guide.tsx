@@ -1,12 +1,23 @@
 import { Image } from 'antd'
+import { useEffect, useState } from 'react'
 
 import styles from './home.module.less'
+import requests from '@/lib/fetchers'
+import { StorageResp } from '@/interfaces/storage'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
 }
 
 export function Guide({ handleToggleDesigner }: Props) {
+  const navigate = useNavigate()
+  const [storageId, setStorageId] = useState<number>()
+  useEffect(() => {
+    requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
+      setStorageId(res[0].id)
+    })
+  }, [])
   const handleClose = () => {
     handleToggleDesigner('notice')
   }
@@ -18,9 +29,30 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineUp: '',
       lineDown: '',
       subTasks: [
-        { title: '连接数据库', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-        { title: '连接REST API', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-        { title: '连接GraphQL API', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' }
+        {
+          title: '连接数据库',
+          date: '08.12 14:00 完成',
+          state: 1,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/datasource/new'
+        },
+        {
+          title: '连接REST API',
+          date: '08.12 14:00 完成',
+          state: 1,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/datasource/new'
+        },
+        {
+          title: '连接GraphQL API',
+          date: '08.12 14:00 完成',
+          state: 1,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/datasource/new'
+        }
       ]
     },
     {
@@ -30,8 +62,22 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineUp: '',
       lineDown: '',
       subTasks: [
-        { title: '设置存储提供商', date: '08.12 14:00 完成', state: 1, lineUp: '', lineDown: '' },
-        { title: '上传一个文件', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+        {
+          title: '设置存储提供商',
+          date: '08.12 14:00 完成',
+          state: 1,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/storage/new'
+        },
+        {
+          title: '上传一个文件',
+          date: '快去完成吧',
+          state: 0,
+          lineUp: '',
+          lineDown: '',
+          link: storageId ? `/workbench/storage/${storageId}/manage` : '/workbench/storage/new'
+        }
       ]
     },
     {
@@ -41,8 +87,22 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineUp: '',
       lineDown: '',
       subTasks: [
-        { title: '设置身份提供商', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-        { title: '注册账户并登录', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+        {
+          title: '设置身份提供商',
+          date: '快去完成吧',
+          state: 0,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/datasource/new'
+        },
+        {
+          title: '注册账户并登录',
+          date: '快去完成吧',
+          state: 0,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/datasource/new'
+        }
       ]
     },
     {
@@ -52,8 +112,22 @@ export function Guide({ handleToggleDesigner }: Props) {
       lineUp: '',
       lineDown: '',
       subTasks: [
-        { title: '可视化编写接口', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' },
-        { title: '下载接口SDK', date: '快去完成吧', state: 0, lineUp: '', lineDown: '' }
+        {
+          title: '可视化编写接口',
+          date: '快去完成吧',
+          state: 0,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/apimanage/crud'
+        },
+        {
+          title: '下载接口SDK',
+          date: '快去完成吧',
+          state: 0,
+          lineUp: '',
+          lineDown: '',
+          link: '/workbench/rapi'
+        }
       ]
     }
   ]
@@ -109,7 +183,12 @@ export function Guide({ handleToggleDesigner }: Props) {
                   <div className={styles.title}>{`${i + 1}.${j + 1} ${sub.title}`}</div>
                   <div className={styles.status}>{sub.state ? sub.date : '快去完成吧'}</div>
                 </div>
-                <div className={styles.btn}>
+                <div
+                  className={styles.btn}
+                  onClick={() => {
+                    sub.link && navigate(sub.link)
+                  }}
+                >
                   {sub.state ? '修改' : '前往'}
                   <div className={styles.arrow} />
                 </div>
