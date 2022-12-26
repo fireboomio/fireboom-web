@@ -1,6 +1,7 @@
 import type { Field } from '@mrleebo/prisma-ast'
 import { Input, message } from 'antd'
 import { useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import AttributeArgHelper from '@/components/PrismaDesign/components/AttributeArg/AttributeArgHelper'
@@ -16,6 +17,7 @@ const FieldRelationAttributeArg = ({
   field,
   currentModelFields = []
 }: AttributeHandlersProp) => {
+  const intl = useIntl()
   const { entities } = useEntities()
   const { currentEntity } = useCurrentEntity()
   const referenceEntity = entities.find(e => e.name === field!.fieldType)
@@ -50,7 +52,12 @@ const FieldRelationAttributeArg = ({
     setEditing(false)
     const nameRegex = new RegExp('^"[A-Za-z0-9_]+"$')
     if (nameValue && !nameRegex.test(nameValue)) {
-      void message.error('name应为字符串，使用大小写字母或者下划线！')
+      void message.error(
+        intl.formatMessage(
+          { defaultMessage: '{field}应为字符串，使用大小写字母或者下划线！' },
+          { field: 'name' }
+        )
+      )
       setNameValue(name)
       return
     }
@@ -75,7 +82,7 @@ const FieldRelationAttributeArg = ({
   }
 
   if (!referenceEntity) {
-    void message.error('无法找到关联表实体类型！')
+    void message.error(intl.formatMessage({ defaultMessage: '无法找到关联表实体类型！' }))
     return <></>
   }
 
@@ -85,12 +92,12 @@ const FieldRelationAttributeArg = ({
       <span>name: </span>
       <span>(</span>
       {isEditing ? (
-        <div className="w-12 h-7">
+        <div className="h-7 w-12">
           <Input
             onChange={e => setNameValue(e.target.value)}
             autoFocus
             onBlur={handleNameChange}
-            placeholder="请输入"
+            placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
             value={nameValue}
             onPressEnter={handleNameChange}
             bordered={false}
@@ -99,7 +106,7 @@ const FieldRelationAttributeArg = ({
         </div>
       ) : (
         <div className="text-[#ECA160]" onClick={handleFocus}>
-          {nameValue ? nameValue : '请输入'}
+          {nameValue ? nameValue : intl.formatMessage({ defaultMessage: '请输入' })}
         </div>
       )}
       <span>)</span>
@@ -107,7 +114,9 @@ const FieldRelationAttributeArg = ({
       <span>fields: </span>
       <AttributeArgSelector
         multiSelect={true}
-        optionsMessage={`从<${currentEntity.name}>选择字段`}
+        optionsMessage={`从<${currentEntity.name}>${intl.formatMessage({
+          defaultMessage: '选择字段'
+        })}`}
         handleDataChange={handleFieldsDataChange}
         options={fieldsList}
         selectedOptionsValue={currentFields}
@@ -116,7 +125,9 @@ const FieldRelationAttributeArg = ({
       <span>references: </span>
       <AttributeArgSelector
         multiSelect={true}
-        optionsMessage={`从<${referenceEntity.name}>选择字段`}
+        optionsMessage={`从<${referenceEntity.name}>${intl.formatMessage({
+          defaultMessage: '选择字段'
+        })}`}
         handleDataChange={handleReferenceDataChange}
         options={referenceList}
         selectedOptionsValue={references}

@@ -1,5 +1,6 @@
 import { Select } from 'antd'
 import { useEffect } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import styles from '../index.module.less'
@@ -75,7 +76,9 @@ const AttributeArgSelector = ({
             {argIsFunction && '()'}
           </span>
         ) : (
-          <span className={styles['to-choose']}>待选择</span>
+          <span className={styles['to-choose']}>
+            <FormattedMessage defaultMessage="待选择" />
+          </span>
         )}
         <div className={styles['child-select']}>
           <Select
@@ -90,7 +93,7 @@ const AttributeArgSelector = ({
             dropdownRender={menu => (
               <>
                 {optionsMessage && (
-                  <div className="w-full ml-3 mr-10 mb-2 text-[#ECA160]">{optionsMessage}</div>
+                  <div className="mr-10 mb-2 ml-3 w-full text-[#ECA160]">{optionsMessage}</div>
                 )}
                 {menu}
               </>

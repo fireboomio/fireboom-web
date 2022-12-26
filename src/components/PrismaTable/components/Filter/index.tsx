@@ -1,6 +1,7 @@
 import type { Enums, SchemaModel } from '@paljs/types'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { useEffect } from 'react'
+import { FormattedMessage } from 'react-intl'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
@@ -35,7 +36,11 @@ const FilterContainer = ({
   }, [originalFilters, setFilters])
 
   if (!currentModel) {
-    return <div>当前实体不存在</div>
+    return (
+      <div>
+        <FormattedMessage defaultMessage="当前实体不存在" />
+      </div>
+    )
   }
 
   const addNewFilter = () => {
@@ -87,14 +92,14 @@ const FilterContainer = ({
         )
       })}
       <div className={styles.filterBtn} onClick={addNewFilter}>
-        + 新增筛选条件
+        <FormattedMessage defaultMessage="+ 新增筛选条件" />
       </div>
-      <ButtonGroup className="flex gap-2 w-full justify-end pr-24px mt-18px">
+      <ButtonGroup className="flex mt-18px w-full pr-24px gap-2 justify-end">
         <div className={styles.cancelBtn} onClick={handleCancel}>
-          取消
+          <FormattedMessage defaultMessage="取消" />
         </div>
         <div className={styles.addBtn} onClick={handleSave}>
-          保存
+          <FormattedMessage defaultMessage="保存" />
         </div>
       </ButtonGroup>
     </div>

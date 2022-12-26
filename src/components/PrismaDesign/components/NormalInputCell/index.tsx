@@ -4,6 +4,7 @@ import { Input, Popover } from 'antd'
 import type { ReactNode } from 'react'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 interface Props {
@@ -23,6 +24,7 @@ const NormalInputCell = ({
   placeholder,
   validation
 }: Props) => {
+  const intl = useIntl()
   const [isEditing, setIsEditing] = useImmer<boolean>(initialIsEditing ?? false)
 
   const [data, setData] = useImmer<string>(initialData ?? '')
@@ -42,7 +44,11 @@ const NormalInputCell = ({
     if (!validationResult.result) {
       setInputStatus('error')
       inputRef.current?.focus({ cursor: 'all' })
-      setErrorPrompt(errorPromptContainer(validationResult.errorMessage ?? '输入不合法！'))
+      setErrorPrompt(
+        errorPromptContainer(
+          validationResult.errorMessage ?? intl.formatMessage({ defaultMessage: '输入不合法！' })
+        )
+      )
       return false
     }
     setIsEditing(false)
@@ -95,7 +101,7 @@ const NormalInputCell = ({
           } overflow-hidden overflow-ellipsis max-w-full`}
           onClick={changeIsEditing}
         >
-          {data ? data : <div className="text-[#AFB0B4] w-max">{placeholder}</div>}
+          {data ? data : <div className="w-max text-[#AFB0B4]">{placeholder}</div>}
         </div>
       )}
     </div>

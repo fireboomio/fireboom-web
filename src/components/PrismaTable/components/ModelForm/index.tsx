@@ -3,6 +3,7 @@ import type { SchemaField, SchemaModel } from '@paljs/types'
 import { Button, Form, message, Modal } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
 
 import useActions from '@/components/PrismaTable/hooks/useActions'
@@ -39,6 +40,7 @@ const ModelFormContainer = ({
   refetch,
   initialValues
 }: Props) => {
+  const intl = useIntl()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const [relationMap, setRelationMap] = useState<RelationMap>()
 
@@ -48,14 +50,14 @@ const ModelFormContainer = ({
   const onSave = async () => {
     await refetch()
       .then(() => setModalVisible(false))
-      .then(() => message.success('操作成功！'))
-      .catch(() => message.error('操作失败！'))
+      .then(() => message.success(intl.formatMessage({ defaultMessage: '操作成功！' })))
+      .catch(() => message.error(intl.formatMessage({ defaultMessage: '操作失败！' })))
   }
 
   const { onSubmit, loading } = useActions(model, initialValues, action, onSave, namespace)
 
   const handleFormSubmit = (values: Record<string, any>) =>
-    void onSubmit(values).catch((error: Error) => message.error(`提交失败！ ${error.message}`))
+    void onSubmit(values).catch((error: Error) => message.error(`${error.message}`))
 
   if (!relationMap) return null
 
@@ -76,11 +78,19 @@ const ModelFormContainer = ({
       width={550}
       open={modalVisible}
       destroyOnClose
-      title={{ create: '添加', update: '编辑', view: '查看' }[action]}
+      title={
+        {
+          create: intl.formatMessage({ defaultMessage: '添加' }),
+          update: intl.formatMessage({ defaultMessage: '编辑' }),
+          view: intl.formatMessage({ defaultMessage: '查看' })
+        }[action]
+      }
       onCancel={() => setModalVisible(false)}
       footer={
         <ButtonGroup className="gap-2">
-          <Button onClick={() => setModalVisible(false)}>取消</Button>
+          <Button onClick={() => setModalVisible(false)}>
+            <FormattedMessage defaultMessage="取消" />
+          </Button>
           <Button
             key="submit"
             htmlType="submit"
@@ -88,12 +98,12 @@ const ModelFormContainer = ({
             disabled={loading}
             className={`${styles['add-btn']} cursor-default p-0`}
           >
-            保存
+            <FormattedMessage defaultMessage="保存" />
           </Button>
         </ButtonGroup>
       }
     >
-      <div className="flex justify-center pt-5 pr-5">
+      <div className="flex pt-5 pr-5 justify-center">
         <Form
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}

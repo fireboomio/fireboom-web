@@ -5,6 +5,7 @@ import { Select, Spin, Tree } from 'antd'
 import { debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import CollapsePanel from '@/components/CollapsePanel'
 import requests from '@/lib/fetchers'
@@ -16,12 +17,12 @@ import iconDoubleLeft from '../assets/double-left.svg'
 import iconRefresh from '../assets/refresh.svg'
 import iconRefreshDepend from '../assets/refresh-depend.svg'
 import iconUpAndDown from '../assets/up-and-down.svg'
+import banDependList from '../banDependList'
 import type { Depend, HookInfo } from '../index'
 import iconFile from './assets/file.svg'
 import iconFold from './assets/fold.svg'
 import iconFoldOpen from './assets/fold-open.svg'
 import ideStyles from './index.module.less'
-import banDependList from '../banDependList'
 
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -105,13 +106,14 @@ type TreeNode = {
 const SearchDepend = (props: SearchDependProps) => {
   type Depend = { label: string; value: string }
   const [value, setValue] = useState<Depend[] | null>([])
+  const intl = useIntl()
   return (
-    <div className="search flex justify-between items-center">
+    <div className="flex search justify-between items-center">
       {/* 搜索 */}
       <DebounceSelect
         mode="multiple"
         value={value}
-        placeholder="搜索依赖"
+        placeholder={intl.formatMessage({ defaultMessage: '搜索依赖' })}
         fetchOptions={getDependList}
         onChange={newValue => {
           console.log(newValue)
@@ -122,7 +124,7 @@ const SearchDepend = (props: SearchDependProps) => {
         }}
         className="input"
       />
-      <img src={iconDepend} alt="依赖" />
+      <img src={iconDepend} alt="dependencies" />
     </div>
   )
 }
@@ -162,6 +164,7 @@ const DependList = (props: DependListProps) => {
   const [versionLoading, setVersionLoading] = useState<number>(-1)
   const firstUpload = useRef(true)
   const firstSetDependList = useRef(false)
+  const intl = useIntl()
 
   useEffect(() => {
     if (props.dependList.length !== 0) {
@@ -391,15 +394,15 @@ const DependList = (props: DependListProps) => {
   return (
     <div className={`${ideStyles['ide-container-depend-list']} relative`}>
       <span
-        className="cursor-pointer absolute right-2 z-50"
+        className="cursor-pointer right-2 z-50 absolute"
         onClick={() => {
           props.onFold()
         }}
       >
-        <img src={iconDoubleLeft} alt="折叠" />
+        <img src={iconDoubleLeft} alt="collapse" />
       </span>
       <CollapsePanel>
-        <CollapsePanel.Block title="文件" defaultOpen>
+        <CollapsePanel.Block title={intl.formatMessage({ defaultMessage: '文件' })} defaultOpen>
           <div className={ideStyles.treeContainer}>
             <Tree
               rootClassName="overflow-auto"
@@ -415,7 +418,7 @@ const DependList = (props: DependListProps) => {
             />
           </div>
         </CollapsePanel.Block>
-        <CollapsePanel.Block title="全局依赖">
+        <CollapsePanel.Block title={intl.formatMessage({ defaultMessage: '全局依赖' })}>
           {/* 搜索 */}
           <SearchDepend onAddDepend={addDepend} />
           {/* 列表 */}
@@ -435,7 +438,7 @@ const DependList = (props: DependListProps) => {
                   >
                     {name}
                   </div>
-                  <div className="version flex">
+                  <div className="flex version">
                     {showSelectVersion === -1 && (
                       <span
                         style={{ whiteSpace: 'nowrap' }}
@@ -510,7 +513,7 @@ const DependList = (props: DependListProps) => {
                   key={'dev_' + index}
                 >
                   <div className={`name truncate`}>{depend.name}</div>
-                  <div className="version flex">
+                  <div className="flex version">
                     <span style={{ whiteSpace: 'nowrap' }}>{depend.version}</span>
                   </div>
                 </div>
@@ -519,9 +522,9 @@ const DependList = (props: DependListProps) => {
           </div>
         </CollapsePanel.Block>
         <CollapsePanel.Block
-          title="内部依赖"
+          title={intl.formatMessage({ defaultMessage: '内部依赖' })}
           action={
-            <span className="ml-auto cursor-pointer" onClick={() => props.onRefreshLocalDepend?.()}>
+            <span className="cursor-pointer ml-auto" onClick={() => props.onRefreshLocalDepend?.()}>
               <img src={iconRefreshDepend} alt="刷新" />
             </span>
           }
@@ -531,7 +534,7 @@ const DependList = (props: DependListProps) => {
               <div
                 onDoubleClick={() => props.onInsertLocalDepend?.(item)}
                 key={item}
-                className="truncate text-[#333] font-14px leading-24px cursor-pointer"
+                className="cursor-pointer font-14px text-[#333] leading-24px truncate"
               >
                 {item}
               </div>
