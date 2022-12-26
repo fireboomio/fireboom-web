@@ -1,9 +1,12 @@
 {
+  "apiCrud.empty": {
+    "defaultMessage": "使用该功能前，请先添加数据库"
+  },
   "core.title": {
     "defaultMessage": "飞布控制台",
     "description": "标题"
   },
   "storage.configErr": {
-    "defaultMessage": "配置信息有误，无法连接，请修改后再试"
+    "defaultMessage": "12123"
   }
 }
