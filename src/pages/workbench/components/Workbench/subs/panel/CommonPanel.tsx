@@ -129,8 +129,8 @@ const panelMap: Record<string, PanelConfig> = {
     mutateKey: id => ['/auth', String(id)],
     request: {
       getList: dispatch => {
-        void requests.get<unknown, StorageResp[]>('/auth').then(res => {
-          const rows: Array<CommonPanelResp> = res.map(row => {
+        void requests.get<unknown, any>('/auth').then(res => {
+          const rows: Array<CommonPanelResp> = res.map((row :any) => {
             const icon = 'other'
             const tip = 'openid'
             return {
@@ -138,7 +138,7 @@ const panelMap: Record<string, PanelConfig> = {
               name: row.name,
               icon,
               tip,
-              switch: row.switch,
+              switch: !!row.switchState?.length,
               _row: row,
               svg: '/assets/icon/github-fill.svg'
             }
