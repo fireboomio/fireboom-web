@@ -1,75 +1,78 @@
-import {
-  DocumentFormattingParams,
-  TextEdit,
-  Range,
-  DeclarationParams,
-  CompletionParams,
-  CompletionList,
-  CompletionItem,
-  HoverParams,
-  Hover,
-  CodeActionParams,
+import type {
   CodeAction,
+  CodeActionParams,
+  CompletionItem,
+  CompletionList,
+  CompletionParams,
+  DeclarationParams,
   Diagnostic,
-  DiagnosticSeverity,
-  RenameParams,
-  WorkspaceEdit,
-  CompletionTriggerKind,
-  DocumentSymbolParams,
+  DocumentFormattingParams,
   DocumentSymbol,
-  SymbolKind,
+  DocumentSymbolParams,
+  Hover,
+  HoverParams,
   LocationLink,
+  Range,
+  RenameParams,
+  WorkspaceEdit
 } from 'vscode-languageserver'
 import {
-  Block,
+  CompletionTriggerKind,
+  DiagnosticSeverity,
+  SymbolKind,
+  TextEdit
+} from 'vscode-languageserver'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
+
+import { quickFix } from './codeActionProvider'
+import {
+  getSuggestionForBlockTypes,
+  getSuggestionForFieldAttribute,
+  getSuggestionForFirstInsideBlock,
+  getSuggestionForNativeTypes,
+  getSuggestionForSupportedFields,
+  getSuggestionsForFieldTypes,
+  getSuggestionsForInsideRoundBrackets,
+  suggestEqualSymbol
+} from './completion/completions'
+import { createDiagnosticsForIgnore } from './diagnosticsHandler'
+import format from './prisma-fmt/format'
+import lint from './prisma-fmt/lint'
+import textDocumentCompletion from './prisma-fmt/textDocumentCompletion'
+import {
+  extractCurrentName,
+  insertBasicRename,
+  insertMapAttribute,
+  isEnumName,
+  isEnumValue,
+  isModelName,
+  isRelationField,
+  isValidFieldName,
+  mapExistsAlready,
+  printLogMessage,
+  renameReferencesForEnumValue,
+  renameReferencesForFieldValue,
+  renameReferencesForModelName
+} from './rename/renameUtil'
+import type { Block } from './util'
+import {
   convertDocumentTextToTrimmedLineArray,
   fullDocumentRange,
   getBlockAtPosition,
+  getBlocks,
   getCurrentLine,
   getExperimentalFeaturesRange,
   getModelOrTypeOrEnumBlock,
+  getSymbolBeforePosition,
   getWordAtPosition,
   isFirstInsideBlock,
-  positionIsAfterFieldAndType,
   isInsideAttribute,
-  getSymbolBeforePosition,
-  getBlocks,
+  positionIsAfterFieldAndType
 } from './util'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import format from './prisma-fmt/format'
-import textDocumentCompletion from './prisma-fmt/textDocumentCompletion'
-import {
-  getSuggestionForFieldAttribute,
-  getSuggestionsForFieldTypes,
-  getSuggestionForBlockTypes,
-  getSuggestionForFirstInsideBlock,
-  getSuggestionForSupportedFields,
-  getSuggestionsForInsideRoundBrackets,
-  suggestEqualSymbol,
-  getSuggestionForNativeTypes,
-} from './completion/completions'
-import { quickFix } from './codeActionProvider'
-import lint from './prisma-fmt/lint'
-import {
-  isModelName,
-  insertBasicRename,
-  renameReferencesForModelName,
-  isEnumValue,
-  renameReferencesForEnumValue,
-  isValidFieldName,
-  extractCurrentName,
-  mapExistsAlready,
-  insertMapAttribute,
-  renameReferencesForFieldValue,
-  isEnumName,
-  printLogMessage,
-  isRelationField,
-} from './rename/renameUtil'
-import { createDiagnosticsForIgnore } from './diagnosticsHandler'
 
 export function handleDiagnosticsRequest(
   document: TextDocument,
-  onError?: (errorMessage: string) => void,
+  onError?: (errorMessage: string) => void
 ): Diagnostic[] {
   const text = document.getText(fullDocumentRange(document))
   const res = lint(text, (errorMessage: string) => {
@@ -81,14 +84,14 @@ export function handleDiagnosticsRequest(
   const diagnostics: Diagnostic[] = []
   if (
     res.some(
-      (diagnostic) =>
+      diagnostic =>
         diagnostic.text === "Field declarations don't require a `:`." ||
-        diagnostic.text === 'Model declarations have to be indicated with the `model` keyword.',
+        diagnostic.text === 'Model declarations have to be indicated with the `model` keyword.'
     )
   ) {
     if (onError) {
       onError(
-        "You might currently be viewing a Prisma 1 datamodel which is based on the GraphQL syntax. The current Prisma Language Server doesn't support this syntax. If you are handling a Prisma 1 datamodel, please change the file extension to `.graphql` so the new Prisma Language Server does not get triggered anymore.",
+        "You might currently be viewing a Prisma 1 datamodel which is based on the GraphQL syntax. The current Prisma Language Server doesn't support this syntax. If you are handling a Prisma 1 datamodel, please change the file extension to `.graphql` so the new Prisma Language Server does not get triggered anymore."
       )
     }
   }
@@ -97,10 +100,10 @@ export function handleDiagnosticsRequest(
     const diagnostic: Diagnostic = {
       range: {
         start: document.positionAt(diag.start),
-        end: document.positionAt(diag.end),
+        end: document.positionAt(diag.end)
       },
       message: diag.text,
-      source: '',
+      source: ''
     }
     if (diag.is_warning) {
       diagnostic.severity = DiagnosticSeverity.Warning
@@ -119,8 +122,9 @@ export function handleDiagnosticsRequest(
       diagnostics.push({
         severity: DiagnosticSeverity.Warning,
         range: experimentalFeaturesRange,
-        message: "This property has been renamed to 'previewFeatures' to better communicate what they are.",
-        source: '',
+        message:
+          "This property has been renamed to 'previewFeatures' to better communicate what they are.",
+        source: ''
       })
     }
   }
@@ -135,7 +139,10 @@ export function handleDiagnosticsRequest(
 /**
  * @todo Use official schema.prisma parser. This is a workaround!
  */
-export function handleDefinitionRequest(document: TextDocument, params: DeclarationParams): LocationLink[] | undefined {
+export function handleDefinitionRequest(
+  document: TextDocument,
+  params: DeclarationParams
+): LocationLink[] | undefined {
   const textDocument = params.textDocument
   const position = params.position
 
@@ -157,20 +164,20 @@ export function handleDefinitionRequest(document: TextDocument, params: Declarat
         return index
       }
     })
-    .filter((index) => index !== undefined) as number[]
+    .filter(index => index !== undefined) as number[]
 
   if (results.length === 0) {
     return
   }
 
   const foundBlocks: Block[] = results
-    .map((result) => {
+    .map(result => {
       const block = getBlockAtPosition(result, lines)
       if (block && block.name === word) {
         return block
       }
     })
-    .filter((block) => block !== undefined) as Block[]
+    .filter(block => block !== undefined) as Block[]
 
   if (foundBlocks.length !== 1) {
     return
@@ -184,8 +191,8 @@ export function handleDefinitionRequest(document: TextDocument, params: Declarat
     {
       targetUri: textDocument.uri,
       targetRange: foundBlocks[0].range,
-      targetSelectionRange: foundBlocks[0].nameRange,
-    },
+      targetSelectionRange: foundBlocks[0].nameRange
+    }
   ]
 }
 
@@ -195,7 +202,7 @@ export function handleDefinitionRequest(document: TextDocument, params: Declarat
 export function handleDocumentFormatting(
   params: DocumentFormattingParams,
   document: TextDocument,
-  onError?: (errorMessage: string) => void,
+  onError?: (errorMessage: string) => void
 ): TextEdit[] {
   const formatted = format(document.getText(), params, onError)
   return [TextEdit.replace(fullDocumentRange(document), formatted)]
@@ -219,11 +226,11 @@ export function handleHoverRequest(document: TextDocument, params: HoverParams):
   const commentLine = foundBlock.range.start.line - 1
   const docComments = document.getText({
     start: { line: commentLine, character: 0 },
-    end: { line: commentLine, character: Number.MAX_SAFE_INTEGER },
+    end: { line: commentLine, character: Number.MAX_SAFE_INTEGER }
   })
   if (docComments.startsWith('///')) {
     return {
-      contents: docComments.slice(4).trim(),
+      contents: docComments.slice(4).trim()
     }
   }
   // TODO uncomment once https://github.com/prisma/prisma/issues/2546 is resolved!
@@ -236,7 +243,10 @@ export function handleHoverRequest(document: TextDocument, params: HoverParams):
   return
 }
 
-function prismaFmtCompletions(params: CompletionParams, document: TextDocument): CompletionList | undefined {
+function prismaFmtCompletions(
+  params: CompletionParams,
+  document: TextDocument
+): CompletionList | undefined {
   const text = document.getText(fullDocumentRange(document))
 
   const completionList = textDocumentCompletion(text, params)
@@ -248,7 +258,10 @@ function prismaFmtCompletions(params: CompletionParams, document: TextDocument):
   }
 }
 
-function localCompletions(params: CompletionParams, document: TextDocument): CompletionList | undefined {
+function localCompletions(
+  params: CompletionParams,
+  document: TextDocument
+): CompletionList | undefined {
   const context = params.context
   const position = params.position
 
@@ -261,12 +274,17 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
   const symbolBeforePositionIsWhiteSpace = symbolBeforePosition.search(/\s/) !== -1
 
   const positionIsAfterArray: boolean =
-    wordsBeforePosition.length >= 3 && !currentLineTillPosition.includes('[') && symbolBeforePositionIsWhiteSpace
+    wordsBeforePosition.length >= 3 &&
+    !currentLineTillPosition.includes('[') &&
+    symbolBeforePositionIsWhiteSpace
 
   // datasource, generator, model, type or enum
   const foundBlock = getBlockAtPosition(position.line, lines)
   if (!foundBlock) {
-    if (wordsBeforePosition.length > 1 || (wordsBeforePosition.length === 1 && symbolBeforePositionIsWhiteSpace)) {
+    if (
+      wordsBeforePosition.length > 1 ||
+      (wordsBeforePosition.length === 1 && symbolBeforePositionIsWhiteSpace)
+    ) {
       return
     }
     return getSuggestionForBlockTypes(lines)
@@ -289,7 +307,7 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
           getCurrentLine(document, position.line),
           lines,
           wordsBeforePosition,
-          document,
+          document
         )
       case '"':
         return getSuggestionForSupportedFields(
@@ -297,13 +315,22 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
           lines[position.line],
           currentLineUntrimmed,
           position,
-          lines,
+          lines
         )
       case '.':
         // check if inside attribute
         // Useful to complete composite types
-        if (foundBlock.type === 'model' && isInsideAttribute(currentLineUntrimmed, position, '()')) {
-          return getSuggestionsForInsideRoundBrackets(currentLineUntrimmed, lines, document, position, foundBlock)
+        if (
+          foundBlock.type === 'model' &&
+          isInsideAttribute(currentLineUntrimmed, position, '()')
+        ) {
+          return getSuggestionsForInsideRoundBrackets(
+            currentLineUntrimmed,
+            lines,
+            document,
+            position,
+            foundBlock
+          )
         } else {
           return getSuggestionForNativeTypes(foundBlock, lines, wordsBeforePosition, document)
         }
@@ -315,13 +342,25 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
     case 'type':
       // check if inside attribute
       if (isInsideAttribute(currentLineUntrimmed, position, '()')) {
-        return getSuggestionsForInsideRoundBrackets(currentLineUntrimmed, lines, document, position, foundBlock)
+        return getSuggestionsForInsideRoundBrackets(
+          currentLineUntrimmed,
+          lines,
+          document,
+          position,
+          foundBlock
+        )
       }
       // check if field type
       if (!positionIsAfterFieldAndType(position, document, wordsBeforePosition)) {
         return getSuggestionsForFieldTypes(foundBlock, lines, position, currentLineUntrimmed)
       }
-      return getSuggestionForFieldAttribute(foundBlock, lines[position.line], lines, wordsBeforePosition, document)
+      return getSuggestionForFieldAttribute(
+        foundBlock,
+        lines[position.line],
+        lines,
+        wordsBeforePosition,
+        document
+      )
     case 'datasource':
     case 'generator':
       if (wordsBeforePosition.length === 1 && symbolBeforePositionIsWhiteSpace) {
@@ -338,7 +377,7 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
           lines[position.line],
           currentLineUntrimmed,
           position,
-          lines,
+          lines
         )
       }
       break
@@ -351,11 +390,17 @@ function localCompletions(params: CompletionParams, document: TextDocument): Com
  *
  * This handler provides the initial list of the completion items.
  */
-export function handleCompletionRequest(params: CompletionParams, document: TextDocument): CompletionList | undefined {
+export function handleCompletionRequest(
+  params: CompletionParams,
+  document: TextDocument
+): CompletionList | undefined {
   return prismaFmtCompletions(params, document) || localCompletions(params, document)
 }
 
-export function handleRenameRequest(params: RenameParams, document: TextDocument): WorkspaceEdit | undefined {
+export function handleRenameRequest(
+  params: RenameParams,
+  document: TextDocument
+): WorkspaceEdit | undefined {
   const lines: string[] = convertDocumentTextToTrimmedLineArray(document)
   const position = params.position
   const currentLine: string = lines[position.line]
@@ -367,8 +412,18 @@ export function handleRenameRequest(params: RenameParams, document: TextDocument
 
   const isModelRename: boolean = isModelName(params.position, currentBlock, lines, document)
   const isEnumRename: boolean = isEnumName(params.position, currentBlock, lines, document)
-  const isEnumValueRename: boolean = isEnumValue(currentLine, params.position, currentBlock, document)
-  const isValidFieldRename: boolean = isValidFieldName(currentLine, params.position, currentBlock, document)
+  const isEnumValueRename: boolean = isEnumValue(
+    currentLine,
+    params.position,
+    currentBlock,
+    document
+  )
+  const isValidFieldRename: boolean = isValidFieldName(
+    currentLine,
+    params.position,
+    currentBlock,
+    document
+  )
   const isRelationFieldRename: boolean = isValidFieldRename && isRelationField(currentLine, lines)
 
   if (isModelRename || isEnumRename || isEnumValueRename || isValidFieldRename) {
@@ -378,7 +433,7 @@ export function handleRenameRequest(params: RenameParams, document: TextDocument
       isEnumValueRename,
       isValidFieldRename,
       document,
-      params.position,
+      params.position
     )
 
     let lineNumberOfDefinition = position.line
@@ -386,8 +441,11 @@ export function handleRenameRequest(params: RenameParams, document: TextDocument
     let lineOfDefinition = currentLine
     if (isModelRename || isEnumRename) {
       // get definition of model or enum
-      const matchModelOrEnumBlockBeginning = new RegExp(`\\s*(model|enum)\\s+(${currentName})\\s*({)`, 'g')
-      lineNumberOfDefinition = lines.findIndex((l) => matchModelOrEnumBlockBeginning.test(l))
+      const matchModelOrEnumBlockBeginning = new RegExp(
+        `\\s*(model|enum)\\s+(${currentName})\\s*({)`,
+        'g'
+      )
+      lineNumberOfDefinition = lines.findIndex(l => matchModelOrEnumBlockBeginning.test(l))
       if (lineNumberOfDefinition === -1) {
         return
       }
@@ -408,14 +466,24 @@ export function handleRenameRequest(params: RenameParams, document: TextDocument
       !mapExistsAlready(lineOfDefinition, lines, blockOfDefinition, isModelRename || isEnumRename)
     ) {
       // add map attribute
-      edits.push(insertMapAttribute(currentName, position, blockOfDefinition, isModelRename || isEnumRename))
+      edits.push(
+        insertMapAttribute(currentName, position, blockOfDefinition, isModelRename || isEnumRename)
+      )
     }
 
     // rename references
     if (isModelRename || isEnumRename) {
       edits.push(...renameReferencesForModelName(currentName, params.newName, document, lines))
     } else if (isEnumValueRename) {
-      edits.push(...renameReferencesForEnumValue(currentName, params.newName, document, lines, blockOfDefinition.name))
+      edits.push(
+        ...renameReferencesForEnumValue(
+          currentName,
+          params.newName,
+          document,
+          lines,
+          blockOfDefinition.name
+        )
+      )
     } else if (isValidFieldRename) {
       edits.push(
         ...renameReferencesForFieldValue(
@@ -424,16 +492,23 @@ export function handleRenameRequest(params: RenameParams, document: TextDocument
           document,
           lines,
           blockOfDefinition,
-          isRelationFieldRename,
-        ),
+          isRelationFieldRename
+        )
       )
     }
 
-    printLogMessage(currentName, params.newName, isEnumRename, isModelRename, isValidFieldRename, isEnumValueRename)
+    printLogMessage(
+      currentName,
+      params.newName,
+      isEnumRename,
+      isModelRename,
+      isValidFieldRename,
+      isEnumValueRename
+    )
     return {
       changes: {
-        [document.uri]: edits,
-      },
+        [document.uri]: edits
+      }
     }
   }
 
@@ -456,18 +531,21 @@ export function handleCodeActions(params: CodeActionParams, document: TextDocume
   return quickFix(document, params)
 }
 
-export function handleDocumentSymbol(params: DocumentSymbolParams, document: TextDocument): DocumentSymbol[] {
+export function handleDocumentSymbol(
+  params: DocumentSymbolParams,
+  document: TextDocument
+): DocumentSymbol[] {
   const lines: string[] = convertDocumentTextToTrimmedLineArray(document)
-  return Array.from(getBlocks(lines), (block) => ({
+  return Array.from(getBlocks(lines), block => ({
     kind: {
       model: SymbolKind.Class,
       enum: SymbolKind.Enum,
       type: SymbolKind.Interface,
       datasource: SymbolKind.Struct,
-      generator: SymbolKind.Function,
+      generator: SymbolKind.Function
     }[block.type],
     name: block.name,
     range: block.range,
-    selectionRange: block.nameRange,
+    selectionRange: block.nameRange
   }))
 }

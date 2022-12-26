@@ -77,7 +77,7 @@ export const fetchAndSaveToPrismaSchemaContext = (
       dispatch(createApolloClient(dataSourceId))
     })
     .catch((err: Error) => {
-      message.error(`获取prisma dmf & schema 失败！Error: ${err.message}`)
+      message.error(`Fetch prisma dmf & schema error: ${err.message}`)
       dispatch(initialPrismaSchemaAction([], selectedDataSource, { models: [], enums: [] }))
     })
 }

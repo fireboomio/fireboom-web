@@ -7,5 +7,5 @@ export const PRISMA_BASE_TYPES = [
   'Decimal',
   'DateTime',
   'Json',
-  'Bytes',
-];
+  'Bytes'
+]

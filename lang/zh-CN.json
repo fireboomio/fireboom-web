@@ -1,12 +1,301 @@
 {
+  "+GBE25": {
+    "defaultMessage": "查询授权",
+    "description": "查询是否需要授权"
+  },
+  "+ZZbJ1": {
+    "defaultMessage": "高级筛选"
+  },
+  "+scveH": {
+    "defaultMessage": "{field}应为字符串，使用大小写字母或者下划线！"
+  },
+  "/0bwX0": {
+    "defaultMessage": "联合索引"
+  },
+  "/4apRL": {
+    "defaultMessage": "忽略该字段"
+  },
+  "/CFd+q": {
+    "defaultMessage": "开"
+  },
+  "0BkTtH": {
+    "defaultMessage": "主键"
+  },
+  "0DLw3A": {
+    "defaultMessage": "可以为空"
+  },
+  "0jMIH4": {
+    "defaultMessage": "缓存配置"
+  },
+  "1ceY2D": {
+    "defaultMessage": "使用独立配置"
+  },
+  "1j0lPi": {
+    "defaultMessage": "操作成功！"
+  },
+  "1pv3Jk": {
+    "defaultMessage": "最大时长"
+  },
+  "2DHz6I": {
+    "defaultMessage": "实时查询"
+  },
+  "2QzYmY": {
+    "defaultMessage": "取消"
+  },
+  "2pzrDk": {
+    "defaultMessage": "忽略该表"
+  },
+  "3cF9qm": {
+    "defaultMessage": "内部依赖"
+  },
+  "47GdDb": {
+    "defaultMessage": "关闭"
+  },
+  "4LegCW": {
+    "defaultMessage": "网络请求错误！"
+  },
+  "6F6gTV": {
+    "defaultMessage": "脚本内容不是json格式"
+  },
+  "7aMIeB": {
+    "defaultMessage": "是否需要登录"
+  },
+  "7vnRkg": {
+    "defaultMessage": "在线调试使用指南"
+  },
+  "7yXi5L": {
+    "defaultMessage": "已编辑"
+  },
+  "9HZKLw": {
+    "defaultMessage": "字段别名"
+  },
+  "9huOMe": {
+    "defaultMessage": "请输入合法字符串，使用双引号包括"
+  },
+  "9stmhe": {
+    "defaultMessage": "操作失败！"
+  },
+  "9x/veC": {
+    "defaultMessage": "联合主键"
+  },
+  "A6Mx9m": {
+    "defaultMessage": "搜索依赖"
+  },
+  "AIWQdZ": {
+    "defaultMessage": "示例代码"
+  },
+  "Aj9NiL": {
+    "defaultMessage": "轮询间隔"
+  },
+  "B5JYOd": {
+    "defaultMessage": "唯一索引"
+  },
+  "CLqPBU": {
+    "defaultMessage": "编辑"
+  },
+  "EQ9fu/": {
+    "defaultMessage": "在线调试"
+  },
+  "FEb7U2": {
+    "defaultMessage": "确认"
+  },
+  "GpfOWR": {
+    "defaultMessage": "正在努力开发中～"
+  },
+  "Hu2hE9": {
+    "defaultMessage": "已存在，请勿重复引入"
+  },
+  "IujQJk": {
+    "defaultMessage": "实体别名"
+  },
+  "K2DWpV": {
+    "defaultMessage": "输入不合法！"
+  },
+  "KqTB9T": {
+    "defaultMessage": "变更是否需要登录"
+  },
+  "L/CHdQ": {
+    "defaultMessage": "重新校验时长"
+  },
+  "LKhNTW": {
+    "defaultMessage": "变更授权"
+  },
+  "M363gH": {
+    "defaultMessage": "下次不再提醒"
+  },
+  "MOZq7j": {
+    "defaultMessage": "脚本语言"
+  },
+  "NcChip": {
+    "defaultMessage": "订阅是否需要登录"
+  },
+  "O8A9zp": {
+    "defaultMessage": "开启授权"
+  },
+  "RPeIuR": {
+    "defaultMessage": "{minutes}分钟前"
+  },
+  "Rl/VjA": {
+    "defaultMessage": "是否数组"
+  },
+  "Rv5Swi": {
+    "defaultMessage": "选择字段"
+  },
+  "SKkYA0": {
+    "defaultMessage": "自动保存中..."
+  },
+  "SyLGX/": {
+    "defaultMessage": "调试"
+  },
+  "TbflcV": {
+    "defaultMessage": "刚刚"
+  },
+  "UH1kCc": {
+    "defaultMessage": "添加"
+  },
+  "UPFhlk": {
+    "defaultMessage": "删除操作将会同时删除关联数据！"
+  },
+  "Unr58u": {
+    "defaultMessage": "更新时间"
+  },
+  "Up2nmQ": {
+    "defaultMessage": "已加载最新版本"
+  },
+  "W7e9Ff": {
+    "defaultMessage": "角色列表"
+  },
+  "WsOs5k": {
+    "defaultMessage": "{hours}小时前"
+  },
+  "XEPmlP": {
+    "defaultMessage": "秒"
+  },
+  "XeiAal": {
+    "defaultMessage": "删除"
+  },
+  "YwSrou": {
+    "defaultMessage": "默认值"
+  },
+  "ZMK5E4": {
+    "defaultMessage": "服务端实时查询"
+  },
+  "ZUPzqr": {
+    "defaultMessage": "开启"
+  },
+  "ZUhyFj": {
+    "defaultMessage": "全局依赖"
+  },
+  "aGwXly": {
+    "defaultMessage": "手动保存中..."
+  },
   "apiCrud.empty": {
     "defaultMessage": "使用该功能前，请先添加数据库"
   },
-  "core.title": {
-    "defaultMessage": "飞布控制台",
-    "description": "标题"
+  "b5kCtF": {
+    "defaultMessage": "待选择"
+  },
+  "b5l2vN": {
+    "defaultMessage": "保存"
+  },
+  "cDZ00w": {
+    "defaultMessage": "查看"
+  },
+  "dx8TAj": {
+    "defaultMessage": "此处不支持跳转！"
+  },
+  "eaCopF": {
+    "defaultMessage": "搜索并关联记录"
+  },
+  "gRnd+f": {
+    "defaultMessage": "新增枚举类型"
+  },
+  "gb9fzG": {
+    "defaultMessage": "订阅授权"
+  },
+  "h/5qLW": {
+    "defaultMessage": "{days}天前"
+  },
+  "hovbOX": {
+    "defaultMessage": "无法找到关联表实体类型！"
+  },
+  "jhfb/7": {
+    "defaultMessage": "保存成功"
+  },
+  "l3H/GZ": {
+    "defaultMessage": "删除确认"
+  },
+  "lroVvd": {
+    "defaultMessage": "网络出现问题～",
+    "description": "状态码50x"
+  },
+  "mzPDCn": {
+    "defaultMessage": "新增枚举"
+  },
+  "n4sB7F": {
+    "defaultMessage": "查询缓存"
+  },
+  "oDLN4x": {
+    "defaultMessage": "对查询进行缓存"
+  },
+  "oOGLP0": {
+    "defaultMessage": "联合唯一索引"
+  },
+  "qUKj7E": {
+    "defaultMessage": "复制"
+  },
+  "r8T2Gj": {
+    "defaultMessage": "找不到对应实体主键"
+  },
+  "rnpMD3": {
+    "defaultMessage": "关"
+  },
+  "s9VtMY": {
+    "defaultMessage": "授权配置",
+    "description": "API授权配置"
+  },
+  "saeFbf": {
+    "defaultMessage": "文件"
+  },
+  "slR1VF": {
+    "defaultMessage": "+ 新增筛选条件"
   },
   "storage.configErr": {
     "defaultMessage": "12123"
+  },
+  "szOpH5": {
+    "defaultMessage": "实时配置"
+  },
+  "v9Miyz": {
+    "defaultMessage": "查询是否需要登录"
+  },
+  "vHOsVf": {
+    "defaultMessage": "输入"
+  },
+  "vY8yBU": {
+    "defaultMessage": "暂无内容～",
+    "description": "状态码404"
+  },
+  "vYadwC": {
+    "defaultMessage": "当前实体不存在"
+  },
+  "vr5TVT": {
+    "defaultMessage": "请输入"
+  },
+  "waeVf8": {
+    "defaultMessage": "数据迁移失败！error: {error}"
+  },
+  "x4mNBF": {
+    "defaultMessage": "{seconds}秒前"
+  },
+  "xKCJNb": {
+    "defaultMessage": "飞布控制台",
+    "description": "标题"
+  },
+  "yy7EDI": {
+    "defaultMessage": "上传"
+  },
+  "zvywI9": {
+    "defaultMessage": "编辑脚本"
   }
 }
