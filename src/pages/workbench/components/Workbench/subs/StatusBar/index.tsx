@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { Input, message, Radio, Select, Space } from 'antd'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { Input, message, Radio, Select, Space, Tag } from 'antd'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
@@ -8,9 +8,11 @@ import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { debounce, throttle } from 'lodash'
 
 import styles from './index.module.less'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import UrlInput from '@/components/UrlInput'
 
 const { Option } = Select
 interface Props {
@@ -48,20 +50,35 @@ const StatusBar: React.FC<Props> = ({
 }) => {
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
+  const [hookOptionStatus, setHookOptionStatus] = useState<{
+    WebContainer: HookStatus
+    Customer: HookStatus
+  }>()
   const [hookSwitch, setHookSwitch] = useState<boolean>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
-  const [hooksServerProtocol, setHooksServerProtocol] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   const { openHookServer, loading: hookServerLoading } = useStackblitz()
   const { onRefreshState } = useContext(WorkbenchContext)
-
   useEffect(() => {
-    const [_, protocol, url] = config?.hooksServerURL?.match(/^(https?:\/\/)?(.*)$/) || []
+    setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
     setHookSwitch(!!config.hooksServerURL)
-    setHooksServerURL(url)
-    setHooksServerProtocol(protocol === 'http://' ? 'http://' : 'https://')
   }, [config.hooksServerURL, showHookSetting])
-
+  useEffect(() => {
+    fetchHookOptionStatus(hooksServerURL ?? '')
+  }, [hooksServerURL])
+  const fetchHookOptionStatus = useCallback(
+    throttle(async (url: string) => {
+      try {
+        const data: any = await requests.get(`/hook/status`, {
+          url
+        })
+        setHookOptionStatus(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }, 2000),
+    []
+  )
   useEffect(() => {
     if (!startTime) {
       return
@@ -193,47 +210,55 @@ const StatusBar: React.FC<Props> = ({
                   <Radio.Group
                     onChange={e => {
                       setHookSwitch(e.target.value)
-                      saveHookServerURL('')
                       if (e.target.value) {
                         void message.info('请手动启动钩子，并保证配置正确')
+                        saveHookServerURL(hooksServerURL ?? '')
+                      } else {
+                        saveHookServerURL('')
                       }
                     }}
                     value={hookSwitch}
                   >
                     <Space direction="vertical">
-                      <Radio value={false}>WebContainer</Radio>
-                      <Radio value={true}>手动设置</Radio>
+                      <Radio value={false}>
+                        WebContainer
+                        {hookOptionStatus?.WebContainer === HookStatus.Running && (
+                          <Tag className="!ml-2" color="success">
+                            已启动
+                          </Tag>
+                        )}
+                        {hookOptionStatus?.WebContainer === HookStatus.Stopped && (
+                          <Tag className="!ml-2" color="warning">
+                            未启动
+                          </Tag>
+                        )}
+                      </Radio>
+                      <Radio value={true}>
+                        手动设置
+                        {hookOptionStatus?.Customer === HookStatus.Running && (
+                          <Tag className="!ml-2" color="success">
+                            已启动
+                          </Tag>
+                        )}
+                        {hookOptionStatus?.Customer === HookStatus.Stopped && (
+                          <Tag className="!ml-2" color="warning">
+                            未启动
+                          </Tag>
+                        )}
+                      </Radio>
                     </Space>
                   </Radio.Group>
-                  <Input.Group compact>
-                    <Select
-                      className="w-2/5"
-                      popupClassName="!z-13000"
-                      value={hooksServerProtocol}
-                      onChange={setHooksServerProtocol}
-                    >
-                      <Option value="https://">https://</Option>
-                      <Option value="http://">http://</Option>
-                    </Select>
-                    <Input
-                      style={{ width: '60%' }}
-                      className={styles.hookInput}
-                      value={hooksServerURL}
-                      onChange={e => setHooksServerURL(e.target.value)}
-                      onPressEnter={() => {
-                        if (hookSwitch) {
-                          void saveHookServerURL(`${hooksServerProtocol}${hooksServerURL ?? ''}`)
-                          setShowHookSetting(false)
-                        }
-                      }}
-                      onBlur={() => {
-                        if (hookSwitch) {
-                          void saveHookServerURL(`${hooksServerProtocol}${hooksServerURL ?? ''}`)
-                          setShowHookSetting(false)
-                        }
-                      }}
-                    />
-                  </Input.Group>
+                  <UrlInput
+                    selectClassName="!z-13000"
+                    value={hooksServerURL}
+                    onChange={val => {
+                      if (hookSwitch) {
+                        saveHookServerURL(val)
+                      }
+                      setHooksServerURL(val)
+                      localStorage.setItem('hooksServerURL', val)
+                    }}
+                  />
                 </div>
               </>
             )}
