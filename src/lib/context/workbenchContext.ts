@@ -25,6 +25,7 @@ export interface WorkbenchContextType {
   registerPageListener: (fun: WorkbenchListener) => void // 内容页注册监听函数
   refreshMap: RefreshMap // 各目录刷新标记
   onRefreshMenu: (list: MenuName) => void // 触发制定目录刷新
+  onRefreshState: () => void // 刷新服务器状态
   editFlag: boolean // 当前页面是否有未保存的内容
   markEdit: (flag: boolean) => void // 编辑标记
   navCheck: () => Promise<boolean> // 跳转前检查是否有编辑内容，如果有则提示

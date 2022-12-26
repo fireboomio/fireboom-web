@@ -38,6 +38,7 @@ export default function Index(props: PropsWithChildren) {
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
+  const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
   const prevStatus = useRef<any>()
 
@@ -55,7 +56,9 @@ export default function Index(props: PropsWithChildren) {
       setVersion(res.version)
       setEnv(res.env)
     })
+  }, [])
 
+  useEffect(() => {
     const controller = new AbortController()
     const signal = controller.signal
     fetch(`/api/v1/wdg/state`, { signal }).then(res => {
@@ -102,9 +105,10 @@ export default function Index(props: PropsWithChildren) {
     })
 
     return () => {
+      console.log('finfinfin')
       controller.abort()
     }
-  }, [])
+  }, [refreshState])
 
   const handleRefreshMenu = (listName: MenuName) => {
     setRefreshMap(refreshMap => {
@@ -188,6 +192,7 @@ export default function Index(props: PropsWithChildren) {
           },
           refreshMap,
           onRefreshMenu: handleRefreshMenu,
+          onRefreshState: () => setRefreshState(!refreshState),
           editFlag,
           markEdit,
           navCheck,

@@ -7,11 +7,14 @@ import type { Datasource } from '@/pages/workbench/apimanage/crud/interface'
 import Body from './body'
 import styles from './index.module.less'
 import Sider from './sider'
+import { Empty } from 'antd'
+import { FormattedMessage } from 'react-intl'
 
 export default function CRUDIndex() {
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>()
   const [relationMap, setRelationMap] = useState<RelationMap>()
+  const [isEmpty, setIsEmpty] = useState<boolean>()
   const [dmf, setDmf] = useState<string>()
   const [currentDatasource, setCurrentDatasource] = useState<Datasource>()
   return (
@@ -26,21 +29,38 @@ export default function CRUDIndex() {
         </div>
         <div className="flex flex-1 min-h-0">
           <Sider
+            onEmpty={() => {
+              setIsEmpty(true)
+            }}
             onSelectedModelChange={(model, datasource, modelList, relationMap, dmf) => {
               setCurrentModel(model)
               setCurrentDatasource(datasource)
               setModelList(modelList)
               setRelationMap(relationMap)
               setDmf(dmf)
+              setIsEmpty(false)
             }}
           />
-          <Body
-            model={currentModel}
-            dbName={currentDatasource?.config.apiNamespace ?? ''}
-            modelList={modelList}
-            relationMap={relationMap}
-            dmf={dmf}
-          />
+          {isEmpty ? (
+            <div className="flex-1 flex justify-center pt-25">
+              <Empty
+                description={
+                  <FormattedMessage
+                    id="apiCrud.empty"
+                    defaultMessage="使用该功能前，请先添加数据库"
+                  />
+                }
+              />
+            </div>
+          ) : (
+            <Body
+              model={currentModel}
+              dbName={currentDatasource?.config.apiNamespace ?? ''}
+              modelList={modelList}
+              relationMap={relationMap}
+              dmf={dmf}
+            />
+          )}
         </div>
       </div>
     </div>

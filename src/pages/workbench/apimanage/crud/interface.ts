@@ -54,6 +54,8 @@ export type TableAttr = {
   sortDirection: SortDirection
   create: KeyType
   update: KeyType
+  createDisableFlag: boolean
+  updateDisableFlag: boolean
 }
 export type ApiOptions = {
   dbName: string

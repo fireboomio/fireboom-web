@@ -1,15 +1,16 @@
 /* eslint-disable react/prop-types */
 import { Input, message, Radio, Select, Space } from 'antd'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
-import { ServiceStatus, HookStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 const { Option } = Select
 interface Props {
@@ -52,6 +53,7 @@ const StatusBar: React.FC<Props> = ({
   const [hooksServerProtocol, setHooksServerProtocol] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   const { openHookServer, loading: hookServerLoading } = useStackblitz()
+  const { onRefreshState } = useContext(WorkbenchContext)
 
   useEffect(() => {
     const [_, protocol, url] = config?.hooksServerURL?.match(/^(https?:\/\/)?(.*)$/) || []
@@ -139,10 +141,29 @@ const StatusBar: React.FC<Props> = ({
                 // setShowHookSetting(true)
               }}
             >
-              <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
-              <span className="ml-1 text-[#50C772]">
+              <div
+                className={
+                  'rounded-3px h-3px w-3px' +
+                  (hookStatus === HookStatus.Running ? ' bg-[#50C772]' : ' bg-[#f0b763]')
+                }
+              />
+              <span
+                className={
+                  'ml-1 ' +
+                  (hookStatus === HookStatus.Running ? 'text-[#50C772]' : 'text-[#f0b763]')
+                }
+              >
                 {hookStatusMap[hookStatus as HookStatus] ?? ''}
               </span>
+              <div className="h-full flex items-center pl-1">
+                <img
+                  src="assets/refresh.svg"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onRefreshState()
+                  }}
+                />
+              </div>
             </div>
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>

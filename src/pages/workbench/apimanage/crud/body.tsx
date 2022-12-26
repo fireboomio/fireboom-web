@@ -203,8 +203,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
           // 取消级联生成，子字段目前不做任何默认数据
           // genTableData(field.children || [])
         }
+        let data
         if (field.kind === 'object') {
-          tableData[field.tableId ?? ''] = {
+          data = {
             isDirectField: true,
             kind: field.kind,
             name: field.name,
@@ -217,10 +218,12 @@ export default function CRUDBody(props: CRUDBodyProps) {
             sort: false,
             create: field.required ? KeyType.Required : KeyType.Optional,
             update: KeyType.Optional,
+            createDisableFlag: false,
+            updateDisableFlag: false,
             sortDirection: SortDirection.Asc
           }
         } else {
-          const data = {
+          data = {
             isDirectField: true,
             kind: field.kind,
             name: field.name,
@@ -233,7 +236,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
             filter: true,
             sortDirection: SortDirection.Asc,
             create: field.required ? KeyType.Required : KeyType.Optional,
-            update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional
+            update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional,
+            createDisableFlag: false,
+            updateDisableFlag: false
           }
           if (field.name === props.model?.idField) {
             if (field.hasDefault) {
@@ -248,8 +253,33 @@ export default function CRUDBody(props: CRUDBodyProps) {
           if (data.updateType === undefined) {
             data.update = KeyType.Hidden
           }
-          tableData[field.tableId ?? ''] = data
         }
+        if (field.tableId === model.idField) {
+          data.createDisableFlag = true
+          data.updateDisableFlag = true
+        }
+        if (field.required) {
+          data.createDisableFlag = true
+        }
+        if (data.createType === undefined) {
+          data.createDisableFlag = true
+        }
+        if (data.updateType === undefined) {
+          data.updateDisableFlag = true
+        }
+        // 针对性屏蔽createAt和updateAt的更新和创建
+        if (
+          field.name === 'createdAt' ||
+          field.name === 'updatedAt' ||
+          field.name === 'created_at' ||
+          field.name === 'updated_at'
+        ) {
+          data.createDisableFlag = true
+          data.updateDisableFlag = true
+          data.create = KeyType.Hidden
+          data.update = KeyType.Hidden
+        }
+        tableData[field.tableId ?? ''] = data
       })
     }
     genTableData(model.fields)
@@ -555,11 +585,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
             <Select
               value={table?.[record.tableId]?.create}
               // 生成时，如果是主键，必须是隐藏，如果是必填，必须是必填
-              disabled={
-                record.tableId === model.idField ||
-                record.required ||
-                table?.[record.tableId]?.createType === undefined
-              }
+              disabled={table?.[record.tableId]?.createDisableFlag}
               options={[
                 { label: '无', value: KeyType.Hidden },
                 { label: '选填', value: KeyType.Optional },
@@ -581,10 +607,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
         return (
           !record.isForeign && (
             <Select
-              disabled={
-                record.tableId === model.idField ||
-                table?.[record.tableId]?.updateType === undefined
-              }
+              disabled={table?.[record.tableId]?.updateDisableFlag}
               value={table?.[record.tableId]?.update ?? 'choose'}
               options={[
                 { label: '无', value: KeyType.Hidden },

@@ -11,6 +11,7 @@ import styles from './index.module.less'
 import type { Datasource } from './interface'
 
 interface CRUDSiderProps {
+  onEmpty: () => void
   onSelectedModelChange: (
     model: DMFModel,
     datasource: Datasource,
@@ -76,6 +77,9 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const queryDataSourceList = async () => {
     const result = await requests.get<unknown, Datasource[]>('/dataSource?datasourceType=1')
     setDataSourceList(result)
+    if(!result?.length || result?.length<=0){
+      props.onEmpty()
+    }
     if (!result.find(item => item.id === currentDataSourceId)) {
       setCurrentDataSourceId(result?.[0]?.id)
     }

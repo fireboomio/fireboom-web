@@ -1,3 +1,4 @@
 {
-  "core.title": "飞布控制台"
+  "core.title": "飞布控制台",
+  "storage.configErr": "配置信息有误，无法连接，请修改后再试"
 }
