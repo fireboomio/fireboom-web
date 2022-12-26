@@ -28,7 +28,6 @@ import styles from './index.module.less'
 import { useAPIManager } from './store'
 
 async function fetcher(rec: Record<string, unknown>) {
-  console.log('rec', JSON.stringify(rec).length)
   try {
     const res = await fetch('/app/main/graphql', {
       method: 'POST',
@@ -56,7 +55,6 @@ export default function APIEditorContainer() {
   const {
     query,
     schema,
-    schemaAST,
     setQuery,
     refreshSchema,
     setID,
@@ -187,7 +185,6 @@ export default function APIEditorContainer() {
 
   useEffect(() => {
     setID(params.id!).then(() => {
-      console.log('expand')
       explorerRef.current?.manualExpand()
     })
   }, [params.id, setID])

@@ -1,5 +1,6 @@
 import { message, Modal, Popover, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -132,7 +133,9 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         />
         <div className={styles.logo} onClick={() => navigate('/workbench')} />
         <div className={styles.splitLine} />
-        <div className={styles.title}>飞布控制台</div>
+        <div className={styles.title}>
+          <FormattedMessage id="core.title" defaultMessage="飞布控制台" description="标题" />
+        </div>
         {/*<div className={styles.titleIcon} />*/}
         <div className="flex-1" />
         {pathname === '/workbench/rapi' ? (

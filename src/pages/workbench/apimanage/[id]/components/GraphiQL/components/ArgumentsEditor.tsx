@@ -11,13 +11,14 @@ import requiredIcon from '../assets/required.svg'
 import type { InputValueType, SingleInputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'
 
-const NOT_EDITABLE_DIRECTIVES = [
-  'fromClaim',
-  'injectGeneratedUUID',
-  'injectGeneratedUUID',
-  'injectCurrentDatetime',
-  'injectEnvironmentVariable',
-  'internal'
+// 测试的时候还是得填
+const NOT_EDITABLE_DIRECTIVES: string[] = [
+  // 'fromClaim',
+  // 'injectGeneratedUUID',
+  // 'injectGeneratedUUID',
+  // 'injectCurrentDatetime',
+  // 'injectEnvironmentVariable',
+  // 'internal'
 ]
 
 interface ArgumentsEditorProps {
@@ -31,13 +32,12 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   const [values, setValues] = useState<Record<string, InputValueType>>({})
   const valuesRef = useRef<Record<string, InputValueType>>({})
 
-  
   const parsed = useMemo(() => {
     return parseParameters(props.arguments)
   }, [props.arguments])
 
   const hasDirective = parsed?.some(item => item.directives?.length)
-  
+
   const updateValue = (v: InputValueType, key: string) => {
     const target = {
       ...values,
