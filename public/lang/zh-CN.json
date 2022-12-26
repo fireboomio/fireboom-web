@@ -1,4 +1,5 @@
 {
+  "apiCrud.empty": "使用该功能前，请先添加数据库",
   "core.title": "飞布控制台",
-  "storage.configErr": "配置信息有误，无法连接，请修改后再试"
+  "storage.configErr": "12123"
 }
