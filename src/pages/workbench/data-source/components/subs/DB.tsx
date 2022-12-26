@@ -269,6 +269,7 @@ export default function DB({ content, type }: Props) {
 
   //设置初始编辑部分初始化显示的表单
   useEffect(() => {
+    console.log(111)
     if (type === 'form') {
       form.resetFields()
     }
@@ -276,12 +277,14 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
   useEffect(() => {
+    console.log(222,userNameKind,passwordKind)
     setViewerForm(config.appendType == '1' ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userNameKind, passwordKind])
 
   // 连接URL，值和环境变量切换,对应选择框切换，重新渲染获取数据
   useEffect(() => {
+    console.log(333)
     setViewerForm(initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValue])
@@ -368,6 +371,7 @@ export default function DB({ content, type }: Props) {
 
   //单选框链接URL和链接参数切换回调
   const typeChange = (value: string) => {
+    console.log('====', value)
     switch (value) {
       case '0':
         setViewerForm(initForm)
@@ -380,6 +384,7 @@ export default function DB({ content, type }: Props) {
         break
     }
   }
+  console.log('viewerForm', viewerForm)
 
   const handleTest = () => {
     // TODO 测试接口

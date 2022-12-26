@@ -1,5 +1,5 @@
-import { Button, Form, Input, message, Select, Switch } from 'antd'
-import { useContext, useMemo, useState } from 'react'
+import { Alert, Button, Form, Input, message, Select, Switch } from 'antd'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
@@ -12,9 +12,10 @@ import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 interface Props {
   content?: StorageResp
+  showErr?: boolean
 }
 
-export default function StorageForm({ content }: Props) {
+export default function StorageForm({ content, showErr }: Props) {
   const { handleSwitch } = useContext(StorageSwitchContext)
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -26,6 +27,10 @@ export default function StorageForm({ content }: Props) {
   const secretAccessKeyKind = Form.useWatch(['secretAccessKey', 'kind'], form)
   const [testing, setTesting] = useState(false)
   const envOptions = useEnvOptions()
+
+  useEffect(() => {
+    form.resetFields()
+  }, [content])
 
   const onFinish = async (values: StorageConfig) => {
     const payload = { name: values.name, config: values, useSSL: true }
@@ -67,6 +72,11 @@ export default function StorageForm({ content }: Props) {
 
   return (
     <div className={`${styles['form-contain']}`}>
+      {showErr && (
+        <div className="-mt-4 pb-4">
+          <Alert className="w-full" message="配置信息有误，无法连接，请修改后再试" type="error" />
+        </div>
+      )}
       <Form
         form={form}
         name="basic"

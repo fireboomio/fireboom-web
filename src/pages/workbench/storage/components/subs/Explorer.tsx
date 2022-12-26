@@ -36,6 +36,7 @@ import iconPic from '../assets/icon-pic.svg'
 import iconVideo from '../assets/icon-video.svg'
 import styles from './Explorer.module.less'
 import FileTypeMap from './fileType'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   bucketId?: number
@@ -77,6 +78,7 @@ const FILE_ICON = {
 }
 
 export default function StorageExplorer({ bucketId }: Props) {
+  const navigate = useNavigate()
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
   const [sortField, setSortField] = useImmer('name') // 排序字段
@@ -100,7 +102,15 @@ export default function StorageExplorer({ bucketId }: Props) {
     setTarget(undefined)
     setVisible(false)
     inited.current = false
-    loadMenu(searchBase, { forceRoot: true }).then(() => {
+    loadMenu(searchBase, {
+      forceRoot: true,
+      onError: () => {
+        if (bucketId) {
+          sessionStorage.setItem('storageError', String(bucketId))
+          navigate(`/workbench/storage/${bucketId}`)
+        }
+      }
+    }).then(() => {
       inited.current = true
     })
   }, [bucketId, searchBase])
@@ -288,7 +298,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   /**
    * 根据path匹配options中的节点并刷新
    */
-  const loadMenu = async (path: string, { forceRoot = false } = {}) => {
+  const loadMenu = async (path: string, { forceRoot = false, onError } = {}) => {
     console.log('loadMenu', path)
     if (!bucketId) return
     const hide = message.loading('加载中', 0)
@@ -325,6 +335,10 @@ export default function StorageExplorer({ bucketId }: Props) {
           return '文件列表加载失败'
         }
       })
+      // 请求结果为空是，向外抛错误
+      if (!files) {
+        onError?.()
+      }
       const oldChildMap = new Map(loadTarget.children?.map(x => [x.name, x]) ?? [])
 
       // 目录前缀

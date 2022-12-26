@@ -1,5 +1,5 @@
 import { Button } from 'antd'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
@@ -12,22 +12,12 @@ import StorageForm from './subs/Form'
 interface Props {
   content?: StorageResp
   showType: string
+  showErr: boolean
 }
 
-export default function StorageContainer({ content, showType }: Props) {
+export default function StorageContainer({ content, showType, showErr }: Props) {
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const { handleSwitch } = useContext(StorageSwitchContext)
-  const handleToggleBucket = async () => {
-    if (!content) {
-      return
-    }
-    content.switch ^= 1
-    if (content) {
-      void (await requests.put('/storageBucket ', content))
-    }
-    onRefreshMenu('storage')
-    handleSwitch('detail', content?.id)
-  }
   return (
     <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
       <div
@@ -49,7 +39,7 @@ export default function StorageContainer({ content, showType }: Props) {
         ) : null}
       </div>
       <div
-        className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white pl-8 mx-3 mt-3 pt-8"
+        className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white px-8 mx-3 mt-3 pt-8"
         style={{
           border: '1px solid rgba(95,98,105,0.1)',
           borderBottom: 'none',
@@ -59,7 +49,7 @@ export default function StorageContainer({ content, showType }: Props) {
         {showType === 'detail' ? (
           <StorageDetail content={content} />
         ) : showType === 'form' ? (
-          <StorageForm content={content} />
+          <StorageForm content={content} showErr={showErr} />
         ) : (
           ''
         )}
