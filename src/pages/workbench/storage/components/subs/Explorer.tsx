@@ -22,6 +22,8 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import type { FileT } from '@/interfaces/storage'
@@ -36,7 +38,6 @@ import iconPic from '../assets/icon-pic.svg'
 import iconVideo from '../assets/icon-video.svg'
 import styles from './Explorer.module.less'
 import FileTypeMap from './fileType'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
   bucketId?: number
@@ -78,6 +79,7 @@ const FILE_ICON = {
 }
 
 export default function StorageExplorer({ bucketId }: Props) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const [isSerach, setIsSerach] = useImmer(true)
   const [visible, setVisible] = useImmer(false)
@@ -160,7 +162,9 @@ export default function StorageExplorer({ bucketId }: Props) {
           label: (
             <div>
               <AppstoreOutlined className="mr-2" />
-              <span>视图</span>
+              <span>
+                <FormattedMessage defaultMessage="视图" />
+              </span>
             </div>
           )
         },
@@ -169,7 +173,9 @@ export default function StorageExplorer({ bucketId }: Props) {
           label: (
             <div>
               <BarsOutlined className="mr-2" />
-              <span>列表</span>
+              <span>
+                <FormattedMessage defaultMessage="列表" />
+              </span>
             </div>
           )
         }
@@ -193,7 +199,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           key: '0',
           label: (
             <div onClick={() => setSort('name')}>
-              按名称
+              <FormattedMessage defaultMessage="按名称" />
               {sortField === 'name' && (
                 <span className="ml-2 text-red-500">
                   {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -206,7 +212,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           key: '1',
           label: (
             <div onClick={() => setSort('size')}>
-              按文件大小
+              <FormattedMessage defaultMessage="按文件大小" />
               {sortField === 'size' && (
                 <span className="ml-2 text-red-500">
                   {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -219,7 +225,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           key: '2',
           label: (
             <div onClick={() => setSort('createTime')}>
-              按创建时间
+              <FormattedMessage defaultMessage="按创建时间" />
               {sortField === 'createTime' && (
                 <span className="ml-2 text-red-500">
                   {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -232,7 +238,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           key: '3',
           label: (
             <div onClick={() => setSort('updateTime')}>
-              按修改时间
+              <FormattedMessage defaultMessage="按修改时间" />
               {sortField === 'updateTime' && (
                 <span className="ml-2 text-red-500">
                   {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -301,7 +307,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const loadMenu = async (path: string, { forceRoot = false, onError } = {}) => {
     console.log('loadMenu', path)
     if (!bucketId) return
-    const hide = message.loading('加载中', 0)
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
     try {
       // 找到需要刷新的节点
       const matchNode = (node: Option): Option | undefined => {
@@ -332,7 +338,7 @@ export default function StorageExplorer({ bucketId }: Props) {
       const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
         params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined },
         resolveErrorMsg: response => {
-          return '文件列表加载失败'
+          return intl.formatMessage({ defaultMessage: '文件列表加载失败' })
         }
       })
       // 请求结果为空是，向外抛错误
@@ -357,7 +363,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   items={[
                     {
                       key: 'rename',
-                      label: '重命名',
+                      label: intl.formatMessage({ defaultMessage: '重命名' }),
                       onClick: e => {
                         e.domEvent.stopPropagation()
                         doRename(x.name)
@@ -367,12 +373,12 @@ export default function StorageExplorer({ bucketId }: Props) {
                       key: 'delete',
                       label: (
                         <Popconfirm
-                          title="确定删除吗?"
+                          title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
                           onConfirm={() => deleteFile(x as Option)}
-                          okText="删除"
-                          cancelText="取消"
+                          okText={intl.formatMessage({ defaultMessage: '删除' })}
+                          cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                         >
-                          删除
+                          <FormattedMessage defaultMessage="删除" />
                         </Popconfirm>
                       ),
                       onClick: e => {
@@ -386,9 +392,9 @@ export default function StorageExplorer({ bucketId }: Props) {
               <div className="flex">
                 <span>
                   {x.isDir ? (
-                    <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5" />
+                    <img src={iconFold} alt="文件夹" className="h-3.5 w-3.5" />
                   ) : (
-                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="w-3.5 h-3.5" />
+                    <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="h-3.5 w-3.5" />
                   )}
                 </span>
 
@@ -430,11 +436,11 @@ export default function StorageExplorer({ bucketId }: Props) {
   const doRename = (name: string) => {
     inputValue.current = ''
     Modal.info({
-      title: '请输入名称',
+      title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input
           autoFocus
-          placeholder="请输入"
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onChange={e => {
             inputValue.current = e.target.value
           }}
@@ -445,7 +451,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         if (!inputValue.current) {
           return
         }
-        const hide = message.loading('保存中')
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         requests
           .post('/s3Upload/rename', {
             bucketID: bucketId,
@@ -455,20 +461,20 @@ export default function StorageExplorer({ bucketId }: Props) {
           .then(() => {
             hide()
             setVisible(false)
-            void message.success('保存成功')
+            message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
             setRefreshFlag(!refreshFlag)
           })
       }
     })
   }
   const deleteFile = (file = target) => {
-    const hide = message.loading('删除中')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
     void requests
       .post('/s3Upload/remove', { bucketID: bucketId, fileName: file?.name })
       .then(() => {
         hide()
         setVisible(false)
-        void message.success('删除成功')
+        void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         setRefreshFlag(!refreshFlag)
       })
   }
@@ -478,22 +484,22 @@ export default function StorageExplorer({ bucketId }: Props) {
     let dir = uploadPath
     inputValue.current = ''
     Modal.info({
-      title: '请输入文件夹名称',
+      title: intl.formatMessage({ defaultMessage: '请输入文件夹名称' }),
       content: (
         <Input
           autoFocus
-          placeholder="请输入"
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onChange={e => {
             inputValue.current = e.target.value
           }}
         />
       ),
-      okText: '创建',
+      okText: intl.formatMessage({ defaultMessage: '创建' }),
       onOk: () => {
         if (!inputValue.current) {
           return
         }
-        const hide = message.loading('创建中')
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '创建中' }))
         requests
           .post('/s3Upload/createDir', {
             bucketID: bucketId,
@@ -502,7 +508,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           .then(() => {
             hide()
             setVisible(false)
-            void message.success('创建成功')
+            message.success(intl.formatMessage({ defaultMessage: '创建成功' }))
             // setRefreshFlag(!refreshFlag)
             // 刷新创建文件夹所在的目录
             loadMenu(uploadPath)
@@ -536,9 +542,9 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col h-full">
       <div
-        className="bg-white pl-9 h-13 pr-4 flex  items-center justify-between flex-0"
+        className="bg-white flex flex-0 h-13 pr-4  pl-9 items-center justify-between"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
         <div className="flex flex-1 min-w-0">
@@ -551,7 +557,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         <div className="flex flex-0 justify-center items-center">
           {isSerach ? (
             <Tooltip title="serach">
-              <div className="mr-4 cursor-pointer" onClick={changeSerachState}>
+              <div className="cursor-pointer mr-4" onClick={changeSerachState}>
                 <img alt="" src="/assets/search.svg" />
               </div>
             </Tooltip>
@@ -572,9 +578,9 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Button
             onClick={() => setRefreshFlag(!refreshFlag)}
             icon={<SyncOutlined />}
-            className="mr-2 !p-1 !border-0"
+            className="mr-2 !border-0 !p-1"
           >
-            刷新
+            <FormattedMessage defaultMessage="刷新" />
           </Button>
           {/*<Dropdown overlay={listMenu} placement="bottom">*/}
           {/*  <Button icon={<BarsOutlined />} className="mr-2">*/}
@@ -582,8 +588,8 @@ export default function StorageExplorer({ bucketId }: Props) {
           {/*  </Button>*/}
           {/*</Dropdown>*/}
           <Dropdown overlay={orderMenu} placement="bottom">
-            <Button icon={<BarsOutlined />} className="mr-2 !p-1 !border-0">
-              排序
+            <Button icon={<BarsOutlined />} className="mr-2 !border-0 !p-1">
+              <FormattedMessage defaultMessage="排序" />
             </Button>
           </Dropdown>
           <Divider type="vertical" className="!h-3 !mr-5" />
@@ -598,17 +604,19 @@ export default function StorageExplorer({ bucketId }: Props) {
                 loadMenu(uploadPath)
               } else {
                 if (!uploadingTip.current) {
-                  uploadingTip.current = message.loading('上传中...')
+                  uploadingTip.current = message.loading(
+                    intl.formatMessage({ defaultMessage: '上传中...' })
+                  )
                 }
               }
             }}
           >
-            <Button size="small" className="!h-7 !rounded-2px mr-4">
-              上传
+            <Button size="small" className="mr-4 !rounded-2px !h-7">
+              <FormattedMessage defaultMessage="上传" />
             </Button>
           </Upload>
-          <Button size="small" className="!h-7 !rounded-2px" onClick={createFold}>
-            文件夹
+          <Button size="small" className="!rounded-2px !h-7" onClick={createFold}>
+            <FormattedMessage defaultMessage="文件夹" />
           </Button>
         </div>
       </div>
@@ -646,10 +654,10 @@ export default function StorageExplorer({ bucketId }: Props) {
                   <img
                     src={FILE_ICON[fileType(target?.name ?? '')]}
                     alt="图片"
-                    className="w-3.5 h-3.5 mr-2"
+                    className="h-3.5 mr-2 w-3.5"
                   />
                 ) : (
-                  <img src={iconFold} alt="文件夹" className="w-3.5 h-3.5 mr-2" />
+                  <img src={iconFold} alt="文件夹" className="h-3.5 mr-2 w-3.5" />
                 )}
                 {target?.name}
               </div>
@@ -661,14 +669,27 @@ export default function StorageExplorer({ bucketId }: Props) {
                 className={styles.collapse}
               >
                 {!target?.isDir && (
-                  <Panel header="基本信息" key="1">
-                    <p>类型：{target?.mime ?? '未知'}</p>
-                    <p>大小：{formatBytes(target?.size)}</p>
-                    <p>创建于：{target?.createTime ?? ''}</p>
-                    <p>修改于：{target?.updateTime ?? ''}</p>
+                  <Panel header={intl.formatMessage({ defaultMessage: '基本信息' })} key="1">
+                    <p>
+                      <FormattedMessage defaultMessage="类型" />:{' '}
+                      {target?.mime ??
+                        intl.formatMessage({
+                          defaultMessage: '未知',
+                          description: '未知的文件类型'
+                        })}
+                    </p>
+                    <p>
+                      <FormattedMessage defaultMessage="大小" />: {formatBytes(target?.size)}
+                    </p>
+                    <p>
+                      <FormattedMessage defaultMessage="创建于" />: {target?.createTime ?? ''}
+                    </p>
+                    <p>
+                      <FormattedMessage defaultMessage="修改于" />: {target?.updateTime ?? ''}
+                    </p>
                   </Panel>
                 )}
-                <Panel header="预览" key="2">
+                <Panel header={intl.formatMessage({ defaultMessage: '预览' })} key="2">
                   <div
                     className={`${styles['panel-style']} flex-col justify-center items-center flex`}
                   >
@@ -677,22 +698,26 @@ export default function StorageExplorer({ bucketId }: Props) {
                 </Panel>
                 <div className="flex flex-col">
                   <a className="flex" href={target?.url} download={target?.value}>
-                    <Button className="m-1.5 flex-1 !border-[#efeff0] rounded-4px">下载</Button>
+                    <Button className="rounded-4px flex-1 m-1.5 !border-[#efeff0]">
+                      <FormattedMessage defaultMessage="下载" />
+                    </Button>
                   </a>
                   <Button
                     onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
-                    className="m-1.5 !border-[#efeff0] rounded-4px"
+                    className="rounded-4px m-1.5 !border-[#efeff0]"
                   >
-                    复制URL
+                    <FormattedMessage defaultMessage="复制URL" />
                   </Button>
                   <Popconfirm
-                    title="确定删除吗?"
+                    title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
                     onConfirm={() => deleteFile(target)}
-                    okText="删除"
-                    cancelText="取消"
+                    okText={intl.formatMessage({ defaultMessage: '删除' })}
+                    cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                   >
-                    <Button className="m-1.5 !border-[#efeff0] rounded-4px">
-                      <span className="text-[#F21212]">删除</span>
+                    <Button className="rounded-4px m-1.5 !border-[#efeff0]">
+                      <span className="text-[#F21212]">
+                        <FormattedMessage defaultMessage="删除" />
+                      </span>
                     </Button>
                   </Popconfirm>
                 </div>
