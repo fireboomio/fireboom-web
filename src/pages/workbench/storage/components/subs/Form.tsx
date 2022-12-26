@@ -9,6 +9,7 @@ import requests from '@/lib/fetchers'
 
 import styles from './subs.module.less'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { FormattedMessage } from 'react-intl'
 
 interface Props {
   content?: StorageResp
@@ -74,7 +75,13 @@ export default function StorageForm({ content, showErr }: Props) {
     <div className={`${styles['form-contain']}`}>
       {showErr && (
         <div className="-mt-4 pb-4">
-          <Alert className="w-full" message="配置信息有误，无法连接，请修改后再试" type="error" />
+          <Alert
+            className="w-full"
+            message={
+              <FormattedMessage id="storage.configErr" defaultMessage="12123"  />
+            }
+            type="error"
+          />
         </div>
       )}
       <Form

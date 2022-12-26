@@ -207,7 +207,7 @@ export default function Graphql({ content, type }: Props) {
   function testGql() {
     const values = form.getFieldsValue()
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    void requests.post('/checkDBConn', values).then((x: any) => {
+    void requests.post('/checkDBConn', { sourceType: 3, config: values }).then((x: any) => {
       if (x?.status) {
         message.success('连接成功')
       } else {
