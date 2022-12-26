@@ -13,6 +13,7 @@ export default function FileStorage() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('detail')
   const [content, setContent] = useState<StorageResp>()
+  const [showErr, setShowErr] = useState(false)
 
   useEffect(() => {
     if (id === 'new') {
@@ -20,10 +21,23 @@ export default function FileStorage() {
       setContent(undefined)
       return
     } else {
-      setShowType('detail')
+      if (id === sessionStorage.getItem('storageError')) {
+        sessionStorage.removeItem('storageError')
+        console.log(2222)
+        setShowErr(true)
+        setShowType('form')
+      } else {
+        setShowType('detail')
+      }
     }
   }, [id])
+
   useEffect(() => {
+    // 保存成功后跳转到详情页时顺便清空错误标记
+    if (showType === 'detail' && showErr) {
+      console.log(1111)
+      setShowErr(false)
+    }
     void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
       setContent(data?.filter(item => item.id === Number(id))?.[0])
     })
@@ -39,7 +53,7 @@ export default function FileStorage() {
         <title>FireBoom - 文件存储</title>
       </Helmet>
       <StorageSwitchContext.Provider value={{ handleSwitch }}>
-        <StorageContainer showType={showType} content={content} />
+        <StorageContainer showType={showType} content={content} showErr={showErr} />
       </StorageSwitchContext.Provider>
     </>
   )

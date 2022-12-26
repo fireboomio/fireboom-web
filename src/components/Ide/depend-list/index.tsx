@@ -393,7 +393,6 @@ const DependList = (props: DependListProps) => {
       <span
         className="cursor-pointer absolute right-2 z-50"
         onClick={() => {
-          console.log(123123)
           props.onFold()
         }}
       >
