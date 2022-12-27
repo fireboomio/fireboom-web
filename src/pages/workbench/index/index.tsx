@@ -1,14 +1,14 @@
 import { Image } from 'antd'
-import { useEffect } from 'react'
+import React, { useEffect, lazy, Suspense } from 'react'
 import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
-import { Guide } from '@/pages/workbench/index/components/Guide'
 import { Notice } from '@/pages/workbench/index/components/Notice'
 
 import styles from './index.module.less'
 
+const Guide = lazy(() => import('@/pages/workbench/index/components/Guide'))
 interface HomeApi {
   liveQueryTotal: number
   mutationsTotal: number
@@ -318,7 +318,9 @@ export default function Home() {
 
             <div className="flex-shrink-0 ml-18px w-380px relative">
               <Notice handleToggleDesigner={handleToggleDesigner} />
-              {showType == 'guide' ? <Guide handleToggleDesigner={handleToggleDesigner} /> : null}
+              <Suspense fallback={<div />}>
+                {showType == 'guide' ? <Guide handleToggleDesigner={handleToggleDesigner} /> : null}
+              </Suspense>
             </div>
           </div>
         </div>

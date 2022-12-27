@@ -1,5 +1,5 @@
 import type { OperationDefinitionNode } from 'graphql'
-import { lazy, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
@@ -149,21 +149,25 @@ const APIFlowChart = ({ id }: { id: string }) => {
         directiveState!.isInternal ? (
           <InternalOperationChart />
         ) : operationType === 'subscription' ? (
-          <SubscriptionChart
-            globalHookState={globalState as unknown as SubscriptionGlobalHookState}
-            hookState={hookState}
-            directiveState={directiveState}
-            apiSetting={apiDesc!.setting}
-            onEditHook={hook => setEditingHook(hook)}
-          />
+          <Suspense>
+            <SubscriptionChart
+              globalHookState={globalState as unknown as SubscriptionGlobalHookState}
+              hookState={hookState}
+              directiveState={directiveState}
+              apiSetting={apiDesc!.setting}
+              onEditHook={hook => setEditingHook(hook)}
+            />
+          </Suspense>
         ) : (
-          <FlowChart
-            globalHookState={globalState}
-            hookState={hookState}
-            directiveState={directiveState}
-            apiSetting={apiDesc!.setting}
-            onEditHook={hook => setEditingHook(hook)}
-          />
+          <Suspense>
+            <FlowChart
+              globalHookState={globalState}
+              hookState={hookState}
+              directiveState={directiveState}
+              apiSetting={apiDesc!.setting}
+              onEditHook={hook => setEditingHook(hook)}
+            />
+          </Suspense>
         )
       ) : (
         <></>

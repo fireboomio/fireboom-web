@@ -1,5 +1,5 @@
 import { Layout as ALayout, Modal } from 'antd'
-import type { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -16,14 +16,16 @@ import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import Window from '@/pages/workbench/components/Workbench/subs/Window'
-import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
 import Sider from './subs/Sider'
 import StatusBar from './subs/StatusBar'
+import React from 'react'
 
+const ModelingWrapper = React.lazy(() => import('@/pages/workbench/modeling/components/modelingWrapper'))
+
+const Window = React.lazy(() => import('@/pages/workbench/components/Workbench/subs/Window'))
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
 interface BarOnce {
@@ -157,11 +159,13 @@ export default function Index(props: PropsWithChildren) {
         <ALayout className="relative">
           <AContent className="bg-[#FBFBFB]">{props.children}</AContent>
           {showWindow ? (
-            <Window
-              style={{ left: 0, right: 0, bottom: 0 }}
-              toggleWindow={() => setShowWindow(!showWindow)}
-              defaultTab={defaultWindowTab}
-            />
+            <Suspense>
+              <Window
+                style={{ left: 0, right: 0, bottom: 0 }}
+                toggleWindow={() => setShowWindow(!showWindow)}
+                defaultTab={defaultWindowTab}
+              />
+            </Suspense>
           ) : (
             <></>
           )}
@@ -187,7 +191,7 @@ export default function Index(props: PropsWithChildren) {
   )
   const location = useLocation()
   if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
-    return <ModelingWrapper>{body}</ModelingWrapper>
+    return <Suspense><ModelingWrapper>{body}</ModelingWrapper></Suspense>
   } else {
     return (
       <WorkbenchContext.Provider

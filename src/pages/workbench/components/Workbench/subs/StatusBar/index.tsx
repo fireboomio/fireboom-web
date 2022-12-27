@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Input, message, Radio, Select, Space, Tag } from 'antd'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
@@ -12,8 +12,8 @@ import { debounce, throttle } from 'lodash'
 
 import styles from './index.module.less'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import UrlInput from '@/components/UrlInput'
 
+const UrlInput = React.lazy(() => import('@/components/UrlInput'))
 const { Option } = Select
 interface Props {
   className?: string
@@ -248,6 +248,7 @@ const StatusBar: React.FC<Props> = ({
                       </Radio>
                     </Space>
                   </Radio.Group>
+                  <Suspense>
                   <UrlInput
                     selectClassName="!z-13000"
                     value={hooksServerURL}
@@ -259,6 +260,7 @@ const StatusBar: React.FC<Props> = ({
                       localStorage.setItem('hooksServerURL', val)
                     }}
                   />
+                  </Suspense>
                 </div>
               </>
             )}
