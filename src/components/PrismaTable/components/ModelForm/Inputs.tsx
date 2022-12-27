@@ -149,7 +149,7 @@ const Object = ({
     if (!required || value) {
       callback()
     } else {
-      const msg = intl.formatMessage({ defaultMessage: `请选择 ${type} 表关联数据` })
+      const msg = intl.formatMessage({ defaultMessage: `请选择 {type} 表关联数据` }, { type: type })
       message.error(msg)
       callback(msg)
     }
@@ -181,7 +181,7 @@ const Object = ({
       </Form.Item>
       <Modal
         width={1200}
-        title={intl.formatMessage({ defaultMessage: `关联 ${type} 表数据` })}
+        title={intl.formatMessage({ defaultMessage: `关联 {type} 表数据` }, { type })}
         open={connectModalVisible}
         footer={false}
         destroyOnClose

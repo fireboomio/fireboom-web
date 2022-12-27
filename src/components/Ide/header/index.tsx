@@ -72,7 +72,10 @@ const IdeHeaderContainer: FC<Props> = props => {
         break
       case AutoSaveStatus.SAVED:
         // 拼接保存时间, 时:分:秒
-        _text = intl.formatMessage({ defaultMessage: `已保存 ${dayjs().format('HH:mm:ss')}` })
+        _text = intl.formatMessage(
+          { defaultMessage: '已保存 {time}', description: '保存时间提示' },
+          { time: dayjs().format('HH:mm:ss') }
+        )
         break
       case AutoSaveStatus.EDIT:
         _text = intl.formatMessage({ defaultMessage: '已编辑' })

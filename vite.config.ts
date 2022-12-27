@@ -16,7 +16,19 @@ import { argv } from 'process'
 const backendUrl = process.env.SERVER_URL || 'http://localhost:9123'
 
 const plugins: PluginOption[] = [
-  react(),
+  react({
+    babel: {
+      "plugins": [
+        [
+          "formatjs",
+          {
+            "idInterpolationPattern": "[sha512:contenthash:base64:6]",
+            "ast": true
+          }
+        ]
+      ]
+    }
+  }),
   vitePluginImp({
     libList: [
       {
