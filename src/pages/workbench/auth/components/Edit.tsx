@@ -4,19 +4,21 @@ import { Button, Checkbox, Form, Input, Radio, Select } from 'antd'
 import axios from 'axios'
 import type { ReactNode } from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
+// import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
+import UrlInput from '@/components/UrlInput'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthDispatchContext, AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { intl } from '@/providers/IntlProvider'
 
 import styles from './subs.module.less'
-import useSWRImmutable from 'swr/immutable'
-import useEnvOptions from '@/lib/hooks/useEnvOptions'
-import UrlInput from '@/components/UrlInput'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -31,13 +33,14 @@ type Config = Record<string, ReactNode>
 type FromValues = Record<string, number | string | readonly string[] | undefined>
 
 const options = [
-  { label: '基于Cookie', value: 'cookieBased' },
-  { label: '基于Token', value: 'tokenBased' }
+  { label: intl.formatMessage({ defaultMessage: '基于Cookie' }), value: 'cookieBased' },
+  { label: intl.formatMessage({ defaultMessage: '基于Token' }), value: 'tokenBased' }
 ]
 
 export default function AuthMainEdit({ content, onChange, onTest }: Props) {
+  const intl = useIntl()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
-  const dispatch = useContext(AuthDispatchContext)
+  // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
   const issuer = Form.useWatch('issuer', form)
   const clientIdKind = Form.useWatch(['clientId', 'kind'], form)
@@ -184,55 +187,86 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           initialValues={initialValues}
         >
           <Form.Item
-            label="供应商ID"
+            label={intl.formatMessage({ defaultMessage: '供应商ID' })}
             name="id"
             rules={[
-              { required: true, message: '供应商ID不能为空' },
+              {
+                required: true,
+                message: intl.formatMessage({ defaultMessage: '供应商ID不能为空' })
+              },
               {
                 pattern: new RegExp('^\\w+$', 'g'),
-                message: '只允许包含字母，数字，下划线'
+                message: intl.formatMessage({ defaultMessage: '只允许包含字母，数字，下划线' })
               }
             ]}
           >
-            <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
+            <Input
+              placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+              autoComplete="off"
+              autoFocus={true}
+            />
           </Form.Item>
 
-          <Form.Item label="App ID">
+          <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
             <Input.Group compact className="!flex">
               <Form.Item name={['clientId', 'kind']} noStyle>
-                <Select className="w-100px flex-0">
-                  <Select.Option value="0">值</Select.Option>
-                  <Select.Option value="1">环境变量</Select.Option>
+                <Select className="flex-0 w-100px">
+                  <Select.Option value="0">
+                    <FormattedMessage defaultMessage="值" />
+                  </Select.Option>
+                  <Select.Option value="1">
+                    <FormattedMessage defaultMessage="环境变量" />
+                  </Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name={['clientId', 'val']}
                 noStyle
-                rules={[{ required: true, message: 'App ID不能为空' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                  }
+                ]}
               >
                 {clientIdKind === '0' ? (
-                  <Input className="flex-1" placeholder="请输入" />
+                  <Input
+                    className="flex-1"
+                    placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                  />
                 ) : (
                   <Select className="flex-1" options={envOptions} />
                 )}
               </Form.Item>
             </Input.Group>
           </Form.Item>
-          <Form.Item label="App Secret">
+          <Form.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
             <Input.Group compact className="!flex">
               <Form.Item name={['clientSecret', 'kind']} noStyle>
-                <Select className="w-100px flex-0">
-                  <Select.Option value="0">值</Select.Option>
-                  <Select.Option value="1">环境变量</Select.Option>
+                <Select className="flex-0 w-100px">
+                  <Select.Option value="0">
+                    <FormattedMessage defaultMessage="值" />
+                  </Select.Option>
+                  <Select.Option value="1">
+                    <FormattedMessage defaultMessage="环境变量" />
+                  </Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name={['clientSecret', 'val']}
                 noStyle
-                rules={[{ required: true, message: 'App Secret不能为空' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
+                  }
+                ]}
               >
                 {clientSecretKind === '0' ? (
-                  <Input className="flex-1" placeholder="请输入" />
+                  <Input
+                    className="flex-1"
+                    placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                  />
                 ) : (
                   <Select className="flex-1" options={envOptions} />
                 )}
@@ -243,20 +277,20 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             label="Issuer"
             name="issuer"
             rules={[
-              { required: true, message: 'Issuer不能为空' },
+              { required: true, message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' }) },
               {
                 // pattern: /^https?:\/\/[:.\w\d/]+$/,
                 type: 'url',
-                message: '只允许输入链接'
+                message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
               }
             ]}
           >
-            <UrlInput placeholder="请输入..." />
+            <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
           </Form.Item>
-          <Form.Item label="服务发现地址">
+          <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />
           </Form.Item>
-          <Form.Item label="JWKS" name="jwks">
+          <Form.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })} name="jwks">
             <Radio.Group
               onChange={e => {
                 typeChange(e.target.value as string)
@@ -268,7 +302,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Radio.Group>
           </Form.Item>
           {isRadioShow ? (
-            <Form.Item label="jwksJSON" className="mb-5">
+            <Form.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })} className="mb-5">
               <ReactJson
                 onEdit={saveJwksJSON}
                 onAdd={saveJwksJSON}
@@ -279,7 +313,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               />
             </Form.Item>
           ) : (
-            <Form.Item label="jwksURL" name="jwksURL">
+            <Form.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })} name="jwksURL">
               <Input
                 disabled
                 suffix={
@@ -289,16 +323,19 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                       window.open(jwksURL, '_blank')
                     }}
                   >
-                    浏览
+                    <FormattedMessage defaultMessage="浏览" />
                   </div>
                 }
               />
             </Form.Item>
           )}
-          <Form.Item label="用户端点" name="userInfoEndpoint">
+          <Form.Item
+            label={intl.formatMessage({ defaultMessage: '用户端点' })}
+            name="userInfoEndpoint"
+          >
             <Input disabled />
           </Form.Item>
-          <Form.Item label="是否开启" name="switchState">
+          <Form.Item label={intl.formatMessage({ defaultMessage: '是否开启' })} name="switchState">
             <Checkbox.Group options={options} />
           </Form.Item>
 
@@ -314,10 +351,12 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 handleBottomToggleDesigner('data', content.id)
               }}
             >
-              <span>取消</span>
+              <span>
+                <FormattedMessage defaultMessage="取消" />
+              </span>
             </Button>
             <Button className="ml-4 btn-test" onClick={onTest}>
-              测试
+              <FormattedMessage defaultMessage="测试" />
             </Button>
             <Button
               className="ml-4 btn-save"
@@ -325,7 +364,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 form.submit()
               }}
             >
-              保存
+              <FormattedMessage defaultMessage="保存" />
             </Button>
           </Form.Item>
         </Form>

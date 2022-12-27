@@ -1,10 +1,11 @@
 import { Image } from 'antd'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import type { StorageResp } from '@/interfaces/storage'
+import requests from '@/lib/fetchers'
 
 import styles from './home.module.less'
-import requests from '@/lib/fetchers'
-import { StorageResp } from '@/interfaces/storage'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
   handleToggleDesigner: (rightType: string) => void
@@ -146,9 +147,9 @@ export default function Guide({ handleToggleDesigner }: Props) {
 
   return (
     <div className={styles.guideContainer}>
-      <div className="flex-0 flex justify-between items-center h-62px pl-23px pr-8px">
-        <span className="text-17px font-bold text-[#222]">新手指引</span>
-        <div className="p-3 text-0px cursor-pointer">
+      <div className="flex flex-0 h-62px pr-8px pl-23px justify-between items-center">
+        <span className="font-bold text-17px text-[#222]">新手指引</span>
+        <div className="cursor-pointer p-3 text-0px">
           <Image
             width={15}
             height={15}

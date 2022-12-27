@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -10,6 +11,7 @@ import requests from '@/lib/fetchers'
 import StorageContainer from '../components/Container'
 
 export default function FileStorage() {
+  const intl = useIntl()
   const { id } = useParams()
   const [showType, setShowType] = useImmer<'explorer' | 'detail' | 'form'>('detail')
   const [content, setContent] = useState<StorageResp>()
@@ -53,7 +55,9 @@ export default function FileStorage() {
   return (
     <>
       <Helmet>
-        <title>FireBoom - 文件存储</title>
+        <title>
+          FireBoom - <FormattedMessage defaultMessage="文件存储" />
+        </title>
       </Helmet>
       <StorageSwitchContext.Provider value={{ handleSwitch }}>
         <StorageContainer showType={showType} content={content} showErr={showErr} />

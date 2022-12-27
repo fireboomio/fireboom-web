@@ -1,5 +1,6 @@
 import { Button, message } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
@@ -13,18 +14,16 @@ import AuthCheck from '../components/Check'
 import AuthEdit from '../components/Edit'
 
 export default function AuthConfigContainer() {
+  const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const [content, setContent] = useState<AuthProvResp>()
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
   const { id } = useParams()
   const { config } = useContext(ConfigContext)
-  const { data: authList, mutate } = useSWRImmutable<AuthProvResp[]>(
-    ['/auth', id],
-    function (url, id) {
-      return requests.get(url)
-    }
-  )
+  const { data: authList } = useSWRImmutable<AuthProvResp[]>(['/auth', id], function (url, id) {
+    return requests.get(url)
+  })
   useEffect(() => {
     // 如果id为new，则视为新增
     if (id === 'new') {
@@ -71,7 +70,9 @@ export default function AuthConfigContainer() {
     try {
       target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
     } catch (e) {
-      message.error('地址异常，请检查系统设置中的API域名是否正确')
+      message.error(
+        intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
+      )
       console.error(e)
       return
     }
@@ -85,28 +86,28 @@ export default function AuthConfigContainer() {
   }
 
   return (
-    <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
+    <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
       <div
-        className="h-54px flex-0 bg-white flex items-center pl-11"
+        className="bg-white flex flex-0 h-54px pl-11 items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
-        {content?.name || '创建身份认证器'}
+        <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" />
+        {content?.name || <FormattedMessage defaultMessage="创建身份认证器" />}
         <div className="flex-1"></div>
         {!editFlag ? (
           <>
             <Button className={'btn-test  mr-4'} onClick={onTest}>
-              测试
+              <FormattedMessage defaultMessage="测试" />
             </Button>
             <Button className={'btn-save  mr-11'} onClick={() => setEditFlag(true)}>
-              编辑
+              <FormattedMessage defaultMessage="编辑" />
             </Button>
           </>
         ) : null}
       </div>
       <div
-        className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white pl-8 mx-3 mt-3"
+        className="bg-white rounded-4px flex-1 mx-3 mt-3 min-h-0 pl-8 overflow-y-auto"
         style={{
           border: '1px solid rgba(95,98,105,0.1)',
           borderBottom: 'none',

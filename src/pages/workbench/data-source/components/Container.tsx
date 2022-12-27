@@ -1,10 +1,10 @@
 import { Button, Image, Input, message, Switch } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import React, { useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -13,7 +13,7 @@ import { updateHookSwitch } from '@/lib/service/hook'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
-import Designer from './subs/Designer'
+// import Designer from './subs/Designer'
 import Graphql from './subs/Graphql'
 import Rest from './subs/Rest'
 
@@ -23,6 +23,7 @@ interface Props {
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
+  const intl = useIntl()
   const { mutate } = useSWRConfig()
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -63,16 +64,16 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const testLink = (placement: NotificationPlacement) => {
     void requests.post('/checkDBConn', { ...content }).then((x: any) => {
       if (x?.status) {
-        message.success('连接成功')
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
       } else {
-        message.error(x?.msg || '连接失败')
+        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
       }
     })
   }
 
   const handleEdit = async (name: string) => {
     if (!name.match(/^\w[a-zA-Z0-9_]*$/)) {
-      message.error('请输入字母、数字或下划线')
+      message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
       return
     }
     const saveData = { ...content, name }
@@ -94,10 +95,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
             <div className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly">
               <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
               <span className="ml-1" onClick={() => handleToggleDesigner('detail')}>
-                返回
+                <FormattedMessage defaultMessage="返回" />
               </span>
             </div>
-            <div className="font-medium">高级设置</div>
+            <div className="font-medium">
+              <FormattedMessage defaultMessage="高级设置" />
+            </div>
           </>
         ) : (
           <>
@@ -118,12 +121,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   style={{ width: '200px' }}
                   defaultValue={content?.name}
                   autoFocus
-                  placeholder="请输入数据源名"
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入数据源名' })}
                 />
               ) : (
                 <>
                   {content?.name}
-                  <span onClick={() => setIsEditing(true)} className="ml-3 cursor-pointer">
+                  <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
                     <img
                       alt="bianji"
                       src="assets/iconfont/bianji.svg"
@@ -133,7 +136,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 </>
               )
             ) : (
-              content?.name || '新建数据源'
+              content?.name || intl.formatMessage({ defaultMessage: '新建数据源' })
             )}
           </>
         )}
@@ -144,8 +147,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType !== 4 ? (
               <Switch
                 checked={content?.switch === 1}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
+                checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                 onChange={toggleOpen}
                 className="mr-4"
               />
@@ -155,7 +158,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 className={'btn-test ml-4 '}
                 onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
               >
-                设计
+                <FormattedMessage defaultMessage="设计" />
               </Button>
             ) : (
               <></>
@@ -163,10 +166,10 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType !== 4 ? (
               <>
                 <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
-                  测试
+                  <FormattedMessage defaultMessage="测试" />
                 </Button>
                 <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
-                  编辑
+                  <FormattedMessage defaultMessage="编辑" />
                 </Button>
               </>
             ) : (

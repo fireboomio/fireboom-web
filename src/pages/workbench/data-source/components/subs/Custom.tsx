@@ -41,54 +41,54 @@ export default function Custom({ content }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content.config.schema])
 
-  const connectSwitchOnChange = (isChecked: boolean) => {
-    void requests
-      .put('/dataSource', {
-        ...content,
-        switch: isChecked == true ? 0 : 1
-      })
-      .then(() => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-          dispatch({ type: 'fetched', data: res })
-        })
-      })
-  }
+  // const connectSwitchOnChange = (isChecked: boolean) => {
+  //   void requests
+  //     .put('/dataSource', {
+  //       ...content,
+  //       switch: isChecked == true ? 0 : 1
+  //     })
+  //     .then(() => {
+  //       void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
+  //         dispatch({ type: 'fetched', data: res })
+  //       })
+  //     })
+  // }
 
-  const handleEdit = (value: string) => {
-    if (value == '') {
-      return
-    }
+  // const handleEdit = (value: string) => {
+  //   if (value == '') {
+  //     return
+  //   }
 
-    if (content.name == '' || content.name.startsWith('example_')) {
-      const req = {
-        ...content,
-        config: { apiNamespace: value, serverName: value, schema: '' },
-        name: value
-      }
-      Reflect.deleteProperty(req, 'id')
-      void requests.post<unknown, number>('/dataSource', req).then(res => {
-        content.id = res
-        handleSave(content)
-      })
-    } else {
-      const newContent = {
-        ...content,
-        config: { ...config, apiNamespace: value, serverName: value },
-        name: value
-      }
-      void requests.put(`/dataSource/${content.id}`, newContent).then(() => {
-        handleSave(newContent)
-      })
-    }
+  //   if (content.name == '' || content.name.startsWith('example_')) {
+  //     const req = {
+  //       ...content,
+  //       config: { apiNamespace: value, serverName: value, schema: '' },
+  //       name: value
+  //     }
+  //     Reflect.deleteProperty(req, 'id')
+  //     void requests.post<unknown, number>('/dataSource', req).then(res => {
+  //       content.id = res
+  //       handleSave(content)
+  //     })
+  //   } else {
+  //     const newContent = {
+  //       ...content,
+  //       config: { ...config, apiNamespace: value, serverName: value },
+  //       name: value
+  //     }
+  //     void requests.put(`/dataSource/${content.id}`, newContent).then(() => {
+  //       handleSave(newContent)
+  //     })
+  //   }
 
-    setIsEditing(false)
-  }
+  //   setIsEditing(false)
+  // }
 
-  const save = () => {
-    void requests
-      .put(`/dataSource/content/${content.id}`, { content: code })
-      .then(() => void message.success('保存成功!'))
-  }
+  // const save = () => {
+  //   void requests
+  //     .put(`/dataSource/content/${content.id}`, { content: code })
+  //     .then(() => void message.success('保存成功!'))
+  // }
 
   return <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" />
 }

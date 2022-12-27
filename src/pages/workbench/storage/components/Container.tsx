@@ -4,8 +4,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
+// import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import StorageDetail from './subs/Detail'
 import StorageForm from './subs/Form'
 
@@ -17,7 +17,7 @@ interface Props {
 
 export default function StorageContainer({ content, showType, showErr }: Props) {
   const intl = useIntl()
-  const { onRefreshMenu } = useContext(WorkbenchContext)
+  // const { onRefreshMenu } = useContext(WorkbenchContext)
   const { handleSwitch } = useContext(StorageSwitchContext)
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">

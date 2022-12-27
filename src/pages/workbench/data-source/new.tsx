@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Designer from '@/pages/workbench/data-source/components/subs/Designer'
 
 export default function NewDatasource() {

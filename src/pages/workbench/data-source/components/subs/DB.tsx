@@ -5,15 +5,14 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 import styles from './DB.module.less'
 import FileList from './FileList'
 import Setting from './Setting'
-import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 interface Props {
   content: DatasourceResp
@@ -182,13 +181,7 @@ export default function DB({ content, type }: Props) {
 
   const paramForm = (
     <>
-      <Form.Item
-        label="主机:"
-        name="host"
-        rules={[
-          { required: true, message: '主机名不能为空' }
-        ]}
-      >
+      <Form.Item label="主机:" name="host" rules={[{ required: true, message: '主机名不能为空' }]}>
         <Input placeholder="请输入..." />
       </Form.Item>
       <Form.Item
@@ -218,7 +211,7 @@ export default function DB({ content, type }: Props) {
       <Form.Item label="用户:">
         <Input.Group compact className="!flex">
           <Form.Item name={['userName', 'kind']} noStyle>
-            <Select className="w-100px flex-0">
+            <Select className="flex-0 w-100px">
               <Select.Option value="0">值</Select.Option>
               <Select.Option value="1">环境变量</Select.Option>
             </Select>
@@ -246,15 +239,12 @@ export default function DB({ content, type }: Props) {
       <Form.Item label="密码:">
         <Input.Group compact className="!flex">
           <Form.Item name={['password', 'kind']} noStyle>
-            <Select className="w-100px flex-0">
+            <Select className="flex-0 w-100px">
               <Select.Option value="0">值</Select.Option>
               <Select.Option value="1">环境变量</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name={['password', 'val']}
-            noStyle
-          >
+          <Form.Item name={['password', 'val']} noStyle>
             {String(passwordKind) !== '1' ? (
               <Input className="flex-1" placeholder="请输入" />
             ) : (
@@ -417,9 +407,9 @@ export default function DB({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
-          <div className="py-10px flex justify-end">
+          <div className="flex py-10px justify-end">
             <div
-              className="h-22px bg-[#F9F9F9] rounded-2px text-[#E92E5E] w-21 flex items-center justify-center cursor-pointer"
+              className="cursor-pointer flex bg-[#F9F9F9] rounded-2px h-22px text-[#E92E5E] w-21 items-center justify-center"
               onClick={() => handleToggleDesigner('setting', content.id)}
             >
               更多设置
@@ -573,11 +563,11 @@ export default function DB({ content, type }: Props) {
                 >
                   <span>取消</span>
                 </Button>
-                <Button className="btn-test ml-4" onClick={() => testLink()}>
+                <Button className="ml-4 btn-test" onClick={() => testLink()}>
                   测试
                 </Button>
                 <Button
-                  className="btn-save ml-4"
+                  className="ml-4 btn-save"
                   onClick={() => {
                     form.submit()
                   }}

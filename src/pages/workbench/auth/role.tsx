@@ -3,6 +3,7 @@ import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, Modal, Popconfirm, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
@@ -21,12 +22,6 @@ interface RoleProvResp {
   create_time: string | number
 }
 
-interface TabT {
-  key: string
-  title: string
-}
-
-const { TabPane } = Tabs
 export const hookPath: Record<string, string> = {
   postAuthentication: 'auth/postAuthentication',
   revalidate: 'auth/revalidate',
@@ -34,6 +29,7 @@ export const hookPath: Record<string, string> = {
   mutatingPostAuthentication: 'auth/mutatingPostAuthentication'
 }
 export default function AuthRole() {
+  const intl = useIntl()
   const [form] = Form.useForm()
   const formId = Form.useWatch('id', form)
   const [modal1Visible, setModal1Visible] = useImmer(false)
@@ -45,12 +41,12 @@ export default function AuthRole() {
   // const [defaultCode, setDefaultCode] = useState<string>('')
   const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
 
-  const tabs = [
-    { key: 'postAuthentication', title: 'postAuthentication' },
-    { key: 'revalidate', title: 'revalidate' },
-    { key: 'mutatingPostAuthentication', title: 'mutatingPostAuthentication' },
-    { key: 'postLogout', title: 'postLogout' }
-  ]
+  // const tabs = [
+  //   { key: 'postAuthentication', title: 'postAuthentication' },
+  //   { key: 'revalidate', title: 'revalidate' },
+  //   { key: 'mutatingPostAuthentication', title: 'mutatingPostAuthentication' },
+  //   { key: 'postLogout', title: 'postLogout' }
+  // ]
 
   // 角色管理的相关函数
   // const getData = useCallback(async () => {
@@ -60,7 +56,7 @@ export default function AuthRole() {
   // }, [])
 
   useEffect(() => {
-    void requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
+    requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
       setRoleData(res)
     })
   }, [roleFlag])
@@ -77,86 +73,88 @@ export default function AuthRole() {
   }
   const columns: ColumnsType<RoleProvResp> = [
     {
-      title: '角色',
+      title: intl.formatMessage({ defaultMessage: '角色' }),
       dataIndex: 'code',
       key: 'code'
     },
     {
-      title: '角色描述',
+      title: intl.formatMessage({ defaultMessage: '角色描述' }),
       dataIndex: 'remark',
       key: 'remark'
     },
     {
-      title: '创建时间',
+      title: intl.formatMessage({ defaultMessage: '创建时间' }),
       dataIndex: 'createTime',
       key: 'createTime'
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ defaultMessage: '操作' }),
       key: 4,
       render: (_, row) => (
         <>
           <span
-            className="cursor-pointer pl-0 text-red-500 mr-1"
+            className="cursor-pointer mr-1 pl-0 text-red-500"
             onClick={() => {
               form.setFieldsValue(row)
               setModal1Visible(true)
             }}
           >
-            编辑
+            <FormattedMessage defaultMessage="编辑" />
           </span>
           <Popconfirm
-            title="确定要删除?"
-            okText="确定"
-            cancelText="取消"
+            title={intl.formatMessage({ defaultMessage: '确定要删除?' })}
+            okText={intl.formatMessage({ defaultMessage: '确定' })}
+            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             onConfirm={() => {
-              void handleDeleteRole(row.id)
+              handleDeleteRole(row.id)
             }}
           >
-            <span className="cursor-pointer pl-0 text-red-500">删除</span>
+            <span className="cursor-pointer pl-0 text-red-500">
+              <FormattedMessage defaultMessage="删除" />
+            </span>
           </Popconfirm>
         </>
       )
     }
   ]
 
-  const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
+  // const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
   useEffect(() => {
     getDefaultCode(`auth.${activeKey}`).then(res => {
       setDefaultCodeMap({ ...defaultCodeMap, [activeKey]: res })
     })
   }, [activeKey])
 
-  const save = () => {
-    void requests.post('/auth/hooks', {
-      hookName: activeKey,
-      content: currHook?.content,
-      hookSwitch: currHook?.hookSwitch
-    })
-    setRefreshFlag(!refreshFlag)
-  }
+  // const save = () => {
+  //   void requests.post('/auth/hooks', {
+  //     hookName: activeKey,
+  //     content: currHook?.content,
+  //     hookSwitch: currHook?.hookSwitch
+  //   })
+  //   setRefreshFlag(!refreshFlag)
+  // }
 
-  function handleEditorChange(value: string | undefined) {
-    if (!value) return
+  // function handleEditorChange(value: string | undefined) {
+  //   if (!value) return
 
-    setHooks(draft => {
-      let hook = draft.find(x => x.hookName === activeKey)
-      if (!hook) hook = { content: '', fileName: '', hookName: activeKey, hookSwitch: false }
-      hook.content = value
-    })
-  }
+  //   setHooks(draft => {
+  //     let hook = draft.find(x => x.hookName === activeKey)
+  //     if (!hook) hook = { content: '', fileName: '', hookName: activeKey, hookSwitch: false }
+  //     hook.content = value
+  //   })
+  // }
 
-  function toggleSwitch() {
-    void requests.post('/auth/hooks', {
-      hookName: activeKey,
-      hookSwitch: !currHook?.hookSwitch,
-      content: currHook?.content
-    })
-    setRefreshFlag(!refreshFlag)
-  }
+  // function toggleSwitch() {
+  //   void requests.post('/auth/hooks', {
+  //     hookName: activeKey,
+  //     hookSwitch: !currHook?.hookSwitch,
+  //     content: currHook?.content
+  //   })
+  //   setRefreshFlag(!refreshFlag)
+  // }
   const [tab, setTab] = useState<string>('role')
   return (
-    <div className="p-3 bg-[#fbfbfc] h-full">
+    <div className="bg-[#fbfbfc] h-full p-3">
       <div className={'relative h-full flex ' + styles.roleContainer}>
         {tab === 'role' ? (
           <div className="top-2px right-0 absolute">
@@ -167,7 +165,9 @@ export default function AuthRole() {
                 setModal1Visible(true)
               }}
             >
-              <span className="text-sm text-gray">添加</span>
+              <span className="text-sm text-gray">
+                <FormattedMessage defaultMessage="添加" />
+              </span>
             </Button>
           </div>
         ) : (
@@ -181,7 +181,7 @@ export default function AuthRole() {
           onChange={setTab}
           items={[
             {
-              label: '角色管理',
+              label: intl.formatMessage({ defaultMessage: '角色管理' }),
               key: 'role',
               children: (
                 <div className={styles.tabContent}>
@@ -189,7 +189,11 @@ export default function AuthRole() {
                     <Modal
                       open
                       mask={false}
-                      title={formId ? '编辑角色' : '添加角色'}
+                      title={
+                        formId
+                          ? intl.formatMessage({ defaultMessage: '编辑角色' })
+                          : intl.formatMessage({ defaultMessage: '添加角色' })
+                      }
                       style={{ top: '200px' }}
                       width={549}
                       transitionName=""
@@ -197,10 +201,10 @@ export default function AuthRole() {
                         form.submit()
                       }}
                       onCancel={() => setModal1Visible(false)}
-                      okText="保存"
+                      okText={intl.formatMessage({ defaultMessage: '保存' })}
                       okButtonProps={{ className: styles['save-btn'] }}
                       okType="text"
-                      cancelText="取消"
+                      cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                     >
                       <Form
                         name="roleList"
@@ -217,19 +221,27 @@ export default function AuthRole() {
                         className="h-30 mt-8 ml-8"
                       >
                         <Form.Item
-                          label="角色code"
+                          label={intl.formatMessage({ defaultMessage: '角色code' })}
                           name="code"
                           rules={[
-                            { required: true, message: '请输入角色编码' },
+                            {
+                              required: true,
+                              message: intl.formatMessage({ defaultMessage: '请输入角色编码' })
+                            },
                             {
                               pattern: /^[_a-zA-Z][_a-zA-Z\d]*$/g,
-                              message: '请输入数字、字母或下划线，第一位不能是数字'
+                              message: intl.formatMessage({
+                                defaultMessage: '请输入数字、字母或下划线，第一位不能是数字'
+                              })
                             }
                           ]}
                         >
                           <Input />
                         </Form.Item>
-                        <Form.Item label="角色描述" name="remark">
+                        <Form.Item
+                          label={intl.formatMessage({ defaultMessage: '角色描述' })}
+                          name="remark"
+                        >
                           <Input />
                         </Form.Item>
                         <Form.Item name="id"></Form.Item>
@@ -264,7 +276,7 @@ export default function AuthRole() {
               )
             },
             {
-              label: '身份鉴权',
+              label: intl.formatMessage({ defaultMessage: '身份鉴权' }),
               key: 'auth',
               children: (
                 <div className={styles.tabContent}>
