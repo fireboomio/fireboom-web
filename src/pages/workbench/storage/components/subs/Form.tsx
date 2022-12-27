@@ -78,7 +78,7 @@ export default function StorageForm({ content, showErr }: Props) {
           <Alert
             className="w-full"
             message={
-              <FormattedMessage id="storage.configErr" defaultMessage="12123"  />
+              <FormattedMessage id="storage.configErr" defaultMessage="配置信息有误，无法连接，请修改后再试"  />
             }
             type="error"
           />
