@@ -1,10 +1,10 @@
 import { Button } from 'antd'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests from '@/lib/fetchers'
 
 import StorageDetail from './subs/Detail'
 import StorageForm from './subs/Form'
@@ -16,16 +16,17 @@ interface Props {
 }
 
 export default function StorageContainer({ content, showType, showErr }: Props) {
+  const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const { handleSwitch } = useContext(StorageSwitchContext)
   return (
-    <div className="common-form h-full flex items-stretch justify-items-stretch flex-col">
+    <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       <div
-        className="h-54px flex-0 bg-white flex items-center pl-11"
+        className="bg-white flex flex-0 h-54px pl-11 items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <img src="/assets/ant-tree/file.png" className="w-14px h-14px mr-1.5" alt="文件" />
-        {content?.name || '创建文件存储'}
+        <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" />
+        {content?.name || intl.formatMessage({ defaultMessage: '创建文件存储' })}
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
@@ -33,13 +34,13 @@ export default function StorageContainer({ content, showType, showErr }: Props) 
               className={'btn-save  ml-4 mr-11'}
               onClick={() => handleSwitch('form', content?.id)}
             >
-              编辑
+              <FormattedMessage defaultMessage="编辑" />
             </Button>
           </>
         ) : null}
       </div>
       <div
-        className="rounded-4px flex-1 min-h-0 overflow-y-auto bg-white px-8 mx-3 mt-3 pt-8"
+        className="bg-white rounded-4px flex-1 mx-3 mt-3 min-h-0 px-8 pt-8 overflow-y-auto"
         style={{
           border: '1px solid rgba(95,98,105,0.1)',
           borderBottom: 'none',

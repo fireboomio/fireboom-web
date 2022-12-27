@@ -1,15 +1,15 @@
 import { Alert, Button, Form, Input, message, Select, Switch } from 'antd'
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 import styles from './subs.module.less'
-import useEnvOptions from '@/lib/hooks/useEnvOptions'
-import { FormattedMessage } from 'react-intl'
 
 interface Props {
   content?: StorageResp
@@ -17,6 +17,7 @@ interface Props {
 }
 
 export default function StorageForm({ content, showErr }: Props) {
+  const intl = useIntl()
   const { handleSwitch } = useContext(StorageSwitchContext)
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -48,7 +49,7 @@ export default function StorageForm({ content, showErr }: Props) {
   }
 
   const onFinishFailed = (_errorInfo: object) => {
-    void message.error('保存失败！')
+    void message.error(intl.formatMessage({ defaultMessage: '保存失败！' }))
   }
 
   const handleTest = () => {
@@ -61,9 +62,9 @@ export default function StorageForm({ content, showErr }: Props) {
       })
       .then((x: any) => {
         if (x?.status) {
-          message.success('连接成功')
+          message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
         } else {
-          message.error(x?.msg || '连接失败')
+          message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
         }
       })
       .finally(() => {
@@ -77,9 +78,7 @@ export default function StorageForm({ content, showErr }: Props) {
         <div className="-mt-4 pb-4">
           <Alert
             className="w-full"
-            message={
-              <FormattedMessage id="storage.configErr" defaultMessage="配置信息有误，无法连接，请修改后再试"  />
-            }
+            message={<FormattedMessage defaultMessage="12123" />}
             type="error"
           />
         </div>
@@ -96,31 +95,54 @@ export default function StorageForm({ content, showErr }: Props) {
         className="ml-3"
         initialValues={{ accessKeyID: { kind: '0' }, secretAccessKey: { kind: '0' }, ...config }}
       >
-        <Form.Item label="名称" rules={[{ required: true, message: '请输入名称' }]} name="name">
-          <Input placeholder="请输入..." />
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '名称' })}
+          rules={[
+            { required: true, message: intl.formatMessage({ defaultMessage: '请输入名称' }) }
+          ]}
+          name="name"
+        >
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
         </Form.Item>
         <Form.Item
-          label="服务地址"
+          label={intl.formatMessage({ defaultMessage: '服务地址' })}
           name="endpoint"
-          rules={[{ required: true, message: '请输入服务地址' }]}
+          rules={[
+            { required: true, message: intl.formatMessage({ defaultMessage: '请输入服务地址' }) }
+          ]}
         >
-          <Input addonBefore="http(s)://" placeholder="请输入..." />
+          <Input
+            addonBefore="http(s)://"
+            placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+          />
         </Form.Item>
         <Form.Item label="App ID">
           <Input.Group compact className="!flex">
             <Form.Item name={['accessKeyID', 'kind']} noStyle>
-              <Select className="w-100px flex-0">
-                <Select.Option value="0">值</Select.Option>
-                <Select.Option value="1">环境变量</Select.Option>
+              <Select className="flex-0 w-100px">
+                <Select.Option value="0">
+                  <FormattedMessage defaultMessage="值" />
+                </Select.Option>
+                <Select.Option value="1">
+                  <FormattedMessage defaultMessage="环境变量" />
+                </Select.Option>
               </Select>
             </Form.Item>
             <Form.Item
               name={['accessKeyID', 'val']}
               noStyle
-              rules={[{ required: true, message: 'App ID不能为空' }]}
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                }
+              ]}
             >
               {accessKeyIDKind === '0' ? (
-                <Input className="flex-1" placeholder="请输入" />
+                <Input
+                  className="flex-1"
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                />
               ) : (
                 <Select className="flex-1" options={envOptions} />
               )}
@@ -130,18 +152,30 @@ export default function StorageForm({ content, showErr }: Props) {
         <Form.Item label="App Secret">
           <Input.Group compact className="!flex">
             <Form.Item name={['secretAccessKey', 'kind']} noStyle>
-              <Select className="w-100px flex-0">
-                <Select.Option value="0">值</Select.Option>
-                <Select.Option value="1">环境变量</Select.Option>
+              <Select className="flex-0 w-100px">
+                <Select.Option value="0">
+                  <FormattedMessage defaultMessage="值" />
+                </Select.Option>
+                <Select.Option value="1">
+                  <FormattedMessage defaultMessage="环境变量" />
+                </Select.Option>
               </Select>
             </Form.Item>
             <Form.Item
               name={['secretAccessKey', 'val']}
               noStyle
-              rules={[{ required: true, message: 'App Secret不能为空' }]}
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
+                }
+              ]}
             >
               {secretAccessKeyKind === '0' ? (
-                <Input className="flex-1" placeholder="请输入" />
+                <Input
+                  className="flex-1"
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                />
               ) : (
                 <Select className="flex-1" options={envOptions} />
               )}
@@ -149,21 +183,25 @@ export default function StorageForm({ content, showErr }: Props) {
           </Input.Group>
         </Form.Item>
         <Form.Item
-          label="区域"
+          label={intl.formatMessage({ defaultMessage: '区域' })}
           name="bucketLocation"
-          rules={[{ required: true, message: '请输入区域' }]}
+          rules={[
+            { required: true, message: intl.formatMessage({ defaultMessage: '请输入区域' }) }
+          ]}
         >
-          <Input placeholder="请输入..." />
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
         </Form.Item>
         <Form.Item
-          label="bucketName"
+          label={intl.formatMessage({ defaultMessage: '桶名称' })}
           name="bucketName"
-          rules={[{ required: true, message: '请输入bucketName' }]}
+          rules={[
+            { required: true, message: intl.formatMessage({ defaultMessage: '请输入bucketName' }) }
+          ]}
         >
-          <Input placeholder="请输入..." />
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
         </Form.Item>
         <Form.Item
-          label="开启SSL"
+          label={intl.formatMessage({ defaultMessage: '开启SSL' })}
           style={{ marginTop: '29px' }}
           name="useSSL"
           valuePropName="checked"
@@ -184,11 +222,11 @@ export default function StorageForm({ content, showErr }: Props) {
           >
             <span>取消</span>
           </Button>
-          <Button className="btn-test ml-4" onClick={() => handleTest()} loading={testing}>
-            测试
+          <Button className="ml-4 btn-test" onClick={() => handleTest()} loading={testing}>
+            <FormattedMessage defaultMessage="测试" />
           </Button>
-          <Button className="btn-save ml-4" onClick={() => form.submit()}>
-            保存
+          <Button className="ml-4 btn-save" onClick={() => form.submit()}>
+            <FormattedMessage defaultMessage="保存" />
           </Button>
         </Form.Item>
       </Form>

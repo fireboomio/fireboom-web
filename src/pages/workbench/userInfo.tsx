@@ -2,12 +2,14 @@ import { loader } from '@monaco-editor/react'
 import { Button, message } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export default function UserInfo() {
   const [info, setInfo] = useState()
+  const intl = useIntl()
 
   useEffect(() => {
     axios.get('/api/v1/oidc/userInfo').then(info => {
@@ -17,7 +19,7 @@ export default function UserInfo() {
 
   const handleLogout = () => {
     axios.get('/api/v1/oidc/logout').then(() => {
-      message.info('登出成功，即将关闭当前页面')
+      message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
       setTimeout(() => {
         window.close()
       }, 3000)
@@ -25,14 +27,14 @@ export default function UserInfo() {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-0 px-4 font-500 text-18px leading-40px bg-white flex items-center">
-        登录用户
+    <div className="flex flex-col h-full">
+      <div className="bg-white flex flex-0 font-500 px-4 text-18px leading-40px items-center">
+        <FormattedMessage defaultMessage="登录用户" />
         <Button className="ml-auto" onClick={handleLogout}>
-          登出
+          <FormattedMessage defaultMessage="登出" />
         </Button>
       </div>
-      <div className="flex-1 p-4 h-full">
+      <div className="h-full flex-1 p-4">
         {info ? <ReactJson src={info} iconStyle="triangle" name={false} /> : null}
       </div>
     </div>
