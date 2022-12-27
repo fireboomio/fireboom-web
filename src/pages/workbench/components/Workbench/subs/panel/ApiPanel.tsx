@@ -3,10 +3,10 @@ import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
 import type React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import IconFont from '@/components/Iconfont'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -23,6 +23,7 @@ import SidePanel from './SidePanel'
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
 export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
+  const intl = useIntl()
   const { config } = useConfigContext()
   const navigate = useNavigate()
   const location = useLocation()
@@ -215,9 +216,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   function calcMiniStatus(nodeData: DirTreeNode) {
     if (nodeData.legal) {
-      return <div className={styles.errLabel}>非法</div>
+      return (
+        <div className={styles.errLabel}>
+          <FormattedMessage defaultMessage="非法" />
+        </div>
+      )
     } else if (!nodeData.isPublic) {
-      return '内部'
+      return <FormattedMessage defaultMessage="内部" />
     } else {
       return nodeData.method
     }
@@ -234,7 +239,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const handleAddNode = (action: ActionT) => {
     if (multiSelection.length > 1) {
-      message.error('只能选择一个节点')
+      message.error(intl.formatMessage({ defaultMessage: '只能选择一个节点' }))
       return
     }
     if (!panelOpened) {
@@ -284,11 +289,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const validateName = (name: string, isDir = false) => {
     if (!isUpperCase(name[0])) {
-      message.error('接口名称必须大写开头')
+      message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
       return false
     }
     if (!name.match(/^\w[a-zA-Z0-9_]*$/)) {
-      message.error('请输入字母、数字或下划线')
+      message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
       return false
     }
     return true
@@ -334,7 +339,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           })
         } else {
           if (!isUpperCase(inputValue[0])) {
-            message.error('接口名称必须大写开头')
+            message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
             return
           }
           void renameApi(currEditingNode, inputValue).then(res => {
@@ -361,7 +366,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           setRefreshFlag(!refreshFlag)
           // @ts-ignore
         } else if (!isUpperCase(inputValue.at(0))) {
-          void message.warn('接口名称必须大写开头！')
+          void message.warn(intl.formatMessage({ defaultMessage: '接口名称必须大写开头！' }))
         } else {
           handleSaveGql()
           currEditingNode.title = inputValue
@@ -459,7 +464,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   async function batchSwitch(flag: boolean) {
-    const hide = message.loading('执行中...')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中...' }))
     try {
       await requests.post('operateApi/batchOnline', {
         Ids: selectedNode.map(x => x.id),
@@ -468,7 +473,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     } finally {
       hide()
     }
-    message.success('操作成功')
+    message.success(intl.formatMessage({ defaultMessage: '操作成功' }))
     setRefreshFlag(!refreshFlag)
   }
 
@@ -496,8 +501,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               setAction('重命名')
             }}
           >
-            <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}} />
-            <span className="ml-1.5">重命名</span>
+            <img
+              alt="zhongmingming"
+              src="assets/iconfont/zhongmingming.svg"
+              style={{ height: '1em', width: '1em' }}
+            />
+            <span className="ml-1.5">
+              <FormattedMessage defaultMessage="重命名" />{' '}
+            </span>
           </div>
         )
       },
@@ -506,7 +517,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         label: (
           <div onClick={e => e.stopPropagation()}>
             <Popconfirm
-              title="确定删除吗?"
+              title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
               onConfirm={() => {
                 handleDelete(nodeData)
                 setDropDownId(undefined)
@@ -514,12 +525,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               onCancel={() => {
                 setDropDownId(undefined)
               }}
-              okText="删除"
-              cancelText="取消"
+              okText={intl.formatMessage({ defaultMessage: '删除' })}
+              cancelText={intl.formatMessage({ defaultMessage: '取消' })}
               placement="right"
             >
-              <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}} />
-              <span className="ml-1.5">删除</span>
+              <img
+                alt="shanchu"
+                src="assets/iconfont/shanchu.svg"
+                style={{ height: '1em', width: '1em' }}
+              />
+              <span className="ml-1.5">
+                <FormattedMessage defaultMessage="删除" />
+              </span>
             </Popconfirm>
           </div>
         )
@@ -586,197 +603,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       </div>
     )
   }
-
-  return (
-    <SidePanel
-      {...props}
-      title="API管理"
-      hideAdd
-      open={panelOpened}
-      onOpen={flag => {
-        setPanelOpened(flag)
-        props.onOpen && props.onOpen(flag)
-      }}
-      action={
-        <>
-          {/*<Tooltip title="筛选" >*/}
-          {/*  <div className={styles.headerFilter} />*/}
-          {/*</Tooltip>*/}
-          <Tooltip title="刷新列表">
-            <div
-              className={styles.headerRefresh}
-              onClick={() => {
-                void getFetcher<OperationResp[]>('/operateApi')
-                  .then(res => setTreeData(convertToTree(res)))
-                  // .then(() => setSelectedKey(''))
-                  .then(() => message.success('刷新完成！'))
-                  .catch((err: Error) => {
-                    void message.error('获取文件列表失败！')
-                    throw err
-                  })
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="全局设置">
-            <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
-          </Tooltip>
-          <Tooltip title="新建目录">
-            <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          </Tooltip>
-          <Tooltip title="新建API">
-            <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
-          </Tooltip>
-        </>
-      }
-    >
-      <Dropdown
-        overlay={
-          <Menu
-            items={[
-              {
-                disabled: !selectedNode.some(x => !x.enable),
-                key: 'enable',
-                label: (
-                  <div
-                    onClick={() => {
-                      if (!selectedNode.some(x => !x.enable)) return
-                      void batchSwitch(true)
-                    }}
-                  >
-                    上线
-                  </div>
-                )
-              },
-              {
-                disabled: !selectedNode.some(x => x.enable),
-                key: 'disable',
-                label: (
-                  <div
-                    onClick={() => {
-                      if (!selectedNode.some(x => x.enable)) return
-                      void batchSwitch(false)
-                    }}
-                  >
-                    下线
-                  </div>
-                )
-              },
-              {
-                disabled: !selectedNode.length,
-                key: 'delete',
-                label: (
-                  <div
-                    onClick={() => {
-                      setMultiSelection([])
-                      Modal.confirm({
-                        title: '是否确认删除选中的API？',
-                        onOk: () => {
-                          const ids = selectedNode.map(x => x.id).filter(x => x)
-                          requests.post('operateApi/batchDelete', { ids }).then(() => {
-                            ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
-                            message.success('删除成功')
-                            setRefreshFlag(!refreshFlag)
-                          })
-                          // setEditFlag(false)
-                          // resolve(true)
-                        },
-                        okText: '确认',
-                        cancelText: '取消'
-                      })
-                    }}
-                  >
-                    删除
-                  </div>
-                )
-              },
-              {
-                key: 'cancel',
-                label: (
-                  <div
-                    onClick={() => {
-                      setMultiSelection([])
-                    }}
-                  >
-                    取消
-                  </div>
-                )
-              }
-            ]}
-          />
-        }
-        trigger={['contextMenu']}
-      >
-        <div className="flex flex-col h-full justify-between">
-          <div className={styles.treeContainer}>
-            {treeData.length ? (
-              <Tree
-                rootClassName="overflow-auto"
-                // @ts-ignore
-                titleRender={titleRender}
-                // draggable
-                showIcon
-                defaultExpandParent
-                expandedKeys={expandedKeys}
-                onExpand={setExpandedKeys}
-                // @ts-ignore
-                treeData={treeData}
-                multiple
-                selectedKeys={multiSelection}
-                // @ts-ignore
-                onSelect={handleSelectTreeNode}
-              />
-            ) : null}
-          </div>
-          <div className={styles.createRowWrapper}>
-            <div className={styles.createRow}>
-              <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
-                新建
-              </span>
-              <span> 或者 </span>
-              <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
-                批量新建
-              </span>
-            </div>
-            <Tooltip title="测试">
-              <div
-                className={styles.graphqlEntry}
-                onClick={() => {
-                  const current = new URL(window.location.href)
-                  if (config.apiHost) {
-                    window.open(
-                      `${current.protocol}//localhost:${current.port}/app/main/graphql`,
-                      '_blank'
-                    )
-                  } else {
-                    window.open(
-                      `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
-                      '_blank'
-                    )
-                  }
-                }}
-              >
-                <img alt="" src="/assets/icon/graphql2.svg" />
-              </div>
-            </Tooltip>
-          </div>
-        </div>
-      </Dropdown>
-      <Modal
-        title="API全局设置"
-        open={isModalVisible}
-        onOk={() => {
-          setIsModalVisible(false)
-        }}
-        onCancel={() => {
-          setIsModalVisible(false)
-        }}
-        footer={null}
-        centered
-      >
-        <ApiConfig type="global" onClose={() => setIsModalVisible(false)} />
-      </Modal>
-    </SidePanel>
-  )
 }
 
 function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {

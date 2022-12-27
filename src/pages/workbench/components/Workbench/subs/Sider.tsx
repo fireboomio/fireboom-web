@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
@@ -63,7 +64,7 @@ export default function Sider() {
             }}
           >
             <div className={styles.apiIcon} />
-            API设计
+            <FormattedMessage defaultMessage="API设计" />
           </div>
           <div
             className={`${styles.tabs_tab}  ${tab === 'data' ? styles.tabs_tab__active : ''}`}
@@ -72,7 +73,7 @@ export default function Sider() {
             }}
           >
             <div className={styles.dataIcon} />
-            数据建模
+            <FormattedMessage defaultMessage="数据建模" />
           </div>
         </div>
       </div>

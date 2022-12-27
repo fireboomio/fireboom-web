@@ -1,10 +1,10 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import IconFont from '@/components/Iconfont'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import type { StorageResp } from '@/interfaces/storage'
@@ -12,6 +12,7 @@ import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
+import { intl } from '@/providers/IntlProvider'
 
 import styles from './CommonPanel.module.less'
 import SidePanel from './SidePanel'
@@ -36,7 +37,7 @@ interface PanelConfig {
 
 const panelMap: Record<string, PanelConfig> = {
   dataSource: {
-    title: '数据源',
+    title: intl.formatMessage({ defaultMessage: '数据源' }),
     openItem: id => `/workbench/data-source/${id}`,
     newItem: '/workbench/data-source/new',
     request: {
@@ -79,7 +80,7 @@ const panelMap: Record<string, PanelConfig> = {
     mutateKey: id => ['/dataSource', String(id)]
   },
   storage: {
-    title: '文件存储',
+    title: intl.formatMessage({ defaultMessage: '文件存储' }),
     openItem: id => `/workbench/storage/${id}/manage`,
     newItem: '/workbench/storage/new',
     request: {
@@ -110,27 +111,27 @@ const panelMap: Record<string, PanelConfig> = {
     navMenu: [
       {
         icon: 'assets/iconfont/wenjian1.svg',
-        name: '查看',
+        name: intl.formatMessage({ defaultMessage: '查看' }),
         menuPath: id => `/workbench/storage/${id}`
       }
     ]
   },
   auth: {
-    title: '身份验证',
+    title: intl.formatMessage({ defaultMessage: '身份验证' }),
     openItem: id => `/workbench/auth/${id}`,
     newItem: '/workbench/auth/new',
     navAction: [
       {
         icon: '/assets/workbench/panel-role.png',
         path: '/workbench/auth/role',
-        tooltip: '权限管理'
+        tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
       }
     ],
     mutateKey: id => ['/auth', String(id)],
     request: {
       getList: dispatch => {
         void requests.get<unknown, any>('/auth').then(res => {
-          const rows: Array<CommonPanelResp> = res.map((row :any) => {
+          const rows: Array<CommonPanelResp> = res.map((row: any) => {
             const icon = 'other'
             const tip = 'openid'
             return {
@@ -181,8 +182,14 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         key: 'rename',
         label: (
           <div onClick={() => setEditTarget(row)}>
-            <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}} />
-            <span className="ml-1.5">重命名</span>
+            <img
+              alt="zhongmingming"
+              src="assets/iconfont/zhongmingming.svg"
+              style={{ height: '1em', width: '1em' }}
+            />
+            <span className="ml-1.5">
+              <FormattedMessage defaultMessage="重命名" />
+            </span>
           </div>
         )
       },
@@ -191,16 +198,22 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         label: (
           <Popconfirm
             placement="right"
-            title="确认删除该实体吗？"
+            title={intl.formatMessage({ defaultMessage: '确认删除该实体吗？' })}
             onConfirm={() => void handleItemDelete(dropDownId)}
-            okText="删除"
-            cancelText="取消"
+            okText={intl.formatMessage({ defaultMessage: '删除' })}
+            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             overlayClassName={styles['delete-label']}
-            okType={'danger'}
+            okType="danger"
           >
             <div>
-              <img alt="a-shanchu2" src="assets/iconfont/a-shanchu2.svg" style={{height:'1em', width: '1em'}} />
-              <span className="ml-1.5">删除</span>
+              <img
+                alt="a-shanchu2"
+                src="assets/iconfont/a-shanchu2.svg"
+                style={{ height: '1em', width: '1em' }}
+              />
+              <span className="ml-1.5">
+                <FormattedMessage defaultMessage="删除" />
+              </span>
             </div>
           </Popconfirm>
         )
@@ -255,7 +268,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       return
     }
     if (!value.match(/^\w[a-zA-Z0-9_]*$/)) {
-      message.error('请输入字母、数字或下划线')
+      message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
       return
     }
     row.name = value
@@ -328,7 +341,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   className="font-normal h-5 text-sm leading-4 w-5/7"
                   defaultValue={editTarget.name}
                   autoFocus
-                  placeholder="请输入外部数据源名"
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入外部数据源名' })}
                 />
               ) : (
                 <div className={styles.title}>{item.name}</div>

@@ -1,6 +1,7 @@
 import { Layout as ALayout, Modal } from 'antd'
 import type { PropsWithChildren } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -32,6 +33,7 @@ interface BarOnce {
 }
 
 export default function Index(props: PropsWithChildren) {
+  const intl = useIntl()
   const [info, setInfo] = useState<Info>()
   const [version, setVersion] = useState<string>('--')
   const [env, setEnv] = useState<string>('--')
@@ -124,7 +126,9 @@ export default function Index(props: PropsWithChildren) {
     }
     return await new Promise<boolean>(resolve => {
       Modal.confirm({
-        title: '即将离开当前页面，为保存的内容将被都是，是否确认？',
+        title: intl.formatMessage({
+          defaultMessage: '即将离开当前页面，未保存的内容将被丢失，是否确认？'
+        }),
         onOk: () => {
           setEditFlag(false)
           resolve(true)

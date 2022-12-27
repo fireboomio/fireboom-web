@@ -1,6 +1,7 @@
 import { Tooltip } from 'antd'
 import type React from 'react'
 import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import styles from './SidePanel.module.less'
 
@@ -16,6 +17,7 @@ export interface SidePanelProps {
 }
 
 export default function SidePanel(props: SidePanelProps) {
+  const intl = useIntl()
   const [open, setOpen] = useState(false)
   useEffect(() => {
     if (props.open !== undefined) {
@@ -41,7 +43,7 @@ export default function SidePanel(props: SidePanelProps) {
         <div className={styles.action} onClick={e => e.stopPropagation()}>
           {props.action ? props.action : null}
           {props.hideAdd ? null : (
-            <Tooltip title="新建">
+            <Tooltip title={intl.formatMessage({ defaultMessage: '新建' })}>
               <div className={styles.add} onClick={props.onAdd} />
             </Tooltip>
           )}
