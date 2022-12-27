@@ -19,14 +19,15 @@ export default function FileStorage() {
     if (id === 'new') {
       setShowType('form')
       setContent(undefined)
+      setShowErr(false)
       return
     } else {
       if (id === sessionStorage.getItem('storageError')) {
         sessionStorage.removeItem('storageError')
-        console.log(2222)
         setShowErr(true)
         setShowType('form')
       } else {
+        setShowErr(false)
         setShowType('detail')
       }
     }
@@ -35,7 +36,6 @@ export default function FileStorage() {
   useEffect(() => {
     // 保存成功后跳转到详情页时顺便清空错误标记
     if (showType === 'detail' && showErr) {
-      console.log(1111)
       setShowErr(false)
     }
     void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
@@ -46,6 +46,7 @@ export default function FileStorage() {
   function handleSwitch(value: 'explorer' | 'form' | 'detail', _id: number | undefined) {
     setShowType(value)
   }
+  console.log('====================================', showErr)
 
   return (
     <>

@@ -18,6 +18,12 @@
   "/CFd+q": {
     "defaultMessage": "开"
   },
+  "/NfUUH": {
+    "defaultMessage": "创建于"
+  },
+  "/cqdKk": {
+    "defaultMessage": "下载"
+  },
   "0BkTtH": {
     "defaultMessage": "主键"
   },
@@ -42,8 +48,14 @@
   "2QzYmY": {
     "defaultMessage": "取消"
   },
+  "2a+U1g": {
+    "defaultMessage": "服务地址"
+  },
   "2pzrDk": {
     "defaultMessage": "忽略该表"
+  },
+  "32k+gD": {
+    "defaultMessage": "创建文件存储"
   },
   "3cF9qm": {
     "defaultMessage": "内部依赖"
@@ -54,17 +66,38 @@
   "4LegCW": {
     "defaultMessage": "网络请求错误！"
   },
+  "5FboZ/": {
+    "defaultMessage": "类型"
+  },
+  "66awCH": {
+    "defaultMessage": "刷新"
+  },
   "6F6gTV": {
     "defaultMessage": "脚本内容不是json格式"
+  },
+  "7MUg0d": {
+    "defaultMessage": "保存失败！"
   },
   "7aMIeB": {
     "defaultMessage": "是否需要登录"
   },
+  "7nyFdZ": {
+    "defaultMessage": "请输入名称"
+  },
   "7vnRkg": {
     "defaultMessage": "在线调试使用指南"
   },
+  "7xvRgU": {
+    "defaultMessage": "登出成功，即将关闭当前页面"
+  },
   "7yXi5L": {
     "defaultMessage": "已编辑"
+  },
+  "8y5Ykn": {
+    "defaultMessage": "修改于"
+  },
+  "9Fxs0Y": {
+    "defaultMessage": "确定删除吗?"
   },
   "9HZKLw": {
     "defaultMessage": "字段别名"
@@ -72,11 +105,17 @@
   "9huOMe": {
     "defaultMessage": "请输入合法字符串，使用双引号包括"
   },
+  "9n8LjV": {
+    "defaultMessage": "登录用户"
+  },
   "9stmhe": {
     "defaultMessage": "操作失败！"
   },
   "9x/veC": {
     "defaultMessage": "联合主键"
+  },
+  "9yQugt": {
+    "defaultMessage": "连接失败"
   },
   "A6Mx9m": {
     "defaultMessage": "搜索依赖"
@@ -90,8 +129,17 @@
   "B5JYOd": {
     "defaultMessage": "唯一索引"
   },
+  "BtZh7z": {
+    "defaultMessage": "创建"
+  },
   "CLqPBU": {
     "defaultMessage": "编辑"
+  },
+  "E1Ds9+": {
+    "defaultMessage": "按名称"
+  },
+  "EBMdAL": {
+    "defaultMessage": "创建成功"
   },
   "EQ9fu/": {
     "defaultMessage": "在线调试"
@@ -99,14 +147,38 @@
   "FEb7U2": {
     "defaultMessage": "确认"
   },
+  "FYqDZK": {
+    "defaultMessage": "APP Secret"
+  },
+  "FpWcg2": {
+    "defaultMessage": "桶名称"
+  },
   "GpfOWR": {
     "defaultMessage": "正在努力开发中～"
+  },
+  "GuD3c8": {
+    "defaultMessage": "排序"
+  },
+  "HPWQD3": {
+    "defaultMessage": "登出"
   },
   "Hu2hE9": {
     "defaultMessage": "已存在，请勿重复引入"
   },
+  "Hxs6Qn": {
+    "defaultMessage": "列表"
+  },
   "IujQJk": {
     "defaultMessage": "实体别名"
+  },
+  "IyVzrX": {
+    "defaultMessage": "保存中"
+  },
+  "JDIfhr": {
+    "defaultMessage": "连接成功"
+  },
+  "JeJAmT": {
+    "defaultMessage": "重命名"
   },
   "K2DWpV": {
     "defaultMessage": "输入不合法！"
@@ -126,11 +198,20 @@
   "MOZq7j": {
     "defaultMessage": "脚本语言"
   },
+  "Ms9pdw": {
+    "defaultMessage": "复制URL"
+  },
   "NcChip": {
     "defaultMessage": "订阅是否需要登录"
   },
   "O8A9zp": {
     "defaultMessage": "开启授权"
+  },
+  "PbEf10": {
+    "defaultMessage": "开启SSL"
+  },
+  "QT75K3": {
+    "defaultMessage": "按修改时间"
   },
   "RPeIuR": {
     "defaultMessage": "{minutes}分钟前"
@@ -143,6 +224,9 @@
   },
   "SKkYA0": {
     "defaultMessage": "自动保存中..."
+  },
+  "SU89De": {
+    "defaultMessage": "按创建时间"
   },
   "SyLGX/": {
     "defaultMessage": "调试"
@@ -165,6 +249,9 @@
   "W7e9Ff": {
     "defaultMessage": "角色列表"
   },
+  "WfVg3t": {
+    "defaultMessage": "APP ID"
+  },
   "WsOs5k": {
     "defaultMessage": "{hours}小时前"
   },
@@ -176,6 +263,9 @@
   },
   "YwSrou": {
     "defaultMessage": "默认值"
+  },
+  "Z4d9SJ": {
+    "defaultMessage": "App ID不能为空"
   },
   "ZMK5E4": {
     "defaultMessage": "服务端实时查询"
@@ -189,8 +279,14 @@
   "aGwXly": {
     "defaultMessage": "手动保存中..."
   },
+  "aiBGBs": {
+    "defaultMessage": "删除成功"
+  },
   "apiCrud.empty": {
     "defaultMessage": "使用该功能前，请先添加数据库"
+  },
+  "aqQg0p": {
+    "defaultMessage": "区域"
   },
   "b5kCtF": {
     "defaultMessage": "待选择"
@@ -207,6 +303,21 @@
   "eaCopF": {
     "defaultMessage": "搜索并关联记录"
   },
+  "ekxzlF": {
+    "defaultMessage": "名称"
+  },
+  "fJh8DQ": {
+    "defaultMessage": "请输入bucketName"
+  },
+  "fRk+GN": {
+    "defaultMessage": "请输入文件夹名称"
+  },
+  "fblGdv": {
+    "defaultMessage": "删除中"
+  },
+  "g1YGD6": {
+    "defaultMessage": "视图"
+  },
   "gRnd+f": {
     "defaultMessage": "新增枚举类型"
   },
@@ -219,8 +330,14 @@
   "hovbOX": {
     "defaultMessage": "无法找到关联表实体类型！"
   },
+  "ig9iLd": {
+    "defaultMessage": "请输入服务地址"
+  },
   "jhfb/7": {
     "defaultMessage": "保存成功"
+  },
+  "jxZEU/": {
+    "defaultMessage": "文件列表加载失败"
   },
   "l3H/GZ": {
     "defaultMessage": "删除确认"
@@ -229,11 +346,20 @@
     "defaultMessage": "网络出现问题～",
     "description": "状态码50x"
   },
+  "mPsm6o": {
+    "defaultMessage": "测试"
+  },
   "mzPDCn": {
     "defaultMessage": "新增枚举"
   },
+  "n1GZIK": {
+    "defaultMessage": "创建中"
+  },
   "n4sB7F": {
     "defaultMessage": "查询缓存"
+  },
+  "o9bMHL": {
+    "defaultMessage": "大小"
   },
   "oDLN4x": {
     "defaultMessage": "对查询进行缓存"
@@ -241,11 +367,30 @@
   "oOGLP0": {
     "defaultMessage": "联合唯一索引"
   },
+  "omnQsM": {
+    "defaultMessage": "上传中..."
+  },
+  "oyyjIg": {
+    "defaultMessage": "文件夹"
+  },
+  "p7ywbO": {
+    "defaultMessage": "配置信息有误，无法连接，请修改后再试"
+  },
+  "pV2t/S": {
+    "defaultMessage": "基本信息"
+  },
+  "qRSHCi": {
+    "defaultMessage": "未知",
+    "description": "未知的文件类型"
+  },
   "qUKj7E": {
     "defaultMessage": "复制"
   },
   "r8T2Gj": {
     "defaultMessage": "找不到对应实体主键"
+  },
+  "rDN439": {
+    "defaultMessage": "请输入..."
   },
   "rnpMD3": {
     "defaultMessage": "关"
@@ -260,11 +405,17 @@
   "slR1VF": {
     "defaultMessage": "+ 新增筛选条件"
   },
-  "storage.configErr": {
-    "defaultMessage": "12123"
-  },
   "szOpH5": {
     "defaultMessage": "实时配置"
+  },
+  "txDRJz": {
+    "defaultMessage": "环境变量"
+  },
+  "uOSn0p": {
+    "defaultMessage": "请输入区域"
+  },
+  "uhTa0i": {
+    "defaultMessage": "预览"
   },
   "v9Miyz": {
     "defaultMessage": "查询是否需要登录"
@@ -282,18 +433,33 @@
   "vr5TVT": {
     "defaultMessage": "请输入"
   },
+  "wCsUWB": {
+    "defaultMessage": "App Secret不能为空"
+  },
   "waeVf8": {
     "defaultMessage": "数据迁移失败！error: {error}"
   },
   "x4mNBF": {
     "defaultMessage": "{seconds}秒前"
   },
+  "xE1H+X": {
+    "defaultMessage": "设置"
+  },
   "xKCJNb": {
     "defaultMessage": "飞布控制台",
     "description": "标题"
   },
+  "xVTk70": {
+    "defaultMessage": "加载中"
+  },
+  "xaG7IX": {
+    "defaultMessage": "按文件大小"
+  },
   "yy7EDI": {
     "defaultMessage": "上传"
+  },
+  "zbqD5q": {
+    "defaultMessage": "值"
   },
   "zvywI9": {
     "defaultMessage": "编辑脚本"
