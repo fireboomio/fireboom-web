@@ -5,6 +5,7 @@ import ButtonGroup from 'antd/lib/button/button-group'
 import zhCN from 'antd/lib/locale-provider/zh_CN'
 import type { SorterResult } from 'antd/lib/table/interface'
 import { useEffect } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import { getTableColumns } from '@/components/PrismaTable/components/DynamicTable/DynamicTableHelper'
@@ -183,9 +184,9 @@ const DynamicTable = ({
 
   return (
     <ConfigProvider locale={zhCN}>
-      <div className="flex justify-start items-center h-54px bg-white flex-shrink-0 px-11">
-        <span className="text-16px font-medium">{currentModel.name}</span>
-        <span className="text-14px text-[#118aD1] ml-3 mr-auto">model</span>
+      <div className="bg-white flex flex-shrink-0 h-54px px-11 justify-start items-center">
+        <span className="font-medium text-16px">{currentModel.name}</span>
+        <span className="mr-auto ml-3 text-14px text-[#118aD1]">model</span>
         <Popover
           destroyTooltipOnHide
           trigger="click"
@@ -205,7 +206,7 @@ const DynamicTable = ({
           }
         >
           <div className={styles.filterBtn}>
-            高级筛选
+            <FormattedMessage defaultMessage="高级筛选" />
             <div className={styles.dot}>{initialFilters.length}</div>
             <div className={styles.split} />
             <CaretDownOutlined className={`self-center mx-7px ${styles['dropdown-icon']}`} />
@@ -213,7 +214,7 @@ const DynamicTable = ({
         </Popover>
         {usage === 'dataPreview' && (
           <div className={styles.addBtn} onClick={() => setCreateModalVisible(true)}>
-            添加
+            <FormattedMessage defaultMessage="添加" />
           </div>
         )}
       </div>

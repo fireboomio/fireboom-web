@@ -28,7 +28,7 @@ export function useStackblitz() {
               ...Object.keys(dependFiles).reduce<Record<string, string>>((obj, fileName) => {
                 obj[fileName] = dependFiles[fileName]
                 return obj
-              }, {}),
+              }, {})
             }
           },
           {

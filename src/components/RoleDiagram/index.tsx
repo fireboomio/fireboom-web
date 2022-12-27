@@ -1,4 +1,5 @@
 import type { SVGProps } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 interface RoleDiagramProps {
   rule?: string
@@ -153,7 +154,9 @@ const RoleDiagram = ({ rule, className }: RoleDiagramProps) => {
         className || ''
       }`}
     >
-      <div className="mt-0.5 text-xs text-[#666666] scale-75">角色列表</div>
+      <div className="mt-0.5 text-xs text-[#666666] scale-75">
+        <FormattedMessage defaultMessage="角色列表" />
+      </div>
       {rule && iconMap[rule as keyof typeof iconMap]}
     </div>
   )

@@ -4,6 +4,7 @@ import { Button, message } from 'antd'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
 import { useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { RunHookResponse } from '..'
 import iconDebug from '../assets/debug.svg'
@@ -31,6 +32,7 @@ type EditorInputContainerProps = Pick<
 >
 
 export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
+  const intl = useIntl()
   const editorRef = useRef<any>(null)
   // debug运行中loading
   const [loading, setLoading] = useState<boolean>(false)
@@ -45,7 +47,7 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
         parseCode = JSON.parse(code) as Record<string, any>
       } catch (error) {
         // 不是json格式
-        void message.warning('脚本内容不是json格式')
+        void message.warning(intl.formatMessage({ defaultMessage: '脚本内容不是json格式' }))
         return
       }
       setLoading(true)
@@ -55,9 +57,11 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
   }
   return (
     <div className={`${ideStyles['input-container']}`}>
-      <div className="flex justify-between mb-1">
-        <div className="title">输入</div>
-        {props.expandAction && <img src={iconRefreshBtn} alt="刷新" />}
+      <div className="flex mb-1 justify-between">
+        <div className="title">
+          <FormattedMessage defaultMessage="输入" />
+        </div>
+        {props.expandAction && <img src={iconRefreshBtn} alt="Refresh" />}
       </div>
       {props.expandAction && (
         <>
@@ -78,11 +82,11 @@ export const EditorInputContainer: FC<EditorInputContainerProps> = props => {
             <Button
               onClick={debounce(onClickDebug, 1000, { leading: true })}
               loading={loading}
-              icon={<img src={iconDebug} alt="调试" className="mr-1" />}
+              icon={<img src={iconDebug} alt="debug" className="mr-1" />}
               type="primary"
               className={ideStyles['save-btn']}
             >
-              调试
+              <FormattedMessage defaultMessage="调试" />
             </Button>
           </div>
         </>
@@ -101,7 +105,7 @@ export const EditorOutPutContainer: FC<EditorOutPutContainerProps> = props => {
   }
   return (
     <div className={`${ideStyles['output-container']}`}>
-      <div className="flex justify-between mb-1">
+      <div className="flex mb-1 justify-between">
         <div className="title">输出</div>
         {props.expandAction && (
           <span

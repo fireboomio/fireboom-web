@@ -8,6 +8,7 @@ import { debounce } from 'lodash'
 import type { FC } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import type { LocalLib } from '@/components/Ide/dependLoader'
@@ -108,6 +109,7 @@ interface Props {
  * @return {*}
  */
 const IdeContainer: FC<Props> = props => {
+  const intl = useIntl()
   const defaultRunResult = { logs: [], result: '' }
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<number | null>(null)
@@ -335,7 +337,7 @@ const IdeContainer: FC<Props> = props => {
       if (match) {
         lastImport = i
         if (match[1] === name) {
-          message.warning('已存在，请勿重复引入')
+          message.warning(intl.formatMessage({ defaultMessage: '已存在，请勿重复引入' }))
           return
         }
       }
@@ -410,7 +412,7 @@ const IdeContainer: FC<Props> = props => {
           }}
         />
         <div
-          className="flex justify-start flex-1 min-h-0"
+          className="flex flex-1 min-h-0 justify-start"
           style={{ height: fullScreen ? '100vh' : 'auto' }}
         >
           {/* 依赖列表是否收起 */}

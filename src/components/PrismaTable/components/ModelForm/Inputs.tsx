@@ -5,6 +5,7 @@ import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
 import moment from 'moment'
 import { useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import DynamicTable from '@/components/PrismaTable/components/DynamicTable'
@@ -118,6 +119,7 @@ const Object = ({
   disabled,
   initialValues
 }: Props) => {
+  const intl = useIntl()
   const form = Form.useFormInstance()
   const initialObjectValue = initialValues[name] as Record<string, any>
 
@@ -147,8 +149,9 @@ const Object = ({
     if (!required || value) {
       callback()
     } else {
-      void message.error(`请选择 ${type} 表关联数据`)!
-      callback(`请选择 ${type} 关联数据`)
+      const msg = intl.formatMessage({ defaultMessage: `请选择 ${type} 表关联数据` })
+      message.error(msg)
+      callback(msg)
     }
   }
 
@@ -169,7 +172,7 @@ const Object = ({
             onPressEnter={undefined}
             readOnly
             allowClear
-            placeholder="搜索并关联记录"
+            placeholder={intl.formatMessage({ defaultMessage: '搜索并关联记录' })}
             value={displayValue}
             enterButton
             onSearch={() => setConnectModalVisible(true)}
@@ -178,7 +181,7 @@ const Object = ({
       </Form.Item>
       <Modal
         width={1200}
-        title={`关联 ${type} 表数据`}
+        title={intl.formatMessage({ defaultMessage: `关联 ${type} 表数据` })}
         open={connectModalVisible}
         footer={false}
         destroyOnClose
@@ -192,7 +195,9 @@ const Object = ({
           initialFilters={filters}
           updateInitialFilters={setFilters}
           connectedRecord={initialObjectValue}
-          redirectToEntityWithFilters={() => void message.warning('此处不支持跳转！')}
+          redirectToEntityWithFilters={() =>
+            void message.warning(intl.formatMessage({ defaultMessage: '此处不支持跳转！' }))
+          }
         />
       </Modal>
     </>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { createContext, useEffect, useState } from 'react'
-import { IntlProvider as ReactIntlProvider } from 'react-intl'
+import { createContext, useCallback, useEffect, useState } from 'react'
+import { createIntl, createIntlCache, IntlProvider as ReactIntlProvider } from 'react-intl'
 
 interface IntlProviderProps {
   children?: ReactNode
@@ -11,6 +11,22 @@ function loadLangs(lang: string) {
 }
 
 const LOCALE_STORE_KEY = 'user.locale'
+const browserLanguage = window.navigator.language
+const defaultLocale = localStorage.getItem(LOCALE_STORE_KEY) || browserLanguage || 'en'
+
+// This is optional but highly recommended
+// since it prevents memory leak
+const cache = createIntlCache()
+let _locale: string = defaultLocale
+let _messages: Record<string, string> = {}
+
+export const intl = createIntl(
+  {
+    locale: _locale,
+    messages: _messages
+  },
+  cache
+)
 
 export type IntlState = {
   locale: string
@@ -24,16 +40,19 @@ const IntlContext = createContext<IntlState>(
 )
 
 const IntlProvider = ({ children }: IntlProviderProps) => {
-  const browserLanguage = window.navigator.language
-  const [locale, setLocale] = useState(
-    localStorage.getItem(LOCALE_STORE_KEY) || browserLanguage || 'en'
-  )
+  const [locale, _setLocale] = useState(defaultLocale)
   const [messages, setMessages] = useState<Record<string, string>>({})
+
+  const setLocale = useCallback((locale: string) => {
+    _setLocale(locale)
+    _locale = locale
+  }, [])
 
   useEffect(() => {
     if (locale) {
       loadLangs(locale).then(json => {
         setMessages(json)
+        _messages = json
       })
     }
   }, [locale])

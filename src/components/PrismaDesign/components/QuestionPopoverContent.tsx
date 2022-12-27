@@ -1,4 +1,5 @@
 import { Radio, Space } from 'antd'
+import { FormattedMessage } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 export type ArrayOrOptionalRadioValue = 'optional' | 'isArray' | undefined
@@ -19,10 +20,10 @@ const QuestionPopoverContent = ({ radioValue, handleRadioChange }: QuestionPopov
     <Radio.Group value={value}>
       <Space direction="vertical" size={12}>
         <Radio value={'optional'} onClick={() => handleRadioClick('optional')}>
-          可以为空
+          <FormattedMessage defaultMessage="可以为空" />
         </Radio>
         <Radio value={'isArray'} onClick={() => handleRadioClick('isArray')}>
-          是否数组
+          <FormattedMessage defaultMessage="是否数组" />
         </Radio>
       </Space>
     </Radio.Group>

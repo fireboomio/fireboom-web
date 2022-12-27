@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import { throttle } from 'lodash'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 
 import type { Block } from '@/interfaces/modeling'
 import { updateBlocksAction } from '@/lib/actions/PrismaSchemaActions'
@@ -19,6 +20,7 @@ const errorToast = throttle(() => {
 }, 3000)
 
 const useBlocks = () => {
+  const intl = useIntl()
   const {
     state: { blocks, currentDBSource, originBlocks },
     dispatch
@@ -35,7 +37,12 @@ const useBlocks = () => {
       .then(() => refetchPrismaSchema(String(currentDBSource.id), dispatch))
       .catch((err: Error) => {
         dispatch(updateBlocksAction(PrismaSchemaBlockOperator(blocks).cleanEmptyNameEntity()))
-        void message.error(`数据迁移失败！error: ${err.message}`)
+        message.error(
+          intl.formatMessage(
+            { defaultMessage: `数据迁移失败！error: {error}` },
+            { error: err.message }
+          )
+        )
         throw err
       })
   }

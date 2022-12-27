@@ -1,6 +1,7 @@
 import { Button, Checkbox, Form, InputNumber, message, Switch } from 'antd'
 import { OperationTypeNode } from 'graphql/index'
 import { useContext, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -29,6 +30,7 @@ interface Setting {
 }
 
 export default function Index(props: Props) {
+  const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const [apiSetting, setApiSetting] = useState<Setting>()
   const [globalSetting, setGlobalSetting] = useState<Setting>()
@@ -124,7 +126,7 @@ export default function Index(props: Props) {
         id: props.id || 0
       })
       .then(() => {
-        message.success('保存成功')
+        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
         props.onClose?.()
       })
   }
@@ -149,7 +151,9 @@ export default function Index(props: Props) {
               name="enable"
               valuePropName="checked"
             >
-              <Checkbox>使用独立配置</Checkbox>
+              <Checkbox>
+                <FormattedMessage defaultMessage="使用独立配置" />
+              </Checkbox>
             </Form.Item>
 
             <div className={styles.splitLine} />
@@ -157,51 +161,72 @@ export default function Index(props: Props) {
         ) : null}
         {props.type === 'global' ? (
           <>
-            <div className={styles.tip}>授权配置</div>
-            <Form.Item label="查询授权">
+            <div className={styles.tip}>
+              <FormattedMessage defaultMessage="授权配置" description="API授权配置" />
+            </div>
+            <Form.Item
+              label={intl.formatMessage({
+                defaultMessage: '查询授权',
+                description: '查询是否需要授权'
+              })}
+            >
               <>
                 <Form.Item noStyle name="authenticationQueriesRequired" valuePropName="checked">
-                  <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  查询是否需要登录
+                  <FormattedMessage defaultMessage="查询是否需要登录" />
                 </span>
               </>
             </Form.Item>
-            <Form.Item label="变更授权">
+            <Form.Item label={intl.formatMessage({ defaultMessage: '变更授权' })}>
               <>
                 <Form.Item noStyle name="authenticationMutationsRequired" valuePropName="checked">
-                  <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  变更是否需要登录
+                  <FormattedMessage defaultMessage="变更是否需要登录" />
                 </span>
               </>
             </Form.Item>
-            <Form.Item label="订阅授权">
+            <Form.Item label={intl.formatMessage({ defaultMessage: '订阅授权' })}>
               <>
                 <Form.Item
                   noStyle
                   name="authenticationSubscriptionsRequired"
                   valuePropName="checked"
                 >
-                  <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({
+                      defaultMessage: '关闭'
+                    })}
+                  />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  订阅是否需要登录
+                  <FormattedMessage defaultMessage="订阅是否需要登录" />
                 </span>
-                onch
               </>
             </Form.Item>
           </>
         ) : (
-          <Form.Item label="开启授权">
+          <Form.Item label={intl.formatMessage({ defaultMessage: '开启授权' })}>
             <>
               <Form.Item noStyle name="authenticationRequired" valuePropName="checked">
-                <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+                <Switch
+                  disabled={disabled}
+                  checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                  unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                />
               </Form.Item>
               <span className={styles.tip} style={{ marginLeft: 12 }}>
-                是否需要登录
+                <FormattedMessage defaultMessage="是否需要登录" />
               </span>
             </>
           </Form.Item>
@@ -211,23 +236,43 @@ export default function Index(props: Props) {
           {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
             <>
               {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-              <div className={styles.tip}>缓存配置</div>
+              <div className={styles.tip}>
+                <FormattedMessage defaultMessage="缓存配置" />
+              </div>
 
-              <Form.Item label="查询缓存">
+              <Form.Item label={intl.formatMessage({ defaultMessage: '查询缓存' })}>
                 <>
                   <Form.Item noStyle name="cachingEnable" valuePropName="checked">
-                    <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+                    <Switch
+                      disabled={disabled}
+                      checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                      unCheckedChildren={intl.formatMessage({
+                        defaultMessage: '关闭'
+                      })}
+                    />
                   </Form.Item>
                   <span className={styles.tip} style={{ marginLeft: 12 }}>
-                    对查询进行缓存
+                    <FormattedMessage defaultMessage="对查询进行缓存" />
                   </span>
                 </>
               </Form.Item>
-              <Form.Item label="最大时长" name="cachingMaxAge">
-                <InputNumber disabled={disabled} addonAfter="秒" />
+              <Form.Item
+                label={intl.formatMessage({ defaultMessage: '最大时长' })}
+                name="cachingMaxAge"
+              >
+                <InputNumber
+                  disabled={disabled}
+                  addonAfter={intl.formatMessage({ defaultMessage: '秒' })}
+                />
               </Form.Item>
-              <Form.Item label="重新校验时长" name="cachingStaleWhileRevalidate">
-                <InputNumber disabled={disabled} addonAfter="秒" />
+              <Form.Item
+                label={intl.formatMessage({ defaultMessage: '重新校验时长' })}
+                name="cachingStaleWhileRevalidate"
+              >
+                <InputNumber
+                  disabled={disabled}
+                  addonAfter={intl.formatMessage({ defaultMessage: '秒' })}
+                />
               </Form.Item>
             </>
           ) : null}
@@ -235,21 +280,33 @@ export default function Index(props: Props) {
           {props.operationType === OperationTypeNode.QUERY || props.type === 'global' ? (
             <>
               {props.type === 'panel' ? <div className={styles.splitLine} /> : ''}
-              <div className={styles.tip}>实时配置</div>
+              <div className={styles.tip}>
+                <FormattedMessage defaultMessage="实时配置" />
+              </div>
 
-              <Form.Item label="实时查询">
+              <Form.Item label={intl.formatMessage({ defaultMessage: '实时查询' })}>
                 <>
                   <Form.Item noStyle name="liveQueryEnable" valuePropName="checked">
-                    <Switch disabled={disabled} checkedChildren="开启" unCheckedChildren="关闭" />
+                    <Switch
+                      disabled={disabled}
+                      checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                      unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                    />
                   </Form.Item>
                   <span className={styles.tip} style={{ marginLeft: 12 }}>
-                    服务端实时查询
+                    <FormattedMessage defaultMessage="服务端实时查询" />
                   </span>
                 </>
               </Form.Item>
 
-              <Form.Item label="轮询间隔" name="liveQueryPollingIntervalSeconds">
-                <InputNumber disabled={disabled} addonAfter="秒" />
+              <Form.Item
+                label={intl.formatMessage({ defaultMessage: '轮询间隔' })}
+                name="liveQueryPollingIntervalSeconds"
+              >
+                <InputNumber
+                  disabled={disabled}
+                  addonAfter={intl.formatMessage({ defaultMessage: '秒' })}
+                />
               </Form.Item>
             </>
           ) : null}
@@ -262,10 +319,10 @@ export default function Index(props: Props) {
                 form.submit()
               }}
             >
-              保存
+              <FormattedMessage defaultMessage="保存" />
             </Button>
             <Button className={'btn-cancel ml-4'} onClick={props.onClose}>
-              <span>取消</span>
+              <FormattedMessage defaultMessage="取消" />
             </Button>
           </Form.Item>
         ) : null}

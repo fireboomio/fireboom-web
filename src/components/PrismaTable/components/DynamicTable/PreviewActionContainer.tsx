@@ -1,6 +1,7 @@
 import type { SchemaModel } from '@paljs/types'
 import { Button, message, Modal } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import ModelFormContainer from '@/components/PrismaTable/components/ModelForm'
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, namespace }: Props) => {
+  const intl = useIntl()
   const [updateModalVisible, setUpdateModalVisible] = useImmer<boolean>(false)
   const [deleteModalVisible, setDeleteModalVisible] = useImmer<boolean>(false)
 
@@ -23,7 +25,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
 
   const handleDeleteOne = () => {
     if (!currentModelIdField) {
-      void message.error('找不到对应实体主键')
+      void message.error(intl.formatMessage({ defaultMessage: '找不到对应实体主键' }))
       return
     }
     void deleteOne({
@@ -37,7 +39,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
         setDeleteModalVisible(false)
         void refetch()
       })
-      .catch((err: Error) => message.error(`删除数据失败，error: ${err.message}`))
+      .catch((err: Error) => message.error(`error: ${err.message}`))
   }
 
   const handleEditOne = () => {
@@ -49,29 +51,33 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
   }
 
   return (
-    <div className="flex w-full flex h-7 items-center">
-      <Button type="link" className="!p-0 mr-4" onClick={handleEditOne}>
-        编辑
+    <div className="flex h-7 w-full items-center ">
+      <Button type="link" className="mr-4 !p-0" onClick={handleEditOne}>
+        <FormattedMessage defaultMessage="编辑" />
       </Button>
-      <Button type="link" className="!p-0 mr-4" onClick={onclickDelete}>
-        删除
+      <Button type="link" className="mr-4 !p-0" onClick={onclickDelete}>
+        <FormattedMessage defaultMessage="删除" />
       </Button>
       <Modal
-        title="删除确认"
+        title={intl.formatMessage({ defaultMessage: '删除确认' })}
         closable
         open={deleteModalVisible}
         destroyOnClose
         onCancel={() => setDeleteModalVisible(false)}
         footer={
           <ButtonGroup className="gap-2">
-            <Button onClick={() => setDeleteModalVisible(false)}>取消</Button>
+            <Button onClick={() => setDeleteModalVisible(false)}>
+              <FormattedMessage defaultMessage="取消" />
+            </Button>
             <Button className={`${styles['add-btn']} cursor-default p-0`} onClick={handleDeleteOne}>
-              确认
+              <FormattedMessage defaultMessage="确认" />
             </Button>
           </ButtonGroup>
         }
       >
-        <div>删除操作将会同时删除关联数据！</div>
+        <div>
+          <FormattedMessage defaultMessage="删除操作将会同时删除关联数据！" />
+        </div>
       </Modal>
       <ModelFormContainer
         model={currentModel}

@@ -134,7 +134,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         <div className={styles.logo} onClick={() => navigate('/workbench')} />
         <div className={styles.splitLine} />
         <div className={styles.title}>
-          <FormattedMessage id="core.title" defaultMessage="飞布控制台" description="标题" />
+          <FormattedMessage defaultMessage="飞布控制台" description="标题" />
         </div>
         {/*<div className={styles.titleIcon} />*/}
         <div className="flex-1" />

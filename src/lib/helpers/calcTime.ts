@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 
+import { intl } from '@/providers/IntlProvider'
+
 interface Runtime {
   days: number
   hours: number
@@ -13,16 +15,16 @@ export default function (initTime: string) {
     $d: Runtime
   }
   if (time.$d.days > 0) {
-    return `${time.$d.days}天前`
+    return intl.formatMessage({ defaultMessage: '{days}天前' }, { days: time.$d.days })
   }
   if (time.$d.hours > 0) {
-    return `${time.$d.hours}小时前`
+    return intl.formatMessage({ defaultMessage: '{hours}小时前' }, { days: time.$d.hours })
   }
   if (time.$d.minutes > 0) {
-    return `${time.$d.minutes}分钟前`
+    return intl.formatMessage({ defaultMessage: '{minutes}分钟前' }, { days: time.$d.minutes })
   }
   if (time.$d.seconds > 0) {
-    return `${time.$d.seconds}秒前`
+    return intl.formatMessage({ defaultMessage: '{seconds}秒前' }, { days: time.$d.seconds })
   }
-  return '刚刚'
+  return intl.formatMessage({ defaultMessage: '刚刚' })
 }

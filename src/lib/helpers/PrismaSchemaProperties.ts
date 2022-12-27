@@ -2,6 +2,7 @@ import type { Field } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 
 import type { Entity } from '@/interfaces/modeling'
+import { intl } from '@/providers/IntlProvider'
 
 export interface AttributeHandlersProp {
   args: AttributeArgument[]
@@ -19,19 +20,55 @@ export interface AttributeType {
 }
 
 const CommonFieldAttributes: AttributeType[] = [
-  { name: 'id', hasArgs: false, comment: '主键' },
-  { name: 'default', hasArgs: true, comment: '默认值' },
-  { name: 'unique', hasArgs: false, comment: '唯一索引' },
-  { name: 'map', hasArgs: true, comment: '字段别名' },
-  { name: 'ignore', hasArgs: false, comment: '忽略该字段' }
+  { name: 'id', hasArgs: false, comment: intl.formatMessage({ defaultMessage: '主键' }) },
+  {
+    name: 'default',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '默认值' })
+  },
+  {
+    name: 'unique',
+    hasArgs: false,
+    comment: intl.formatMessage({ defaultMessage: '唯一索引' })
+  },
+  {
+    name: 'map',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '字段别名' })
+  },
+  {
+    name: 'ignore',
+    hasArgs: false,
+    comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+  }
 ]
 
 const CommonModelAttributes: AttributeType[] = [
-  { name: 'index', hasArgs: true, comment: '联合索引' },
-  { name: 'id', hasArgs: true, comment: '联合主键' },
-  { name: 'unique', hasArgs: true, comment: '联合唯一索引' },
-  { name: 'map', hasArgs: true, comment: '实体别名' },
-  { name: 'ignore', hasArgs: false, comment: '忽略该表' }
+  {
+    name: 'index',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '联合索引' })
+  },
+  {
+    name: 'id',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '联合主键' })
+  },
+  {
+    name: 'unique',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '联合唯一索引' })
+  },
+  {
+    name: 'map',
+    hasArgs: true,
+    comment: intl.formatMessage({ defaultMessage: '实体别名' })
+  },
+  {
+    name: 'ignore',
+    hasArgs: false,
+    comment: intl.formatMessage({ defaultMessage: '忽略该表' })
+  }
 ]
 
 type PrismaSchemaAttributePropertiesType = Record<
@@ -121,8 +158,16 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
       },
       Unsupported: {
         attributes: [
-          { name: 'map', hasArgs: true, comment: '字段别名' },
-          { name: 'ignore', hasArgs: false, comment: '忽略该字段' }
+          {
+            name: 'map',
+            hasArgs: true,
+            comment: intl.formatMessage({ defaultMessage: '字段别名' })
+          },
+          {
+            name: 'ignore',
+            hasArgs: false,
+            comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+          }
         ]
       }
     },
@@ -188,7 +233,11 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
           { name: 'db.Date', hasArgs: true },
           { name: 'db.Time', hasArgs: true },
           { name: 'db.Timestamp', hasArgs: true },
-          { name: 'updatedAt', hasArgs: false, comment: '更新时间' }
+          {
+            name: 'updatedAt',
+            hasArgs: false,
+            comment: intl.formatMessage({ defaultMessage: '更新时间' })
+          }
         ]
       },
       Json: {
@@ -217,8 +266,16 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
       },
       Unsupported: {
         attributes: [
-          { name: 'map', hasArgs: true, comment: '字段别名' },
-          { name: 'ignore', hasArgs: false, comment: '忽略该字段' }
+          {
+            name: 'map',
+            hasArgs: true,
+            comment: intl.formatMessage({ defaultMessage: '字段别名' })
+          },
+          {
+            name: 'ignore',
+            hasArgs: false,
+            comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+          }
         ]
       }
     },
@@ -258,7 +315,11 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
       DateTime: {
         attributes: [
           ...CommonFieldAttributes,
-          { name: 'updatedAt', hasArgs: false, comment: '更新时间' }
+          {
+            name: 'updatedAt',
+            hasArgs: false,
+            comment: intl.formatMessage({ defaultMessage: '更新时间' })
+          }
         ]
       },
       // 'Json': {}, // not supported
@@ -276,8 +337,16 @@ export const PrismaSchemaProperties: PrismaSchemaAttributePropertiesType = {
       },
       Unsupported: {
         attributes: [
-          { name: 'map', hasArgs: true, comment: '字段别名' },
-          { name: 'ignore', hasArgs: false, comment: '忽略该字段' }
+          {
+            name: 'map',
+            hasArgs: true,
+            comment: intl.formatMessage({ defaultMessage: '字段别名' })
+          },
+          {
+            name: 'ignore',
+            hasArgs: false,
+            comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+          }
         ]
       }
     },

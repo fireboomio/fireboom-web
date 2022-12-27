@@ -3,6 +3,7 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import axios from 'axios'
 
 import type { Result } from '@/interfaces/common'
+import { intl } from '@/providers/IntlProvider'
 
 const requests = axios.create({
   baseURL: '/api/v1',
@@ -24,10 +25,12 @@ requests.interceptors.response.use(
   },
   (error: AxiosError) => {
     const errMag = error.config.resolveErrorMsg?.(error.response)
-    // @ts-ignore
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    void message.error(errMag ?? error?.response?.data?.message ?? '网络请求错误！')
+    message.error(
+      errMag ??
+        // @ts-ignore
+        error?.response?.data?.message ??
+        intl.formatMessage({ defaultMessage: '网络请求错误！' })
+    )
     return Promise.reject(error)
   }
 )

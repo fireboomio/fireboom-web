@@ -1,5 +1,6 @@
 import { Upload } from 'antd'
 import type { UploadProps } from 'antd/es/upload/interface'
+import { FormattedMessage } from 'react-intl'
 
 import { formatBytes } from '@/lib/utils'
 
@@ -23,7 +24,9 @@ const FormToolTip = (props: UploadProps) => {
         <div className={styles.container}>
           <div className={styles.uploadBtn}>
             <div className={styles.image} />
-            <div className={styles.text}>上传</div>
+            <div className={styles.text}>
+              <FormattedMessage defaultMessage="上传" />
+            </div>
           </div>
         </div>
       </Upload>
