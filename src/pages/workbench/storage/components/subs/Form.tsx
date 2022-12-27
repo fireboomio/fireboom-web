@@ -78,7 +78,7 @@ export default function StorageForm({ content, showErr }: Props) {
         <div className="-mt-4 pb-4">
           <Alert
             className="w-full"
-            message={<FormattedMessage defaultMessage="12123" />}
+            message={<FormattedMessage defaultMessage="配置信息有误，无法连接，请修改后再试" />}
             type="error"
           />
         </div>
