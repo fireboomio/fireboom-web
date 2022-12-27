@@ -10,6 +10,7 @@ import type {
 } from 'graphql'
 import { Kind } from 'graphql'
 import { lazy, useContext, useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
@@ -26,6 +27,7 @@ import RBACPopup from './RBACPopup'
 const SequenceDiagram = lazy(() => import('./SequenceDiagram'))
 
 const GraphiQLToolbar = () => {
+  const intl = useIntl()
   const [argOpen, setArgOpen] = useState(false)
   const [seqOpen, setSeqOpen] = useState(false)
   const { query, schemaAST, setQuery } = useAPIManager(state => ({
@@ -40,7 +42,7 @@ const GraphiQLToolbar = () => {
     callback: (directives: DirectiveNode[], definitionNode: OperationDefinitionNode) => void
   ) => {
     if (!query) {
-      message.error('请先创建查询语句')
+      message.error(intl.formatMessage({ defaultMessage: '请先创建查询语句' }))
     }
     if (schemaAST) {
       if (schemaAST.definitions[0]?.kind === Kind.OPERATION_DEFINITION) {
@@ -160,7 +162,12 @@ const GraphiQLToolbar = () => {
         if (['Query', 'Mutation', 'Subscription'].includes(state.kind)) {
           const variable = getCursorSurroundedVariable(line.text, cursor.ch as number)
           if (!variable) {
-            return message.warn('请选择正确的参数节点')
+            return message.warn(
+              intl.formatMessage({
+                defaultMessage: '请选择正确的参数节点',
+                description: '插入指令时'
+              })
+            )
           }
           const varDef = definitionNode.variableDefinitions!.find(
             v => v.variable.name.value === variable
@@ -169,7 +176,7 @@ const GraphiQLToolbar = () => {
             // @ts-ignore
             varDef.directives = varDef.directives ?? []
             if (varDef.directives?.some(dir => dir.name.value === name)) {
-              message.warn('指令已存在')
+              message.warn(intl.formatMessage({ defaultMessage: '指令已存在' }))
             } else {
               // @ts-ignore
               varDef.directives!.push(val)
@@ -178,7 +185,12 @@ const GraphiQLToolbar = () => {
             }
           }
         } else {
-          message.warn('请选择正确的参数节点')
+          message.warn(
+            intl.formatMessage({
+              defaultMessage: '请选择正确的参数节点',
+              description: '插入指令时'
+            })
+          )
         }
       }
     })
@@ -248,7 +260,9 @@ const GraphiQLToolbar = () => {
           }
         }
       }
-      message.warn('请选择合适的插入节点')
+      message.warn(
+        intl.formatMessage({ defaultMessage: '请选择合适的插入节点', description: '插入指令时' })
+      )
     })
   }
 
@@ -312,13 +326,17 @@ const GraphiQLToolbar = () => {
         overlay={<RBACPopup value={selectedRole} onChange={injectRole} />}
         trigger={['click']}
       >
-        <button className="graphiql-toolbar-btn">@角色</button>
+        <button className="graphiql-toolbar-btn">
+          <FormattedMessage defaultMessage="@角色" description="插入指令处" />
+        </button>
       </Dropdown>
       <Dropdown
         overlay={<InternalPopup value={isInternal} onChange={injectInternalOperation} />}
         trigger={['click']}
       >
-        <button className="graphiql-toolbar-btn">@内部</button>
+        <button className="graphiql-toolbar-btn">
+          <FormattedMessage defaultMessage="@内部" description="插入指令处" />
+        </button>
       </Dropdown>
       <div className="graphiql-toolbar-divider" />
       <Dropdown
@@ -327,13 +345,17 @@ const GraphiQLToolbar = () => {
         overlay={<ArgumentDirectivePopup onInject={injectArgument} />}
         trigger={['click']}
       >
-        <button className="graphiql-toolbar-btn">入参指令</button>
+        <button className="graphiql-toolbar-btn">
+          <FormattedMessage defaultMessage="入参指令" description="插入指令处" />
+        </button>
       </Dropdown>
       <button className="graphiql-toolbar-btn" onClick={injectTransform}>
-        响应转换
+        <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
       </button>
       <Dropdown overlay={<CrossOriginPopup />} trigger={['click']}>
-        <button className="graphiql-toolbar-btn">跨源关联</button>
+        <button className="graphiql-toolbar-btn">
+          <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
+        </button>
       </Dropdown>
       <Dropdown
         open={seqOpen}
@@ -342,7 +364,9 @@ const GraphiQLToolbar = () => {
         placement="bottomRight"
         onOpenChange={onSeqOpenChange}
       >
-        <span className="graphiql-toolbar-sequence-chart">时序图</span>
+        <span className="graphiql-toolbar-sequence-chart">
+          <FormattedMessage defaultMessage="时序图" description="插入指令处" />
+        </span>
       </Dropdown>
 
       <span className="graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>

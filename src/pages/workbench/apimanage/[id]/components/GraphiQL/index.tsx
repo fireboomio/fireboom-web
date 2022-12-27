@@ -28,6 +28,7 @@ import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
 import { collectVariables } from 'graphql-language-service'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { useDragResize } from '@/hooks/resize'
 import { getVariablesJSONSchema } from '@/lib/helpers/getVariablesJSONSchema'
@@ -321,6 +322,7 @@ const GraphiInputAndResponse = ({
   actionRef,
   onTabChange
 }: GraphiInputAndResponseProps) => {
+  const intl = useIntl()
   const [activeKey, setActiveKey] = useState('arguments')
   const [variableMode, setVariableMode] = useState<'json' | 'form'>('form')
 
@@ -398,7 +400,7 @@ const GraphiInputAndResponse = ({
         onTabClick={onTabChange}
         items={[
           {
-            label: '输入',
+            label: intl.formatMessage({ defaultMessage: '输入' }),
             key: 'arguments',
             children: (
               <>
@@ -414,7 +416,11 @@ const GraphiInputAndResponse = ({
               </>
             )
           },
-          { label: '响应', key: 'response', children: <ResponseViewer /> }
+          {
+            label: intl.formatMessage({ defaultMessage: '响应' }),
+            key: 'response',
+            children: <ResponseViewer />
+          }
         ]}
       />
     </div>

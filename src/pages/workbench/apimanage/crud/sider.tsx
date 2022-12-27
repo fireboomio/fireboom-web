@@ -1,6 +1,7 @@
 import { message, Select } from 'antd'
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -22,6 +23,7 @@ interface CRUDSiderProps {
 }
 
 export default function CRUDSider(props: CRUDSiderProps) {
+  const intl = useIntl()
   // 刷新列表
   const [dataSourceList, setDataSourceList] = useState<Datasource[]>([])
   const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
@@ -40,7 +42,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
     if (!currentDataSourceId) {
       return
     }
-    const hide = message.loading('正在加载模型列表')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '正在加载模型列表' }))
     try {
       const nativeSDL = await requests.get<unknown, string>(
         `/prisma/nativeSDL/${currentDataSourceId}`,
@@ -77,7 +79,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const queryDataSourceList = async () => {
     const result = await requests.get<unknown, Datasource[]>('/dataSource?datasourceType=1')
     setDataSourceList(result)
-    if(!result?.length || result?.length<=0){
+    if (!result?.length || result?.length <= 0) {
       props.onEmpty()
     }
     if (!result.find(item => item.id === currentDataSourceId)) {
@@ -119,7 +121,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
               name: x.name,
               label: (
                 <div className="flex items-center">
-                  <img className="mr-1 w-3 h-3" alt={x.name} src={svg} />
+                  <img className="h-3 mr-1 w-3" alt={x.name} src={svg} />
                   {x.name}
                 </div>
               ),
@@ -128,7 +130,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
           })}
         />
         <div
-          className="ml-1 w-28px h-28px bg-[#f7f7f7] flex items-center justify-center cursor-pointer"
+          className="cursor-pointer flex bg-[#f7f7f7] h-28px ml-1 w-28px items-center justify-center"
           onClick={loadModelList}
         >
           <img width={18} height={18} src="/assets/refresh.svg" alt="刷新" />

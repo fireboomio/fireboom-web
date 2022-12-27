@@ -1,5 +1,6 @@
 import { Checkbox, Dropdown, Radio, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import RoleDiagram from '@/components/RoleDiagram'
 import type { Role } from '@/interfaces/user'
@@ -92,7 +93,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
         <div className="flex flex-wrap flex-1 gap-x-2 gap-y-2 roles">
           {!selected.length && (
             <div className="flex h-full w-full text-gray-500 items-center justify-center">
-              没有选定角色，请点击下方加号添加
+              <FormattedMessage defaultMessage="没有选定角色，请点击下方加号添加" />
             </div>
           )}
           {selected.map((role, index) => (
@@ -123,7 +124,10 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
                     indeterminate={!!selected.length && selected.length !== roles.length}
                     onChange={onAllCheckChange}
                   >
-                    共{roles.length}项数据
+                    <FormattedMessage
+                      defaultMessage="共{count}项数据"
+                      values={{ count: roles.length }}
+                    />
                   </Checkbox>
                 </div>
                 <div className="py-1">
@@ -145,7 +149,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
             }
           >
             {!rule ? (
-              <Tooltip title="请先选择匹配模式">
+              <Tooltip title={<FormattedMessage defaultMessage="请先选择匹配模式" />}>
                 <PlusCircleFilled className="cursor-pointer mt-2" />
               </Tooltip>
             ) : (

@@ -6,6 +6,7 @@ import create from 'zustand'
 
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { intl } from '@/providers/IntlProvider'
 
 import { parseSchemaAST } from './components/GraphiQL/utils'
 
@@ -137,9 +138,12 @@ export const useAPIManager = create<APIState>((set, get) => ({
       get()._workbenchContext?.onRefreshMenu('api')
     })
   },
-  updateAPIName: (path) => {
+  updateAPIName: path => {
     return requests.put(`/operateApi/rename/${get().apiID}`, { path }).then(resp => {
-      get().pureUpdateAPI({ path, restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`) })
+      get().pureUpdateAPI({
+        path,
+        restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
+      })
       // 刷新api列表
       get()._workbenchContext?.onRefreshMenu('api')
     })
@@ -149,13 +153,13 @@ export const useAPIManager = create<APIState>((set, get) => ({
     // content 校验
     if (!content || !schemaAST) {
       if (showMessage) {
-        message.error('请输入合法的 GraphQL 查询语句')
+        message.error(intl.formatMessage({ defaultMessage: '请输入合法的 GraphQL 查询语句' }))
       }
       return false
     }
     if (schemaAST.definitions.length > 1) {
       if (showMessage) {
-        message.error('不支持多条查询语句')
+        message.error(intl.formatMessage({ defaultMessage: '不支持多条查询语句' }))
       }
       return false
     }

@@ -34,7 +34,8 @@ export const parseParameters = (
       position: 'path',
       type: type,
       isList,
-      isRequired: directives?.some(dir => dir.name === 'internal') ? false : isRequired,
+      // isRequired: directives?.some(dir => dir.name === 'internal') ? false : isRequired,
+      isRequired,
       directives
     }
   })

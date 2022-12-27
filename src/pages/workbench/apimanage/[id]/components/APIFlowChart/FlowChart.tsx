@@ -5,6 +5,7 @@ import type { Edge, Node } from '@antv/x6'
 import { Graph, Shape } from '@antv/x6'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef } from 'react'
+import { useIntl } from 'react-intl'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -52,6 +53,7 @@ const _Chart = ({
   apiSetting,
   onEditHook
 }: FlowChartProps) => {
+  const intl = useIntl()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -409,7 +411,7 @@ const _Chart = ({
     let y = CANVAS_PADDING
     const start = graph.createNode({
       shape: 'terminal',
-      label: '开始请求',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '开始请求' }),
       x: TERMINAL_X,
       y
     })
@@ -454,7 +456,7 @@ const _Chart = ({
     if (directiveState.fromClaim || apiSetting.authenticationRequired) {
       const loggedValidation = graph.createNode({
         shape: 'decision',
-        label: '登录校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
         x: DECISION_X,
         y
       })
@@ -501,7 +503,7 @@ const _Chart = ({
     if (directiveState.rbac) {
       const authValidation = graph.createNode({
         shape: 'decision',
-        label: '授权校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '授权校验?' }),
         x: DECISION_X,
         y
       })
@@ -548,7 +550,7 @@ const _Chart = ({
       y += 8 + LABEL_HEIGHT
       const requestValidation = graph.createNode({
         shape: 'decision',
-        label: '入参校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '入参校验?' }),
         x: DECISION_X,
         y
       })
@@ -599,7 +601,7 @@ const _Chart = ({
     ) {
       const argsInjection = graph.createNode({
         shape: 'process',
-        label: '参数注入',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '参数注入' }),
         x: PROCESS_X,
         y
       })
@@ -751,7 +753,7 @@ const _Chart = ({
     // 执行
     const operation = graph.createNode({
       shape: 'operation',
-      label: '执行\n(Operation)',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '执行\n(Operation)' }),
       x: OPERATION_X,
       y
     })
@@ -763,7 +765,7 @@ const _Chart = ({
     if (directiveState.transform) {
       const responseTransform = graph.createNode({
         shape: 'process',
-        label: '响应转换',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '响应转换' }),
         x: PROCESS_X,
         y
       })
@@ -1007,7 +1009,7 @@ const _Chart = ({
     // 发送响应到客户端
     const sendResponse = graph.createNode({
       shape: 'process',
-      label: '发送响应到客户端',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '发送响应到客户端' }),
       width: 144,
       height: PROCESS_HEIGHT,
       x: PROCESS_X - (144 - PROCESS_WIDTH) / 2,
@@ -1020,7 +1022,7 @@ const _Chart = ({
     y += 20 + PROCESS_HEIGHT
     const end = graph.createNode({
       shape: 'terminal',
-      label: '结束',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '结束' }),
       x: TERMINAL_X,
       y
     })
@@ -1152,6 +1154,7 @@ const _Chart = ({
     </div>
   )
 }
+
 const FlowChart = React.memo(_Chart, (prev, next) => isEqual(prev, next))
 
 export default FlowChart

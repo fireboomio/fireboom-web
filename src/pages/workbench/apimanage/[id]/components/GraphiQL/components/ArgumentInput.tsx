@@ -3,6 +3,7 @@ import Editor from '@monaco-editor/react'
 import { Checkbox, DatePicker, Input, InputNumber, Modal } from 'antd'
 import moment from 'moment'
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import type { ParameterT } from '@/interfaces/apimanage'
 import { isInputKey } from '@/lib/helpers/utils'
@@ -23,6 +24,7 @@ const SingleArgumentInput = ({
   value,
   onChange
 }: Omit<ArgumentInputProps, 'argument'> & { type: string }) => {
+  const intl = useIntl()
   const [showEdit, setShowEdit] = useState<boolean>(false)
   const [editorValue, setEditorValue] = useState<string>('')
 
@@ -91,7 +93,7 @@ const SingleArgumentInput = ({
           {showEdit && (
             <Modal
               mask={false}
-              title="输入变量"
+              title={intl.formatMessage({ defaultMessage: '输入变量' })}
               width={600}
               style={{ top: '10vh' }}
               bodyStyle={{ height: '60vh' }}
@@ -101,12 +103,14 @@ const SingleArgumentInput = ({
                 let json = {}
                 try {
                   json = JSON.parse(editorValue)
-                } catch (e) {}
+                } catch (e) {
+                  //
+                }
                 onChange?.(json)
               }}
               onCancel={() => setShowEdit(false)}
-              cancelText="取消"
-              okText="确定"
+              cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+              okText={intl.formatMessage({ defaultMessage: '确定' })}
             >
               <Editor
                 options={{

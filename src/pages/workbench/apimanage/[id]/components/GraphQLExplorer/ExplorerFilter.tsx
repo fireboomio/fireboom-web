@@ -1,5 +1,6 @@
 import { type CheckboxOptionType, AutoComplete, Radio, Tooltip } from 'antd'
 import { useCallback } from 'react'
+import { useIntl } from 'react-intl'
 
 import styles from './filter.module.less'
 import { RefreshIcon } from './icons'
@@ -25,6 +26,7 @@ const ExplorerFilter = ({
   setSelectedType,
   onRefresh
 }: ExplorerFilterProps) => {
+  const intl = useIntl()
   const _onRefresh = useCallback(() => {
     if (!isLoading) {
       onRefresh?.()
@@ -35,13 +37,13 @@ const ExplorerFilter = ({
       <div className="flex items-center">
         <AutoComplete
           className={styles.select}
-          placeholder="筛选"
+          placeholder={intl.formatMessage({ defaultMessage: '筛选' })}
           options={dataSourceList.map(item => ({ label: item, value: item }))}
           value={selectedDataSource}
           onChange={onSeletedDataSource}
           allowClear
         />
-        <Tooltip title="刷新">
+        <Tooltip title={intl.formatMessage({ defaultMessage: '刷新' })}>
           <RefreshIcon className={`ml-3 ${isLoading ? 'animate-spin' : ''}`} onClick={_onRefresh} />
         </Tooltip>
       </div>

@@ -3,6 +3,7 @@ import { Graph } from '@antv/x6'
 import type { SelectionNode } from 'graphql'
 import { Kind } from 'graphql'
 import { useEffect, useMemo, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { useAPIManager } from '../../../../store'
 
@@ -38,6 +39,7 @@ function getLabelAttrs(name: string) {
 }
 
 const SequenceDiagram = () => {
+  const intl = useIntl()
   const { schemaAST, schema } = useAPIManager()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -219,25 +221,25 @@ const SequenceDiagram = () => {
         const dataSourceNodes: Node[] = [
           graph.createNode({
             shape: 'block',
-            label: '客户端',
+            label: intl.formatMessage({ defaultMessage: '客户端' }),
             x: 12,
             y: 12
           }),
           graph.createNode({
             shape: 'block',
-            label: '客户端',
+            label: intl.formatMessage({ defaultMessage: '客户端' }),
             x: 12,
             y: totalHeight - 40
           }),
           graph.createNode({
             shape: 'block',
-            label: '服务端',
+            label: intl.formatMessage({ defaultMessage: '服务端' }),
             x: 148,
             y: 12
           }),
           graph.createNode({
             shape: 'block',
-            label: '服务端',
+            label: intl.formatMessage({ defaultMessage: '服务端' }),
             x: 148,
             y: totalHeight - 40
           })
@@ -278,7 +280,7 @@ const SequenceDiagram = () => {
           source: { x: 52, y: 64 },
           target: { x: 188, y: 64 }
         })
-        e1.appendLabel(getLabelAttrs('发起请求'))
+        e1.appendLabel(getLabelAttrs(intl.formatMessage({ defaultMessage: '发起请求' })))
 
         let y = 56
         console.log(sequence.sequenceList)
@@ -344,7 +346,7 @@ const SequenceDiagram = () => {
           source: { x: 188, y },
           target: { x: 52, y }
         })
-        e2.appendLabel(getLabelAttrs('请求结果'))
+        e2.appendLabel(getLabelAttrs(intl.formatMessage({ defaultMessage: '请求结果' })))
 
         // return graph.dispose
       }, 100)
@@ -361,7 +363,11 @@ const SequenceDiagram = () => {
           height: `${totalHeight}px`
         }}
       >
-        {!selections.length && <div className="p-4">暂无内容</div>}
+        {!selections.length && (
+          <div className="p-4">
+            <FormattedMessage defaultMessage="暂无内容" />{' '}
+          </div>
+        )}
       </div>
     </div>
   )
