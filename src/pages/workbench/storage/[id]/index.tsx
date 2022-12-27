@@ -34,19 +34,21 @@ export default function FileStorage() {
   }, [id])
 
   useEffect(() => {
+    console.log(123123)
     // 保存成功后跳转到详情页时顺便清空错误标记
     if (showType === 'detail' && showErr) {
       setShowErr(false)
     }
-    void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
-      setContent(data?.filter(item => item.id === Number(id))?.[0])
-    })
+    if (id !== 'new') {
+      void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
+        setContent(data?.filter(item => item.id === Number(id))?.[0])
+      })
+    }
   }, [showType])
 
   function handleSwitch(value: 'explorer' | 'form' | 'detail', _id: number | undefined) {
     setShowType(value)
   }
-  console.log('====================================', showErr)
 
   return (
     <>
