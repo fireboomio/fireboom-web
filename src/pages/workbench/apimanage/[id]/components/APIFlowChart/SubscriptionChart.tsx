@@ -5,6 +5,7 @@ import type { Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef } from 'react'
+import { useIntl } from 'react-intl'
 
 import { ActionGroup } from './ActionGroup'
 import globalHookImg from './assets/global-hook.png'
@@ -33,6 +34,7 @@ const _Chart = ({
   apiSetting,
   onEditHook
 }: SubscriptionChartProps) => {
+  const intl = useIntl()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -276,7 +278,7 @@ const _Chart = ({
     // 客户端
     const client = graph.createNode({
       shape: 'endpoint',
-      label: '客户端',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '客户端' }),
       x: ENDPOINT_X,
       y: CANVAS_PADDING
     })
@@ -292,7 +294,7 @@ const _Chart = ({
     // 事件源
     const source = graph.createNode({
       shape: 'endpoint',
-      label: '事件源',
+      label: intl.formatMessage({ description: '流程图', defaultMessage: '事件源' }),
       x: ENDPOINT_X,
       y: 587
     })
@@ -344,7 +346,7 @@ const _Chart = ({
     if (directiveState.fromClaim || apiSetting.authenticationRequired) {
       graph.addNode({
         shape: 'decision',
-        label: '登录校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
         x: 95,
         y: 80
       })
@@ -367,7 +369,7 @@ const _Chart = ({
     if (directiveState.rbac) {
       graph.addNode({
         shape: 'decision',
-        label: '授权校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '授权校验?' }),
         x: 95,
         y: 160
       })
@@ -390,7 +392,7 @@ const _Chart = ({
     if (directiveState.jsonSchema) {
       graph.addNode({
         shape: 'decision',
-        label: '入参校验?',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '入参校验?' }),
         x: 95,
         y: 236
       })
@@ -418,7 +420,7 @@ const _Chart = ({
     ) {
       graph.addNode({
         shape: 'rect',
-        label: '结\n\n\n束',
+        label: intl.formatMessage({ description: '流程图', defaultMessage: '结\n\n\n束' }),
         x: 11,
         y: 82,
         width: 21,
@@ -564,39 +566,69 @@ const _Chart = ({
         // x: 108,
         x: 148,
         y: 482,
-        component: <IndexNode index="1" text="订阅" />
+        component: (
+          <IndexNode
+            index="1"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '订阅' })}
+          />
+        )
       },
       {
         shape: 'react-shape',
         x: 132,
         y: 375,
-        component: <IndexNode index="2" text="订阅" />
+        component: (
+          <IndexNode
+            index="2"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '订阅' })}
+          />
+        )
       },
       {
         shape: 'react-shape',
         // x: 181,
         x: 218,
         y: 482,
-        component: <IndexNode index="3" text="推送" />
+        component: (
+          <IndexNode
+            index="3"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '推送' })}
+          />
+        )
       },
       {
         shape: 'react-shape',
         x: 204,
         y: 204,
-        component: <IndexNode index="4" text="推送" />
+        component: (
+          <IndexNode
+            index="4"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '推送' })}
+          />
+        )
       },
       {
         shape: 'react-shape',
         // x: 253,
         x: 287,
         y: 482,
-        component: <IndexNode index="5" text="取消" />
+        component: (
+          <IndexNode
+            index="5"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '取消' })}
+          />
+        )
       },
       {
         shape: 'react-shape',
         x: 272,
         y: 375,
-        component: <IndexNode index="6" text="取消" />
+        component: (
+          <IndexNode
+            index="6"
+            text={intl.formatMessage({ description: '流程图', defaultMessage: '取消' })}
+          />
+        )
       }
     ]
     steps.forEach(step => {
@@ -608,7 +640,10 @@ const _Chart = ({
       shape: 'rect',
       x: 286,
       y: 632,
-      label: '注：2 → 3 → 4 → 5 重复执行',
+      label: intl.formatMessage({
+        description: '流程图',
+        defaultMessage: '注：2 → 3 → 4 → 5 重复执行'
+      }),
       attrs: {
         body: {
           fill: 'none',

@@ -4,6 +4,7 @@ import copy from 'copy-to-clipboard'
 import type { OperationDefinitionNode } from 'graphql'
 import { Kind, OperationTypeNode } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -15,6 +16,7 @@ import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
+  const intl = useIntl()
   const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiID } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
@@ -63,7 +65,11 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const toggleEnable = async (checked: boolean) => {
     try {
       await changeEnable(checked)
-      message.success(checked ? '已开启' : '已关闭')
+      message.success(
+        checked
+          ? intl.formatMessage({ defaultMessage: '已开启' })
+          : intl.formatMessage({ defaultMessage: '已关闭' })
+      )
     } catch (error) {
       //
     }
@@ -93,7 +99,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
           path: `${apiDesc!.path}_Copy`,
           id: apiDesc!.id
         })
-        message.success(`已复制接口 ${apiDesc!.path}_Copy}`)
+        message.success(
+          intl.formatMessage({ defaultMessage: '已复制接口 {path}_Copy}' }, { path: apiDesc!.path })
+        )
         workbenchCtx.onRefreshMenu('api')
       } catch (error) {
         //
@@ -104,7 +112,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const copyLink = async () => {
     let link = apiDesc?.restUrl
     if (!link) {
-      message.error('接口异常')
+      message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
     }
     if (!config.apiHost) {
@@ -155,17 +163,16 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   --data-raw '${JSON.stringify(data)}' \\
   --compressed`
       copy(curl)
-    } else if (operationType === 'subscription') {
     }
 
-    message.success('URL 地址已复制')
+    message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
   }
 
   const save = async () => {
     try {
       const q = onGetQuery() ?? query
       if (await updateContent(q)) {
-        message.success('已保存')
+        message.success(intl.formatMessage({ defaultMessage: '已保存' }))
       }
     } catch (error) {
       //
@@ -218,14 +225,20 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
           </>
         ) : null}
       </Breadcrumb>
-      <Tooltip title="编辑">
+      <Tooltip title={intl.formatMessage({ defaultMessage: '编辑' })}>
         <EditFilled
           className="cursor-pointer text-xs ml-1 !text-gray-500 !hover:text-default"
           onClick={startEdit}
         />
       </Tooltip>
       <div className="flex text-[rgba(175,176,180,0.6)] items-center">
-        <span className="text-xs ml-1"> - {saved ? '已保存' : '未保存'}</span>
+        <span className="text-xs ml-1">
+          {' '}
+          -{' '}
+          {saved
+            ? intl.formatMessage({ defaultMessage: '已保存' })
+            : intl.formatMessage({ defaultMessage: '未保存' })}
+        </span>
         <div className="ml-11" />
         <div className="text-sm relative">
           {method}
@@ -233,21 +246,19 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
             <FlashFilled className="h-1.5 top-0.5 -right-1 text-[#3AE375] w-1.5 absolute" />
           )}
         </div>
-        <Tooltip title="复制接口">
+        <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口' })}>
           <CopyOutlined className="cursor-pointer ml-3 text-[#6F6F6F]" onClick={copyAPI} />
         </Tooltip>
-        <Tooltip title="复制接口 URL 地址">
+        <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口 URL 地址' })}>
           <LinkOutlined className="cursor-pointer ml-2 text-[#6F6F6F]" onClick={copyLink} />
         </Tooltip>
       </div>
       <button className={styles.save} onClick={save}>
         <SaveFilled className={styles.saveIcon} />
-        保存
+        <FormattedMessage defaultMessage="保存" />
       </button>
       <Switch
         className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
-        checkedChildren=""
-        unCheckedChildren=""
         checked={apiDesc?.enable}
         onChange={toggleEnable}
       />

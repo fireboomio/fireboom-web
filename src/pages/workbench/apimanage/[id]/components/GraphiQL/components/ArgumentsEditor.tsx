@@ -2,6 +2,7 @@ import { useEditorContext } from '@graphiql/react'
 import { message, Tooltip } from 'antd'
 import type { VariableDefinitionNode } from 'graphql'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { useDebounceEffect } from '@/hooks/debounce'
 import { parseParameters } from '@/lib/gql-parser'
@@ -28,6 +29,7 @@ interface ArgumentsEditorProps {
 }
 
 const ArgumentsEditor = (props: ArgumentsEditorProps) => {
+  const intl = useIntl()
   const editorContext = useEditorContext()
   const [values, setValues] = useState<Record<string, InputValueType>>({})
   const valuesRef = useRef<Record<string, InputValueType>>({})
@@ -74,8 +76,14 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       getValue() {
         const obj = parsed.reduce<Record<string, any>>((obj, item) => {
           let val = valuesRef.current[item.name]
-          const requiredMsg = `字段 ${item.name} 的参数未提供`
-          const notValidMsg = `字段 ${item.name} 的参数输入错误`
+          const requiredMsg = intl.formatMessage(
+            { defaultMessage: '字段 {name} 的参数未提供' },
+            { name: item.name }
+          )
+          const notValidMsg = intl.formatMessage(
+            { defaultMessage: '字段 {name} 的参数输入错误' },
+            { name: item.name }
+          )
           if (item.isRequired) {
             if (item.isList) {
               if ((val as SingleInputValueType[]).length) {
@@ -170,11 +178,21 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       <table className="min-w-120">
         <thead>
           <tr>
-            <th style={{ width: '15%', maxWidth: '80px' }}>参数</th>
-            <th style={{ width: '20%', maxWidth: '112px' }}>类型</th>
-            <th style={{ width: '56px' }}>必填</th>
-            <th>指令</th>
-            <th style={{ width: hasDirective ? '25%' : '45%', minWidth: '200px' }}>输入值</th>
+            <th style={{ width: '15%', maxWidth: '80px' }}>
+              <FormattedMessage defaultMessage="参数" />
+            </th>
+            <th style={{ width: '20%', maxWidth: '112px' }}>
+              <FormattedMessage defaultMessage="类型" />{' '}
+            </th>
+            <th style={{ width: '56px' }}>
+              <FormattedMessage defaultMessage="必填" />
+            </th>
+            <th>
+              <FormattedMessage defaultMessage="指令" />
+            </th>
+            <th style={{ width: hasDirective ? '25%' : '45%', minWidth: '200px' }}>
+              <FormattedMessage defaultMessage="输入值" />
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -188,7 +206,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                 {arg.isRequired ? (
                   <img src={requiredIcon} alt="required" width={15} height={15} />
                 ) : (
-                  '否'
+                  <FormattedMessage defaultMessage="否" />
                 )}
               </td>
               <td>

@@ -8,6 +8,7 @@ import { message, Tabs } from 'antd'
 import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
@@ -47,6 +48,7 @@ async function fetcher(rec: Record<string, unknown>) {
 }
 
 export default function APIEditorContainer() {
+  const intl = useIntl()
   const params = useParams()
   const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
   const workbenchCtx = useContext(WorkbenchContext)
@@ -89,12 +91,12 @@ export default function APIEditorContainer() {
         destroyInactiveTabPane
         items={[
           {
-            label: '概览',
+            label: intl.formatMessage({ defaultMessage: '概览' }),
             key: '1',
             children: <APIFlowChart id={params.id as string} />
           },
           {
-            label: '设置',
+            label: intl.formatMessage({ defaultMessage: '设置' }),
             key: '2',
             children: params.id ? (
               <ApiConfig operationType={operationType} type="panel" id={Number(params.id)} />
@@ -160,7 +162,7 @@ export default function APIEditorContainer() {
     setIsRefreshing(true)
     await refreshSchema()
     setIsRefreshing(false)
-    message.success('已刷新')
+    message.success(intl.formatMessage({ defaultMessage: '已刷新' }))
   }, [refreshSchema])
 
   // 进入页面时，立刻请求一次graphql schema

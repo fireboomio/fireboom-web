@@ -1,6 +1,7 @@
 import { Tabs } from 'antd'
 import type { ConstDirectiveNode } from 'graphql'
 import { Kind } from 'graphql'
+import { useIntl } from 'react-intl'
 
 import CustomLabel from './CustomLabel'
 import DirectiveDescription from './DirectiveDescription'
@@ -12,6 +13,7 @@ interface ArgumentDirectivePopupProps {
 }
 
 const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePopupProps) => {
+  const intl = useIntl()
   return (
     <div className="bg-white rounded flex shadow">
       <Tabs
@@ -41,7 +43,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@fromClaim"
-                title="从用户信息中提取参数作为输入值"
+                title={intl.formatMessage({ defaultMessage: '从用户信息中提取参数作为输入值' })}
                 code={`query myQuery ($userId: String! @fromClaim(name: USERID)
   $name: String! @fromClaim(name: NAME)
   $email: String! @fromClaim(name: EMAIL)
@@ -72,7 +74,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@jsonSchema"
-                title="入参校验，用于入参校验"
+                title={intl.formatMessage({ defaultMessage: '入参校验，用于入参校验' })}
                 code={`query myQuery ($message: String!
   @jsonSchema(
     title: "Message"
@@ -112,7 +114,9 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@hooksVariable"
-                title="hooks 函数参数，仅用于自定义 hooks 中"
+                title={intl.formatMessage({
+                  defaultMessage: 'hooks 函数参数，仅用于自定义 hooks 中'
+                })}
                 code={`query myQuery ($filter: String! @hooksVariable) {}`}
               />
             )
@@ -133,7 +137,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@injectGeneratedUUID"
-                title="自动注入 UUID，用户无需传参"
+                title={intl.formatMessage({ defaultMessage: '自动注入 UUID，用户无需传参' })}
                 code={`query myQuery ($id: String! @injectGeneratedUUID) {}`}
               />
             )
@@ -161,7 +165,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@injectCurrentDatetime"
-                title="自动注入当前时间，用户无需传参"
+                title={intl.formatMessage({ defaultMessage: '自动注入当前时间，用户无需传参' })}
                 code={`query myQuery ($updatedAt: DateTime! @injectCurrentDateTime(format: UnixDate)) {}`}
               />
             )
@@ -189,7 +193,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@injectEnvironmentVariable"
-                title="自动注入环境变量的值，用户无需传参"
+                title={intl.formatMessage({ defaultMessage: '自动注入环境变量的值，用户无需传参' })}
                 code={`query myQuery ($applicationID: String! @injectEnvironmentVariable(name: "AUTH_APP_ID")) {}`}
               />
             )
@@ -210,7 +214,9 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
             children: (
               <DirectiveDescription
                 name="@internal"
-                title="内部变量，标记某个字段为内部变量，方便后续查询语句中使用"
+                title={intl.formatMessage({
+                  defaultMessage: '内部变量，标记某个字段为内部变量，方便后续查询语句中使用'
+                })}
                 code={`query myQuery ($code: ID!, $capitalAlias: String! @internal) {
   country: countries_country(code: $code) {
     code

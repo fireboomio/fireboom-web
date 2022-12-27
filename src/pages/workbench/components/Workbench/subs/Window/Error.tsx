@@ -1,5 +1,6 @@
 import { Empty } from 'antd'
 import { useContext, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -78,7 +79,9 @@ export default function Error() {
 
   return (
     <div>
-      {!blocks.length && <Empty className="pt-20" description="暂无问题" />}
+      {!blocks.length && (
+        <Empty className="pt-20" description={<FormattedMessage defaultMessage="暂无问题" />} />
+      )}
       {blocks.map((block, index) => (
         <div className={styles.block} key={index}>
           {block.list.map(item => (
@@ -90,39 +93,39 @@ export default function Error() {
                 {block.key === 'datasource' && (
                   <>
                     <span>
-                      ，可
+                      , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
                         onClick={() => navigate(`/workbench/data-source/${item.id}`)}
                       >
-                        前往
+                        <FormattedMessage defaultMessage="前往" />
                       </span>
-                      排查，或
+                      <FormattedMessage defaultMessage="排查, 或" />
                       <span className={styles.action} onClick={() => closeDatasource(item.id)}>
-                        关闭
+                        <FormattedMessage defaultMessage="关闭" />
                       </span>
-                      该数据源
+                      <FormattedMessage defaultMessage="该数据源" />
                     </span>
                   </>
                 )}
                 {block.key === 'api' && (
                   <>
                     <span>
-                      ，可
+                      , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
                         onClick={() => navigate(`/workbench/apimanage/${item.id}`)}
                       >
-                        前往
+                        <FormattedMessage defaultMessage="前往" />
                       </span>
-                      编辑
+                      <FormattedMessage defaultMessage="编辑" />
                       {item.switch && (
                         <>
-                          ，或
+                          , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeAPI(item.id)}>
-                            关闭
+                            <FormattedMessage defaultMessage="关闭" />
                           </span>
-                          该API
+                          <FormattedMessage defaultMessage="该API" />
                         </>
                       )}
                     </span>
@@ -131,21 +134,21 @@ export default function Error() {
                 {block.key === 'auth' && (
                   <>
                     <span>
-                      ，可
+                      , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
                         onClick={() => navigate(`/workbench/auth/${item.id}`)}
                       >
-                        前往
+                        <FormattedMessage defaultMessage="前往" />
                       </span>
-                      编辑
+                      <FormattedMessage defaultMessage="编辑" />
                       {item.switch && (
                         <>
-                          ，或
+                          , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeAuth(item.id)}>
-                            关闭
+                            <FormattedMessage defaultMessage="关闭" />
                           </span>
-                          该验证器
+                          <FormattedMessage defaultMessage="该验证器" />
                         </>
                       )}
                     </span>
@@ -154,21 +157,21 @@ export default function Error() {
                 {block.key === 'storage' && (
                   <>
                     <span>
-                      ，可
+                      , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
                         onClick={() => navigate(`/workbench/storage/${item.id}`)}
                       >
-                        前往
+                        <FormattedMessage defaultMessage="前往" />
                       </span>
-                      编辑
+                      <FormattedMessage defaultMessage="编辑" />
                       {item.switch && (
                         <>
-                          ，或
+                          , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeStorage(item.id)}>
-                            关闭
+                            <FormattedMessage defaultMessage="关闭" />
                           </span>
-                          该对象存储
+                          <FormattedMessage defaultMessage="该对象存储" />
                         </>
                       )}
                     </span>

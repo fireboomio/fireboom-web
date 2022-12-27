@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import type { LogMessage } from '@/interfaces/window'
 import { matchJson } from '@/lib/utils'
+import { intl } from '@/providers/IntlProvider'
 
 import Error from './Error'
 import type { LogAction } from './Log'
@@ -11,8 +12,8 @@ import Log from './Log'
 import RcTab from './RcTab'
 
 const tabs = [
-  { title: '日志', key: '0' },
-  { title: '问题', key: '1' }
+  { title: intl.formatMessage({ defaultMessage: '日志' }), key: '0' },
+  { title: intl.formatMessage({ defaultMessage: '问题' }), key: '1' }
 ]
 interface Props {
   style: CSSProperties
@@ -68,7 +69,7 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
 
   return (
     <div
-      className="bg-[#fff] border-gray-500/50 min-h-80px pb-5 px-7 bottom-36px z-1200  absolute"
+      className="bg-[#fff] border-gray-500/50 min-h-80px px-7 pb-5 bottom-36px z-1200  absolute"
       style={{
         borderTop: '1px solid #EFEFEFFF',
         borderRadius: '12px 12px 0 0',

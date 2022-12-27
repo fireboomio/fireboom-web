@@ -14,17 +14,18 @@ import {
 import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/Iconfont'
 import RoleDiagram from '@/components/RoleDiagram'
 import type { DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
+import { intl } from '@/providers/IntlProvider'
 
 import failIcon from './assets/fail-icon.svg'
 import failPic from './assets/fail-pic.svg'
@@ -43,13 +44,13 @@ interface CRUDBodyProps {
 }
 
 const apiOptions = [
-  { label: '增加', value: API.Create },
-  { label: '删除', value: API.Delete },
-  { label: '更新', value: API.Update },
-  { label: '详情', value: API.Detail },
-  { label: '分页查询', value: API.List },
-  { label: '批量删除', value: API.BatchDelete },
-  { label: '查询全部', value: API.Export }
+  { label: intl.formatMessage({ defaultMessage: '增加' }), value: API.Create },
+  { label: intl.formatMessage({ defaultMessage: '删除' }), value: API.Delete },
+  { label: intl.formatMessage({ defaultMessage: '更新' }), value: API.Update },
+  { label: intl.formatMessage({ defaultMessage: '详情' }), value: API.Detail },
+  { label: intl.formatMessage({ defaultMessage: '分页查询' }), value: API.List },
+  { label: intl.formatMessage({ defaultMessage: '批量删除' }), value: API.BatchDelete },
+  { label: intl.formatMessage({ defaultMessage: '查询全部' }), value: API.Export }
 ]
 
 function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
@@ -145,6 +146,7 @@ function expandForeignField(
 }
 
 export default function CRUDBody(props: CRUDBodyProps) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)
@@ -313,7 +315,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     let apiList = buildApi(values)
     const pathList = apiList.map(item => item.path)
 
-    const hideCheck = message.loading('校验中')
+    const hideCheck = message.loading(intl.formatMessage({ defaultMessage: '校验中' }))
     const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
       '/operateApi/operationByPaths',
       {
@@ -330,7 +332,15 @@ export default function CRUDBody(props: CRUDBodyProps) {
           return (
             <div key={path} className="flex">
               <span className="w-3/5">{path}</span>
-              {pathMap[path] ? <span className="text-[#f21212]">已存在</span> : <span>不存在</span>}
+              {pathMap[path] ? (
+                <span className="text-[#f21212]">
+                  <FormattedMessage defaultMessage="已存在" />
+                </span>
+              ) : (
+                <span>
+                  <FormattedMessage defaultMessage="不存在" />
+                </span>
+              )}
             </div>
           )
         })
@@ -344,7 +354,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     if (apiList.length === 0) {
       return
     }
-    const hide = message.loading('正在生成')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '正在生成' }))
 
     // 处理登录鉴权
     let result
@@ -368,7 +378,16 @@ export default function CRUDBody(props: CRUDBodyProps) {
           className="m-auto mt-30 left-3 block relative"
         />
         <div className="font-500 mt-8 text-center text-default">
-          {result ? `本次成功生成${result.filter(x => !x.Code).length}条API` : '生成失败'}
+          {result ? (
+            <FormattedMessage
+              defaultMessage="本次成功生成{count}条API"
+              values={{
+                count: result.filter(x => !x.Code).length
+              }}
+            />
+          ) : (
+            '生成失败'
+          )}
         </div>
         {result && (
           <div className="bg-[#FAFAFC] mx-auto rounded-2 mt-6 py-4 w-140">
@@ -380,7 +399,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
                   className="text-default ml-1.5 text-[#649FFF]"
                   onClick={() => navigate(`/workbench/apimanage/${row.ID}`)}
                 >
-                  查看
+                  <FormattedMessage defaultMessage="查看" />
                 </a>
               </div>
             ))}
@@ -474,7 +493,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
   const columns = [
     {
-      title: '字段',
+      title: intl.formatMessage({ defaultMessage: '字段' }),
       dataIndex: 'name',
       render: (text: string) => (
         <Popover content={text}>
@@ -482,9 +501,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
         </Popover>
       )
     },
-    { title: '类型', dataIndex: 'type' },
+    { title: intl.formatMessage({ defaultMessage: '类型' }), dataIndex: 'type' },
     {
-      title: '列表',
+      title: intl.formatMessage({ defaultMessage: '列表' }),
       dataIndex: 'list',
       filterKey: 'list',
       render: (text: any, record: any) => {
@@ -500,7 +519,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '详情',
+      title: intl.formatMessage({ defaultMessage: '详情' }),
       dataIndex: 'detail',
       filterKey: 'detail',
       render: (text: any, record: any) => {
@@ -516,7 +535,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '过滤',
+      title: intl.formatMessage({ defaultMessage: '过滤' }),
       dataIndex: 'filter',
       filterKey: 'filter',
       render: (text: any, record: any) => {
@@ -534,7 +553,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '排序',
+      title: intl.formatMessage({ defaultMessage: '排序' }),
       dataIndex: 'sort',
       filterKey: 'sort',
       render: (text: any, record: any) => {
@@ -552,7 +571,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '默认排序',
+      title: intl.formatMessage({ defaultMessage: '默认排序' }),
       dataIndex: 'sortDirection',
       filterKey: 'sort',
       render: (text: any, record: any) => {
@@ -576,7 +595,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '创建',
+      title: intl.formatMessage({ defaultMessage: '创建' }),
       dataIndex: 'create',
       filterKey: 'create',
       render: (text: any, record: any) => {
@@ -587,9 +606,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
               // 生成时，如果是主键，必须是隐藏，如果是必填，必须是必填
               disabled={table?.[record.tableId]?.createDisableFlag}
               options={[
-                { label: '无', value: KeyType.Hidden },
-                { label: '选填', value: KeyType.Optional },
-                { label: '必填', value: KeyType.Required }
+                { label: intl.formatMessage({ defaultMessage: '无' }), value: KeyType.Hidden },
+                { label: intl.formatMessage({ defaultMessage: '选填' }), value: KeyType.Optional },
+                { label: intl.formatMessage({ defaultMessage: '必填' }), value: KeyType.Required }
               ]}
               onChange={value => {
                 setTableFiled(record.tableId, 'create', value)
@@ -600,7 +619,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       }
     },
     {
-      title: '更新',
+      title: intl.formatMessage({ defaultMessage: '更新' }),
       dataIndex: 'update',
       filterKey: 'update',
       render: (text: any, record: any) => {
@@ -610,9 +629,9 @@ export default function CRUDBody(props: CRUDBodyProps) {
               disabled={table?.[record.tableId]?.updateDisableFlag}
               value={table?.[record.tableId]?.update ?? 'choose'}
               options={[
-                { label: '无', value: KeyType.Hidden },
-                { label: '选填', value: KeyType.Optional },
-                { label: '必填', value: KeyType.Required }
+                { label: intl.formatMessage({ defaultMessage: '无' }), value: KeyType.Hidden },
+                { label: intl.formatMessage({ defaultMessage: '选填' }), value: KeyType.Optional },
+                { label: intl.formatMessage({ defaultMessage: '必填' }), value: KeyType.Required }
               ]}
               onChange={value => {
                 setTableFiled(record.tableId, 'update', value)
@@ -635,21 +654,25 @@ export default function CRUDBody(props: CRUDBodyProps) {
       >
         <Form.Item
           name="primaryKey"
-          label="主键选择"
-          rules={[{ required: true, message: '请选择主键' }]}
+          label={intl.formatMessage({ defaultMessage: '主键选择' })}
+          rules={[
+            { required: true, message: intl.formatMessage({ defaultMessage: '请选择主键' }) }
+          ]}
         >
           <Select options={field} />
         </Form.Item>
-        <Form.Item name="apiList" label="生成接口">
+        <Form.Item name="apiList" label={intl.formatMessage({ defaultMessage: '生成接口' })}>
           <Checkbox.Group onChange={onApiListChange} options={apiOptions} />
         </Form.Item>
         <Form.Item
           name="prefix"
-          label="API前缀"
+          label={intl.formatMessage({ defaultMessage: 'API前缀' })}
           rules={[
             {
               pattern: /^[A-Z][a-zA-Z0-9_]*$/,
-              message: '请输入字母数字或下划线组合，以大写字母开头'
+              message: intl.formatMessage({
+                defaultMessage: '请输入字母数字或下划线组合，以大写字母开头'
+              })
             }
           ]}
         >
@@ -668,16 +691,29 @@ export default function CRUDBody(props: CRUDBodyProps) {
           )}
           className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
         >
-          <Collapse.Panel header="更多设置" key="1" forceRender>
+          <Collapse.Panel
+            header={intl.formatMessage({ defaultMessage: '更多设置' })}
+            key="1"
+            forceRender
+          >
             <div className={styles.authContainer}>
-              <Form.Item name="authApiList" label="接口角色">
+              <Form.Item
+                name="authApiList"
+                label={intl.formatMessage({ defaultMessage: '接口角色' })}
+              >
                 <Checkbox.Group options={apiOptions} />
               </Form.Item>
-              <Form.Item name="auth" label="登录鉴权">
+              <Form.Item name="auth" label={intl.formatMessage({ defaultMessage: '登录鉴权' })}>
                 <Radio.Group>
-                  <Radio value={-1}>默认</Radio>
-                  <Radio value={1}>开启</Radio>
-                  <Radio value={0}>关闭</Radio>
+                  <Radio value={-1}>
+                    <FormattedMessage defaultMessage="默认" />
+                  </Radio>
+                  <Radio value={1}>
+                    <FormattedMessage defaultMessage="开启" />
+                  </Radio>
+                  <Radio value={0}>
+                    <FormattedMessage defaultMessage="关闭" />
+                  </Radio>
                 </Radio.Group>
               </Form.Item>
               <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
@@ -721,12 +757,12 @@ export default function CRUDBody(props: CRUDBodyProps) {
             </div>
             <Form.Item
               name="alias"
-              label="别名"
+              label={intl.formatMessage({ defaultMessage: '别名' })}
               rules={[
                 {
                   required: true,
                   pattern: /^[a-zA-Z0-9_]*$/,
-                  message: '请输入字母数字或下划线组合'
+                  message: intl.formatMessage({ defaultMessage: '请输入字母数字或下划线组合' })
                 }
               ]}
             >
@@ -758,10 +794,10 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 form.resetFields()
               }}
             >
-              重置
+              <FormattedMessage defaultMessage="重置" />
             </Button>
             <Button className="mr-4 btn-save" htmlType="submit">
-              创建
+              <FormattedMessage defaultMessage="创建" />
             </Button>
           </>
         </Form.Item>
@@ -775,7 +811,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       </Form>
       <Modal
         open={!!confirmModal}
-        title="批量新建预览"
+        title={intl.formatMessage({ defaultMessage: '批量新建预览' })}
         onCancel={() => {
           setConfirmModal(undefined)
         }}
@@ -788,7 +824,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 confirmResolve.current?.(0)
               }}
             >
-              取消
+              <FormattedMessage defaultMessage="取消" />
             </Button>
             {existPathFlag && (
               <Button
@@ -798,7 +834,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
                   confirmResolve.current?.(1)
                 }}
               >
-                跳过已有API
+                <FormattedMessage defaultMessage="跳过已有API" />
               </Button>
             )}
             <Button
@@ -808,7 +844,11 @@ export default function CRUDBody(props: CRUDBodyProps) {
                 confirmResolve.current?.(2)
               }}
             >
-              {existPathFlag ? '全部覆盖' : '全部创建'}
+              {existPathFlag ? (
+                <FormattedMessage defaultMessage="全部覆盖" />
+              ) : (
+                <FormattedMessage defaultMessage="全部创建" />
+              )}
             </Button>
           </div>
         }

@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import { Empty } from 'antd'
+import { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import type { DMFModel } from '@/interfaces/datasource'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
@@ -7,8 +9,6 @@ import type { Datasource } from '@/pages/workbench/apimanage/crud/interface'
 import Body from './body'
 import styles from './index.module.less'
 import Sider from './sider'
-import { Empty } from 'antd'
-import { FormattedMessage } from 'react-intl'
 
 export default function CRUDIndex() {
   const [currentModel, setCurrentModel] = useState<DMFModel>()
@@ -23,9 +23,9 @@ export default function CRUDIndex() {
         <div className={styles.header}>
           <div className={styles.back} onClick={() => history.go(-1)}>
             <img className="mr-1" width={12} height={7} src="/assets/back.svg" alt="返回" />
-            返回上一级
+            <FormattedMessage defaultMessage="返回上一级" />
           </div>
-          CRUD生成器
+          <FormattedMessage defaultMessage="CRUD生成器" />
         </div>
         <div className="flex flex-1 min-h-0">
           <Sider
@@ -42,7 +42,7 @@ export default function CRUDIndex() {
             }}
           />
           {isEmpty ? (
-            <div className="flex-1 flex justify-center pt-25">
+            <div className="flex flex-1 pt-25 justify-center">
               <Empty
                 description={
                   <FormattedMessage

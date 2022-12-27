@@ -10,16 +10,18 @@ import { Kind, print } from 'graphql'
 import type { MutableRefObject } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { intl } from '@/providers/IntlProvider'
+
 import { GraphQLExplorerContext } from './context'
 import ExplorerFilter from './ExplorerFilter'
 import ResultField from './ResultField'
 import { arraySort, convertMapToArray } from './utils'
 
 const filters = [
-  { label: '全部', value: '' },
-  { label: '查询', value: 'query' },
-  { label: '变更', value: 'mutation' },
-  { label: '订阅', value: 'subscription' }
+  { label: intl.formatMessage({ defaultMessage: '全部' }), value: '' },
+  { label: intl.formatMessage({ defaultMessage: '查询' }), value: 'query' },
+  { label: intl.formatMessage({ defaultMessage: '变更' }), value: 'mutation' },
+  { label: intl.formatMessage({ defaultMessage: '订阅' }), value: 'subscription' }
 ] as const
 
 const values = filters.map(item => item.value)

@@ -1,5 +1,6 @@
 import { Drawer } from 'antd'
 import { useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import IdeContainer from '@/components/Ide'
 
@@ -33,7 +34,7 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
         <div className="flex items-center">
           <div className={styles.back} onClick={onClose}>
             <img src={backArrow} alt="返回" className="mr-1" />
-            返回文件
+            <FormattedMessage defaultMessage="返回文件" />
           </div>
           <div className={styles.split} />
           <div className={styles.title}>{title}</div>

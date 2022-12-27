@@ -1,14 +1,19 @@
 /* eslint-disable react/prop-types */
-import { Input, message, Radio, Select, Space, Tag } from 'antd'
-import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { message, Radio, Space, Tag } from 'antd'
+import { throttle } from 'lodash'
+import { Suspense, useCallback, useContext, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
+import UrlInput from '@/components/UrlInput'
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { debounce, throttle } from 'lodash'
+import { intl } from '@/providers/IntlProvider'
 
 import styles from './index.module.less'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -26,15 +31,15 @@ interface Props {
   toggleWindow: (defaultTa: string) => void
 }
 const statusMap = {
-  [ServiceStatus.Compiling]: '编译中',
-  [ServiceStatus.Starting]: '启动中',
-  [ServiceStatus.Running]: '已启动',
-  [ServiceStatus.CompileFail]: '编译失败',
-  [ServiceStatus.StartFail]: '启动失败'
+  [ServiceStatus.Compiling]: intl.formatMessage({ defaultMessage: '编译中' }),
+  [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
+  [ServiceStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+  [ServiceStatus.CompileFail]: intl.formatMessage({ defaultMessage: '编译失败' }),
+  [ServiceStatus.StartFail]: intl.formatMessage({ defaultMessage: '启动失败' })
 }
 const hookStatusMap = {
-  [HookStatus.Running]: '已启动',
-  [HookStatus.Stopped]: '未启动'
+  [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+  [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
 }
 
 // eslint-disable-next-line react/prop-types
@@ -48,6 +53,7 @@ const StatusBar: React.FC<Props> = ({
   hookStatus,
   toggleWindow
 }) => {
+  const intl = useIntl()
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{
@@ -123,7 +129,9 @@ const StatusBar: React.FC<Props> = ({
             }}
             className={styles.errLabel + ' mr-2 cursor-pointer'}
           >
-            <span>日志</span>
+            <span>
+              <FormattedMessage defaultMessage="日志" />
+            </span>
           </span>
           <span
             onClick={() => {
@@ -140,14 +148,20 @@ const StatusBar: React.FC<Props> = ({
               <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
             </span>
           </span>
-          <span className="ml-8">引擎状态：</span>
+          <span className="ml-8">
+            {' '}
+            <FormattedMessage defaultMessage="引擎状态" />:{' '}
+          </span>
           <span className={styles.errLabel}>
             <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
             <span className="ml-1 text-[#50C772]">
               {statusMap[engineStatus as ServiceStatus] ?? ''}
             </span>
           </span>
-          <span className="ml-4.5">钩子状态：</span>
+          <span className="ml-4.5">
+            {' '}
+            <FormattedMessage defaultMessage="钩子状态" />:{' '}
+          </span>
           <span className={styles.errLabel + ' cursor-pointer'}>
             <div
               className="flex h-full items-center"
@@ -172,7 +186,7 @@ const StatusBar: React.FC<Props> = ({
               >
                 {hookStatusMap[hookStatus as HookStatus] ?? ''}
               </span>
-              <div className="h-full flex items-center pl-1">
+              <div className="flex h-full pl-1 items-center">
                 <img
                   src="assets/refresh.svg"
                   onClick={e => {
@@ -211,7 +225,9 @@ const StatusBar: React.FC<Props> = ({
                     onChange={e => {
                       setHookSwitch(e.target.value)
                       if (e.target.value) {
-                        void message.info('请手动启动钩子，并保证配置正确')
+                        message.info(
+                          intl.formatMessage({ defaultMessage: '请手动启动钩子，并保证配置正确' })
+                        )
                         saveHookServerURL(hooksServerURL ?? '')
                       } else {
                         saveHookServerURL('')
@@ -224,25 +240,25 @@ const StatusBar: React.FC<Props> = ({
                         WebContainer
                         {hookOptionStatus?.WebContainer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
-                            已启动
+                            <FormattedMessage defaultMessage="已启动" />
                           </Tag>
                         )}
                         {hookOptionStatus?.WebContainer === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
-                            未启动
+                            <FormattedMessage defaultMessage="未启动" />
                           </Tag>
                         )}
                       </Radio>
                       <Radio value={true}>
-                        手动设置
+                        <FormattedMessage defaultMessage="手动设置" />
                         {hookOptionStatus?.Customer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
-                            已启动
+                            <FormattedMessage defaultMessage="已启动" />
                           </Tag>
                         )}
                         {hookOptionStatus?.Customer === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
-                            未启动
+                            <FormattedMessage defaultMessage="未启动" />
                           </Tag>
                         )}
                       </Radio>
@@ -265,7 +281,9 @@ const StatusBar: React.FC<Props> = ({
               </>
             )}
           </span>
-          <span className="ml-4.5">编译时间：</span>
+          <span className="ml-4.5">
+            <FormattedMessage defaultMessage="编译时间" />:{' '}
+          </span>
 
           <span className={styles.errLabel}>
             <span className="ml-1 text-[#649FFF]">{compileTime}</span>

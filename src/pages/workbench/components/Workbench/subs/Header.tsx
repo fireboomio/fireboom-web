@@ -1,11 +1,12 @@
 import { message, Modal, Popover, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { intl } from '@/providers/IntlProvider'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
@@ -16,23 +17,23 @@ import styles from './header.module.less'
 const hotkeys = [
   {
     keys: ['alt/^', 'h'],
-    desc: '打开快捷键提示'
+    desc: intl.formatMessage({ defaultMessage: '打开快捷键提示' })
   },
   {
     keys: ['alt/^', 'n'],
-    desc: '新建APi/新建模型'
+    desc: intl.formatMessage({ defaultMessage: '新建APi/新建模型' })
   },
   {
     keys: ['alt/^', 'b'],
-    desc: '批量新建API'
+    desc: intl.formatMessage({ defaultMessage: '批量新建API' })
   },
   {
     keys: ['alt/^', 'c'],
-    desc: '编译'
+    desc: intl.formatMessage({ defaultMessage: '编译' })
   },
   {
     keys: ['alt/^', 'm'],
-    desc: '切换API设计和模型设计'
+    desc: intl.formatMessage({ defaultMessage: '切换API设计和模型设计' })
   },
   // {
   //   keys: ['alt/^', '+'],
@@ -44,27 +45,30 @@ const hotkeys = [
   // },
   {
     keys: ['alt/^', 'r'],
-    desc: '运行当前Operation'
+    desc: intl.formatMessage({ defaultMessage: '运行当前Operation' })
   },
   {
     keys: ['alt/^', 't'],
-    desc: '模型设计页切换设计/数据视图'
+    desc: intl.formatMessage({ defaultMessage: '模型设计页切换设计/数据视图' })
   },
   {
     keys: ['alt/^', 'shift', 'd'],
-    desc: '创建当前API的拷贝'
+    desc: intl.formatMessage({ defaultMessage: '创建当前API的拷贝' })
   },
   {
     keys: ['alt/^', 'shift', 'c'],
-    desc: '复制当前API请求链接'
+    desc: intl.formatMessage({ defaultMessage: '复制当前API请求链接' })
   },
   {
     keys: ['alt/^', 'shift', 't'],
-    desc: 'API编辑页切换Json/表单模式，模型设计页切换设计/代码模式'
+    desc: intl.formatMessage({
+      defaultMessage: 'API编辑页切换Json/表单模式，模型设计页切换设计/代码模式'
+    })
   }
 ]
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isFullscreen } = useContext(WorkbenchContext)
@@ -78,19 +82,16 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     if (compiling) {
       return
     }
-    void requests.get('/wdg/reStart').then(() => void message.success('开始编译...'))
+    void requests
+      .get('/wdg/reStart')
+      .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译...' })))
   }
-
-  // TODO
-  const generatePrismaSDK = useCallback(() => {
-    // requests.post('/')
-  }, [])
 
   const showHotkey = useCallback(() => {
     Modal.info({
       width: '800px',
       icon: null,
-      title: '页面快捷键',
+      title: intl.formatMessage({ defaultMessage: '页面快捷键' }),
       content: (
         <div className="flex flex-wrap">
           {hotkeys.map(keymap => (
@@ -151,7 +152,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
                     href="/api/v1/file/postToSwag"
                     download="Swagger.json"
                   >
-                    下载 swagger
+                    <FormattedMessage defaultMessage="下载 swagger" />
                   </a>
                   <br />
                   <a
@@ -160,7 +161,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
                     href="/api/v1/file/postToSwag"
                     download="OpenAPI"
                   >
-                    下载 OpenAPI
+                    <FormattedMessage defaultMessage="下载 OpenAPI" />
                   </a>
                   <br />
                   <a
@@ -169,7 +170,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
                     href="/api/v1/operateApi/sdk"
                     download="SDK"
                   >
-                    下载 React SDK
+                    <FormattedMessage defaultMessage="下载 React SDK" />
                   </a>
                 </div>
               }
@@ -230,7 +231,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           className={styles.helpIcon}
           onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
         />
-        <Tooltip title="快捷键">
+        <Tooltip title={intl.formatMessage({ defaultMessage: '快捷键' })}>
           <svg
             className="cursor-pointer ml-4"
             onClick={showHotkey}
