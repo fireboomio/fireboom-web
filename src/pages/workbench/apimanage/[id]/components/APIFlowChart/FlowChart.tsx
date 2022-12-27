@@ -606,7 +606,39 @@ const _Chart = ({
         y
       })
       arrowNodes.push(argsInjection)
+
       // 参数注入指令集
+      const directives: Node.Metadata[] = []
+      if (directiveState.injectCurrentDatetime) {
+        directives.push({
+          shape: 'directive',
+          label: '@CurrentDatetime',
+          width: 110,
+          height: 16,
+          x: 290,
+          y: y + 40
+        })
+      }
+      if (directiveState.injectEnvironmentVariable) {
+        directives.push({
+          shape: 'directive',
+          label: '@EnvironmentVariable',
+          width: 128,
+          height: 16,
+          x: 280,
+          y: y - 40
+        })
+      }
+      if (directiveState.injectGeneratedUUID) {
+        directives.push({
+          shape: 'directive',
+          label: '@GeneratedUUID',
+          width: 110,
+          height: 16,
+          x: 290,
+          y: y
+        })
+      }
       const injectDirective = new ActionGroup(
         {
           shape: 'directiveTrigger',
@@ -614,32 +646,7 @@ const _Chart = ({
           x: 258,
           y: y
         },
-        [
-          {
-            shape: 'directive',
-            label: '@EnvironmentVariable',
-            width: 128,
-            height: 16,
-            x: 280,
-            y: y - 40
-          },
-          {
-            shape: 'directive',
-            label: '@GeneratedUUID',
-            width: 110,
-            height: 16,
-            x: 290,
-            y: y
-          },
-          {
-            shape: 'directive',
-            label: '@CurrentDatetime',
-            width: 110,
-            height: 16,
-            x: 290,
-            y: y + 40
-          }
-        ],
+        directives,
         'linear'
       )
       directiveNodes.push(injectDirective)
@@ -1144,13 +1151,6 @@ const _Chart = ({
 
     return () => {
       console.log('dispose FlowChart')
-      graph.dispose()
-    }
-  }, [directiveState, hookState, globalHookState, apiSetting, onEditHook])
-
-  return (
-    <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">
-      <div className="flex-1 min-h-175 min-w-102" ref={containerRef} />
     </div>
   )
 }
