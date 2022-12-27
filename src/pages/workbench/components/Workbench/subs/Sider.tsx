@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from 'react'
+import React, { Suspense, useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import ModelPannel from '@/pages/workbench/modeling/components/pannel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import ApiPanel from './panel/ApiPanel'
 import CommonPanel from './panel/CommonPanel'
 import styles from './Sider.module.less'
 
+const ModelPannel = React.lazy(() => import('@/pages/workbench/modeling/components/pannel'))
 const tapPathMap: Record<string, string> = {
   api: '/workbench',
   data: '/workbench/modeling'
@@ -93,16 +93,18 @@ export default function Sider() {
         </div>
       ) : null}
       {tab === 'data' && panel ? (
-        <ModelPannel
-          setShowType={setShowType}
-          changeToER={() => setShowType('erDiagram')}
-          addNewModel={() => setShowType('newModel')}
-          addNewEnum={() => setShowType('newEnum')}
-          sourceOptions={dataSources}
-          onChangeSource={dbSourceId => handleChangeSource(dbSourceId)}
-          onClickEntity={handleClickEntity}
-          onToggleDesigner={handleToggleDesigner}
-        />
+        <Suspense>
+          <ModelPannel
+            setShowType={setShowType}
+            changeToER={() => setShowType('erDiagram')}
+            addNewModel={() => setShowType('newModel')}
+            addNewEnum={() => setShowType('newEnum')}
+            sourceOptions={dataSources}
+            onChangeSource={dbSourceId => handleChangeSource(dbSourceId)}
+            onClickEntity={handleClickEntity}
+            onToggleDesigner={handleToggleDesigner}
+          />
+        </Suspense>
       ) : null}
     </div>
   )

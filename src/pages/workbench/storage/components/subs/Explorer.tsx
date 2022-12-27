@@ -18,7 +18,8 @@ import {
   Popconfirm,
   Popover,
   Tooltip,
-  Upload
+  Upload,
+  Image
 } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef } from 'react'
@@ -524,17 +525,17 @@ export default function StorageExplorer({ bucketId }: Props) {
     }
     const type = fileType(file?.name ?? '')
     if (file.isDir) {
-      return <img width={200} height={200} src={iconFold} alt="文件夹" />
+      return <img width={100} height={100} src={iconFold} alt="文件夹" />
     } else if (type === 'pic') {
-      return <img width={200} height={200} src={target?.url ?? ''} alt={target?.value} />
+      return <Image width={100} height={100} src={target?.url ?? ''} alt={target?.value} />
     } else if (type === 'video') {
-      return <video controls width={200} height={200} src={target?.url ?? ''} />
+      return <video controls width={100} height={100} src={target?.url ?? ''} />
     } else {
       return (
         <img
           src={FILE_ICON[fileType(target?.value as string)]}
-          width={200}
-          height={200}
+          width={100}
+          height={100}
           alt={target?.value}
         />
       )

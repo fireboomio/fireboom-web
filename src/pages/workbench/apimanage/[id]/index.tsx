@@ -240,7 +240,9 @@ export default function APIEditorContainer() {
             </div>
           </div>
           {editor}
-          <div className="h-full w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
+          {!workbenchCtx.isFullscreen && (
+            <div className="h-full w-102 overflow-x-hidden overflow-y-auto">{tabs}</div>
+          )}
         </div>
       </div>
     </>

@@ -9,7 +9,7 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
-import { lazy, useContext, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -359,7 +359,7 @@ const GraphiQLToolbar = () => {
       </Dropdown>
       <Dropdown
         open={seqOpen}
-        overlay={seqOpen ? <SequenceDiagram /> : <></>}
+        overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
         trigger={['click']}
         placement="bottomRight"
         onOpenChange={onSeqOpenChange}

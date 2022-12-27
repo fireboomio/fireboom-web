@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { Suspense, useContext } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -11,7 +11,9 @@ export default function WorkbenchPage() {
   }
   return (
     <Workbench>
-      <Outlet />
+      <Suspense>
+        <Outlet />
+      </Suspense>
     </Workbench>
   )
 }

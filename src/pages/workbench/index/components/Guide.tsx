@@ -10,7 +10,7 @@ interface Props {
   handleToggleDesigner: (rightType: string) => void
 }
 
-export function Guide({ handleToggleDesigner }: Props) {
+export default function Guide({ handleToggleDesigner }: Props) {
   const navigate = useNavigate()
   const [storageId, setStorageId] = useState<number>()
   useEffect(() => {

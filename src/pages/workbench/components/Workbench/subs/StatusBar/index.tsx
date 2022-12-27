@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import { message, Radio, Space, Tag } from 'antd'
 import { throttle } from 'lodash'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import UrlInput from '@/components/UrlInput'
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -16,6 +15,7 @@ import { intl } from '@/providers/IntlProvider'
 
 import styles from './index.module.less'
 
+const UrlInput = React.lazy(() => import('@/components/UrlInput'))
 interface Props {
   className?: string
   env?: string
@@ -260,17 +260,19 @@ const StatusBar: React.FC<Props> = ({
                       </Radio>
                     </Space>
                   </Radio.Group>
-                  <UrlInput
-                    selectClassName="!z-13000"
-                    value={hooksServerURL}
-                    onChange={val => {
-                      if (hookSwitch) {
-                        saveHookServerURL(val)
-                      }
-                      setHooksServerURL(val)
-                      localStorage.setItem('hooksServerURL', val)
-                    }}
-                  />
+                  <Suspense>
+                    <UrlInput
+                      selectClassName="!z-13000"
+                      value={hooksServerURL}
+                      onChange={val => {
+                        if (hookSwitch) {
+                          saveHookServerURL(val)
+                        }
+                        setHooksServerURL(val)
+                        localStorage.setItem('hooksServerURL', val)
+                      }}
+                    />
+                  </Suspense>
                 </div>
               </>
             )}

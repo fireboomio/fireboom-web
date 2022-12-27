@@ -1,5 +1,5 @@
 import { Layout as ALayout, Modal } from 'antd'
-import type { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
@@ -17,14 +17,16 @@ import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import Window from '@/pages/workbench/components/Workbench/subs/Window'
-import ModelingWrapper from '@/pages/workbench/modeling/components/modelingWrapper'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
 import Sider from './subs/Sider'
 import StatusBar from './subs/StatusBar'
+import React from 'react'
 
+const ModelingWrapper = React.lazy(() => import('@/pages/workbench/modeling/components/modelingWrapper'))
+
+const Window = React.lazy(() => import('@/pages/workbench/components/Workbench/subs/Window'))
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
 interface BarOnce {
@@ -40,6 +42,7 @@ export default function Index(props: PropsWithChildren) {
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
+  const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
   const prevStatus = useRef<any>()
@@ -140,13 +143,18 @@ export default function Index(props: PropsWithChildren) {
 
   const body = (
     <ALayout className={`h-100vh ${styles.workbench}`}>
-      <AHeader className={styles.header}>
-        <Header onToggleSider={() => setHideSider(!hideSider)} engineStatus={info?.engineStatus} />
-      </AHeader>
+      {!fullScreen && (
+        <AHeader className={styles.header}>
+          <Header
+            onToggleSider={() => setHideSider(!hideSider)}
+            engineStatus={info?.engineStatus}
+          />
+        </AHeader>
+      )}
       <ALayout>
         <ASider
           width={230}
-          style={{ marginLeft: hideSider ? -230 : 0 }}
+          style={{ marginLeft: hideSider || fullScreen ? -230 : 0 }}
           theme="light"
           className={styles.sider}
         >
@@ -155,35 +163,39 @@ export default function Index(props: PropsWithChildren) {
         <ALayout className="relative">
           <AContent className="bg-[#FBFBFB]">{props.children}</AContent>
           {showWindow ? (
-            <Window
-              style={{ left: 0, right: 0, bottom: 0 }}
-              toggleWindow={() => setShowWindow(!showWindow)}
-              defaultTab={defaultWindowTab}
-            />
+            <Suspense>
+              <Window
+                style={{ left: 0, right: 0, bottom: 0 }}
+                toggleWindow={() => setShowWindow(!showWindow)}
+                defaultTab={defaultWindowTab}
+              />
+            </Suspense>
           ) : (
             <></>
           )}
         </ALayout>
       </ALayout>
-      <AFooter className={styles.footer}>
-        <StatusBar
-          version={version}
-          env={env}
-          errorInfo={info?.errorInfo}
-          startTime={info?.startTime}
-          engineStatus={info?.engineStatus}
-          hookStatus={info?.hookStatus}
-          toggleWindow={(defaultTab: string) => {
-            setDefaultWindowTab(defaultTab)
-            setShowWindow(!showWindow)
-          }}
-        />
-      </AFooter>
+      {!fullScreen && (
+        <AFooter className={styles.footer}>
+          <StatusBar
+            version={version}
+            env={env}
+            errorInfo={info?.errorInfo}
+            startTime={info?.startTime}
+            engineStatus={info?.engineStatus}
+            hookStatus={info?.hookStatus}
+            toggleWindow={(defaultTab: string) => {
+              setDefaultWindowTab(defaultTab)
+              setShowWindow(!showWindow)
+            }}
+          />
+        </AFooter>
+      )}
     </ALayout>
   )
   const location = useLocation()
   if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
-    return <ModelingWrapper>{body}</ModelingWrapper>
+    return <Suspense><ModelingWrapper>{body}</ModelingWrapper></Suspense>
   } else {
     return (
       <WorkbenchContext.Provider
@@ -200,8 +212,10 @@ export default function Index(props: PropsWithChildren) {
           editFlag,
           markEdit,
           navCheck,
-          setFullscreen: setHideSider,
-          isFullscreen: hideSider
+          setFullscreen: setFullScreen,
+          isFullscreen: fullScreen,
+          setHideSide: setHideSider,
+          isHideSide: hideSider
           // treeNode: []
         }}
       >
