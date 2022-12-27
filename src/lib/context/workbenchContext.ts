@@ -31,6 +31,8 @@ export interface WorkbenchContextType {
   navCheck: () => Promise<boolean> // 跳转前检查是否有编辑内容，如果有则提示
   setFullscreen: (flag: boolean) => void // 设置全屏模式
   isFullscreen: boolean // 当前是否全屏模式
+  setHideSide: (flag: boolean) => void // 设置全屏模式
+  isHideSide: boolean // 当前是否全屏模式
 }
 
 /**

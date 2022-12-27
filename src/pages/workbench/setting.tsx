@@ -10,12 +10,12 @@ import Pannel from './setting/components/Pannel'
 
 export default function Setting() {
   const location = useLocation()
-  const { setFullscreen } = useContext(WorkbenchContext)
+  const { setHideSide } = useContext(WorkbenchContext)
   const navigate = useNavigate()
 
   // 进入设置页面时，自动全屏
   useEffect(() => {
-    setFullscreen(true)
+    setHideSide(true)
   }, [])
 
   // TODO: need refine

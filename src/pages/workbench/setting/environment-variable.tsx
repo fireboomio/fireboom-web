@@ -28,6 +28,7 @@ export default function SettingMainEnvironmentVariable() {
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
+  const [showMap, setShowMap] = useImmer<Record<string, boolean>>({})
   const [isVariableVisible, setIsVariableVisible] = useImmer(false)
   const [isProEnvVisible, setIsProEnvVisible] = useImmer(false)
   const [disabled, setDisabled] = useImmer(true)
@@ -107,7 +108,41 @@ export default function SettingMainEnvironmentVariable() {
       title: '变量值',
       dataIndex: 'devEnv',
       key: 'devEnv',
-      width: 200
+      width: 200,
+      render: (text, record) => {
+        console.log(record)
+        return (
+          <span
+            onClick={() =>
+              setShowMap(showMap => {
+                showMap[record.key] = !showMap[record.key]
+              })
+            }
+          >
+            {showMap[record.key] ? (
+              <div>
+                {text}
+                <img
+                  alt="xiaoyanjing-chakan"
+                  src="assets/iconfont/xiaoyanjing-chakan.svg"
+                  style={{ height: '1em', width: '1em' }}
+                  className="ml-6"
+                />
+              </div>
+            ) : (
+              <div>
+                <span>**************</span>
+                <img
+                  alt="xiaoyanjing-yincang"
+                  src="assets/iconfont/xiaoyanjing-yincang.svg"
+                  style={{ height: '1em', width: '1em' }}
+                  className="ml-6"
+                />
+              </div>
+            )}
+          </span>
+        )
+      }
     },
     {
       title: '操作',
@@ -115,13 +150,16 @@ export default function SettingMainEnvironmentVariable() {
       width: 200,
       render: (_, { id, key, devEnv, proEnv, oldKey }) => (
         <div>
-          <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}}
-               onClick={() => {
+          <img
+            alt="zhongmingming"
+            src="assets/iconfont/zhongmingming.svg"
+            style={{ height: '1em', width: '1em' }}
+            onClick={() => {
               setIsVariableVisible(true)
               form.setFieldsValue({ key, devEnv, proEnv, oldKey })
               setID(id)
             }}
-               className="mr-3"
+            className="mr-3"
           />
           <Popconfirm
             title="确定要删除?"
@@ -137,7 +175,12 @@ export default function SettingMainEnvironmentVariable() {
               e.stopPropagation()
             }}
           >
-            <img alt="shanchu" src="assets/iconfont/shanchu.svg" style={{height:'1em', width: '1em'}} onClick={e => e.stopPropagation()} />
+            <img
+              alt="shanchu"
+              src="assets/iconfont/shanchu.svg"
+              style={{ height: '1em', width: '1em' }}
+              onClick={e => e.stopPropagation()}
+            />
           </Popconfirm>
         </div>
       )
@@ -250,40 +293,6 @@ export default function SettingMainEnvironmentVariable() {
           pagination={false}
           className={'mb-3 ' + styles.envTable}
         />
-        <div className="border-gray border-b">
-          <div>
-            <span>系统变量</span>
-          </div>
-          <Descriptions
-            className="mt-3"
-            bordered
-            column={1}
-            size="small"
-            labelStyle={{
-              color: '#5F6269',
-              backgroundColor: 'white',
-              width: '30%',
-              borderRight: 'none',
-              borderBottom: 'none'
-            }}
-          >
-            <Descriptions.Item label={system[0]?.key ? system[0]?.key : 'FIREBOOM_ADMINZ_SECR'}>
-              <span onClick={handleToggleSecret}>
-                {isShowSecret ? (
-                  <div>
-                    {system[0]?.devEnv}
-                    <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}} className="ml-6" />
-                  </div>
-                ) : (
-                  <div>
-                    <span>**************</span>
-                    <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}} className="ml-6" />
-                  </div>
-                )}
-              </span>
-            </Descriptions.Item>
-          </Descriptions>
-        </div>
       </div>
     </>
   )

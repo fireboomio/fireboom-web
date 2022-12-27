@@ -246,8 +246,8 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       </button>
       <Switch
         className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
-        checkedChildren="上线"
-        unCheckedChildren="下线"
+        checkedChildren=""
+        unCheckedChildren=""
         checked={apiDesc?.enable}
         onChange={toggleEnable}
       />

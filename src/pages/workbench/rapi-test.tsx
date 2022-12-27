@@ -4,11 +4,11 @@ import { useSearchParams } from 'react-router-dom'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 export default function Rapi() {
-  const { setFullscreen } = useContext(WorkbenchContext)
+  const { setHideSide } = useContext(WorkbenchContext)
   const [params] = useSearchParams()
 
   useEffect(() => {
-    setFullscreen(true)
+    setHideSide(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

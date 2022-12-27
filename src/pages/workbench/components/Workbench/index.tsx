@@ -38,6 +38,7 @@ export default function Index(props: PropsWithChildren) {
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
+  const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
   const prevStatus = useRef<any>()
@@ -136,13 +137,18 @@ export default function Index(props: PropsWithChildren) {
 
   const body = (
     <ALayout className={`h-100vh ${styles.workbench}`}>
-      <AHeader className={styles.header}>
-        <Header onToggleSider={() => setHideSider(!hideSider)} engineStatus={info?.engineStatus} />
-      </AHeader>
+      {!fullScreen && (
+        <AHeader className={styles.header}>
+          <Header
+            onToggleSider={() => setHideSider(!hideSider)}
+            engineStatus={info?.engineStatus}
+          />
+        </AHeader>
+      )}
       <ALayout>
         <ASider
           width={230}
-          style={{ marginLeft: hideSider ? -230 : 0 }}
+          style={{ marginLeft: hideSider || fullScreen ? -230 : 0 }}
           theme="light"
           className={styles.sider}
         >
@@ -161,20 +167,22 @@ export default function Index(props: PropsWithChildren) {
           )}
         </ALayout>
       </ALayout>
-      <AFooter className={styles.footer}>
-        <StatusBar
-          version={version}
-          env={env}
-          errorInfo={info?.errorInfo}
-          startTime={info?.startTime}
-          engineStatus={info?.engineStatus}
-          hookStatus={info?.hookStatus}
-          toggleWindow={(defaultTab: string) => {
-            setDefaultWindowTab(defaultTab)
-            setShowWindow(!showWindow)
-          }}
-        />
-      </AFooter>
+      {!fullScreen && (
+        <AFooter className={styles.footer}>
+          <StatusBar
+            version={version}
+            env={env}
+            errorInfo={info?.errorInfo}
+            startTime={info?.startTime}
+            engineStatus={info?.engineStatus}
+            hookStatus={info?.hookStatus}
+            toggleWindow={(defaultTab: string) => {
+              setDefaultWindowTab(defaultTab)
+              setShowWindow(!showWindow)
+            }}
+          />
+        </AFooter>
+      )}
     </ALayout>
   )
   const location = useLocation()
@@ -196,8 +204,10 @@ export default function Index(props: PropsWithChildren) {
           editFlag,
           markEdit,
           navCheck,
-          setFullscreen: setHideSider,
-          isFullscreen: hideSider
+          setFullscreen: setFullScreen,
+          isFullscreen: fullScreen,
+          setHideSide: setHideSider,
+          isHideSide: hideSider
           // treeNode: []
         }}
       >

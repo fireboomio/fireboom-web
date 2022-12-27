@@ -24,6 +24,9 @@
   "/cqdKk": {
     "defaultMessage": "下载"
   },
+  "00Cy+a": {
+    "defaultMessage": "请选择 {type} 表关联数据"
+  },
   "0BkTtH": {
     "defaultMessage": "主键"
   },
@@ -177,6 +180,10 @@
   "JDIfhr": {
     "defaultMessage": "连接成功"
   },
+  "JcvFnh": {
+    "defaultMessage": "已保存 {time}",
+    "description": "保存时间提示"
+  },
   "JeJAmT": {
     "defaultMessage": "重命名"
   },
@@ -206,6 +213,9 @@
   },
   "O8A9zp": {
     "defaultMessage": "开启授权"
+  },
+  "OF2wA3": {
+    "defaultMessage": "关联 {type} 表数据"
   },
   "PbEf10": {
     "defaultMessage": "开启SSL"
