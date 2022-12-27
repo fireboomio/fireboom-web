@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import { message, Radio, Space, Tag } from 'antd'
 import { throttle } from 'lodash'
-import { Suspense, useCallback, useContext, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import UrlInput from '@/components/UrlInput'
 import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -12,14 +11,11 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import calcTime from '@/lib/helpers/calcTime'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import { debounce, throttle } from 'lodash'
 import { intl } from '@/providers/IntlProvider'
 
 import styles from './index.module.less'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 const UrlInput = React.lazy(() => import('@/components/UrlInput'))
-const { Option } = Select
 interface Props {
   className?: string
   env?: string
@@ -265,17 +261,17 @@ const StatusBar: React.FC<Props> = ({
                     </Space>
                   </Radio.Group>
                   <Suspense>
-                  <UrlInput
-                    selectClassName="!z-13000"
-                    value={hooksServerURL}
-                    onChange={val => {
-                      if (hookSwitch) {
-                        saveHookServerURL(val)
-                      }
-                      setHooksServerURL(val)
-                      localStorage.setItem('hooksServerURL', val)
-                    }}
-                  />
+                    <UrlInput
+                      selectClassName="!z-13000"
+                      value={hooksServerURL}
+                      onChange={val => {
+                        if (hookSwitch) {
+                          saveHookServerURL(val)
+                        }
+                        setHooksServerURL(val)
+                        localStorage.setItem('hooksServerURL', val)
+                      }}
+                    />
                   </Suspense>
                 </div>
               </>
