@@ -1151,6 +1151,13 @@ const _Chart = ({
 
     return () => {
       console.log('dispose FlowChart')
+      graph.dispose()
+    }
+  }, [directiveState, hookState, globalHookState, apiSetting, onEditHook])
+
+  return (
+    <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">
+      <div className="flex-1 min-h-175 min-w-102" ref={containerRef} />
     </div>
   )
 }

@@ -603,6 +603,196 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       </div>
     )
   }
+  return (
+    <SidePanel
+      {...props}
+      title="API管理"
+      hideAdd
+      open={panelOpened}
+      onOpen={flag => {
+        setPanelOpened(flag)
+        props.onOpen && props.onOpen(flag)
+      }}
+      action={
+        <>
+          {/*<Tooltip title="筛选" >*/}
+          {/*  <div className={styles.headerFilter} />*/}
+          {/*</Tooltip>*/}
+          <Tooltip title="刷新列表">
+            <div
+              className={styles.headerRefresh}
+              onClick={() => {
+                void getFetcher<OperationResp[]>('/operateApi')
+                  .then(res => setTreeData(convertToTree(res)))
+                  // .then(() => setSelectedKey(''))
+                  .then(() => message.success('刷新完成！'))
+                  .catch((err: Error) => {
+                    void message.error('获取文件列表失败！')
+                    throw err
+                  })
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="全局设置">
+            <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
+          </Tooltip>
+          <Tooltip title="新建目录">
+            <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
+          </Tooltip>
+          <Tooltip title="新建API">
+            <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
+          </Tooltip>
+        </>
+      }
+    >
+      <Dropdown
+        overlay={
+          <Menu
+            items={[
+              {
+                disabled: !selectedNode.some(x => !x.enable),
+                key: 'enable',
+                label: (
+                  <div
+                    onClick={() => {
+                      if (!selectedNode.some(x => !x.enable)) return
+                      void batchSwitch(true)
+                    }}
+                  >
+                    上线
+                  </div>
+                )
+              },
+              {
+                disabled: !selectedNode.some(x => x.enable),
+                key: 'disable',
+                label: (
+                  <div
+                    onClick={() => {
+                      if (!selectedNode.some(x => x.enable)) return
+                      void batchSwitch(false)
+                    }}
+                  >
+                    下线
+                  </div>
+                )
+              },
+              {
+                disabled: !selectedNode.length,
+                key: 'delete',
+                label: (
+                  <div
+                    onClick={() => {
+                      setMultiSelection([])
+                      Modal.confirm({
+                        title: '是否确认删除选中的API？',
+                        onOk: () => {
+                          const ids = selectedNode.map(x => x.id).filter(x => x)
+                          requests.post('operateApi/batchDelete', { ids }).then(() => {
+                            ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
+                            message.success('删除成功')
+                            setRefreshFlag(!refreshFlag)
+                          })
+                          // setEditFlag(false)
+                          // resolve(true)
+                        },
+                        okText: '确认',
+                        cancelText: '取消'
+                      })
+                    }}
+                  >
+                    删除
+                  </div>
+                )
+              },
+              {
+                key: 'cancel',
+                label: (
+                  <div
+                    onClick={() => {
+                      setMultiSelection([])
+                    }}
+                  >
+                    取消
+                  </div>
+                )
+              }
+            ]}
+          />
+        }
+        trigger={['contextMenu']}
+      >
+        <div className="flex flex-col h-full justify-between">
+          <div className={styles.treeContainer}>
+            {treeData.length ? (
+              <Tree
+                rootClassName="overflow-auto"
+                // @ts-ignore
+                titleRender={titleRender}
+                // draggable
+                showIcon
+                defaultExpandParent
+                expandedKeys={expandedKeys}
+                onExpand={setExpandedKeys}
+                // @ts-ignore
+                treeData={treeData}
+                multiple
+                selectedKeys={multiSelection}
+                // @ts-ignore
+                onSelect={handleSelectTreeNode}
+              />
+            ) : null}
+          </div>
+          <div className={styles.createRowWrapper}>
+            <div className={styles.createRow}>
+              <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
+                新建
+              </span>
+              <span> 或者 </span>
+              <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+                批量新建
+              </span>
+            </div>
+            <Tooltip title="测试">
+              <div
+                className={styles.graphqlEntry}
+                onClick={() => {
+                  const current = new URL(window.location.href)
+                  if (config.apiHost) {
+                    window.open(
+                      `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                      '_blank'
+                    )
+                  } else {
+                    window.open(
+                      `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
+                      '_blank'
+                    )
+                  }
+                }}
+              >
+                <img alt="" src="/assets/icon/graphql2.svg" />
+              </div>
+            </Tooltip>
+          </div>
+        </div>
+      </Dropdown>
+      <Modal
+        title="API全局设置"
+        open={isModalVisible}
+        onOk={() => {
+          setIsModalVisible(false)
+        }}
+        onCancel={() => {
+          setIsModalVisible(false)
+        }}
+        footer={null}
+        centered
+      >
+        <ApiConfig type="global" onClose={() => setIsModalVisible(false)} />
+      </Modal>
+    </SidePanel>
+  )
 }
 
 function convertToTree(data: OperationResp[] | null, lv = '0'): DirTreeNode[] {
