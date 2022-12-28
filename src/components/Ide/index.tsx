@@ -402,8 +402,8 @@ const IdeContainer: FC<Props> = props => {
             },
             onToggleHook: async value => {
               hookInfo && setHookInfo({ ...hookInfo, switch: value })
-              props.onChangeEnable?.()
               await updateHookSwitch(hookPath, value)
+              props.onChangeEnable?.()
             },
             onFullScreen: () => {
               setFullScreen(!fullScreen)

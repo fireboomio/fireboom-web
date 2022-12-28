@@ -1,11 +1,12 @@
 import { Input, Select } from 'antd'
-import React from 'react'
+import type React from 'react'
 
 interface PriceInputProps {
   value?: string
   onChange?: (value: string) => void
   placeholder?: string
   style?: React.CSSProperties
+  className?: string
   selectClassName?: string
 }
 
@@ -14,11 +15,13 @@ export default function UrlInput({
   onChange,
   placeholder,
   style,
-  selectClassName
+  selectClassName,
+  className
 }: PriceInputProps) {
   let [, prefix = 'https://', url = ''] = (value ?? '').match(/^(https?:\/\/)(.*$)/) ?? []
   return (
     <Input
+      className={className}
       style={style}
       addonBefore={
         <Select

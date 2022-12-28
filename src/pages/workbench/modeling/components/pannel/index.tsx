@@ -80,7 +80,7 @@ const ModelPannel = ({
     const initialModel = `\nmodel ${newName} {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 `
