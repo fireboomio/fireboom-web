@@ -1,3 +1,4 @@
+import { ConfigProvider } from 'antd'
 import type { ReactNode } from 'react'
 import { createContext, useCallback, useEffect, useState } from 'react'
 import { createIntl, createIntlCache, IntlProvider as ReactIntlProvider } from 'react-intl'
@@ -14,6 +15,8 @@ const LOCALE_STORE_KEY = 'user.locale'
 const browserLanguage = window.navigator.language
 const defaultLocale = localStorage.getItem(LOCALE_STORE_KEY) || browserLanguage || 'en'
 
+console.log('defaultLocale', defaultLocale)
+
 // This is optional but highly recommended
 // since it prevents memory leak
 const cache = createIntlCache()
@@ -23,7 +26,8 @@ let _messages: Record<string, string> = {}
 export const intl = createIntl(
   {
     locale: _locale,
-    messages: _messages
+    messages: _messages,
+    defaultLocale
   },
   cache
 )
@@ -67,7 +71,13 @@ const IntlProvider = ({ children }: IntlProviderProps) => {
     >
       {messages && (
         <ReactIntlProvider messages={messages} locale={locale} defaultLocale={browserLanguage}>
-          {children}
+          <ConfigProvider
+            locale={{
+              locale
+            }}
+          >
+            {children}
+          </ConfigProvider>
         </ReactIntlProvider>
       )}
     </IntlContext.Provider>

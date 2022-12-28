@@ -18,13 +18,13 @@ export default function (initTime: string) {
     return intl.formatMessage({ defaultMessage: '{days}天前' }, { days: time.$d.days })
   }
   if (time.$d.hours > 0) {
-    return intl.formatMessage({ defaultMessage: '{hours}小时前' }, { days: time.$d.hours })
+    return intl.formatMessage({ defaultMessage: '{hours}小时前' }, { hours: time.$d.hours })
   }
   if (time.$d.minutes > 0) {
-    return intl.formatMessage({ defaultMessage: '{minutes}分钟前' }, { days: time.$d.minutes })
+    return intl.formatMessage({ defaultMessage: '{minutes}分钟前' }, { minutes: time.$d.minutes })
   }
   if (time.$d.seconds > 0) {
-    return intl.formatMessage({ defaultMessage: '{seconds}秒前' }, { days: time.$d.seconds })
+    return intl.formatMessage({ defaultMessage: '{seconds}秒前' }, { seconds: time.$d.seconds })
   }
   return intl.formatMessage({ defaultMessage: '刚刚' })
 }
