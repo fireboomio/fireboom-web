@@ -1,6 +1,6 @@
 import { ConfigProvider } from 'antd'
 import type { ReactNode } from 'react'
-import { createContext, useCallback, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { createIntl, createIntlCache, IntlProvider as ReactIntlProvider } from 'react-intl'
 
 interface IntlProviderProps {
@@ -50,6 +50,7 @@ const IntlProvider = ({ children }: IntlProviderProps) => {
   const setLocale = useCallback((locale: string) => {
     _setLocale(locale)
     _locale = locale
+    localStorage.setItem(LOCALE_STORE_KEY, locale)
   }, [])
 
   useEffect(() => {
@@ -85,3 +86,7 @@ const IntlProvider = ({ children }: IntlProviderProps) => {
 }
 
 export default IntlProvider
+
+export function useAppIntl() {
+  return useContext(IntlContext)
+}
