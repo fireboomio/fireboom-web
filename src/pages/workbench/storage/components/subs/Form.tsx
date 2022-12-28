@@ -106,7 +106,7 @@ export default function StorageForm({ content, showErr }: Props) {
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '服务地址' })}
-          name="endpoint"
+          name="endPoint"
           rules={[
             { required: true, message: intl.formatMessage({ defaultMessage: '请输入服务地址' }) }
           ]}

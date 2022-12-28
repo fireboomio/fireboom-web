@@ -64,6 +64,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     const hide = message.loading('加载中...', 0)
     fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources, paramIdRef)?.finally(
       () => {
+        setSyncEditorFlag(!syncEditorFlag)
         hide()
       }
     )
@@ -102,6 +103,9 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [inEdit, state.blocks])
 
   const handleSetInEdit = (flag: boolean) => {
+    if (flag === inEdit) {
+      return
+    }
     if (inEdit) {
       if (Object.keys({ ...newMap, ...delMap, ...editMap }).length > 0) {
         message.error('请先保存或取消编辑')
