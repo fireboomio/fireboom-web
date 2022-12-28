@@ -42,7 +42,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           navigate(`/workbench/modeling/${v}`)
         }}
         optionLabelProp="label"
-        value={paramId ? Number(paramId) : ''}
+        value={paramId && paramId !== '0' ? Number(paramId) : ''}
         options={sourceOptions.map(x => {
           let svg = '/assets/icon/db-other.svg'
           switch (x.sourceType) {

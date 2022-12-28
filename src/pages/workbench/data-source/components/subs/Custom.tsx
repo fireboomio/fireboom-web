@@ -1,5 +1,4 @@
 import { loader } from '@monaco-editor/react'
-import { message } from 'antd'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
@@ -9,7 +8,7 @@ import {
   DatasourceDispatchContext,
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -28,7 +27,7 @@ export default function Custom({ content }: Props) {
   const dispatch = useContext(DatasourceDispatchContext)
   const [isEditing, setIsEditing] = useImmer(content.name == '')
   const [code, setCode] = useImmer('')
-
+  const { onRefreshMenu } = useContext(WorkbenchContext)
   const config = content.config as unknown as Config
 
   useEffect(() => {
@@ -90,5 +89,13 @@ export default function Custom({ content }: Props) {
   //     .then(() => void message.success('保存成功!'))
   // }
 
-  return <IdeContainer hookPath={`customize/${content.name}`} defaultLanguage="typescript" />
+  return (
+    <IdeContainer
+      onChangeEnable={() => {
+        onRefreshMenu('dataSource')
+      }}
+      hookPath={`customize/${content.name}`}
+      defaultLanguage="typescript"
+    />
+  )
 }

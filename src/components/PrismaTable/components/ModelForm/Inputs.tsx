@@ -132,7 +132,9 @@ const Object = ({
   const relationModel = models.find(m => m.id === type)
   const relationModelIdField = relationModel?.fields.find(f => f.isId)
   initialObjectValue && form.setFieldValue(name, initialObjectValue[relationModelIdField!.name])
-  initialObjectValue && form.setFieldValue(type, displayValue)
+  if (name !== type) {
+    initialObjectValue && form.setFieldValue(type, displayValue)
+  }
 
   useEffect(() => {
     initialObjectValue && setDisplayValue(getDisplayName(initialObjectValue, relationModel!))

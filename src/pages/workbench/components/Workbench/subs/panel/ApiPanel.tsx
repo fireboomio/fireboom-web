@@ -2,7 +2,7 @@ import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from
 import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
 import type React from 'react'
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -70,8 +70,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
 
-  const isLocationPage = useRef<boolean>()
-
   // 快捷键
   useEffect(() => {
     const unbind1 = registerHotkeyHandler('alt+n,^+n', () => {
@@ -89,22 +87,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // 监听location变化，及时清空选中状态
   useEffect(() => {
     if (!location.pathname.match(/^\/workbench\/apimanage(?:\/\d*)?$/)) {
-      isLocationPage.current = false
       setMultiSelection([])
     } else {
-      if (!isLocationPage.current) {
-        // 如果是从其他页面跳转过来的，需要刷新一下尝试自动选中当前项
-        if (treeData) {
-          const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
-          if (pathId) {
-            const currentNode = getNodeById(pathId, treeData)
-            if (currentNode) {
-              setMultiSelection([currentNode.key])
-            }
+      // 尝试自动选中当前项
+      if (treeData) {
+        const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+        if (pathId) {
+          const currentNode = getNodeById(pathId, treeData)
+          if (currentNode) {
+            setMultiSelection([currentNode.key])
           }
         }
       }
-      isLocationPage.current = true
     }
   }, [location])
   useEffect(() => {
