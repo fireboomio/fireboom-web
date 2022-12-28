@@ -5,10 +5,10 @@ import { Button, Select, Switch } from 'antd'
 import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 
@@ -42,6 +42,7 @@ interface Props {
 }
 
 const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
+  const intl = useIntl()
   const { id: currDBId } = useParams()
   const [data, setData] = useImmer<DataType[]>([])
   const [model, setModel] = useState<Model[]>([])
@@ -179,7 +180,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
     <div className="flex gap-6 h-[calc(100vh_-_190px)]">
       <div className="w-2/5">
         <div className={`${styles['head']}`}>
-          <span>自定义类型</span>
+          <span>{intl.formatMessage({ defaultMessage: '自定义类型' })}</span>
         </div>
         <Editor
           language="graphql"
@@ -191,7 +192,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
 
       <div className="w-3/5">
         <div className={`${styles['head']} !pr-3 flex items-center justify-between`}>
-          <span>字段类型映射</span>
+          <span>{intl.formatMessage({ defaultMessage: '字段类型映射' })}</span>
 
           <Button
             size="small"
@@ -203,7 +204,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
               src="assets/iconfont/baocun.svg"
               style={{ height: '1em', width: '1em', color: '#5F6269' }}
             />
-            <span className="text-sm">保存</span>
+            <span className="text-sm">{intl.formatMessage({ defaultMessage: '保存' })}</span>
           </Button>
         </div>
 
@@ -215,11 +216,11 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
           <table className="w-full bg-[#FFFFFFFF] disable-common-select">
             <thead className="leading-38px bg-[#5F62690D]">
               <tr className="">
-                <th>表</th>
-                <th>字段</th>
-                <th>响应类型</th>
-                <th>输入类型</th>
-                <th>是否开启</th>
+                <th>{intl.formatMessage({ defaultMessage: '表' })}</th>
+                <th>{intl.formatMessage({ defaultMessage: '字段' })}</th>
+                <th>{intl.formatMessage({ defaultMessage: '响应类型' })}</th>
+                <th>{intl.formatMessage({ defaultMessage: '输入类型' })}</th>
+                <th>{intl.formatMessage({ defaultMessage: '是否开启' })}</th>
                 <th></th>
               </tr>
             </thead>

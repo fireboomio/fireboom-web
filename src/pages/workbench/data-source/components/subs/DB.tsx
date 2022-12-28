@@ -1,6 +1,7 @@
 import { Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -46,6 +47,7 @@ const passwordReg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{
 const BASEPATH = '/static/upload/sqlite'
 
 export default function DB({ content, type }: Props) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [_disabled, setDisabled] = useImmer(false)
@@ -109,17 +111,17 @@ export default function DB({ content, type }: Props) {
   const urlRule = {
     mysql: {
       pattern: /^mysql:\/\/.{1,120}$/g,
-      message: '以 mysql:// 开头，不超过128位',
+      message: intl.formatMessage({ defaultMessage: '以 mysql:// 开头，不超过128位' }),
       required: true
     },
     postgresql: {
       pattern: /^postgresql:\/\/.{1,115}$/g,
-      message: '以 postgresql:// 开头，不超过128位',
+      message: intl.formatMessage({ defaultMessage: '以 postgresql:// 开头，不超过128位' }),
       required: true
     },
     mongodb: {
       pattern: /^mongodb:\/\/.{1,118}$/g,
-      message: '以 mongodb:// 开头，不超过128位',
+      message: intl.formatMessage({ defaultMessage: '以 mongodb:// 开头，不超过128位' }),
       required: true
     }
   }[String(content?.config.dbType).toLowerCase()]
@@ -127,7 +129,7 @@ export default function DB({ content, type }: Props) {
   const initForm =
     dbType === 'SQLite' ? (
       <Form.Item
-        rules={[{ required: true, message: '请上传文件' }]}
+        rules={[{ required: true, message: intl.formatMessage({ defaultMessage: '请上传文件' }) }]}
         label={
           <>
             <span>路径</span>
@@ -139,7 +141,7 @@ export default function DB({ content, type }: Props) {
         style={{ marginBottom: '20px' }}
       >
         <Input
-          placeholder="请输入..."
+          placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
           onClick={() => setVisible(true)}
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           suffix={<a onClick={() => setVisible(true)}>浏览</a>}
@@ -147,12 +149,12 @@ export default function DB({ content, type }: Props) {
         />
       </Form.Item>
     ) : (
-      <Form.Item label="连接URL">
+      <Form.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
         <Input.Group compact>
           <Form.Item name={['databaseUrl', 'kind']} noStyle>
             <Select className="w-1/5" onChange={onValueChange}>
-              <Option value="0">值</Option>
-              <Option value="1">环境变量</Option>
+              <Option value="0">{intl.formatMessage({ defaultMessage: '值' })}</Option>
+              <Option value="1">{intl.formatMessage({ defaultMessage: '环境变量' })}</Option>
             </Select>
           </Form.Item>
           {isValue ? (
@@ -162,7 +164,10 @@ export default function DB({ content, type }: Props) {
               noStyle
               rules={urlRule ? [urlRule] : []}
             >
-              <Input style={{ width: '80%' }} placeholder="请输入" />
+              <Input
+                style={{ width: '80%' }}
+                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+              />
             </Form.Item>
           ) : (
             <Form.Item key={2} name={['databaseUrl', 'val']} noStyle rules={[]}>
@@ -181,54 +186,71 @@ export default function DB({ content, type }: Props) {
 
   const paramForm = (
     <>
-      <Form.Item label="主机:" name="host" rules={[{ required: true, message: '主机名不能为空' }]}>
-        <Input placeholder="请输入..." />
+      <Form.Item
+        label={intl.formatMessage({ defaultMessage: '主机:' })}
+        name="host"
+        rules={[
+          { required: true, message: intl.formatMessage({ defaultMessage: '主机名不能为空' }) }
+        ]}
+      >
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
       </Form.Item>
       <Form.Item
-        label="数据库名:"
+        label={intl.formatMessage({ defaultMessage: '数据库名:' })}
         name="dbName"
         rules={[
-          { required: true, message: '数据库名不能为空' },
+          { required: true, message: intl.formatMessage({ defaultMessage: '数据库名不能为空' }) },
           {
             pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_-]*$', 'g'),
-            message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+            message: intl.formatMessage({
+              defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+            })
           }
         ]}
       >
-        <Input placeholder="请输入..." />
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
       </Form.Item>
       <Form.Item
-        label="端口:"
+        label={intl.formatMessage({ defaultMessage: '端口:' })}
         name="port"
         rules={[
-          { required: true, message: '端口号不能为空' },
-          { pattern: port, message: '端口范围为0-9999' }
+          { required: true, message: intl.formatMessage({ defaultMessage: '端口号不能为空' }) },
+          { pattern: port, message: intl.formatMessage({ defaultMessage: '端口范围为0-9999' }) }
         ]}
       >
-        <Input placeholder="请输入..." />
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
       </Form.Item>
 
-      <Form.Item label="用户:">
+      <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })}>
         <Input.Group compact className="!flex">
           <Form.Item name={['userName', 'kind']} noStyle>
             <Select className="flex-0 w-100px">
-              <Select.Option value="0">值</Select.Option>
-              <Select.Option value="1">环境变量</Select.Option>
+              <Select.Option value="0">
+                {intl.formatMessage({ defaultMessage: '值' })}
+              </Select.Option>
+              <Select.Option value="1">
+                {intl.formatMessage({ defaultMessage: '环境变量' })}
+              </Select.Option>
             </Select>
           </Form.Item>
           <Form.Item
             name={['userName', 'val']}
             noStyle
             rules={[
-              { required: true, message: '用户名不能为空' },
+              { required: true, message: intl.formatMessage({ defaultMessage: '用户名不能为空' }) },
               {
                 pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                message: intl.formatMessage({
+                  defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                })
               }
             ]}
           >
             {String(userNameKind) !== '1' ? (
-              <Input className="flex-1" placeholder="请输入" />
+              <Input
+                className="flex-1"
+                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+              />
             ) : (
               <Select className="flex-1" options={envOptions} />
             )}
@@ -236,17 +258,24 @@ export default function DB({ content, type }: Props) {
         </Input.Group>
       </Form.Item>
 
-      <Form.Item label="密码:">
+      <Form.Item label={intl.formatMessage({ defaultMessage: '密码:' })}>
         <Input.Group compact className="!flex">
           <Form.Item name={['password', 'kind']} noStyle>
             <Select className="flex-0 w-100px">
-              <Select.Option value="0">值</Select.Option>
-              <Select.Option value="1">环境变量</Select.Option>
+              <Select.Option value="0">
+                {intl.formatMessage({ defaultMessage: '值' })}
+              </Select.Option>
+              <Select.Option value="1">
+                {intl.formatMessage({ defaultMessage: '环境变量' })}
+              </Select.Option>
             </Select>
           </Form.Item>
           <Form.Item name={['password', 'val']} noStyle>
             {String(passwordKind) !== '1' ? (
-              <Input className="flex-1" placeholder="请输入" />
+              <Input
+                className="flex-1"
+                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+              />
             ) : (
               <Select className="flex-1" options={envOptions} />
             )}
@@ -350,9 +379,9 @@ export default function DB({ content, type }: Props) {
       })
       .then(x => {
         if (x?.status) {
-          message.success('连接成功')
+          message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
         } else {
-          message.error(x?.msg || '连接失败')
+          message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
         }
       })
   }
@@ -395,7 +424,7 @@ export default function DB({ content, type }: Props) {
           beforeUpload={file => {
             const isAllowed = file.name.endsWith('.db')
             if (!isAllowed) {
-              message.error('只允许上传 db 格式文件')
+              message.error(intl.formatMessage({ defaultMessage: '只允许上传 db 格式文件' }))
             }
             return isAllowed || Upload.LIST_IGNORE
           }}
@@ -412,21 +441,27 @@ export default function DB({ content, type }: Props) {
               className="cursor-pointer flex bg-[#F9F9F9] rounded-2px h-22px text-[#E92E5E] w-21 items-center justify-center"
               onClick={() => handleToggleDesigner('setting', content.id)}
             >
-              更多设置
+              {intl.formatMessage({ defaultMessage: '更多设置' })}
             </div>
           </div>
           <div>
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="连接名">{config.apiNamespace}</Descriptions.Item>
-              <Descriptions.Item label="数据库类型">{config.dbType}</Descriptions.Item>
+              <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接名' })}>
+                {config.apiNamespace}
+              </Descriptions.Item>
+              <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据库类型' })}>
+                {config.dbType}
+              </Descriptions.Item>
               {dbType === 'SQLite' ? (
-                <Descriptions.Item label="路径">{config.databaseUrl?.val ?? ''}</Descriptions.Item>
+                <Descriptions.Item label={intl.formatMessage({ defaultMessage: '路径' })}>
+                  {config.databaseUrl?.val ?? ''}
+                </Descriptions.Item>
               ) : (
                 <>
                   {dbType === 'MongoDB' ? (
                     <></>
                   ) : (
-                    <Descriptions.Item label="连接类型">
+                    <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接类型' })}>
                       {config.appendType == '0'
                         ? '连接URL'
                         : config.appendType == '1'
@@ -437,11 +472,19 @@ export default function DB({ content, type }: Props) {
 
                   {config.appendType == '1' ? (
                     <>
-                      <Descriptions.Item label="主机">{config.host}</Descriptions.Item>
-                      <Descriptions.Item label="端口">{config.port}</Descriptions.Item>
-                      <Descriptions.Item label="数据库名">{config.dbName}</Descriptions.Item>
-                      <Descriptions.Item label="用户">{config.userName?.val}</Descriptions.Item>
-                      <Descriptions.Item label="密码">
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '主机' })}>
+                        {config.host}
+                      </Descriptions.Item>
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '端口' })}>
+                        {config.port}
+                      </Descriptions.Item>
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据库名' })}>
+                        {config.dbName}
+                      </Descriptions.Item>
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户' })}>
+                        {config.userName?.val}
+                      </Descriptions.Item>
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密码' })}>
                         {isSecretShow ? (
                           <span>
                             {config.password?.val}
@@ -467,7 +510,7 @@ export default function DB({ content, type }: Props) {
                     </>
                   ) : (
                     <>
-                      <Descriptions.Item label="连接URL">
+                      <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
                         {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
                       </Descriptions.Item>
                     </>
@@ -511,41 +554,40 @@ export default function DB({ content, type }: Props) {
               }}
             >
               <Form.Item
-                label="名称:"
+                label={intl.formatMessage({ defaultMessage: '名称:' })}
                 name="apiNamespace"
                 rules={[
-                  { required: true, message: '名称不能为空' },
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: '名称不能为空' })
+                  },
                   {
                     pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                    message: intl.formatMessage({
+                      defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                    })
                   }
                 ]}
               >
-                <Input placeholder="请输入..." autoComplete="off" autoFocus={true} />
+                <Input
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                  autoComplete="off"
+                  autoFocus={true}
+                />
               </Form.Item>
-
-              {/* <Form.Item
-                label="类型:"
-                name="dbType"
-                // rules={[{ required: true, message: '类型不能为空' }]}
-              >
-                <Select placeholder="请输入..." defaultValue="MySQL">
-                  <Select.Option value="MySQL">MySql</Select.Option>
-                  <Select.Option value="SQLITE">SQLITE</Select.Option>
-                  <Select.Option value="PGSQL">PGSQL</Select.Option>
-                  <Select.Option value="MONGODB">MONGODB</Select.Option>
-                </Select>
-              </Form.Item> */}
 
               {dbType === 'SQLite' || dbType === 'MongoDB' ? (
                 <></>
               ) : (
-                <Form.Item label="连接类型:" name="appendType">
+                <Form.Item
+                  label={intl.formatMessage({ defaultMessage: '连接类型:' })}
+                  name="appendType"
+                >
                   <Radio.Group onChange={e => typeChange(e.target.value as string)}>
                     <Radio value="0" style={{ marginRight: '50px' }}>
-                      连接URL
+                      {intl.formatMessage({ defaultMessage: '连接URL' })}
                     </Radio>
-                    <Radio value="1"> 连接参数 </Radio>
+                    <Radio value="1">{intl.formatMessage({ defaultMessage: '连接参数' })}</Radio>
                   </Radio.Group>
                 </Form.Item>
               )}
@@ -561,10 +603,10 @@ export default function DB({ content, type }: Props) {
                     }
                   }}
                 >
-                  <span>取消</span>
+                  <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
                 </Button>
                 <Button className="ml-4 btn-test" onClick={() => testLink()}>
-                  测试
+                  {intl.formatMessage({ defaultMessage: '测试' })}
                 </Button>
                 <Button
                   className="ml-4 btn-save"
@@ -572,7 +614,7 @@ export default function DB({ content, type }: Props) {
                     form.submit()
                   }}
                 >
-                  保存
+                  {intl.formatMessage({ defaultMessage: '保存' })}
                 </Button>
               </Form.Item>
             </Form>

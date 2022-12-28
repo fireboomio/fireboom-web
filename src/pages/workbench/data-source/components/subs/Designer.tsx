@@ -1,7 +1,7 @@
 import { Input, Modal } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -25,6 +25,7 @@ import iconRocketMQ from '../assets/RocketMQ.svg'
 import iconSQLite from '../assets/SQLite.svg'
 import iconSQLServer from '../assets/SQLServer.svg'
 import styles from './Designer.module.less'
+import { intl as _intl } from '@/providers/IntlProvider'
 
 const initData: {
   name: string
@@ -45,7 +46,7 @@ const initData: {
     ]
   },
   {
-    name: '数据库',
+    name: _intl.formatMessage({ defaultMessage: '数据库' }),
     items: [
       { name: 'PostgreSQL', icon: iconPostgreSQL, sourceType: 1, dbType: 'PostgreSQL' },
       { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
@@ -82,15 +83,19 @@ const initData: {
     ]
   },
   {
-    name: '消息队列',
+    name: _intl.formatMessage({ defaultMessage: '消息队列' }),
     items: [
       { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true },
       { name: 'RocketMQ', icon: iconRocketMQ, coming: true },
-      { name: '阿里云物联网平台', icon: iconAli, coming: true }
+      {
+        name: _intl.formatMessage({ defaultMessage: '阿里云物联网平台' }),
+        icon: iconAli,
+        coming: true
+      }
     ]
   },
   {
-    name: '自定义',
+    name: _intl.formatMessage({ defaultMessage: '自定义' }),
     items: [
       { name: 'node.js', icon: iconNode, sourceType: 4 },
       { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
@@ -98,6 +103,7 @@ const initData: {
   }
 ]
 
+// 解析图标
 const iconMap: Record<string, string> = {}
 initData.forEach(({ items }) => {
   items.forEach(({ sourceType, dbType, icon }) => {
@@ -106,6 +112,7 @@ initData.forEach(({ items }) => {
 })
 
 export default function Designer() {
+  const intl = useIntl()
   const dispatch = useContext(DatasourceDispatchContext)
   const { handleToggleDesigner, handleCreate, handleSave } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
@@ -138,24 +145,26 @@ export default function Designer() {
       )
       .then(xx => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        setData(x => x.concat({ name: '示例数据源', items: xx }))
+        setData(x =>
+          x.concat({ name: intl.formatMessage({ defaultMessage: '示例数据源' }), items: xx })
+        )
       })
   }, [])
 
   function createCustom() {
     Modal.confirm({
-      title: '请输入数据源名称',
+      title: intl.formatMessage({ defaultMessage: '请输入数据源名称' }),
       content: (
         <Input
           autoFocus
-          placeholder="请输入"
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onChange={e => {
             inputValue.current = e.target.value
           }}
         />
       ),
-      okText: '创建',
-      cancelText: '取消',
+      okText: intl.formatMessage({ defaultMessage: '创建' }),
+      cancelText: intl.formatMessage({ defaultMessage: '取消' }),
       onOk: async () => {
         if (!inputValue.current) {
           return
@@ -172,6 +181,7 @@ export default function Designer() {
       }
     })
   }
+
   function handleClick(sourceType: number, dbType: string, name: string) {
     if (sourceType === 4) {
       return createCustom()
@@ -220,7 +230,11 @@ export default function Designer() {
                   <img alt="" src={x.icon} />
                 </div>
                 <span className={'ml-3' + (x.coming ? ' text-[#787D8B]' : '')}>{x.name}</span>
-                {x.coming && <div className={styles.coming}>即将</div>}
+                {x.coming && (
+                  <div className={styles.coming}>
+                    {intl.formatMessage({ defaultMessage: '即将' })}
+                  </div>
+                )}
               </div>
             ))}
           </div>
