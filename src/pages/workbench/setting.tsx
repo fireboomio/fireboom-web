@@ -43,14 +43,16 @@ export default function Setting() {
           <FormattedMessage defaultMessage="设置" />
         </span>
       </div>
-      <div className="flex flex-1 min-h-0">
-        <Col className="flex-0 w-188px">
-          <Pannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
-        </Col>
-        <Col className="bg-white h-full flex-1 min-w-0 overflow-y-auto">
-          <Outlet />
-        </Col>
-      </div>
+      {showType && (
+        <div className="flex flex-1 min-h-0">
+          <Col className="flex-0 w-188px">
+            <Pannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
+          </Col>
+          <Col className="bg-white h-full flex-1 min-w-0 overflow-y-auto">
+            <Outlet />
+          </Col>
+        </div>
+      )}
     </div>
   )
 }
