@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import IconFont from '@/components/Iconfont'
 import type { SettingType } from '@/interfaces/setting'
 
 // import styles from './Pannel.module.less'
@@ -86,7 +85,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
     <div className="h-full bg-[#f8f8f8] px-4 pt-5.5">
       {settingTypeList.map(settingType => (
         <SettingItem
-          active={showType === settingType.type}
+          active={showType === `/workbench/setting/${settingType.type}`}
           key={settingType.type}
           handleToggleDesigner={handleToggleDesigner}
           settingType={settingType}
