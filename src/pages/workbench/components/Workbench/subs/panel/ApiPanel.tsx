@@ -218,7 +218,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     } else if (!nodeData.isPublic) {
       return <FormattedMessage defaultMessage="内部" />
     } else {
-      return nodeData.method
+      // return nodeData.method
     }
   }
 
@@ -576,6 +576,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           />
         ) : (
           <>
+            <div
+              className={`${styles.method} ${styles[`method_${nodeData.method.toLowerCase()}`]}`}
+            >
+              {nodeData.method.toUpperCase()}
+            </div>
             <div className={styles.title}>{nodeData.title}</div>
             <div className={styles.suffix}>{miniStatus}</div>
             <div onClick={e => e.stopPropagation()}>
@@ -600,7 +605,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   return (
     <SidePanel
       {...props}
-      title="API管理"
+      title={intl.formatMessage({ defaultMessage: 'API管理' })}
       hideAdd
       open={panelOpened}
       onOpen={flag => {
@@ -612,28 +617,28 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           {/*<Tooltip title="筛选" >*/}
           {/*  <div className={styles.headerFilter} />*/}
           {/*</Tooltip>*/}
-          <Tooltip title="刷新列表">
+          <Tooltip title={intl.formatMessage({ defaultMessage: '刷新列表' })}>
             <div
               className={styles.headerRefresh}
               onClick={() => {
                 void getFetcher<OperationResp[]>('/operateApi')
                   .then(res => setTreeData(convertToTree(res)))
                   // .then(() => setSelectedKey(''))
-                  .then(() => message.success('刷新完成！'))
+                  .then(() => message.success(intl.formatMessage({ defaultMessage: '刷新完成！' })))
                   .catch((err: Error) => {
-                    void message.error('获取文件列表失败！')
+                    message.error(intl.formatMessage({ defaultMessage: '获取文件列表失败！' }))
                     throw err
                   })
               }}
             />
           </Tooltip>
-          <Tooltip title="全局设置">
+          <Tooltip title={intl.formatMessage({ defaultMessage: '全局设置' })}>
             <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
           </Tooltip>
-          <Tooltip title="新建目录">
+          <Tooltip title={intl.formatMessage({ defaultMessage: '新建目录' })}>
             <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
           </Tooltip>
-          <Tooltip title="新建API">
+          <Tooltip title={intl.formatMessage({ defaultMessage: '新建API' })}>
             <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
           </Tooltip>
         </>
@@ -653,7 +658,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                       void batchSwitch(true)
                     }}
                   >
-                    上线
+                    <FormattedMessage defaultMessage="上线" />
                   </div>
                 )
               },
@@ -667,7 +672,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                       void batchSwitch(false)
                     }}
                   >
-                    下线
+                    <FormattedMessage defaultMessage="下线" />
                   </div>
                 )
               },
@@ -690,12 +695,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                           // setEditFlag(false)
                           // resolve(true)
                         },
-                        okText: '确认',
-                        cancelText: '取消'
+                        okText: intl.formatMessage({ defaultMessage: '确认' }),
+                        cancelText: intl.formatMessage({ defaultMessage: '取消' })
                       })
                     }}
                   >
-                    删除
+                    <FormattedMessage defaultMessage="删除" />
                   </div>
                 )
               },
@@ -707,7 +712,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                       setMultiSelection([])
                     }}
                   >
-                    取消
+                    <FormattedMessage defaultMessage="取消" />
                   </div>
                 )
               }
@@ -740,14 +745,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <div className={styles.createRowWrapper}>
             <div className={styles.createRow}>
               <span className={styles.btn} onClick={() => handleAddNode('创建文件')}>
-                新建
+                <FormattedMessage defaultMessage="新建" />
               </span>
-              <span> 或者 </span>
+              <span>
+                {' '}
+                <FormattedMessage defaultMessage="或者" />{' '}
+              </span>
               <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
-                批量新建
+                <FormattedMessage defaultMessage="批量新建" />
               </span>
             </div>
-            <Tooltip title="测试">
+            <Tooltip title={intl.formatMessage({ defaultMessage: '测试' })}>
               <div
                 className={styles.graphqlEntry}
                 onClick={() => {
@@ -772,7 +780,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         </div>
       </Dropdown>
       <Modal
-        title="API全局设置"
+        title={intl.formatMessage({ defaultMessage: 'API全局设置' })}
         open={isModalVisible}
         onOk={() => {
           setIsModalVisible(false)
