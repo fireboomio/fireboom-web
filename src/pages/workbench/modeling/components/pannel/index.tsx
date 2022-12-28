@@ -2,6 +2,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import { printSchema } from '@mrleebo/prisma-ast'
 import { Menu } from 'antd'
 import { useContext, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import type { Updater } from 'use-immer'
 
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
@@ -44,6 +45,7 @@ const ModelPannel = ({
   const { handleClickEntity } = panel
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
+  const { id: paramId } = useParams()
 
   const menu = (
     <Menu
@@ -109,7 +111,9 @@ const ModelPannel = ({
       <div className={styles.pannel}>
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
-        <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
+        {paramId && paramId !== '0' && (
+          <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
+        )}
       </div>
 
       <div className="flex-1 mt-1 overflow-y-auto">

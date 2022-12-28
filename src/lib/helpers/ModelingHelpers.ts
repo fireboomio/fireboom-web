@@ -64,7 +64,7 @@ export const fetchAndSaveToPrismaSchemaContext = (
   const selectedDataSource = dataSources.find(source => source.id === dataSourceId)
   if (!selectedDataSource) {
     // void message.error(`切换数据源失败！无法找到数据源: id=${dataSourceId}`)
-    return
+    return Promise.resolve()
   }
   return initialPrismaSchema(String(dataSourceId), dispatch, selectedDataSource, paramIdRef)
     .then(() => {

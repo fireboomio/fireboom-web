@@ -71,9 +71,7 @@ const StatusBar: React.FC<Props> = ({
   const fetchHookOptionStatus = useCallback(
     throttle(async (url: string) => {
       try {
-        const data: any = await requests.get(`/hook/status`, {
-          url
-        })
+        const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
         setHookOptionStatus(data)
       } catch (error) {
         console.error(error)
