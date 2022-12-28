@@ -1,10 +1,10 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch } from 'antd'
 import { useContext, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import IconFont from '@/components/Iconfont'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 
@@ -25,6 +25,7 @@ const formItemLayoutWithOutLabel = {
 }
 
 function AuthMainSetting() {
+  const intl = useIntl()
   const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
   const [redirectURLsShow, setRedirectURLsShow] = useImmer(false)
   const [form] = Form.useForm()
@@ -55,7 +56,7 @@ function AuthMainSetting() {
             }}
           >
             <Form.Item
-              label="重定向URL"
+              label={intl.formatMessage({ defaultMessage: '重定向URL' })}
               wrapperCol={{
                 xs: { span: 20 },
                 sm: { span: 20 }
@@ -98,7 +99,11 @@ function AuthMainSetting() {
                         <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
                           <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
                             <div>
-                              <div>{'域名' + (index + 1).toString() + ':'}</div>
+                              <div>
+                                {intl.formatMessage({ defaultMessage: '域名' }) +
+                                  (index + 1).toString() +
+                                  ':'}
+                              </div>
                               <Input
                                 addonBefore={
                                   <Select
@@ -110,7 +115,7 @@ function AuthMainSetting() {
                                     <Select.Option value="http://">http://</Select.Option>
                                   </Select>
                                 }
-                                placeholder="请输入域名"
+                                placeholder={intl.formatMessage({ defaultMessage: '请输入域名' })}
                                 style={{ width: '60%' }}
                                 onChange={e => setFieldValue('path', e.target.value)}
                                 defaultValue={current.replace(/^https?:\/\//, '')}
@@ -148,7 +153,7 @@ function AuthMainSetting() {
                         className="text-gray-500/60"
                         onClick={() => add()}
                       >
-                        新增URL
+                        <FormattedMessage defaultMessage="新增URL" />
                       </Button>
                       <Form.ErrorList errors={errors} />
                     </Form.Item>
@@ -185,7 +190,7 @@ export default function SettingMainSecurity() {
   }, [refreshFlag])
 
   return (
-    <div className="pl-8 pt-4 bg-white h-full">
+    <div className="bg-white h-full pt-4 pl-8">
       {securConfig.allowedHosts ? (
         <div className={`${styles['security-form-contain']}`}>
           <Form
@@ -225,7 +230,12 @@ export default function SettingMainSecurity() {
                 />
               </Form.Item>
               <span className={styles.setTitle}>
-                <img alt="zhuyi" src="assets/iconfont/zhuyi.svg" style={{height:'1em', width: '1em'}} className="mr-1 text-[14px]" />
+                <img
+                  alt="zhuyi"
+                  src="assets/iconfont/zhuyi.svg"
+                  style={{ height: '1em', width: '1em' }}
+                  className="mr-1 text-[14px]"
+                />
                 <span>https://localhost:9991/api/main/graphql</span>
               </span>
             </Form.Item>
@@ -255,7 +265,7 @@ export default function SettingMainSecurity() {
                   })
                 }}
               />
-              <span className="ml-4 text-default">允许全部</span>
+              <span className="text-default ml-4">允许全部</span>
             </Form.Item>
             {!securConfig.allowedHostsEnable && (
               <Form.Item

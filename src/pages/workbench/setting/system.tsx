@@ -5,9 +5,9 @@ import { Alert, Descriptions, Input, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './components/subs/subs.module.less'
@@ -31,6 +31,7 @@ interface Runtime {
   seconds: number
 }
 export default function SettingMainVersion() {
+  const intl = useIntl()
   const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
@@ -73,7 +74,15 @@ export default function SettingMainVersion() {
     const time = dayjs.duration(dayjs().diff(dayjs(initTime), 'seconds'), 'seconds') as unknown as {
       $d: Runtime
     }
-    return `${time.$d.days}天 ${time.$d.hours}时 ${time.$d.minutes}分 ${time.$d.seconds}秒`
+    return intl.formatMessage(
+      { defaultMessage: '{days}天 {hours}时 {minutes}分 {seconds}秒' },
+      {
+        days: time.$d.days,
+        hours: time.$d.hours,
+        minutes: time.$d.minutes,
+        seconds: time.$d.seconds
+      }
+    )
   }
 
   const editPort = (key: string, value: string) => {
@@ -87,17 +96,20 @@ export default function SettingMainVersion() {
       {systemConfig.apiPort ? (
         <div className="pt-8 pl-8">
           <Descriptions
-            colon={false}
+            colon
             column={1}
             className={styles['descriptions-box']}
             labelStyle={{
               width: '15%'
             }}
           >
-            <Descriptions.Item label="运行时长:">
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
               {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
             </Descriptions.Item>
-            <Descriptions.Item label="API域名:" className="w-20">
+            <Descriptions.Item
+              label={intl.formatMessage({ defaultMessage: 'API域名' })}
+              className="w-20"
+            >
               {isApiHostEditing ? (
                 <Input
                   defaultValue={systemConfig.apiHost}
@@ -116,14 +128,20 @@ export default function SettingMainVersion() {
               ) : (
                 <span>{systemConfig.apiHost}</span>
               )}
-              <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
-                   className="ml-2"
-                   onClick={() => {
+              <img
+                alt="bianji"
+                src="assets/iconfont/bianji.svg"
+                style={{ height: '1em', width: '1em' }}
+                className="ml-2"
+                onClick={() => {
                   setIsApiHostEditing(!isApiHostEditing)
                 }}
               />
             </Descriptions.Item>
-            <Descriptions.Item label="API端口:" className="w-20">
+            <Descriptions.Item
+              label={intl.formatMessage({ defaultMessage: 'API端口' })}
+              className="w-20"
+            >
               {isApiPortEditing ? (
                 <Input
                   defaultValue={systemConfig.apiPort}
@@ -142,9 +160,12 @@ export default function SettingMainVersion() {
               ) : (
                 <span>{systemConfig.apiPort}</span>
               )}
-              <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}
-                   className="ml-2"
-                   onClick={() => {
+              <img
+                alt="bianji"
+                src="assets/iconfont/bianji.svg"
+                style={{ height: '1em', width: '1em' }}
+                className="ml-2"
+                onClick={() => {
                   setIsApiPortEditing(!isApiPortEditing)
                 }}
               />
@@ -175,7 +196,7 @@ export default function SettingMainVersion() {
             {/*    }}*/}
             {/*  />*/}
             {/*</Descriptions.Item>*/}
-            <Descriptions.Item label="日志水平:">
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '日志水平' })}>
               <Radio.Group
                 value={systemConfig.logLevel}
                 onChange={e => {
@@ -191,7 +212,7 @@ export default function SettingMainVersion() {
                 <Radio value={3}> error </Radio>
               </Radio.Group>
             </Descriptions.Item>
-            <Descriptions.Item label="开发环境">
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '开发环境' })}>
               <Radio.Group
                 value={systemConfig.devSwitch}
                 onChange={e => {
@@ -205,12 +226,14 @@ export default function SettingMainVersion() {
                 }}
               >
                 <Radio value={true} className="mr-15">
-                  开发环境
+                  <FormattedMessage defaultMessage="开发环境" />
                 </Radio>
-                <Radio value={false}>生产环境</Radio>
+                <Radio value={false}>
+                  <FormattedMessage defaultMessage="生产环境" />
+                </Radio>
               </Radio.Group>
             </Descriptions.Item>
-            <Descriptions.Item label="调试:">
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '调试' })}>
               <Switch
                 onChange={value => {
                   void requests
@@ -228,7 +251,7 @@ export default function SettingMainVersion() {
               />
             </Descriptions.Item>
             {!systemConfig.devSwitch ? (
-              <Descriptions.Item label="强制跳转:">
+              <Descriptions.Item label={intl.formatMessage({ defaultMessage: '强制跳转' })}>
                 <Switch
                   checked={systemConfig.forcedJumpSwitch}
                   className={styles['switch-edit-btn']}
@@ -257,7 +280,11 @@ export default function SettingMainVersion() {
             {/*>*/}
             {/*  <span>重启</span>*/}
             {/*</button>*/}
-            <Alert message="修改设置后，请重新编译" type="warning" showIcon />
+            <Alert
+              message={intl.formatMessage({ defaultMessage: '修改设置后，请重新编译' })}
+              type="warning"
+              showIcon
+            />
           </div>
         </div>
       ) : null}
