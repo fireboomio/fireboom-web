@@ -685,12 +685,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                     onClick={() => {
                       setMultiSelection([])
                       Modal.confirm({
-                        title: '是否确认删除选中的API？',
+                        title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
                         onOk: () => {
                           const ids = selectedNode.map(x => x.id).filter(x => x)
                           requests.post('operateApi/batchDelete', { ids }).then(() => {
                             ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
-                            message.success('删除成功')
+                            message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
                             setRefreshFlag(!refreshFlag)
                           })
                           // setEditFlag(false)

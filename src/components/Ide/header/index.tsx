@@ -121,7 +121,7 @@ const IdeHeaderContainer: FC<Props> = props => {
                   setStackblitzRemember(e.target.checked)
                 }}
               >
-                <FormattedMessage defaultMessage="下次不再提醒" />
+                {intl.formatMessage({ defaultMessage: '下次不再提醒' })}
               </Checkbox>
             </div>
           </>
