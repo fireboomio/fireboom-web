@@ -1,6 +1,7 @@
 import type { MenuProps } from 'antd'
 import { Dropdown, Input, Menu, message, Popconfirm } from 'antd'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
@@ -38,6 +39,7 @@ const ModelEntityItem = ({
   editFlag,
   newFlag
 }: Props) => {
+  const intl = useIntl()
   const { currentEntityId, changeToEntityById } = useCurrentEntity()
   const { blocks, updateAndSaveBlock, applyLocalBlocks } = useBlocks()
   const [isHovering, setIsHovering] = useImmer(false)
@@ -72,10 +74,10 @@ const ModelEntityItem = ({
         changeToEntityById(getFirstEntity()?.id ?? 0)
         setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
       }
-      const hide = message.loading('删除中...', 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中...' }), 0)
       void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
         .then(() => {
-          message.success('删除成功')
+          message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         })
         .finally(() => {
           hide()
@@ -94,21 +96,25 @@ const ModelEntityItem = ({
   const renameEntity = (newName: string) => {
     setIsEditing(false)
     if (!newName) {
-      void message.error('实体名不可为空！')
+      void message.error(intl.formatMessage({ defaultMessage: '实体名不可为空！' }))
       return
     }
     const nameIsValid = new RegExp(ENTITY_NAME_REGEX).test(newName)
     if (newName === MAGIC_DELETE_ENTITY_NAME || !nameIsValid) {
-      void message.error('实体名不合法！')
+      void message.error(intl.formatMessage({ defaultMessage: '实体名不合法！' }))
       return
     }
     if (!inEdit) {
-      const hide = message.loading('保存中...', 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }), 0)
       updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName))
         .then(() => {
-          message.success('实体名更新成功')
+          message.success(intl.formatMessage({ defaultMessage: '实体名更新成功' }))
         })
-        .catch((error: Error) => message.error(`实体名更新失败, error: ${error.message}`))
+        .catch((error: Error) =>
+          message.error(
+            intl.formatMessage({ defaultMessage: '实体名更新失败, error: ' }) + `${error.message}`
+          )
+        )
         .finally(() => {
           hide()
         })
@@ -134,7 +140,7 @@ const ModelEntityItem = ({
       items={[
         {
           key: 1,
-          label: <span>重命名</span>,
+          label: <span>{intl.formatMessage({ defaultMessage: '重命名' })}</span>,
           icon: <img src={iconRename} alt="重命名" />,
           onClick: () => setIsEditing(!isEditing)
         },
@@ -144,15 +150,17 @@ const ModelEntityItem = ({
             <Popconfirm
               className="w-full h-full"
               placement="right"
-              title="确认删除该实体吗？将会同时删除引用字段！"
+              title={intl.formatMessage({
+                defaultMessage: '确认删除该实体吗？将会同时删除引用字段！'
+              })}
               onConfirm={handleItemDelete}
-              okText="删除"
-              cancelText="取消"
+              okText={intl.formatMessage({ defaultMessage: '删除' })}
+              cancelText={intl.formatMessage({ defaultMessage: '取消' })}
               onCancel={() => setVisible(false)}
               overlayClassName={styles['delete-label']}
               okType={'danger'}
             >
-              <span>删除</span>
+              <span>{intl.formatMessage({ defaultMessage: '删除' })}</span>
             </Popconfirm>
           ),
           icon: <img src={iconDel} alt="删除" />
@@ -169,7 +177,7 @@ const ModelEntityItem = ({
       className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
       defaultValue={entity.name}
       autoFocus
-      placeholder="请输入实体名"
+      placeholder={intl.formatMessage({ defaultMessage: '请输入实体名' })}
     />
   ) : (
     <div className={'text-sm font-normal leading-4 ' + styles.name}>{entity.name}</div>

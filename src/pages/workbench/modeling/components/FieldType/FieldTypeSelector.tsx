@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Modal, Popover, Select } from 'antd'
 import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import type { Enum } from '@/interfaces/modeling'
@@ -35,6 +36,7 @@ const FieldTypeSelector = ({
   isOptional,
   addNewEnum
 }: Props) => {
+  const intl = useIntl()
   const [selectOptions, setSelectOptions] = useImmer(options)
 
   const [newEnumModalVisible, setNewEnumModalVisible] = useImmer(false)
@@ -108,7 +110,7 @@ const FieldTypeSelector = ({
                   type="link"
                   onClick={() => setNewEnumModalVisible(true)}
                 >
-                  新增枚举类型
+                  {intl.formatMessage({ defaultMessage: '新增枚举类型' })}
                 </Button>
               </div>
             </div>
@@ -137,7 +139,7 @@ const FieldTypeSelector = ({
       )}
       <Modal
         width={800}
-        title="新增枚举"
+        title={intl.formatMessage({ defaultMessage: '新增枚举' })}
         closable
         destroyOnClose
         open={newEnumModalVisible}

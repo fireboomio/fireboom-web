@@ -22,12 +22,12 @@ import type { ColumnsType } from 'antd/es/table'
 import axios from 'axios'
 import { get } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -63,11 +63,26 @@ const columns: ColumnsType<DataType> = [
     render: (_, { kind, val }) => (
       <div className="flex items-center">
         {kind == '0' ? (
-          <img alt="zhi" src="assets/iconfont/zhi.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
+          <img
+            alt="zhi"
+            src="assets/iconfont/zhi.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[24px]"
+          />
         ) : kind == '1' ? (
-          <img alt="shifoubixu2" src="assets/iconfont/shifoubixu2.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
+          <img
+            alt="shifoubixu2"
+            src="assets/iconfont/shifoubixu2.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[24px]"
+          />
         ) : (
-          <img alt="biangeng1" src="assets/iconfont/biangeng1.svg" style={{height:'1em', width: '1em'}} className="text-[24px]" />
+          <img
+            alt="biangeng1"
+            src="assets/iconfont/biangeng1.svg"
+            style={{ height: '1em', width: '1em' }}
+            className="text-[24px]"
+          />
         )}
         <span className="ml-2">{val}</span>
       </div>
@@ -107,6 +122,7 @@ const BASEPATH = '/static/upload/oas'
 const { TabPane } = Tabs
 
 export default function Rest({ content, type }: Props) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
@@ -203,7 +219,7 @@ export default function Rest({ content, type }: Props) {
         setIsValue(true)
         setRulesObj({
           pattern: /^.{1,128}$/g,
-          message: '请输入长度不大于128的非空值'
+          message: intl.formatMessage({ defaultMessage: '请输入长度不大于128的非空值' })
         })
         return
       case '1':
@@ -214,7 +230,9 @@ export default function Rest({ content, type }: Props) {
         setIsValue(true)
         setRulesObj({
           pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-          message: '以字母或下划线开头，只能由字母、下划线和数字组成'
+          message: intl.formatMessage({
+            defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
+          })
         })
         return
       default:
@@ -222,14 +240,14 @@ export default function Rest({ content, type }: Props) {
     }
   }
 
-  const test =  ()=>{
+  const test = () => {
     const values = form.getFieldsValue()
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     void requests.post('/checkDBConn', values).then((x: any) => {
       if (x?.status) {
-        message.success('连接成功')
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
       } else {
-        message.error(x?.msg || '连接失败')
+        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
       }
     })
   }
@@ -259,7 +277,7 @@ export default function Rest({ content, type }: Props) {
 
   //表单上传失败回调
   const onFinishFailed = (errorInfo: object) => {
-    void message.error('提交失败!')
+    void message.error(intl.formatMessage({ defaultMessage: '提交失败' }))
     throw errorInfo
   }
 
@@ -277,7 +295,7 @@ export default function Rest({ content, type }: Props) {
       setIsValue(true)
       setRulesObj({
         pattern: /^.{1,128}$/g,
-        message: '请输入长度不大于128的非空值'
+        message: intl.formatMessage({ defaultMessage: '请输入长度不大于128的非空值' })
       })
     }
   }
@@ -305,7 +323,9 @@ export default function Rest({ content, type }: Props) {
               file.name.endsWith('.yaml') ||
               file.name.endsWith('.yml')
             if (!isAllowed) {
-              message.error('只允许上传 json 或 yaml 格式文件')
+              message.error(
+                intl.formatMessage({ defaultMessage: '只允许上传 json 或 yaml 格式文件' })
+              )
             }
             return isAllowed || Upload.LIST_IGNORE
           }}
@@ -315,40 +335,14 @@ export default function Rest({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
-            <div>
-              <img alt="shujuyuantubiao1" src="assets/iconfont/shujuyuantubiao1.svg" style={{height:'1em', width: '1em'}} />
-              <span className="ml-2">
-                {content.name} <span className="text-xs text-gray-500/80">GET</span>
-              </span>
-            </div>
-            <div className="flex justify-center items-center">
-              <Switch
-                checked={content.switch == 0 ? true : false}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
-                onChange={connectSwitchOnChange}
-                className={styles['switch-check-btn']}
-              />
-              <Button className="ml-4 w-16 btn-light-border" onClick={() => setTestVisible(true)}>
-                测试
-              </Button>
-              <Button
-                className="ml-4 btn-light-full"
-                onClick={() => handleToggleDesigner('form', content.id)}
-              >
-                编辑
-              </Button>
-            </div>
-          </div> */}
-
           <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
               <Descriptions.Item
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      名称 <FormToolTip title="名称" />
+                      {intl.formatMessage({ defaultMessage: '名称' })}{' '}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: '名称' })} />
                     </span>
                   </>
                 }
@@ -360,8 +354,8 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      Rest 端点
-                      <FormToolTip title="Rest 端点" />
+                      {intl.formatMessage({ defaultMessage: 'Rest 端点' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
                     </span>
                   </>
                 }
@@ -373,8 +367,8 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      指定 OAS
-                      <FormToolTip title="指定OAS" />
+                      {intl.formatMessage({ defaultMessage: ' 指定 OAS' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: ' 指定 OAS' })} />
                     </span>
                   </>
                 }
@@ -398,7 +392,7 @@ export default function Rest({ content, type }: Props) {
               items={[
                 {
                   key: '1',
-                  label: '请求头',
+                  label: intl.formatMessage({ defaultMessage: '请求头' }),
                   children: (
                     <Descriptions
                       className="mb-8"
@@ -436,8 +430,8 @@ export default function Rest({ content, type }: Props) {
                   key: '2',
                   label: (
                     <span className={styles['label-style']}>
-                      授权
-                      <FormToolTip title="授权" />
+                      {intl.formatMessage({ defaultMessage: '授权' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: '授权' })} />
                     </span>
                   ),
                   children: (
@@ -448,28 +442,52 @@ export default function Rest({ content, type }: Props) {
                         size="small"
                         className={styles['descriptions-box']}
                       >
-                        <Descriptions.Item label="JWT获取">
-                          {{ 0: '无', 1: '静态', 2: '动态' }[config.jwtType ?? 0]}
+                        <Descriptions.Item
+                          label={intl.formatMessage({ defaultMessage: 'JWT获取' })}
+                        >
+                          {
+                            {
+                              0: intl.formatMessage({ defaultMessage: '无' }),
+                              1: intl.formatMessage({ defaultMessage: '静态' }),
+                              2: intl.formatMessage({ defaultMessage: '动态' })
+                            }[config.jwtType ?? 0]
+                          }
                         </Descriptions.Item>
-                        <Descriptions.Item label="密钥">
+                        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密钥' })}>
                           {isEyeShow ? (
                             <>
                               <span className="mr-5">
                                 {(config.secret as unknown as DataType)?.val}
                               </span>
-                              <img alt="xiaoyanjing-chakan" src="assets/iconfont/xiaoyanjing-chakan.svg" style={{height:'1em', width: '1em'}} onClick={changeEyeState} />
+                              <img
+                                alt="xiaoyanjing-chakan"
+                                src="assets/iconfont/xiaoyanjing-chakan.svg"
+                                style={{ height: '1em', width: '1em' }}
+                                onClick={changeEyeState}
+                              />
                             </>
                           ) : (
                             <>
                               <span className="mr-5">********</span>
-                              <img alt="xiaoyanjing-yincang" src="assets/iconfont/xiaoyanjing-yincang.svg" style={{height:'1em', width: '1em'}} onClick={changeEyeState} />
+                              <img
+                                alt="xiaoyanjing-yincang"
+                                src="assets/iconfont/xiaoyanjing-yincang.svg"
+                                style={{ height: '1em', width: '1em' }}
+                                onClick={changeEyeState}
+                              />
                             </>
                           )}
                         </Descriptions.Item>
-                        <Descriptions.Item label="签名方法">
+                        <Descriptions.Item
+                          label={intl.formatMessage({ defaultMessage: '签名方法' })}
+                        >
                           {config.signingMethod}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Token端点">{config.tokenPoint}</Descriptions.Item>
+                        <Descriptions.Item
+                          label={intl.formatMessage({ defaultMessage: 'Token端点' })}
+                        >
+                          {config.tokenPoint}
+                        </Descriptions.Item>
                       </Descriptions>
                     </div>
                   )
@@ -484,16 +502,24 @@ export default function Rest({ content, type }: Props) {
             expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
           >
-            <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
+            <Panel
+              header={intl.formatMessage({ defaultMessage: '更多设置' })}
+              key="1"
+              className="site-collapse-custom-panel"
+            >
               <Descriptions bordered column={1} size="small">
                 <Descriptions.Item
-                  label={<span className={styles['label-style']}>是否状态联合</span>}
+                  label={
+                    <span className={styles['label-style']}>
+                      {intl.formatMessage({ defaultMessage: '是否状态联合' })}
+                    </span>
+                  }
                   className="justify-start"
                 >
                   {config.statusCodeUnions ? (
-                    <Tag color="green">开启</Tag>
+                    <Tag color="green">{intl.formatMessage({ defaultMessage: '开启' })}</Tag>
                   ) : (
-                    <Tag color="red">关闭</Tag>
+                    <Tag color="red">{intl.formatMessage({ defaultMessage: '关闭' })}</Tag>
                   )}
                 </Descriptions.Item>
               </Descriptions>
@@ -551,31 +577,42 @@ export default function Rest({ content, type }: Props) {
               <Form.Item
                 label={
                   <>
-                    <span>命名空间</span>
-                    <FormToolTip title="命名空间" />
+                    <span>{intl.formatMessage({ defaultMessage: '命名空间' })}</span>
+                    <FormToolTip title={intl.formatMessage({ defaultMessage: '命名空间' })} />
                   </>
                 }
                 rules={[
-                  { required: true, message: '请输入命名空间' },
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: '请输入命名空间' })
+                  },
                   {
                     pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-                    message: '以字母或下划线开头，只能由字母、下划线和数字组成'
+                    message: intl.formatMessage({
+                      defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
+                    })
                   }
                 ]}
                 name="apiNameSpace"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
-                <Input placeholder="请输入..." />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
               </Form.Item>
               <Form.Item
                 label={
                   <>
-                    <span>Rest 端点</span>
-                    <FormToolTip title="Rest 端点" />
+                    <span>{intl.formatMessage({ defaultMessage: 'Rest 端点' })}</span>
+                    <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
                   </>
                 }
-                rules={[{ required: true, type: 'url', message: '只允许输入链接' }]}
+                rules={[
+                  {
+                    required: true,
+                    type: 'url',
+                    message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
+                  }
+                ]}
                 name="baseURL"
                 colon={false}
                 style={{ marginBottom: '20px' }}
@@ -585,15 +622,20 @@ export default function Rest({ content, type }: Props) {
                   filterOption={(inputValue, option) => {
                     return true
                   }}
-                  placeholder="请输入..."
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
                 />
               </Form.Item>
               <Form.Item
-                rules={[{ required: true, message: '请上传 OAS 文件' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: '请上传 OAS 文件' })
+                  }
+                ]}
                 label={
                   <>
-                    <span>指定 OAS</span>
-                    <FormToolTip title="指定OAS" />
+                    <span>{intl.formatMessage({ defaultMessage: '指定 OAS' })}</span>
+                    <FormToolTip title={intl.formatMessage({ defaultMessage: '指定OAS' })} />
                   </>
                 }
                 colon={false}
@@ -603,10 +645,14 @@ export default function Rest({ content, type }: Props) {
                 // getValueFromEvent={normFile}
               >
                 <Input
-                  placeholder="请输入..."
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
                   onClick={() => setVisible(true)}
                   // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                  suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+                  suffix={
+                    <a onClick={() => setVisible(true)}>
+                      {intl.formatMessage({ defaultMessage: '浏览' })}
+                    </a>
+                  }
                   readOnly
                   // value={uploadPath}
                 />
@@ -614,7 +660,7 @@ export default function Rest({ content, type }: Props) {
 
               <div className="tabs-form">
                 <Tabs defaultActiveKey="1" className="ml-3" onChange={onTabChange}>
-                  <TabPane tab="请求头" key="1">
+                  <TabPane tab={intl.formatMessage({ defaultMessage: '请求头' })} key="1">
                     <Form.Item
                       wrapperCol={{
                         xs: { span: 24 },
@@ -643,19 +689,19 @@ export default function Rest({ content, type }: Props) {
                                       <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('0')}
                                       </span>
-                                      值
+                                      {intl.formatMessage({ defaultMessage: '值' })}
                                     </Option>
                                     <Option value="1">
                                       <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('1')}
                                       </span>
-                                      环境变量
+                                      {intl.formatMessage({ defaultMessage: '环境变量' })}
                                     </Option>
                                     <Option value="2">
                                       <span className="h-full mr-1 inline-flex align-top items-center">
                                         {renderIcon('2')}
                                       </span>
-                                      转发自客户端
+                                      {intl.formatMessage({ defaultMessage: '转发自客户端' })}
                                     </Option>
                                   </Select>
                                 </Form.Item>
@@ -668,14 +714,19 @@ export default function Rest({ content, type }: Props) {
                                       ? [
                                           {
                                             pattern: /^.{1,128}$/g,
-                                            message: '请输入长度不大于128的非空值'
+                                            message: intl.formatMessage({
+                                              defaultMessage: '请输入长度不大于128的非空值'
+                                            })
                                           }
                                         ]
                                       : []
                                   }
                                 >
                                   {form.getFieldValue(['headers', field.name, 'kind']) === '0' ? (
-                                    <Input style={{ width: '80%' }} placeholder="请输入" />
+                                    <Input
+                                      style={{ width: '80%' }}
+                                      placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                                    />
                                   ) : (
                                     <Select
                                       className="w-1/5"
@@ -686,7 +737,12 @@ export default function Rest({ content, type }: Props) {
                                     />
                                   )}
                                 </Form.Item>
-                                <img alt="guanbi" src="assets/iconfont/guanbi.svg" style={{height:'1em', width: '1em'}} onClick={() => remove(index)} />
+                                <img
+                                  alt="guanbi"
+                                  src="assets/iconfont/guanbi.svg"
+                                  style={{ height: '1em', width: '1em' }}
+                                  onClick={() => remove(index)}
+                                />
                               </Space>
                             ))}
 
@@ -700,7 +756,7 @@ export default function Rest({ content, type }: Props) {
                                 icon={<PlusOutlined />}
                                 className="text-gray-500/60 w-1/1"
                               >
-                                新增请求头信息
+                                {intl.formatMessage({ defaultMessage: '新增请求头信息' })}
                               </Button>
                               <Form.ErrorList errors={errors} />
                             </Form.Item>
@@ -712,36 +768,52 @@ export default function Rest({ content, type }: Props) {
                   <TabPane
                     tab={
                       <div>
-                        <span>授权</span>
-                        <img alt="wenhao" src="assets/iconfont/wenhao.svg" style={{height:'1em', width: '1em'}} className={`${styles['form-icon']} ml-1`} />
+                        <span>{intl.formatMessage({ defaultMessage: '授权' })}</span>
+                        <img
+                          alt="wenhao"
+                          src="assets/iconfont/wenhao.svg"
+                          style={{ height: '1em', width: '1em' }}
+                          className={`${styles['form-icon']} ml-1`}
+                        />
                       </div>
                     }
                     key="2"
                   >
-                    <Form.Item label="JWT获取" name="jwtType" initialValue={'0'}>
+                    <Form.Item
+                      label={intl.formatMessage({ defaultMessage: 'JWT获取' })}
+                      name="jwtType"
+                      initialValue={'0'}
+                    >
                       <Radio.Group onChange={onChangeRadio} value={value}>
                         <Radio value={'0'} className="mr-20">
-                          无
+                          {intl.formatMessage({ defaultMessage: '无' })}
                         </Radio>
                         <Radio value={'1'} className="mr-20">
-                          静态
+                          {intl.formatMessage({ defaultMessage: '静态' })}
                         </Radio>
-                        <Radio value={'2'}>动态</Radio>
+                        <Radio value={'2'}>{intl.formatMessage({ defaultMessage: '动态' })}</Radio>
                       </Radio.Group>
                     </Form.Item>
                     {jwtType === '1' ? (
                       <>
-                        <Form.Item label="密钥">
+                        <Form.Item label={intl.formatMessage({ defaultMessage: '密钥' })}>
                           <Input.Group compact>
                             <Form.Item name={['secret', 'kind']} noStyle>
                               <Select className="w-1/5" onChange={onValueChange}>
-                                <Option value="0">值</Option>
-                                <Option value="1">环境变量</Option>
+                                <Option value="0">
+                                  {intl.formatMessage({ defaultMessage: '值' })}
+                                </Option>
+                                <Option value="1">
+                                  {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                </Option>
                               </Select>
                             </Form.Item>
                             {isValue ? (
                               <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
-                                <Input style={{ width: '80%' }} placeholder="请输入" />
+                                <Input
+                                  style={{ width: '80%' }}
+                                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                                />
                               </Form.Item>
                             ) : (
                               <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
@@ -757,7 +829,11 @@ export default function Rest({ content, type }: Props) {
                           </Input.Group>
                         </Form.Item>
 
-                        <Form.Item label="签名方法" name="signingMethod" initialValue={'HS256'}>
+                        <Form.Item
+                          label={intl.formatMessage({ defaultMessage: '签名方法' })}
+                          name="signingMethod"
+                          initialValue={'HS256'}
+                        >
                           <Radio value={'HS256'} checked>
                             HS256
                           </Radio>
@@ -766,17 +842,24 @@ export default function Rest({ content, type }: Props) {
                     ) : null}
                     {jwtType === '2' ? (
                       <>
-                        <Form.Item label="密钥">
+                        <Form.Item label={intl.formatMessage({ defaultMessage: '密钥' })}>
                           <Input.Group compact>
                             <Form.Item name={['secret', 'kind']} noStyle>
                               <Select className="w-1/5" onChange={onValueChange}>
-                                <Option value="0">值</Option>
-                                <Option value="1">环境变量</Option>
+                                <Option value="0">
+                                  {intl.formatMessage({ defaultMessage: '值' })}
+                                </Option>
+                                <Option value="1">
+                                  {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                </Option>
                               </Select>
                             </Form.Item>
                             <Form.Item name={['secret', 'val']} noStyle rules={[rulesObj]}>
                               {isValue ? (
-                                <Input style={{ width: '80%' }} placeholder="请输入" />
+                                <Input
+                                  style={{ width: '80%' }}
+                                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                                />
                               ) : (
                                 <Select
                                   className="w-1/5"
@@ -792,8 +875,11 @@ export default function Rest({ content, type }: Props) {
                         <Form.Item
                           label={
                             <>
-                              <span>Token 端点</span>
-                              <img alt="wenhao" src="assets/iconfont/wenhao.svg" style={{height:'1em', width: '1em'}}
+                              <span>{intl.formatMessage({ defaultMessage: 'Token 端点' })}</span>
+                              <img
+                                alt="wenhao"
+                                src="assets/iconfont/wenhao.svg"
+                                style={{ height: '1em', width: '1em' }}
                                 className={`${styles['form-icon']} ml-1`}
                               />
                             </>
@@ -803,7 +889,9 @@ export default function Rest({ content, type }: Props) {
                           style={{ marginBottom: '20px' }}
                           name="tokenPoint"
                         >
-                          <Input placeholder="请输入..." />
+                          <Input
+                            placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                          />
                         </Form.Item>
                       </>
                     ) : null}
@@ -816,13 +904,19 @@ export default function Rest({ content, type }: Props) {
                 defaultActiveKey={['0']}
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
               >
-                <Panel header="更多" key="1" className="site-collapse-custom-panel">
+                <Panel
+                  header={intl.formatMessage({ defaultMessage: '更多' })}
+                  key="1"
+                  className="site-collapse-custom-panel"
+                >
                   <Form.Item
                     label={
                       <>
                         <span className={styles['label-style']}>
-                          是否状态联合
-                          <FormToolTip title="是否状态联合" />
+                          {intl.formatMessage({ defaultMessage: '是否状态联合' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '是否状态联合' })}
+                          />
                         </span>
                       </>
                     }
@@ -848,7 +942,7 @@ export default function Rest({ content, type }: Props) {
                       }
                     }}
                   >
-                    <span>取消</span>
+                    <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
                   </Button>
                   <Button
                     className={'btn-test ml-4'}
@@ -856,10 +950,12 @@ export default function Rest({ content, type }: Props) {
                       test()
                     }}
                   >
-                    测试
+                    {intl.formatMessage({ defaultMessage: '测试' })}
                   </Button>
                   <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
-                    {content.name == '' ? '创建' : '保存'}
+                    {content.name == ''
+                      ? intl.formatMessage({ defaultMessage: '创建' })
+                      : intl.formatMessage({ defaultMessage: '保存' })}
                   </Button>
                 </div>
               </Form.Item>

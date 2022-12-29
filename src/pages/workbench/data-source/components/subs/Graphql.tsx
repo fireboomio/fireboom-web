@@ -19,12 +19,12 @@ import {
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { Rule } from 'antd/lib/form'
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
-import IconFont from '@/components/Iconfont'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -74,6 +74,7 @@ const BASEPATH = '/static/upload/oas'
 const HEADER_LIST = HttpRequestHeaders.map(x => ({ label: x, value: x }))
 
 export default function Graphql({ content, type }: Props) {
+  const intl = useIntl()
   const navigate = useNavigate()
   const config = content.config as Config
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
@@ -147,14 +148,20 @@ export default function Graphql({ content, type }: Props) {
     switch (value) {
       case '0':
         setIsValue(true)
-        setRulesObj({ pattern: /^.{1,2000}$/g, message: '请输入长度不大于2000的非空值' })
+        setRulesObj({
+          pattern: /^.{1,2000}$/g,
+          message: intl.formatMessage({ defaultMessage: '请输入长度不大于2000的非空值' })
+        })
         return
       case '1':
         setIsValue(false)
         return
       case '2':
         setIsValue(true)
-        setRulesObj({ pattern: /^\w+$/g, message: '请输入非空值' })
+        setRulesObj({
+          pattern: /^\w+$/g,
+          message: intl.formatMessage({ defaultMessage: '请输入非空值' })
+        })
         return
       default:
         return
@@ -170,7 +177,11 @@ export default function Graphql({ content, type }: Props) {
         if (!value) return
         return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
           ? Promise.resolve()
-          : Promise.reject('以字母或下划线开头，只能由字母、下划线和数字组成')
+          : Promise.reject(
+              intl.formatMessage({
+                defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
+              })
+            )
       }
     })
   }
@@ -209,9 +220,9 @@ export default function Graphql({ content, type }: Props) {
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
     void requests.post('/checkDBConn', { sourceType: 3, config: values }).then((x: any) => {
       if (x?.status) {
-        message.success('连接成功')
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
       } else {
-        message.error(x?.msg || '连接失败')
+        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
       }
     })
   }
@@ -264,8 +275,8 @@ export default function Graphql({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>
-                      名称
-                      <FormToolTip title="名称" />
+                      {intl.formatMessage({ defaultMessage: '名称' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: '名称' })} />
                     </span>
                   </div>
                 }
@@ -278,8 +289,8 @@ export default function Graphql({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>
-                      Graphql 端点
-                      <FormToolTip title="Graphql 端点" />
+                      {intl.formatMessage({ defaultMessage: 'Graphql 端点' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Graphql 端点' })} />
                     </span>
                   </div>
                 }
@@ -293,8 +304,8 @@ export default function Graphql({ content, type }: Props) {
                   label={
                     <div>
                       <span className={styles['label-style']}>
-                        指定Schema
-                        <FormToolTip title="指定Schema" />
+                        {intl.formatMessage({ defaultMessage: '指定Schema' })}
+                        <FormToolTip title={intl.formatMessage({ defaultMessage: '指定Schema' })} />
                       </span>
                     </div>
                   }
@@ -312,7 +323,9 @@ export default function Graphql({ content, type }: Props) {
               )}
             </Descriptions>
           </div>
-          <div className="text-base font-medium ml-3 mb-3">请求头</div>
+          <div className="text-base font-medium ml-3 mb-3">
+            {intl.formatMessage({ defaultMessage: '请求头' })}
+          </div>
           <div className={`${styles['table-contain']} mb-8`}>
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               {((config?.headers as unknown as DataType[]) ?? []).map(
@@ -352,28 +365,38 @@ export default function Graphql({ content, type }: Props) {
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
           >
-            <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
+            <Panel
+              header={intl.formatMessage({ defaultMessage: '更多设置' })}
+              key="1"
+              className="site-collapse-custom-panel"
+            >
               <div className="flex justify-center mb-8">
                 <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
                   <Descriptions.Item
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          是否内部
-                          <FormToolTip title="是否内部" />
+                          {intl.formatMessage({ defaultMessage: '是否内部' })}
+                          <FormToolTip title={intl.formatMessage({ defaultMessage: '是否内部' })} />
                         </span>
                       </div>
                     }
                     className="justify-start"
                   >
-                    {config.internal ? <Tag color="green">开启</Tag> : <Tag color="red">关闭</Tag>}
+                    {config.internal ? (
+                      <Tag color="green">{intl.formatMessage({ defaultMessage: '开启' })}</Tag>
+                    ) : (
+                      <Tag color="red">{intl.formatMessage({ defaultMessage: '关闭' })}</Tag>
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          自定义Float标量
-                          <FormToolTip title="自定义Float标量" />
+                          {intl.formatMessage({ defaultMessage: '自定义Float标量' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '自定义Float标量' })}
+                          />
                         </span>
                       </div>
                     }
@@ -385,8 +408,10 @@ export default function Graphql({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          自定义INT标量
-                          <FormToolTip title="自定义INT标量" />
+                          {intl.formatMessage({ defaultMessage: '自定义INT标量' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '自定义INT标量' })}
+                          />
                         </span>
                       </div>
                     }
@@ -398,8 +423,10 @@ export default function Graphql({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          排除重命名根字段
-                          <FormToolTip title="排除重命名根字段" />
+                          {intl.formatMessage({ defaultMessage: '排除重命名根字段' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '排除重命名根字段' })}
+                          />
                         </span>
                       </div>
                     }
@@ -443,8 +470,8 @@ export default function Graphql({ content, type }: Props) {
                 label={
                   <div>
                     <span className={styles['label-style']}>
-                      名称:
-                      <FormToolTip title="名称" />
+                      {intl.formatMessage({ defaultMessage: '名称' })}:
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: '名称' })} />
                     </span>
                   </div>
                 }
@@ -452,35 +479,46 @@ export default function Graphql({ content, type }: Props) {
                 style={{ marginBottom: '20px' }}
                 name="apiNameSpace"
                 rules={[
-                  { required: true, message: '名称不能为空' },
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: '名称不能为空' })
+                  },
                   {
                     pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-                    message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                    message: intl.formatMessage({
+                      defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                    })
                   }
                 ]}
               >
-                <Input placeholder="请输入..." />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
               </Form.Item>
 
               <Form.Item
                 label={
                   <div>
                     <span className={styles['label-style']}>
-                      Graphql 端点:
-                      <FormToolTip title="Graphql 端点" />
+                      {intl.formatMessage({ defaultMessage: 'Graphql 端点' })}:
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Graphql 端点' })} />
                     </span>
                   </div>
                 }
                 colon={false}
                 required
                 rules={[
-                  { required: true, message: '端点不能为空' },
-                  { pattern: urlReg, message: '请填写规范域名' }
+                  {
+                    required: true,
+                    message: intl.formatMessage({ defaultMessage: '端点不能为空' })
+                  },
+                  {
+                    pattern: urlReg,
+                    message: intl.formatMessage({ defaultMessage: '请填写规范域名' })
+                  }
                 ]}
                 style={{ marginBottom: '20px' }}
                 name="url"
               >
-                <Input placeholder="请输入..." />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
               </Form.Item>
 
               <Form.Item name="agreement" label=" " valuePropName="checked">
@@ -489,7 +527,7 @@ export default function Graphql({ content, type }: Props) {
                     setIsShowUpSchema(!isShowUpSchema)
                   }}
                 >
-                  通过发送指令,自动内省Schema
+                  {intl.formatMessage({ defaultMessage: '通过发送指令,自动内省Schema' })}
                 </Checkbox>
               </Form.Item>
               {isShowUpSchema ? (
@@ -497,8 +535,8 @@ export default function Graphql({ content, type }: Props) {
                   label={
                     <div>
                       <span className={styles['label-style']}>
-                        指定Schema:
-                        <FormToolTip title="指定Schema" />
+                        {intl.formatMessage({ defaultMessage: '指定Schema' })}:
+                        <FormToolTip title={intl.formatMessage({ defaultMessage: '指定Schema' })} />
                       </span>
                     </div>
                   }
@@ -510,10 +548,14 @@ export default function Graphql({ content, type }: Props) {
                   // getValueFromEvent={normFile}
                 >
                   <Input
-                    placeholder="请输入..."
+                    placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
                     onClick={() => setVisible(true)}
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                    suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+                    suffix={
+                      <a onClick={() => setVisible(true)}>
+                        {intl.formatMessage({ defaultMessage: '浏览' })}
+                      </a>
+                    }
                     readOnly
                     // value={uploadPath}
                   />
@@ -549,7 +591,9 @@ export default function Graphql({ content, type }: Props) {
                 ''
               )}
 
-              <div className="text-lg ml-3 mb-3">请求头:</div>
+              <div className="text-lg ml-3 mb-3">
+                {intl.formatMessage({ defaultMessage: '请求头' })}:
+              </div>
 
               <Form.Item wrapperCol={{ span: 24 }}>
                 <Form.List name="headers">
@@ -563,7 +607,7 @@ export default function Graphql({ content, type }: Props) {
                               filterOption={(inputValue, option) => {
                                 return (option?.label ?? '').includes(inputValue)
                               }}
-                              placeholder="请输入..."
+                              placeholder={intl.formatMessage({ defaultMessage: '请求头' })}
                             />
                           </Form.Item>
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
@@ -572,19 +616,19 @@ export default function Graphql({ content, type }: Props) {
                                 <span className="mr-1 inline-flex align-top h-full items-center">
                                   {renderIcon('0')}
                                 </span>
-                                值
+                                {intl.formatMessage({ defaultMessage: '值' })}
                               </Option>
                               <Option value="1">
                                 <span className="mr-1 inline-flex align-top h-full items-center">
                                   {renderIcon('1')}
                                 </span>
-                                环境变量
+                                {intl.formatMessage({ defaultMessage: '环境变量' })}
                               </Option>
                               <Option value="2">
                                 <span className="mr-1 inline-flex align-top h-full items-center">
                                   {renderIcon('2')}
                                 </span>
-                                转发自客户端
+                                {intl.formatMessage({ defaultMessage: '转发自客户端' })}
                               </Option>
                             </Select>
                           </Form.Item>
@@ -596,14 +640,18 @@ export default function Graphql({ content, type }: Props) {
                                 ? [
                                     {
                                       pattern: /^.{1,2000}$/g,
-                                      message: '请输入长度不大于2000的非空值'
+                                      message: intl.formatMessage({
+                                        defaultMessage: '请输入长度不大于2000的非空值'
+                                      })
                                     }
                                   ]
                                 : []
                             }
                           >
                             {form.getFieldValue(['headers', field.name, 'kind']) === '0' ? (
-                              <Input placeholder="请输入" />
+                              <Input
+                                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                              />
                             ) : (
                               <Select
                                 className="w-1/5"
@@ -636,7 +684,7 @@ export default function Graphql({ content, type }: Props) {
                           icon={<PlusOutlined />}
                           className="text-gray-500/60 w-1/1"
                         >
-                          新增请求头信息
+                          {intl.formatMessage({ defaultMessage: '新增请求头信息' })}
                         </Button>
                         <Form.ErrorList errors={errors} />
                       </Form.Item>
@@ -652,13 +700,17 @@ export default function Graphql({ content, type }: Props) {
                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                 className={`${styles['collapse-box']} site-collapse-custom-collapse bg-white-50`}
               >
-                <Panel header="更多设置" key="1" className="site-collapse-custom-panel">
+                <Panel
+                  header={intl.formatMessage({ defaultMessage: '更多设置' })}
+                  key="1"
+                  className="site-collapse-custom-panel"
+                >
                   <Form.Item
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          是否内部
-                          <FormToolTip title="是否内部" />
+                          {intl.formatMessage({ defaultMessage: '是否内部' })}
+                          <FormToolTip title={intl.formatMessage({ defaultMessage: '是否内部' })} />
                         </span>
                       </div>
                     }
@@ -673,8 +725,10 @@ export default function Graphql({ content, type }: Props) {
                     label={
                       <div className="">
                         <span className={styles['label-style']}>
-                          自定义Float标量
-                          <FormToolTip title="自定义Float标量" />
+                          {intl.formatMessage({ defaultMessage: '自定义Float标量' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '自定义Float标量' })}
+                          />
                         </span>
                       </div>
                     }
@@ -697,8 +751,10 @@ export default function Graphql({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          自定义INT标量
-                          <FormToolTip title="自定义INT标量" />
+                          {intl.formatMessage({ defaultMessage: '自定义INT标量' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '自定义INT标量' })}
+                          />
                         </span>
                       </div>
                     }
@@ -720,8 +776,10 @@ export default function Graphql({ content, type }: Props) {
                     label={
                       <div>
                         <span className={styles['label-style']}>
-                          排除重命名根字段
-                          <FormToolTip title="排除重命名根字段" />
+                          {intl.formatMessage({ defaultMessage: '排除重命名根字段' })}
+                          <FormToolTip
+                            title={intl.formatMessage({ defaultMessage: '排除重命名根字段' })}
+                          />
                         </span>
                       </div>
                     }
@@ -754,7 +812,7 @@ export default function Graphql({ content, type }: Props) {
                     }
                   }}
                 >
-                  <span>取消</span>
+                  <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
                 </Button>
                 <Button
                   className={'btn-test ml-4'}
@@ -762,7 +820,7 @@ export default function Graphql({ content, type }: Props) {
                     testGql()
                   }}
                 >
-                  测试
+                  {intl.formatMessage({ defaultMessage: '测试' })}
                 </Button>
                 <Button
                   className={'btn-save ml-4'}
@@ -770,7 +828,9 @@ export default function Graphql({ content, type }: Props) {
                     form.submit()
                   }}
                 >
-                  {content.name == '' ? '创建' : '保存'}
+                  {content.name == ''
+                    ? intl.formatMessage({ defaultMessage: '创建' })
+                    : intl.formatMessage({ defaultMessage: '保存' })}
                 </Button>
               </div>
             </Form.Item>
@@ -796,7 +856,7 @@ export default function Graphql({ content, type }: Props) {
           beforeUpload={file => {
             const isAllowed = file.name.endsWith('.graphql')
             if (!isAllowed) {
-              message.error('只允许上传 graphql 格式文件')
+              message.error(intl.formatMessage({ defaultMessage: '只允许上传 graphql 格式文件' }))
             }
             return isAllowed || Upload.LIST_IGNORE
           }}

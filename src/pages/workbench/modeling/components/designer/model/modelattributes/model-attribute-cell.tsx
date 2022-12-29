@@ -1,6 +1,7 @@
 import type { Field, ModelAttribute } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { message, Select } from 'antd'
+import { useIntl } from 'react-intl'
 
 import type { Model } from '@/interfaces/modeling'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
@@ -46,6 +47,7 @@ const ModelAttributeCell = ({
   deleteEmptyAttributes,
   handleUpdateAttribute
 }: Props) => {
+  const intl = useIntl()
   const {
     config: { dbType }
   } = useDBSource()
@@ -56,7 +58,9 @@ const ModelAttributeCell = ({
   const modelAttributesMap: Record<string, AttributeType> = {}
   const prismaSchemaPropertyForDBType = PrismaSchemaProperties[dbType]
   if (!prismaSchemaPropertyForDBType) {
-    void message.error(`暂不支持数据库类型为[${dbType}]的数据源！`)
+    void message.error(
+      intl.formatMessage({ defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' }, { dbType })
+    )
     return <>N/A</>
   }
   prismaSchemaPropertyForDBType.model.attributes.forEach(attr => {

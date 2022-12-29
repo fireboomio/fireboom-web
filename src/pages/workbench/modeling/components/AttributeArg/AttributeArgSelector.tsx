@@ -1,5 +1,6 @@
 import { Select } from 'antd'
 import { useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import styles from '../index.module.less'
@@ -35,6 +36,7 @@ const AttributeArgSelector = ({
   argIsFunction = false,
   optionsMessage
 }: Props) => {
+  const intl = useIntl()
   const [isSelected, setSelected] = useImmer(selectedOptionsValue.length !== 0)
   const [selectOptions, setSelectOptions] = useImmer(options)
 
@@ -75,7 +77,9 @@ const AttributeArgSelector = ({
             {argIsFunction && '()'}
           </span>
         ) : (
-          <span className={styles['to-choose']}>待选择</span>
+          <span className={styles['to-choose']}>
+            {intl.formatMessage({ defaultMessage: '待选择' })}
+          </span>
         )}
         <div className={styles['child-select']}>
           <Select

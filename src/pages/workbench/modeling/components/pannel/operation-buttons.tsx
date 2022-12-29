@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
@@ -14,14 +15,17 @@ interface Props {
 }
 
 const OperationButtons = ({ changeToER, addNewModel }: Props) => {
+  const intl = useIntl()
   const { panel } = useContext(PrismaSchemaContext)
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
   const { currentEntity } = useCurrentEntity()
-  let title = inEdit ? '数据建模' : '数据预览'
+  let title = inEdit
+    ? intl.formatMessage({ defaultMessage: '数据建模' })
+    : intl.formatMessage({ defaultMessage: '数据预览' })
   // 当前无选中对象时，强制显示数据建模
   if (!currentEntity) {
-    title = '数据建模'
+    title = intl.formatMessage({ defaultMessage: '数据建模' })
   }
 
   // 快捷键

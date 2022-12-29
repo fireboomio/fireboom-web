@@ -4,8 +4,8 @@ import { Image, Input, message, Popconfirm, Table, Upload } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
-import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './FileList.module.less'
@@ -36,6 +36,7 @@ export default function FileList({
   basePath,
   upType
 }: Props) {
+  const intl = useIntl()
   const [data, setData] = useState<TableType[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
   const [keyword, setKeyword] = useState('')
@@ -51,10 +52,13 @@ export default function FileList({
         console.log(info.file, info.fileList)
       }
       if (info.file.status === 'done') {
-        message.success(`${info.file.name} 上传成功`)
+        message.success(`${info.file.name} ${intl.formatMessage({ defaultMessage: '上传成功' })}`)
         setRefreshFlag(!refreshFlag)
       } else if (info.file.status === 'error') {
-        message.error(info.file.response?.message || `${info.file.name} 上传失败`)
+        message.error(
+          info.file.response?.message ||
+            `${info.file.name} ${intl.formatMessage({ defaultMessage: '上传失败' })}`
+        )
       }
     }
   }
@@ -98,10 +102,30 @@ export default function FileList({
   }
 
   const columns: ColumnsType<TableType> = [
-    { title: '文件名', dataIndex: 'name', key: 'name', className: 'cursor-pointer' },
-    { title: '大小', dataIndex: 'size', key: 'size', width: 100 },
-    { title: '修改时间', dataIndex: 'modifyTime', key: 'modifyTime', width: 180 },
-    { title: '权限', dataIndex: 'permission', key: 'permission', width: 80 },
+    {
+      title: intl.formatMessage({ defaultMessage: '文件名' }),
+      dataIndex: 'name',
+      key: 'name',
+      className: 'cursor-pointer'
+    },
+    {
+      title: intl.formatMessage({ defaultMessage: '大小' }),
+      dataIndex: 'size',
+      key: 'size',
+      width: 100
+    },
+    {
+      title: intl.formatMessage({ defaultMessage: '修改时间' }),
+      dataIndex: 'modifyTime',
+      key: 'modifyTime',
+      width: 180
+    },
+    {
+      title: intl.formatMessage({ defaultMessage: '权限' }),
+      dataIndex: 'permission',
+      key: 'permission',
+      width: 80
+    },
     // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
     {
       title: '',
@@ -111,11 +135,11 @@ export default function FileList({
       render: (_, rcd) => (
         <div className="flex items-center justify-between">
           <Popconfirm
-            title="确认删除？"
+            title={intl.formatMessage({ defaultMessage: '确认删除？' })}
             onConfirm={e => confirm(rcd, e)}
             onCancel={cancel}
-            okText="是"
-            cancelText="否"
+            okText={intl.formatMessage({ defaultMessage: '是' })}
+            cancelText={intl.formatMessage({ defaultMessage: '否' })}
           >
             <img
               alt="shanchu"

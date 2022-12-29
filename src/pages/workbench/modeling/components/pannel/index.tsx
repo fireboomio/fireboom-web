@@ -1,7 +1,6 @@
-import { AppleOutlined } from '@ant-design/icons'
 import { printSchema } from '@mrleebo/prisma-ast'
-import { Menu } from 'antd'
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import type { Updater } from 'use-immer'
 
@@ -39,6 +38,7 @@ const ModelPannel = ({
   addNewModel,
   setShowType
 }: Props) => {
+  const intl = useIntl()
   const { entities, editMap, newMap, delMap } = useEntities()
   const { changeToEntityById } = useCurrentEntity()
   const { panel, triggerSyncEditor, dispatch } = useContext(PrismaSchemaContext)
@@ -46,24 +46,6 @@ const ModelPannel = ({
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
   const { id: paramId } = useParams()
-
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: '1',
-          label: <span onClick={addNewModel}>模型</span>,
-          icon: <AppleOutlined />
-        }
-        // 此处不支持新增枚举，改为在model中弹窗新增
-        // {
-        //   key: '2',
-        //   label: <span onClick={addNewEnum}>枚举</span>,
-        //   icon: <AppleOutlined/>,
-        // },
-      ]}
-    />
-  )
 
   const { blocks, applyLocalSchema, applyLocalBlocks } = useBlocks()
 
@@ -131,7 +113,9 @@ const ModelPannel = ({
       </div>
       {Object.keys(delMap).length ? (
         <div className="bg-[#f7f7f7] rounded-4px m-2 px-3 text-[#666] leading-32px">
-          系统检测到您可能删除或重命名了模型，迁移后将导致数据丢失，请谨慎操作
+          {intl.formatMessage({
+            defaultMessage: '系统检测到您可能删除或重命名了模型，迁移后将导致数据丢失，请谨慎操作'
+          })}
         </div>
       ) : null}
     </div>
