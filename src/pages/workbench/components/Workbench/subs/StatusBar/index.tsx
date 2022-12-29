@@ -182,14 +182,14 @@ const StatusBar: React.FC<Props> = ({
               >
                 {hookStatusMap[hookStatus as HookStatus] ?? ''}
               </span>
-              <div className="flex h-full pl-1 items-center">
-                <img
-                  src="assets/refresh.svg"
-                  onClick={e => {
-                    e.stopPropagation()
-                    workbenchContext.onRefreshState()
-                  }}
-                />
+              <div
+                className="flex h-full pl-1 items-center"
+                onClick={e => {
+                  workbenchContext.onRefreshState()
+                  e.stopPropagation()
+                }}
+              >
+                <img alt="" src="assets/refresh.svg" />
               </div>
             </div>
             <div className={styles.split} />
