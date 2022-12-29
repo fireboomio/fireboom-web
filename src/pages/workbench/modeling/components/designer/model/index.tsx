@@ -4,6 +4,7 @@ import { Button, Col, Divider, Form, Input, message, Modal, Popover, Row, Spin }
 import ButtonGroup from 'antd/lib/button/button-group'
 import { findLastIndex } from 'lodash'
 import { forwardRef, useEffect, useImperativeHandle } from 'react'
+import { useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
@@ -55,6 +56,7 @@ const ModelDesigner = forwardRef(
       addEmptyModelAttribute,
       currentModel
     }))
+    const intl = useIntl()
     const [currentModel, setCurrentModel] = useImmer<Model>(model)
 
     const [modelNameModalVisible, setModelNameModalVisible] = useImmer(false)
@@ -159,7 +161,7 @@ const ModelDesigner = forwardRef(
 
     const handleSaveModel = () => {
       if (!checkIdExist(currentModel)) {
-        void message.error('实体未设置主键')
+        void message.error(intl.formatMessage({ defaultMessage: '实体未设置主键' }))
         return
       }
       // if (currentModelName === UNTITLED_NEW_ENTITY) {
@@ -308,7 +310,12 @@ const ModelDesigner = forwardRef(
               idxs.push(idx)
             })
           }
-          return { result: false, errorMessage: '字段名不合法，以字母开头，可包含数字和下划线' }
+          return {
+            result: false,
+            errorMessage: intl.formatMessage({
+              defaultMessage: '字段名不合法，以字母开头，可包含数字和下划线'
+            })
+          }
         }
         if (fieldNameExist) {
           if (invalidFieldIdx.indexOf(idx) === -1) {
@@ -316,7 +323,10 @@ const ModelDesigner = forwardRef(
               idxs.push(idx)
             })
           }
-          return { result: false, errorMessage: '字段名已存在' }
+          return {
+            result: false,
+            errorMessage: intl.formatMessage({ defaultMessage: '字段名已存在' })
+          }
         }
         if (invalidFieldIdx.indexOf(idx) !== -1) {
           setInvalidFieldIdx(idxs => {
@@ -328,7 +338,7 @@ const ModelDesigner = forwardRef(
 
     const handleUpdateModelName = ({ modelName }: { modelName: string }) => {
       if (modelName === MAGIC_DELETE_ENTITY_NAME) {
-        void message.error('实体名不合法！')
+        void message.error(intl.formatMessage({ defaultMessage: '实体名不合法！' }))
         return
       }
       saveModel({ ...currentModel, name: modelName })
@@ -347,7 +357,7 @@ const ModelDesigner = forwardRef(
             <Row wrap={false}>
               <Col span={3}>
                 <NormalInputCell
-                  placeholder="请编辑"
+                  placeholder={intl.formatMessage({ defaultMessage: '请编辑' })}
                   data={field.name}
                   onBlur={handleFieldNameChange(field)}
                   initialIsEditing={field.name === ''}
@@ -378,7 +388,7 @@ const ModelDesigner = forwardRef(
                     />
                   )}
                   <NormalInputCell
-                    placeholder="注释描述"
+                    placeholder={intl.formatMessage({ defaultMessage: '注释描述' })}
                     className="text-[#AFB0B4]"
                     data={field.comment?.replace(/^\/\/\s+/, '') ?? ''}
                     onBlur={handleFieldCommentChange(field)}
@@ -450,13 +460,15 @@ const ModelDesigner = forwardRef(
           handleUpdateAttribute={handlePropertyUpdate}
         />
         <Modal
-          title="新增实体"
+          title={intl.formatMessage({ defaultMessage: '新增实体' })}
           open={modelNameModalVisible}
           onCancel={() => setModelNameModalVisible(false)}
           destroyOnClose
           footer={
             <ButtonGroup className="gap-2">
-              <Button onClick={() => setModelNameModalVisible(false)}>取消</Button>
+              <Button onClick={() => setModelNameModalVisible(false)}>
+                {intl.formatMessage({ defaultMessage: '取消' })}
+              </Button>
               <Button
                 key="submit"
                 htmlType="submit"
@@ -470,14 +482,16 @@ const ModelDesigner = forwardRef(
         >
           <Form onFinish={handleUpdateModelName} name="new_model_name_form">
             <Form.Item
-              label="实体名"
+              label={intl.formatMessage({ defaultMessage: '实体名' })}
               name="modelName"
               initialValue={currentModelName}
               rules={[
                 {
                   pattern: new RegExp('^([A-Za-z][A-Za-z0-9_]*)*$'),
                   required: true,
-                  message: '实体名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*'
+                  message: intl.formatMessage({
+                    defaultMessage: '实体名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*'
+                  })
                 }
               ]}
             >

@@ -2,6 +2,7 @@ import { getSchema, printSchema } from '@mrleebo/prisma-ast'
 import { Button, Empty, Input, message, Popover, Radio } from 'antd'
 import { cloneDeep, isEqual } from 'lodash'
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
@@ -42,6 +43,7 @@ interface Props {
 const ModeKey = 'modeling_edit_mode'
 
 const DesignerContainer = ({ type, setShowType, showType }: Props) => {
+  const intl = useIntl()
   const { newMap } = useEntities()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const editType = newMap[currentEntity?.name] ? 'add' : 'edit'
@@ -104,7 +106,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const initialModel: Model = getSchema(`model ${UNTITLED_NEW_ENTITY} {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 `).list[0] as Model
@@ -127,16 +129,16 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     // 在这里 将 新增的枚举 添加进去
     const newBlocks = PrismaSchemaBlockOperator(blocks).addEnums(newEnums)
     if (!titleValue) {
-      void message.error('实体名不可为空！')
+      void message.error(intl.formatMessage({ defaultMessage: '实体名不可为空！' }))
       return
     }
     const nameIsValid = new RegExp(ENTITY_NAME_REGEX).test(titleValue)
     if (!nameIsValid) {
-      void message.error('实体名不合法！')
+      void message.error(intl.formatMessage({ defaultMessage: '实体名不合法！' }))
       return
     }
     model = { ...model, name: titleValue }
-    const hide = message.loading('保存中...')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
     return updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
@@ -153,23 +155,23 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       })
       .then(() => {
         hide()
-        message.success('保存成功！')
+        message.success(intl.formatMessage({ defaultMessage: '保存成功！' }))
       })
   }
 
   const handleSaveEnum = (enumm: Enum) => {
     if (!titleValue) {
-      void message.error('枚举名不可为空！')
+      void message.error(intl.formatMessage({ defaultMessage: '枚举名不可为空！' }))
       return
     }
     const nameIsValid = new RegExp(ENTITY_NAME_REGEX).test(titleValue)
     if (!nameIsValid) {
-      void message.error('枚举名不合法！')
+      void message.error(intl.formatMessage({ defaultMessage: '枚举名不合法！' }))
       return
     }
     enumm = { ...enumm, name: titleValue }
 
-    const hide = message.loading('保存中...')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
     void updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(blocks).addEnum(enumm)
@@ -185,7 +187,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       })
       .then(() => {
         hide()
-        message.success('保存成功！')
+        message.success(intl.formatMessage({ defaultMessage: '保存成功！' }))
       })
   }
 
@@ -194,7 +196,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       return block.type === 'enum' && block.name === newEnum.name
     })
     if (exist) {
-      return message.error('枚举名已存在！')
+      return message.error(intl.formatMessage({ defaultMessage: '枚举名已存在！' }))
     }
 
     applyLocalBlocks(PrismaSchemaBlockOperator(blocks).addEnum(newEnum))
@@ -216,10 +218,10 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
         >
           <div className={styles.resetBtn} onClick={onCancel}>
-            重置
+            {intl.formatMessage({ defaultMessage: '重置' })}
           </div>
           <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
-            迁移
+            {intl.formatMessage({ defaultMessage: '迁移' })}
           </Button>
           <Radio.Group
             disabled={!editorValidate}
@@ -229,35 +231,38 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               setMode(e.target.value)
             }}
           >
-            <Popover content="普通视图" trigger="hover">
+            <Popover content={intl.formatMessage({ defaultMessage: '普通视图' })} trigger="hover">
               <Radio.Button value="designer">
                 <img src={iconDesignModeActive} alt="" />
               </Radio.Button>
             </Popover>
-            <Popover content="源码视图" trigger="hover">
+            <Popover content={intl.formatMessage({ defaultMessage: '源码视图' })} trigger="hover">
               <Radio.Button value="editor">
                 <img src={iconEditMode} alt="" />
               </Radio.Button>
             </Popover>
           </Radio.Group>
         </div>
-        <Empty className="pt-20" description="无可用实体！" />
+        <Empty
+          className="pt-20"
+          description={intl.formatMessage({ defaultMessage: '无可用实体！' })}
+        />
       </div>
     )
   }
 
   function onCancel() {
-    const hide = message.loading('刷新中...')
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '刷新中...' }))
     refreshBlocks().then(() => {
       hide()
       triggerSyncEditor()
-      message.success('重置成功！')
+      message.success(intl.formatMessage({ defaultMessage: '重置成功！' }))
     })
   }
   async function onSave() {
     try {
       if (mode === 'editor') {
-        const hide = message.loading('保存中...')
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
         await requests.post<unknown, DMFResp>(
           `/prisma/migrate/${dbSourceId ?? ''}`,
           {
@@ -268,7 +273,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         await refreshBlocks()
         hide()
       } else {
-        const hide = message.loading('保存中...')
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
         await requests.post<unknown, DMFResp>(
           `/prisma/migrate/${dbSourceId ?? ''}`,
           {
@@ -289,10 +294,10 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       // 查看模式下使用老逻辑直接删除
       changeToEntityById(getFirstEntity()?.id ?? 0)
       setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
-      const hide = message.loading('删除中...', 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中...' }), 0)
       void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id))
         .then(() => {
-          message.success('删除成功')
+          message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         })
         .finally(() => {
           hide()
@@ -420,17 +425,17 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               ) : null}
             </div>
             <div className={styles.resetBtn} onClick={onDelete}>
-              删除
+              {intl.formatMessage({ defaultMessage: '删除' })}
             </div>
           </>
         ) : (
           <div className="flex-1" />
         )}
         <div className={styles.resetBtn} onClick={onCancel}>
-          重置
+          {intl.formatMessage({ defaultMessage: '重置' })}
         </div>
         <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
-          迁移
+          {intl.formatMessage({ defaultMessage: '迁移' })}
         </Button>
         <Radio.Group
           disabled={!editorValidate}
@@ -443,12 +448,12 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             setMode(e.target.value)
           }}
         >
-          <Popover content="普通视图" trigger="hover">
+          <Popover content={intl.formatMessage({ defaultMessage: '普通视图' })} trigger="hover">
             <Radio.Button value="designer">
               <img src={mode === 'designer' ? iconDesignModeActive : iconDesignMode} alt="" />
             </Radio.Button>
           </Popover>
-          <Popover content="源码视图" trigger="hover">
+          <Popover content={intl.formatMessage({ defaultMessage: '源码视图' })} trigger="hover">
             <Radio.Button value="editor">
               <img src={mode === 'editor' ? iconEditModeActive : iconEditMode} alt="" />
             </Radio.Button>

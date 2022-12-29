@@ -2,6 +2,7 @@ import { WarningOutlined } from '@ant-design/icons'
 import type { AttributeArgument } from '@mrleebo/prisma-ast'
 import { Input, Popover } from 'antd'
 import type { ReactNode } from 'react'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import type { AttributeHandlersProp } from '@/lib/helpers/PrismaSchemaProperties'
@@ -17,6 +18,7 @@ const errorPromptContainer = (errorMessage: string) => {
 }
 
 const ModelMapAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersProp) => {
+  const intl = useIntl()
   const initialValue = AttributeArgHelper.extractNormalAttrArgs(args)
   const [isEditing, setEditing] = useImmer(false)
   const [value, setValue] = useImmer<string>(initialValue)
@@ -26,7 +28,11 @@ const ModelMapAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersProp) =
   const commit = () => {
     if (!value || value[0] !== '"' || value[value.length - 1] !== '"') {
       setInputStatus('error')
-      setErrorPrompt(errorPromptContainer('请输入合法字符串，使用双引号包括'))
+      setErrorPrompt(
+        errorPromptContainer(
+          intl.formatMessage({ defaultMessage: '请输入合法字符串，使用双引号包括' })
+        )
+      )
       setValue(initialValue)
       return false
     }
@@ -58,7 +64,7 @@ const ModelMapAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersProp) =
           prefix={errorPrompt}
           status={inputStatus}
           onBlur={commit}
-          placeholder="请输入"
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           value={value}
           onPressEnter={commit}
           bordered={false}
@@ -66,7 +72,7 @@ const ModelMapAttributeArg = ({ args, updateAttrArgs }: AttributeHandlersProp) =
         />
       ) : (
         <div className="w-max text-[#ECA160]" onClick={handleFocus}>
-          {value ? value : '请输入'}
+          {value ? value : intl.formatMessage({ defaultMessage: '请输入' })}
         </div>
       )}
       <span>)</span>

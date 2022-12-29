@@ -3,6 +3,7 @@ import type { Enumerator } from '@mrleebo/prisma-ast'
 import { Button, Col, Form, Input, Modal, Row } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { forwardRef, useEffect, useImperativeHandle } from 'react'
+import { useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
@@ -31,6 +32,7 @@ const EnumDesigner = forwardRef(
       handleSaveEnum,
       handleAddNewEnumButtonClick
     }))
+    const intl = useIntl()
     const [currentEnum, setCurrentEnum] = useImmer<Enum>(savedEnum)
 
     const [enumNameModalVisible, setEnumNameModalVisible] = useImmer(false)
@@ -156,7 +158,10 @@ const EnumDesigner = forwardRef(
               idxs.push(idx)
             })
           }
-          return { result: false, errorMessage: '枚举名不合法' }
+          return {
+            result: false,
+            errorMessage: intl.formatMessage({ defaultMessage: '枚举名不合法' })
+          }
         }
         if (enumNameExist) {
           if (invalidFieldIdx.indexOf(idx) === -1) {
@@ -164,7 +169,10 @@ const EnumDesigner = forwardRef(
               idxs.push(idx)
             })
           }
-          return { result: false, errorMessage: '枚举名已存在' }
+          return {
+            result: false,
+            errorMessage: intl.formatMessage({ defaultMessage: '枚举名已存在' })
+          }
         }
         if (invalidFieldIdx.indexOf(idx) !== -1) {
           setInvalidFieldIdx(idxs => {
@@ -209,7 +217,7 @@ const EnumDesigner = forwardRef(
               <NormalInputCell
                 data={enumItem.name}
                 onBlur={handleNameBlur(enumItem)}
-                placeholder="请填写枚举名"
+                placeholder={intl.formatMessage({ defaultMessage: '请填写枚举名' })}
                 initialIsEditing={enumItem.name === ''}
                 validation={handleValidateEnumName(enumItem.name, idx)}
               />
@@ -219,41 +227,45 @@ const EnumDesigner = forwardRef(
                 data={enumItem.comment?.replace(/^\/\/\s+/, '') ?? ''}
                 onBlur={handleCommentChange(enumItem)}
                 className="max-w-250px text-color-[#5F626999]"
-                placeholder="请填写枚举注释"
+                placeholder={intl.formatMessage({ defaultMessage: '请填写枚举注释' })}
               />
             </Col>
             <DeleteOutlined onClick={handleDeleteEnum(enumItem)} />
           </Row>
         ))}
         <Modal
-          title="新增枚举"
+          title={intl.formatMessage({ defaultMessage: '新增枚举' })}
           open={enumNameModalVisible}
           onCancel={() => setEnumNameModalVisible(false)}
           destroyOnClose
           footer={
             <ButtonGroup className="gap-2">
-              <Button onClick={() => setEnumNameModalVisible(false)}>取消</Button>
+              <Button onClick={() => setEnumNameModalVisible(false)}>
+                {intl.formatMessage({ defaultMessage: '取消' })}
+              </Button>
               <Button
                 key="submit"
                 htmlType="submit"
                 form="new_enum_name_form"
                 className={`${styles['save-btn']} cursor-default p-0`}
               >
-                保存
+                {intl.formatMessage({ defaultMessage: '保存' })}
               </Button>
             </ButtonGroup>
           }
         >
           <Form onFinish={handleUpdateEnumName} name="new_enum_name_form">
             <Form.Item
-              label="枚举名"
+              label={intl.formatMessage({ defaultMessage: '枚举名' })}
               name="enumName"
               initialValue={name}
               rules={[
                 {
                   pattern: new RegExp('^([A-Za-z][A-Za-z0-9_]*)*$'),
                   required: true,
-                  message: '枚举名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*'
+                  message: intl.formatMessage({
+                    defaultMessage: '枚举名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*'
+                  })
                 }
               ]}
             >

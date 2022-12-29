@@ -1,10 +1,13 @@
-import { DMMF } from "@/interfaces/dbml"
-import requests from "@/lib/fetchers"
-import { generateDBMLSchema } from "@/lib/prisma-dbml-generator/generator/dbml"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
+
+import type { DMMF } from '@/interfaces/dbml'
+import requests from '@/lib/fetchers'
+import { generateDBMLSchema } from '@/lib/prisma-dbml-generator/generator/dbml'
 
 const ErDiagram = () => {
+  const intl = useIntl()
   const frameRef = useRef<HTMLIFrameElement>(null)
   const { id } = useParams()
   const [dmmf, setDMMF] = useState<DMMF.Document>()
@@ -22,12 +25,12 @@ const ErDiagram = () => {
           return arr
         }, [])
       })
-      
+
       const dbml = generateDBMLSchema(dmmf)
       console.log('dbml', dbml)
-      
+
       if (loadRef.current) {
-        (frameRef.current!.contentWindow as any)['setContent'](dbml)
+        ;(frameRef.current!.contentWindow as any)['setContent'](dbml)
       }
     }
   }, [dmmf])
@@ -56,7 +59,9 @@ const ErDiagram = () => {
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex mb-6 justify-start items-center">
-        <span className="flex-grow font-medium text-lg">ER 图</span>
+        <span className="flex-grow font-medium text-lg">
+          {intl.formatMessage({ defaultMessage: 'ER 图' })}
+        </span>
       </div>
       <iframe ref={frameRef} src="/d" className="border-none flex-1 mt-4 w-full" />
     </div>

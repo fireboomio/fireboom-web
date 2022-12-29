@@ -1,6 +1,7 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
 import React, { useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
+  const intl = useIntl()
   const { mutate } = useSWRConfig()
   const { id } = useDBSource()
   const navigate = useNavigate()
@@ -84,7 +86,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
                 type="link"
                 onClick={handleManageSourceClick}
               >
-                管理
+                {intl.formatMessage({ defaultMessage: '管理' })}
               </Button>
             </div>
           </div>

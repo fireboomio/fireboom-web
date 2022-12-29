@@ -1,6 +1,7 @@
 import type { Attribute, Field } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { message } from 'antd'
+import { useIntl } from 'react-intl'
 
 import type { DBSourceType } from '@/interfaces/modeling'
 
@@ -22,6 +23,7 @@ const FieldAttributesCell = ({
   deleteFieldAttribute,
   updateFieldAttribute
 }: Props) => {
+  const intl = useIntl()
   const fieldAttributes = field?.attributes ?? []
 
   const handleAttrNameSelect = (idx: number) => (value: string) => {
@@ -31,7 +33,7 @@ const FieldAttributesCell = ({
     }
     // 检查id字段是否已经被使用
     if (value === 'id' && fields.find(f => f.attributes?.find(attr => attr.name === 'id'))) {
-      void message.error('每一个实体只能有一个主键！')
+      void message.error(intl.formatMessage({ defaultMessage: '每一个实体只能有一个主键！' }))
       deleteEmptyAttributes()
       return
     }

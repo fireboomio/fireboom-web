@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import type { ReactNode } from 'react'
 import { useEffect, useReducer, useRef } from 'react'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
@@ -20,6 +21,7 @@ import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers
 import modelingReducer from '@/lib/reducers/ModelingReducers'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
+  const intl = useIntl()
   // 用来获取实时id参数，以避免数据源请求返回后，id参数已经变化
   const paramIdRef = useRef<string>()
   const { id: paramId } = useParams()
@@ -39,7 +41,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   useEffect(() => {
     paramIdRef.current = paramId
     if (dataSources.length > 0 && paramId) {
-      const hide = message.loading('加载中...', 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中...' }), 0)
       fetchAndSaveToPrismaSchemaContext(
         Number(paramId),
         dispatch,
@@ -61,7 +63,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [state.blocks])
 
   const handleChangeSource = (dbSourceId: number) => {
-    const hide = message.loading('加载中...', 0)
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中...' }), 0)
     fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources, paramIdRef)?.finally(
       () => {
         setSyncEditorFlag(!syncEditorFlag)
@@ -108,7 +110,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     }
     if (inEdit) {
       if (Object.keys({ ...newMap, ...delMap, ...editMap }).length > 0) {
-        message.error('请先保存或取消编辑')
+        message.error(intl.formatMessage({ defaultMessage: '请先保存或取消编辑' }))
         return
       }
     }
