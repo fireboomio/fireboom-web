@@ -142,7 +142,7 @@ const IdeContainer: FC<Props> = props => {
   const [hookPath, setHookPath] = useState(props.hookPath)
   // 将hookPath保存到本地， 用以支持动态更换
   useEffect(() => {
-    setHookPath(hookPath)
+    setHookPath(props.hookPath)
   }, [props.hookPath])
 
   // 获取hook信息
