@@ -111,7 +111,6 @@ export default function Index(props: PropsWithChildren) {
     })
 
     return () => {
-      console.log('finfinfin')
       controller.abort()
     }
   }, [refreshState])

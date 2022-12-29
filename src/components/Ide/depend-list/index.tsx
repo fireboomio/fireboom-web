@@ -6,6 +6,7 @@ import { debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useImmer } from 'use-immer'
 
 import CollapsePanel from '@/components/CollapsePanel'
 import requests from '@/lib/fetchers'
@@ -283,10 +284,7 @@ const DependList = (props: DependListProps) => {
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
   const titleRender = (nodeData: TreeNode) => {
-    let isGary = !nodeData.enable && !nodeData.isDir
-    if (nodeData.path === props.hookInfo?.path) {
-      isGary = props.hookInfo?.switch === false
-    }
+    let isGary = !enableMap[nodeData.key] && !nodeData.isDir
     return (
       <div
         className="flex overflow-hidden"
@@ -318,7 +316,7 @@ const DependList = (props: DependListProps) => {
     )
   }
   const [treeData, setTreeData] = useState<any[]>([])
-  const [currentNode, setCurrentNode] = useState<any>([])
+  const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>([])
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
   useEffect(() => {
@@ -335,6 +333,7 @@ const DependList = (props: DependListProps) => {
   }, [props.hookPath])
   useEffect(() => {
     requests.get<unknown, any[]>('hook/model').then(res => {
+      const map = {} as any
       const markKey = (data: TreeNode[], key: string): TreeNode[] => {
         return data.filter((item: TreeNode, index: number) => {
           // 临时移除path开头的前缀，后续接口更新后可以移除该操作
@@ -344,6 +343,7 @@ const DependList = (props: DependListProps) => {
           if (item.children) {
             item.children = markKey(item.children || [], item.key)
           }
+          map[item.path] = item.enable
           return !item.isDir || item.children?.length
         })
       }
@@ -374,21 +374,18 @@ const DependList = (props: DependListProps) => {
         }
       }
       res = markKey(res, '')
+      setEnableMap(map)
       setTreeData(res)
     })
   }, [])
 
   // 当hookInfo更新时，自动更新钩子树中对应钩子的状态
   useEffect(() => {
-    if (!treeData.length || !props.hookInfo) {
-      return
-    }
-    const currentNode = findNodeInTree(treeData, props.hookInfo?.path)
-    if (!currentNode) {
-      return
-    }
-    currentNode.enable = props.hookInfo?.switch
-    setTreeData([...treeData])
+    setEnableMap(map => {
+      if (props.hookInfo?.path) {
+        map[props.hookInfo?.path] = props.hookInfo?.switch
+      }
+    })
   }, [props.hookInfo])
 
   return (
