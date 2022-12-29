@@ -15,6 +15,7 @@ import type { LocalLib } from '@/components/Ide/dependLoader'
 import { DependManager } from '@/components/Ide/dependLoader'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import {
   getHook,
   getTypes,
@@ -110,6 +111,7 @@ interface Props {
  */
 const IdeContainer: FC<Props> = props => {
   const intl = useIntl()
+  const workbenchCtx = useContext(WorkbenchContext)
   const defaultRunResult = { logs: [], result: '' }
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<number | null>(null)
@@ -406,6 +408,7 @@ const IdeContainer: FC<Props> = props => {
               props.onChangeEnable?.()
             },
             onFullScreen: () => {
+              workbenchCtx.setFullscreen(!fullScreen)
               setFullScreen(!fullScreen)
               handle.active ? void handle.exit() : void handle.enter()
             }

@@ -5,7 +5,6 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/Iconfont'
 import type { DMFResp } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
 import { ENTITY_NAME_REGEX, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
@@ -362,8 +361,19 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               ) : (
                 titleValue
               )}
-              <img alt="zhongmingming" src="assets/iconfont/zhongmingming.svg" style={{height:'1em', width: '1em'}}
-              />
+              <span
+                className="ml-1 cursor-pointers"
+                onClick={() => {
+                  setEditTitle(!editTitle)
+                  setTitleValue(currentEntity.name)
+                }}
+              >
+                <img
+                  alt="zhongmingming"
+                  src="assets/iconfont/zhongmingming.svg"
+                  style={{ height: '1em', width: '1em' }}
+                />
+              </span>
               {/*{isEditing && '(未保存)'}*/}
             </span>
             <span className="mr-auto font-400 text-lg ml-12px text-[#118AD1] text-14px">
