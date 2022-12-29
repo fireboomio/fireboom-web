@@ -2,10 +2,10 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Select, Switch } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
-import IconFont from '@/components/Iconfont'
 import { HttpRequestHeaders } from '@/lib/constant'
 import requests from '@/lib/fetchers'
 
@@ -30,10 +30,10 @@ const formItemLayoutWithOutLabel = {
 }
 
 export default function SettingCrossdomain() {
+  const intl = useIntl()
   const [corsConfig, setCorsConfig] = useImmer({} as CorsConfiguration)
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg = /^(http(s?)|):\/\/(.+)$/
 
   const postRequest = useCallback(
     async (key: string, value: string | Array<string> | boolean | number) => {
@@ -77,7 +77,9 @@ export default function SettingCrossdomain() {
             <Form.Item
               label={
                 <div>
-                  <span>允许源</span>
+                  <span>
+                    <FormattedMessage defaultMessage="允许源" />
+                  </span>
                   <FormToolTip
                     className="!left-4"
                     title={<img src={tipCros} className="max-w-60vw max-h-60vh" alt="" />}
@@ -99,7 +101,9 @@ export default function SettingCrossdomain() {
                   })
                 }}
               />
-              <span className="ml-4 text-default">允许全部</span>
+              <span className="text-default ml-4">
+                <FormattedMessage defaultMessage="允许全部" />
+              </span>
             </Form.Item>
             {!corsConfig.allowedOriginsEnable && (
               <Form.Item
@@ -150,7 +154,11 @@ export default function SettingCrossdomain() {
                           >
                             <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
                               <div>
-                                <div>{'域名' + (index + 1).toString() + ':'}</div>
+                                <div>
+                                  {intl.formatMessage({ defaultMessage: '域名' }) +
+                                    (index + 1).toString() +
+                                    ':'}
+                                </div>
                                 <Input
                                   addonBefore={
                                     <Select
@@ -162,7 +170,9 @@ export default function SettingCrossdomain() {
                                       <Select.Option value="http://">http://</Select.Option>
                                     </Select>
                                   }
-                                  placeholder="对应请求响应中的: Access-Control-Allow-Origin"
+                                  placeholder={intl.formatMessage({
+                                    defaultMessage: '对应请求响应中的: Access-Control-Allow-Origin'
+                                  })}
                                   style={{ width: '60%' }}
                                   onChange={e => setFieldValue('path', e.target.value)}
                                   defaultValue={current.replace(/^https?:\/\//, '')}
@@ -200,7 +210,7 @@ export default function SettingCrossdomain() {
                           className="text-gray-500/60"
                           onClick={() => add()}
                         >
-                          新增Origin
+                          <FormattedMessage defaultMessage="新增Origin" />
                         </Button>
                         <Form.ErrorList errors={errors} />
                       </Form.Item>
@@ -209,11 +219,15 @@ export default function SettingCrossdomain() {
                 </Form.List>
               </Form.Item>
             )}
-            <Form.Item name="allowedMethods" label="允许方法" className="-mt-3">
+            <Form.Item
+              name="allowedMethods"
+              label={intl.formatMessage({ defaultMessage: '允许方法' })}
+              className="-mt-3"
+            >
               <Select
                 style={{ width: '90%' }}
                 mode="multiple"
-                placeholder="请选择..."
+                placeholder={intl.formatMessage({ defaultMessage: '请选择' })}
                 onChange={(values: string) => {
                   void postRequest('allowedMethods', values).then(() => {
                     setRefreshFlag(!refreshFlag)
@@ -227,7 +241,10 @@ export default function SettingCrossdomain() {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item name="allowedHeaders" label="允许头">
+            <Form.Item
+              name="allowedHeaders"
+              label={intl.formatMessage({ defaultMessage: '允许头' })}
+            >
               <Select
                 mode="tags"
                 options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
@@ -238,7 +255,10 @@ export default function SettingCrossdomain() {
                 }}
               />
             </Form.Item>
-            <Form.Item name="exposedHeaders" label="排除头">
+            <Form.Item
+              name="exposedHeaders"
+              label={intl.formatMessage({ defaultMessage: '排除头' })}
+            >
               <Select
                 mode="tags"
                 options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
@@ -249,7 +269,7 @@ export default function SettingCrossdomain() {
                 }}
               />
             </Form.Item>
-            <Form.Item label="跨域时间">
+            <Form.Item label={intl.formatMessage({ defaultMessage: '跨域时间' })}>
               <Form.Item
                 name="maxAge"
                 validateTrigger={['onChange', 'onBlur']}
@@ -259,7 +279,11 @@ export default function SettingCrossdomain() {
                     validator: (rule, value: number) => {
                       if (value) {
                         if (value < 0 || value > 86400) {
-                          return Promise.reject('请填写范围内的跨域时间,范围为0- 86400 秒')
+                          return Promise.reject(
+                            intl.formatMessage({
+                              defaultMessage: '请填写范围内的跨域时间,范围为0 - 86400 秒'
+                            })
+                          )
                         } else {
                           return Promise.resolve()
                         }
@@ -269,7 +293,7 @@ export default function SettingCrossdomain() {
                 ]}
               >
                 <Input
-                  addonAfter="秒"
+                  addonAfter={intl.formatMessage({ defaultMessage: '秒' })}
                   onBlur={() => {
                     void postRequest('maxAge', Number(form.getFieldValue('maxAge') as string)).then(
                       () => {
@@ -287,7 +311,7 @@ export default function SettingCrossdomain() {
                 />
               </Form.Item>
             </Form.Item>
-            <Form.Item label="允许证书">
+            <Form.Item label={intl.formatMessage({ defaultMessage: '允许证书' })}>
               <Form.Item valuePropName="checked" name="allowCredentials" noStyle required>
                 <Switch
                   size="small"
@@ -300,8 +324,14 @@ export default function SettingCrossdomain() {
                   }}
                 />
               </Form.Item>
-              <span className="ml-4 text-gray-500 inline-block h-6">
-                <img alt="zhuyi" src="assets/iconfont/zhuyi.svg" style={{height:'1em', width: '1em'}} className="text-[14px]" /> 是否允许证书
+              <span className="h-6 ml-4 text-gray-500 inline-block">
+                <img
+                  alt="zhuyi"
+                  src="assets/iconfont/zhuyi.svg"
+                  style={{ height: '1em', width: '1em' }}
+                  className="text-[14px]"
+                />{' '}
+                <FormattedMessage defaultMessage="是否允许证书" />
               </span>
             </Form.Item>
           </Form>

@@ -60,14 +60,16 @@ const StatusBar: React.FC<Props> = ({
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   const { openHookServer, loading: hookServerLoading } = useStackblitz()
-  const { onRefreshState } = useContext(WorkbenchContext)
+  const workbenchContext = useContext(WorkbenchContext)
   useEffect(() => {
     setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
     setHookSwitch(!!config.hooksServerURL)
   }, [config.hooksServerURL, showHookSetting])
   useEffect(() => {
-    fetchHookOptionStatus(hooksServerURL ?? '')
-  }, [hooksServerURL])
+    if (showHookSetting) {
+      fetchHookOptionStatus(hooksServerURL ?? '')
+    }
+  }, [hooksServerURL, showHookSetting])
   const fetchHookOptionStatus = useCallback(
     throttle(async (url: string) => {
       try {
@@ -185,7 +187,7 @@ const StatusBar: React.FC<Props> = ({
                   src="assets/refresh.svg"
                   onClick={e => {
                     e.stopPropagation()
-                    onRefreshState()
+                    workbenchContext.onRefreshState()
                   }}
                 />
               </div>
@@ -219,9 +221,13 @@ const StatusBar: React.FC<Props> = ({
                     onChange={e => {
                       setHookSwitch(e.target.value)
                       if (e.target.value) {
-                        message.info(
-                          intl.formatMessage({ defaultMessage: '请手动启动钩子，并保证配置正确' })
-                        )
+                        if (hookOptionStatus?.Customer !== HookStatus.Running) {
+                          message.info(
+                            intl.formatMessage({
+                              defaultMessage: '当前地址的钩子服务未启动，手动启动钩子后，方可使用。'
+                            })
+                          )
+                        }
                         saveHookServerURL(hooksServerURL ?? '')
                       } else {
                         saveHookServerURL('')

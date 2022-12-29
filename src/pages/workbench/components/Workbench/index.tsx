@@ -1,6 +1,6 @@
 import { Layout as ALayout, Modal } from 'antd'
-import { PropsWithChildren, Suspense } from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import type { PropsWithChildren } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -22,9 +22,10 @@ import styles from './index.module.less'
 import Header from './subs/Header'
 import Sider from './subs/Sider'
 import StatusBar from './subs/StatusBar'
-import React from 'react'
 
-const ModelingWrapper = React.lazy(() => import('@/pages/workbench/modeling/components/modelingWrapper'))
+const ModelingWrapper = React.lazy(
+  () => import('@/pages/workbench/modeling/components/modelingWrapper')
+)
 
 const Window = React.lazy(() => import('@/pages/workbench/components/Workbench/subs/Window'))
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
@@ -110,7 +111,6 @@ export default function Index(props: PropsWithChildren) {
     })
 
     return () => {
-      console.log('finfinfin')
       controller.abort()
     }
   }, [refreshState])
@@ -195,7 +195,11 @@ export default function Index(props: PropsWithChildren) {
   )
   const location = useLocation()
   if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
-    return <Suspense><ModelingWrapper>{body}</ModelingWrapper></Suspense>
+    return (
+      <Suspense>
+        <ModelingWrapper>{body}</ModelingWrapper>
+      </Suspense>
+    )
   } else {
     return (
       <WorkbenchContext.Provider

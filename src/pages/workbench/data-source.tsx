@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useReducer, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
@@ -63,7 +62,6 @@ export default function DataSource() {
   // if (error) return <div>failed to load</div>
 
   // TODO: need refine
-  console.log('content', content)
 
   return (
     <>

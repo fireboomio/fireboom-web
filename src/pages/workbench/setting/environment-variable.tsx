@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Descriptions, Form, Input, Modal, Popconfirm, Table } from 'antd'
+import { Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
-import IconFont from '@/components/Iconfont'
 import requests from '@/lib/fetchers'
 
 import styles from './components/subs/subs.module.less'
@@ -25,6 +25,7 @@ type FromValues = Record<string, number | string | boolean>
 
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
+  const intl = useIntl()
   const [form] = Form.useForm()
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
@@ -99,13 +100,13 @@ export default function SettingMainEnvironmentVariable() {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: '变量名',
+      title: intl.formatMessage({ defaultMessage: '变量名' }),
       dataIndex: 'key',
       key: 'key',
       width: 200
     },
     {
-      title: '变量值',
+      title: intl.formatMessage({ defaultMessage: '变量值' }),
       dataIndex: 'devEnv',
       key: 'devEnv',
       width: 200,
@@ -145,7 +146,7 @@ export default function SettingMainEnvironmentVariable() {
       }
     },
     {
-      title: '操作',
+      title: intl.formatMessage({ defaultMessage: '操作' }),
       dataIndex: 'action',
       width: 200,
       render: (_, { id, key, devEnv, proEnv, oldKey }) => (
@@ -162,9 +163,9 @@ export default function SettingMainEnvironmentVariable() {
             className="mr-3"
           />
           <Popconfirm
-            title="确定要删除?"
-            okText="确定"
-            cancelText="取消"
+            title={intl.formatMessage({ defaultMessage: '确定要删除?' })}
+            okText={intl.formatMessage({ defaultMessage: '确定' })}
+            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             onConfirm={e => {
               // @ts-ignore
               e.stopPropagation()
@@ -189,10 +190,12 @@ export default function SettingMainEnvironmentVariable() {
 
   return (
     <>
-      <div className="px-8 bg-white h-full pt-7">
+      <div className="bg-white h-full px-8 pt-7">
         <div className="flex justify-between">
           <div className="mt-0">
-            <span>环境变量</span>
+            <span>
+              <FormattedMessage defaultMessage="环境变量" />
+            </span>
           </div>
           <button className={`btn-save mb-4 border-none font-14px`} onClick={showModal}>
             <span
@@ -203,13 +206,17 @@ export default function SettingMainEnvironmentVariable() {
                 setID(-1)
               }}
             >
-              新建变量
+              <FormattedMessage defaultMessage="新建环境变量" />
             </span>
           </button>
         </div>
         <Modal
           mask={false}
-          title={id === -1 ? '新增环境变量' : '修改环境变量'}
+          title={
+            id === -1
+              ? intl.formatMessage({ defaultMessage: '新建变量' })
+              : intl.formatMessage({ defaultMessage: '修改环境变量' })
+          }
           forceRender={true}
           transitionName=""
           bodyStyle={{
@@ -226,10 +233,14 @@ export default function SettingMainEnvironmentVariable() {
                 form.submit()
               }}
             >
-              {id === -1 ? '创建' : '保存'}
+              {id === -1
+                ? intl.formatMessage({ defaultMessage: '创建' })
+                : intl.formatMessage({ defaultMessage: '保存' })}
             </span>
           }
-          cancelText={<span className="w-10">取消</span>}
+          cancelText={
+            <span className="w-10">{intl.formatMessage({ defaultMessage: '取消' })} </span>
+          }
           okType="text"
         >
           <Form
@@ -249,13 +260,15 @@ export default function SettingMainEnvironmentVariable() {
             labelAlign="left"
           >
             <Form.Item
-              label="名称"
+              label={intl.formatMessage({ defaultMessage: '名称' })}
               name="key"
               rules={[
-                { required: true, message: '名称不能为空' },
+                { required: true, message: intl.formatMessage({ defaultMessage: '名称不能为空' }) },
                 {
                   pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                  message: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                  message: intl.formatMessage({
+                    defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                  })
                 },
                 {
                   validator: (rule, value) => {
@@ -264,7 +277,7 @@ export default function SettingMainEnvironmentVariable() {
                     }
                     const existItem = environmentConfig.find(item => item.key == value)
                     if (existItem) {
-                      return Promise.reject('名称重复')
+                      return Promise.reject(intl.formatMessage({ defaultMessage: '名称重复' }))
                     } else {
                       return Promise.resolve()
                     }
@@ -276,10 +289,14 @@ export default function SettingMainEnvironmentVariable() {
             </Form.Item>
             <Form.Item name="oldKey" hidden></Form.Item>
             <Form.Item
-              label="值"
+              label={intl.formatMessage({ defaultMessage: '值' })}
               name="devEnv"
               rules={[
-                { required: true, pattern: /^.{1,256}$/g, message: '请输入长度不大于256的非空值' }
+                {
+                  required: true,
+                  pattern: /^.{1,256}$/g,
+                  message: intl.formatMessage({ defaultMessage: '请输入长度不大于256的非空值' })
+                }
               ]}
             >
               <Input />
