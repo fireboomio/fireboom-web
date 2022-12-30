@@ -21,7 +21,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
   const navigate = useNavigate()
   const [storageId, setStorageId] = useState<number>()
   useEffect(() => {
-    requests.get<unknown, StorageResp[]>('/storageBuckey').then(res => {
+    requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
       setStorageId(res[0].id)
     })
   }, [])
@@ -106,7 +106,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 0,
           lineUp: '',
           lineDown: '',
-          link: '/workbench/datasource/new'
+          link: '/workbench/auth/new'
         },
         {
           key: 'authRegister',
@@ -115,7 +115,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 0,
           lineUp: '',
           lineDown: '',
-          link: '/workbench/datasource/new'
+          link: '/workbench/auth/new'
         }
       ]
     },
