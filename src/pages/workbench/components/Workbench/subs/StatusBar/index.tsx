@@ -109,8 +109,8 @@ const StatusBar: React.FC<Props> = ({
     <div className={className}>
       <div className={styles['status-bar']}>
         <span className={styles['info']}>
-          <span className={styles.gitIcon} />
-          <span className="mr-12">CONNECT GIT (BETA)</span>
+          {/*<span className={styles.gitIcon} />*/}
+          {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
             <span>{env}</span>
           </span>
@@ -146,7 +146,7 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className="ml-8">
             {' '}
-            <FormattedMessage defaultMessage="引擎状态" />:{' '}
+            <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel}>
             <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
@@ -156,7 +156,7 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className="ml-4.5">
             {' '}
-            <FormattedMessage defaultMessage="钩子状态" />:{' '}
+            <FormattedMessage defaultMessage="钩子" />:{' '}
           </span>
           <span className={styles.errLabel + ' cursor-pointer'}>
             <div

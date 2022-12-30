@@ -1,5 +1,5 @@
 import { Image } from 'antd'
-import React, { useEffect, lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useImmer } from 'use-immer'
 
@@ -255,22 +255,22 @@ export default function Home() {
                 <div className={[styles.card, styles.moduleSingle].join(' ')}>
                   <div className={styles.title}>
                     <div className={styles.text}>OSS存储</div>
-                    <div className={styles.number}>{ossTotal}</div>
-                    <div className={styles.numberText}>个</div>
+                    {/*<div className={styles.number}>{ossTotal}</div>*/}
+                    {/*<div className={styles.numberText}>个</div>*/}
                   </div>
-                  <div className={styles.memoryLine}>
-                    已使用 {useMemory}G<span className={styles.memoryTotal}>{totalMemory}/G</span>
-                  </div>
-                  <div className={styles.memoryProgress}>
-                    <div
-                      className={styles.active}
-                      style={{
-                        width:
-                          String(((Number(useMemory) || 0) / (Number(totalMemory) || 1)) * 100) +
-                          '%'
-                      }}
-                    />
-                  </div>
+                  {/*<div className={styles.memoryLine}>*/}
+                  {/*  已使用 {useMemory}G<span className={styles.memoryTotal}>{totalMemory}/G</span>*/}
+                  {/*</div>*/}
+                  {/*<div className={styles.memoryProgress}>*/}
+                  {/*  <div*/}
+                  {/*    className={styles.active}*/}
+                  {/*    style={{*/}
+                  {/*      width:*/}
+                  {/*        String(((Number(useMemory) || 0) / (Number(totalMemory) || 1)) * 100) +*/}
+                  {/*        '%'*/}
+                  {/*    }}*/}
+                  {/*  />*/}
+                  {/*</div>*/}
                 </div>
                 <div className={[styles.card, styles.moduleSingle].join(' ')}>
                   <div className={styles.title}>
@@ -278,18 +278,18 @@ export default function Home() {
                     <div className={styles.number}>{authTotal}</div>
                     <div className={styles.numberText}>个</div>
                   </div>
-                  <div className={styles.authLine}>
-                    <div className={styles.item}>
-                      <div className={[styles.icon, styles.icon1].join(' ')} />
-                      <div className={styles.label}>累计用户</div>
-                      <div className={styles.text}>{totalUser}个</div>
-                    </div>
-                    <div className={styles.item}>
-                      <div className={[styles.icon, styles.icon2].join(' ')} />
-                      <div className={styles.label}>新增用户</div>
-                      <div className={styles.text}>{todayInsertUser}个</div>
-                    </div>
-                  </div>
+                  {/*<div className={styles.authLine}>*/}
+                  {/*  <div className={styles.item}>*/}
+                  {/*    <div className={[styles.icon, styles.icon1].join(' ')} />*/}
+                  {/*    <div className={styles.label}>累计用户</div>*/}
+                  {/*    <div className={styles.text}>{totalUser}个</div>*/}
+                  {/*  </div>*/}
+                  {/*  <div className={styles.item}>*/}
+                  {/*    <div className={[styles.icon, styles.icon2].join(' ')} />*/}
+                  {/*    <div className={styles.label}>新增用户</div>*/}
+                  {/*    <div className={styles.text}>{todayInsertUser}个</div>*/}
+                  {/*  </div>*/}
+                  {/*</div>*/}
                 </div>
               </div>
 

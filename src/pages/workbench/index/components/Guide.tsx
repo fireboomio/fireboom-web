@@ -1,6 +1,7 @@
 import { Image } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useImmer } from 'use-immer'
 
 import type { StorageResp } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
@@ -12,10 +13,15 @@ interface Props {
 }
 
 export default function Guide({ handleToggleDesigner }: Props) {
+  const [finishMap, setFinishMap] = useImmer<Record<string, string>>(
+    localStorage.getItem('GuideFinishMap')
+      ? JSON.parse(localStorage.getItem('GuideFinishMap') as string)
+      : {}
+  )
   const navigate = useNavigate()
   const [storageId, setStorageId] = useState<number>()
   useEffect(() => {
-    requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
+    requests.get<unknown, StorageResp[]>('/storageBuckey').then(res => {
       setStorageId(res[0].id)
     })
   }, [])
@@ -31,6 +37,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         {
+          key: 'connectDB',
           title: '连接数据库',
           date: '08.12 14:00 完成',
           state: 1,
@@ -39,6 +46,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           link: '/workbench/datasource/new'
         },
         {
+          key: 'connectREST',
           title: '连接REST API',
           date: '08.12 14:00 完成',
           state: 1,
@@ -47,6 +55,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           link: '/workbench/datasource/new'
         },
         {
+          key: 'connectGraphQL',
           title: '连接GraphQL API',
           date: '08.12 14:00 完成',
           state: 1,
@@ -64,6 +73,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         {
+          key: 'addOSS',
           title: '设置存储提供商',
           date: '08.12 14:00 完成',
           state: 1,
@@ -72,6 +82,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           link: '/workbench/storage/new'
         },
         {
+          key: 'uploadFile',
           title: '上传一个文件',
           date: '快去完成吧',
           state: 0,
@@ -89,6 +100,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         {
+          key: 'addAuth',
           title: '设置身份提供商',
           date: '快去完成吧',
           state: 0,
@@ -97,6 +109,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           link: '/workbench/datasource/new'
         },
         {
+          key: 'authRegister',
           title: '注册账户并登录',
           date: '快去完成吧',
           state: 0,
@@ -114,6 +127,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
       lineDown: '',
       subTasks: [
         {
+          key: 'addAPI',
           title: '可视化编写接口',
           date: '快去完成吧',
           state: 0,
@@ -122,6 +136,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           link: '/workbench/apimanage/crud'
         },
         {
+          key: 'downloadSDK',
           title: '下载接口SDK',
           date: '快去完成吧',
           state: 0,
@@ -138,8 +153,12 @@ export default function Guide({ handleToggleDesigner }: Props) {
   const GRAY = '#EBEBEB'
   tasks.forEach(task => {
     task.lineUp = nextColor
-    task.lineDown = nextColor = task.state === 1 ? GREEN : GRAY
+    task.state = task.subTasks.find(sub => !finishMap[sub.key]) ? 0 : 1
+    task.lineDown = nextColor = task.state ? GREEN : GRAY
     task.subTasks.forEach(sub => {
+      const finish = finishMap[sub.key]
+      sub.state = finish ? 1 : 0
+      sub.date = finish ? `${finish}完成` : '快去完成吧'
       sub.lineUp = nextColor
       sub.lineDown = nextColor = sub.state === 1 ? GREEN : GRAY
     })
@@ -187,6 +206,10 @@ export default function Guide({ handleToggleDesigner }: Props) {
                 <div
                   className={styles.btn}
                   onClick={() => {
+                    setFinishMap(map => {
+                      map[sub.key] = new Date().toLocaleString()
+                      localStorage.setItem('GuideFinishMap', JSON.stringify(map))
+                    })
                     sub.link && navigate(sub.link)
                   }}
                 >
