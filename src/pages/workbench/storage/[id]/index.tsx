@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -54,11 +53,6 @@ export default function FileStorage() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          FireBoom - <FormattedMessage defaultMessage="文件存储" />
-        </title>
-      </Helmet>
       <StorageSwitchContext.Provider value={{ handleSwitch }}>
         <StorageContainer showType={showType} content={content} showErr={showErr} />
       </StorageSwitchContext.Provider>

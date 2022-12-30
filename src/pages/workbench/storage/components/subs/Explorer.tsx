@@ -337,6 +337,7 @@ export default function StorageExplorer({ bucketId }: Props) {
 
       // 请求并构造节点
       const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+        timeout: 15e3,
         params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined },
         resolveErrorMsg: response => {
           return intl.formatMessage({ defaultMessage: '文件列表加载失败' })
@@ -384,6 +385,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                       ),
                       onClick: e => {
                         e.domEvent.stopPropagation()
+                        deleteByName(x.name)
                       }
                     }
                   ]}
@@ -467,6 +469,17 @@ export default function StorageExplorer({ bucketId }: Props) {
           })
       }
     })
+  }
+  const deleteByName = (name: string) => {
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
+    void requests
+      .post('/s3Upload/remove', { bucketID: bucketId, fileName: deleteByName })
+      .then(() => {
+        hide()
+        setVisible(false)
+        void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+        setRefreshFlag(!refreshFlag)
+      })
   }
   const deleteFile = (file = target) => {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
