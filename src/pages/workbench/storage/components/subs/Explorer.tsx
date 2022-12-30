@@ -380,13 +380,11 @@ export default function StorageExplorer({ bucketId }: Props) {
                           okText={intl.formatMessage({ defaultMessage: '删除' })}
                           cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                         >
-                          <FormattedMessage defaultMessage="删除" />
+                          <div>
+                            <FormattedMessage defaultMessage="删除" />
+                          </div>
                         </Popconfirm>
-                      ),
-                      onClick: e => {
-                        e.domEvent.stopPropagation()
-                        deleteByName(x.name)
-                      }
+                      )
                     }
                   ]}
                 />
@@ -469,17 +467,6 @@ export default function StorageExplorer({ bucketId }: Props) {
           })
       }
     })
-  }
-  const deleteByName = (name: string) => {
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
-    void requests
-      .post('/s3Upload/remove', { bucketID: bucketId, fileName: deleteByName })
-      .then(() => {
-        hide()
-        setVisible(false)
-        void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
-        setRefreshFlag(!refreshFlag)
-      })
   }
   const deleteFile = (file = target) => {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
