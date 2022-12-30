@@ -141,7 +141,7 @@ export default function DB({ content, type }: Props) {
         style={{ marginBottom: '20px' }}
       >
         <Input
-          placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onClick={() => setVisible(true)}
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           suffix={<a onClick={() => setVisible(true)}>浏览</a>}
@@ -193,7 +193,7 @@ export default function DB({ content, type }: Props) {
           { required: true, message: intl.formatMessage({ defaultMessage: '主机名不能为空' }) }
         ]}
       >
-        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
       </Form.Item>
       <Form.Item
         label={intl.formatMessage({ defaultMessage: '数据库名:' })}
@@ -208,7 +208,7 @@ export default function DB({ content, type }: Props) {
           }
         ]}
       >
-        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
       </Form.Item>
       <Form.Item
         label={intl.formatMessage({ defaultMessage: '端口:' })}
@@ -218,7 +218,7 @@ export default function DB({ content, type }: Props) {
           { pattern: port, message: intl.formatMessage({ defaultMessage: '端口范围为0-9999' }) }
         ]}
       >
-        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
       </Form.Item>
 
       <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })}>
@@ -570,7 +570,7 @@ export default function DB({ content, type }: Props) {
                 ]}
               >
                 <Input
-                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                   autoComplete="off"
                   autoFocus={true}
                 />

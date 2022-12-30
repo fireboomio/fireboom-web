@@ -138,7 +138,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       return
     }
     model = { ...model, name: titleValue }
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
     return updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(newBlocks).addModel(model)
@@ -171,7 +171,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     }
     enumm = { ...enumm, name: titleValue }
 
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
     void updateAndSaveBlock(
       editType === 'add'
         ? PrismaSchemaBlockOperator(blocks).addEnum(enumm)
@@ -252,7 +252,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }
 
   function onCancel() {
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '刷新中...' }))
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '刷新中' }))
     refreshBlocks().then(() => {
       hide()
       triggerSyncEditor()
@@ -262,7 +262,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   async function onSave() {
     try {
       if (mode === 'editor') {
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
           `/prisma/migrate/${dbSourceId ?? ''}`,
           {
@@ -273,7 +273,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         await refreshBlocks()
         hide()
       } else {
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }))
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
           `/prisma/migrate/${dbSourceId ?? ''}`,
           {
@@ -294,7 +294,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       // 查看模式下使用老逻辑直接删除
       changeToEntityById(getFirstEntity()?.id ?? 0)
       setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中...' }), 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }), 0)
       void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(currentEntity.id))
         .then(() => {
           message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
@@ -367,7 +367,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
                 titleValue
               )}
               <span
-                className="ml-1 cursor-pointers"
+                className="cursor-pointers ml-1"
                 onClick={() => {
                   setEditTitle(!editTitle)
                   setTitleValue(currentEntity.name)

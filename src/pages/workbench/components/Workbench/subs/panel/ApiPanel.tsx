@@ -458,7 +458,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   async function batchSwitch(flag: boolean) {
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中...' }))
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
     try {
       await requests.post('operateApi/batchOnline', {
         Ids: selectedNode.map(x => x.id),

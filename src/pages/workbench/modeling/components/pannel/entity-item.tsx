@@ -74,7 +74,7 @@ const ModelEntityItem = ({
         changeToEntityById(getFirstEntity()?.id ?? 0)
         setShowType(getFirstEntity()?.type === 'model' ? 'preview' : 'editEnum')
       }
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中...' }), 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }), 0)
       void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
         .then(() => {
           message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
@@ -105,7 +105,7 @@ const ModelEntityItem = ({
       return
     }
     if (!inEdit) {
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中...' }), 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
       updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).updateEntityName(entity.id, newName))
         .then(() => {
           message.success(intl.formatMessage({ defaultMessage: '实体名更新成功' }))
@@ -148,7 +148,7 @@ const ModelEntityItem = ({
           key: 4,
           label: (
             <Popconfirm
-              className="w-full h-full"
+              className="h-full w-full"
               placement="right"
               title={intl.formatMessage({
                 defaultMessage: '确认删除该实体吗？将会同时删除引用字段！'
@@ -174,7 +174,7 @@ const ModelEntityItem = ({
       onBlur={e => renameEntity(e.target.value)}
       onKeyUp={handlePressKey}
       onPressEnter={e => renameEntity(e.currentTarget.value)}
-      className="text-sm font-normal leading-4 h-5 w-5/7 pl-1"
+      className="font-normal h-5 text-sm pl-1 leading-4 w-5/7"
       defaultValue={entity.name}
       autoFocus
       placeholder={intl.formatMessage({ defaultMessage: '请输入实体名' })}

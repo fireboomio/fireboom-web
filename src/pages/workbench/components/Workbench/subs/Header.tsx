@@ -84,7 +84,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     }
     void requests
       .get('/wdg/reStart')
-      .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译...' })))
+      .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译' })))
   }
 
   const showHotkey = useCallback(() => {

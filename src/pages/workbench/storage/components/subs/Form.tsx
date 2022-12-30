@@ -102,7 +102,7 @@ export default function StorageForm({ content, showErr }: Props) {
           ]}
           name="name"
         >
-          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '服务地址' })}
@@ -113,7 +113,7 @@ export default function StorageForm({ content, showErr }: Props) {
         >
           <Input
             addonBefore="http(s)://"
-            placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+            placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           />
         </Form.Item>
         <Form.Item label="App ID">
@@ -189,7 +189,7 @@ export default function StorageForm({ content, showErr }: Props) {
             { required: true, message: intl.formatMessage({ defaultMessage: '请输入区域' }) }
           ]}
         >
-          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '桶名称' })}
@@ -198,7 +198,7 @@ export default function StorageForm({ content, showErr }: Props) {
             { required: true, message: intl.formatMessage({ defaultMessage: '请输入bucketName' }) }
           ]}
         >
-          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '开启SSL' })}

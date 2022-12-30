@@ -597,7 +597,7 @@ export default function Rest({ content, type }: Props) {
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
-                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
               <Form.Item
                 label={
@@ -622,7 +622,7 @@ export default function Rest({ content, type }: Props) {
                   filterOption={(inputValue, option) => {
                     return true
                   }}
-                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                 />
               </Form.Item>
               <Form.Item
@@ -645,7 +645,7 @@ export default function Rest({ content, type }: Props) {
                 // getValueFromEvent={normFile}
               >
                 <Input
-                  placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                   onClick={() => setVisible(true)}
                   // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   suffix={
@@ -890,7 +890,7 @@ export default function Rest({ content, type }: Props) {
                           name="tokenPoint"
                         >
                           <Input
-                            placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                            placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                           />
                         </Form.Item>
                       </>

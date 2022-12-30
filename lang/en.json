@@ -1,6 +1,6 @@
 {
   "+0ahcJ": {
-    "defaultMessage": "请选择主键"
+    "defaultMessage": "Please select primary key"
   },
   "+GBE25": {
     "defaultMessage": "查询授权",
@@ -13,10 +13,10 @@
     "defaultMessage": "模型设计页切换设计/数据视图"
   },
   "+S5lJM": {
-    "defaultMessage": "外观"
+    "defaultMessage": "Appearence"
   },
   "+ZZbJ1": {
-    "defaultMessage": "高级筛选"
+    "defaultMessage": "Advance"
   },
   "+jyuQU": {
     "defaultMessage": "API编辑页切换Json/表单模式，模型设计页切换设计/代码模式"
@@ -31,7 +31,7 @@
     "defaultMessage": "暂不支持数据库类型为[{dbType}]的数据源！"
   },
   "+zhQOH": {
-    "defaultMessage": "{days}天 {hours}时 {minutes}分 {seconds}秒"
+    "defaultMessage": "{days}day {hours}hour {minutes}min {seconds}sec"
   },
   "/0bwX0": {
     "defaultMessage": "联合索引"
@@ -44,7 +44,7 @@
     "description": "插入指令处"
   },
   "/CFd+q": {
-    "defaultMessage": "开"
+    "defaultMessage": "On"
   },
   "/F5ua7": {
     "defaultMessage": "角色管理"
@@ -1599,7 +1599,7 @@
     "defaultMessage": "已开启"
   },
   "xKCJNb": {
-    "defaultMessage": "飞布控制台",
+    "defaultMessage": "Fireboom",
     "description": "标题"
   },
   "xVTk70": {

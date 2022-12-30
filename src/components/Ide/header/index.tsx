@@ -65,9 +65,9 @@ const IdeHeaderContainer: FC<Props> = props => {
       case AutoSaveStatus.SAVEING:
         // 这里牵扯到保存的主动/被动
         if (type === 'active') {
-          _text = intl.formatMessage({ defaultMessage: '手动保存中...' })
+          _text = intl.formatMessage({ defaultMessage: '手动保存中' })
         } else {
-          _text = intl.formatMessage({ defaultMessage: '自动保存中...' })
+          _text = intl.formatMessage({ defaultMessage: '自动保存中' })
         }
         break
       case AutoSaveStatus.SAVED:

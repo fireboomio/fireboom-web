@@ -491,7 +491,7 @@ export default function Graphql({ content, type }: Props) {
                   }
                 ]}
               >
-                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
 
               <Form.Item
@@ -518,7 +518,7 @@ export default function Graphql({ content, type }: Props) {
                 style={{ marginBottom: '20px' }}
                 name="url"
               >
-                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入...' })} />
+                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
 
               <Form.Item name="agreement" label=" " valuePropName="checked">
@@ -548,7 +548,7 @@ export default function Graphql({ content, type }: Props) {
                   // getValueFromEvent={normFile}
                 >
                   <Input
-                    placeholder={intl.formatMessage({ defaultMessage: '请输入...' })}
+                    placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                     onClick={() => setVisible(true)}
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     suffix={

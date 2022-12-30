@@ -41,7 +41,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   useEffect(() => {
     paramIdRef.current = paramId
     if (dataSources.length > 0 && paramId) {
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中...' }), 0)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
       fetchAndSaveToPrismaSchemaContext(
         Number(paramId),
         dispatch,
@@ -63,7 +63,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   }, [state.blocks])
 
   const handleChangeSource = (dbSourceId: number) => {
-    const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中...' }), 0)
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
     fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources, paramIdRef)?.finally(
       () => {
         setSyncEditorFlag(!syncEditorFlag)

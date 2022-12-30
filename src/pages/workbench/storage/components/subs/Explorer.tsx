@@ -606,7 +606,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               } else {
                 if (!uploadingTip.current) {
                   uploadingTip.current = message.loading(
-                    intl.formatMessage({ defaultMessage: '上传中...' })
+                    intl.formatMessage({ defaultMessage: '上传中' })
                   )
                 }
               }
