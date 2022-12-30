@@ -10,7 +10,6 @@ import { intl } from '@/providers/IntlProvider'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
-import HeaderDeploy from '../assets/header-deploy.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
 
@@ -200,9 +199,9 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             >
               <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
             </div>
-            <div className={styles.headBtn}>
-              <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />
-            </div>
+            {/*<div className={styles.headBtn}>*/}
+            {/*  <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />*/}
+            {/*</div>*/}
           </>
         )}
         <div className={styles.splitLine} style={{ margin: '0 26px' }} />
@@ -246,9 +245,9 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </svg>
         </Tooltip>
         <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
-        <div className={styles.avatar}>
-          <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />
-        </div>
+        {/*<div className={styles.avatar}>*/}
+        {/*  <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />*/}
+        {/*</div>*/}
       </div>
     </>
   )

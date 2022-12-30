@@ -109,6 +109,7 @@ const IdeHeaderContainer: FC<Props> = props => {
       window.open('https://stackblitz.com/local')
     } else {
       Modal.info({
+        closable: true,
         title: intl.formatMessage({ defaultMessage: '在线调试使用指南' }),
         width: 720,
         icon: null,
@@ -131,7 +132,8 @@ const IdeHeaderContainer: FC<Props> = props => {
             localStorage.setItem(stackblitzRememberKey, '1')
           }
           window.open('https://stackblitz.com/local')
-        }
+        },
+        okText: intl.formatMessage({ defaultMessage: '我知道了' })
       })
     }
   }, [])
@@ -158,9 +160,9 @@ const IdeHeaderContainer: FC<Props> = props => {
           <Button size="small" className="ml-4" onClick={localDebug}>
             <FormattedMessage defaultMessage="调试" />
           </Button>
-          <Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>
-            <FormattedMessage defaultMessage="在线调试" />
-          </Button>
+          {/*<Button size="small" className="ml-4" loading={debugOpenLoading} onClick={onlineDebug}>*/}
+          {/*  <FormattedMessage defaultMessage="在线调试" />*/}
+          {/*</Button>*/}
           <Button
             className="ml-4"
             onClick={props.onSave}

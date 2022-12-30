@@ -4,7 +4,6 @@ import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { useStackblitz } from '@/hooks/stackblitz'
 import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -59,7 +58,7 @@ const StatusBar: React.FC<Props> = ({
   const [hookSwitch, setHookSwitch] = useState<boolean>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
-  const { openHookServer, loading: hookServerLoading } = useStackblitz()
+  // const { openHookServer, loading: hookServerLoading } = useStackblitz()
   const workbenchContext = useContext(WorkbenchContext)
   useEffect(() => {
     setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
@@ -102,15 +101,16 @@ const StatusBar: React.FC<Props> = ({
 
   // 在线stackbliz调试
   const onlineDebug = useCallback(() => {
-    openHookServer()
+    // openHookServer()
+    window.open('https://stackblitz.com/local', '_blank')
   }, [])
 
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
         <span className={styles['info']}>
-          <span className={styles.gitIcon} />
-          <span className="mr-12">CONNECT GIT (BETA)</span>
+          {/*<span className={styles.gitIcon} />*/}
+          {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
             <span>{env}</span>
           </span>
@@ -146,7 +146,7 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className="ml-8">
             {' '}
-            <FormattedMessage defaultMessage="引擎状态" />:{' '}
+            <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel}>
             <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
@@ -156,13 +156,13 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className="ml-4.5">
             {' '}
-            <FormattedMessage defaultMessage="钩子状态" />:{' '}
+            <FormattedMessage defaultMessage="钩子" />:{' '}
           </span>
           <span className={styles.errLabel + ' cursor-pointer'}>
             <div
               className="flex h-full items-center"
               onClick={() => {
-                if (!config.hooksServerURL && !hookServerLoading) {
+                if (!config.hooksServerURL) {
                   onlineDebug()
                 }
                 // setShowHookSetting(true)

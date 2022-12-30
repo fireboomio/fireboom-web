@@ -2,7 +2,7 @@ import { Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import requests from '@/lib/fetchers'
+import calcTime from '@/lib/helpers/calcTime'
 
 import styles from './home.module.less'
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface NoticeConfig {
-  bulletinType: number
+  content: string
   date: string
   title: string
 }
@@ -19,9 +19,17 @@ interface NoticeConfig {
 export function Notice({ handleToggleDesigner }: Props) {
   const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
   useEffect(() => {
-    void requests.get<unknown, NoticeConfig[]>('/home/bulletin').then(res => {
-      setNoticeConfig(res)
-    })
+    void fetch('https://raw.githubusercontent.com/fireboomio/fb-news/main/news.json').then(
+      async res => {
+        const result = await res.json()
+        const news = result.map((item: any) => ({
+          content: item.content,
+          title: item.title,
+          date: calcTime(item.time)
+        }))
+        setNoticeConfig(news)
+      }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -40,12 +48,10 @@ export function Notice({ handleToggleDesigner }: Props) {
       <div className={styles.rowList}>
         {_noticeConfig.map((row, index) => (
           <div className={styles.noticeRow} key={index}>
-            <div className={[styles.icon, styles['icon' + String(row.bulletinType)]].join(' ')} />
+            <div className={[styles.icon, styles['icon1']].join(' ')} />
             <div className={styles.info}>
-              <div className={styles.title}>
-                {{ 1: '公告信息', 2: '消息通知' }[row.bulletinType]}
-              </div>
-              <div className={styles.text}>{row.title}</div>
+              <div className={styles.title}>{row.title}</div>
+              <div className={styles.text}>{row.content}</div>
             </div>
             <div className={styles.time}>{row.date}</div>
           </div>
