@@ -46,7 +46,7 @@ const OPERATION_X = (CANVAS_WIDTH - OPERATION_WIDTH) / 2
 const LABEL_X = (CANVAS_WIDTH - LABEL_WIDTH) / 2
 const HOOK_X = (CANVAS_WIDTH - HOOK_WIDTH) / 2
 
-const _Chart = ({
+const FlowChart = ({
   globalHookState,
   hookState,
   directiveState,
@@ -1161,7 +1161,5 @@ const _Chart = ({
     </div>
   )
 }
-
-const FlowChart = React.memo(_Chart, (prev, next) => isEqual(prev, next))
 
 export default FlowChart

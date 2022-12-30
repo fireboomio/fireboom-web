@@ -105,7 +105,7 @@ export default function APIEditorContainer() {
         ]}
       />
     )
-  }, [operationType, params.id])
+  }, [intl, operationType, params.id])
 
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
@@ -205,7 +205,7 @@ export default function APIEditorContainer() {
   return (
     <>
       <Helmet>
-        <title>GraphiQL</title>
+        <title>{intl.formatMessage({ defaultMessage: 'API编辑' })}</title>
       </Helmet>
       <div className="bg-white flex flex-col h-full" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />

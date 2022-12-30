@@ -27,7 +27,7 @@ const ENDPOINT_WIDTH = 320
 // 计算图形 x 值
 const ENDPOINT_X = (CANVAS_WIDTH - ENDPOINT_WIDTH) / 2
 
-const _Chart = ({
+const SubscriptionChart = ({
   globalHookState,
   hookState,
   directiveState,
@@ -663,7 +663,5 @@ const _Chart = ({
     </div>
   )
 }
-
-const SubscriptionChart = React.memo(_Chart, (prev, next) => isEqual(prev, next))
 
 export default SubscriptionChart

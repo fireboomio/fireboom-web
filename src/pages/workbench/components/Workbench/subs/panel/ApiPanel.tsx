@@ -577,9 +577,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         ) : (
           <>
             <div
-              className={`${styles.method} ${styles[`method_${nodeData.method.toLowerCase()}`]}`}
+              className={`${styles.method} ${styles[`method_${nodeData.method?.toLowerCase()}`]}`}
             >
-              {nodeData.method.toUpperCase()}
+              {nodeData.method?.toUpperCase()}
             </div>
             <div className={styles.title}>{nodeData.title}</div>
             <div className={styles.suffix}>{miniStatus}</div>

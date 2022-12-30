@@ -1,5 +1,6 @@
-import type { OperationDefinitionNode } from 'graphql'
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import type { OperationDefinitionNode, OperationTypeNode } from 'graphql'
+import { isEqual } from 'lodash'
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
@@ -8,7 +9,12 @@ import { parseParameters } from '@/lib/gql-parser'
 import { useAPIManager } from '../../store'
 import EditPanel from './EditPanel'
 import type { FlowChartProps } from './FlowChart'
-import type { SubscriptionGlobalHookState } from './interface'
+import type {
+  BaseHookState,
+  CommonChartProps,
+  NormalGlobalHookState,
+  SubscriptionGlobalHookState
+} from './interface'
 // import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
 
@@ -143,34 +149,23 @@ const APIFlowChart = ({ id }: { id: string }) => {
     setEditingHook(null)
   }, [id])
 
+  const onEditHook = useCallback((hook: { name: string; path: string }) => {
+    setEditingHook(hook)
+  }, [])
+
   return (
     <>
-      {globalState && hookState ? (
-        directiveState!.isInternal ? (
-          <InternalOperationChart />
-        ) : operationType === 'subscription' ? (
-          <Suspense>
-            <SubscriptionChart
-              globalHookState={globalState as unknown as SubscriptionGlobalHookState}
-              hookState={hookState}
-              directiveState={directiveState}
-              apiSetting={apiDesc!.setting}
-              onEditHook={hook => setEditingHook(hook)}
-            />
-          </Suspense>
-        ) : (
-          <Suspense>
-            <FlowChart
-              globalHookState={globalState}
-              hookState={hookState}
-              directiveState={directiveState}
-              apiSetting={apiDesc!.setting}
-              onEditHook={hook => setEditingHook(hook)}
-            />
-          </Suspense>
-        )
-      ) : (
-        <></>
+      {apiDesc && (
+        <ChartWrapper
+          apiSetting={apiDesc!.setting}
+          directiveState={directiveState}
+          // @ts-ignore
+          globalHookState={globalState}
+          // @ts-ignore
+          hookState={hookState}
+          operationType={operationType}
+          onEditHook={onEditHook}
+        />
       )}
       {editingHook && (
         <EditPanel
@@ -185,3 +180,53 @@ const APIFlowChart = ({ id }: { id: string }) => {
 }
 
 export default APIFlowChart
+
+const _ChartWrapper = (
+  props: CommonChartProps &
+    (
+      | {
+          globalHookState: NormalGlobalHookState
+        }
+      | {
+          globalHookState: SubscriptionGlobalHookState
+        }
+    ) & {
+      operationType: Readonly<OperationTypeNode | undefined>
+    }
+) => {
+  const { globalHookState, hookState, directiveState, operationType, apiSetting, onEditHook } =
+    props
+  return (
+    <>
+      {globalHookState && hookState ? (
+        directiveState!.isInternal ? (
+          <InternalOperationChart />
+        ) : operationType === 'subscription' ? (
+          <Suspense>
+            <SubscriptionChart
+              globalHookState={globalHookState as unknown as SubscriptionGlobalHookState}
+              hookState={hookState}
+              directiveState={directiveState}
+              apiSetting={apiSetting}
+              onEditHook={onEditHook}
+            />
+          </Suspense>
+        ) : (
+          <Suspense>
+            <FlowChart
+              globalHookState={globalHookState as NormalGlobalHookState}
+              hookState={hookState}
+              directiveState={directiveState}
+              apiSetting={apiSetting}
+              onEditHook={onEditHook}
+            />
+          </Suspense>
+        )
+      ) : (
+        <></>
+      )}
+    </>
+  )
+}
+
+const ChartWrapper = React.memo(_ChartWrapper, (prev, next) => isEqual(prev, next))
