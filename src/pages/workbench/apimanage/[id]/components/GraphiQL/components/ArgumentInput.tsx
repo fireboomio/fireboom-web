@@ -30,6 +30,7 @@ const SingleArgumentInput = ({
 
   switch (type) {
     case 'Int':
+    case 'BigInt':
       return (
         <InputNumber
           className="text-xs w-full"
