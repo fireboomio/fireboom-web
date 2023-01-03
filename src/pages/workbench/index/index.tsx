@@ -114,11 +114,6 @@ export default function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>FireBoom</title>
-        <meta name="description" content="FireBoom" />
-      </Helmet>
-
       <div className="flex flex-col h-full">
         <div className="flex-1 min-h-0">
           <div className={styles.bodyContainer}>
