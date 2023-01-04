@@ -305,7 +305,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   /**
    * 根据path匹配options中的节点并刷新
    */
-  const loadMenu = async (path: string, { forceRoot = false, onError } = {}) => {
+  const loadMenu = async (path: string, { forceRoot = false, onError = null } = {}) => {
     console.log('loadMenu', path)
     if (!bucketId) return
     const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
@@ -336,16 +336,21 @@ export default function StorageExplorer({ bucketId }: Props) {
       const loadPath = loadTarget?.name ?? ''
 
       // 请求并构造节点
-      const files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+      let files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
         timeout: 15e3,
         params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined },
         resolveErrorMsg: response => {
           return intl.formatMessage({ defaultMessage: '文件列表加载失败' })
         }
       })
-      // 请求结果为空是，向外抛错误
+      // 请求结果为空时，向外抛错误。仅限根目录请求
       if (!files) {
-        onError?.()
+        if (onError && !loadPath) {
+          // @ts-ignore
+          onError()
+        } else {
+          files = []
+        }
       }
       const oldChildMap = new Map(loadTarget.children?.map(x => [x.name, x]) ?? [])
 
