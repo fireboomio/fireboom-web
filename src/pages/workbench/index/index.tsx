@@ -114,11 +114,6 @@ export default function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>FireBoom</title>
-        <meta name="description" content="FireBoom" />
-      </Helmet>
-
       <div className="flex flex-col h-full">
         <div className="flex-1 min-h-0">
           <div className={styles.bodyContainer}>
@@ -255,8 +250,8 @@ export default function Home() {
                 <div className={[styles.card, styles.moduleSingle].join(' ')}>
                   <div className={styles.title}>
                     <div className={styles.text}>OSS存储</div>
-                    {/*<div className={styles.number}>{ossTotal}</div>*/}
-                    {/*<div className={styles.numberText}>个</div>*/}
+                    <div className={styles.number}>{ossTotal}</div>
+                    <div className={styles.numberText}>个</div>
                   </div>
                   {/*<div className={styles.memoryLine}>*/}
                   {/*  已使用 {useMemory}G<span className={styles.memoryTotal}>{totalMemory}/G</span>*/}

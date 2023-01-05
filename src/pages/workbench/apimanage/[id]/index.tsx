@@ -7,7 +7,6 @@ import 'graphiql/graphiql.css'
 import { message, Tabs } from 'antd'
 import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
@@ -204,9 +203,6 @@ export default function APIEditorContainer() {
 
   return (
     <>
-      <Helmet>
-        <title>{intl.formatMessage({ defaultMessage: 'API编辑' })}</title>
-      </Helmet>
       <div className="bg-white flex flex-col h-full" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />
         <div className="flex flex-1 items-stretch overflow-hidden">

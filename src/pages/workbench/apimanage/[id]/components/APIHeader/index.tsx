@@ -3,7 +3,7 @@ import { Breadcrumb, Input, message, Switch, Tooltip } from 'antd'
 import copy from 'copy-to-clipboard'
 import type { OperationDefinitionNode } from 'graphql'
 import { Kind, OperationTypeNode } from 'graphql'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -92,7 +92,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
   }, [schemaAST])
 
-  const copyAPI = async () => {
+  const copyAPI = useCallback(async () => {
     if (apiDesc?.path) {
       try {
         await requests.post('/operateApi/copy', {
@@ -107,9 +107,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         //
       }
     }
-  }
+  }, [apiDesc, intl, workbenchCtx])
 
-  const copyLink = async () => {
+  const copyLink = useCallback(async () => {
     let link = apiDesc?.restUrl
     if (!link) {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
@@ -166,7 +166,15 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
 
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
-  }
+  }, [
+    apiDesc?.liveQuery,
+    apiDesc?.restUrl,
+    apiID,
+    config.apiHost,
+    config.apiPort,
+    intl,
+    schemaAST?.definitions
+  ])
 
   const save = async () => {
     try {
@@ -193,7 +201,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       unbind1()
       unbind2()
     }
-  }, [])
+  }, [copyAPI, copyLink])
 
   return (
     <div

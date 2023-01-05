@@ -87,6 +87,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   }
 
   const showHotkey = useCallback(() => {
+    Modal.destroyAll()
     Modal.info({
       width: '800px',
       icon: null,
