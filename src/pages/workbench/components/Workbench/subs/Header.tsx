@@ -106,7 +106,8 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             </div>
           ))}
         </div>
-      )
+      ),
+      okText: intl.formatMessage({ defaultMessage: '知道了' })
     })
   }, [])
 
