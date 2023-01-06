@@ -286,8 +286,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
       return false
     }
-    if (!name.match(/^\w[a-zA-Z0-9_]*$/)) {
-      message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
+    if (!name.match(/^\w[a-zA-Z0-9]*$/)) {
+      message.error(intl.formatMessage({ defaultMessage: '请输入字母或数字' }))
       return false
     }
     return true
