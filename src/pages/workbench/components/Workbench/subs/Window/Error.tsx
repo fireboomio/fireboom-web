@@ -56,11 +56,8 @@ export default function Error() {
     }
   }
   async function closeAPI(id: number) {
-    const res = await requests.get<unknown, any>(`/operateApi/${id}`)
-    if (res?.id) {
-      await requests.put(`/operateApi`, { ...res, enable: false })
-      onRefreshMenu('api')
-    }
+    await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enable: false })
+    onRefreshMenu('api')
   }
   async function closeAuth(id: number) {
     const res = await requests.get<unknown, any>(`/auth/${id}`)
