@@ -13,7 +13,7 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import UrlInput from '@/components/UrlInput'
 import type { AuthProvResp } from '@/interfaces/auth'
-import { AuthDispatchContext, AuthToggleContext } from '@/lib/context/auth-context'
+import { AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import { intl } from '@/providers/IntlProvider'
@@ -355,9 +355,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <FormattedMessage defaultMessage="取消" />
               </span>
             </Button>
-            <Button className="ml-4 btn-test" onClick={onTest}>
-              <FormattedMessage defaultMessage="测试" />
-            </Button>
+            {/*<Button className="ml-4 btn-test" onClick={onTest}>*/}
+            {/*  <FormattedMessage defaultMessage="测试" />*/}
+            {/*</Button>*/}
             <Button
               className="ml-4 btn-save"
               onClick={() => {

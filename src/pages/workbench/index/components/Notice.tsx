@@ -11,6 +11,7 @@ interface Props {
 }
 
 interface NoticeConfig {
+  url: string
   content: string
   date: string
   title: string
@@ -25,7 +26,8 @@ export function Notice({ handleToggleDesigner }: Props) {
         const news = result.map((item: any) => ({
           content: item.content,
           title: item.title,
-          date: calcTime(item.time)
+          date: calcTime(item.time),
+          url: item.url
         }))
         setNoticeConfig(news)
       }
@@ -47,7 +49,13 @@ export function Notice({ handleToggleDesigner }: Props) {
       </div>
       <div className={styles.rowList}>
         {_noticeConfig.map((row, index) => (
-          <div className={styles.noticeRow} key={index}>
+          <div
+            className={styles.noticeRow}
+            key={index}
+            onClick={() => {
+              window.open(row.url, '_blank')
+            }}
+          >
             <div className={[styles.icon, styles['icon1']].join(' ')} />
             <div className={styles.info}>
               <div className={styles.title}>{row.title}</div>
