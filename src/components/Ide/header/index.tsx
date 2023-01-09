@@ -133,7 +133,7 @@ const IdeHeaderContainer: FC<Props> = props => {
           }
           window.open('https://stackblitz.com/local')
         },
-        okText: intl.formatMessage({ defaultMessage: '我知道了' })
+        okText: intl.formatMessage({ defaultMessage: '知道了' })
       })
     }
   }, [])

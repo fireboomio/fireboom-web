@@ -3,1657 +3,1669 @@
     "defaultMessage": "Please select primary key"
   },
   "+GBE25": {
-    "defaultMessage": "查询授权",
+    "defaultMessage": "Query authorization",
     "description": "查询是否需要授权"
   },
   "+Hw5bq": {
-    "defaultMessage": "版权"
+    "defaultMessage": "Copyright"
   },
   "+MrBgm": {
-    "defaultMessage": "模型设计页切换设计/数据视图"
+    "defaultMessage": "Switch the view to design/data in model design page"
   },
   "+S5lJM": {
     "defaultMessage": "Appearence"
   },
   "+ZZbJ1": {
-    "defaultMessage": "Advance"
+    "defaultMessage": "Advanced Filter"
   },
   "+jyuQU": {
-    "defaultMessage": "API编辑页切换Json/表单模式，模型设计页切换设计/代码模式"
+    "defaultMessage": "Switch to Json Mode/ Form Mode in API edit page, Switch to Design Mode/ Code Mode in Model design page"
   },
   "+l43TG": {
-    "defaultMessage": "用户:"
+    "defaultMessage": "User:"
   },
   "+scveH": {
-    "defaultMessage": "{field}应为字符串，使用大小写字母或者下划线！"
+    "defaultMessage": "{field} are required to be strings，use uppercase letters, lowercase letters or underline!"
   },
   "+y//Sq": {
-    "defaultMessage": "暂不支持数据库类型为[{dbType}]的数据源！"
+    "defaultMessage": "Data sources in the database type of [{dbType}] are not currently supported"
   },
   "+zhQOH": {
     "defaultMessage": "{days}day {hours}hour {minutes}min {seconds}sec"
   },
   "/0bwX0": {
-    "defaultMessage": "联合索引"
+    "defaultMessage": "Composite Indexes"
   },
   "/4apRL": {
-    "defaultMessage": "忽略该字段"
+    "defaultMessage": "Ignore this field"
   },
   "/9NbO2": {
-    "defaultMessage": "响应转换",
+    "defaultMessage": "Response Transformation",
     "description": "插入指令处"
   },
   "/CFd+q": {
     "defaultMessage": "On"
   },
   "/F5ua7": {
-    "defaultMessage": "角色管理"
+    "defaultMessage": "role management"
   },
   "/LdjPR": {
-    "defaultMessage": "实体名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*"
+    "defaultMessage": "The entity name is invalid，pattern: [A-Za-z][A-Za-z0-9_]*"
   },
   "/NBrxg": {
-    "defaultMessage": "输入值"
+    "defaultMessage": "Input value"
   },
   "/NfUUH": {
-    "defaultMessage": "创建于"
+    "defaultMessage": "Created at"
   },
   "/Y87R/": {
-    "defaultMessage": "字段名不合法，以字母开头，可包含数字和下划线"
+    "defaultMessage": "The field name is invalid，begin with letters，numbers and underscores are allowed"
   },
   "/aSrX0": {
-    "defaultMessage": "名称重复"
+    "defaultMessage": "Name Duplication"
   },
   "/bRVWS": {
-    "defaultMessage": "命名空间"
+    "defaultMessage": "Namespace"
   },
   "/cqdKk": {
-    "defaultMessage": "下载"
+    "defaultMessage": "Download"
   },
   "/g7pR0": {
-    "defaultMessage": "或者"
+    "defaultMessage": "or"
   },
   "/mrUV7": {
-    "defaultMessage": "自定义"
+    "defaultMessage": "User-defined"
   },
   "/yVpDb": {
-    "defaultMessage": "默认"
+    "defaultMessage": "Default"
   },
   "00Cy+a": {
-    "defaultMessage": "请选择 {type} 表关联数据"
+    "defaultMessage": "Please select  {type} table associated data "
   },
   "07J5x2": {
-    "defaultMessage": "prisma引擎版本"
+    "defaultMessage": "prisma engine version"
   },
   "0BkTtH": {
-    "defaultMessage": "主键"
+    "defaultMessage": "primary key"
   },
   "0D60ha": {
-    "defaultMessage": "更多"
+    "defaultMessage": "more"
   },
   "0DLw3A": {
-    "defaultMessage": "可以为空"
+    "defaultMessage": "can be empty"
   },
   "0IjLDk": {
-    "defaultMessage": "SDK 模板"
+    "defaultMessage": "SDK Template"
   },
   "0aGQa4": {
-    "defaultMessage": "以 postgresql:// 开头，不超过128位"
+    "defaultMessage": "Begin with postgresql:// 开头，no more than 128 digits"
   },
   "0bBO2n": {
-    "defaultMessage": "版本"
+    "defaultMessage": "version"
   },
   "0jMIH4": {
-    "defaultMessage": "缓存配置"
+    "defaultMessage": "Cache Configuration"
   },
   "0o/d0Y": {
-    "defaultMessage": "请输入字母、数字或下划线"
+    "defaultMessage": "Please enter letters, numbers or underscores"
   },
   "0uAOrg": {
-    "defaultMessage": "编译"
+    "defaultMessage": "Compile"
   },
   "0x6ogM": {
-    "defaultMessage": "暂无内容"
+    "defaultMessage": "No content at present"
   },
   "17LOYz": {
-    "defaultMessage": "手动设置"
+    "defaultMessage": "Manual Settings"
   },
   "18cXOV": {
-    "defaultMessage": "复制接口 URL 地址"
+    "defaultMessage": "Copy interface URL address"
   },
   "1GUffX": {
-    "defaultMessage": "请上传 OAS 文件"
+    "defaultMessage": "Please upload OAS file"
   },
   "1Spi9T": {
-    "defaultMessage": "增加"
+    "defaultMessage": "Add"
   },
   "1Y05V3": {
-    "defaultMessage": "Rest 端点"
+    "defaultMessage": "Rest endpoint"
   },
   "1Ze/Gy": {
-    "defaultMessage": "复制接口"
+    "defaultMessage": "Copy interface"
   },
   "1ceY2D": {
-    "defaultMessage": "使用独立配置"
+    "defaultMessage": "Use independent configuration"
   },
   "1j0lPi": {
-    "defaultMessage": "操作成功！"
+    "defaultMessage": "Success！"
   },
   "1jRYJf": {
-    "defaultMessage": "允许全部"
+    "defaultMessage": "Allow all"
   },
   "1kGGA/": {
-    "defaultMessage": "已关闭"
+    "defaultMessage": "Closed"
   },
   "1pv3Jk": {
-    "defaultMessage": "最大时长"
+    "defaultMessage": "Maximum length of time"
   },
   "2+X2n8": {
-    "defaultMessage": "批量删除"
+    "defaultMessage": "Bulk deletion"
   },
   "23wB4T": {
-    "defaultMessage": "请求头"
+    "defaultMessage": "request header"
   },
   "2DHz6I": {
-    "defaultMessage": "实时查询"
+    "defaultMessage": "real-time inquiry"
   },
   "2FVy0L": {
-    "defaultMessage": "数据库名不能为空"
+    "defaultMessage": "Database name can not be null"
   },
   "2FgMsD": {
-    "defaultMessage": "请输入字母数字或下划线组合，以大写字母开头"
+    "defaultMessage": "Please enter a combination of letters, numbers or underscores，begin with a capital letter "
   },
   "2GUa4t": {
-    "defaultMessage": "请选择正确的参数节点",
+    "defaultMessage": "Please select the correct parameter node",
     "description": "插入指令时"
   },
   "2P6VLX": {
-    "defaultMessage": "只允许上传 json 或 yaml 格式文件"
+    "defaultMessage": "Only files in json or yaml format can be uploaded"
   },
   "2PNzKb": {
-    "defaultMessage": "从<{name}>选择字段"
+    "defaultMessage": "Select fields from <{name}>"
   },
   "2QzYmY": {
-    "defaultMessage": "取消"
+    "defaultMessage": "Cancel"
   },
   "2Y1dR4": {
-    "defaultMessage": "字段 {name} 的参数输入错误"
+    "defaultMessage": "The parameter of field {name} is incorrectly entered"
   },
   "2a+U1g": {
     "defaultMessage": "服务地址"
   },
   "2pzrDk": {
-    "defaultMessage": "忽略该表"
+    "defaultMessage": "ignore the table"
   },
   "2t41Pv": {
-    "defaultMessage": "已保存"
+    "defaultMessage": "saved"
   },
   "2y+Dze": {
-    "defaultMessage": "本次成功生成{count}条API"
+    "defaultMessage": "{count} pieces of APIs are generated successfully this time"
   },
   "3+qPlN": {
-    "defaultMessage": "排查, 或"
+    "defaultMessage": "troubleshoot, or"
   },
   "32k+gD": {
-    "defaultMessage": "创建文件存储"
+    "defaultMessage": "create file storage"
   },
   "3OgiQ+": {
-    "defaultMessage": "枚举名已存在"
+    "defaultMessage": "The enumerator name already exists"
   },
   "3SibWe": {
-    "defaultMessage": "允许方法"
+    "defaultMessage": "allowed method"
   },
   "3bdXhI": {
-    "defaultMessage": "登录校验?",
+    "defaultMessage": "Login verify?",
     "description": "流程图"
   },
   "3cF9qm": {
-    "defaultMessage": "内部依赖"
+    "defaultMessage": "internal dependence"
   },
   "42Fm6z": {
-    "defaultMessage": "公开"
+    "defaultMessage": "open"
   },
   "4549+5": {
-    "defaultMessage": "普通视图"
+    "defaultMessage": "common view"
   },
   "47GdDb": {
-    "defaultMessage": "关闭"
+    "defaultMessage": "close"
   },
   "4LegCW": {
-    "defaultMessage": "网络请求错误！"
+    "defaultMessage": "Network request error！"
   },
   "4rbyCQ": {
-    "defaultMessage": "端口:"
+    "defaultMessage": "port:"
   },
   "4tkspf": {
-    "defaultMessage": "执行 (Operation)",
+    "defaultMessage": "Operation",
     "description": "流程图"
   },
   "53xMJk": {
-    "defaultMessage": "请输入角色编码"
+    "defaultMessage": "Please enter the role code"
   },
   "5BzHRY": {
-    "defaultMessage": "新增Origin"
+    "defaultMessage": "New Origin"
   },
   "5FboZ/": {
-    "defaultMessage": "类型"
+    "defaultMessage": "type"
   },
   "5euLB8": {
-    "defaultMessage": "路径"
+    "defaultMessage": "path"
   },
   "5gzWCE": {
-    "defaultMessage": "即将离开当前页面，未保存的内容将被丢失，是否确认？"
+    "defaultMessage": "Leaving the current interface, unsaved content will be lost, confirm exit？"
   },
   "608d8o": {
     "defaultMessage": "日志"
   },
   "66awCH": {
-    "defaultMessage": "刷新"
+    "defaultMessage": "refresh"
   },
   "6B0EzP": {
-    "defaultMessage": "连接URL"
+    "defaultMessage": "connect URL"
   },
   "6F6gTV": {
-    "defaultMessage": "脚本内容不是json格式"
+    "defaultMessage": "The script content is not in json format"
   },
   "6IHx+i": {
-    "defaultMessage": "跳过已有API"
+    "defaultMessage": "Skip  exsisting API"
   },
   "6RphVF": {
-    "defaultMessage": "请上传文件"
+    "defaultMessage": "Please upload the file"
   },
   "6UDCIR": {
-    "defaultMessage": "转发自客户端"
+    "defaultMessage": "Forwarded from the client"
   },
   "799kEA": {
-    "defaultMessage": "修改时间"
+    "defaultMessage": "modification time"
   },
   "7IrS7D": {
-    "defaultMessage": "当前地址的钩子服务未启动，手动启动钩子后，方可使用。"
+    "defaultMessage": "The hook service at the current address is not started，it can be used only after manual start"
   },
   "7MUg0d": {
-    "defaultMessage": "保存失败！"
+    "defaultMessage": "Save failed！"
   },
   "7aMIeB": {
-    "defaultMessage": "是否需要登录"
+    "defaultMessage": "Does it require login?"
   },
   "7cCd7/": {
-    "defaultMessage": "运行当前Operation"
+    "defaultMessage": "run current Operation"
   },
   "7hbJjS": {
-    "defaultMessage": "发起请求"
+    "defaultMessage": "issue the request"
   },
   "7nyFdZ": {
-    "defaultMessage": "请输入名称"
+    "defaultMessage": "Please enter the name"
   },
   "7vnRkg": {
-    "defaultMessage": "在线调试使用指南"
+    "defaultMessage": "online debugging user guide"
   },
   "7xvRgU": {
-    "defaultMessage": "登出成功，即将关闭当前页面"
+    "defaultMessage": "Successfully logged out，the current page is about to close"
   },
   "7yXi5L": {
-    "defaultMessage": "已编辑"
+    "defaultMessage": "edited"
   },
   "87LrSH": {
-    "defaultMessage": "枚举名"
+    "defaultMessage": "enumerator name"
   },
   "88kUM2": {
-    "defaultMessage": "共{count}项数据"
+    "defaultMessage": "There is a total of {count} items of data"
   },
   "8AtCIp": {
-    "defaultMessage": "请输入数据源名"
+    "defaultMessage": "Please enter the data source name"
   },
   "8EHsht": {
-    "defaultMessage": "无可用实体！"
+    "defaultMessage": "No available entity！"
   },
   "8GU0DT": {
-    "defaultMessage": "钩子状态"
+    "defaultMessage": "hook state"
   },
   "8NsucZ": {
-    "defaultMessage": "@内部",
+    "defaultMessage": "@interior",
     "description": "插入指令处"
   },
   "8gWGMl": {
-    "defaultMessage": "内部变量，标记某个字段为内部变量，方便后续查询语句中使用"
+    "defaultMessage": "internal variable, mark a field as an internal variable, so that it can be used in subsequent query statements"
   },
   "8mYf5w": {
-    "defaultMessage": "是否开启"
+    "defaultMessage": "whether to enable it"
   },
   "8y5Ykn": {
-    "defaultMessage": "修改于"
+    "defaultMessage": "modified on"
   },
   "96YcwE": {
-    "defaultMessage": "字段类型映射"
+    "defaultMessage": "field type mapping"
   },
   "9Fxs0Y": {
-    "defaultMessage": "确定删除吗?"
+    "defaultMessage": "Confirm the deletion?"
   },
   "9HZKLw": {
-    "defaultMessage": "字段别名"
+    "defaultMessage": "Field alias"
   },
   "9SBdsw": {
-    "defaultMessage": "用户名不能为空"
+    "defaultMessage": "The user name cannot be empty"
   },
   "9WXJgY": {
-    "defaultMessage": "响应转换",
+    "defaultMessage": "response transformation",
     "description": "流程图"
   },
   "9YT9eI": {
-    "defaultMessage": "正在加载模型列表"
+    "defaultMessage": "Loading a list of models"
   },
   "9huOMe": {
-    "defaultMessage": "请输入合法字符串，使用双引号包括"
+    "defaultMessage": "Please enter a valid string, use double quotation marks "
   },
   "9n8LjV": {
-    "defaultMessage": "登录用户"
+    "defaultMessage": "login user"
   },
   "9stmhe": {
-    "defaultMessage": "操作失败！"
+    "defaultMessage": "Failed！"
   },
   "9x/veC": {
-    "defaultMessage": "联合主键"
+    "defaultMessage": "composite key"
   },
   "9yQugt": {
-    "defaultMessage": "连接失败"
+    "defaultMessage": "connection failed"
   },
   "A2YuIk": {
-    "defaultMessage": "签名方法"
+    "defaultMessage": "signature method"
   },
   "A3wHyU": {
-    "defaultMessage": "枚举名不合法！"
+    "defaultMessage": "The enumeration name is invalid！"
   },
   "A5xsdI": {
-    "defaultMessage": "运行时长"
+    "defaultMessage": "running time"
   },
   "A6Mx9m": {
-    "defaultMessage": "搜索依赖"
+    "defaultMessage": "search dependence"
   },
   "AIWQdZ": {
-    "defaultMessage": "示例代码"
+    "defaultMessage": "sample code"
   },
   "AO9K4t": {
-    "defaultMessage": "批量新建预览"
+    "defaultMessage": "create new preview in batches"
   },
   "AR/s6m": {
-    "defaultMessage": "创建身份认证器"
+    "defaultMessage": "create an identity authenticator"
   },
   "ATIkHk": {
-    "defaultMessage": "打开快捷键提示"
+    "defaultMessage": "open the shortcut prompt"
   },
   "AVKP8a": {
-    "defaultMessage": "迁移"
+    "defaultMessage": "migrate"
   },
   "AVofrL": {
-    "defaultMessage": "源码视图"
+    "defaultMessage": "source view"
   },
   "AXTXwf": {
-    "defaultMessage": "实体名更新成功"
+    "defaultMessage": "The entity name was updated successfully"
   },
   "AYi+tS": {
-    "defaultMessage": "prisma版本"
+    "defaultMessage": "prisma version"
   },
   "AatDue": {
-    "defaultMessage": "新建目录"
+    "defaultMessage": "new directory"
   },
   "AeO+ID": {
-    "defaultMessage": "新建变量"
+    "defaultMessage": "new variable"
   },
   "Aj9NiL": {
-    "defaultMessage": "轮询间隔"
+    "defaultMessage": "polling interval"
   },
   "B0rHcT": {
-    "defaultMessage": "动态"
+    "defaultMessage": "dynamic "
   },
   "B5JYOd": {
-    "defaultMessage": "唯一索引"
+    "defaultMessage": "unique index"
   },
   "B9XR0F": {
-    "defaultMessage": "确认删除该实体吗？将会同时删除引用字段！"
+    "defaultMessage": "Delete this entity？The reference field will also be deleted！"
   },
   "BGgRyA": {
-    "defaultMessage": "下载 React SDK"
+    "defaultMessage": "download React SDK"
   },
   "BLQNDV": {
-    "defaultMessage": "请编辑"
+    "defaultMessage": "Please edit"
   },
   "BLWx5q": {
-    "defaultMessage": "发送响应到客户端",
+    "defaultMessage": "Send a response to the client",
     "description": "流程图"
   },
   "BOZ5lK": {
-    "defaultMessage": "刷新完成！"
+    "defaultMessage": "The refresh is complete！"
   },
   "BX00L6": {
-    "defaultMessage": "请输入长度不大于128的非空值"
+    "defaultMessage": "Please enter a non-null value, limit the length to 128 characters"
   },
   "BbdcOe": {
-    "defaultMessage": "是否状态联合"
+    "defaultMessage": "state association or not"
   },
   "Bjvcv9": {
-    "defaultMessage": "指定OAS"
+    "defaultMessage": "designated OAS"
   },
   "BtZh7z": {
-    "defaultMessage": "创建"
+    "defaultMessage": "create"
   },
   "BxhyoS": {
-    "defaultMessage": "跨域"
+    "defaultMessage": "cross-domain"
   },
   "C/vpUV": {
-    "defaultMessage": "请输入数字、字母或下划线，第一位不能是数字"
+    "defaultMessage": "Please enter numbers, letters, or underscores, the first digit can not be a number"
   },
   "C4HPJc": {
-    "defaultMessage": "上传成功"
+    "defaultMessage": "Upload complete"
   },
   "C5D7TM": {
-    "defaultMessage": "数据源"
+    "defaultMessage": "data source"
   },
   "C8ZFaR": {
-    "defaultMessage": "筛选"
+    "defaultMessage": "filter"
   },
   "CLqPBU": {
-    "defaultMessage": "编辑"
+    "defaultMessage": "edit"
   },
   "CP8WcX": {
-    "defaultMessage": "只允许上传 graphql 格式文件"
+    "defaultMessage": "Only files in graphql format can be uploaded"
   },
   "CSKTb8": {
-    "defaultMessage": "自动注入 UUID，用户无需传参"
+    "defaultMessage": "automatically injects UUID，users do not need to pass parameters"
   },
   "CVx5RX": {
-    "defaultMessage": "指定Schema"
+    "defaultMessage": "specified Schema"
   },
   "DLG2Yy": {
-    "defaultMessage": "连接类型"
+    "defaultMessage": "connection type"
   },
   "DPch2e": {
-    "defaultMessage": "已刷新"
+    "defaultMessage": "refreshed"
   },
   "DWjAJJ": {
-    "defaultMessage": "只允许包含字母，数字，下划线"
+    "defaultMessage": "Only letters, numbers and underscores are allowed"
   },
   "DpfSLU": {
-    "defaultMessage": "参数"
+    "defaultMessage": "parameter"
   },
   "DqrJMk": {
-    "defaultMessage": "请填写枚举注释"
+    "defaultMessage": "Please fill in enumeration annotation"
   },
   "E1Ds9+": {
-    "defaultMessage": "按名称"
+    "defaultMessage": "by name"
   },
   "E6yn6S": {
-    "defaultMessage": "文件存储"
+    "defaultMessage": "file store"
   },
   "EBMdAL": {
-    "defaultMessage": "创建成功"
+    "defaultMessage": "The creation is successful"
   },
   "EIebSr": {
-    "defaultMessage": "无"
+    "defaultMessage": "null"
   },
   "EJ9IE3": {
-    "defaultMessage": "接口角色"
+    "defaultMessage": "interface role"
   },
   "EQ9fu/": {
-    "defaultMessage": "在线调试"
+    "defaultMessage": "online debugging"
   },
   "Eaqhfe": {
-    "defaultMessage": "排除重命名根字段"
+    "defaultMessage": "exclude renaming root fields"
   },
   "EdIsPB": {
-    "defaultMessage": "请输入字母数字或下划线组合"
+    "defaultMessage": "Please enter a combination of letters,numbers or underscores"
   },
   "EpuhM8": {
-    "defaultMessage": "复制当前API请求链接"
+    "defaultMessage": "copy the current API request link"
   },
   "F3wzck": {
-    "defaultMessage": "表"
+    "defaultMessage": "table"
   },
   "FEb7U2": {
-    "defaultMessage": "确认"
+    "defaultMessage": "confirm"
   },
   "FQQECq": {
-    "defaultMessage": "必填"
+    "defaultMessage": "required"
   },
   "FYqDZK": {
     "defaultMessage": "APP Secret"
   },
   "FbmCny": {
-    "defaultMessage": "推送",
+    "defaultMessage": "push",
     "description": "流程图"
   },
   "FpWcg2": {
-    "defaultMessage": "桶名称"
+    "defaultMessage": "bucket name"
   },
   "G1Nhzp": {
-    "defaultMessage": "已存在"
+    "defaultMessage": "already exist"
   },
   "G5QYm7": {
-    "defaultMessage": "客户端"
+    "defaultMessage": "client"
   },
   "GHE+9W": {
-    "defaultMessage": "变量名"
+    "defaultMessage": "variable name"
   },
   "GbiB/D": {
-    "defaultMessage": "未启动"
+    "defaultMessage": "not start"
   },
   "GcooW9": {
-    "defaultMessage": "从用户信息中提取参数作为输入值"
+    "defaultMessage": "extract parameter from user information as input"
   },
   "GpfOWR": {
-    "defaultMessage": "正在努力开发中～"
+    "defaultMessage": "It is under developement～"
   },
   "GuD3c8": {
-    "defaultMessage": "排序"
+    "defaultMessage": "sort"
   },
   "H4GEbT": {
-    "defaultMessage": "编辑角色"
+    "defaultMessage": "edit role"
   },
   "HPWQD3": {
-    "defaultMessage": "登出"
+    "defaultMessage": "log out"
   },
   "HSZ1vp": {
-    "defaultMessage": "是否允许证书"
+    "defaultMessage": "certificate of permission or not"
   },
   "HalctF": {
-    "defaultMessage": "开始编译"
+    "defaultMessage": "start compiling"
   },
   "Hu2hE9": {
-    "defaultMessage": "已存在，请勿重复引入"
+    "defaultMessage": "Already exist，please don't reintroduce "
   },
   "Hv6ThW": {
-    "defaultMessage": "对应请求响应中的: Access-Control-Allow-Origin"
+    "defaultMessage": "corresponding to the Access-Control-Allow-Origin in request response"
   },
   "Hxs6Qn": {
-    "defaultMessage": "列表"
+    "defaultMessage": "list"
   },
   "IAf7JP": {
-    "defaultMessage": "服务发现地址"
+    "defaultMessage": "service discovery address"
   },
   "IGwGVj": {
-    "defaultMessage": "请输入命名空间"
+    "defaultMessage": "Please enter namespace"
   },
   "ILCVXB": {
-    "defaultMessage": "请输入长度不大于256的非空值"
+    "defaultMessage": "Please enter a non-null value, limit the length to 256"
   },
   "IQIvYd": {
-    "defaultMessage": "刷新列表"
+    "defaultMessage": "refresh the list"
+  },
+  "Ipvx+S": {
+    "defaultMessage": "Engine"
   },
   "Ipx/DS": {
-    "defaultMessage": "API域名"
+    "defaultMessage": "API domain name"
   },
   "IujQJk": {
-    "defaultMessage": "实体别名"
+    "defaultMessage": "entity alias"
   },
   "IyVzrX": {
-    "defaultMessage": "保存中"
+    "defaultMessage": "saving "
   },
   "J9jPRL": {
-    "defaultMessage": "复制成功"
+    "defaultMessage": "copy successfully"
   },
   "JDIfhr": {
-    "defaultMessage": "连接成功"
+    "defaultMessage": "connect successfully"
   },
   "JJvpR5": {
-    "defaultMessage": "是否确认删除选中的API？"
+    "defaultMessage": "Confirm the deletion of the selected API？"
   },
   "JcvFnh": {
-    "defaultMessage": "已保存 {time}",
+    "defaultMessage": "saved {time}",
     "description": "保存时间提示"
   },
   "JeJAmT": {
-    "defaultMessage": "重命名"
+    "defaultMessage": "rename"
   },
   "Jy/NUB": {
-    "defaultMessage": "时序图",
+    "defaultMessage": "sequence diagram",
     "description": "插入指令处"
   },
   "K27Y7X": {
-    "defaultMessage": "排除头"
+    "defaultMessage": "exclude head"
   },
   "K2DWpV": {
-    "defaultMessage": "输入不合法！"
+    "defaultMessage": "Invalid input！"
   },
   "KY299P": {
-    "defaultMessage": "引擎状态"
+    "defaultMessage": "engine state"
   },
   "KiiWJR": {
-    "defaultMessage": "变量值"
+    "defaultMessage": "variable value"
   },
   "Kkatuf": {
-    "defaultMessage": "入参校验，用于入参校验"
+    "defaultMessage": "input parameter check，for input parameter check"
   },
   "KqTB9T": {
-    "defaultMessage": "变更是否需要登录"
+    "defaultMessage": "whether the change needs login"
   },
   "Ksj+aW": {
-    "defaultMessage": "端口范围为0-9999"
+    "defaultMessage": "the port range is 0-9999"
   },
   "L/CHdQ": {
-    "defaultMessage": "重新校验时长"
+    "defaultMessage": "recalibration time"
   },
   "LJEftP": {
-    "defaultMessage": "请先选择匹配模式"
+    "defaultMessage": "Please select a matching mode first"
   },
   "LKhNTW": {
-    "defaultMessage": "变更授权"
+    "defaultMessage": "change authority"
   },
   "LOLrph": {
-    "defaultMessage": "结 束",
+    "defaultMessage": "end",
     "description": "流程图"
   },
   "LWXiI7": {
-    "defaultMessage": "基于Token"
+    "defaultMessage": "base on Token"
   },
   "LhbdSU": {
-    "defaultMessage": "请先创建查询语句"
+    "defaultMessage": "Please create query statement first"
   },
   "LwwUFT": {
-    "defaultMessage": "暂无问题"
+    "defaultMessage": "There is no issue currently"
   },
   "LzQ0Lw": {
-    "defaultMessage": "确认删除？"
+    "defaultMessage": "Confirm the deletion？"
   },
   "M/Ydym": {
-    "defaultMessage": "默认排序"
+    "defaultMessage": "default sort"
   },
   "M363gH": {
-    "defaultMessage": "下次不再提醒"
+    "defaultMessage": "Don't remind me again"
   },
   "M5bmPZ": {
-    "defaultMessage": "系统检测到您可能删除或重命名了模型，迁移后将导致数据丢失，请谨慎操作"
+    "defaultMessage": "The system detected that you may have deleted or renamed the model，the data will be lost after migration，please be careful"
   },
   "MFe3Kw": {
-    "defaultMessage": "下线"
+    "defaultMessage": "go offline"
   },
   "MOZq7j": {
-    "defaultMessage": "脚本语言"
+    "defaultMessage": "script language"
   },
   "MeoAGh": {
-    "defaultMessage": "枚举名已存在！"
+    "defaultMessage": "The enumeration name is already exist！"
   },
   "Ms9pdw": {
-    "defaultMessage": "复制URL"
+    "defaultMessage": "copy URL"
   },
   "Mto+Yh": {
-    "defaultMessage": "hooks 函数参数，仅用于自定义 hooks 中"
+    "defaultMessage": "hooks function parameter，only used in custom hooks "
   },
   "N188jr": {
-    "defaultMessage": "下载 swagger"
+    "defaultMessage": "download swagger"
   },
   "ND/EcE": {
-    "defaultMessage": "端口号不能为空"
+    "defaultMessage": "The port number can not be empty"
   },
   "NGs9sO": {
-    "defaultMessage": "返回"
+    "defaultMessage": "back"
   },
   "NSax9B": {
     "defaultMessage": "App Secret"
   },
   "NYgxWS": {
-    "defaultMessage": "请填写范围内的跨域时间,范围为0 - 86400 秒"
+    "defaultMessage": "Please enter a cross-domain time in the range of 0 - 86400 seconds"
   },
   "NcChip": {
-    "defaultMessage": "订阅是否需要登录"
+    "defaultMessage": "Whether the subscription needs login"
   },
   "NyeMXU": {
     "defaultMessage": "App ID"
   },
   "NzT9mX": {
-    "defaultMessage": "提交失败"
+    "defaultMessage": "submit failed"
   },
   "O1HTOa": {
-    "defaultMessage": "管理"
+    "defaultMessage": "management"
   },
   "O8A9zp": {
-    "defaultMessage": "开启授权"
+    "defaultMessage": "enable authorization"
   },
   "OF2wA3": {
-    "defaultMessage": "关联 {type} 表数据"
+    "defaultMessage": "associate {type} table data"
   },
   "OPt+As": {
-    "defaultMessage": "只能选择一个节点"
+    "defaultMessage": "only one node can be selected "
   },
   "Oww89Y": {
-    "defaultMessage": "上传中"
+    "defaultMessage": "uploading"
   },
   "Oxa91E": {
     "defaultMessage": "jwksJSON"
   },
   "P/eul9": {
-    "defaultMessage": "否"
+    "defaultMessage": "No"
   },
   "P9Qnez": {
     "defaultMessage": "JWKS"
   },
   "PCQ1Db": {
-    "defaultMessage": "跨源关联",
+    "defaultMessage": "cross-source association",
     "description": "插入指令处"
   },
   "PI0Ele": {
-    "defaultMessage": "端口"
+    "defaultMessage": "port"
   },
   "PbEf10": {
-    "defaultMessage": "开启SSL"
+    "defaultMessage": "enable SSL"
   },
   "Pcni+q": {
-    "defaultMessage": "没有选定角色，请点击下方加号添加"
+    "defaultMessage": "No selected role，please add one by clicking the plus sign below"
   },
   "Pdx/YD": {
-    "defaultMessage": "密码"
+    "defaultMessage": "password"
   },
   "Pge30O": {
-    "defaultMessage": "API前缀"
+    "defaultMessage": "API prefix"
   },
   "PpQOV5": {
-    "defaultMessage": "已启动"
+    "defaultMessage": "started"
   },
   "QT75K3": {
-    "defaultMessage": "按修改时间"
+    "defaultMessage": "by modification time"
   },
   "QaFk/Y": {
-    "defaultMessage": "供应商ID不能为空"
+    "defaultMessage": "The supplier ID can not be empty"
   },
   "QarRBC": {
-    "defaultMessage": "新建API"
+    "defaultMessage": "new API"
   },
   "QpRtOT": {
-    "defaultMessage": "执行中"
+    "defaultMessage": "executing"
   },
   "R2D5Dv": {
-    "defaultMessage": "创建时间"
+    "defaultMessage": "creation time"
   },
   "R5wYZd": {
-    "defaultMessage": "允许源"
+    "defaultMessage": "allow source"
   },
   "R8Yt/D": {
-    "defaultMessage": "上传失败"
+    "defaultMessage": "upload failed "
   },
   "RP3X0u": {
-    "defaultMessage": "连接参数"
+    "defaultMessage": "connection parameter"
   },
   "RPeIuR": {
-    "defaultMessage": "{minutes}分钟前"
+    "defaultMessage": "{minutes} minutes ago"
   },
   "RQeDK/": {
-    "defaultMessage": "不开启"
+    "defaultMessage": "do not enable"
   },
   "RagALW": {
-    "defaultMessage": "名称:"
+    "defaultMessage": "name:"
   },
   "Rj34mG": {
-    "defaultMessage": "主机:"
+    "defaultMessage": "host:"
   },
   "Rl/VjA": {
-    "defaultMessage": "是否数组"
+    "defaultMessage": "array or not"
   },
   "RuZ3Ak": {
-    "defaultMessage": "切换API设计和模型设计"
+    "defaultMessage": "switch API design and model design"
   },
   "Rv5Swi": {
-    "defaultMessage": "选择字段"
+    "defaultMessage": "select field"
   },
   "S6iTyu": {
-    "defaultMessage": "实体未设置主键"
+    "defaultMessage": "entity has no primary key"
   },
   "S8cTgj": {
-    "defaultMessage": "请输入数据源名称"
+    "defaultMessage": "Please enter data source name"
   },
   "SHeOyn": {
-    "defaultMessage": "未保存"
+    "defaultMessage": "unsaved"
   },
   "SJbKgr": {
-    "defaultMessage": "批量新建"
+    "defaultMessage": "create in batches "
   },
   "SU89De": {
-    "defaultMessage": "按创建时间"
+    "defaultMessage": "by creation time"
   },
   "Sa7tEZ": {
-    "defaultMessage": "实体名"
+    "defaultMessage": "entity name"
   },
   "SkX7yV": {
-    "defaultMessage": "Token端点"
+    "defaultMessage": "Token endpoint"
   },
   "SyLGX/": {
-    "defaultMessage": "调试"
+    "defaultMessage": "debugging"
   },
   "T0bxDG": {
-    "defaultMessage": "编译中"
+    "defaultMessage": "compiling"
   },
   "TACLOV": {
-    "defaultMessage": "连接名"
+    "defaultMessage": "connection name"
   },
   "TDqc4L": {
-    "defaultMessage": "权限"
+    "defaultMessage": "authority"
   },
   "TFEmmD": {
-    "defaultMessage": "以字母或下划线开头，只能由字母、下划线和数字组成"
+    "defaultMessage": "Begin with letters or underscores，only consist of letters, underscores and number"
   },
   "THkRPD": {
-    "defaultMessage": "添加角色"
+    "defaultMessage": "add role"
   },
   "TbflcV": {
-    "defaultMessage": "刚刚"
+    "defaultMessage": "just now"
   },
   "Tm3YfU": {
-    "defaultMessage": "接口名称必须大写开头！"
+    "defaultMessage": "Interface name must begin with uppercase letter！"
   },
   "U0ZvW8": {
-    "defaultMessage": "每一个实体只能有一个主键！"
+    "defaultMessage": "Each entity can only have one primary key！"
   },
   "U1eYS0": {
-    "defaultMessage": "批量新建API"
+    "defaultMessage": "create API in batches"
   },
   "UEEFxl": {
-    "defaultMessage": "基于Token和Cookie"
+    "defaultMessage": "base on Token and Cookie"
   },
   "UEiMSy": {
-    "defaultMessage": "身份验证"
+    "defaultMessage": "indentity authentication"
   },
   "UH1kCc": {
-    "defaultMessage": "添加"
+    "defaultMessage": "add"
   },
   "UOrOkX": {
-    "defaultMessage": "查询全部"
+    "defaultMessage": "query all"
   },
   "UPFhlk": {
-    "defaultMessage": "删除操作将会同时删除关联数据！"
+    "defaultMessage": "The deletion operation will also delete associated data！"
+  },
+  "UU3d6B": {
+    "defaultMessage": "Hook"
   },
   "UXFkBB": {
-    "defaultMessage": "概览"
+    "defaultMessage": "overview"
   },
   "UifjEZ": {
-    "defaultMessage": "日志水平"
+    "defaultMessage": "log level"
   },
   "Ul2EcR": {
-    "defaultMessage": "实体名更新失败, error:"
+    "defaultMessage": "entity name update failed, error:"
   },
   "UmVV8s": {
-    "defaultMessage": "新建数据源"
+    "defaultMessage": "new data source"
   },
   "Unr58u": {
-    "defaultMessage": "更新时间"
+    "defaultMessage": "update time"
   },
   "Up2nmQ": {
-    "defaultMessage": "已加载最新版本"
+    "defaultMessage": "The latest version is loaded"
   },
   "UtE0dS": {
-    "defaultMessage": "操作"
+    "defaultMessage": "operation"
   },
   "UxBXdV": {
-    "defaultMessage": "自定义类型"
+    "defaultMessage": "custom type"
   },
   "Uzsm7t": {
-    "defaultMessage": "API全局设置"
+    "defaultMessage": "API global setting"
   },
   "V0RiZp": {
-    "defaultMessage": "操作成功"
+    "defaultMessage": "The operation is successful"
   },
   "V8c5V8": {
-    "defaultMessage": "获取文件列表失败！"
+    "defaultMessage": "Failed to obtain the file list！"
   },
   "V8cvxi": {
-    "defaultMessage": "连接类型:"
+    "defaultMessage": "connection type:"
   },
   "VLmNWR": {
-    "defaultMessage": "页面快捷键"
+    "defaultMessage": "page shortcut key"
   },
   "VSwka6": {
-    "defaultMessage": "实体名不合法！"
+    "defaultMessage": "Invalid entity name！"
   },
   "ViVQNi": {
-    "defaultMessage": "角色"
+    "defaultMessage": "role"
   },
   "VlUpDD": {
-    "defaultMessage": "示例数据源"
+    "defaultMessage": "sample data source"
   },
   "VmsX4o": {
-    "defaultMessage": "以字母或下划线开头，只能由数字、字母、下划线组成"
+    "defaultMessage": "Begin with letters or underscores，only consist of numbers, letters and underscores"
   },
   "W7e9Ff": {
-    "defaultMessage": "角色列表"
+    "defaultMessage": "role list"
   },
   "WHN1dG": {
-    "defaultMessage": "保存成功！"
+    "defaultMessage": "The save is successful！"
   },
   "WNS/6E": {
-    "defaultMessage": "允许证书"
+    "defaultMessage": "certificate of permission"
   },
   "WWNrrS": {
-    "defaultMessage": "权限管理"
+    "defaultMessage": "authority management"
   },
   "WfVg3t": {
     "defaultMessage": "APP ID"
   },
   "WiL7+z": {
-    "defaultMessage": "上线"
+    "defaultMessage": "go online"
   },
   "WpBk1h": {
-    "defaultMessage": "语言"
+    "defaultMessage": "language"
   },
   "WsOs5k": {
-    "defaultMessage": "{hours}小时前"
+    "defaultMessage": "{hours} hours ago"
   },
   "WtlUhL": {
-    "defaultMessage": "URL 地址已复制"
+    "defaultMessage": "URL address is copied "
   },
   "XEPmlP": {
-    "defaultMessage": "秒"
+    "defaultMessage": "second"
   },
   "XeiAal": {
-    "defaultMessage": "删除"
+    "defaultMessage": "delete"
   },
   "Xhn2gT": {
-    "defaultMessage": "请选择"
+    "defaultMessage": "Please select"
   },
   "XseOZ1": {
-    "defaultMessage": "注：2 → 3 → 4 → 5 重复执行",
+    "defaultMessage": "Note：repeat 2 → 3 → 4 → 5 ",
     "description": "流程图"
   },
   "Xx+23S": {
-    "defaultMessage": "即将"
+    "defaultMessage": "upcoming"
   },
   "Xz2JYA": {
-    "defaultMessage": "启动失败"
+    "defaultMessage": "failed to start"
   },
   "YCiD/D": {
-    "defaultMessage": "请先保存或取消编辑"
+    "defaultMessage": "Please save or quit edit first"
   },
   "YIAhsY": {
-    "defaultMessage": "系统"
+    "defaultMessage": "system"
   },
   "YJo5EG": {
-    "defaultMessage": "供应商ID"
+    "defaultMessage": "supplier ID"
   },
   "YrzlYQ": {
-    "defaultMessage": "生成接口"
+    "defaultMessage": "generate interface"
   },
   "Ytievw": {
-    "defaultMessage": "该验证器"
+    "defaultMessage": "this validator"
   },
   "YwSrou": {
-    "defaultMessage": "默认值"
+    "defaultMessage": "default value"
   },
   "Z4d9SJ": {
-    "defaultMessage": "App ID不能为空"
+    "defaultMessage": "App ID can not be empty"
   },
   "ZIqHdN": {
-    "defaultMessage": "响应"
+    "defaultMessage": "response"
   },
   "ZMK5E4": {
-    "defaultMessage": "服务端实时查询"
+    "defaultMessage": "real-time query in server"
   },
   "ZQxXRq": {
-    "defaultMessage": "自动注入当前时间，用户无需传参"
+    "defaultMessage": "automatically injects the current time，users do not need to pass parameters"
   },
   "ZRU2jE": {
-    "defaultMessage": "新增请求头信息"
+    "defaultMessage": "new request header information"
   },
   "ZUPzqr": {
-    "defaultMessage": "开启"
+    "defaultMessage": "enable"
   },
   "ZUhyFj": {
-    "defaultMessage": "全局依赖"
+    "defaultMessage": "global dependency"
   },
   "ZnzCll": {
-    "defaultMessage": "别名"
+    "defaultMessage": "alias"
   },
   "aE19iu": {
-    "defaultMessage": "跨域时间"
+    "defaultMessage": "cross-domain time"
   },
   "aI3L5g": {
-    "defaultMessage": "全局设置"
+    "defaultMessage": "global setting"
   },
   "aUGOy3": {
-    "defaultMessage": "请输入非空值"
+    "defaultMessage": "Please enter a non-null value"
   },
   "aUe2XA": {
-    "defaultMessage": "高级设置"
+    "defaultMessage": "advanced settings"
   },
   "aYUJpY": {
-    "defaultMessage": "主机名不能为空"
+    "defaultMessage": "The host name can not be null"
   },
   "aiBGBs": {
-    "defaultMessage": "删除成功"
+    "defaultMessage": "The deletion is sucessful"
   },
   "aj1rA6": {
-    "defaultMessage": "API设计"
+    "defaultMessage": "API design"
   },
   "apiCrud.empty": {
-    "defaultMessage": "使用该功能前，请先添加数据库"
+    "defaultMessage": "Please add database before using this function"
   },
   "aqQg0p": {
-    "defaultMessage": "区域"
+    "defaultMessage": "domain"
   },
   "ayODEw": {
-    "defaultMessage": "数据预览"
+    "defaultMessage": "data preview"
   },
   "b5kCtF": {
-    "defaultMessage": "待选择"
+    "defaultMessage": "awaiting selection"
   },
   "b5l2vN": {
-    "defaultMessage": "保存"
+    "defaultMessage": "save"
   },
   "bChoai": {
-    "defaultMessage": "全部创建"
+    "defaultMessage": "create all"
   },
   "bUqRuh": {
-    "defaultMessage": "自动注入环境变量的值，用户无需传参"
+    "defaultMessage": "automatically injects the value of environment variable，users do not need to pass parameters"
   },
   "blp0RF": {
-    "defaultMessage": "取消",
+    "defaultMessage": "cancel",
     "description": "流程图"
   },
   "bpeH07": {
-    "defaultMessage": "修改设置后，请重新编译"
+    "defaultMessage": "Please recompile after changing the settings"
   },
   "bqbDVw": {
-    "defaultMessage": "查询"
+    "defaultMessage": "query"
   },
   "bwYWez": {
-    "defaultMessage": "事件源",
+    "defaultMessage": "event source",
     "description": "流程图"
   },
   "bxdSeG": {
-    "defaultMessage": "无法找到对应实体[{entityName}]"
+    "defaultMessage": "the corresponding entity [{entityName}] can not be found"
   },
   "c8WRih": {
-    "defaultMessage": "请输入合法的 GraphQL 查询语句"
+    "defaultMessage": "Please enter vaild GraphQL query statement"
   },
   "cDZ00w": {
-    "defaultMessage": "查看"
+    "defaultMessage": "view"
   },
   "cJXZNP": {
-    "defaultMessage": "只允许上传 db 格式文件"
+    "defaultMessage": "Only files in the format of db can be uploaded"
   },
   "cLvrI5": {
-    "defaultMessage": "过滤"
+    "defaultMessage": "filter"
   },
   "cX1H0F": {
-    "defaultMessage": "开发环境"
+    "defaultMessage": "development environment"
   },
   "clv90W": {
-    "defaultMessage": "指令已存在"
+    "defaultMessage": "the instruction is already exist"
   },
   "dEbvz0": {
-    "defaultMessage": "name应为字符串，使用大小写字母或者下划线！"
+    "defaultMessage": "name should be string，use uppercase letters, lowercase letters or underscores！"
   },
   "dGBGbt": {
-    "defaultMessage": "全部"
+    "defaultMessage": "all"
   },
   "dKVEuY": {
-    "defaultMessage": "字段 {name} 的参数未提供"
+    "defaultMessage": "the parameter of field {name} is not given"
   },
   "dNYak1": {
-    "defaultMessage": "JWT获取"
+    "defaultMessage": "JWT acquisition"
   },
   "dRWums": {
-    "defaultMessage": "私有"
+    "defaultMessage": "private"
   },
   "dUiZuI": {
-    "defaultMessage": "自定义Float标量"
+    "defaultMessage": "custom Float scalar"
   },
   "dvkDbC": {
-    "defaultMessage": "请求结果"
+    "defaultMessage": "request result"
   },
   "dx8TAj": {
-    "defaultMessage": "此处不支持跳转！"
+    "defaultMessage": "Jump is not supported here！"
   },
   "e42x18": {
-    "defaultMessage": "客户端",
+    "defaultMessage": "client",
     "description": "流程图"
   },
   "e8TcE7": {
-    "defaultMessage": "参考用法如下"
+    "defaultMessage": "The reference usage is as follows"
   },
   "eL3Qi6": {
-    "defaultMessage": "用户"
+    "defaultMessage": "user"
   },
   "eUa9sz": {
-    "defaultMessage": "Token 端点"
+    "defaultMessage": "Token endpoint"
   },
   "eaCopF": {
-    "defaultMessage": "搜索并关联记录"
+    "defaultMessage": "search for and associate records"
   },
   "eiRag+": {
-    "defaultMessage": "以 mysql:// 开头，不超过128位"
+    "defaultMessage": "begin with mysql:// 开头，limit the length to 128 characters"
   },
   "ekxzlF": {
-    "defaultMessage": "名称"
+    "defaultMessage": "name"
   },
   "esvors": {
-    "defaultMessage": "设计"
+    "defaultMessage": "design"
   },
   "etnuPx": {
-    "defaultMessage": "安全"
+    "defaultMessage": "security"
   },
   "ezUs/G": {
-    "defaultMessage": "请输入域名"
+    "defaultMessage": "Please enter the domain name"
   },
   "f0XHRN": {
-    "defaultMessage": "修改环境变量"
+    "defaultMessage": "modify the environment variable"
   },
   "f5XT1C": {
-    "defaultMessage": "该API"
+    "defaultMessage": "this API"
   },
   "f7n43q": {
-    "defaultMessage": "重置成功！"
+    "defaultMessage": "Reset successfully！"
   },
   "fJh8DQ": {
-    "defaultMessage": "请输入bucketName"
+    "defaultMessage": "Please enter bucketName"
   },
   "fRk+GN": {
-    "defaultMessage": "请输入文件夹名称"
+    "defaultMessage": "Please enter file name"
   },
   "fblGdv": {
-    "defaultMessage": "删除中"
+    "defaultMessage": "deleting"
   },
   "fh2gOX": {
-    "defaultMessage": "参数注入",
+    "defaultMessage": "parameter injection",
     "description": "流程图"
   },
   "fv+irj": {
-    "defaultMessage": "或"
+    "defaultMessage": "or"
   },
   "g1YGD6": {
-    "defaultMessage": "视图"
+    "defaultMessage": "view"
   },
   "gHmYLs": {
-    "defaultMessage": "API端口"
+    "defaultMessage": "API port"
   },
   "gRnd+f": {
-    "defaultMessage": "新增枚举类型"
+    "defaultMessage": "new enumeration type"
   },
   "gb9fzG": {
-    "defaultMessage": "订阅授权"
+    "defaultMessage": "subscription authority"
   },
   "ghoLaJ": {
-    "defaultMessage": "入参指令",
+    "defaultMessage": "input parameter instruction",
     "description": "插入指令处"
   },
   "glR5T7": {
-    "defaultMessage": "不支持多条查询语句"
+    "defaultMessage": "Multiple query statements are not supported"
   },
   "gohOE0": {
-    "defaultMessage": "枚举名称不合法，pattern: [A-Za-z][A-Za-z0-9_]*"
+    "defaultMessage": "Invalid enumeration name，pattern: [A-Za-z][A-Za-z0-9_]*"
   },
   "gpEzjP": {
-    "defaultMessage": "问题"
+    "defaultMessage": "issue"
+  },
+  "gxjC5l": {
+    "defaultMessage": "Please enter letters or numbers"
   },
   "h+6xKv": {
-    "defaultMessage": "手动保存中"
+    "defaultMessage": "manually saving"
   },
   "h/5qLW": {
-    "defaultMessage": "{days}天前"
+    "defaultMessage": "{days} days ago"
   },
   "h3R9PB": {
-    "defaultMessage": "启动中"
+    "defaultMessage": "enabling"
   },
   "h7JHIR": {
-    "defaultMessage": "主机"
+    "defaultMessage": "host"
   },
   "hF6ZoL": {
-    "defaultMessage": "端点不能为空"
+    "defaultMessage": "the endpoint can not be empty"
   },
   "hdiR0N": {
-    "defaultMessage": "订阅"
+    "defaultMessage": "subscription"
   },
   "ho6kY0": {
-    "defaultMessage": "身份鉴权"
+    "defaultMessage": "identity authentication"
   },
   "hovbOX": {
-    "defaultMessage": "无法找到关联表实体类型！"
+    "defaultMessage": "The associative table entity type can not be found！"
   },
   "hv0Nju": {
-    "defaultMessage": "入参校验?",
+    "defaultMessage": "Input parameter check?",
     "description": "流程图"
   },
   "iChtCh": {
-    "defaultMessage": "字段名已存在"
+    "defaultMessage": "The field name is exist"
   },
   "iW9zfZ": {
-    "defaultMessage": "地址异常，请检查系统设置中的API域名是否正确"
+    "defaultMessage": "Address exception，please check the API domain name in system settings"
   },
   "ig9iLd": {
-    "defaultMessage": "请输入服务地址"
+    "defaultMessage": "Please enter the service address"
   },
   "in3Y3D": {
-    "defaultMessage": "基于Cookie"
+    "defaultMessage": "base on Cookie"
   },
   "io7fqu": {
-    "defaultMessage": "请填写规范域名"
+    "defaultMessage": "Please enter standard  domain name"
   },
   "jD7VUp": {
-    "defaultMessage": "@角色",
+    "defaultMessage": "@role",
     "description": "插入指令处"
   },
   "jGexDU": {
-    "defaultMessage": "接口名称必须大写开头"
+    "defaultMessage": "The interface name must begin with uppercase letters"
   },
   "jPMqvu": {
-    "defaultMessage": "指定 OAS"
+    "defaultMessage": "designated OAS"
   },
   "jUwANU": {
-    "defaultMessage": "通过发送指令,自动内省Schema"
+    "defaultMessage": "automatically introspect Schema by sending instruction"
   },
   "jhfb/7": {
-    "defaultMessage": "保存成功"
+    "defaultMessage": "The save is successful"
   },
   "jxZEU/": {
-    "defaultMessage": "文件列表加载失败"
+    "defaultMessage": "Failed to load file list"
   },
   "jxcl66": {
-    "defaultMessage": "CRUD生成器"
+    "defaultMessage": "CRUD generator"
   },
   "k+zCG7": {
-    "defaultMessage": "角色描述"
+    "defaultMessage": "role description"
   },
   "kXy8jI": {
     "defaultMessage": "jwksURL"
   },
   "kc0dbR": {
-    "defaultMessage": "变更"
+    "defaultMessage": "modification"
   },
   "kjpwk7": {
-    "defaultMessage": "数据加载失败！"
+    "defaultMessage": "Failed to load data！"
   },
   "kr+X28": {
-    "defaultMessage": "确认删除该实体吗？"
+    "defaultMessage": "Confirm the deletion of this entity？"
   },
   "l/FgDC": {
-    "defaultMessage": "新增实体"
+    "defaultMessage": "new entity"
   },
   "l3H/GZ": {
-    "defaultMessage": "删除确认"
+    "defaultMessage": "deletion confirmation"
   },
   "lPNqbT": {
-    "defaultMessage": "授权校验?",
+    "defaultMessage": "Authorization check?",
     "description": "流程图"
   },
   "lUmMMK": {
-    "defaultMessage": "自动保存中"
+    "defaultMessage": "autosaving"
   },
   "lYtwbc": {
-    "defaultMessage": "授权"
+    "defaultMessage": "authoriaztion"
   },
   "lcCuRt": {
-    "defaultMessage": "用户端点"
+    "defaultMessage": "user endpoint"
   },
   "ldUt6r": {
-    "defaultMessage": "请输入实体名"
+    "defaultMessage": "Please enter entity name"
   },
   "lliahm": {
-    "defaultMessage": "更多设置"
+    "defaultMessage": "more settings"
   },
   "lroVvd": {
-    "defaultMessage": "网络出现问题～",
+    "defaultMessage": "A network problem occurred～",
     "description": "状态码50x"
   },
   "m6bUGD": {
-    "defaultMessage": "订阅",
+    "defaultMessage": "subscription",
     "description": "流程图"
   },
   "m9wKUI": {
-    "defaultMessage": "可"
+    "defaultMessage": "can"
   },
   "mA7n5i": {
-    "defaultMessage": "允许头"
+    "defaultMessage": "allow head"
   },
   "mOO4wE": {
-    "defaultMessage": "登录鉴权"
+    "defaultMessage": "login authenticaton"
   },
   "mPmxv/": {
-    "defaultMessage": "请输入长度不大于2000的非空值"
+    "defaultMessage": "Please enter a non-null value, limit the length to 2000"
   },
   "mPsm6o": {
-    "defaultMessage": "测试"
+    "defaultMessage": "test"
   },
   "mVdcTE": {
-    "defaultMessage": "请选择合适的插入节点",
+    "defaultMessage": "Please select an appropriate insert node",
     "description": "插入指令时"
   },
   "mfZMW6": {
-    "defaultMessage": "名称不能为空"
+    "defaultMessage": "Name can not be empty"
   },
   "mzPDCn": {
-    "defaultMessage": "新增枚举"
+    "defaultMessage": "new enumeration"
   },
   "n+d99f": {
-    "defaultMessage": "请填写枚举名"
+    "defaultMessage": "Please fill in enumeration name"
   },
   "n/Dcpq": {
-    "defaultMessage": "已复制接口 {path}_Copy}"
+    "defaultMessage": "The interface {path}_Copy} is copied"
   },
   "n1GZIK": {
-    "defaultMessage": "创建中"
+    "defaultMessage": "creating"
   },
   "n4sB7F": {
-    "defaultMessage": "查询缓存"
+    "defaultMessage": "query cache"
   },
   "n6o1H/": {
-    "defaultMessage": "非法"
+    "defaultMessage": "invalidation"
   },
   "n8v1qP": {
-    "defaultMessage": "该对象存储"
+    "defaultMessage": "this object storage"
   },
   "nS8PfW": {
-    "defaultMessage": "确定要删除?"
+    "defaultMessage": "Confirm the deletion?"
   },
   "nc6GYZ": {
-    "defaultMessage": "注释描述"
+    "defaultMessage": "annotation description"
   },
   "ndOQA+": {
-    "defaultMessage": "枚举名不可为空！"
+    "defaultMessage": "The enumeration can not be empty！"
   },
   "niiUfh": {
-    "defaultMessage": "数据库类型"
+    "defaultMessage": "database type"
   },
   "nooQRz": {
-    "defaultMessage": "请输入外部数据源名"
+    "defaultMessage": "Please enter external data source name"
   },
   "nwr0JF": {
-    "defaultMessage": "创建当前API的拷贝"
+    "defaultMessage": "create copy of the current API"
   },
   "o8HwKf": {
-    "defaultMessage": "文件名"
+    "defaultMessage": "file name"
   },
   "o9bMHL": {
-    "defaultMessage": "大小"
+    "defaultMessage": "size"
   },
   "oDLN4x": {
-    "defaultMessage": "对查询进行缓存"
+    "defaultMessage": "cache the query"
   },
   "oHQdew": {
-    "defaultMessage": "查看更新日志"
+    "defaultMessage": "view the update log"
   },
   "oOGLP0": {
-    "defaultMessage": "联合唯一索引"
+    "defaultMessage": "joint unique index"
   },
   "oyIdrj": {
-    "defaultMessage": "Graphql 端点"
+    "defaultMessage": "Graphql endpoint"
   },
   "oyyjIg": {
-    "defaultMessage": "文件夹"
+    "defaultMessage": "folder"
   },
   "p/HR+X": {
-    "defaultMessage": "接口异常"
+    "defaultMessage": "interface exception"
   },
   "p/NHCA": {
-    "defaultMessage": "校验中"
+    "defaultMessage": "checking"
   },
   "p6z/hH": {
-    "defaultMessage": "数据库"
+    "defaultMessage": "database"
   },
   "p7ywbO": {
-    "defaultMessage": "配置信息有误，无法连接，请修改后再试"
+    "defaultMessage": "The configuration information is incorrect and can not be connected, please modify it and try again"
   },
   "pV2t/S": {
-    "defaultMessage": "基本信息"
+    "defaultMessage": "basic information"
   },
   "pf77Ih": {
-    "defaultMessage": "选填"
+    "defaultMessage": "optional"
   },
   "ptadMC": {
-    "defaultMessage": "内部"
+    "defaultMessage": "inside"
   },
   "pzponE": {
-    "defaultMessage": "Issuer不能为空"
+    "defaultMessage": "Issuer can not be empty"
   },
   "qJFIkj": {
-    "defaultMessage": "自定义INT标量"
+    "defaultMessage": "custom INT scalar"
   },
   "qMKYtF": {
-    "defaultMessage": "新建APi/新建模型"
+    "defaultMessage": "new APi/ new model"
   },
   "qNBYXi": {
-    "defaultMessage": "实体名不可为空！"
+    "defaultMessage": "Entity name can not be empty！"
   },
   "qNTQ6L": {
-    "defaultMessage": "数据库名"
+    "defaultMessage": "database name"
   },
   "qRSHCi": {
-    "defaultMessage": "未知",
+    "defaultMessage": "unknown",
     "description": "未知的文件类型"
   },
   "qUKj7E": {
-    "defaultMessage": "复制"
+    "defaultMessage": "copy"
   },
   "qVDSm2": {
-    "defaultMessage": "浏览"
+    "defaultMessage": "browse"
   },
   "qVqrPb": {
-    "defaultMessage": "只允许输入链接"
+    "defaultMessage": "Only links are allowed"
   },
   "qZjJ7M": {
-    "defaultMessage": "重定向URL"
+    "defaultMessage": "redirect URL"
   },
   "qb9HEL": {
-    "defaultMessage": "返回上一级"
+    "defaultMessage": "back to the upper level"
   },
   "qx0Xj9": {
-    "defaultMessage": "新建环境变量"
+    "defaultMessage": "new environment variable"
   },
   "r0/TUu": {
-    "defaultMessage": "确定"
+    "defaultMessage": "confirm"
+  },
+  "r1IImU": {
+    "defaultMessage": "Ok"
   },
   "r2dEd/": {
-    "defaultMessage": "重置"
+    "defaultMessage": "reset"
   },
   "r8T2Gj": {
-    "defaultMessage": "找不到对应实体主键"
+    "defaultMessage": "The corresponding entity primary key can not be found"
   },
   "r9JD8F": {
-    "defaultMessage": "返回文件"
+    "defaultMessage": "return file"
   },
   "rNWfUf": {
-    "defaultMessage": "下载 OpenAPI"
+    "defaultMessage": "download OpenAPI"
   },
   "rbmyiL": {
-    "defaultMessage": "编译失败"
+    "defaultMessage": "Failed to compile"
   },
   "rhH6N4": {
-    "defaultMessage": "刷新中"
+    "defaultMessage": "refreshing"
   },
   "rnpMD3": {
-    "defaultMessage": "关"
+    "defaultMessage": "off"
   },
   "s4hJju": {
-    "defaultMessage": "详情"
+    "defaultMessage": "details"
   },
   "s9VtMY": {
-    "defaultMessage": "授权配置",
+    "defaultMessage": "authorization settings",
     "description": "API授权配置"
   },
   "sLFK3g": {
-    "defaultMessage": "前往"
+    "defaultMessage": "go"
   },
   "sRc1VN": {
-    "defaultMessage": "SDK模板"
+    "defaultMessage": "SDK template"
   },
   "sRgn0V": {
-    "defaultMessage": "开始请求",
+    "defaultMessage": "start request",
     "description": "流程图"
   },
   "sRkj0b": {
-    "defaultMessage": "快捷键"
+    "defaultMessage": "shortcut key"
   },
   "saR+wi": {
-    "defaultMessage": "服务端"
+    "defaultMessage": "server"
   },
   "saeFbf": {
-    "defaultMessage": "文件"
+    "defaultMessage": "file"
   },
   "slR1VF": {
-    "defaultMessage": "+ 新增筛选条件"
+    "defaultMessage": "+ new filter condition"
   },
   "szOpH5": {
-    "defaultMessage": "实时配置"
+    "defaultMessage": "real-time setting"
   },
   "t2iHNJ": {
-    "defaultMessage": "更新"
+    "defaultMessage": "update"
   },
   "tFmMiG": {
-    "defaultMessage": "消息队列"
+    "defaultMessage": "message queue"
   },
   "tRrAhi": {
-    "defaultMessage": "系统将实时覆盖开启的SDK"
+    "defaultMessage": "The system will overwrite enabled SDK in real time"
   },
   "tVV3cU": {
-    "defaultMessage": "输入变量"
+    "defaultMessage": "input variable"
   },
   "tVoPUq": {
-    "defaultMessage": "新建"
+    "defaultMessage": "create"
   },
   "tXvcEA": {
-    "defaultMessage": "阿里云物联网平台"
+    "defaultMessage": "Aliyun IoT Platform"
   },
   "tdD1O3": {
-    "defaultMessage": "域名"
+    "defaultMessage": "domain name"
   },
   "tmMwuy": {
-    "defaultMessage": "响应类型"
+    "defaultMessage": "response type"
   },
   "txDRJz": {
-    "defaultMessage": "环境变量"
+    "defaultMessage": "environment variable"
   },
   "uDcCXN": {
     "defaultMessage": "Issuer"
   },
   "uOSn0p": {
-    "defaultMessage": "请输入区域"
+    "defaultMessage": "Please input domain"
   },
   "ueuJlz": {
-    "defaultMessage": "数据建模"
+    "defaultMessage": "data modeling"
   },
   "uhTa0i": {
-    "defaultMessage": "预览"
+    "defaultMessage": "preview"
   },
   "uhcx5v": {
-    "defaultMessage": "新增URL"
+    "defaultMessage": "new URL"
   },
   "unbHGZ": {
-    "defaultMessage": "是否内部"
+    "defaultMessage": "inside or not"
   },
   "us77n8": {
-    "defaultMessage": "静态"
+    "defaultMessage": "static state"
   },
   "v2156y": {
-    "defaultMessage": "API编辑"
+    "defaultMessage": "API edit"
   },
   "v9Miyz": {
-    "defaultMessage": "查询是否需要登录"
+    "defaultMessage": "Whether the query needs login"
   },
   "vA8Nfy": {
-    "defaultMessage": "分页查询"
+    "defaultMessage": "paging query"
   },
   "vAJa48": {
-    "defaultMessage": "结束",
+    "defaultMessage": "end",
     "description": "流程图"
   },
   "vChpIH": {
-    "defaultMessage": "ER 图"
+    "defaultMessage": "ER diagram"
   },
   "vHOsVf": {
-    "defaultMessage": "输入"
+    "defaultMessage": "input"
   },
   "vY8yBU": {
-    "defaultMessage": "暂无内容～",
+    "defaultMessage": "No contents at present～",
     "description": "状态码404"
   },
   "vYadwC": {
-    "defaultMessage": "当前实体不存在"
+    "defaultMessage": "The current entity is not exist"
   },
   "vcG1mv": {
-    "defaultMessage": "不存在"
+    "defaultMessage": "not exist"
   },
   "vr5TVT": {
-    "defaultMessage": "请输入"
+    "defaultMessage": "Please input"
   },
   "w1CbbR": {
-    "defaultMessage": "数据库名:"
+    "defaultMessage": "database name:"
   },
   "wCsUWB": {
-    "defaultMessage": "App Secret不能为空"
+    "defaultMessage": "App Secret can not be empty"
   },
   "wLS1Dj": {
-    "defaultMessage": "全部覆盖"
+    "defaultMessage": "cover all"
   },
   "wZkLCJ": {
-    "defaultMessage": "编译时间"
+    "defaultMessage": "Compilation time"
   },
   "waEJRs": {
-    "defaultMessage": "密钥"
+    "defaultMessage": "secret key"
   },
   "waeVf8": {
-    "defaultMessage": "数据迁移失败！error: {error}"
+    "defaultMessage": "Data migration failed！error: {error}"
   },
   "x0YFe8": {
-    "defaultMessage": "以 mongodb:// 开头，不超过128位"
+    "defaultMessage": "Begin with mongodb://，no longer than 128 characters"
   },
   "x4mNBF": {
-    "defaultMessage": "{seconds}秒前"
+    "defaultMessage": "{seconds} seconds ago"
   },
   "xE1H+X": {
-    "defaultMessage": "设置"
+    "defaultMessage": "settings"
   },
   "xI0mPJ": {
-    "defaultMessage": "已开启"
+    "defaultMessage": "enabled"
   },
   "xKCJNb": {
-    "defaultMessage": "Fireboom",
+    "defaultMessage": "Fireboom console",
     "description": "标题"
   },
   "xVTk70": {
-    "defaultMessage": "加载中"
+    "defaultMessage": "loading"
   },
   "xaG7IX": {
-    "defaultMessage": "按文件大小"
+    "defaultMessage": "by file size"
   },
   "xaND3c": {
-    "defaultMessage": "正在生成"
+    "defaultMessage": "generating"
   },
   "xc9ERZ": {
-    "defaultMessage": "输入类型"
+    "defaultMessage": "input type"
   },
   "yEDkg1": {
-    "defaultMessage": "枚举名不合法"
+    "defaultMessage": "invalid enumeration name"
   },
   "yOMNOj": {
-    "defaultMessage": "是"
+    "defaultMessage": "Yes"
   },
   "yy7EDI": {
-    "defaultMessage": "上传"
+    "defaultMessage": "upload"
   },
   "z/Ra4N": {
-    "defaultMessage": "指令"
+    "defaultMessage": "instruction"
   },
   "z0QaYJ": {
-    "defaultMessage": "字段"
+    "defaultMessage": "field"
   },
   "z1UqSC": {
-    "defaultMessage": "角色code"
+    "defaultMessage": "role code"
   },
   "z487Zy": {
-    "defaultMessage": "该数据源"
+    "defaultMessage": "this data source"
   },
   "zM/rdn": {
-    "defaultMessage": "主键选择"
+    "defaultMessage": "primary key selection"
   },
   "zQEdCX": {
-    "defaultMessage": "API管理"
+    "defaultMessage": "API management"
   },
   "zZ6RPo": {
-    "defaultMessage": "强制跳转"
+    "defaultMessage": "forced jump"
   },
   "zbqD5q": {
-    "defaultMessage": "值"
+    "defaultMessage": "value"
   },
   "zpbmDc": {
-    "defaultMessage": "生产环境"
+    "defaultMessage": "production enviroment"
   },
   "zq/lNp": {
-    "defaultMessage": "密码:"
+    "defaultMessage": "password:"
   },
   "zvywI9": {
-    "defaultMessage": "编辑脚本"
+    "defaultMessage": "edit the script"
   }
 }

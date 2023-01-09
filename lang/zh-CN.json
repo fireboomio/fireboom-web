@@ -307,9 +307,6 @@
   "8EHsht": {
     "defaultMessage": "无可用实体！"
   },
-  "8GU0DT": {
-    "defaultMessage": "钩子状态"
-  },
   "8NsucZ": {
     "defaultMessage": "@内部",
     "description": "插入指令处"
@@ -392,9 +389,6 @@
   },
   "AYi+tS": {
     "defaultMessage": "prisma版本"
-  },
-  "AatDue": {
-    "defaultMessage": "新建目录"
   },
   "AeO+ID": {
     "defaultMessage": "新建变量"
@@ -493,9 +487,6 @@
   "EJ9IE3": {
     "defaultMessage": "接口角色"
   },
-  "EQ9fu/": {
-    "defaultMessage": "在线调试"
-  },
   "Eaqhfe": {
     "defaultMessage": "排除重命名根字段"
   },
@@ -578,6 +569,9 @@
   "IQIvYd": {
     "defaultMessage": "刷新列表"
   },
+  "Ipvx+S": {
+    "defaultMessage": "引擎"
+  },
   "Ipx/DS": {
     "defaultMessage": "API域名"
   },
@@ -612,9 +606,6 @@
   },
   "K2DWpV": {
     "defaultMessage": "输入不合法！"
-  },
-  "KY299P": {
-    "defaultMessage": "引擎状态"
   },
   "KiiWJR": {
     "defaultMessage": "变量值"
@@ -857,6 +848,9 @@
   },
   "UPFhlk": {
     "defaultMessage": "删除操作将会同时删除关联数据！"
+  },
+  "UU3d6B": {
+    "defaultMessage": "钩子"
   },
   "UXFkBB": {
     "defaultMessage": "概览"
@@ -1179,6 +1173,9 @@
   "gpEzjP": {
     "defaultMessage": "问题"
   },
+  "gxjC5l": {
+    "defaultMessage": "请输入字母或数字"
+  },
   "h+6xKv": {
     "defaultMessage": "手动保存中"
   },
@@ -1435,6 +1432,9 @@
   "r0/TUu": {
     "defaultMessage": "确定"
   },
+  "r1IImU": {
+    "defaultMessage": "知道了"
+  },
   "r2dEd/": {
     "defaultMessage": "重置"
   },
@@ -1535,9 +1535,6 @@
   },
   "us77n8": {
     "defaultMessage": "静态"
-  },
-  "v2156y": {
-    "defaultMessage": "API编辑"
   },
   "v9Miyz": {
     "defaultMessage": "查询是否需要登录"
