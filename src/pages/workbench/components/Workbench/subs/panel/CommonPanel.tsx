@@ -141,7 +141,7 @@ const panelMap: Record<string, PanelConfig> = {
               tip,
               switch: !!row.switchState?.length,
               _row: row,
-              svg: '/assets/icon/github-fill.svg'
+              svg: '/assets/icon/oidc.svg'
             }
           })
           dispatch({
