@@ -7,6 +7,7 @@ import ideStyles from './index.module.less'
 
 interface Props {
   value?: string
+  path?: string
   defaultLanguage?: string
   expandAction: boolean
   fullScreen: boolean
@@ -25,7 +26,7 @@ const IdeCodeContainer: FC<Props> = props => {
       } ${props.fullScreen ? ideStyles['code-container-full-screen'] : ''}`}
     >
       <Editor
-        path="inmemory://model/src/hook.ts"
+        path={`inmemory://model/hook/${props.path}`}
         language={props.defaultLanguage ?? 'typescript'}
         value={props.value}
         onChange={value => {

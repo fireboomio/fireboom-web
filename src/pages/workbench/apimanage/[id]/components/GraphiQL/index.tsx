@@ -179,10 +179,11 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-  const { schemaAST, apiID, schema } = useAPIManager(state => ({
+  const { schemaAST, apiID, schema, clearHistoryFlag } = useAPIManager(state => ({
     schemaAST: state.schemaAST,
     apiID: state.apiID,
-    schema: state.schema
+    schema: state.schema,
+    clearHistoryFlag: state.clearHistoryFlag
   }))
   const editorCtx = useEditorContext()
   const { dragRef, elRef, parentRef, isHidden, resetSize } = useDragResize({
@@ -252,6 +253,13 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     })
   }, [schema, schemaAST])
 
+  useEffect(() => {
+    // 当api变更时，该flag会同步变更，触发历史记录清理。
+    // 由于query变更此时尚未生效所以需要延迟执行。以保证清理时editor内容已经变更为新的query
+    setTimeout(() => {
+      editorCtx?.queryEditor?.clearHistory()
+    })
+  }, [clearHistoryFlag])
   // API 变更后需要刷新输入输出
   useEffect(() => {
     if (prevApiID.current && prevApiID.current !== apiID) {
