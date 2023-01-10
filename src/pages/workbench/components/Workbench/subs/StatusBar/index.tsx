@@ -8,7 +8,7 @@ import type { ErrorInfo } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import calcTime from '@/lib/helpers/calcTime'
+import useCalcTime from '@/lib/helpers/calcTime'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { intl } from '@/providers/IntlProvider'
 
@@ -49,6 +49,7 @@ const StatusBar: React.FC<Props> = ({
   toggleWindow
 }) => {
   const intl = useIntl()
+  const calcTime = useCalcTime()
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{
@@ -91,7 +92,7 @@ const StatusBar: React.FC<Props> = ({
     return () => {
       clearInterval(timer)
     }
-  }, [startTime])
+  }, [startTime, calcTime])
 
   async function saveHookServerURL(str: string) {
     void requests.post('/setting', { key: 'hooksServerURL', val: str }).then(() => {

@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 
 import type { Model } from '@/interfaces/modeling'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
-import { PrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
+import { usePrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
 import useDBSource from '@/lib/hooks/useDBSource'
 import ModelIndexAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelIndexAttributeArg'
 import ModelMapAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelMapAttributeArg'
@@ -48,6 +48,7 @@ const ModelAttributeCell = ({
   handleUpdateAttribute
 }: Props) => {
   const intl = useIntl()
+  const PrismaSchemaProperties = usePrismaSchemaProperties()
   const {
     config: { dbType }
   } = useDBSource()
