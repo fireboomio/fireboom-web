@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import type { Entity } from '@/interfaces/modeling'
 import { PRISMA_BASE_TYPES } from '@/lib/constants/prismaConstants'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
-import { PrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
+import { usePrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
 import useDBSource from '@/lib/hooks/useDBSource'
 import useEntities from '@/lib/hooks/useEntities'
 import FieldDefaultAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/FieldDefaultAttributeArg'
@@ -61,6 +61,7 @@ const FieldAttributeCell = ({
   updateAttrArgs
 }: Props) => {
   const intl = useIntl()
+  const PrismaSchemaProperties = usePrismaSchemaProperties()
   const {
     config: { dbType }
   } = useDBSource()

@@ -2,7 +2,7 @@ import { Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import calcTime from '@/lib/helpers/calcTime'
+import useCalcTime from '@/lib/helpers/calcTime'
 
 import styles from './home.module.less'
 
@@ -19,6 +19,7 @@ interface NoticeConfig {
 
 export function Notice({ handleToggleDesigner }: Props) {
   const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
+  const calcTime = useCalcTime()
   useEffect(() => {
     void fetch('https://raw.githubusercontent.com/fireboomio/fb-news/main/news.json').then(
       async res => {
