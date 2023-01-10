@@ -46,6 +46,7 @@ export interface APIState {
   query: string
   lastSavedQuery: string | undefined
   setQuery: (v: string) => void
+  clearHistoryFlag: boolean // 通知编辑器需要清空历史记录，用于切换api时清除旧api的内容
   schemaAST: DocumentNode | undefined
   _workbenchContext: WorkbenchContextType | undefined
   computed: {
@@ -101,6 +102,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // debugger
     }
   },
+  clearHistoryFlag: false,
   originSchema: undefined,
   schema: undefined,
   schemaAST: undefined,
@@ -193,6 +195,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // @ts-ignore
       const content = api.content
       get().setQuery(content)
+      set({ clearHistoryFlag: !get().clearHistoryFlag })
       set({ lastSavedQuery: content })
     } catch (e) {
       // 接口请求错误就刷新api列表

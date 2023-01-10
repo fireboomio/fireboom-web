@@ -463,6 +463,7 @@ const IdeContainer: FC<Props> = props => {
             {/* 编辑器 */}
             <IdeCodeContainer
               {...{
+                path: hookPath,
                 defaultLanguage: props.defaultLanguage,
                 value: hookInfo?.script,
                 expandAction,
