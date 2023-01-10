@@ -307,9 +307,6 @@
   "8EHsht": {
     "defaultMessage": "No available entity！"
   },
-  "8GU0DT": {
-    "defaultMessage": "hook state"
-  },
   "8NsucZ": {
     "defaultMessage": "@internal",
     "description": "插入指令处"
@@ -392,9 +389,6 @@
   },
   "AYi+tS": {
     "defaultMessage": "prisma version"
-  },
-  "AatDue": {
-    "defaultMessage": "new directory"
   },
   "AeO+ID": {
     "defaultMessage": "new variable"
@@ -492,9 +486,6 @@
   },
   "EJ9IE3": {
     "defaultMessage": "interface role"
-  },
-  "EQ9fu/": {
-    "defaultMessage": "online debugging"
   },
   "Eaqhfe": {
     "defaultMessage": "exclude renaming root fields"
@@ -615,9 +606,6 @@
   },
   "K2DWpV": {
     "defaultMessage": "Invalid input！"
-  },
-  "KY299P": {
-    "defaultMessage": "engine state"
   },
   "KiiWJR": {
     "defaultMessage": "variable value"
@@ -749,6 +737,9 @@
   },
   "PpQOV5": {
     "defaultMessage": "Started"
+  },
+  "PvMD53": {
+    "defaultMessage": "API {path} copied"
   },
   "QT75K3": {
     "defaultMessage": "by modification time"
@@ -902,6 +893,9 @@
   },
   "VLmNWR": {
     "defaultMessage": "page shortcut key"
+  },
+  "VS6lNw": {
+    "defaultMessage": "tab size"
   },
   "VSwka6": {
     "defaultMessage": "Invalid entity name！"
@@ -1082,9 +1076,6 @@
   },
   "dEbvz0": {
     "defaultMessage": "name should be string，use uppercase letters, lowercase letters or underscores！"
-  },
-  "dGBGbt": {
-    "defaultMessage": "all"
   },
   "dKVEuY": {
     "defaultMessage": "the parameter of field {name} is not given"
@@ -1329,9 +1320,6 @@
   "n+d99f": {
     "defaultMessage": "Please fill in enumeration name"
   },
-  "n/Dcpq": {
-    "defaultMessage": "The interface {path}_Copy} is copied"
-  },
   "n1GZIK": {
     "defaultMessage": "creating"
   },
@@ -1547,9 +1535,6 @@
   },
   "us77n8": {
     "defaultMessage": "static state"
-  },
-  "v2156y": {
-    "defaultMessage": "API edit"
   },
   "v9Miyz": {
     "defaultMessage": "Whether the query needs login"

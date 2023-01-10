@@ -94,13 +94,14 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const copyAPI = useCallback(async () => {
     if (apiDesc?.path) {
+      const destPath = `${apiDesc!.path}Copy${Math.random().toString(36).substring(2, 5)}`
       try {
         await requests.post('/operateApi/copy', {
-          path: `${apiDesc!.path}_Copy`,
+          path: destPath,
           id: apiDesc!.id
         })
         message.success(
-          intl.formatMessage({ defaultMessage: '已复制接口 {path}_Copy}' }, { path: apiDesc!.path })
+          intl.formatMessage({ defaultMessage: '已复制接口 {path}' }, { path: destPath })
         )
         workbenchCtx.onRefreshMenu('api')
       } catch (error) {

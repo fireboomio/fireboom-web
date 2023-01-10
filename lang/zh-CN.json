@@ -738,6 +738,9 @@
   "PpQOV5": {
     "defaultMessage": "已启动"
   },
+  "PvMD53": {
+    "defaultMessage": "已复制接口 {path}"
+  },
   "QT75K3": {
     "defaultMessage": "按修改时间"
   },
@@ -890,6 +893,9 @@
   },
   "VLmNWR": {
     "defaultMessage": "页面快捷键"
+  },
+  "VS6lNw": {
+    "defaultMessage": "tab宽度"
   },
   "VSwka6": {
     "defaultMessage": "实体名不合法！"
@@ -1070,9 +1076,6 @@
   },
   "dEbvz0": {
     "defaultMessage": "name应为字符串，使用大小写字母或者下划线！"
-  },
-  "dGBGbt": {
-    "defaultMessage": "全部"
   },
   "dKVEuY": {
     "defaultMessage": "字段 {name} 的参数未提供"
@@ -1316,9 +1319,6 @@
   },
   "n+d99f": {
     "defaultMessage": "请填写枚举名"
-  },
-  "n/Dcpq": {
-    "defaultMessage": "已复制接口 {path}_Copy}"
   },
   "n1GZIK": {
     "defaultMessage": "创建中"
