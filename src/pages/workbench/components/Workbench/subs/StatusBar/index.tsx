@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { message, Radio, Space, Tag } from 'antd'
 import { throttle } from 'lodash'
-import React, { Suspense, useCallback, useContext, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { ErrorInfo } from '@/interfaces/common'
@@ -10,7 +10,6 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import { intl } from '@/providers/IntlProvider'
 
 import styles from './index.module.less'
 
@@ -24,17 +23,6 @@ interface Props {
   engineStatus?: ServiceStatus
   hookStatus?: HookStatus
   toggleWindow: (defaultTa: string) => void
-}
-const statusMap = {
-  [ServiceStatus.Compiling]: intl.formatMessage({ defaultMessage: '编译中' }),
-  [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
-  [ServiceStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-  [ServiceStatus.CompileFail]: intl.formatMessage({ defaultMessage: '编译失败' }),
-  [ServiceStatus.StartFail]: intl.formatMessage({ defaultMessage: '启动失败' })
-}
-const hookStatusMap = {
-  [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-  [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
 }
 
 // eslint-disable-next-line react/prop-types
@@ -50,6 +38,24 @@ const StatusBar: React.FC<Props> = ({
 }) => {
   const intl = useIntl()
   const calcTime = useCalcTime()
+
+  const statusMap = useMemo(
+    () => ({
+      [ServiceStatus.Compiling]: intl.formatMessage({ defaultMessage: '编译中' }),
+      [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
+      [ServiceStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+      [ServiceStatus.CompileFail]: intl.formatMessage({ defaultMessage: '编译失败' }),
+      [ServiceStatus.StartFail]: intl.formatMessage({ defaultMessage: '启动失败' })
+    }),
+    [intl]
+  )
+  const hookStatusMap = useMemo(
+    () => ({
+      [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+      [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
+    }),
+    [intl]
+  )
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{

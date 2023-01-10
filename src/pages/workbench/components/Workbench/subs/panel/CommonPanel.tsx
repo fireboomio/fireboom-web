@@ -1,7 +1,7 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
@@ -12,7 +12,6 @@ import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
-import { intl } from '@/providers/IntlProvider'
 
 import styles from './CommonPanel.module.less'
 import SidePanel from './SidePanel'
@@ -35,129 +34,141 @@ interface PanelConfig {
   navAction?: Array<{ icon: string; path: string; tooltip: string }>
 }
 
-const panelMap: Record<string, PanelConfig> = {
-  dataSource: {
-    title: intl.formatMessage({ defaultMessage: '数据源' }),
-    openItem: id => `/workbench/data-source/${id}`,
-    newItem: '/workbench/data-source/new',
-    request: {
-      getList: dispatch => {
-        void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-          dispatch({
-            type: 'fetched',
-            data: res.map(row => {
-              let icon = 'other'
-              let svg = '/assets/icon/db-other.svg'
-              let tip = ''
-              switch (row.sourceType) {
-                case 1:
-                  tip = String(row.config.dbName || '')
-                  svg =
-                    {
-                      mysql: '/assets/icon/mysql.svg',
-                      pgsql: '/assets/icon/pg.svg',
-                      graphql: '/assets/icon/graphql.svg',
-                      mongodb: '/assets/icon/mongodb.svg',
-                      rest: '/assets/icon/rest.svg',
-                      sqlite: '/assets/icon/sqlite.svg'
-                    }[String(row.config.dbType).toLowerCase()] || svg
-                  break
-                case 2:
-                  svg = '/assets/icon/rest.svg'
-                  break
-                case 3:
-                  svg = '/assets/icon/graphql.svg'
-                  break
-              }
-              return { id: row.id, name: row.name, icon, tip, switch: row.switch, _row: row, svg }
-            })
-          })
-        })
-      },
-      editItem: async row => await requests.put('/dataSource', row),
-      delItem: async id => await requests.delete(`/dataSource/${id}`)
-    },
-    mutateKey: id => ['/dataSource', String(id)]
-  },
-  storage: {
-    title: intl.formatMessage({ defaultMessage: '文件存储' }),
-    openItem: id => `/workbench/storage/${id}/manage`,
-    newItem: '/workbench/storage/new',
-    request: {
-      getList: dispatch => {
-        void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
-          dispatch({
-            type: 'fetched',
-            data: (res ?? []).map(row => {
-              const icon = 'other'
-              const tip = ''
-              return {
-                id: row.id,
-                name: row.name,
-                icon,
-                tip,
-                switch: row.switch,
-                _row: row,
-                svg: '/assets/icon/file.svg'
-              }
-            })
-          })
-        })
-      },
-      editItem: async row => await requests.put('/storageBucket', row),
-      delItem: async id => await requests.delete(`/storageBucket/${id}`)
-    },
-    mutateKey: id => ['/dataSource', String(id)],
-    navMenu: [
-      {
-        icon: 'assets/iconfont/wenjian1.svg',
-        name: intl.formatMessage({ defaultMessage: '查看' }),
-        menuPath: id => `/workbench/storage/${id}`
-      }
-    ]
-  },
-  auth: {
-    title: intl.formatMessage({ defaultMessage: '身份验证' }),
-    openItem: id => `/workbench/auth/${id}`,
-    newItem: '/workbench/auth/new',
-    navAction: [
-      {
-        icon: '/assets/workbench/panel-role.png',
-        path: '/workbench/auth/role',
-        tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
-      }
-    ],
-    mutateKey: id => ['/auth', String(id)],
-    request: {
-      getList: dispatch => {
-        void requests.get<unknown, any>('/auth').then(res => {
-          const rows: Array<CommonPanelResp> = res.map((row: any) => {
-            const icon = 'other'
-            const tip = 'OIDC'
-            return {
-              id: row.id,
-              name: row.name,
-              icon,
-              tip,
-              switch: !!row.switchState?.length,
-              _row: row,
-              svg: '/assets/icon/oidc.svg'
-            }
-          })
-          dispatch({
-            type: 'fetched',
-            data: rows
-          })
-        })
-      },
-      editItem: async row => await requests.put('/auth', row),
-      delItem: async id => await requests.delete(`/auth/${id}`)
-    }
-  }
-}
-
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
+  const intl = useIntl()
   const { mutate } = useSWRConfig()
+
+  const panelMap = useMemo<Record<string, PanelConfig>>(
+    () => ({
+      dataSource: {
+        title: intl.formatMessage({ defaultMessage: '数据源' }),
+        openItem: id => `/workbench/data-source/${id}`,
+        newItem: '/workbench/data-source/new',
+        request: {
+          getList: dispatch => {
+            void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
+              dispatch({
+                type: 'fetched',
+                data: res.map(row => {
+                  let icon = 'other'
+                  let svg = '/assets/icon/db-other.svg'
+                  let tip = ''
+                  switch (row.sourceType) {
+                    case 1:
+                      tip = String(row.config.dbName || '')
+                      svg =
+                        {
+                          mysql: '/assets/icon/mysql.svg',
+                          pgsql: '/assets/icon/pg.svg',
+                          graphql: '/assets/icon/graphql.svg',
+                          mongodb: '/assets/icon/mongodb.svg',
+                          rest: '/assets/icon/rest.svg',
+                          sqlite: '/assets/icon/sqlite.svg'
+                        }[String(row.config.dbType).toLowerCase()] || svg
+                      break
+                    case 2:
+                      svg = '/assets/icon/rest.svg'
+                      break
+                    case 3:
+                      svg = '/assets/icon/graphql.svg'
+                      break
+                  }
+                  return {
+                    id: row.id,
+                    name: row.name,
+                    icon,
+                    tip,
+                    switch: row.switch,
+                    _row: row,
+                    svg
+                  }
+                })
+              })
+            })
+          },
+          editItem: async row => await requests.put('/dataSource', row),
+          delItem: async id => await requests.delete(`/dataSource/${id}`)
+        },
+        mutateKey: id => ['/dataSource', String(id)]
+      },
+      storage: {
+        title: intl.formatMessage({ defaultMessage: '文件存储' }),
+        openItem: id => `/workbench/storage/${id}/manage`,
+        newItem: '/workbench/storage/new',
+        request: {
+          getList: dispatch => {
+            void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
+              dispatch({
+                type: 'fetched',
+                data: (res ?? []).map(row => {
+                  const icon = 'other'
+                  const tip = ''
+                  return {
+                    id: row.id,
+                    name: row.name,
+                    icon,
+                    tip,
+                    switch: row.switch,
+                    _row: row,
+                    svg: '/assets/icon/file.svg'
+                  }
+                })
+              })
+            })
+          },
+          editItem: async row => await requests.put('/storageBucket', row),
+          delItem: async id => await requests.delete(`/storageBucket/${id}`)
+        },
+        mutateKey: id => ['/dataSource', String(id)],
+        navMenu: [
+          {
+            icon: 'assets/iconfont/wenjian1.svg',
+            name: intl.formatMessage({ defaultMessage: '查看' }),
+            menuPath: id => `/workbench/storage/${id}`
+          }
+        ]
+      },
+      auth: {
+        title: intl.formatMessage({ defaultMessage: '身份验证' }),
+        openItem: id => `/workbench/auth/${id}`,
+        newItem: '/workbench/auth/new',
+        navAction: [
+          {
+            icon: '/assets/workbench/panel-role.png',
+            path: '/workbench/auth/role',
+            tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
+          }
+        ],
+        mutateKey: id => ['/auth', String(id)],
+        request: {
+          getList: dispatch => {
+            void requests.get<unknown, any>('/auth').then(res => {
+              const rows: Array<CommonPanelResp> = res.map((row: any) => {
+                const icon = 'other'
+                const tip = 'openid'
+                return {
+                  id: row.id,
+                  name: row.name,
+                  icon,
+                  tip,
+                  switch: !!row.switchState?.length,
+                  _row: row,
+                  svg: '/assets/icon/github-fill.svg'
+                }
+              })
+              dispatch({
+                type: 'fetched',
+                data: rows
+              })
+            })
+          },
+          editItem: async row => await requests.put('/auth', row),
+          delItem: async id => await requests.delete(`/auth/${id}`)
+        }
+      }
+    }),
+    [intl]
+  )
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type])
   const navigate = useNavigate()
   const location = useLocation()

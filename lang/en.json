@@ -40,7 +40,7 @@
     "defaultMessage": "Ignore this field"
   },
   "/9NbO2": {
-    "defaultMessage": "Response Transformation",
+    "defaultMessage": "Transform",
     "description": "插入指令处"
   },
   "/CFd+q": {
@@ -101,7 +101,7 @@
     "defaultMessage": "Begin with postgresql:// 开头，no more than 128 digits"
   },
   "0bBO2n": {
-    "defaultMessage": "version"
+    "defaultMessage": "Version"
   },
   "0jMIH4": {
     "defaultMessage": "Cache Configuration"
@@ -180,7 +180,7 @@
     "defaultMessage": "The parameter of field {name} is incorrectly entered"
   },
   "2a+U1g": {
-    "defaultMessage": "服务地址"
+    "defaultMessage": "Server address"
   },
   "2pzrDk": {
     "defaultMessage": "ignore the table"
@@ -236,7 +236,7 @@
     "defaultMessage": "New Origin"
   },
   "5FboZ/": {
-    "defaultMessage": "type"
+    "defaultMessage": "Type"
   },
   "5euLB8": {
     "defaultMessage": "path"
@@ -245,7 +245,7 @@
     "defaultMessage": "Leaving the current interface, unsaved content will be lost, confirm exit？"
   },
   "608d8o": {
-    "defaultMessage": "日志"
+    "defaultMessage": "Log"
   },
   "66awCH": {
     "defaultMessage": "refresh"
@@ -311,7 +311,7 @@
     "defaultMessage": "hook state"
   },
   "8NsucZ": {
-    "defaultMessage": "@interior",
+    "defaultMessage": "@internal",
     "description": "插入指令处"
   },
   "8gWGMl": {
@@ -336,7 +336,7 @@
     "defaultMessage": "The user name cannot be empty"
   },
   "9WXJgY": {
-    "defaultMessage": "response transformation",
+    "defaultMessage": "Resp transform",
     "description": "流程图"
   },
   "9YT9eI": {
@@ -418,7 +418,7 @@
     "defaultMessage": "Please edit"
   },
   "BLWx5q": {
-    "defaultMessage": "Send a response to the client",
+    "defaultMessage": "Return response",
     "description": "流程图"
   },
   "BOZ5lK": {
@@ -437,7 +437,7 @@
     "defaultMessage": "create"
   },
   "BxhyoS": {
-    "defaultMessage": "cross-domain"
+    "defaultMessage": "Cross Domain"
   },
   "C/vpUV": {
     "defaultMessage": "Please enter numbers, letters, or underscores, the first digit can not be a number"
@@ -446,7 +446,7 @@
     "defaultMessage": "Upload complete"
   },
   "C5D7TM": {
-    "defaultMessage": "data source"
+    "defaultMessage": "Data source"
   },
   "C8ZFaR": {
     "defaultMessage": "filter"
@@ -473,7 +473,7 @@
     "defaultMessage": "Only letters, numbers and underscores are allowed"
   },
   "DpfSLU": {
-    "defaultMessage": "parameter"
+    "defaultMessage": "Parameter"
   },
   "DqrJMk": {
     "defaultMessage": "Please fill in enumeration annotation"
@@ -482,7 +482,7 @@
     "defaultMessage": "by name"
   },
   "E6yn6S": {
-    "defaultMessage": "file store"
+    "defaultMessage": "File store"
   },
   "EBMdAL": {
     "defaultMessage": "The creation is successful"
@@ -512,7 +512,7 @@
     "defaultMessage": "confirm"
   },
   "FQQECq": {
-    "defaultMessage": "required"
+    "defaultMessage": "Required"
   },
   "FYqDZK": {
     "defaultMessage": "APP Secret"
@@ -607,7 +607,7 @@
     "defaultMessage": "rename"
   },
   "Jy/NUB": {
-    "defaultMessage": "sequence diagram",
+    "defaultMessage": "Sequence diagram",
     "description": "插入指令处"
   },
   "K27Y7X": {
@@ -729,7 +729,7 @@
     "defaultMessage": "JWKS"
   },
   "PCQ1Db": {
-    "defaultMessage": "cross-source association",
+    "defaultMessage": "Cross",
     "description": "插入指令处"
   },
   "PI0Ele": {
@@ -748,7 +748,7 @@
     "defaultMessage": "API prefix"
   },
   "PpQOV5": {
-    "defaultMessage": "started"
+    "defaultMessage": "Started"
   },
   "QT75K3": {
     "defaultMessage": "by modification time"
@@ -850,7 +850,7 @@
     "defaultMessage": "base on Token and Cookie"
   },
   "UEiMSy": {
-    "defaultMessage": "indentity authentication"
+    "defaultMessage": "Identity authentication"
   },
   "UH1kCc": {
     "defaultMessage": "add"
@@ -865,7 +865,7 @@
     "defaultMessage": "Hook"
   },
   "UXFkBB": {
-    "defaultMessage": "overview"
+    "defaultMessage": "Overview"
   },
   "UifjEZ": {
     "defaultMessage": "log level"
@@ -934,7 +934,7 @@
     "defaultMessage": "go online"
   },
   "WpBk1h": {
-    "defaultMessage": "language"
+    "defaultMessage": "Language"
   },
   "WsOs5k": {
     "defaultMessage": "{hours} hours ago"
@@ -965,7 +965,7 @@
     "defaultMessage": "Please save or quit edit first"
   },
   "YIAhsY": {
-    "defaultMessage": "system"
+    "defaultMessage": "System"
   },
   "YJo5EG": {
     "defaultMessage": "supplier ID"
@@ -983,7 +983,7 @@
     "defaultMessage": "App ID can not be empty"
   },
   "ZIqHdN": {
-    "defaultMessage": "response"
+    "defaultMessage": "Response"
   },
   "ZMK5E4": {
     "defaultMessage": "real-time query in server"
@@ -1053,7 +1053,7 @@
     "defaultMessage": "Please recompile after changing the settings"
   },
   "bqbDVw": {
-    "defaultMessage": "query"
+    "defaultMessage": "Query"
   },
   "bwYWez": {
     "defaultMessage": "event source",
@@ -1078,7 +1078,7 @@
     "defaultMessage": "development environment"
   },
   "clv90W": {
-    "defaultMessage": "the instruction is already exist"
+    "defaultMessage": "the directive is already exist"
   },
   "dEbvz0": {
     "defaultMessage": "name should be string，use uppercase letters, lowercase letters or underscores！"
@@ -1130,7 +1130,7 @@
     "defaultMessage": "design"
   },
   "etnuPx": {
-    "defaultMessage": "security"
+    "defaultMessage": "Security"
   },
   "ezUs/G": {
     "defaultMessage": "Please enter the domain name"
@@ -1173,7 +1173,7 @@
     "defaultMessage": "subscription authority"
   },
   "ghoLaJ": {
-    "defaultMessage": "input parameter instruction",
+    "defaultMessage": "Directive",
     "description": "插入指令处"
   },
   "glR5T7": {
@@ -1204,7 +1204,7 @@
     "defaultMessage": "the endpoint can not be empty"
   },
   "hdiR0N": {
-    "defaultMessage": "subscription"
+    "defaultMessage": "Subscription"
   },
   "ho6kY0": {
     "defaultMessage": "identity authentication"
@@ -1260,7 +1260,7 @@
     "defaultMessage": "jwksURL"
   },
   "kc0dbR": {
-    "defaultMessage": "modification"
+    "defaultMessage": "Mutation"
   },
   "kjpwk7": {
     "defaultMessage": "Failed to load data！"
@@ -1482,7 +1482,7 @@
     "defaultMessage": "SDK template"
   },
   "sRgn0V": {
-    "defaultMessage": "start request",
+    "defaultMessage": "Start",
     "description": "流程图"
   },
   "sRkj0b": {
@@ -1525,7 +1525,7 @@
     "defaultMessage": "response type"
   },
   "txDRJz": {
-    "defaultMessage": "environment variable"
+    "defaultMessage": "Environment Variables"
   },
   "uDcCXN": {
     "defaultMessage": "Issuer"
@@ -1534,7 +1534,7 @@
     "defaultMessage": "Please input domain"
   },
   "ueuJlz": {
-    "defaultMessage": "data modeling"
+    "defaultMessage": "Modeling"
   },
   "uhTa0i": {
     "defaultMessage": "preview"
@@ -1605,7 +1605,7 @@
     "defaultMessage": "{seconds} seconds ago"
   },
   "xE1H+X": {
-    "defaultMessage": "settings"
+    "defaultMessage": "Settings"
   },
   "xI0mPJ": {
     "defaultMessage": "enabled"
@@ -1636,7 +1636,7 @@
     "defaultMessage": "upload"
   },
   "z/Ra4N": {
-    "defaultMessage": "instruction"
+    "defaultMessage": "Directive"
   },
   "z0QaYJ": {
     "defaultMessage": "field"

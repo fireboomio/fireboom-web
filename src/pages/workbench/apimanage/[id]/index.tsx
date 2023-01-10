@@ -81,6 +81,14 @@ export default function APIEditorContainer() {
   const contentUpdateTimeout = useRef<number>()
   const isEditingRef = useRef(false)
   const explorerRef = useRef<any>()
+  const filtersMap = useMemo(
+    () => ({
+      query: intl.formatMessage({ defaultMessage: '查询' }),
+      mutation: intl.formatMessage({ defaultMessage: '变更' }),
+      subscription: intl.formatMessage({ defaultMessage: '订阅' })
+    }),
+    [intl]
+  )
 
   const tabs = useMemo(() => {
     return (
@@ -162,12 +170,12 @@ export default function APIEditorContainer() {
     await refreshSchema()
     setIsRefreshing(false)
     message.success(intl.formatMessage({ defaultMessage: '已刷新' }))
-  }, [refreshSchema])
+  }, [intl, refreshSchema])
 
   // 进入页面时，立刻请求一次graphql schema
   useEffect(() => {
     refreshSchema()
-  }, [])
+  }, [refreshSchema])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -222,6 +230,7 @@ export default function APIEditorContainer() {
               <GraphiqlExplorer
                 ref={explorerRef}
                 schema={schema}
+                filtersMap={filtersMap}
                 query={query}
                 onEdit={setQuery}
                 isLoading={isRefreshing}

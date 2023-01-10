@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
@@ -25,7 +25,6 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
-import { intl } from '@/providers/IntlProvider'
 
 import failIcon from './assets/fail-icon.svg'
 import failPic from './assets/fail-pic.svg'
@@ -42,16 +41,6 @@ interface CRUDBodyProps {
   dbName: string
   dmf?: string // graphql schema
 }
-
-const apiOptions = [
-  { label: intl.formatMessage({ defaultMessage: '增加' }), value: API.Create },
-  { label: intl.formatMessage({ defaultMessage: '删除' }), value: API.Delete },
-  { label: intl.formatMessage({ defaultMessage: '更新' }), value: API.Update },
-  { label: intl.formatMessage({ defaultMessage: '详情' }), value: API.Detail },
-  { label: intl.formatMessage({ defaultMessage: '分页查询' }), value: API.List },
-  { label: intl.formatMessage({ defaultMessage: '批量删除' }), value: API.BatchDelete },
-  { label: intl.formatMessage({ defaultMessage: '查询全部' }), value: API.Export }
-]
 
 function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
   model.fields.forEach(field => {
@@ -147,6 +136,18 @@ function expandForeignField(
 
 export default function CRUDBody(props: CRUDBodyProps) {
   const intl = useIntl()
+  const apiOptions = useMemo(
+    () => [
+      { label: intl.formatMessage({ defaultMessage: '增加' }), value: API.Create },
+      { label: intl.formatMessage({ defaultMessage: '删除' }), value: API.Delete },
+      { label: intl.formatMessage({ defaultMessage: '更新' }), value: API.Update },
+      { label: intl.formatMessage({ defaultMessage: '详情' }), value: API.Detail },
+      { label: intl.formatMessage({ defaultMessage: '分页查询' }), value: API.List },
+      { label: intl.formatMessage({ defaultMessage: '批量删除' }), value: API.BatchDelete },
+      { label: intl.formatMessage({ defaultMessage: '查询全部' }), value: API.Export }
+    ],
+    [intl]
+  )
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)

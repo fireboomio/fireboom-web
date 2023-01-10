@@ -94,6 +94,8 @@ type Props = {
   // title?: string
 
   /// Add
+  filtersMap: Record<FilterType, string>
+  /// Add
   isLoading?: boolean
   dataSourceList: string[]
   onRefresh?: () => void
@@ -137,7 +139,7 @@ type State = {
 type Selections = ReadonlyArray<SelectionNode>
 type AvailableFragments = Record<string, FragmentDefinitionNode>
 
-function capitalize(string) {
+function capitalize(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
@@ -3044,14 +3046,7 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-const filters = [
-  { label: '全部', value: '' },
-  { label: '查询', value: 'query' },
-  { label: '变更', value: 'mutation' },
-  { label: '订阅', value: 'subscription' }
-] as const
-const values = filters.map(item => item.value)
-type FilterType = typeof values[number]
+type FilterType = 'query' | 'mutation' | 'subscription'
 
 class ExplorerWrapper extends React.PureComponent<
   Props,
@@ -3069,16 +3064,20 @@ class ExplorerWrapper extends React.PureComponent<
   // }
 
   /// Add
-  state = {
+  state: {
+    k: number
+    selectedType: FilterType
+    selectedDataSource: string | undefined
+  } = {
     k: +new Date(),
-    selectedType: '',
+    selectedType: 'query',
     selectedDataSource: undefined
   }
 
   /// Add
-  _onChangeType = (v: FilterType | undefined) => {
+  _onChangeType = (v: string | undefined) => {
     this.setState({
-      selectedType: v ?? ''
+      selectedType: (v ?? 'query') as FilterType
     })
   }
 
@@ -3092,7 +3091,7 @@ class ExplorerWrapper extends React.PureComponent<
   manualExpand() {
     // 切换时清空缓存
     parseQueryMemoize = null
-    this.state.k = +new Date()
+    this.setState({ k: +new Date() })
   }
 
   render() {
@@ -3111,7 +3110,20 @@ class ExplorerWrapper extends React.PureComponent<
         {/* Add */}
         <ExplorerFilter
           // key={this.state.k}
-          filters={filters}
+          filters={[
+            {
+              label: this.props.filtersMap.query,
+              value: 'query'
+            },
+            {
+              label: this.props.filtersMap.mutation,
+              value: 'mutation'
+            },
+            {
+              label: this.props.filtersMap.subscription,
+              value: 'subscription'
+            }
+          ]}
           isLoading={this.props.isLoading}
           selectedType={this.state.selectedType}
           selectedDataSource={this.state.selectedDataSource}

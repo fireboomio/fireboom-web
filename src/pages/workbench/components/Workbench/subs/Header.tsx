@@ -1,73 +1,75 @@
 import { message, Modal, Popover, Tooltip } from 'antd'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import { intl } from '@/providers/IntlProvider'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
 
-const hotkeys = [
-  {
-    keys: ['alt/^', 'h'],
-    desc: intl.formatMessage({ defaultMessage: '打开快捷键提示' })
-  },
-  {
-    keys: ['alt/^', 'n'],
-    desc: intl.formatMessage({ defaultMessage: '新建APi/新建模型' })
-  },
-  {
-    keys: ['alt/^', 'b'],
-    desc: intl.formatMessage({ defaultMessage: '批量新建API' })
-  },
-  {
-    keys: ['alt/^', 'c'],
-    desc: intl.formatMessage({ defaultMessage: '编译' })
-  },
-  {
-    keys: ['alt/^', 'm'],
-    desc: intl.formatMessage({ defaultMessage: '切换API设计和模型设计' })
-  },
-  // {
-  //   keys: ['alt/^', '+'],
-  //   desc: '打开入参指令'
-  // },
-  // {
-  //   keys: ['alt/^', '-'],
-  //   desc: '插入响应转换'
-  // },
-  {
-    keys: ['alt/^', 'r'],
-    desc: intl.formatMessage({ defaultMessage: '运行当前Operation' })
-  },
-  {
-    keys: ['alt/^', 't'],
-    desc: intl.formatMessage({ defaultMessage: '模型设计页切换设计/数据视图' })
-  },
-  {
-    keys: ['alt/^', 'shift', 'd'],
-    desc: intl.formatMessage({ defaultMessage: '创建当前API的拷贝' })
-  },
-  {
-    keys: ['alt/^', 'shift', 'c'],
-    desc: intl.formatMessage({ defaultMessage: '复制当前API请求链接' })
-  },
-  {
-    keys: ['alt/^', 'shift', 't'],
-    desc: intl.formatMessage({
-      defaultMessage: 'API编辑页切换Json/表单模式，模型设计页切换设计/代码模式'
-    })
-  }
-]
-
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
+
+  const hotkeys = useMemo(
+    () => [
+      {
+        keys: ['alt/^', 'h'],
+        desc: intl.formatMessage({ defaultMessage: '打开快捷键提示' })
+      },
+      {
+        keys: ['alt/^', 'n'],
+        desc: intl.formatMessage({ defaultMessage: '新建APi/新建模型' })
+      },
+      {
+        keys: ['alt/^', 'b'],
+        desc: intl.formatMessage({ defaultMessage: '批量新建API' })
+      },
+      {
+        keys: ['alt/^', 'c'],
+        desc: intl.formatMessage({ defaultMessage: '编译' })
+      },
+      {
+        keys: ['alt/^', 'm'],
+        desc: intl.formatMessage({ defaultMessage: '切换API设计和模型设计' })
+      },
+      // {
+      //   keys: ['alt/^', '+'],
+      //   desc: '打开入参指令'
+      // },
+      // {
+      //   keys: ['alt/^', '-'],
+      //   desc: '插入响应转换'
+      // },
+      {
+        keys: ['alt/^', 'r'],
+        desc: intl.formatMessage({ defaultMessage: '运行当前Operation' })
+      },
+      {
+        keys: ['alt/^', 't'],
+        desc: intl.formatMessage({ defaultMessage: '模型设计页切换设计/数据视图' })
+      },
+      {
+        keys: ['alt/^', 'shift', 'd'],
+        desc: intl.formatMessage({ defaultMessage: '创建当前API的拷贝' })
+      },
+      {
+        keys: ['alt/^', 'shift', 'c'],
+        desc: intl.formatMessage({ defaultMessage: '复制当前API请求链接' })
+      },
+      {
+        keys: ['alt/^', 'shift', 't'],
+        desc: intl.formatMessage({
+          defaultMessage: 'API编辑页切换Json/表单模式，模型设计页切换设计/代码模式'
+        })
+      }
+    ],
+    [intl]
+  )
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isFullscreen } = useContext(WorkbenchContext)

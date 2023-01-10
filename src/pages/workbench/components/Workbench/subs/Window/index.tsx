@@ -1,20 +1,16 @@
 import { Resizable } from 're-resizable'
 import type { CSSProperties } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import type { LogMessage } from '@/interfaces/window'
 import { matchJson } from '@/lib/utils'
-import { intl } from '@/providers/IntlProvider'
 
 import Error from './Error'
 import type { LogAction } from './Log'
 import Log from './Log'
 import RcTab from './RcTab'
 
-const tabs = [
-  { title: intl.formatMessage({ defaultMessage: '日志' }), key: '0' },
-  { title: intl.formatMessage({ defaultMessage: '问题' }), key: '1' }
-]
 interface Props {
   style: CSSProperties
   defaultTab?: string
@@ -23,6 +19,14 @@ interface Props {
 
 // eslint-disable-next-line react/prop-types
 const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
+  const intl = useIntl()
+  const tabs = useMemo(
+    () => [
+      { title: intl.formatMessage({ defaultMessage: '日志' }), key: '0' },
+      { title: intl.formatMessage({ defaultMessage: '问题' }), key: '1' }
+    ],
+    [intl]
+  )
   const [tabActiveKey, setTabActiveKey] = useState(defaultTab ?? '0')
   const logActionRef = useRef<LogAction>()
   const responseRef = useRef<Response>()

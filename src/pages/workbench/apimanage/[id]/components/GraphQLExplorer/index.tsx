@@ -9,23 +9,12 @@ import type {
 import { Kind, print } from 'graphql'
 import type { MutableRefObject } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-
-import { intl } from '@/providers/IntlProvider'
+import { useIntl } from 'react-intl'
 
 import { GraphQLExplorerContext } from './context'
 import ExplorerFilter from './ExplorerFilter'
 import ResultField from './ResultField'
 import { arraySort, convertMapToArray } from './utils'
-
-const filters = [
-  { label: intl.formatMessage({ defaultMessage: '全部' }), value: '' },
-  { label: intl.formatMessage({ defaultMessage: '查询' }), value: 'query' },
-  { label: intl.formatMessage({ defaultMessage: '变更' }), value: 'mutation' },
-  { label: intl.formatMessage({ defaultMessage: '订阅' }), value: 'subscription' }
-] as const
-
-const values = filters.map(item => item.value)
-type FilterType = typeof values[number]
 
 export interface GraphiqlExplorerAction {
   manualExpand: () => void
@@ -43,6 +32,8 @@ interface GraphiqlExplorerProps {
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
+type FilterType = 'query' | 'mutation' | 'subscription'
+
 const GraphiqlExplorer = ({
   actionRef,
   isLoading,
@@ -53,8 +44,19 @@ const GraphiqlExplorer = ({
   onChange,
   onRefresh
 }: GraphiqlExplorerProps) => {
+  const intl = useIntl()
+  const filters = useMemo(
+    () =>
+      [
+        { label: intl.formatMessage({ defaultMessage: '查询' }), value: 'query' },
+        { label: intl.formatMessage({ defaultMessage: '变更' }), value: 'mutation' },
+        { label: intl.formatMessage({ defaultMessage: '订阅' }), value: 'subscription' }
+      ] as const,
+    [intl]
+  )
+
   const [selectedDataSource, setSeletedDataSource] = useState<string>()
-  const [selectedType, setSelectedType] = useState<FilterType>('')
+  const [selectedType, setSelectedType] = useState<FilterType>('query')
   const [k, setK] = useState(+new Date())
 
   const fieldTypeMap = useMemo(() => {
@@ -160,7 +162,7 @@ const GraphiqlExplorer = ({
         selectedDataSource={selectedDataSource}
         onSeletedDataSource={setSeletedDataSource}
         dataSourceList={dataSourceList}
-        setSelectedType={v => setSelectedType((v as FilterType | undefined) || '')}
+        setSelectedType={v => setSelectedType((v as FilterType | undefined) || 'query')}
         onRefresh={onRefresh}
       />
       {schema && (

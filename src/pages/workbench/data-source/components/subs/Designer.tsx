@@ -1,5 +1,5 @@
 import { Input, Modal } from 'antd'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -25,94 +25,99 @@ import iconRocketMQ from '../assets/RocketMQ.svg'
 import iconSQLite from '../assets/SQLite.svg'
 import iconSQLServer from '../assets/SQLServer.svg'
 import styles from './Designer.module.less'
-import { intl as _intl } from '@/providers/IntlProvider'
-
-const initData: {
-  name: string
-  items: {
-    name: string
-    logo?: string
-    icon: string
-    sourceType?: number
-    dbType?: string
-    coming?: boolean
-  }[]
-}[] = [
-  {
-    name: 'API',
-    items: [
-      { name: 'REST API', icon: iconRESTAPI, sourceType: 2 },
-      { name: 'GraphQL API', icon: iconGraphalAPI, sourceType: 3 }
-    ]
-  },
-  {
-    name: _intl.formatMessage({ defaultMessage: '数据库' }),
-    items: [
-      { name: 'PostgreSQL', icon: iconPostgreSQL, sourceType: 1, dbType: 'PostgreSQL' },
-      { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
-      { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB' },
-      { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
-      {
-        name: 'CockroachDB',
-        icon: iconCockroachDB,
-        sourceType: 1,
-        dbType: 'CockroachDB',
-        coming: true
-      },
-      {
-        name: 'SQL Server',
-        icon: iconSQLServer,
-        sourceType: 1,
-        dbType: 'SQL Server',
-        coming: true
-      },
-      {
-        name: 'Plantscale',
-        icon: iconPlanetscale,
-        sourceType: 1,
-        dbType: 'Plantscale',
-        coming: true
-      },
-      {
-        name: 'MariaDB',
-        icon: iconMariaDB,
-        sourceType: 1,
-        dbType: 'MariaDB',
-        coming: true
-      }
-    ]
-  },
-  {
-    name: _intl.formatMessage({ defaultMessage: '消息队列' }),
-    items: [
-      { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true },
-      { name: 'RocketMQ', icon: iconRocketMQ, coming: true },
-      {
-        name: _intl.formatMessage({ defaultMessage: '阿里云物联网平台' }),
-        icon: iconAli,
-        coming: true
-      }
-    ]
-  },
-  {
-    name: _intl.formatMessage({ defaultMessage: '自定义' }),
-    items: [
-      { name: 'node.js', icon: iconNode, sourceType: 4 },
-      { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
-    ]
-  }
-]
-
-// 解析图标
-const iconMap: Record<string, string> = {}
-initData.forEach(({ items }) => {
-  items.forEach(({ sourceType, dbType, icon }) => {
-    iconMap[`${sourceType}_${dbType ?? ''}`.toLowerCase()] = icon
-  })
-})
 
 export default function Designer() {
   const intl = useIntl()
+  const initData = useMemo<
+    {
+      name: string
+      items: {
+        name: string
+        logo?: string
+        icon: string
+        sourceType?: number
+        dbType?: string
+        coming?: boolean
+      }[]
+    }[]
+  >(
+    () => [
+      {
+        name: 'API',
+        items: [
+          { name: 'REST API', icon: iconRESTAPI, sourceType: 2 },
+          { name: 'GraphQL API', icon: iconGraphalAPI, sourceType: 3 }
+        ]
+      },
+      {
+        name: intl.formatMessage({ defaultMessage: '数据库' }),
+        items: [
+          { name: 'PostgreSQL', icon: iconPostgreSQL, sourceType: 1, dbType: 'PostgreSQL' },
+          { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
+          { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB' },
+          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
+          {
+            name: 'CockroachDB',
+            icon: iconCockroachDB,
+            sourceType: 1,
+            dbType: 'CockroachDB',
+            coming: true
+          },
+          {
+            name: 'SQL Server',
+            icon: iconSQLServer,
+            sourceType: 1,
+            dbType: 'SQL Server',
+            coming: true
+          },
+          {
+            name: 'Plantscale',
+            icon: iconPlanetscale,
+            sourceType: 1,
+            dbType: 'Plantscale',
+            coming: true
+          },
+          {
+            name: 'MariaDB',
+            icon: iconMariaDB,
+            sourceType: 1,
+            dbType: 'MariaDB',
+            coming: true
+          }
+        ]
+      },
+      {
+        name: intl.formatMessage({ defaultMessage: '消息队列' }),
+        items: [
+          { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true },
+          { name: 'RocketMQ', icon: iconRocketMQ, coming: true },
+          {
+            name: intl.formatMessage({ defaultMessage: '阿里云物联网平台' }),
+            icon: iconAli,
+            coming: true
+          }
+        ]
+      },
+      {
+        name: intl.formatMessage({ defaultMessage: '自定义' }),
+        items: [
+          { name: 'node.js', icon: iconNode, sourceType: 4 },
+          { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
+        ]
+      }
+    ],
+    [intl]
+  )
+  // 解析图标
+  const iconMap = useMemo<Record<string, string>>(() => {
+    const iconMap: Record<string, string> = {}
+    initData.forEach(({ items }) => {
+      items.forEach(({ sourceType, dbType, icon }) => {
+        iconMap[`${sourceType}_${dbType ?? ''}`.toLowerCase()] = icon
+      })
+    })
+    return iconMap
+  }, [initData])
   const dispatch = useContext(DatasourceDispatchContext)
   const { handleToggleDesigner, handleCreate, handleSave } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
@@ -214,7 +219,7 @@ export default function Designer() {
             {category.items.map(x => (
               <div
                 key={x.name}
-                className="border rounded cursor-pointer bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 hover:shadow-lg flex items-center relative"
+                className="border rounded cursor-pointer flex bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 items-center relative hover:shadow-lg"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onClick={() => !x.coming && handleClick(x.sourceType, x.dbType, x.name)}

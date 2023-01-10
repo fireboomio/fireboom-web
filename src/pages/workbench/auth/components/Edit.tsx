@@ -3,7 +3,7 @@ import { loader } from '@monaco-editor/react'
 import { Button, Checkbox, Form, Input, Radio, Select } from 'antd'
 import axios from 'axios'
 import type { ReactNode } from 'react'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
@@ -16,7 +16,6 @@ import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import requests from '@/lib/fetchers'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
-import { intl } from '@/providers/IntlProvider'
 
 import styles from './subs.module.less'
 
@@ -32,13 +31,15 @@ type Config = Record<string, ReactNode>
 
 type FromValues = Record<string, number | string | readonly string[] | undefined>
 
-const options = [
-  { label: intl.formatMessage({ defaultMessage: '基于Cookie' }), value: 'cookieBased' },
-  { label: intl.formatMessage({ defaultMessage: '基于Token' }), value: 'tokenBased' }
-]
-
 export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const intl = useIntl()
+  const options = useMemo(
+    () => [
+      { label: intl.formatMessage({ defaultMessage: '基于Cookie' }), value: 'cookieBased' },
+      { label: intl.formatMessage({ defaultMessage: '基于Token' }), value: 'tokenBased' }
+    ],
+    [intl]
+  )
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
