@@ -42,6 +42,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [delayAction, setDelayAction] = useState<ActionT>() // 面板展开后执行新增操作
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([])
   const [dropDownId, setDropDownId] = useState<string>() // 当前下拉列表的对象id
+  const [scrollBottom, setScrollBottom] = useState<boolean>() // 滚动到底部
   const currEditingNode = useMemo(() => {
     if (!currEditingKey) return null
     return getNodeByKey(currEditingKey, treeData)
@@ -274,6 +275,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       // 无插入目标时，插入根节点
       tree.push(node)
     }
+
+    // 强制滚动到底部
+    setScrollBottom(!scrollBottom)
 
     // 清空输入框内容
     setInputValue('')
@@ -607,6 +611,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       {...props}
       title={intl.formatMessage({ defaultMessage: 'API管理' })}
       hideAdd
+      scrollBottom={scrollBottom}
       open={panelOpened}
       onOpen={flag => {
         setPanelOpened(flag)
@@ -741,6 +746,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 onSelect={handleSelectTreeNode}
               />
             ) : null}
+            {currEditingKey && ['创建文件', '创建目录'].includes(action ?? '') && (
+              <div style={{ height: 12 }} />
+            )}
           </div>
           <div className={styles.createRowWrapper}>
             <div className={styles.createRow}>

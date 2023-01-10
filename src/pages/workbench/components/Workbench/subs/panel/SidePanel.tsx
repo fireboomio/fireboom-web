@@ -1,6 +1,6 @@
 import { Tooltip } from 'antd'
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import styles from './SidePanel.module.less'
@@ -12,6 +12,7 @@ export interface SidePanelProps {
   hideAdd?: boolean
   children?: React.ReactNode
   defaultOpen?: boolean
+  scrollBottom?: boolean
   onAdd?: () => void
   onOpen?: (flag: boolean) => void
 }
@@ -19,6 +20,7 @@ export interface SidePanelProps {
 export default function SidePanel(props: SidePanelProps) {
   const intl = useIntl()
   const [open, setOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (props.open !== undefined) {
       handelOpen(props.open)
@@ -26,6 +28,14 @@ export default function SidePanel(props: SidePanelProps) {
       handelOpen(true)
     }
   }, [props.defaultOpen, props.open])
+
+  useEffect(() => {
+    if (props.scrollBottom !== undefined) {
+      if (contentRef?.current?.scrollTop) {
+        contentRef.current.scrollTop = 1e6
+      }
+    }
+  }, [props.scrollBottom])
 
   const handelOpen = (flag: boolean) => {
     setOpen(flag)
@@ -49,7 +59,9 @@ export default function SidePanel(props: SidePanelProps) {
           )}
         </div>
       </div>
-      <div className={`${open ? '' : 'hidden'} ${styles.content}`}>{props.children}</div>
+      <div ref={contentRef} className={`${open ? '' : 'hidden'} ${styles.content}`}>
+        {props.children}
+      </div>
     </div>
   )
 }
