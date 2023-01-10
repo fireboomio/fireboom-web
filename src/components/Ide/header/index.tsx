@@ -1,5 +1,5 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Modal, Select, Switch } from 'antd'
+import { Button, Checkbox, Modal, Radio, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
@@ -34,6 +34,8 @@ interface Props {
   onSave?: () => void
   // hook内容信息
   hookInfo?: HookInfo
+  tabSize: number
+  setTabSize: (size: number) => void
 }
 
 interface DebugResp {
@@ -201,6 +203,24 @@ const IdeHeaderContainer: FC<Props> = props => {
         {/* 右侧区域 */}
         <div className="flex items-center">
           <div className="name">
+            <FormattedMessage defaultMessage="tab宽度" />
+          </div>
+          <div className="ml-2">
+            <Radio.Group
+              size="small"
+              value={props.tabSize}
+              onChange={e => {
+                props.setTabSize(e.target.value)
+              }}
+              options={[
+                { label: 2, value: 2 },
+                { label: 4, value: 4 }
+              ]}
+              optionType="button"
+              buttonStyle="solid"
+            />
+          </div>
+          <div className="name ml-2">
             <FormattedMessage defaultMessage="脚本语言" />
           </div>
           <div className="ml-2">

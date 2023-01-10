@@ -103,6 +103,7 @@ interface Props {
   onSelectHook?: (value: string) => void
 }
 
+const tabSizeKey = 'editorTabSize'
 /**
  *
  * 代码ide容器
@@ -132,6 +133,7 @@ const IdeContainer: FC<Props> = props => {
   const [fullScreen, setFullScreen] = useState(false)
   // 是否缩小依赖区域
   const [smallDepend, setSmallDepend] = useState(false)
+  const [tabSize, setTabSize] = useState(localStorage.getItem(tabSizeKey) === '2' ? 2 : 4)
   const [savePayload, setPayload] = useState<AutoSavePayload>({
     type: 'passive',
     status: null
@@ -250,6 +252,8 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
     setMonaco(monaco)
+    const model = monaco.editor.getModel(monaco.Uri.parse('inmemory://model/src/hook.ts'))
+    model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
 
   // 保存内容(依赖和脚本)
@@ -395,6 +399,13 @@ const IdeContainer: FC<Props> = props => {
           hookPath={hookPath}
           hookInfo={hookInfo}
           hostUrl={globalConfig.apiHost}
+          tabSize={tabSize}
+          setTabSize={size => {
+            setTabSize(size)
+            localStorage.setItem(tabSizeKey, String(size))
+            const model = monaco.editor.getModel(monaco.Uri.parse('inmemory://model/src/hook.ts'))
+            model.updateOptions({ tabSize: size, indentSize: size })
+          }}
           {...{
             savePayload,
             fullScreen,
