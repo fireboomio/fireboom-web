@@ -403,7 +403,7 @@ const IdeContainer: FC<Props> = props => {
           setTabSize={size => {
             setTabSize(size)
             localStorage.setItem(tabSizeKey, String(size))
-            const model = monaco.editor.getModel(monaco.Uri.parse('inmemory://model/src/hook.ts'))
+            const model = monaco.editor.getModel(`inmemory://model/hook/${hookPath}`)
             model.updateOptions({ tabSize: size, indentSize: size })
           }}
           {...{

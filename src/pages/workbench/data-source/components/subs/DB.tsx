@@ -623,6 +623,11 @@ export default function DB({ content, type }: Props) {
       ) : (
         //设置页面———————————————————————————————————————————————————————————————————————————————————
         <Setting
+          onSave={data => {
+            handleSave({
+              ...data
+            })
+          }}
           content={content}
           initSchema={config.schemaExtension as string}
           replaceJSON={config.replaceJSONTypeFieldConfiguration as ReplaceJSON[]}
