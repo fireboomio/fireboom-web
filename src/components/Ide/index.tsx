@@ -252,7 +252,7 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
     setMonaco(monaco)
-    const model = monaco.editor.getModel(monaco.Uri.parse('inmemory://model/src/hook.ts'))
+    const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
 

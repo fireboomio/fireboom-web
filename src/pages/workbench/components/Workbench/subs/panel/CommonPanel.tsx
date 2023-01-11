@@ -145,7 +145,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             void requests.get<unknown, any>('/auth').then(res => {
               const rows: Array<CommonPanelResp> = res.map((row: any) => {
                 const icon = 'other'
-                const tip = 'openid'
+                const tip = 'OIDC'
                 return {
                   id: row.id,
                   name: row.name,
@@ -153,7 +153,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   tip,
                   switch: !!row.switchState?.length,
                   _row: row,
-                  svg: '/assets/icon/github-fill.svg'
+                  svg: '/assets/icon/oidc.svg'
                 }
               })
               dispatch({
