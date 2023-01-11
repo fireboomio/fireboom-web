@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useDebounceEffect } from '@/hooks/debounce'
 import { parseParameters } from '@/lib/gql-parser'
 
+import { useAPIManager } from '../../../store'
 import { CircleCloseOutlined } from '../../icons'
 import requiredIcon from '../assets/required.svg'
 import type { InputValueType, SingleInputValueType } from './ArgumentInput'
@@ -31,12 +32,15 @@ interface ArgumentsEditorProps {
 const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   const intl = useIntl()
   const editorContext = useEditorContext()
+  const { schemaTypeMap } = useAPIManager(state => ({
+    schemaTypeMap: state.schemaTypeMap
+  }))
   const [values, setValues] = useState<Record<string, InputValueType>>({})
   const valuesRef = useRef<Record<string, InputValueType>>({})
 
   const parsed = useMemo(() => {
-    return parseParameters(props.arguments)
-  }, [props.arguments])
+    return parseParameters(props.arguments, schemaTypeMap)
+  }, [props.arguments, schemaTypeMap])
 
   const hasDirective = parsed?.some(item => item.directives?.length)
 
@@ -102,6 +106,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                   if (typeof vItem === 'object') {
                     return vItem
                   }
+                  if (item.enumName) {
+                    return vItem
+                  }
                   try {
                     return JSON.parse(vItem as string)
                   } catch (error) {
@@ -112,7 +119,10 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
               })
             }
           } else {
-            if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+            if (
+              !['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type) &&
+              !item.enumName
+            ) {
               if (val) {
                 try {
                   val = JSON.parse(val as string)

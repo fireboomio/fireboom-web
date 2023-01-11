@@ -26,15 +26,23 @@ const FlowChart = lazy(() => import('./FlowChart'))
 const SubscriptionChart = lazy(() => import('./SubscriptionChart'))
 
 const APIFlowChart = ({ id }: { id: string }) => {
-  const { apiDesc, schemaAST, query, operationType, appendToAPIRefresh, dispendToAPIRefresh } =
-    useAPIManager(state => ({
-      apiDesc: state.apiDesc,
-      schemaAST: state.schemaAST,
-      query: state.query,
-      operationType: state.computed.operationType,
-      appendToAPIRefresh: state.appendToAPIRefresh,
-      dispendToAPIRefresh: state.dispendToAPIRefresh
-    }))
+  const {
+    apiDesc,
+    schemaAST,
+    schemaTypeMap,
+    query,
+    operationType,
+    appendToAPIRefresh,
+    dispendToAPIRefresh
+  } = useAPIManager(state => ({
+    apiDesc: state.apiDesc,
+    schemaAST: state.schemaAST,
+    query: state.query,
+    operationType: state.computed.operationType,
+    schemaTypeMap: state.schemaTypeMap,
+    appendToAPIRefresh: state.appendToAPIRefresh,
+    dispendToAPIRefresh: state.dispendToAPIRefresh
+  }))
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
   const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
@@ -44,7 +52,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
       const defs =
         (schemaAST?.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
         []
-      const variables = parseParameters(defs)
+      const variables = parseParameters(defs, schemaTypeMap)
       const globalDirectives = (
         schemaAST?.definitions[0] as OperationDefinitionNode | undefined
       )?.directives?.map(dir => dir.name.value)

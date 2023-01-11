@@ -1,7 +1,13 @@
 import { message } from 'antd'
-import type { DocumentNode, GraphQLSchema, IntrospectionQuery, OperationTypeNode } from 'graphql'
+import type {
+  DocumentNode,
+  GraphQLSchema,
+  IntrospectionQuery,
+  IntrospectionType,
+  OperationTypeNode
+} from 'graphql'
 import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
-import { isEqual } from 'lodash'
+import { isEqual, keyBy } from 'lodash'
 import create from 'zustand'
 
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
@@ -43,6 +49,7 @@ export interface APIState {
   apiDesc?: APIDesc
   originSchema: IntrospectionQuery | undefined
   schema: GraphQLSchema | undefined
+  schemaTypeMap: Record<string, IntrospectionType>
   query: string
   lastSavedQuery: string | undefined
   setQuery: (v: string) => void
@@ -106,6 +113,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
   originSchema: undefined,
   schema: undefined,
   schemaAST: undefined,
+  schemaTypeMap: {},
   _workbenchContext: undefined,
   computed: {
     get operationType() {
@@ -217,7 +225,11 @@ export const useAPIManager = create<APIState>((set, get) => ({
         if (!isEqual(get().originSchema, newOriginSchema)) {
           console.log('schema changed')
           const newSchema = buildClientSchema(newOriginSchema)
-          set({ originSchema: newOriginSchema, schema: newSchema })
+          set({
+            originSchema: newOriginSchema,
+            schema: newSchema,
+            schemaTypeMap: keyBy(newOriginSchema.__schema.types, 'name')
+          })
         }
       })
   },

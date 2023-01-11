@@ -2,6 +2,8 @@ import type {
   ConstArgumentNode,
   ConstDirectiveNode,
   DirectiveNode,
+  IntrospectionEnumType,
+  IntrospectionType,
   VariableDefinitionNode
 } from 'graphql'
 import { Kind } from 'graphql'
@@ -19,7 +21,8 @@ export const parseRbac = (directives: readonly DirectiveNode[] | undefined) => {
 
 // 从 variableDefinition 字段解析参数
 export const parseParameters = (
-  varDefs: readonly VariableDefinitionNode[] | undefined
+  varDefs: readonly VariableDefinitionNode[] | undefined,
+  schemaTypeMap: Record<string, IntrospectionType>
 ): ParameterT[] => {
   if (!varDefs) return []
 
@@ -36,6 +39,10 @@ export const parseParameters = (
       isList,
       // isRequired: directives?.some(dir => dir.name === 'internal') ? false : isRequired,
       isRequired,
+      enums:
+        schemaTypeMap[type]?.kind === 'ENUM'
+          ? (schemaTypeMap[type] as IntrospectionEnumType).enumValues
+          : null,
       directives
     }
   })

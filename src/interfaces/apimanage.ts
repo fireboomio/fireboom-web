@@ -1,3 +1,5 @@
+import type { IntrospectionEnumValue } from 'graphql'
+
 export type DirTreeNode = OperationItem & { key: string; children: DirTreeNode[] | null }
 
 export type OperationItem = OperationResp & {
@@ -46,6 +48,7 @@ export interface ParameterT {
   type: string
   isRequired: boolean
   isList: boolean
+  enums: readonly IntrospectionEnumValue[] | null
   directives?: DirectiveT[]
 }
 

@@ -1,6 +1,7 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import Editor from '@monaco-editor/react'
 import { Checkbox, DatePicker, Input, InputNumber, Modal } from 'antd'
+import type { IntrospectionEnumValue } from 'graphql'
 import moment from 'moment'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -15,6 +16,7 @@ interface ArgumentInputProps {
   argument: ParameterT
   value?: InputValueType
   name?: string
+  enums: readonly IntrospectionEnumValue[] | null
   onChange?: (v: InputValueType) => void
 }
 
@@ -22,11 +24,35 @@ const SingleArgumentInput = ({
   type,
   name,
   value,
+  enums,
   onChange
-}: Omit<ArgumentInputProps, 'argument'> & { type: string }) => {
+}: Omit<ArgumentInputProps, 'argument'> & {
+  type: string
+}) => {
   const intl = useIntl()
   const [showEdit, setShowEdit] = useState<boolean>(false)
   const [editorValue, setEditorValue] = useState<string>('')
+
+  if (enums) {
+    // 使用ant的Select会卡
+    return (
+      <select
+        className="border border-solid rounded-sm outline-none border-[#d9d9d9] h-7 text-xs text-sm w-full max-w-50 py-1 px-2 focus-visible:border-[#f5587a] focus-visible:shadow"
+        placeholder={type}
+        value={value as string}
+        onChange={e => {
+          onChange?.(e.target.value)
+        }}
+      >
+        <option value={undefined}></option>
+        {enums.map(item => (
+          <option key={item.name} value={item.name}>
+            {item.name}
+          </option>
+        ))}
+      </select>
+    )
+  }
 
   switch (type) {
     case 'Int':
@@ -155,6 +181,7 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
       <SingleArgumentInput
         name={argument.name}
         type={argument.type}
+        enums={argument.enums}
         value={value}
         onChange={onChange}
       />
@@ -185,6 +212,7 @@ const ArgumentInput = ({ argument, value, onChange }: ArgumentInputProps) => {
           <SingleArgumentInput
             type={argument.type}
             name={argument.name}
+            enums={argument.enums}
             value={val}
             onChange={v => updateOne(v, index)}
           />
