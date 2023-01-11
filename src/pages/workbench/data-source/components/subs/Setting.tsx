@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleFilled } from '@ant-design/icons'
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Select, Switch } from 'antd'
+import { Button, message, Select, Switch } from 'antd'
 import type { InputObjectTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { parse } from 'graphql'
 import { useEffect, useState } from 'react'
@@ -39,9 +39,10 @@ interface Props {
   initSchema: string
   replaceJSON: ReplaceJSON[]
   content: DatasourceResp
+  onSave: (data: any) => void
 }
 
-const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
+const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) => {
   const intl = useIntl()
   const { id: currDBId } = useParams()
   const [data, setData] = useImmer<DataType[]>([])
@@ -169,7 +170,12 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content }) => {
         schemaExtension: schemaExtension
       }
     }
-    void requests.put('/dataSource', payload)
+    requests.put('/dataSource', payload).then(res => {
+      onSave(payload)
+      if (res) {
+        message.success(intl.formatMessage({ defaultMessage: '保存成功！' }))
+      }
+    })
   }
 
   function handleDelete(item: DataType) {

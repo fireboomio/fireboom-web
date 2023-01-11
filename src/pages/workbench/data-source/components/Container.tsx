@@ -92,9 +92,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
       >
         {showType === 'setting' ? (
           <>
-            <div className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly">
+            <div
+              className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly"
+              onClick={() => handleToggleDesigner('detail')}
+            >
               <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
-              <span className="ml-1" onClick={() => handleToggleDesigner('detail')}>
+              <span className="ml-1">
                 <FormattedMessage defaultMessage="返回" />
               </span>
             </div>
