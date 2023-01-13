@@ -3094,7 +3094,23 @@ class ExplorerWrapper extends React.PureComponent<
     this.setState({ k: +new Date() })
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any) {
+    const query = (nextProps.query ?? '').trim()
+    let type = ''
+    if (query.startsWith('query')) {
+      type = 'query'
+    } else if (query.startsWith('mutation')) {
+      type = 'mutation'
+    } else if (query.startsWith('subscription')) {
+      type = 'subscription'
+    }
+    if (type && this.state.selectedType !== type) {
+      this.setState({ selectedType: type })
+    }
+  }
+
   render() {
+    console.log('=====this', this.props)
     return (
       <div
         // Updated

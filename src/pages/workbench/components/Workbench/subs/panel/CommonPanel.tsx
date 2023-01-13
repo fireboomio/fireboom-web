@@ -265,7 +265,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     // 当被删除对象是当前打开的页面时，需要跳转离开
     if (panelConfig.openItem(id) === location.pathname) {
       // 找到首个不是在新窗口中打开页面的项目
-      const index = datasource.findIndex(item => !item.openInNewPage)
+      const index = datasource.findIndex(item => item.id !== id)
       if (index >= 0) {
         handleItemNav(datasource[index])
       } else {
