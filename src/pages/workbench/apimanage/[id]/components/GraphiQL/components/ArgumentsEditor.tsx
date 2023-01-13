@@ -103,29 +103,29 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             if (val) {
               val = (val as SingleInputValueType[]).map(vItem => {
                 if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
-                  if (typeof vItem === 'object') {
+                  if (item.enums) {
                     return vItem
                   }
-                  if (item.enumName) {
-                    return vItem
+                  if (typeof vItem === 'string') {
+                    try {
+                      return JSON.parse(vItem as string)
+                    } catch (error) {
+                      message.error(notValidMsg)
+                      throw new Error(notValidMsg)
+                    }
                   }
-                  try {
-                    return JSON.parse(vItem as string)
-                  } catch (error) {
-                    message.error(notValidMsg)
-                    throw new Error(notValidMsg)
-                  }
+                  return vItem
                 }
               })
             }
           } else {
             if (
               !['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type) &&
-              !item.enumName
+              !item.enums
             ) {
-              if (val) {
+              if (val && typeof val === 'string') {
                 try {
-                  val = JSON.parse(val as string)
+                  val = JSON.parse(val)
                 } catch (error) {
                   message.error(notValidMsg)
                   throw new Error(notValidMsg)
@@ -238,6 +238,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                 {!arg.directives?.find(dir => NOT_EDITABLE_DIRECTIVES.includes(dir.name)) && (
                   <ArgumentInput
                     argument={arg}
+                    enums={arg.enums}
                     value={values[arg.name]}
                     onChange={v => updateValue(v, arg.name)}
                   />
