@@ -582,8 +582,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
             <Select
               value={table?.[record.tableId]?.sortDirection}
               options={[
-                { label: '正序', value: SortDirection.Asc },
-                { label: '倒序', value: SortDirection.Desc }
+                { label: intl.formatMessage({ defaultMessage: '正序' }), value: SortDirection.Asc },
+                { label: intl.formatMessage({ defaultMessage: '倒序' }), value: SortDirection.Desc }
               ]}
               onChange={value => {
                 setTableFiled(record.tableId, 'sortDirection', value)

@@ -1,6 +1,6 @@
 import { Image } from 'antd'
 import React, { lazy, Suspense, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
@@ -9,6 +9,7 @@ import { Notice } from '@/pages/workbench/index/components/Notice'
 import styles from './index.module.less'
 
 const Guide = lazy(() => import('@/pages/workbench/index/components/Guide'))
+
 interface HomeApi {
   liveQueryTotal: number
   mutationsTotal: number
@@ -69,6 +70,7 @@ const initialValues = {
 }
 
 export default function Home() {
+  const intl = useIntl()
   const [showType, setShowType] = useImmer('notice')
   const [homeConfig, setHomeConfig] = useImmer<HomeConfig>(initialValues)
   const handleToggleDesigner = (rightType: string) => {
@@ -97,11 +99,11 @@ export default function Home() {
         <div className={styles.btnLine}>
           <div className={styles.btn}>
             <div className={[styles.image, styles.imageDoc].join(' ')} />
-            <div className={styles.text}>文档</div>
+            <div className={styles.text}>{intl.formatMessage({ defaultMessage: '文档' })}</div>
           </div>
           <div className={styles.btn}>
             <div className={[styles.image, styles.imageCode].join(' ')} />
-            <div className={styles.text}>代码</div>
+            <div className={styles.text}>{intl.formatMessage({ defaultMessage: '代码' })}</div>
           </div>
         </div>
       </div>
@@ -120,12 +122,16 @@ export default function Home() {
             <div className={styles.centerContainer}>
               <div className={styles.row}>
                 <div className={[styles.card, styles.moduleData].join(' ')}>
-                  <div className={styles.cardTitle}>数据源</div>
+                  <div className={styles.cardTitle}>
+                    {intl.formatMessage({ defaultMessage: '数据源' })}
+                  </div>
                   <div className="flex">
                     <div className={[styles.dataCard, styles.dataCard1].join(' ')}>
                       <div className={styles.dataCardBody}>
                         <div className={styles.info}>
-                          <div className={styles.name}>数据库</div>
+                          <div className={styles.name}>
+                            {intl.formatMessage({ defaultMessage: '数据库' })}
+                          </div>
                           <div className={styles.number}>{dbTotal}</div>
                         </div>
                         <Image
@@ -170,7 +176,9 @@ export default function Home() {
                     <div className={[styles.dataCard, styles.dataCard4].join(' ')}>
                       <div className={styles.dataCardBody}>
                         <div className={styles.info}>
-                          <div className={styles.name}>自定义服务</div>
+                          <div className={styles.name}>
+                            {intl.formatMessage({ defaultMessage: '自定义服务' })}
+                          </div>
                           <div className={styles.number}>{CustomerTotal}</div>
                         </div>
                         <Image
@@ -188,11 +196,15 @@ export default function Home() {
 
               <div className={styles.row}>
                 <div className={[styles.card, styles.moduleApi].join(' ')}>
-                  <div className={styles.cardTitle}>对外API</div>
+                  <div className={styles.cardTitle}>
+                    {intl.formatMessage({ defaultMessage: '对外API' })}
+                  </div>
                   <div className="flex">
                     <div className={styles.apiCard}>
                       <div className={styles.info}>
-                        <div className={styles.name}>查询</div>
+                        <div className={styles.name}>
+                          {intl.formatMessage({ defaultMessage: '查询' })}
+                        </div>
                         <div className={styles.number}>{queryTotal}</div>
                       </div>
                       <Image
@@ -205,7 +217,9 @@ export default function Home() {
                     </div>
                     <div className={styles.apiCard}>
                       <div className={styles.info}>
-                        <div className={styles.name}>实时查询</div>
+                        <div className={styles.name}>
+                          {intl.formatMessage({ defaultMessage: '实时查询' })}
+                        </div>
                         <div className={styles.number}>{liveQueryTotal}</div>
                       </div>
                       <Image
@@ -218,7 +232,9 @@ export default function Home() {
                     </div>
                     <div className={styles.apiCard}>
                       <div className={styles.info}>
-                        <div className={styles.name}>变更</div>
+                        <div className={styles.name}>
+                          {intl.formatMessage({ defaultMessage: '变更' })}
+                        </div>
                         <div className={styles.number}>{mutationsTotal}</div>
                       </div>
                       <Image
@@ -231,7 +247,9 @@ export default function Home() {
                     </div>
                     <div className={styles.apiCard}>
                       <div className={styles.info}>
-                        <div className={styles.name}>订阅</div>
+                        <div className={styles.name}>
+                          {intl.formatMessage({ defaultMessage: '订阅' })}
+                        </div>
                         <div className={styles.number}>{subscriptionsTotal}</div>
                       </div>
                       <Image
@@ -249,9 +267,13 @@ export default function Home() {
               <div className={styles.row}>
                 <div className={[styles.card, styles.moduleSingle].join(' ')}>
                   <div className={styles.title}>
-                    <div className={styles.text}>OSS存储</div>
+                    <div className={styles.text}>
+                      {intl.formatMessage({ defaultMessage: 'OSS存储' })}
+                    </div>
                     <div className={styles.number}>{ossTotal}</div>
-                    <div className={styles.numberText}>个</div>
+                    <div className={styles.numberText}>
+                      {intl.formatMessage({ defaultMessage: '个' })}
+                    </div>
                   </div>
                   {/*<div className={styles.memoryLine}>*/}
                   {/*  已使用 {useMemory}G<span className={styles.memoryTotal}>{totalMemory}/G</span>*/}
@@ -269,7 +291,9 @@ export default function Home() {
                 </div>
                 <div className={[styles.card, styles.moduleSingle].join(' ')}>
                   <div className={styles.title}>
-                    <div className={styles.text}>身份验证商</div>
+                    <div className={styles.text}>
+                      {intl.formatMessage({ defaultMessage: '身份验证商' })}
+                    </div>
                     <div className={styles.number}>{authTotal}</div>
                     <div className={styles.numberText}>个</div>
                   </div>
@@ -290,7 +314,9 @@ export default function Home() {
 
               <div className={styles.row}>
                 <div className={[styles.card, styles.moduleFe].join(' ')}>
-                  <div className={styles.cardTitle}>前端集成</div>
+                  <div className={styles.cardTitle}>
+                    {intl.formatMessage({ defaultMessage: '前端集成' })}
+                  </div>
                   <div className={styles.blocks}>
                     <div className={styles.block}>
                       <div className={styles.title}>SDK</div>
@@ -300,7 +326,9 @@ export default function Home() {
                       </div>
                     </div>
                     <div className={styles.block}>
-                      <div className={styles.title}>ADMIN后台</div>
+                      <div className={styles.title}>
+                        {intl.formatMessage({ defaultMessage: 'ADMIN后台' })}
+                      </div>
                       <div className={styles.items}>
                         {renderFeItem(styles.react, 'REACT', '', '')}
                         {renderFeItem(styles.vue, 'VUE', '', '')}

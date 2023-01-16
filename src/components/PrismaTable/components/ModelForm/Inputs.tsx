@@ -57,6 +57,7 @@ const Json = ({ field: { name, required, title }, disabled, initialValues }: Pro
 )
 
 const Datetime = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
   const form = Form.useFormInstance()
 
   const handleDateChange = (dateString: string) => {
@@ -68,6 +69,7 @@ const Datetime = ({ field: { name, required, title }, disabled, initialValues }:
   return (
     <FormItem label={title} name={name} required={required} initialValue={initialDatetime}>
       <DatePicker
+        placeholder={intl.formatMessage({ defaultMessage: '请选择日期时间' })}
         disabled={disabled}
         className="w-full"
         showTime

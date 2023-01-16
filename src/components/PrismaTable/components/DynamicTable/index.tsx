@@ -1,8 +1,7 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { useMutation, useQuery } from '@apollo/client'
-import { Button, ConfigProvider, Empty, Popover, Table } from 'antd'
+import { Button, Empty, Popover, Table } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
-import zhCN from 'antd/lib/locale-provider/zh_CN'
 import type { SorterResult } from 'antd/lib/table/interface'
 import { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
@@ -183,7 +182,7 @@ const DynamicTable = ({
   columns.push(usage === 'connection' ? connectAction : dataPreviewAction)
 
   return (
-    <ConfigProvider locale={zhCN}>
+    <>
       <div className="bg-white flex flex-shrink-0 h-54px px-11 justify-start items-center">
         <span className="font-medium text-16px">{currentModel.name}</span>
         <span className="mr-auto ml-3 text-14px text-[#118aD1]">model</span>
@@ -247,7 +246,7 @@ const DynamicTable = ({
         namespace={namespace}
         setModalVisible={setCreateModalVisible}
       />
-    </ConfigProvider>
+    </>
   )
 }
 
