@@ -14,7 +14,7 @@ import ApiConfig from '@/components/ApiConfig'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
@@ -33,7 +33,8 @@ async function fetcher(rec: Record<string, unknown>) {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-FB-Authentication': getAuthKey() || ''
       },
       body: JSON.stringify(rec)
     }).then(resp => resp.json())

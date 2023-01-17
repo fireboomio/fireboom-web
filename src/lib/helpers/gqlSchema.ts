@@ -6,6 +6,8 @@ import {
   printSchema
 } from 'graphql'
 import { Uri } from 'monaco-editor'
+
+import { getAuthKey } from '../fetchers'
 // import type { SchemaConfig } from 'monaco-graphql/src/typings'
 
 const API_TOKEN = null
@@ -77,7 +79,8 @@ class MySchemaFetcher {
         method: 'POST',
         headers: {
           ...headers,
-          ...this._currentSchema.headers
+          ...this._currentSchema.headers,
+          'X-FB-Authentication': getAuthKey() || ''
         },
         body: JSON.stringify(
           {

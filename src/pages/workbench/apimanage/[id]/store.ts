@@ -11,7 +11,7 @@ import { isEqual, keyBy } from 'lodash'
 import create from 'zustand'
 
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
 import { parseSchemaAST } from './components/GraphiQL/utils'
@@ -215,7 +215,8 @@ export const useAPIManager = create<APIState>((set, get) => ({
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-FB-Authentication': getAuthKey() || ''
       },
       body: JSON.stringify({ query: getIntrospectionQuery() })
     })
