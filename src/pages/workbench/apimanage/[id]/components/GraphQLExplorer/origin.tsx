@@ -3110,7 +3110,6 @@ class ExplorerWrapper extends React.PureComponent<
   }
 
   render() {
-    console.log('=====this', this.props)
     return (
       <div
         // Updated
