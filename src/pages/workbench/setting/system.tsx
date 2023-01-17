@@ -5,7 +5,7 @@ import { Alert, Descriptions, Input, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
@@ -17,6 +17,8 @@ dayjs.extend(duration)
 interface systemConfig {
   apiHost: string
   apiPort: string
+  listenHost: string
+  listenPort: string
   debugSwitch: boolean
   devSwitch: boolean
   forcedJumpSwitch: boolean
@@ -34,6 +36,8 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
+  const [isListenHostEditing, setIsListenHostEditing] = useImmer(false)
+  const [isListenPortEditing, setIsListenPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
   const [refreshFlag, setRefreshFlag] = useState<boolean | null | undefined>()
@@ -170,6 +174,70 @@ export default function SettingMainVersion() {
                 }}
               />
             </Descriptions.Item>
+            <Descriptions.Item
+              label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
+              className="w-20"
+            >
+              {isListenHostEditing ? (
+                <Input
+                  defaultValue={systemConfig.listenHost}
+                  autoFocus
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
+                  type="text"
+                  onBlur={e => {
+                    setIsListenHostEditing(!isListenHostEditing)
+                    void editPort('listenHost', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsListenHostEditing(!isListenHostEditing)
+                    void editPort('listenHost', e.currentTarget.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.listenHost}</span>
+              )}
+              <img
+                alt="bianji"
+                src="assets/iconfont/bianji.svg"
+                style={{ height: '1em', width: '1em' }}
+                className="ml-2"
+                onClick={() => {
+                  setIsListenHostEditing(!isListenHostEditing)
+                }}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={intl.formatMessage({ defaultMessage: '服务器监听端口' })}
+              className="w-20"
+            >
+              {isListenPortEditing ? (
+                <Input
+                  defaultValue={systemConfig.listenPort}
+                  autoFocus
+                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
+                  type="text"
+                  onBlur={e => {
+                    setIsListenPortEditing(!isListenPortEditing)
+                    void editPort('listenPort', e.target.value)
+                  }}
+                  onPressEnter={e => {
+                    setIsListenPortEditing(!isListenPortEditing)
+                    void editPort('listenPort', e.currentTarget.value)
+                  }}
+                />
+              ) : (
+                <span>{systemConfig.listenPort}</span>
+              )}
+              <img
+                alt="bianji"
+                src="assets/iconfont/bianji.svg"
+                style={{ height: '1em', width: '1em' }}
+                className="ml-2"
+                onClick={() => {
+                  setIsListenPortEditing(!isListenPortEditing)
+                }}
+              />
+            </Descriptions.Item>
             {/*<Descriptions.Item label="中间件端口:">*/}
             {/*  {isMidPortEditing ? (*/}
             {/*    <Input*/}
@@ -210,27 +278,6 @@ export default function SettingMainVersion() {
                   debug
                 </Radio>
                 <Radio value={3}> error </Radio>
-              </Radio.Group>
-            </Descriptions.Item>
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '开发环境' })}>
-              <Radio.Group
-                value={systemConfig.devSwitch}
-                onChange={e => {
-                  if (e.target.value) {
-                    requests.post('/global', {
-                      key: 'enableGraphQLEndpoint',
-                      val: true
-                    })
-                  }
-                  onChange(e, 'devSwitch')
-                }}
-              >
-                <Radio value={true} className="mr-15">
-                  <FormattedMessage defaultMessage="开发环境" />
-                </Radio>
-                <Radio value={false}>
-                  <FormattedMessage defaultMessage="生产环境" />
-                </Radio>
               </Radio.Group>
             </Descriptions.Item>
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: '调试' })}>

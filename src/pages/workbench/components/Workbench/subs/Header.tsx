@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
@@ -14,6 +15,7 @@ import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
+  const { config } = useConfigContext()
 
   const hotkeys = useMemo(
     () => [
@@ -80,6 +82,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     props.engineStatus === ServiceStatus.Compiling || props.engineStatus === ServiceStatus.Starting
 
   const doCompile = () => {
+    if (!config.devSwitch) {
+      message.error('生产环境禁止重新编译')
+      return
+    }
     if (compiling) {
       return
     }
@@ -190,13 +196,15 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            <div className={styles.headBtn} onClick={doCompile}>
-              {!compiling ? (
-                <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
-              ) : (
-                <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />
-              )}
-            </div>
+            {config.devSwitch ? (
+              <div className={styles.headBtn} onClick={doCompile}>
+                {!compiling ? (
+                  <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
+                ) : (
+                  <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />
+                )}
+              </div>
+            ) : null}
             <div
               className={styles.headBtn}
               onClick={() => window.open('/#/workbench/rapi', '_blank')}
