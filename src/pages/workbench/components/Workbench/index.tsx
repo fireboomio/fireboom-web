@@ -14,7 +14,7 @@ import type {
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useEventBus } from '@/lib/event/events'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
@@ -73,7 +73,9 @@ export default function Index(props: PropsWithChildren) {
   useEffect(() => {
     const controller = new AbortController()
     const signal = controller.signal
-    fetch(`/api/v1/wdg/state`, { signal }).then(res => {
+    const headers = new Headers()
+    headers.set('X-FB-Authentication', getAuthKey() ?? '')
+    fetch(`/api/v1/wdg/state`, { signal, headers }).then(res => {
       const reader = res.body?.getReader()
       if (!reader) return
 
@@ -86,6 +88,7 @@ export default function Index(props: PropsWithChildren) {
           const data = new Response(value)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           void data.text().then(res => {
+            console.log('====res', res)
             const status = matchJson(res).pop()
             status.engineStatus = ServiceStatus.Running
             if (status) {
