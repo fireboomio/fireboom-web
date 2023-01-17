@@ -1,10 +1,12 @@
+import events from '@/lib/event/events'
+
 const serverModule = new URL('/socketWorker.js', window.location.href).href
 console.log('===createWebSocketWorker===')
 // const serverModule = new URL('/src/lib/socket/worker.ts', window.location.href).href
 const webSocketWorker = new SharedWorker(serverModule, {
   type: 'module',
   credentials: 'same-origin',
-  name: 'socketWorker'
+  name: '_socketWorker'
 })
 export default {}
 
@@ -21,11 +23,13 @@ const sendMessageToSocket = message => {
 
 // Event to listen for incoming data from the worker and update the DOM.
 webSocketWorker.port.addEventListener('message', ({ data }) => {
-  console.log('data', data)
-  switch (data.channel) {
-    case 'engine:state':
-      break
+  if (data.channel) {
+    events.emit({ event: 'wsEvent', channel: data.channel, data: data.data })
   }
+  // switch (data.channel) {
+  //   case 'engine:state':
+  //     break
+  // }
 })
 
 // Initialize the port connection.

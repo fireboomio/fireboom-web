@@ -6,12 +6,16 @@ const connectedPorts = []
 // Create socket instance.
 let socket = null
 const test = Math.random()
-console.log('===socketWorker')
-
+const wsUrl = new URL(location)
+wsUrl.protocol = 'ws:'
+wsUrl.pathname = '/ws'
+if(wsUrl.port === '3000') {
+  wsUrl.port = '9123'
+}
 function openSocket() {
   let heartbeatTimer
   let pingCounter = 0
-  const _socket = new WebSocket('ws://192.168.202.223:9123/ws')
+  const _socket = new WebSocket(wsUrl.href)
   _socket.addEventListener('open', () => {
     _socket.send('connected test')
     sendQueue.forEach(item => {
@@ -40,9 +44,7 @@ function openSocket() {
       pingCounter = 0
       return
     }
-    console.log('socketGotMessage1', data, test)
     const payload = JSON.parse(data)
-    console.log('socketGotMessage2', payload, test)
     connectedPorts.forEach(port => port.postMessage(payload))
   })
 }
