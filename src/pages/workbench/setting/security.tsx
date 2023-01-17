@@ -169,6 +169,7 @@ function AuthMainSetting() {
 }
 
 export default function SettingMainSecurity() {
+  const intl = useIntl()
   const [form] = Form.useForm()
   const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
@@ -243,7 +244,7 @@ export default function SettingMainSecurity() {
             <Form.Item
               label={
                 <div>
-                  <span>允许主机</span>
+                  <span>{intl.formatMessage({ defaultMessage: '允许主机' })}</span>
                   <FormToolTip
                     className="!left-4"
                     title={<img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />}
@@ -265,7 +266,9 @@ export default function SettingMainSecurity() {
                   })
                 }}
               />
-              <span className="text-default ml-4">允许全部</span>
+              <span className="text-default ml-4">
+                {intl.formatMessage({ defaultMessage: '允许全部' })}
+              </span>
             </Form.Item>
             {!securConfig.allowedHostsEnable && (
               <Form.Item

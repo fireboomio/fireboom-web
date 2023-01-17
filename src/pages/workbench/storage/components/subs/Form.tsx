@@ -220,7 +220,7 @@ export default function StorageForm({ content, showErr }: Props) {
               handleSwitch('detail', content?.id)
             }}
           >
-            <span>取消</span>
+            <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
           </Button>
           <Button className="ml-4 btn-test" onClick={() => handleTest()} loading={testing}>
             <FormattedMessage defaultMessage="测试" />

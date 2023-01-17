@@ -169,7 +169,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     }),
     [intl]
   )
-  const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type])
+  const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type, intl])
   const navigate = useNavigate()
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
