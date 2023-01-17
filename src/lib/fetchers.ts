@@ -45,6 +45,12 @@ requests.interceptors.request.use((config: AxiosRequestConfig<any>) => {
   config.headers['X-FB-Authentication'] = authKey ?? ''
   return config
 })
+axios.interceptors.request.use((config: AxiosRequestConfig<any>) => {
+  // @ts-ignore
+  config.headers['X-FB-Authentication'] = authKey ?? ''
+  return config
+})
+
 export const hasAuthKey = () => {
   return !!authKey
 }

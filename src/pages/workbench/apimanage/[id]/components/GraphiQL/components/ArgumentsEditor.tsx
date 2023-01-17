@@ -184,7 +184,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   }, [props.apiID, props.arguments])
 
   return (
-    <div className="arguments-editor">
+    <div className="arguments-editor max-h-50vh overflow-y-scroll">
       <table className="min-w-120">
         <thead>
           <tr>
