@@ -6,6 +6,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "buildPrismaWorker": "npm run build --workspace src/lib/prisma",
+    "buildSocketWorker": "npm run build --workspace src/lib/socket",
     "serve": "vite preview",
     "lint": "pnpm lint:ts && pnpm lint:css",
     "lint:ts": "eslint ./src --fix",
@@ -113,6 +114,7 @@
     "extends": "@doremijs/stylelint-config"
   },
   "workspaces": [
-    "src/lib/prisma"
+    "src/lib/prisma",
+    "src/lib/socket"
   ]
 }
