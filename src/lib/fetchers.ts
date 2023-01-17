@@ -61,7 +61,9 @@ export function setAuthKey(key: string, callback?: () => void) {
   invalidCallback = callback
   localStorage.setItem(AUTH_STORAGE_KEY, key)
 }
-
+export function getAuthKey() {
+  return authKey
+}
 export const getFetcher = <T>(
   url: string,
   params?: Record<string, unknown>,
