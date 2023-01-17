@@ -69,7 +69,7 @@ export const getFetcher = <T>(
   params?: Record<string, unknown>,
   config?: Record<string, unknown>
 ) => {
-  requests.get<unknown, T>(url, { ...config, params: params }).then(res => {
+  return requests.get<unknown, T>(url, { ...config, params: params }).then(res => {
     return res
   })
 }
