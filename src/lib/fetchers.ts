@@ -11,10 +11,6 @@ const requests = axios.create({
 
 requests.interceptors.response.use(
   <T>(resp: AxiosResponse<any, any>) => {
-    if (resp.status === 401 || resp.config.url == '/storageBucket') {
-      invalidCallback?.()
-      setAuthKey('')
-    }
     if (resp.status >= 200 && resp.status < 300) {
       // FIXME: 生效代码适配文件存储列表接口
       // return resp.data.result ?? (resp.data as unknown as T)
@@ -27,6 +23,10 @@ requests.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      invalidCallback?.()
+      setAuthKey('')
+    }
     const errMag = error?.config?.resolveErrorMsg?.(error.response)
     message.error(
       errMag ??

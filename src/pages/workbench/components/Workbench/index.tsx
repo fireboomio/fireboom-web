@@ -13,7 +13,7 @@ import type {
   WorkbenchListener
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import events from '@/lib/event/events'
+import events, { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { matchJson } from '@/lib/utils'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
@@ -64,6 +64,12 @@ export default function Index(props: PropsWithChildren) {
     })
   }, [])
 
+  useEventBus('wsEvent', ({ channel, data }) => {
+    if (channel === 'engine:status') {
+      setInfo(data)
+    }
+  })
+
   useEffect(() => {
     const controller = new AbortController()
     const signal = controller.signal
@@ -81,6 +87,7 @@ export default function Index(props: PropsWithChildren) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           void data.text().then(res => {
             const status = matchJson(res).pop()
+            status.engineStatus = ServiceStatus.Running
             if (status) {
               setInfo(status)
               // 发生变化才通知
