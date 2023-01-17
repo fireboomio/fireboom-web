@@ -35,6 +35,14 @@ requests.interceptors.response.use(
   }
 )
 
+export function setAuthKey(key: string) {
+  requests.interceptors.request.use(req => {
+    req.headers = req.headers ?? {}
+    req.headers['X-FB-Authentication'] = key
+  })
+  return requests
+}
+
 export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
   requests.get<unknown, T>(url, { params: params }).then(res => {
     return res

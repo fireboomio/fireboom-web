@@ -8,14 +8,17 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 
 import App from './App'
+import Authentication from './components/Authentication'
 import IntlProvider from './providers/IntlProvider'
 
 const container = document.getElementById('app')
 const root = createRoot(container!)
 root.render(
-  <HashRouter>
-    <IntlProvider>
-      <App />
-    </IntlProvider>
-  </HashRouter>
+  <IntlProvider>
+    <Authentication>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </Authentication>
+  </IntlProvider>
 )
