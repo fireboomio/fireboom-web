@@ -41,6 +41,7 @@ const AUTH_STORAGE_KEY = '__fb_authKey'
 let authKey = localStorage.getItem(AUTH_STORAGE_KEY)
 let invalidCallback: (() => void) | undefined
 requests.interceptors.request.use((config: AxiosRequestConfig<any>) => {
+  config.headers = config.headers || {}
   // @ts-ignore
   config.headers['X-FB-Authentication'] = authKey ?? ''
   return config
@@ -59,6 +60,10 @@ export function setAuthKey(key: string, callback?: () => void) {
   authKey = key
   invalidCallback = callback
   localStorage.setItem(AUTH_STORAGE_KEY, key)
+}
+
+export function getAuthKey() {
+  return authKey
 }
 
 export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
