@@ -1,5 +1,3 @@
-import '@/lib/socket/index'
-
 import { Layout as ALayout, Modal } from 'antd'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'

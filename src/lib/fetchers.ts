@@ -32,7 +32,7 @@ requests.interceptors.response.use(
       errMag ??
         // @ts-ignore
         error?.response?.data?.message ??
-        intl.formatMessage({ defaultMessage: '网络请求错,误！' })
+        intl.formatMessage({ defaultMessage: '网络请求错误！' })
     )
     return Promise.reject(error)
   }
@@ -61,8 +61,12 @@ export function setAuthKey(key: string, callback?: () => void) {
   localStorage.setItem(AUTH_STORAGE_KEY, key)
 }
 
-export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
-  requests.get<unknown, T>(url, { params: params }).then(res => {
+export const getFetcher = <T>(
+  url: string,
+  params?: Record<string, unknown>,
+  config?: Record<string, unknown>
+) =>
+  requests.get<unknown, T>(url, { ...config, params: params }).then(res => {
     return res
   })
 

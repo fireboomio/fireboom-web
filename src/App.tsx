@@ -1,3 +1,5 @@
+import '@/lib/socket/index'
+
 import { ConfigProvider } from 'antd'
 import enUS from 'antd/lib/locale-provider/en_US'
 import zhCN from 'antd/lib/locale-provider/zh_CN'
@@ -7,7 +9,6 @@ import { useRoutes } from 'react-router-dom'
 import routes from '~react-pages'
 
 import { useAppIntl } from './providers/IntlProvider'
-
 // import Layout from './components/layout'
 // import Workbench from './components/workbench'
 

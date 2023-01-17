@@ -1,9 +1,10 @@
 const serverModule = new URL('/socketWorker.js', window.location.href).href
+console.log('===createWebSocketWorker===')
 // const serverModule = new URL('/src/lib/socket/worker.ts', window.location.href).href
 const webSocketWorker = new SharedWorker(serverModule, {
   type: 'module',
   credentials: 'same-origin',
-  name: 'socketWorker3'
+  name: 'socketWorker'
 })
 export default {}
 
@@ -21,11 +22,14 @@ const sendMessageToSocket = message => {
 // Event to listen for incoming data from the worker and update the DOM.
 webSocketWorker.port.addEventListener('message', ({ data }) => {
   console.log('data', data)
+  switch (data.channel) {
+    case 'engine:state':
+      break
+  }
 })
 
 // Initialize the port connection.
 webSocketWorker.port.start()
-webSocketWorker.port.postMessage({ data: { aa: 111 } })
 window.webSocketWorker = webSocketWorker
 
 // Remove the current worker port from the connected ports list.
