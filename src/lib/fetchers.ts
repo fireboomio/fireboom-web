@@ -1,8 +1,7 @@
 import { message } from 'antd'
-import type { AxiosError, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 
-import type { Result } from '@/interfaces/common'
 import { intl } from '@/providers/IntlProvider'
 
 const requests = axios.create({
@@ -11,7 +10,11 @@ const requests = axios.create({
 })
 
 requests.interceptors.response.use(
-  <T>(resp: AxiosResponse<Result<T>>) => {
+  <T>(resp: AxiosResponse<any, any>) => {
+    if (resp.status === 401 || resp.config.url == '/storageBucket') {
+      invalidCallback?.()
+      setAuthKey('')
+    }
     if (resp.status >= 200 && resp.status < 300) {
       // FIXME: 生效代码适配文件存储列表接口
       // return resp.data.result ?? (resp.data as unknown as T)
@@ -24,23 +27,32 @@ requests.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
-    const errMag = error.config.resolveErrorMsg?.(error.response)
+    const errMag = error?.config?.resolveErrorMsg?.(error.response)
     message.error(
       errMag ??
         // @ts-ignore
         error?.response?.data?.message ??
-        intl.formatMessage({ defaultMessage: '网络请求错误！' })
+        intl.formatMessage({ defaultMessage: '网络请求错,误！' })
     )
     return Promise.reject(error)
   }
 )
+const AUTH_STORAGE_KEY = '__fb_authKey'
+let authKey = localStorage.getItem(AUTH_STORAGE_KEY)
+let invalidCallback: (() => void) | undefined
+requests.interceptors.request.use((config: AxiosRequestConfig<any>) => {
+  // @ts-ignore
+  config.headers['X-FB-Authentication'] = authKey ?? ''
+  return config
+})
+export const hasAuthKey = () => {
+  return !!authKey
+}
 
-export function setAuthKey(key: string) {
-  requests.interceptors.request.use(req => {
-    req.headers = req.headers ?? {}
-    req.headers['X-FB-Authentication'] = key
-  })
-  return requests
+export function setAuthKey(key: string, callback?: () => void) {
+  authKey = key
+  invalidCallback = callback
+  localStorage.setItem(AUTH_STORAGE_KEY, key)
 }
 
 export const getFetcher = <T>(url: string, params?: Record<string, unknown>) =>
