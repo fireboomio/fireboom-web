@@ -34,6 +34,7 @@ export interface APIDesc {
   restUrl: string
   liveQuery: boolean
   setting: {
+    enable: boolean
     authenticationRequired: boolean
     cachingEnable: boolean
     cachingMaxAge: number
