@@ -56,6 +56,7 @@ export default function APIEditorContainer() {
   const [dataSourceList, setDataSourceList] = useState<string[]>([])
   const {
     query,
+    editorQuery,
     schema,
     setQuery,
     refreshSchema,
@@ -67,6 +68,7 @@ export default function APIEditorContainer() {
     operationType
   } = useAPIManager(state => ({
     query: state.query,
+    editorQuery: state.editorQuery,
     schemaAST: state.schemaAST,
     schema: state.schema,
     setQuery: state.setQuery,
@@ -141,12 +143,13 @@ export default function APIEditorContainer() {
       }
       // 加个延迟 让鼠标事件先执行
       setTimeout(() => {
+        // 2023-01-18 移除isEditing的判断，因为command组合键在松开字母键时不会触发keyup，导致isEditing状态不能及时更新
         // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
         if (!isEditingRef.current) {
           // 节流设置值
           contentUpdateTimeout.current = window.setTimeout(() => {
             setQuery(editingContent.current, true)
-          }, 1500)
+          }, 500)
         }
       }, 100)
     },
@@ -158,7 +161,7 @@ export default function APIEditorContainer() {
       <GraphiQL
         fetcher={fetcher}
         schema={schema}
-        query={query}
+        query={editorQuery}
         // ref={x => (ref.current = x)}
         onEditQuery={onEditQuery}
         defaultEditorToolsVisibility={false}
