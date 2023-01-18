@@ -9,6 +9,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../store'
@@ -62,8 +63,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
   }
 
-  const toggleEnable = async (checked: boolean) => {
+  const toggleEnable = useLock(async (checked: boolean) => {
     try {
+      console.log('====runed')
       await changeEnable(checked)
       message.success(
         checked
@@ -73,7 +75,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     } catch (error) {
       //
     }
-  }
+  }, [])
 
   const isLive = useMemo(() => {
     return apiDesc?.liveQuery
