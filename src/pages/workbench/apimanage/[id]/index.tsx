@@ -145,7 +145,7 @@ export default function APIEditorContainer() {
         if (!isEditingRef.current) {
           // 节流设置值
           contentUpdateTimeout.current = window.setTimeout(() => {
-            setQuery(editingContent.current)
+            setQuery(editingContent.current, true)
           }, 1500)
         }
       }, 100)

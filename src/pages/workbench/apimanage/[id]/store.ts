@@ -51,8 +51,9 @@ export interface APIState {
   schema: GraphQLSchema | undefined
   schemaTypeMap: Record<string, IntrospectionType>
   query: string
+  queryForSave: string
   lastSavedQuery: string | undefined
-  setQuery: (v: string) => void
+  setQuery: (v: string, skipQuery?: boolean) => void
   clearHistoryFlag: boolean // 通知编辑器需要清空历史记录，用于切换api时清除旧api的内容
   schemaAST: DocumentNode | undefined
   _workbenchContext: WorkbenchContextType | undefined
@@ -89,6 +90,7 @@ function isQueryHasContent(query: string) {
 export const useAPIManager = create<APIState>((set, get) => ({
   apiDesc: undefined,
   query: DEFAULT_QUERY,
+  queryForSave: DEFAULT_QUERY,
   lastSavedQuery: undefined,
   apiID: '',
   setID: async (id: string) => {
@@ -96,8 +98,11 @@ export const useAPIManager = create<APIState>((set, get) => ({
     await get().refreshAPI()
     refreshFns.forEach(fn => fn())
   },
-  setQuery(query) {
-    set({ query: query || DEFAULT_QUERY })
+  setQuery(query, skipQuery = false) {
+    if (!skipQuery) {
+      set({ query: query || DEFAULT_QUERY })
+    }
+    set({ queryForSave: query || DEFAULT_QUERY })
     try {
       if (!isQueryHasContent(query)) {
         set({ schemaAST: undefined })
@@ -189,7 +194,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
     })
   },
   autoSave() {
-    return get().updateContent(get().query, false)
+    return get().updateContent(get().queryForSave, false)
   },
   refreshAPI: async () => {
     const id = get().apiID

@@ -139,7 +139,7 @@ export function GraphiQL({
       validationRules={validationRules}
       variables={variables}
     >
-      <GraphiQLInterface {...props} query={query} />
+      <GraphiQLInterface {...props} />
     </GraphiQLProvider>
   )
 }
@@ -186,19 +186,6 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     clearHistoryFlag: state.clearHistoryFlag
   }))
   const editorCtx = useEditorContext()
-  useEffect(() => {
-    const editorQuery = editorCtx?.queryEditor?.getValue?.()
-    if (editorQuery) {
-      if (editorQuery !== props.query) {
-        console.trace('===query且与编辑器不同步，触发刷新===')
-        console.log('>>>>>')
-        console.log(editorQuery)
-        console.log('=====')
-        console.log(props.query)
-        console.log('<<<<<')
-      }
-    }
-  }, [props.query])
   const { dragRef, elRef, parentRef, isHidden, resetSize } = useDragResize({
     direction: 'vertical',
     maxSize: 600
