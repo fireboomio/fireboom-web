@@ -17,7 +17,7 @@ dayjs.extend(duration)
 interface systemConfig {
   apiHost: string
   apiPort: string
-  listenAddr: string
+  listenHost: string
   listenPort: string
   debugSwitch: boolean
   devSwitch: boolean
@@ -36,7 +36,7 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
   const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
-  const [isListenAddrEditing, setisListenAddrEditing] = useImmer(false)
+  const [isListenHostEditing, setisListenHostEditing] = useImmer(false)
   const [isListenPortEditing, setIsListenPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
   const [count, setCount] = useImmer(0)
@@ -178,23 +178,23 @@ export default function SettingMainVersion() {
               label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
               className="w-20"
             >
-              {isListenAddrEditing ? (
+              {isListenHostEditing ? (
                 <Input
-                  defaultValue={systemConfig.listenAddr}
+                  defaultValue={systemConfig.listenHost}
                   autoFocus
                   style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   type="text"
                   onBlur={e => {
-                    setisListenAddrEditing(!isListenAddrEditing)
-                    void editPort('listenAddr', e.target.value)
+                    setisListenHostEditing(!isListenHostEditing)
+                    void editPort('listenHost', e.target.value)
                   }}
                   onPressEnter={e => {
-                    setisListenAddrEditing(!isListenAddrEditing)
-                    void editPort('listenAddr', e.currentTarget.value)
+                    setisListenHostEditing(!isListenHostEditing)
+                    void editPort('listenHost', e.currentTarget.value)
                   }}
                 />
               ) : (
-                <span>{systemConfig.listenAddr}</span>
+                <span>{systemConfig.listenHost}</span>
               )}
               <img
                 alt="bianji"
@@ -202,7 +202,7 @@ export default function SettingMainVersion() {
                 style={{ height: '1em', width: '1em' }}
                 className="ml-2"
                 onClick={() => {
-                  setisListenAddrEditing(!isListenAddrEditing)
+                  setisListenHostEditing(!isListenHostEditing)
                 }}
               />
             </Descriptions.Item>
