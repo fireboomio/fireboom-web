@@ -1,15 +1,24 @@
-export function lockFunction<T>(
-  fun: (...arg: any) => Promise<T>
+import { useCallback, useEffect, useRef } from 'react'
+
+export function useLock<T>(
+  fun: (...arg: any) => Promise<T>,
+  deps: any
 ): (...arg: any) => Promise<T | undefined> {
+  console.log('createLock')
   // 解析options
   // 保存原始方法
-  const originFun = fun
+  const originFun = useRef(fun)
   // 锁变量
-  let lock = false
+  let lock = useRef(false)
+  useEffect(() => {
+    originFun.current = fun
+    lock.current = false
+  }, deps)
   // 覆盖为带锁版本
-  return async function (...arg) {
+  return useCallback(async function (...arg) {
+    console.log('run lock', lock.current)
     // 执行中，忽略本次调用
-    if (lock) {
+    if (lock.current) {
       return
     }
 
@@ -17,11 +26,11 @@ export function lockFunction<T>(
     let excuteResult, excuteError
 
     // 上锁
-    lock = true
+    lock.current = true
 
     // 执行原始方法
     try {
-      excuteResult = await originFun(...arg)
+      excuteResult = await originFun.current(...arg)
     } catch (e) {
       excuteError = e
     }
@@ -32,7 +41,7 @@ export function lockFunction<T>(
     // }
 
     // 解锁
-    lock = false
+    lock.current = false
 
     // 如果原始方法执行时发生异常，则自动抛出
     if (excuteError) {
@@ -40,5 +49,5 @@ export function lockFunction<T>(
     }
     // 返回执行结果
     return excuteResult
-  }
+  }, deps)
 }

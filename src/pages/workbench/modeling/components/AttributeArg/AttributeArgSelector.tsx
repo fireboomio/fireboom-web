@@ -83,6 +83,7 @@ const AttributeArgSelector = ({
         )}
         <div className={styles['child-select']}>
           <Select
+            style={{ width: '100%' }}
             value={selectedOptionsValue}
             bordered={false}
             mode={multiSelect ? 'multiple' : undefined}

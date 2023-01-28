@@ -88,7 +88,6 @@ export default function Index(props: PropsWithChildren) {
           const data = new Response(value)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           void data.text().then(res => {
-            console.log('====res', res)
             const status = matchJson(res).pop()
             status.engineStatus = ServiceStatus.Running
             if (status) {

@@ -42,11 +42,9 @@ export function registerHotkeyHandler(hotkey: string, ...args: any) {
   } else {
     hotkeys(hotkey, handler)
   }
-  console.log(`Hotkey: ${hotkey} registed`)
 
   return () => {
     hotkeys.unbind(hotkey, hotkeyMap[hotkey])
     delete hotkeyMap[hotkey]
-    console.log(`Hotkey: ${hotkey} unbind`)
   }
 }

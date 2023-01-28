@@ -2081,6 +2081,7 @@ class FieldView extends React.PureComponent<
 
 function parseQuery(text: string): (DocumentNode | null | undefined) | Error {
   try {
+    text = text.replace(/^#.*$/gm, '')
     if (!text.trim()) {
       return null
     }
@@ -2122,8 +2123,7 @@ function memoizeParseQuery(query: string): DocumentNode {
     return parseQueryMemoize[1]
   } else {
     const result = parseQuery(query)
-
-    if (!result) {
+    if (!result || !query) {
       return DEFAULT_DOCUMENT
     } else if (result instanceof Error) {
       if (parseQueryMemoize) {
