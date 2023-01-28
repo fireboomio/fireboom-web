@@ -213,11 +213,7 @@ const ModelEntityItem = ({
           leaveItem(v)
         }}
       >
-        <div
-          className={styles.dropdownIcon}
-          onClick={e => e.stopPropagation()}
-          style={{ visibility: isHovering ? 'visible' : 'hidden' }}
-        >
+        <div className={styles.dropdownIcon} onClick={e => e.stopPropagation()}>
           <img src={iconMore} alt="菜单" />
         </div>
       </Dropdown>
