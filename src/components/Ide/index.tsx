@@ -133,6 +133,7 @@ const IdeContainer: FC<Props> = props => {
   const [fullScreen, setFullScreen] = useState(false)
   // 是否缩小依赖区域
   const [smallDepend, setSmallDepend] = useState(false)
+  const [scriptList, setScriptList] = useState<string[]>()
   const [tabSize, setTabSize] = useState(localStorage.getItem(tabSizeKey) === '2' ? 2 : 4)
   const [savePayload, setPayload] = useState<AutoSavePayload>({
     type: 'passive',
@@ -185,6 +186,23 @@ const IdeContainer: FC<Props> = props => {
       })
     }
   }
+
+  // scriptList和monaco加载完毕后，将所有scriptList中的代码加载到monaco中
+  useEffect(() => {
+    if (!scriptList || !monaco) return
+    ;(async () => {
+      for (let i = 0; i < scriptList.length; i++) {
+        const path = `inmemory://model/hook/${scriptList[i]}.ts`
+        const model = monaco.editor.getModel(path)
+        if (!model) {
+          const data = await getHook<HookInfo>(scriptList[i])
+          if (!monaco.editor.getModel(path)) {
+            monaco.editor.createModel(data.script, 'typescript', monaco.Uri.parse(path))
+          }
+        }
+      }
+    })()
+  }, [scriptList, monaco])
 
   useEffect(() => {
     // 监听键盘的ctrl+s事件
@@ -253,6 +271,7 @@ const IdeContainer: FC<Props> = props => {
     setEditor(monacoEditor)
     setMonaco(monaco)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
+    console.log('******', hookPath, model)
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
 
@@ -311,6 +330,10 @@ const IdeContainer: FC<Props> = props => {
   const selectHook = (hookPath: string) => {
     setHookPath(hookPath)
     props.onSelectHook?.(hookPath)
+  }
+  // scriptListLoad回调
+  const scriptListLoad = (list: string[]) => {
+    setScriptList(list)
   }
   // dependchange回调
   const dependChange = (depend: Depend) => {
@@ -454,7 +477,8 @@ const IdeContainer: FC<Props> = props => {
                 onRefreshLocalDepend: refreshLocalDepend,
                 onDependRefresh: dependRefresh,
                 onDependDelete: dependRemove,
-                onInsertLocalDepend: insertLocalDepend
+                onInsertLocalDepend: insertLocalDepend,
+                onScriptListLoad: scriptListLoad
               }}
               localDepends={localDepends.map(item => item.name)}
             />
