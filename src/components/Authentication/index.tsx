@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { SystemConfigType } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests, { hasAuthKey, setAuthKey } from '@/lib/fetchers'
+import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
 
 interface AuthenticationProps {
   children: ReactElement
@@ -14,10 +14,15 @@ interface AuthenticationProps {
 const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
-  const onSubmit = ({ key }: { key: string }) => {
-    setAuthKey(key, () => {
+  const authState = useAuthState()
+  console.log('=======authState', authState)
+  useEffect(() => {
+    if (!authState) {
       setAuthed(false)
-    })
+    }
+  }, [authState])
+  const onSubmit = ({ key }: { key: string }) => {
+    setAuthKey(key)
     setAuthed(true)
   }
   const [config, setConfig] = useState<SystemConfigType>({} as SystemConfigType)

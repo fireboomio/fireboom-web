@@ -1,6 +1,8 @@
 import { message } from 'antd'
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
+import { throttle } from 'lodash'
+import { useSyncExternalStore } from 'react'
 
 import { intl } from '@/providers/IntlProvider'
 
@@ -8,6 +10,8 @@ const requests = axios.create({
   baseURL: '/api/v1',
   timeout: 5000
 })
+
+const errToast = throttle(str => message.error(str), 1000)
 
 requests.interceptors.response.use(
   <T>(resp: AxiosResponse<any, any>) => {
@@ -24,11 +28,10 @@ requests.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      invalidCallback?.()
       setAuthKey('')
     }
     const errMag = error?.config?.resolveErrorMsg?.(error.response)
-    message.error(
+    errToast(
       errMag ??
         // @ts-ignore
         error?.response?.data?.message ??
@@ -39,7 +42,6 @@ requests.interceptors.response.use(
 )
 const AUTH_STORAGE_KEY = '__fb_authKey'
 let authKey = localStorage.getItem(AUTH_STORAGE_KEY)
-let invalidCallback: (() => void) | undefined
 requests.interceptors.request.use((config: AxiosRequestConfig<any>) => {
   config.headers = config.headers || {}
   // @ts-ignore
@@ -56,9 +58,19 @@ export const hasAuthKey = () => {
   return !!authKey
 }
 
-export function setAuthKey(key: string, callback?: () => void) {
+let authChangeCallback: (() => void) | undefined
+export const useAuthState = () => {
+  const subscribe = (cb: any) => {
+    authChangeCallback = cb
+    return () => {
+      authChangeCallback = undefined
+    }
+  }
+  return useSyncExternalStore(subscribe, () => hasAuthKey())
+}
+export function setAuthKey(key: string) {
   authKey = key
-  invalidCallback = callback
+  authChangeCallback?.()
   localStorage.setItem(AUTH_STORAGE_KEY, key)
 }
 export function getAuthKey() {
