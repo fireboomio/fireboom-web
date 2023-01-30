@@ -140,6 +140,7 @@ type DependListProps = {
   // 点击缩起依赖区域
   onFold: () => void
   // 依赖变化回调
+  onScriptListLoad?: (list: string[]) => void
   onDependChange?: (depend: Depend) => void
   // 依赖被删除回调
   onDependDelete?: (dependName: string) => void
@@ -316,7 +317,7 @@ const DependList = (props: DependListProps) => {
     )
   }
   const [treeData, setTreeData] = useState<any[]>([])
-  const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>([])
+  const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>({})
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
   useEffect(() => {
@@ -334,6 +335,7 @@ const DependList = (props: DependListProps) => {
   useEffect(() => {
     requests.get<unknown, any[]>('hook/model').then(res => {
       const map = {} as any
+      const scriptList: string[] = []
       const markKey = (data: TreeNode[], key: string): TreeNode[] => {
         return data.filter((item: TreeNode, index: number) => {
           // 临时移除path开头的前缀，后续接口更新后可以移除该操作
@@ -344,6 +346,9 @@ const DependList = (props: DependListProps) => {
             item.children = markKey(item.children || [], item.key)
           }
           map[item.path] = item.enable
+          if (!item.isDir) {
+            scriptList.push(item.path)
+          }
           return !item.isDir || item.children?.length
         })
       }
@@ -374,6 +379,7 @@ const DependList = (props: DependListProps) => {
         }
       }
       res = markKey(res, '')
+      props.onScriptListLoad?.(scriptList)
       setEnableMap(map)
       setTreeData(res)
     })
@@ -544,14 +550,3 @@ const DependList = (props: DependListProps) => {
 }
 
 export default DependList
-
-function findNodeInTree(treeData: TreeNode[], path: string) {
-  for (let i = 0; i < treeData.length; i++) {
-    if (path.startsWith(treeData[i].path)) {
-      if (path === treeData[i].path) {
-        return treeData[i]
-      }
-      return findNodeInTree(treeData[i].children ?? [], path)
-    }
-  }
-}

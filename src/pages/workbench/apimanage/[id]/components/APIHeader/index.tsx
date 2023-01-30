@@ -118,6 +118,11 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
     }
+    // @ts-ignore
+    if (schemaAST?.definitions[0].directives.find(x => x?.name?.value === 'internalOperation')) {
+      message.success(intl.formatMessage({ defaultMessage: '内部 API 无法通过链接访问' }))
+      return
+    }
     if (!config.apiHost) {
       const url = new URL(apiDesc?.restUrl!)
       url.hostname = location.hostname

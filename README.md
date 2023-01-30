@@ -14,3 +14,6 @@ export NODE_OPTIONS='--max-old-space-size=7680'
 npm run intl:extract
 npm run intl:compile
 ```
+
+## 替换npm库
+fireboom-prisma-ast —— https://github.com/woodensail/prisma-ast
