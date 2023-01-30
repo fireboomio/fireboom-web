@@ -15,7 +15,6 @@ const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
   const authState = useAuthState()
-  console.log('=======authState', authState)
   useEffect(() => {
     if (!authState) {
       setAuthed(false)
@@ -25,7 +24,7 @@ const Authentication = (props: AuthenticationProps) => {
     setAuthKey(key)
     setAuthed(true)
   }
-  const [config, setConfig] = useState<SystemConfigType>({} as SystemConfigType)
+  const [config, setConfig] = useState<SystemConfigType>()
   useEffect(() => {
     void refreshConfig()
   }, [])
