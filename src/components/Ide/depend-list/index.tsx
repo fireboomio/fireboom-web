@@ -317,7 +317,7 @@ const DependList = (props: DependListProps) => {
     )
   }
   const [treeData, setTreeData] = useState<any[]>([])
-  const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>([])
+  const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>({})
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
   useEffect(() => {
@@ -550,14 +550,3 @@ const DependList = (props: DependListProps) => {
 }
 
 export default DependList
-
-function findNodeInTree(treeData: TreeNode[], path: string) {
-  for (let i = 0; i < treeData.length; i++) {
-    if (path.startsWith(treeData[i].path)) {
-      if (path === treeData[i].path) {
-        return treeData[i]
-      }
-      return findNodeInTree(treeData[i].children ?? [], path)
-    }
-  }
-}

@@ -393,7 +393,7 @@ const IdeContainer: FC<Props> = props => {
         type: 'passive',
         status: AutoSaveStatus.EDIT
       })
-      saveTimer.current = setTimeout(() => {
+      saveTimer.current = window.setTimeout(() => {
         handleSave('passive')
       }, SAVE_DELAY)
     }
