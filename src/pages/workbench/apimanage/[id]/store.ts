@@ -197,6 +197,10 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
         // 内容变更可能需要刷新api列表
         get()._workbenchContext?.onRefreshMenu('api')
+        requests.get(`/operateApi/${get().apiID}`).then(api => {
+          // @ts-ignore
+          set({ apiDesc: { ...api, setting: get().apiDesc?.setting } })
+        })
         return true
       }
       return false

@@ -4,7 +4,7 @@ export function useLock<T>(
   fun: (...arg: any) => Promise<T>,
   deps: any
 ): (...arg: any) => Promise<T | undefined> {
-  console.log('createLock')
+  // console.log('createLock')
   // 解析options
   // 保存原始方法
   const originFun = useRef(fun)
@@ -16,7 +16,7 @@ export function useLock<T>(
   }, deps)
   // 覆盖为带锁版本
   return useCallback(async function (...arg) {
-    console.log('run lock', lock.current)
+    // console.log('run lock', lock.current)
     // 执行中，忽略本次调用
     if (lock.current) {
       return
