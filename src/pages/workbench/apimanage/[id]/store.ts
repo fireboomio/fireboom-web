@@ -252,11 +252,11 @@ export const useAPIManager = create<APIState>((set, get) => ({
         }
       })
       .catch(() => {
-        set({
-          originSchema: undefined,
-          schema: undefined,
-          schemaAST: undefined
-        })
+        // set({
+        //   originSchema: undefined,
+        //   schema: undefined,
+        //   schemaAST: undefined
+        // })
       })
   },
   appendToAPIRefresh: (fn: () => void) => {

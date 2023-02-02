@@ -92,6 +92,7 @@ export default function Index(props: Props) {
         // 如果修改的是实时查询，则需要刷新api面板=
         if (changedValues.liveQueryEnable !== undefined) {
           onRefreshMenu('api')
+          refreshAPI()
         }
         // 如果修改的是开启授权，则需要刷新当前api页面
         if (
