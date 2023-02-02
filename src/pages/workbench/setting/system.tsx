@@ -271,13 +271,11 @@ export default function SettingMainVersion() {
                   onChange(e, 'logLevel')
                 }}
               >
-                <Radio value={1} className="mr-15 ">
-                  info
-                </Radio>
-                <Radio value={2} className="mr-15">
-                  debug
-                </Radio>
-                <Radio value={3}> error </Radio>
+                <Radio value={-1}>Debug</Radio>
+                <Radio value={0}>Info</Radio>
+                <Radio value={1}>Warn</Radio>
+                <Radio value={2}>Error</Radio>
+                {/* <Radio value={5}>Fatal</Radio> */}
               </Radio.Group>
             </Descriptions.Item>
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: '调试' })}>
