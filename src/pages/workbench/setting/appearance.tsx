@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import { useAppIntl } from '@/providers/IntlProvider'
 
-import styles from './components/subs/subs.module.less'
+// import styles from './components/subs/subs.module.less'
 
 export default function SettingMainAppearance() {
   const intl = useIntl()
@@ -12,10 +12,10 @@ export default function SettingMainAppearance() {
   return (
     <>
       <div className="py-4 px-6">
-        <div className="text-medium text-lg py-4">
+        {/* <div className="text-medium text-lg py-4">
           <FormattedMessage defaultMessage="外观" />
         </div>
-        {/* <div className={`${styles['picture-box']} flex`}>
+        <div className={`${styles['picture-box']} flex`}>
           <div>
             <Image src="/assets/system.svg" alt="图片不见了" />
             <div className="mt-2 text-center text-14px leading-5">
