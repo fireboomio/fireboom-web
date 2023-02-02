@@ -357,7 +357,7 @@ const GraphiQLToolbar = () => {
           <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
         </button>
       </Dropdown>
-      <Dropdown
+      {/* <Dropdown
         open={seqOpen}
         overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
         trigger={['click']}
@@ -367,7 +367,7 @@ const GraphiQLToolbar = () => {
         <span className="graphiql-toolbar-sequence-chart">
           <FormattedMessage defaultMessage="时序图" description="插入指令处" />
         </span>
-      </Dropdown>
+      </Dropdown> */}
 
       <span className="graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
         {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}

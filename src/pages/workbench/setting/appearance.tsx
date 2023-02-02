@@ -15,7 +15,7 @@ export default function SettingMainAppearance() {
         <div className="text-medium text-lg py-4">
           <FormattedMessage defaultMessage="外观" />
         </div>
-        <div className={`${styles['picture-box']} flex`}>
+        {/* <div className={`${styles['picture-box']} flex`}>
           <div>
             <Image src="/assets/system.svg" alt="图片不见了" />
             <div className="mt-2 text-center text-14px leading-5">
@@ -41,7 +41,7 @@ export default function SettingMainAppearance() {
             </div>
           </div>
         </div>
-        <Divider />
+        <Divider /> */}
         <div className="mt-4 text-medium text-lg py-4">
           <FormattedMessage defaultMessage="语言" />
         </div>

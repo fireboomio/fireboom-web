@@ -108,6 +108,8 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const dbProtocal = String(content?.config.dbType).toLowerCase()
+
   const urlRule = {
     mysql: {
       pattern: /^mysql:\/\/.{1,120}$/g,
@@ -124,7 +126,7 @@ export default function DB({ content, type }: Props) {
       message: intl.formatMessage({ defaultMessage: '以 mongodb:// 开头，不超过128位' }),
       required: true
     }
-  }[String(content?.config.dbType).toLowerCase()]
+  }[dbProtocal]
 
   const initForm =
     dbType === 'SQLite' ? (
@@ -166,7 +168,10 @@ export default function DB({ content, type }: Props) {
             >
               <Input
                 style={{ width: '80%' }}
-                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                placeholder={intl.formatMessage(
+                  { defaultMessage: '示例: {dbProtocal}://user:password@localhost/db-name' },
+                  { dbProtocal }
+                )}
               />
             </Form.Item>
           ) : (

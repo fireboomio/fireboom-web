@@ -312,7 +312,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className={styles.row}>
+              {/* <div className={styles.row}>
                 <div className={[styles.card, styles.moduleFe].join(' ')}>
                   <div className={styles.cardTitle}>
                     {intl.formatMessage({ defaultMessage: '前端集成' })}
@@ -336,7 +336,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex-shrink-0 ml-18px w-380px relative">
