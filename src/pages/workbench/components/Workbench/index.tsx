@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
+import { useGlobal } from '@/hooks/global'
 import type { Info } from '@/interfaces/common'
 import type {
   MenuName,
@@ -56,6 +57,12 @@ export default function Index(props: PropsWithChildren) {
     dataSource: false,
     storage: false
   })
+  const { setLogs, logs, questions, setQuestions } = useGlobal(state => ({
+    logs: state.logs,
+    setLogs: state.setLogs,
+    questions: state.questions,
+    setQuestions: state.setQuestions
+  }))
 
   useEffect(() => {
     void requests.get<unknown, BarOnce>('/wdg/barOnce').then(res => {
@@ -78,16 +85,20 @@ export default function Index(props: PropsWithChildren) {
     console.log('pushStatus', data)
   })
   useWebSocket('engine', 'getHookStatus', data => {
-    setInfo({ ...info, ...data })
+    // @ts-ignore
+    setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('log', 'getLogs', data => {
-    console.log('getLogs', data)
+    setLogs(data.logs)
+  })
+  useWebSocket('log', 'appendLog', data => {
+    setLogs(logs.concat(data.logs))
   })
   useWebSocket('question', 'getQuestions', data => {
-    console.log('getQuestions', data)
+    setQuestions(data.questions)
   })
   useWebSocket('question', 'setQuestions', data => {
-    console.log('setQuestions', data)
+    setQuestions(data.questions)
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
@@ -214,7 +225,6 @@ export default function Index(props: PropsWithChildren) {
           <StatusBar
             version={version}
             env={env}
-            errorInfo={info?.errorInfo}
             startTime={info?.startTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}

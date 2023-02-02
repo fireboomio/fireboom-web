@@ -4,7 +4,7 @@ import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import type { ErrorInfo } from '@/interfaces/common'
+import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -20,7 +20,6 @@ interface Props {
   env?: string
   version?: string
   startTime?: string
-  errorInfo?: ErrorInfo
   engineStatus?: ServiceStatus
   hookStatus?: HookStatus
   toggleWindow: (defaultTa: string) => void
@@ -32,13 +31,15 @@ const StatusBar: React.FC<Props> = ({
   env,
   version,
   startTime,
-  errorInfo,
   engineStatus,
   hookStatus,
   toggleWindow
 }) => {
   const intl = useIntl()
   const calcTime = useCalcTime()
+  const { questions } = useGlobal(state => ({
+    questions: state.questions
+  }))
 
   const statusMap = useMemo(
     () => ({
@@ -62,8 +63,9 @@ const StatusBar: React.FC<Props> = ({
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{
-    WebContainer: HookStatus
-    Customer: HookStatus
+    webContainer: HookStatus
+    customer: HookStatus
+    default: HookStatus
   }>()
   const [hookSwitch, setHookSwitch] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
@@ -153,11 +155,15 @@ const StatusBar: React.FC<Props> = ({
           >
             <span className={styles.errLabel}>
               <img height={14} width={14} src="/assets/workbench/footer-error.png" alt="错误" />
-              <span className="ml-2">{errorInfo?.errTotal ?? 0}</span>
+              <span className="ml-2">
+                {questions.filter(x => x.model === QuestionType.DatasourceQuestion).length}
+              </span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
               <img height={14} width={14} src="/assets/workbench/footer-warning.png" alt="警告" />
-              <span className="ml-2">{errorInfo?.warnTotal ?? 0}</span>
+              <span className="ml-2">
+                {questions.filter(x => x.model !== QuestionType.DatasourceQuestion).length}
+              </span>
             </span>
           </span>
           <span className="ml-8">
@@ -261,25 +267,25 @@ const StatusBar: React.FC<Props> = ({
                     <Space direction="vertical">
                       <Radio value={1}>
                         WebContainer
-                        {hookOptionStatus?.WebContainer === HookStatus.Running && (
+                        {hookOptionStatus?.webContainer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
                             <FormattedMessage defaultMessage="已启动" />
                           </Tag>
                         )}
-                        {hookOptionStatus?.WebContainer === HookStatus.Stopped && (
+                        {hookOptionStatus?.webContainer === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>
                         )}
                       </Radio>
                       <Radio value={2}>
-                        <FormattedMessage defaultMessage="系统内置" />
-                        {hookOptionStatus?.WebContainer === HookStatus.Running && (
+                        <FormattedMessage defaultMessage="默认" />
+                        {hookOptionStatus?.default === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
                             <FormattedMessage defaultMessage="已启动" />
                           </Tag>
                         )}
-                        {hookOptionStatus?.WebContainer === HookStatus.Stopped && (
+                        {hookOptionStatus?.default === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>
@@ -287,12 +293,12 @@ const StatusBar: React.FC<Props> = ({
                       </Radio>
                       <Radio value={3}>
                         <FormattedMessage defaultMessage="手动设置" />
-                        {hookOptionStatus?.Customer === HookStatus.Running && (
+                        {hookOptionStatus?.customer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
                             <FormattedMessage defaultMessage="已启动" />
                           </Tag>
                         )}
-                        {hookOptionStatus?.Customer === HookStatus.Stopped && (
+                        {hookOptionStatus?.customer === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>

@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import type { MutableRefObject } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
+import { useGlobal } from '@/hooks/global'
 import type { LogMessage } from '@/interfaces/window'
 
 export type LogAction = {
-  appendLogs: (log: LogMessage[]) => void
   clearLogs: () => void
   downloadLogs: () => void
 }
@@ -17,21 +17,14 @@ type Props = {
 
 // eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ actionRef }) => {
-  const [logs, setLogs] = useState<LogMessage[]>([])
+  // const [logs, setLogs] = useState<LogMessage[]>([])
   const logRef = useRef(null)
 
-  useEffect(() => {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    logRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [logs])
+  const { logs, setLogs } = useGlobal(state => ({ logs: state.logs, setLogs: state.setLogs }))
 
   useEffect(() => {
     if (actionRef) {
       actionRef.current = {
-        appendLogs(_logs: LogMessage[]) {
-          setLogs([...logs, ..._logs.map(item => ({ ...item, logType: item.logType || 1 }))])
-        },
         clearLogs() {
           setLogs([])
         },

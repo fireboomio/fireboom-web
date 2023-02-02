@@ -1,51 +1,60 @@
 import { Empty } from 'antd'
+import { groupBy } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import type { Question } from '@/hooks/global'
+import { QuestionType, useGlobal } from '@/hooks/global'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import styles from './error.module.less'
 
 type Block = {
-  key: string
+  key: QuestionType
   list: {
     id: number
     sourceType: string
     dbType: string
     name: string
     icon: string
-    reasonMsg: string
+    msg: string
     switch: boolean
   }[]
 }
 export default function Error() {
   const [blocks, setBlocks] = useState<Block[]>([])
 
+  const { questions, setQuestions } = useGlobal(state => ({
+    questions: state.questions,
+    setQuestions: state.setQuestions
+  }))
   const { onRefreshMenu } = useContext(WorkbenchContext)
+
   useEffect(() => {
-    requests.get<unknown, any>('wdg/question').then(res => {
-      setBlocks(
-        Object.keys(res).map(key => {
-          res[key].forEach((item: any) => {
-            if (key === 'datasource') {
-              if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(item.type)) {
-                item.icon = `/assets/icon/${item.type}.svg`
-              } else {
-                item.icon = `/assets/icon/db-other.svg`
-              }
-            } else if (['api', 'storage'].includes(key)) {
-              item.icon = '/assets/icon/file.svg'
-            } else {
-              item.icon = '/assets/icon/github-fill.svg'
-            }
-          })
-          return { key, list: res[key] }
-        })
-      )
-    })
-  }, [])
+    const groups: Record<QuestionType, Question[]> = groupBy(questions, 'model') as any
+    // @ts-ignore
+    setBlocks(Object.keys(groups).map(key => ({ key, list: groups[key] })))
+    // setBlocks(
+    //   Object.keys(questions).map(key => {
+    //     questions[key].forEach((item: any) => {
+    //       if (key === 'datasource') {
+    //         if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(item.type)) {
+    //           item.icon = `/assets/icon/${item.type}.svg`
+    //         } else {
+    //           item.icon = `/assets/icon/db-other.svg`
+    //         }
+    //       } else if (['api', 'storage'].includes(key)) {
+    //         item.icon = '/assets/icon/file.svg'
+    //       } else {
+    //         item.icon = '/assets/icon/github-fill.svg'
+    //       }
+    //     })
+    //     return { key, list: questions[key] }
+    //   })
+    // )
+  }, [questions])
 
   const navigate = useNavigate()
   async function closeDatasource(id: number) {
@@ -86,8 +95,8 @@ export default function Error() {
               <img src={item.icon} className={styles.icon} alt="" />
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
-                <span>{item.reasonMsg}</span>
-                {block.key === 'datasource' && (
+                <span>{item.msg}</span>
+                {block.key === QuestionType.DatasourceQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -105,7 +114,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === 'api' && (
+                {block.key === QuestionType.OperationQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -128,7 +137,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === 'auth' && (
+                {block.key === QuestionType.AuthQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -151,7 +160,32 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === 'storage' && (
+                {block.key === QuestionType.OssQuestion && (
+                  <>
+                    <span>
+                      , <FormattedMessage defaultMessage="可" />
+                      <span
+                        className={styles.action}
+                        onClick={() => navigate(`/workbench/storage/${item.id}`)}
+                      >
+                        <FormattedMessage defaultMessage="前往" />
+                      </span>
+                      <FormattedMessage defaultMessage="编辑" />
+                      {item.switch && (
+                        <>
+                          , <FormattedMessage defaultMessage="或" />
+                          <span className={styles.action} onClick={() => closeStorage(item.id)}>
+                            <FormattedMessage defaultMessage="关闭" />
+                          </span>
+                          <FormattedMessage defaultMessage="该对象存储" />
+                        </>
+                      )}
+                    </span>
+                  </>
+                )}
+                {[QuestionType.InternalQuestion, QuestionType.HooksQuestion].includes(
+                  block.key
+                ) && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
