@@ -18,7 +18,7 @@ export interface OperationResp {
   isDir: boolean
   liveQuery: boolean
   enable: boolean
-  legal: boolean
+  inlegal: boolean
   isPublic: boolean
   method: 'GET' | 'POST'
   operationType: 'query' | 'mutation' | 'subscription'

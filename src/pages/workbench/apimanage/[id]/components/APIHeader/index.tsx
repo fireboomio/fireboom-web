@@ -274,6 +274,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         <FormattedMessage defaultMessage="保存" />
       </button>
       <Switch
+        disabled={apiDesc?.inlegal && !apiDesc?.enable}
         className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
         checked={apiDesc?.enable}
         onChange={toggleEnable}

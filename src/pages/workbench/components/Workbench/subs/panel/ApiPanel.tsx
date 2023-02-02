@@ -210,7 +210,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
-    if (nodeData.legal) {
+    if (nodeData.inlegal) {
       return (
         <div className={styles.errLabel}>
           <FormattedMessage defaultMessage="非法" />
@@ -480,7 +480,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     let itemTypeClass
     if (nodeData.isDir) {
       itemTypeClass = styles.treeItemDir
-    } else if (nodeData.legal) {
+    } else if (nodeData.inlegal) {
       itemTypeClass = styles.treeItemErr
     } else if (!nodeData.enable) {
       itemTypeClass = styles.treeItemDisable
