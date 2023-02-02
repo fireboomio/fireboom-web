@@ -9,20 +9,22 @@ const test = Math.random()
 const wsUrl = new URL(location)
 wsUrl.protocol = 'ws:'
 wsUrl.pathname = '/ws'
-if(wsUrl.port === '3000') {
-  wsUrl.port = '9123'
-}
+// if(wsUrl.port === '3000') {
+//   wsUrl.port = '9123'
+// }
 function openSocket() {
   let heartbeatTimer
   let pingCounter = 0
   const _socket = new WebSocket(wsUrl.href)
   _socket.addEventListener('open', () => {
-    _socket.send('connected test')
     sendQueue.forEach(item => {
       _socket.send(item)
     })
     sendQueue.length = 0
     socket = _socket
+    pingCounter++
+    socket.send('ping')
+    initQuery(socket)
     heartbeatTimer = setInterval(() => {
       if (pingCounter >= 3) {
         _socket.close()
@@ -30,11 +32,11 @@ function openSocket() {
       }
       pingCounter++
       socket.send('ping')
-    }, 1000 * 60 * 5)
+    }, 1000 * 30)
   })
   _socket.addEventListener('close', () => {
     clearInterval(heartbeatTimer)
-    openSocket()
+    setTimeout(openSocket, 5000)
   })
 
 // Send data from socket to all open tabs.
@@ -56,6 +58,13 @@ function sendSocket(data) {
     })
     sendQueue.length = 0
   }
+}
+
+// socket建立后查询初始状态
+function initQuery(socket){
+  // socket.send('{"channel":"engine", "event": "getStatus"}')
+  // socket.send('{"channel":"log", "event": "getLogs"}')
+  // socket.send('{"channel":"question", "event": "getQuestions"}')
 }
 
 openSocket()

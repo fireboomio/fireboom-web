@@ -14,7 +14,7 @@ export default {}
  * Sends a message to the worker and passes that to the Web Socket.
  * @param {any} message
  */
-const sendMessageToSocket = message => {
+export const sendMessageToSocket = message => {
   webSocketWorker.port.postMessage({
     action: 'send',
     value: message
@@ -24,7 +24,7 @@ const sendMessageToSocket = message => {
 // Event to listen for incoming data from the worker and update the DOM.
 webSocketWorker.port.addEventListener('message', ({ data }) => {
   if (data.channel) {
-    events.emit({ event: 'wsEvent', channel: data.channel, data: data.data })
+    events.emit({ event: 'wsEvent', data })
   }
   // switch (data.channel) {
   //   case 'engine:state':
@@ -34,7 +34,6 @@ webSocketWorker.port.addEventListener('message', ({ data }) => {
 
 // Initialize the port connection.
 webSocketWorker.port.start()
-window.webSocketWorker = webSocketWorker
 
 // Remove the current worker port from the connected ports list.
 // This way your connectedPorts list stays true to the actual connected ports,
