@@ -373,7 +373,12 @@ export default function StorageExplorer({ bucketId }: Props) {
                       label: intl.formatMessage({ defaultMessage: '重命名' }),
                       onClick: e => {
                         e.domEvent.stopPropagation()
-                        doRename(x.name)
+                        doRename(x.name).then(newName => {
+                          if (newName) {
+                            // FIXME 子目录中并不能实时修改页面显示
+                            x.name = newName
+                          }
+                        })
                       }
                     },
                     {
@@ -439,38 +444,45 @@ export default function StorageExplorer({ bucketId }: Props) {
     await loadMenu(path)
   }
 
-  const doRename = (name: string) => {
+  const doRename = async (name: string) => {
     inputValue.current = ''
-    Modal.info({
-      title: intl.formatMessage({ defaultMessage: '请输入名称' }),
-      content: (
-        <Input
-          autoFocus
-          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-          onChange={e => {
-            inputValue.current = e.target.value
-          }}
-        />
-      ),
-      okText: '确定',
-      onOk: () => {
-        if (!inputValue.current) {
-          return
+    const originFileName = name.replace(/\/&/, '').split('/').pop()
+    return new Promise<string>(resolve => {
+      Modal.info({
+        title: intl.formatMessage({ defaultMessage: '请输入名称' }),
+        content: (
+          <Input
+            autoFocus
+            defaultValue={originFileName}
+            placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+            onChange={e => {
+              inputValue.current = e.target.value
+            }}
+          />
+        ),
+        okText: '确定',
+        onOk: () => {
+          const newName = inputValue.current?.replace(/ /g, '')
+          if (!newName) {
+            resolve('')
+            return
+          }
+          const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
+          requests
+            .post('/s3Upload/rename', {
+              bucketID: bucketId,
+              oldName: name,
+              newName: name.replace(/[^/]*(?=$|\/$)/, newName)
+            })
+            .then(() => {
+              hide()
+              setVisible(false)
+              message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+              setRefreshFlag(!refreshFlag)
+              resolve(name.replace(new RegExp(`${originFileName}&`), newName))
+            })
         }
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
-        requests
-          .post('/s3Upload/rename', {
-            bucketID: bucketId,
-            oldName: name,
-            newName: name.replace(/[^/]*(?=$|\/$)/, inputValue.current)
-          })
-          .then(() => {
-            hide()
-            setVisible(false)
-            message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-            setRefreshFlag(!refreshFlag)
-          })
-      }
+      })
     })
   }
   const deleteFile = (file = target) => {
@@ -703,11 +715,13 @@ export default function StorageExplorer({ bucketId }: Props) {
                   </div>
                 </Panel>
                 <div className="flex flex-col">
-                  <a className="flex" href={target?.url} download={target?.value}>
-                    <Button className="rounded-4px flex-1 m-1.5 !border-[#efeff0]">
-                      <FormattedMessage defaultMessage="下载" />
-                    </Button>
-                  </a>
+                  {!target?.isDir && (
+                    <a className="flex" href={target?.url} download={target?.value}>
+                      <Button className="rounded-4px flex-1 m-1.5 !border-[#efeff0]">
+                        <FormattedMessage defaultMessage="下载" />
+                      </Button>
+                    </a>
+                  )}
                   <Button
                     onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
                     className="rounded-4px m-1.5 !border-[#efeff0]"
