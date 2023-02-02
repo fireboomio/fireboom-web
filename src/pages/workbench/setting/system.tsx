@@ -142,7 +142,7 @@ export default function SettingMainVersion() {
                 }}
               />
             </Descriptions.Item>
-            <Descriptions.Item
+            {/* <Descriptions.Item
               label={intl.formatMessage({ defaultMessage: 'API端口' })}
               className="w-20"
             >
@@ -173,7 +173,7 @@ export default function SettingMainVersion() {
                   setIsApiPortEditing(!isApiPortEditing)
                 }}
               />
-            </Descriptions.Item>
+            </Descriptions.Item> */}
             <Descriptions.Item
               label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
               className="w-20"
