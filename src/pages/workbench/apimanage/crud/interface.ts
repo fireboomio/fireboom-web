@@ -88,11 +88,13 @@ export enum API {
 }
 
 export enum ServiceStatus {
-  Compiling = 1,
+  Building = 1,
   Starting = 2,
-  Running = 3,
-  CompileFail = 4,
-  StartFail = 5
+  Started = 3,
+  StartFailed = 4,
+  BuildFailed = 5,
+  Built = 6,
+  NotStarted = 7
 }
 
 export enum HookStatus {

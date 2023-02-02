@@ -79,7 +79,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const [open, setOpen] = useState(false)
 
   const compiling =
-    props.engineStatus === ServiceStatus.Compiling || props.engineStatus === ServiceStatus.Starting
+    props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
 
   const doCompile = () => {
     if (!config.devSwitch) {

@@ -13,9 +13,9 @@ import type {
   WorkbenchListener
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import events, { useEventBus } from '@/lib/event/events'
+import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
-import { matchJson } from '@/lib/utils'
+import { sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
@@ -63,61 +63,86 @@ export default function Index(props: PropsWithChildren) {
       setEnv(res.env)
     })
   }, [])
-
-  useEventBus('wsEvent', ({ channel, data }) => {
-    if (channel === 'engine:status') {
-      setInfo(data)
+  useWebSocket('engine', 'getStatus', data => {
+    setInfo(data)
+    if (data.engineStatus === ServiceStatus.Started) {
+      events.emit({ event: 'compileFinish' })
     }
+    console.log('status', data)
   })
+  useWebSocket('engine', 'pushStatus', data => {
+    setInfo(data)
+    if (data.engineStatus === ServiceStatus.Started) {
+      events.emit({ event: 'compileFinish' })
+    }
+    console.log('pushStatus', data)
+  })
+  useWebSocket('engine', 'getHookStatus', data => {
+    setInfo({ ...info, ...data })
+  })
+  useWebSocket('log', 'getLogs', data => {
+    console.log('getLogs', data)
+  })
+  useWebSocket('question', 'getQuestions', data => {
+    console.log('getQuestions', data)
+  })
+  useWebSocket('question', 'setQuestions', data => {
+    console.log('setQuestions', data)
+  })
+  useEffect(() => {
+    sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
+    sendMessageToSocket({ channel: 'log', event: 'getLogs' })
+    sendMessageToSocket({ channel: 'question', event: 'getQuestions' })
+  }, [])
 
   useEffect(() => {
     const controller = new AbortController()
     const signal = controller.signal
     const headers = new Headers()
     headers.set('X-FB-Authentication', getAuthKey() ?? '')
-    fetch(`/api/v1/wdg/state`, { signal, headers }).then(res => {
-      const reader = res.body?.getReader()
-      if (!reader) return
-
-      // @ts-ignore
-      const process = ({ value, done }) => {
-        if (done) return
-
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          const data = new Response(value)
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          void data.text().then(res => {
-            const status = matchJson(res).pop()
-            status.engineStatus = ServiceStatus.Running
-            if (status) {
-              setInfo(status)
-              // 发生变化才通知
-              if (prevStatus.current) {
-                if (status.engineStatus === ServiceStatus.Running) {
-                  events.emit({ event: 'compileFinish' })
-                } else if (
-                  status.engineStatus === ServiceStatus.CompileFail ||
-                  status.engineStatus === ServiceStatus.StartFail
-                ) {
-                  events.emit({ event: 'compileFail' })
-                }
-              }
-              prevStatus.current = status
-            }
-          })
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.log(error)
-        }
-
-        // @ts-ignore
-        void reader.read().then(process)
-      }
-
-      // @ts-ignore
-      void reader.read().then(process)
-    })
+    // fetch(`/api/v1/wdg/state`, { signal, headers }).then(res => {
+    //   const reader = res.body?.getReader()
+    //   if (!reader) return
+    //
+    //   // @ts-ignore
+    //   const process = ({ value, done }) => {
+    //     if (done) return
+    //
+    //     try {
+    //       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    //       const data = new Response(value)
+    //       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    //       void data.text().then(res => {
+    //         const status = matchJson(res).pop()
+    //         status.engineStatus = ServiceStatus.Running
+    //         if (status) {
+    //           setInfo(status)
+    //           // 发生变化才通知
+    //           if (prevStatus.current) {
+    //             if (status.engineStatus === ServiceStatus.Running) {
+    //               events.emit({ event: 'compileFinish' })
+    //             } else if (
+    //               status.engineStatus === ServiceStatus.CompileFail ||
+    //               status.engineStatus === ServiceStatus.StartFail
+    //             ) {
+    //               events.emit({ event: 'compileFail' })
+    //             }
+    //           }
+    //           prevStatus.current = status
+    //         }
+    //       })
+    //     } catch (error) {
+    //       // eslint-disable-next-line no-console
+    //       console.log(error)
+    //     }
+    //
+    //     // @ts-ignore
+    //     void reader.read().then(process)
+    //   }
+    //
+    //   // @ts-ignore
+    //   void reader.read().then(process)
+    // })
 
     return () => {
       controller.abort()

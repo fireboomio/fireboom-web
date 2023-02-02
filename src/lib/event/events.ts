@@ -5,8 +5,10 @@ import EventEmitter from '@/lib/event/emitter'
 
 type WsEvent = {
   event: 'wsEvent'
-  channel: string
-  data: any
+  data: {
+    channel: string
+    event: string
+  }
 }
 type TitleChangeEvent = {
   event: 'titleChange'
@@ -34,6 +36,14 @@ export function useEventBus(event: string, cb: EventHandler) {
     events.on(event, cb)
     return () => {
       events.off(event, cb)
+    }
+  })
+}
+
+export function useWebSocket(channel: string, event: string, cb: (data: any) => void) {
+  useEventBus('wsEvent', ({ data }) => {
+    if (data.channel === channel && data.event === event) {
+      cb(data.data)
     }
   })
 }

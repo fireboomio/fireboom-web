@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { message, Radio, Space, Tag } from 'antd'
+import { Radio, Space, Tag } from 'antd'
 import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -9,6 +9,7 @@ import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
+import { sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
@@ -41,11 +42,13 @@ const StatusBar: React.FC<Props> = ({
 
   const statusMap = useMemo(
     () => ({
-      [ServiceStatus.Compiling]: intl.formatMessage({ defaultMessage: '编译中' }),
+      [ServiceStatus.Building]: intl.formatMessage({ defaultMessage: '编译中' }),
       [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
-      [ServiceStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-      [ServiceStatus.CompileFail]: intl.formatMessage({ defaultMessage: '编译失败' }),
-      [ServiceStatus.StartFail]: intl.formatMessage({ defaultMessage: '启动失败' })
+      [ServiceStatus.Started]: intl.formatMessage({ defaultMessage: '已启动' }),
+      [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' }),
+      [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
+      [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
+      [ServiceStatus.NotStarted]: intl.formatMessage({ defaultMessage: '未启动' })
     }),
     [intl]
   )
@@ -62,14 +65,20 @@ const StatusBar: React.FC<Props> = ({
     WebContainer: HookStatus
     Customer: HookStatus
   }>()
-  const [hookSwitch, setHookSwitch] = useState<boolean>()
+  const [hookSwitch, setHookSwitch] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   // const { openHookServer, loading: hookServerLoading } = useStackblitz()
   const workbenchContext = useContext(WorkbenchContext)
   useEffect(() => {
     setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
-    setHookSwitch(!!config.hooksServerURL)
+    if (!config.hooksServerURL) {
+      setHookSwitch(1)
+    } else if (config.hooksServerURL === 'http://127.0.0.1:9992') {
+      setHookSwitch(2)
+    } else {
+      setHookSwitch(3)
+    }
   }, [config.hooksServerURL, showHookSetting])
   useEffect(() => {
     if (showHookSetting) {
@@ -192,7 +201,7 @@ const StatusBar: React.FC<Props> = ({
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {
-                  workbenchContext.onRefreshState()
+                  sendMessageToSocket({ channel: 'engine', event: 'getHookStatus' })
                   e.stopPropagation()
                 }}
               >
@@ -227,23 +236,30 @@ const StatusBar: React.FC<Props> = ({
                   <Radio.Group
                     onChange={e => {
                       setHookSwitch(e.target.value)
-                      if (e.target.value) {
-                        if (hookOptionStatus?.Customer !== HookStatus.Running) {
-                          message.info(
-                            intl.formatMessage({
-                              defaultMessage: '当前地址的钩子服务未启动，手动启动钩子后，方可使用。'
-                            })
-                          )
-                        }
-                        saveHookServerURL(hooksServerURL ?? '')
-                      } else {
-                        saveHookServerURL('')
+                      const map: Record<string, string | undefined> = {
+                        '1': '',
+                        '2': 'http://127.0.0.1:9123',
+                        '3': hooksServerURL
                       }
+                      const url: string = map[e.target.value] ?? ''
+                      saveHookServerURL(url)
+                      // if (e.target.value) {
+                      //   if (hookOptionStatus?.Customer !== HookStatus.Running) {
+                      //     message.info(
+                      //       intl.formatMessage({
+                      //         defaultMessage: '当前地址的钩子服务未启动，手动启动钩子后，方可使用。'
+                      //       })
+                      //     )
+                      //   }
+                      //   saveHookServerURL(hooksServerURL ?? '')
+                      // } else {
+                      //   saveHookServerURL('')
+                      // }
                     }}
                     value={hookSwitch}
                   >
                     <Space direction="vertical">
-                      <Radio value={false}>
+                      <Radio value={1}>
                         WebContainer
                         {hookOptionStatus?.WebContainer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
@@ -256,7 +272,20 @@ const StatusBar: React.FC<Props> = ({
                           </Tag>
                         )}
                       </Radio>
-                      <Radio value={true}>
+                      <Radio value={2}>
+                        <FormattedMessage defaultMessage="系统内置" />
+                        {hookOptionStatus?.WebContainer === HookStatus.Running && (
+                          <Tag className="!ml-2" color="success">
+                            <FormattedMessage defaultMessage="已启动" />
+                          </Tag>
+                        )}
+                        {hookOptionStatus?.WebContainer === HookStatus.Stopped && (
+                          <Tag className="!ml-2" color="warning">
+                            <FormattedMessage defaultMessage="未启动" />
+                          </Tag>
+                        )}
+                      </Radio>
+                      <Radio value={3}>
                         <FormattedMessage defaultMessage="手动设置" />
                         {hookOptionStatus?.Customer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
@@ -277,7 +306,7 @@ const StatusBar: React.FC<Props> = ({
                       selectClassName="!z-13000"
                       value={hooksServerURL}
                       onChange={val => {
-                        if (hookSwitch) {
+                        if (hookSwitch === 3) {
                           saveHookServerURL(val)
                         }
                         setHooksServerURL(val)
