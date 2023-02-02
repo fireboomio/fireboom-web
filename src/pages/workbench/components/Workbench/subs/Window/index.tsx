@@ -1,10 +1,7 @@
 import { Resizable } from 're-resizable'
 import type { CSSProperties } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-
-import type { LogMessage } from '@/interfaces/window'
-import { matchJson } from '@/lib/utils'
 
 import Error from './Error'
 import type { LogAction } from './Log'
@@ -30,33 +27,6 @@ const Window: React.FC<Props> = ({ style, toggleWindow, defaultTab }) => {
   const [tabActiveKey, setTabActiveKey] = useState(defaultTab ?? '0')
   const logActionRef = useRef<LogAction>()
   const responseRef = useRef<Response>()
-
-  useEffect(() => {
-    const controller = new AbortController()
-    const signal = controller.signal
-    async function fn() {
-      if (!responseRef.current) {
-        responseRef.current = await fetch('/api/v1/wdg/log', { signal })
-        const reader = responseRef.current.body!.getReader()
-        const decoder = new TextDecoder()
-        let result = await reader.read()
-        while (!result.done) {
-          const text = decoder.decode(result.value)
-          // console.log('log stream: ', text)
-          const resps = matchJson(text) as LogMessage[]
-          logActionRef.current?.appendLogs(resps)
-          result = await reader.read()
-        }
-        console.log('Log finished')
-      }
-    }
-    fn()
-    return () => {
-      console.log('close fetch')
-      controller.abort()
-    }
-  }, [])
-
   const extra = (
     <div className="cursor-pointer flex justify-end">
       <div onClick={() => logActionRef.current?.clearLogs()}>
