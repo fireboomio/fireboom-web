@@ -171,11 +171,7 @@ export default function APIEditorContainer() {
 
   const onRefreshSchema = useCallback(async () => {
     setIsRefreshing(true)
-    try {
-      await refreshSchema()
-    } catch (e) {
-      //
-    }
+    await refreshSchema()
     setIsRefreshing(false)
     message.success(intl.formatMessage({ defaultMessage: '已刷新' }))
   }, [intl, refreshSchema])
