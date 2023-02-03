@@ -1,4 +1,4 @@
-import { Input, Modal } from 'antd'
+import { Input, message, Modal } from 'antd'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -157,32 +157,37 @@ export default function Designer() {
   }, [])
 
   function createCustom() {
-    Modal.confirm({
+    const { destroy } = Modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入数据源名称' }),
       content: (
         <Input
           autoFocus
+          required
           placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onChange={e => {
-            inputValue.current = e.target.value
+            inputValue.current = e.target.value.replace(/ /g, '')
           }}
         />
       ),
       okText: intl.formatMessage({ defaultMessage: '创建' }),
       cancelText: intl.formatMessage({ defaultMessage: '取消' }),
-      onOk: async () => {
-        if (!inputValue.current) {
-          return
+      okButtonProps: {
+        async onClick() {
+          if (!inputValue.current) {
+            message.error(intl.formatMessage({ defaultMessage: '请输入数据源名称' }))
+            return
+          }
+          let data = {
+            name: inputValue.current,
+            config: { apiNamespace: inputValue.current, serverName: inputValue.current },
+            sourceType: 4,
+            switch: 0
+          } as any
+          const result = await requests.post<unknown, number>('/dataSource', data)
+          data.id = result
+          handleSave(data)
+          destroy()
         }
-        let data = {
-          name: inputValue.current,
-          config: { apiNamespace: inputValue.current, serverName: inputValue.current },
-          sourceType: 4,
-          switch: 0
-        } as any
-        const result = await requests.post<unknown, number>('/dataSource', data)
-        data.id = result
-        handleSave(data)
       }
     })
   }
