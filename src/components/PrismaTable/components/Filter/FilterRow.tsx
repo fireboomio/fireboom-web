@@ -81,9 +81,7 @@ const FilterRow = ({
 
   const fieldType = getFilterFieldType()
   const enumOptions =
-    fieldType === 'Enum'
-      ? enums.find(e => e.name === relationFieldNameSelectValue)?.fields ?? []
-      : []
+    fieldType === 'Enum' ? enums.find(e => e.name === selectedField.type)?.fields ?? [] : []
   const operators = getFilterOperators(fieldType)
 
   const relationFieldsOptions = getRelationFields()

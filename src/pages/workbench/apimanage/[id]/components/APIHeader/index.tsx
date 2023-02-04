@@ -65,7 +65,6 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const toggleEnable = useLock(async (checked: boolean) => {
     try {
-      console.log('====runed')
       await changeEnable(checked)
       message.success(
         checked

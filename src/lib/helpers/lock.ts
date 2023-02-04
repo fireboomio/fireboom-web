@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-export function useLock<T>(
-  fun: (...arg: any) => Promise<T>,
-  deps: any
-): (...arg: any) => Promise<T | undefined> {
+export function useLock<T, Q extends (...arg: any) => Promise<T>>(
+  fun: Q,
+  deps: React.DependencyList
+) {
   // console.log('createLock')
   // 解析options
   // 保存原始方法
@@ -15,7 +15,7 @@ export function useLock<T>(
     lock.current = false
   }, deps)
   // 覆盖为带锁版本
-  return useCallback(async function (...arg) {
+  return useCallback(async function (...arg: Parameters<Q>) {
     // console.log('run lock', lock.current)
     // 执行中，忽略本次调用
     if (lock.current) {
@@ -30,6 +30,7 @@ export function useLock<T>(
 
     // 执行原始方法
     try {
+      // @ts-ignore
       excuteResult = await originFun.current(...arg)
     } catch (e) {
       excuteError = e
@@ -49,5 +50,5 @@ export function useLock<T>(
     }
     // 返回执行结果
     return excuteResult
-  }, deps)
+  }, deps) as (...arg: Parameters<Q>) => ReturnType<Q>
 }
