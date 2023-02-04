@@ -208,8 +208,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         key: 'delete',
         label: (
           <Popconfirm
+            zIndex={9999}
             placement="right"
-            title={intl.formatMessage({ defaultMessage: '确认删除该实体吗？' })}
+            title={intl.formatMessage({ defaultMessage: '确认删除吗？' })}
             onConfirm={() => void handleItemDelete(dropDownId)}
             okText={intl.formatMessage({ defaultMessage: '删除' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}

@@ -515,6 +515,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         label: (
           <div onClick={e => e.stopPropagation()}>
             <Popconfirm
+              zIndex={9999}
               title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
               onConfirm={() => {
                 handleDelete(nodeData)
@@ -798,6 +799,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }}
         footer={null}
         centered
+        destroyOnClose={true}
       >
         <ApiConfig type="global" onClose={() => setIsModalVisible(false)} />
       </Modal>

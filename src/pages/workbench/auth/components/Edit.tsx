@@ -208,7 +208,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             />
           </Form.Item>
 
-          <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
+          <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
             <Input.Group compact className="!flex">
               <Form.Item name={['clientId', 'kind']} noStyle>
                 <Select className="flex-0 w-100px">
@@ -241,7 +241,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               </Form.Item>
             </Input.Group>
           </Form.Item>
-          <Form.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
+          <Form.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })} required>
             <Input.Group compact className="!flex">
               <Form.Item name={['clientSecret', 'kind']} noStyle>
                 <Select className="flex-0 w-100px">

@@ -723,7 +723,10 @@ export default function StorageExplorer({ bucketId }: Props) {
                     </a>
                   )}
                   <Button
-                    onClick={() => void navigator.clipboard.writeText(`${target?.name ?? ''}`)}
+                    onClick={() => {
+                      void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                      message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                    }}
                     className="rounded-4px m-1.5 !border-[#efeff0]"
                   >
                     <FormattedMessage defaultMessage="复制URL" />

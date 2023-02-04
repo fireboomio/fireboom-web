@@ -52,10 +52,16 @@ export default function Designer() {
       {
         name: intl.formatMessage({ defaultMessage: '数据库' }),
         items: [
-          { name: 'PostgreSQL', icon: iconPostgreSQL, sourceType: 1, dbType: 'PostgreSQL' },
+          {
+            name: 'PostgreSQL',
+            icon: iconPostgreSQL,
+            sourceType: 1,
+            dbType: 'PostgreSQL',
+            coming: true
+          },
           { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
-          { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB' },
-          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
+          { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB', coming: true },
+          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite', coming: true },
           {
             name: 'CockroachDB',
             icon: iconCockroachDB,

@@ -43,7 +43,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 1,
           lineUp: '',
           lineDown: '',
-          link: '/workbench/datasource/new'
+          link: '/workbench/data-source/new'
         },
         {
           key: 'connectREST',
@@ -52,7 +52,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 1,
           lineUp: '',
           lineDown: '',
-          link: '/workbench/datasource/new'
+          link: '/workbench/data-source/new'
         },
         {
           key: 'connectGraphQL',
@@ -61,7 +61,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 1,
           lineUp: '',
           lineDown: '',
-          link: '/workbench/datasource/new'
+          link: '/workbench/data-source/new'
         }
       ]
     },
