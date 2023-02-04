@@ -74,6 +74,7 @@ export interface APIState {
   appendToAPIRefresh: (fn: () => void) => void
   dispendToAPIRefresh: (fn: () => void) => void
   setWorkbenchContext: (ctx: WorkbenchContextType) => void
+  engineStartCallback: () => void
 }
 
 const refreshFns: (() => void)[] = []
@@ -88,7 +89,15 @@ function isQueryHasContent(query: string) {
   )
 }
 
+let engineStartPromiseResolve: Function
+const engineStartPromise = new Promise(resolve => {
+  engineStartPromiseResolve = resolve
+})
+
 export const useAPIManager = create<APIState>((set, get) => ({
+  engineStartCallback: () => {
+    engineStartPromiseResolve?.()
+  },
   apiDesc: undefined,
   query: DEFAULT_QUERY,
   editorQuery: DEFAULT_QUERY,
@@ -228,7 +237,8 @@ export const useAPIManager = create<APIState>((set, get) => ({
       get()._workbenchContext?.onRefreshMenu('api')
     }
   },
-  refreshSchema: () => {
+  refreshSchema: async () => {
+    await engineStartPromise
     return fetch('/app/main/graphql', {
       method: 'POST',
       headers: {

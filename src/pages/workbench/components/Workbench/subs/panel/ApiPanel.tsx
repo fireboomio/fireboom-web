@@ -402,30 +402,35 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     // setIsModalVisible(false)
   }
 
+  const postDelete = (ids: number[]) => {
+    const deleteCurrent = !!ids.find(id => `/workbench/apimanage/${id}` === location.pathname)
+    if (deleteCurrent) {
+      const findList = [...treeData]
+      for (;;) {
+        const curr = findList.shift()
+        if (!curr) {
+          navigate('/workbench/apimanage')
+          return
+        }
+        if (curr.children?.length) {
+          findList.push(...curr.children)
+          continue
+        }
+        if (!curr.isDir && !ids.includes(curr.id)) {
+          navigate(`/workbench/apimanage/${curr.id}`)
+          return
+        }
+      }
+    }
+  }
+
   const handleDelete = (node: DirTreeNode) => {
     setAction(null)
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
       setRefreshFlag(!refreshFlag)
       localStorage.removeItem(`_api_args_${node.id}`)
-      if (`/workbench/apimanage/${node.id}` === location.pathname) {
-        const findList = [...treeData]
-        for (;;) {
-          const curr = findList.shift()
-          if (!curr) {
-            navigate('/workbench/apimanage')
-            return
-          }
-          if (curr.children?.length) {
-            findList.push(...curr.children)
-            continue
-          }
-          if (!curr.isDir && curr.id !== node.id) {
-            navigate(`/workbench/apimanage/${curr.id}`)
-            return
-          }
-        }
-      }
+      postDelete([node.id])
     })
   }
 
@@ -463,9 +468,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   async function batchSwitch(flag: boolean) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
+    const ids = selectedNode.map(x => x.id)
     try {
       await requests.post('operateApi/batchOnline', {
-        Ids: selectedNode.map(x => x.id),
+        Ids: ids,
         enable: flag
       })
     } finally {
@@ -473,6 +479,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
     message.success(intl.formatMessage({ defaultMessage: '操作成功' }))
     setRefreshFlag(!refreshFlag)
+    events.emit({
+      event: 'apiEnableChange',
+      data: { ids, enable: flag }
+    })
   }
 
   const titleRender = (nodeData: DirTreeNode) => {
@@ -696,6 +706,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                           requests.post('operateApi/batchDelete', { ids }).then(() => {
                             ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
                             message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+                            postDelete(ids)
                             setRefreshFlag(!refreshFlag)
                           })
                           // setEditFlag(false)

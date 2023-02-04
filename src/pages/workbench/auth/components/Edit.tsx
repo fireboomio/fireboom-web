@@ -184,7 +184,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           }}
           onValuesChange={onValuesChange}
           autoComplete="new-password"
-          validateTrigger="onBlur"
+          validateTrigger="onChange"
           initialValues={initialValues}
         >
           <Form.Item

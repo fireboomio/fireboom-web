@@ -14,6 +14,10 @@ type TitleChangeEvent = {
   event: 'titleChange'
   data: { title: string; path: string }
 }
+type ApiEnableChangeEvent = {
+  event: 'apiEnableChange'
+  data: { ids: number[]; enable: boolean }
+}
 type CompileFinishEvent = {
   event: 'compileFinish'
 }
@@ -21,13 +25,19 @@ type CompileFailEvent = {
   event: 'compileFail'
 }
 
-type EventTypes = TitleChangeEvent | CompileFinishEvent | CompileFailEvent | WsEvent
+type EventTypes =
+  | TitleChangeEvent
+  | CompileFinishEvent
+  | CompileFailEvent
+  | WsEvent
+  | ApiEnableChangeEvent
 
 const events = new EventEmitter<any, EventTypes>()
 
 export default events
 
 export function useEventBus(event: 'titleChange', cb: EventHandler<TitleChangeEvent>): void
+export function useEventBus(event: 'apiEnableChange', cb: EventHandler<ApiEnableChangeEvent>): void
 export function useEventBus(event: 'compileFinish', cb: EventHandler<CompileFinishEvent>): void
 export function useEventBus(event: 'compileFail', cb: EventHandler<CompileFailEvent>): void
 export function useEventBus(event: 'wsEvent', cb: EventHandler<WsEvent>): void
@@ -43,6 +53,7 @@ export function useEventBus(event: string, cb: EventHandler) {
 export function useWebSocket(channel: string, event: string, cb: (data: any) => void) {
   useEventBus('wsEvent', ({ data }) => {
     if (data.channel === channel && data.event === event) {
+      // @ts-ignore
       cb(data.data)
     }
   })

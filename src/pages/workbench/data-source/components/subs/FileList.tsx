@@ -151,9 +151,9 @@ export default function FileList({
           </Popconfirm>
 
           <a
-            href={`/api/v1/file/downloadFile??auth-key=${getAuthKey()}type=${upType}&fileName=${
+            href={`/api/v1/file/downloadFile?type=${upType}&fileName=${
               rcd.name
-            }`}
+            }&auth-key=${getAuthKey()}`}
           >
             <img
               alt="xiazai"

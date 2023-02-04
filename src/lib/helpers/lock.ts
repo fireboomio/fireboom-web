@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function useLock<T, Q extends (...arg: any) => Promise<T>>(
   fun: Q,
@@ -10,6 +10,7 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
   const originFun = useRef(fun)
   // 锁变量
   let lock = useRef(false)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     originFun.current = fun
     lock.current = false
@@ -25,6 +26,7 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
     // 记录执行结果和执行过程中产生的异常
     let excuteResult, excuteError
 
+    setLoading(true)
     // 上锁
     lock.current = true
 
@@ -41,6 +43,7 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
     //   await new Promise(resolve => setTimeout(resolve, delay))
     // }
 
+    setLoading(false)
     // 解锁
     lock.current = false
 
@@ -51,5 +54,5 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
     // 返回执行结果
     return excuteResult
   }, deps) as (...arg: Parameters<Q>) => Promise<Awaited<ReturnType<Q>> | undefined>
-  return { loading: lock.current, fun: wrapped }
+  return { loading, fun: wrapped }
 }

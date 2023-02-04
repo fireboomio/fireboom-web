@@ -15,6 +15,7 @@ import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
@@ -55,6 +56,7 @@ export default function APIEditorContainer() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dataSourceList, setDataSourceList] = useState<string[]>([])
   const {
+    engineStartCallback,
     query,
     editorQuery,
     schema,
@@ -67,6 +69,7 @@ export default function APIEditorContainer() {
     autoSave,
     operationType
   } = useAPIManager(state => ({
+    engineStartCallback: state.engineStartCallback,
     query: state.query,
     editorQuery: state.editorQuery,
     schemaAST: state.schemaAST,
@@ -184,8 +187,21 @@ export default function APIEditorContainer() {
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
   })
+  useEventBus('apiEnableChange', ({ data }) => {
+    if (data.ids.includes(Number(params.id))) {
+      pureUpdateAPI({ enable: data.enable })
+    }
+  })
+  useEffect(() => {
+    if (workbenchCtx.engineStatus === ServiceStatus.Started) {
+      engineStartCallback()
+    }
+  }, [workbenchCtx.engineStatus])
 
-  useEventBus('compileFinish', refreshSchema)
+  useEventBus('compileFinish', () => {
+    engineStartCallback()
+    refreshSchema()
+  })
 
   useEffect(() => {
     // 3秒后自动保存

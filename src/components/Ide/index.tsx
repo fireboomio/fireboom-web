@@ -191,16 +191,23 @@ const IdeContainer: FC<Props> = props => {
   // scriptList和monaco加载完毕后，将所有scriptList中的代码加载到monaco中
   useEffect(() => {
     if (!scriptList || !monaco) return
-    requests.get<unknown, { path: string; content: string }[]>('hook/ctree').then(res => {
-      res.forEach(({ path, content }) => {
-        const model = monaco.editor.getModel(path)
-        if (!model) {
-          if (!monaco.editor.getModel(path)) {
-            monaco.editor.createModel(content, 'typescript', monaco.Uri.parse(path))
+    requests
+      .get<unknown, { path: string; content: string }[]>('hook/ctree', { timeout: 60000 })
+      .then(res => {
+        res.forEach(({ path, content }) => {
+          if (path.startsWith('generated/') || path.startsWith('node_modules/')) {
+            return
           }
-        }
+          console.log(path, content)
+          const monacoPath = `inmemory://model/hook/${path}`
+          const model = monaco.editor.getModel(path)
+          if (!model) {
+            if (!monaco.editor.getModel(path)) {
+              monaco.editor.createModel(content, 'typescript', monaco.Uri.parse(monacoPath))
+            }
+          }
+        })
       })
-    })
   }, [scriptList, monaco])
 
   useEffect(() => {
