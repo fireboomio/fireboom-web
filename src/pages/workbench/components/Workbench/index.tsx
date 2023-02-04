@@ -75,14 +75,13 @@ export default function Index(props: PropsWithChildren) {
     if (data.engineStatus === ServiceStatus.Started) {
       events.emit({ event: 'compileFinish' })
     }
-    console.log('status', data)
   })
   useWebSocket('engine', 'pushStatus', data => {
-    setInfo(data)
+    // @ts-ignore
+    setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
     if (data.engineStatus === ServiceStatus.Started) {
       events.emit({ event: 'compileFinish' })
     }
-    console.log('pushStatus', data)
   })
   useWebSocket('engine', 'getHookStatus', data => {
     // @ts-ignore
@@ -248,6 +247,7 @@ export default function Index(props: PropsWithChildren) {
     return (
       <WorkbenchContext.Provider
         value={{
+          engineStatus: info?.engineStatus,
           triggerPageEvent: (event: WorkbenchEvent) => {
             listener.current?.(event)
           },

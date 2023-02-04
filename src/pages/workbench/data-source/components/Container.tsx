@@ -9,6 +9,7 @@ import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
 import { updateHookSwitch } from '@/lib/service/hook'
 
 import Custom from './subs/Custom'
@@ -30,13 +31,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const [isEditing, setIsEditing] = React.useState(false)
 
   const navigate = useNavigate()
-  if (!content) {
-    return null
-  }
-
-  const toggleOpen = async () => {
+  const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
-
     content.switch ^= 1
     if (content) {
       void (await requests.put('/dataSource', content))
@@ -47,7 +43,12 @@ export default function DatasourceContainer({ content, showType }: Props) {
       updateHookSwitch(`customize/${content.name}`, !!content.switch)
     }
     onRefreshMenu('dataSource')
+  }, [content])
+
+  if (!content) {
+    return null
   }
+
   let icon = 'other'
   switch (content?.sourceType) {
     case 1:
@@ -83,6 +84,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     await mutate(['/dataSource', String(content.id)])
   }
 
+  console.log(loading)
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
@@ -149,6 +151,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             {content.sourceType !== 4 ? (
               <Switch
+                loading={loading}
                 checked={content?.switch === 1}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                 unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -168,9 +171,6 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
-                <Button className={'btn-test ml-4 mr-4'} onClick={() => testLink('bottomLeft')}>
-                  <FormattedMessage defaultMessage="测试" />
-                </Button>
                 <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
                   <FormattedMessage defaultMessage="编辑" />
                 </Button>

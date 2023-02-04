@@ -131,35 +131,121 @@ export default function Designer() {
   const inputValue = useRef<string>('')
 
   useEffect(() => {
-    void requests
-      .get('/dataSource/example')
-      .then(xs => {
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-        setExamples(xs.map(x => x.config))
-        return xs
-      })
-      .then(xs =>
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-        xs.map(x => {
+    const exampleList = [
+      {
+        coming: true,
+        id: 0,
+        name: 'example_pgsql',
+        sourceType: 1,
+        config: {
+          apiNamespace: 'example_pgsql',
+          dbType: 'postgresql',
+          appendType: '0',
+          databaseUrl: {
+            key: '',
+            kind: '0',
+            val: 'anson:1234qwer!@139.196.89.94:5433/dbc32d0e6ba2c141c196fe42bb389034b8anson'
+          },
+          schemaExtension: '',
+          replaceJSONTypeFieldConfiguration: null,
+          host: '',
+          dbName: '',
+          port: '',
+          userName: {
+            key: '',
+            kind: '',
+            val: ''
+          },
+          password: {
+            key: '',
+            kind: '',
+            val: ''
+          }
+        },
+        switch: 0,
+        createTime: '',
+        updateTime: '',
+        isDel: 0
+      },
+      {
+        id: 0,
+        name: 'example_restApi',
+        sourceType: 2,
+        config: {
+          apiNameSpace: 'example_restApi',
+          filePath: 'example_rest.json',
+          baseURL: '',
+          jwtType: '',
+          secret: {
+            key: '',
+            kind: '',
+            val: ''
+          },
+          signingMethod: '',
+          tokenPoint: '',
+          statusCodeUnions: false,
+          headers: []
+        },
+        switch: 0,
+        createTime: '',
+        updateTime: '',
+        isDel: 0
+      },
+      {
+        id: 0,
+        name: 'example_graphqlApi',
+        sourceType: 3,
+        config: {
+          apiNameSpace: 'example_graphqlApi',
+          url: 'https://graphql-weather-api.herokuapp.com/',
+          loadSchemaFromString: '',
+          internal: false,
+          customFloatScalars: null,
+          customIntScalars: null,
+          skipRenameRootFields: null,
+          headers: []
+        },
+        switch: 0,
+        createTime: '',
+        updateTime: '',
+        isDel: 0
+      },
+      {
+        id: 0,
+        name: 'example_customer',
+        sourceType: 4,
+        config: {
+          apiNamespace: 'example_customer',
+          serverName: 'example_customer',
+          enableGraphQLEndpoint: false,
+          schema:
+            "new GraphQLSchema({\n\t\t\t\tquery: new GraphQLObjectType({\n\t\t\t\t\tname: 'RootQueryType',\n\t\t\t\t\tfields: {\n\t\t\t\t\t\thello: {\n\t\t\t\t\t\t\ttype: GraphQLString,\n\t\t\t\t\t\t\tresolve() {\n\t\t\t\t\t\t\t\treturn 'world';\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t}),\n\t\t\t}"
+        },
+        switch: 0,
+        createTime: '',
+        updateTime: '',
+        isDel: 0
+      }
+    ]
+    setExamples(exampleList as any)
+
+    setData(x =>
+      x.concat({
+        name: intl.formatMessage({ defaultMessage: '示例数据源' }),
+        items: exampleList.map(x => {
           return {
+            coming: x.coming,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            name: x.config.name,
-            icon: iconMap[`${x.config.sourceType}_${x.config.config.dbType ?? ''}`.toLowerCase()],
+            name: x.name,
+            icon: iconMap[`${x.sourceType}_${x.config.dbType ?? ''}`.toLowerCase()],
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            sourceType: x.config.sourceType,
+            sourceType: x.sourceType,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            dbType: x.config.config.dbType
+            dbType: x.config.dbType
           }
         })
-      )
-      .then(xx => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        setData(x =>
-          x.concat({ name: intl.formatMessage({ defaultMessage: '示例数据源' }), items: xx })
-        )
       })
+    )
   }, [])
 
   function createCustom() {

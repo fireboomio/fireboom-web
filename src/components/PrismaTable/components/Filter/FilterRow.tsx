@@ -212,6 +212,7 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
     case 'Boolean':
       return (
         <Select
+          defaultValue={inputValue}
           dropdownMatchSelectWidth={false}
           className="w-full"
           onSelect={(value: boolean) => handleValueChange(value)}
@@ -222,7 +223,12 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
       )
     case 'Enum':
       return (
-        <Select dropdownMatchSelectWidth={false} className="w-full" onSelect={handleValueChange}>
+        <Select
+          defaultValue={inputValue}
+          dropdownMatchSelectWidth={false}
+          className="w-full"
+          onSelect={handleValueChange}
+        >
           {enums.map(e => {
             return (
               <Option key={e} value={e}>
