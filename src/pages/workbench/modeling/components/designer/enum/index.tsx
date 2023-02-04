@@ -1,4 +1,4 @@
-import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { DeleteOutlined } from '@ant-design/icons'
 import type { Enumerator } from '@mrleebo/prisma-ast'
 import { Button, Col, Form, Input, Modal, Row } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
@@ -184,28 +184,6 @@ const EnumDesigner = forwardRef(
 
     return (
       <div className={currentEnum.id ? 'bg-white px-7 py-4 flex-1' : 'w-full'}>
-        {!currentEnum.id ? (
-          <div className="flex justify-start items-center -mt-16px">
-            <div className="flex justify-start items-center h-10 bg-white pl-4 pr-4 mr-auto">
-              <span className="text-lg font-medium text-16px">{currentEnumName}</span>
-              <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">
-                enum
-              </span>
-            </div>
-
-            <PlusCircleOutlined onClick={handleAddNewEnumButtonClick} />
-            <Button className="ml-3" onClick={handleResetEnum} disabled={!isEditing}>
-              重置
-            </Button>
-            <Button
-              className={`${styles['save-btn']} ml-3`}
-              onClick={handleSaveEnum}
-              disabled={!isEditing || invalidFieldIdx.length > 0}
-            >
-              保存
-            </Button>
-          </div>
-        ) : null}
         {filteredEnumerators?.map((enumItem, idx) => (
           <Row
             justify="space-between"

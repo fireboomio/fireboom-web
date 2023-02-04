@@ -6,7 +6,7 @@ import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import requests, { getHeader } from '@/lib/fetchers'
+import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 
 import styles from './FileList.module.less'
 
@@ -150,7 +150,11 @@ export default function FileList({
             />
           </Popconfirm>
 
-          <a href={`/api/v1/file/downloadFile?type=${upType}&fileName=${rcd.name}`}>
+          <a
+            href={`/api/v1/file/downloadFile??auth-key=${getAuthKey()}type=${upType}&fileName=${
+              rcd.name
+            }`}
+          >
             <img
               alt="xiazai"
               src="assets/iconfont/xiazai.svg"
