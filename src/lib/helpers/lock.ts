@@ -15,7 +15,7 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
     lock.current = false
   }, deps)
   // 覆盖为带锁版本
-  return useCallback(async function (...arg: Parameters<Q>) {
+  const wrapped = useCallback(async function (...arg: Parameters<Q>) {
     // console.log('run lock', lock.current)
     // 执行中，忽略本次调用
     if (lock.current) {
@@ -50,5 +50,6 @@ export function useLock<T, Q extends (...arg: any) => Promise<T>>(
     }
     // 返回执行结果
     return excuteResult
-  }, deps) as (...arg: Parameters<Q>) => ReturnType<Q>
+  }, deps) as (...arg: Parameters<Q>) => Promise<Awaited<ReturnType<Q>> | undefined>
+  return { loading: lock.current, fun: wrapped }
 }

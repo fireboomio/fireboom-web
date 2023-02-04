@@ -504,7 +504,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             updateLocalstorage={editType === 'add' ? updateNewEntityInLocalStorage : undefined}
             setIsEditing={editType === 'edit' ? setIsEditing : undefined}
             isEditing={isEditing}
-            savedEnum={editType === 'edit' ? (currentEntity as Enum) : (newEntity as Enum)}
+            savedEnum={currentEntity as Enum}
             saveEnum={handleSaveEnum}
             saveModify={(entity: any) => {
               if (entity) {

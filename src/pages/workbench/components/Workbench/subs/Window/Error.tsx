@@ -35,25 +35,28 @@ export default function Error() {
   useEffect(() => {
     const groups: Record<QuestionType, Question[]> = groupBy(questions, 'model') as any
     // @ts-ignore
-    setBlocks(Object.keys(groups).map(key => ({ key, list: groups[key] })))
-    // setBlocks(
-    //   Object.keys(questions).map(key => {
-    //     questions[key].forEach((item: any) => {
-    //       if (key === 'datasource') {
-    //         if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(item.type)) {
-    //           item.icon = `/assets/icon/${item.type}.svg`
-    //         } else {
-    //           item.icon = `/assets/icon/db-other.svg`
-    //         }
-    //       } else if (['api', 'storage'].includes(key)) {
-    //         item.icon = '/assets/icon/file.svg'
-    //       } else {
-    //         item.icon = '/assets/icon/github-fill.svg'
-    //       }
-    //     })
-    //     return { key, list: questions[key] }
-    //   })
-    // )
+    const list: any = Object.keys(groups).map(key => ({
+      key,
+      list: groups[key].map((x: any) => {
+        const type = (x.dbType ?? '').toLowerCase()
+        if (key === String(QuestionType.DatasourceQuestion)) {
+          if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(type)) {
+            x.icon = `/assets/icon/${type}.svg`
+          } else {
+            x.icon = `/assets/icon/db-other.svg`
+          }
+        } else if (
+          key == String(QuestionType.OssQuestion) ||
+          key == String(QuestionType.AuthQuestion)
+        ) {
+          x.icon = '/assets/icon/file.svg'
+        } else {
+          x.icon = '/assets/icon/github-fill.svg'
+        }
+        return x
+      })
+    }))
+    setBlocks(list)
   }, [questions])
 
   const navigate = useNavigate()
@@ -96,7 +99,7 @@ export default function Error() {
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
                 <span>{item.msg}</span>
-                {block.key === QuestionType.DatasourceQuestion && (
+                {block.key == QuestionType.DatasourceQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -114,7 +117,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === QuestionType.OperationQuestion && (
+                {block.key == QuestionType.OperationQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -137,7 +140,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === QuestionType.AuthQuestion && (
+                {block.key == QuestionType.AuthQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -160,7 +163,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === QuestionType.OssQuestion && (
+                {block.key == QuestionType.OssQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />

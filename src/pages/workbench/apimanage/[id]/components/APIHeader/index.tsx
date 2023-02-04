@@ -63,7 +63,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
   }
 
-  const toggleEnable = useLock(async (checked: boolean) => {
+  const { loading, fun: toggleEnable } = useLock(async (checked: boolean) => {
     try {
       await changeEnable(checked)
       message.success(
@@ -273,6 +273,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         <FormattedMessage defaultMessage="保存" />
       </button>
       <Switch
+        loading={loading}
         disabled={apiDesc?.inlegal && !apiDesc?.enable}
         className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
         checked={apiDesc?.enable}

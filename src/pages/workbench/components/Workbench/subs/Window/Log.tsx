@@ -3,7 +3,6 @@ import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
 
 import { useGlobal } from '@/hooks/global'
-import type { LogMessage } from '@/interfaces/window'
 
 export type LogAction = {
   clearLogs: () => void
@@ -52,14 +51,8 @@ const Log: React.FC<Props> = ({ actionRef }) => {
       <div className="h-full mb-0 w-10/10 overflow-auto">
         {logs.map((x, idx) => (
           <div className="text-xs leading-25px font-normal text-[#333333]" key={idx}>
-            <span className="mr-8">{x.time}</span>{' '}
-            <span className="mr-1.5">
-              <img
-                src={x.logType === 1 ? '/assets/log-core.svg' : '/assets/log-hook.svg'}
-                alt={x.logType === 1 ? '核心日志' : '钩子日志'}
-              />
-            </span>
-            <span className="w-100 mr-1">{x.level}</span> <span>{x.msg}</span>
+            <span className="mr-8">{x.time}</span> <span className="w-100 mr-1">{x.level}</span>{' '}
+            <span>{x.msg}</span>
           </div>
         ))}
 

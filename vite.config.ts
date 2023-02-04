@@ -12,8 +12,8 @@ import { argv } from 'process'
 // const backendUrl = 'http://120.26.62.151:9123'
 // const backendUrl = 'http://192.168.166.143:9123'
 // const backendUrl = 'http://8.142.115.204:9123'
-// const backendUrl = 'http://192.168.202.98:9123'
-const backendUrl = process.env.SERVER_URL || 'http://localhost:9123'
+const backendUrl = 'http://192.168.202.98:9123'
+// const backendUrl = process.env.SERVER_URL || 'http://localhost:9123'
 
 const plugins: PluginOption[] = [
   react({
