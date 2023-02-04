@@ -26,7 +26,7 @@ export default function RapiFrame() {
       spec-url={params.get('url')}
       server-url={customServerUrl}
       default-api-server={customServerUrl}
-      show-header="false"
+      // show-header="false"
       show-info="false"
       allow-authentication="false"
       allow-server-selection="false"
