@@ -16,6 +16,7 @@ import { DependManager } from '@/components/Ide/dependLoader'
 import getDefaultCode from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import requests from '@/lib/fetchers'
 import {
   getHook,
   getTypes,
@@ -190,18 +191,16 @@ const IdeContainer: FC<Props> = props => {
   // scriptList和monaco加载完毕后，将所有scriptList中的代码加载到monaco中
   useEffect(() => {
     if (!scriptList || !monaco) return
-    ;(async () => {
-      for (let i = 0; i < scriptList.length; i++) {
-        const path = `inmemory://model/hook/${scriptList[i]}.ts`
+    requests.get<unknown, { path: string; content: string }[]>('hook/ctree').then(res => {
+      res.forEach(({ path, content }) => {
         const model = monaco.editor.getModel(path)
         if (!model) {
-          const data = await getHook<HookInfo>(scriptList[i])
           if (!monaco.editor.getModel(path)) {
-            monaco.editor.createModel(data.script, 'typescript', monaco.Uri.parse(path))
+            monaco.editor.createModel(content, 'typescript', monaco.Uri.parse(path))
           }
         }
-      }
-    })()
+      })
+    })
   }, [scriptList, monaco])
 
   useEffect(() => {
@@ -271,7 +270,6 @@ const IdeContainer: FC<Props> = props => {
     setEditor(monacoEditor)
     setMonaco(monaco)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
-    console.log('******', hookPath, model)
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
 

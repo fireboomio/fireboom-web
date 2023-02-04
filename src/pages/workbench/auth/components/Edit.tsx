@@ -14,7 +14,7 @@ import Error50x from '@/components/ErrorPage/50x'
 import UrlInput from '@/components/UrlInput'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
-import requests from '@/lib/fetchers'
+import requests, { getHeader } from '@/lib/fetchers'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 import styles from './subs.module.less'
@@ -118,7 +118,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     // 开始请求前，先清空现有数据
     // setJwksUrl('')
     // setEndPoint('')
-    const res = await axios.get(url)
+    const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
     // 如果当前url不是最新的，忽略本次请求
     if (currentInspecting.current !== url) {
       return
