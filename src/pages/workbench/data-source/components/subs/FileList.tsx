@@ -6,7 +6,7 @@ import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import requests from '@/lib/fetchers'
+import requests, { getHeader } from '@/lib/fetchers'
 
 import styles from './FileList.module.less'
 
@@ -44,6 +44,7 @@ export default function FileList({
   const upProps: UploadProps = {
     name: 'file',
     action: '/api/v1/file/uploadFile',
+    headers: getHeader(),
     data: { type: upType },
     showUploadList: false,
     beforeUpload: beforeUpload,
@@ -133,7 +134,7 @@ export default function FileList({
       key: 'icon',
       width: 80,
       render: (_, rcd) => (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between" onClick={e => e.stopPropagation()}>
           <Popconfirm
             title={intl.formatMessage({ defaultMessage: '确认删除？' })}
             onConfirm={e => confirm(rcd, e)}

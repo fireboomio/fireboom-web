@@ -116,7 +116,7 @@ export default function StorageForm({ content, showErr }: Props) {
             placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           />
         </Form.Item>
-        <Form.Item label="App ID">
+        <Form.Item label="App ID" required>
           <Input.Group compact className="!flex">
             <Form.Item name={['accessKeyID', 'kind']} noStyle>
               <Select className="flex-0 w-100px">
@@ -149,7 +149,7 @@ export default function StorageForm({ content, showErr }: Props) {
             </Form.Item>
           </Input.Group>
         </Form.Item>
-        <Form.Item label="App Secret">
+        <Form.Item label="App Secret" required>
           <Input.Group compact className="!flex">
             <Form.Item name={['secretAccessKey', 'kind']} noStyle>
               <Select className="flex-0 w-100px">

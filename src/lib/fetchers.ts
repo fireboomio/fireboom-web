@@ -58,6 +58,12 @@ export const hasAuthKey = () => {
   return !!authKey
 }
 
+export const getHeader = () => {
+  return {
+    ['X-FB-Authentication']: authKey ?? ''
+  }
+}
+
 let authChangeCallback: (() => void) | undefined
 export const useAuthState = () => {
   const subscribe = (cb: any) => {

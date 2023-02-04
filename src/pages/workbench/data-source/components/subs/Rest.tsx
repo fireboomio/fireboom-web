@@ -889,9 +889,7 @@ export default function Rest({ content, type }: Props) {
                           style={{ marginBottom: '20px' }}
                           name="tokenPoint"
                         >
-                          <Input
-                            placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                          />
+                          <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
                         </Form.Item>
                       </>
                     ) : null}
@@ -944,14 +942,14 @@ export default function Rest({ content, type }: Props) {
                   >
                     <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
                   </Button>
-                  <Button
-                    className={'btn-test ml-4'}
-                    onClick={() => {
-                      test()
-                    }}
-                  >
-                    {intl.formatMessage({ defaultMessage: '测试' })}
-                  </Button>
+                  {/*<Button*/}
+                  {/*  className={'btn-test ml-4'}*/}
+                  {/*  onClick={() => {*/}
+                  {/*    test()*/}
+                  {/*  }}*/}
+                  {/*>*/}
+                  {/*  {intl.formatMessage({ defaultMessage: '测试' })}*/}
+                  {/*</Button>*/}
                   <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
                     {content.name == ''
                       ? intl.formatMessage({ defaultMessage: '创建' })

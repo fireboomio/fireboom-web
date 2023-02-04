@@ -57,6 +57,9 @@ export default function DB({ content, type }: Props) {
   const passwordKind = Form.useWatch(['password', 'kind'], form)
   const appendType = Form.useWatch('appendType', form)
 
+  // 当参数/URL模式变更时，自动同步数据
+  // useEffect(() => {})
+
   const config = content.config as Config
   const [rulesObj, setRulesObj] = useImmer({})
   const [isValue, setIsValue] = useImmer(true)

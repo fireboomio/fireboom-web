@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Radio, Space, Tag } from 'antd'
+import { Radio, Space, Tag, Tooltip } from 'antd'
 import { throttle } from 'lodash'
-import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
 
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
@@ -37,6 +37,7 @@ const StatusBar: React.FC<Props> = ({
 }) => {
   const intl = useIntl()
   const calcTime = useCalcTime()
+  const location = useLocation()
   const { questions } = useGlobal(state => ({
     questions: state.questions
   }))
@@ -71,10 +72,15 @@ const StatusBar: React.FC<Props> = ({
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   // const { openHookServer, loading: hookServerLoading } = useStackblitz()
-  const workbenchContext = useContext(WorkbenchContext)
+  const [showHookServerInput, setShowHookServerInput] = useState<boolean>()
+  const webContainerUrl = useMemo(() => {
+    const url = new URL(window.location.href)
+    url.port = '9123'
+    return url.origin + '/ws'
+  }, [window.location])
   useEffect(() => {
     setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
-    if (!config.hooksServerURL) {
+    if (config.hooksServerURL === webContainerUrl) {
       setHookSwitch(1)
     } else if (config.hooksServerURL === 'http://127.0.0.1:9992') {
       setHookSwitch(2)
@@ -172,9 +178,20 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className={styles.errLabel}>
             <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
-            <span className="ml-1 text-[#50C772]">
-              {statusMap[engineStatus as ServiceStatus] ?? ''}
-            </span>
+            {engineStatus === ServiceStatus.NotStarted ? (
+              <Tooltip
+                open={true}
+                title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
+              >
+                <span className="ml-1 text-[#50C772]">
+                  {statusMap[engineStatus as ServiceStatus] ?? ''}
+                </span>
+              </Tooltip>
+            ) : (
+              <span className="ml-1 text-[#50C772]">
+                {statusMap[engineStatus as ServiceStatus] ?? ''}
+              </span>
+            )}
           </span>
           <span className="ml-4.5">
             {' '}
@@ -243,8 +260,8 @@ const StatusBar: React.FC<Props> = ({
                     onChange={e => {
                       setHookSwitch(e.target.value)
                       const map: Record<string, string | undefined> = {
-                        '1': '',
-                        '2': 'http://127.0.0.1:9123',
+                        '1': webContainerUrl,
+                        '2': 'http://127.0.0.1:9992',
                         '3': hooksServerURL
                       }
                       const url: string = map[e.target.value] ?? ''
