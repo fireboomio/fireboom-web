@@ -354,19 +354,6 @@ export default function Rest({ content, type }: Props) {
                 label={
                   <>
                     <span className={styles['label-style']}>
-                      {intl.formatMessage({ defaultMessage: 'Rest 端点' })}
-                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
-                    </span>
-                  </>
-                }
-                className="justify-start"
-              >
-                {config.baseURL}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label={
-                  <>
-                    <span className={styles['label-style']}>
                       {intl.formatMessage({ defaultMessage: ' 指定 OAS' })}
                       <FormToolTip title={intl.formatMessage({ defaultMessage: ' 指定 OAS' })} />
                     </span>
@@ -383,6 +370,19 @@ export default function Rest({ content, type }: Props) {
                   />
                   <span className="ml-2 text-11px text-[#909399]">{config.filePath}</span>
                 </div>
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <>
+                    <span className={styles['label-style']}>
+                      {intl.formatMessage({ defaultMessage: 'Rest 端点' })}
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
+                    </span>
+                  </>
+                }
+                className="justify-start"
+              >
+                {config.baseURL}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -600,32 +600,6 @@ export default function Rest({ content, type }: Props) {
                 <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
               <Form.Item
-                label={
-                  <>
-                    <span>{intl.formatMessage({ defaultMessage: 'Rest 端点' })}</span>
-                    <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
-                  </>
-                }
-                rules={[
-                  {
-                    required: true,
-                    type: 'url',
-                    message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
-                  }
-                ]}
-                name="baseURL"
-                colon={false}
-                style={{ marginBottom: '20px' }}
-              >
-                <AutoComplete
-                  options={baseURLOptions}
-                  filterOption={(inputValue, option) => {
-                    return true
-                  }}
-                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                />
-              </Form.Item>
-              <Form.Item
                 rules={[
                   {
                     required: true,
@@ -655,6 +629,32 @@ export default function Rest({ content, type }: Props) {
                   }
                   readOnly
                   // value={uploadPath}
+                />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <>
+                    <span>{intl.formatMessage({ defaultMessage: 'Rest 端点' })}</span>
+                    <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
+                  </>
+                }
+                rules={[
+                  {
+                    required: true,
+                    type: 'url',
+                    message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
+                  }
+                ]}
+                name="baseURL"
+                colon={false}
+                style={{ marginBottom: '20px' }}
+              >
+                <AutoComplete
+                  options={baseURLOptions}
+                  filterOption={(inputValue, option) => {
+                    return true
+                  }}
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                 />
               </Form.Item>
 
