@@ -198,7 +198,6 @@ const IdeContainer: FC<Props> = props => {
           if (path.startsWith('generated/') || path.startsWith('node_modules/')) {
             return
           }
-          console.log(path, content)
           const monacoPath = `inmemory://model/hook/${path}`
           const model = monaco.editor.getModel(path)
           if (!model) {
