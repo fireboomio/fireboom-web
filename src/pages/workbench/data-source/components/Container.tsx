@@ -171,7 +171,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
-                <Button className={'btn-save mr-11'} onClick={() => handleToggleDesigner('form')}>
+                <Button className={'btn-save !ml-4'} onClick={() => handleToggleDesigner('form')}>
                   <FormattedMessage defaultMessage="编辑" />
                 </Button>
               </>
