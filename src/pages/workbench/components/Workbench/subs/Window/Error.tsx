@@ -40,18 +40,31 @@ export default function Error() {
       list: groups[key].map((x: any) => {
         const type = (x.dbType ?? '').toLowerCase()
         if (key === String(QuestionType.DatasourceQuestion)) {
-          if (['mysql', 'pgsql', 'mongodb', 'sqlite', 'rest', 'graphql'].includes(type)) {
-            x.icon = `/assets/icon/${type}.svg`
-          } else {
-            x.icon = `/assets/icon/db-other.svg`
+          switch (x.datasource) {
+            case 1:
+              x.icon =
+                {
+                  mysql: '/assets/icon/mysql.svg',
+                  pgsql: '/assets/icon/pg.svg',
+                  graphql: '/assets/icon/graphql.svg',
+                  mongodb: '/assets/icon/mongodb.svg',
+                  rest: '/assets/icon/rest.svg',
+                  sqlite: '/assets/icon/sqlite.svg'
+                }[String(x.dbType).toLowerCase()] || ''
+              break
+            case 2:
+              x.icon = '/assets/icon/rest.svg'
+              break
+            case 3:
+              x.icon = '/assets/icon/graphql.svg'
+              break
           }
-        } else if (
-          key == String(QuestionType.OssQuestion) ||
-          key == String(QuestionType.AuthQuestion)
-        ) {
+        } else if (key == String(QuestionType.AuthQuestion)) {
+          x.icon = '/assets/icon/oidc.svg'
+        } else if (key == String(QuestionType.OssQuestion)) {
           x.icon = '/assets/icon/file.svg'
         } else {
-          x.icon = '/assets/icon/github-fill.svg'
+          x.icon = '/assets/icon/file.svg'
         }
         return x
       })

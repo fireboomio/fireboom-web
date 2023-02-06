@@ -134,7 +134,6 @@ export default function Designer() {
     const exampleList = [
       {
         coming: true,
-        id: 0,
         name: 'example_pgsql',
         sourceType: 1,
         config: {
@@ -168,7 +167,6 @@ export default function Designer() {
         isDel: 0
       },
       {
-        id: 0,
         name: 'example_restApi',
         sourceType: 2,
         config: {
@@ -192,7 +190,6 @@ export default function Designer() {
         isDel: 0
       },
       {
-        id: 0,
         name: 'example_graphqlApi',
         sourceType: 3,
         config: {
@@ -211,7 +208,6 @@ export default function Designer() {
         isDel: 0
       },
       {
-        id: 0,
         name: 'example_customer',
         sourceType: 4,
         config: {

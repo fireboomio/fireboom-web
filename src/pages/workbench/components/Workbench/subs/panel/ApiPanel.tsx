@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
+import { useApiList } from '@/hooks/store/api'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -34,7 +35,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [multiSelection, setMultiSelection] = useState<Key[]>([])
   const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState('')
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   // const [query, setQuery] = useState<string>()
   const [isBlur, setIsBlur] = useState(false)
@@ -116,28 +116,24 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [treeData])
 
+  const { data: apiList, mutate: refreshApiList } = useApiList()
   useEffect(() => {
-    if (!panelOpened) return
+    const tree = convertToTree(apiList ?? [], '0')
 
-    getFetcher<OperationResp[]>('/operateApi')
-      .then(res => {
-        const tree = convertToTree(res, '0')
-
-        setTreeData(tree)
-        // 根据当前path识别需要选中高亮的项目
-        const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
-        if (pathId) {
-          const currentNode = getNodeById(pathId, tree)
-          openApi(tree, pathId)
-          if (currentNode) {
-            setMultiSelection([currentNode.key])
-          }
-        }
-      })
-      .catch((err: Error) => {
-        throw err
-      })
-  }, [panelOpened, refreshFlag, refreshMap.api])
+    setTreeData(tree)
+    // 根据当前path识别需要选中高亮的项目
+    const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+    if (pathId) {
+      const currentNode = getNodeById(pathId, tree)
+      openApi(tree, pathId)
+      if (currentNode) {
+        setMultiSelection([currentNode.key])
+      }
+    }
+  }, [apiList])
+  useEffect(() => {
+    refreshApiList()
+  }, [panelOpened, refreshMap.api])
 
   useEffect(() => {
     if (currEditingNode) {
@@ -152,7 +148,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     if (!isModalVisible && isBlur) {
       setAction(null)
       setCurrEditingKey(null)
-      setRefreshFlag(!refreshFlag)
+      refreshApiList()
     }
     setIsBlur(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -333,7 +329,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (currEditingNode.isDir) {
           void renameNode(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
-            setRefreshFlag(!refreshFlag)
+            refreshApiList()
           })
         } else {
           if (!isUpperCase(inputValue[0])) {
@@ -348,20 +344,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 data: { title: inputValue, path: `${currEditingNode.baseDir}/${inputValue}` }
               })
             }
-            setRefreshFlag(!refreshFlag)
+            refreshApiList()
           })
         }
         break
       case '创建目录':
         void createNode(currEditingNode, inputValue).then(() => {
           setCurrEditingKey(null)
-          setRefreshFlag(!refreshFlag)
+          refreshApiList()
         })
         break
       case '创建文件':
         if (isEmpty(inputValue)) {
           setCurrEditingKey(null)
-          setRefreshFlag(!refreshFlag)
+          refreshApiList()
           // @ts-ignore
         } else if (!isUpperCase(inputValue.at(0))) {
           void message.warn(intl.formatMessage({ defaultMessage: '接口名称必须大写开头！' }))
@@ -386,7 +382,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           if (result?.id) {
             navigate(`/workbench/apimanage/${result?.id}`)
             setCurrEditingKey(null)
-            setRefreshFlag(!refreshFlag)
+            refreshApiList()
           }
           // void message.success('保存成功')
         })
@@ -394,9 +390,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           setAction('创建文件')
           return
         })
-
-      // setAction(null)
-      // setRefreshFlag(!refreshFlag)
     }
     setAction(null)
     // setIsModalVisible(false)
@@ -428,7 +421,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     setAction(null)
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
-      setRefreshFlag(!refreshFlag)
+      refreshApiList()
       localStorage.removeItem(`_api_args_${node.id}`)
       postDelete([node.id])
     })
@@ -478,7 +471,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       hide()
     }
     message.success(intl.formatMessage({ defaultMessage: '操作成功' }))
-    setRefreshFlag(!refreshFlag)
+    refreshApiList()
     events.emit({
       event: 'apiEnableChange',
       data: { ids, enable: flag }
@@ -707,7 +700,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                             ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
                             message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
                             postDelete(ids)
-                            setRefreshFlag(!refreshFlag)
+                            refreshApiList()
                           })
                           // setEditFlag(false)
                           // resolve(true)

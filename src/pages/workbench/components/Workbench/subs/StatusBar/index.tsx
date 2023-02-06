@@ -201,7 +201,7 @@ const StatusBar: React.FC<Props> = ({
             <div
               className="flex h-full items-center"
               onClick={() => {
-                if (!config.hooksServerURL) {
+                if (hookSwitch === 1) {
                   onlineDebug()
                 }
                 // setShowHookSetting(true)
@@ -233,7 +233,9 @@ const StatusBar: React.FC<Props> = ({
             </div>
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
-              <div className={styles.hookEntry}>{config.hooksServerURL || 'WebContainer'}</div>
+              <div className={styles.hookEntry}>
+                {hookSwitch === 1 ? 'WebContainer' : config.hooksServerURL}
+              </div>
               <div
                 className="mr-5px ml-8px"
                 style={{ transform: showHookSetting ? 'rotate(180deg)' : '' }}
@@ -290,19 +292,6 @@ const StatusBar: React.FC<Props> = ({
                           </Tag>
                         )}
                         {hookOptionStatus?.webContainer === HookStatus.Stopped && (
-                          <Tag className="!ml-2" color="warning">
-                            <FormattedMessage defaultMessage="未启动" />
-                          </Tag>
-                        )}
-                      </Radio>
-                      <Radio value={2}>
-                        <FormattedMessage defaultMessage="默认" />
-                        {hookOptionStatus?.default === HookStatus.Running && (
-                          <Tag className="!ml-2" color="success">
-                            <FormattedMessage defaultMessage="已启动" />
-                          </Tag>
-                        )}
-                        {hookOptionStatus?.default === HookStatus.Stopped && (
                           <Tag className="!ml-2" color="warning">
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>

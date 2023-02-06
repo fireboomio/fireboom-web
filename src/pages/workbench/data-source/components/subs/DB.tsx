@@ -156,12 +156,12 @@ export default function DB({ content, type }: Props) {
     ) : (
       <Form.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
         <Input.Group compact>
-          <Form.Item name={['databaseUrl', 'kind']} noStyle>
-            <Select className="w-1/5" onChange={onValueChange}>
-              <Option value="0">{intl.formatMessage({ defaultMessage: '值' })}</Option>
-              <Option value="1">{intl.formatMessage({ defaultMessage: '环境变量' })}</Option>
-            </Select>
-          </Form.Item>
+          {/*<Form.Item name={['databaseUrl', 'kind']} noStyle>*/}
+          {/*  <Select className="w-1/5" onChange={onValueChange}>*/}
+          {/*    <Option value="0">{intl.formatMessage({ defaultMessage: '值' })}</Option>*/}
+          {/*    <Option value="1">{intl.formatMessage({ defaultMessage: '环境变量' })}</Option>*/}
+          {/*  </Select>*/}
+          {/*</Form.Item>*/}
           {isValue ? (
             <Form.Item
               key={1}
@@ -231,16 +231,16 @@ export default function DB({ content, type }: Props) {
 
       <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })}>
         <Input.Group compact className="!flex">
-          <Form.Item name={['userName', 'kind']} noStyle>
-            <Select className="flex-0 w-100px">
-              <Select.Option value="0">
-                {intl.formatMessage({ defaultMessage: '值' })}
-              </Select.Option>
-              <Select.Option value="1">
-                {intl.formatMessage({ defaultMessage: '环境变量' })}
-              </Select.Option>
-            </Select>
-          </Form.Item>
+          {/*<Form.Item name={['userName', 'kind']} noStyle>*/}
+          {/*  <Select className="flex-0 w-100px">*/}
+          {/*    <Select.Option value="0">*/}
+          {/*      {intl.formatMessage({ defaultMessage: '值' })}*/}
+          {/*    </Select.Option>*/}
+          {/*    <Select.Option value="1">*/}
+          {/*      {intl.formatMessage({ defaultMessage: '环境变量' })}*/}
+          {/*    </Select.Option>*/}
+          {/*  </Select>*/}
+          {/*</Form.Item>*/}
           <Form.Item
             name={['userName', 'val']}
             noStyle
@@ -268,16 +268,16 @@ export default function DB({ content, type }: Props) {
 
       <Form.Item label={intl.formatMessage({ defaultMessage: '密码:' })}>
         <Input.Group compact className="!flex">
-          <Form.Item name={['password', 'kind']} noStyle>
-            <Select className="flex-0 w-100px">
-              <Select.Option value="0">
-                {intl.formatMessage({ defaultMessage: '值' })}
-              </Select.Option>
-              <Select.Option value="1">
-                {intl.formatMessage({ defaultMessage: '环境变量' })}
-              </Select.Option>
-            </Select>
-          </Form.Item>
+          {/*<Form.Item name={['password', 'kind']} noStyle>*/}
+          {/*  <Select className="flex-0 w-100px">*/}
+          {/*    <Select.Option value="0">*/}
+          {/*      {intl.formatMessage({ defaultMessage: '值' })}*/}
+          {/*    </Select.Option>*/}
+          {/*    <Select.Option value="1">*/}
+          {/*      {intl.formatMessage({ defaultMessage: '环境变量' })}*/}
+          {/*    </Select.Option>*/}
+          {/*  </Select>*/}
+          {/*</Form.Item>*/}
           <Form.Item name={['password', 'val']} noStyle>
             {String(passwordKind) !== '1' ? (
               <Input
@@ -343,7 +343,7 @@ export default function DB({ content, type }: Props) {
       newValues.databaseUrl.kind = '0'
     }
     let newContent: DatasourceResp
-    if (content.name == '' || content.name.startsWith('example_')) {
+    if (!content.id) {
       const req = { ...content, config: newValues, name: values.apiNamespace }
       Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
@@ -366,6 +366,31 @@ export default function DB({ content, type }: Props) {
 
   //表单item值改变回调
   const onValuesChange = (_allValues: FromValues) => {
+    const values = form.getFieldsValue()
+    console.log(_allValues)
+    if (_allValues.databaseUrl) {
+      // url转参数
+      const [_, userName, password, host, port, dbName] =
+        values.databaseUrl.val.match(/^mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.*)$/) || []
+      form.setFieldValue(['userName', 'val'], userName)
+      form.setFieldValue(['password', 'val'], password)
+      form.setFieldValue('host', host)
+      form.setFieldValue('port', port)
+      form.setFieldValue('dbName', dbName)
+    } else if (
+      _allValues.userName ||
+      _allValues.password ||
+      _allValues.host ||
+      _allValues.port ||
+      _allValues.dbName
+    ) {
+      // 参数转url
+      form.setFieldValue(
+        ['databaseUrl', 'val'],
+        `mysql://${values.userName.val}:${values.password.val}@${values.host}:${values.port}/${values.dbName}`
+      )
+    }
+
     const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
     setDisabled(hasErrors)
   }
@@ -604,7 +629,7 @@ export default function DB({ content, type }: Props) {
                 <Button
                   className="btn-cancel"
                   onClick={() => {
-                    if (content.name && content.name !== 'example_pgsql') {
+                    if (content.id) {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
                       navigate('/workbench/data-source/new')

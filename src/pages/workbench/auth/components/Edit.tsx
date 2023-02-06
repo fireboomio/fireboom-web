@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
-import { Button, Checkbox, Form, Input, Radio, Select } from 'antd'
+import { Button, Checkbox, Form, Input, message, Radio, Select } from 'antd'
 import axios from 'axios'
 import type { ReactNode } from 'react'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -72,6 +72,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     return <Error50x />
   }
   const onFinish = async (values: FromValues) => {
+    if (currentInspecting.current) {
+      message.warning(intl.formatMessage({ defaultMessage: '请等待issuer解析完毕' }))
+      return
+    }
     if (values.jwks == 1) {
       values.jwksJSON = jwksJSON
     }
@@ -110,21 +114,21 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     } catch (e) {
       return
     }
-    // 当前url已经在解析，忽略本次请求
-    if (currentInspecting.current === url) {
-      return
-    }
     currentInspecting.current = url
     // 开始请求前，先清空现有数据
-    // setJwksUrl('')
-    // setEndPoint('')
-    const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
-    // 如果当前url不是最新的，忽略本次请求
-    if (currentInspecting.current !== url) {
-      return
+    form.setFieldValue('jwksURL', '')
+    form.setFieldValue('userInfoEndpoint', '')
+    try {
+      const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
+      // 如果当前url不是最新的，忽略本次请求
+      if (currentInspecting.current !== url) {
+        return
+      }
+      form.setFieldValue('jwksURL', res.data.jwks_uri)
+      form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
+    } finally {
+      currentInspecting.current = ''
     }
-    form.setFieldValue('jwksURL', res.data.jwks_uri)
-    form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
   }
 
   const onValuesChange = (changedValues: object, allValues: FromValues) => {

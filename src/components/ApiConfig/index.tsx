@@ -3,6 +3,7 @@ import { OperationTypeNode } from 'graphql/index'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { useApiGlobalSetting } from '@/hooks/store/api'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
@@ -33,12 +34,9 @@ export default function Index(props: Props) {
   const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const [apiSetting, setApiSetting] = useState<Setting>()
-  const [globalSetting, setGlobalSetting] = useState<Setting>()
   const [form] = Form.useForm()
+  const { data: globalSetting, mutate: refreshGlobalSetting } = useApiGlobalSetting()
   useEffect(() => {
-    void requests.get<unknown, Setting>('/operateApi/setting').then(result => {
-      setGlobalSetting(result)
-    })
     if (props.id) {
       void requests.get<unknown, Setting>(`/operateApi/setting/${props.id}`).then(result => {
         setApiSetting(result)
@@ -128,6 +126,7 @@ export default function Index(props: Props) {
       })
       .then(() => {
         message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+        void refreshGlobalSetting()
         props.onClose?.()
       })
   }

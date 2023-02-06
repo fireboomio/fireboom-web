@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { useStorageList } from '@/hooks/store/storage'
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -29,12 +30,20 @@ export default function StorageForm({ content, showErr }: Props) {
   const secretAccessKeyKind = Form.useWatch(['secretAccessKey', 'kind'], form)
   const [testing, setTesting] = useState(false)
   const envOptions = useEnvOptions()
-
+  const { data: storageList } = useStorageList()
   useEffect(() => {
     form.resetFields()
   }, [content])
 
   const onFinish = async (values: StorageConfig) => {
+    if (
+      storageList?.find(item => {
+        return item.name === values.name && item.id !== content?.id
+      })
+    ) {
+      void message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
+      return
+    }
     const payload = { name: values.name, config: values, useSSL: true }
 
     let resp: StorageResp

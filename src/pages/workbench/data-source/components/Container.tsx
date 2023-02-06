@@ -49,16 +49,24 @@ export default function DatasourceContainer({ content, showType }: Props) {
     return null
   }
 
-  let icon = 'other'
+  let icon = '/assets/icon/db-other.svg'
   switch (content?.sourceType) {
     case 1:
-      icon = String(content.config.dbType) || icon
+      icon =
+        {
+          mysql: '/assets/icon/mysql.svg',
+          pgsql: '/assets/icon/pg.svg',
+          graphql: '/assets/icon/graphql.svg',
+          mongodb: '/assets/icon/mongodb.svg',
+          rest: '/assets/icon/rest.svg',
+          sqlite: '/assets/icon/sqlite.svg'
+        }[String(content.config.dbType).toLowerCase()] || icon
       break
     case 2:
-      icon = 'rest'
+      icon = '/assets/icon/rest.svg'
       break
     case 3:
-      icon = 'graphql'
+      icon = '/assets/icon/graphql.svg'
       break
   }
 
@@ -109,11 +117,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : (
           <>
-            <img
-              className="h-14px mr-1.5 w-14px"
-              src={`/assets/workbench/panel-item-${icon.toLowerCase()}.png`}
-              alt="数据源"
-            />
+            <img className="h-14px mr-1.5 w-14px" src={icon} alt="数据源" />
             {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
 
             {showType === 'detail' ? (
@@ -161,7 +165,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             ) : null}
             {content.sourceType === 1 ? (
               <Button
-                className={'btn-test ml-4 '}
+                className={'btn-test'}
                 onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
               >
                 <FormattedMessage defaultMessage="设计" />
@@ -171,7 +175,10 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
-                <Button className={'btn-save !ml-4'} onClick={() => handleToggleDesigner('form')}>
+                <Button
+                  className={'btn-save !ml-4 mr-11'}
+                  onClick={() => handleToggleDesigner('form')}
+                >
                   <FormattedMessage defaultMessage="编辑" />
                 </Button>
               </>
