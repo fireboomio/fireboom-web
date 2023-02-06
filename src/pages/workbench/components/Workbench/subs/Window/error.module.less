@@ -5,9 +5,12 @@
   background: linear-gradient(270deg, #ffffff 0%, #fcfcff 100%);
   border-radius: 6px;
   .line {
-    margin: 8px 0;
+    padding: 8px 0;
     display: flex;
     align-items: flex-start;
+    &:hover {
+      @apply bg-gray-100;
+    }
     .icon {
       margin: 0 12px 0 16px;
       width: 16px;

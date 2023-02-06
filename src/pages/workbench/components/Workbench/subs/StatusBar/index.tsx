@@ -37,7 +37,6 @@ const StatusBar: React.FC<Props> = ({
 }) => {
   const intl = useIntl()
   const calcTime = useCalcTime()
-  const location = useLocation()
   const { questions } = useGlobal(state => ({
     questions: state.questions
   }))
@@ -184,6 +183,16 @@ const StatusBar: React.FC<Props> = ({
                 title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
               >
                 <span className="ml-1 text-[#50C772]">
+                  {statusMap[engineStatus as ServiceStatus] ?? ''}
+                </span>
+              </Tooltip>
+            ) : engineStatus === ServiceStatus.BuildFailed ||
+              engineStatus === ServiceStatus.StartFailed ? (
+              <Tooltip
+                open={true}
+                title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
+              >
+                <span className="ml-1 text-[#cd3021]">
                   {statusMap[engineStatus as ServiceStatus] ?? ''}
                 </span>
               </Tooltip>

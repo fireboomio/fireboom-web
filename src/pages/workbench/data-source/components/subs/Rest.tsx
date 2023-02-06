@@ -576,14 +576,14 @@ export default function Rest({ content, type }: Props) {
               <Form.Item
                 label={
                   <>
-                    <span>{intl.formatMessage({ defaultMessage: '命名空间' })}</span>
-                    <FormToolTip title={intl.formatMessage({ defaultMessage: '命名空间' })} />
+                    <span>{intl.formatMessage({ defaultMessage: '名称' })}</span>
+                    <FormToolTip title={intl.formatMessage({ defaultMessage: '名称' })} />
                   </>
                 }
                 rules={[
                   {
                     required: true,
-                    message: intl.formatMessage({ defaultMessage: '请输入命名空间' })
+                    message: intl.formatMessage({ defaultMessage: '请输入名称' })
                   },
                   {
                     pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
@@ -685,22 +685,22 @@ export default function Rest({ content, type }: Props) {
                                 >
                                   <Select onChange={onValueChange}>
                                     <Option value="0">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('0')}
-                                      </span>
-                                      {intl.formatMessage({ defaultMessage: '值' })}
+                                      <Space>
+                                        <span>{renderIcon('0')}</span>
+                                        {intl.formatMessage({ defaultMessage: '值' })}
+                                      </Space>
                                     </Option>
                                     <Option value="1">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('1')}
-                                      </span>
-                                      {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                      <Space>
+                                        <span>{renderIcon('1')}</span>
+                                        {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                      </Space>
                                     </Option>
                                     <Option value="2">
-                                      <span className="h-full mr-1 inline-flex align-top items-center">
-                                        {renderIcon('2')}
-                                      </span>
-                                      {intl.formatMessage({ defaultMessage: '转发自客户端' })}
+                                      <Space>
+                                        <span>{renderIcon('2')}</span>
+                                        {intl.formatMessage({ defaultMessage: '转发自客户端' })}
+                                      </Space>
                                     </Option>
                                   </Select>
                                 </Form.Item>
@@ -764,7 +764,7 @@ export default function Rest({ content, type }: Props) {
                       </Form.List>
                     </Form.Item>
                   </TabPane>
-                  <TabPane
+                  {/* <TabPane
                     tab={
                       <div>
                         <span>{intl.formatMessage({ defaultMessage: '授权' })}</span>
@@ -892,7 +892,7 @@ export default function Rest({ content, type }: Props) {
                         </Form.Item>
                       </>
                     ) : null}
-                  </TabPane>
+                  </TabPane> */}
                 </Tabs>
               </div>
               <Collapse

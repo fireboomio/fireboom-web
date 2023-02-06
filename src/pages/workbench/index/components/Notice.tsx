@@ -43,10 +43,14 @@ export function Notice({ handleToggleDesigner }: Props) {
     <div className={styles.noticeContainer}>
       <div className="bg-white flex h-53px pt-2 pl-23px top-0 z-10 items-center sticky">
         <div className="font-bold flex-1 text-17px">通知</div>
-        <div className="cursor-pointer flex h-full flex-0 p-18px text-0px">
+        <a
+          className="cursor-pointer flex h-full flex-0 p-18px text-0px"
+          href="https://github.com/fireboomio/product-manual/discussions"
+          target="fb_discussions"
+        >
           <div className="text-[#ADADAD] text-11px">更多</div>
           <Image alt="更多" width={12} height={12} preview={false} src="/assets/icon-more.png" />
-        </div>
+        </a>
       </div>
       <div className={styles.rowList}>
         {_noticeConfig.map((row, index) => (

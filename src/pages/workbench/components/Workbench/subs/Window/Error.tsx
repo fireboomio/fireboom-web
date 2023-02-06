@@ -102,7 +102,11 @@ export default function Error() {
   return (
     <div>
       {!blocks.length && (
-        <Empty className="pt-20" description={<FormattedMessage defaultMessage="暂无问题" />} />
+        <Empty
+          className="pt-2"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={<FormattedMessage defaultMessage="暂无问题" />}
+        />
       )}
       {blocks.map((block, index) => (
         <div className={styles.block} key={index}>

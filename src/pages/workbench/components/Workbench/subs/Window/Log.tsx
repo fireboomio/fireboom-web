@@ -50,8 +50,11 @@ const Log: React.FC<Props> = ({ actionRef }) => {
     <div className="flex flex-1 w-full overflow-hidden">
       <div className="h-full mb-0 w-10/10 overflow-auto">
         {logs.map((x, idx) => (
-          <div className="text-xs leading-25px font-normal text-[#333333]" key={idx}>
-            <span className="mr-8">{x.time}</span> <span className="w-100 mr-1">{x.level}</span>{' '}
+          <div
+            className="font-normal text-xs text-[#333333] leading-25px hover:bg-gray-100"
+            key={idx}
+          >
+            <span className="mr-8">{x.time}</span> <span className="mr-1 w-100">{x.level}</span>{' '}
             <span>{x.msg}</span>
           </div>
         ))}

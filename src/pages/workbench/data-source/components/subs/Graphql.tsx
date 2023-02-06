@@ -81,7 +81,7 @@ export default function Graphql({ content, type }: Props) {
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [rulesObj, setRulesObj] = useImmer<Rule>({})
   const [deleteFlag, setDeleteFlag] = useImmer(false)
-  const [isShowUpSchema, setIsShowUpSchema] = useImmer(config.loadSchemaFromString !== undefined)
+  const [isShowUpSchema, setIsShowUpSchema] = useImmer(false)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
   const [isValue, setIsValue] = useImmer(true)
 
@@ -239,7 +239,7 @@ export default function Graphql({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          {/* <div className="pb-9px flex items-center justify-between border-gray border-b mb-8">
+          {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
             <div>
               <img alt="shujuyuantubiao1" src="assets/iconfont/shujuyuantubiao1.svg" style={{height:'1em', width: '1em'}} />
               <span className="ml-2">
@@ -268,7 +268,7 @@ export default function Graphql({ content, type }: Props) {
             </div>
           </div> */}
 
-          <div className="flex justify-center mb-8">
+          <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               <Descriptions.Item
                 label={
@@ -322,7 +322,7 @@ export default function Graphql({ content, type }: Props) {
               )}
             </Descriptions>
           </div>
-          <div className="text-base font-medium ml-3 mb-3">
+          <div className="font-medium text-base mb-3 ml-3">
             {intl.formatMessage({ defaultMessage: '请求头' })}
           </div>
           <div className={`${styles['table-contain']} mb-8`}>
@@ -344,7 +344,7 @@ export default function Graphql({ content, type }: Props) {
                   >
                     <div className="flex items-center">
                       <div className="text-0px">{renderIcon(kind)}</div>
-                      <div className="flex-1 min-w-0 ml-2">{val}</div>
+                      <div className="flex-1 ml-2 min-w-0">{val}</div>
                     </div>
                   </Descriptions.Item>
                 )
@@ -369,7 +369,7 @@ export default function Graphql({ content, type }: Props) {
               key="1"
               className="site-collapse-custom-panel"
             >
-              <div className="flex justify-center mb-8">
+              <div className="flex mb-8 justify-center">
                 <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
                   <Descriptions.Item
                     label={
@@ -441,7 +441,7 @@ export default function Graphql({ content, type }: Props) {
       ) : (
         //编辑页面--------------------------------------------------------------------------
         <>
-          <div className="py-6 rounded-xl mb-4">
+          <div className="rounded-xl mb-4 py-6">
             <Form
               form={form}
               name="basic"
@@ -462,7 +462,7 @@ export default function Graphql({ content, type }: Props) {
                 customIntScalars: config.customIntScalars,
                 skipRenameRootFields: config.skipRenameRootFields,
                 headers: config.headers || [],
-                agreement: content.id ? !!config.loadSchemaFromString : false
+                agreement: true
               }}
             >
               <Form.Item
@@ -590,7 +590,7 @@ export default function Graphql({ content, type }: Props) {
                 ''
               )}
 
-              <div className="text-lg ml-3 mb-3">
+              <div className="text-lg mb-3 ml-3">
                 {intl.formatMessage({ defaultMessage: '请求头' })}:
               </div>
 
@@ -612,19 +612,19 @@ export default function Graphql({ content, type }: Props) {
                           <Form.Item className="w-40" name={[field.name, 'kind']}>
                             <Select onChange={onValueChange}>
                               <Option value="0">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                <span className="h-full mr-1 inline-flex align-top items-center">
                                   {renderIcon('0')}
                                 </span>
                                 {intl.formatMessage({ defaultMessage: '值' })}
                               </Option>
                               <Option value="1">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                <span className="h-full mr-1 inline-flex align-top items-center">
                                   {renderIcon('1')}
                                 </span>
                                 {intl.formatMessage({ defaultMessage: '环境变量' })}
                               </Option>
                               <Option value="2">
-                                <span className="mr-1 inline-flex align-top h-full items-center">
+                                <span className="h-full mr-1 inline-flex align-top items-center">
                                   {renderIcon('2')}
                                 </span>
                                 {intl.formatMessage({ defaultMessage: '转发自客户端' })}
@@ -632,7 +632,7 @@ export default function Graphql({ content, type }: Props) {
                             </Select>
                           </Form.Item>
                           <Form.Item
-                            className="w-135 flex-0"
+                            className="flex-0 w-135"
                             name={[field.name, 'val']}
                             rules={
                               form.getFieldValue(['headers', field.name, 'kind']) === '0'
@@ -800,7 +800,7 @@ export default function Graphql({ content, type }: Props) {
               </Collapse>
             </Form>
             <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
-              <div className="flex justify-center items-center w-40 mt-5">
+              <div className="flex mt-5 w-40 justify-center items-center">
                 <Button
                   className={'btn-cancel ml-4'}
                   onClick={() => {
