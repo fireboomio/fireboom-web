@@ -148,6 +148,7 @@ const FieldTypeSelector = ({
       >
         <div className="min-h-xs">
           <EnumDesigner
+            showTitle
             savedEnum={{
               type: 'enum',
               name: UNTITLED_NEW_ENTITY,

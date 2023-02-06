@@ -1,4 +1,6 @@
 import { Input, message, Modal } from 'antd'
+import axios from 'axios'
+import { omit } from 'lodash'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -7,7 +9,7 @@ import {
   DatasourceDispatchContext,
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
-import requests from '@/lib/fetchers'
+import requests, { getHeader } from '@/lib/fetchers'
 
 import iconAli from '../assets/ali.svg'
 import iconCockroachDB from '../assets/CockroachDB.svg'
@@ -187,7 +189,25 @@ export default function Designer() {
         switch: 0,
         createTime: '',
         updateTime: '',
-        isDel: 0
+        isDel: 0,
+        onSelect: () => {
+          const json = {
+            components: { schemas: {} },
+            info: { description: '', title: 'Wundergraph', version: '' },
+            openapi: '3.0.0',
+            paths: {},
+            servers: [{ description: 'apiBaseUrl', url: 'http://localhost:9991' }]
+          }
+          let param = new FormData() //创建form对象
+          param.append('file', new File([JSON.stringify(json)], 'example_rest.json'))
+          param.append('type', '1')
+          let config = {
+            headers: { 'Content-Type': 'multipart/form-data', ...getHeader() } //这里是重点，需要和后台沟通好请求头，Content-Type不一定是这个值
+          } //添加请求头
+          axios.post('/api/v1/file/uploadFile', param, config).then(response => {
+            console.log(response.data)
+          })
+        }
       },
       {
         name: 'example_graphqlApi',
@@ -280,7 +300,7 @@ export default function Designer() {
     })
   }
 
-  function handleClick(sourceType: number, dbType: string, name: string) {
+  async function handleClick(sourceType: number, dbType: string, name: string) {
     if (sourceType === 4) {
       return createCustom()
     }
@@ -296,8 +316,10 @@ export default function Designer() {
       // @ts-ignore
       data = examples.find(x => x.name === name)
     }
+    // @ts-ignore
+    await data.onSelect?.()
 
-    handleCreate(data)
+    handleCreate(omit(data, ['onSelect']) as DatasourceResp)
   }
 
   return (

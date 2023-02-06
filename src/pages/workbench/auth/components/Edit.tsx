@@ -72,12 +72,13 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     return <Error50x />
   }
   const onFinish = async (values: FromValues) => {
-    if (currentInspecting.current) {
-      message.warning(intl.formatMessage({ defaultMessage: '请等待issuer解析完毕' }))
-      return
-    }
     if (values.jwks == 1) {
       values.jwksJSON = jwksJSON
+    } else {
+      if (!values.jwksURL && !values.userInfoEndpoint) {
+        message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
+        return
+      }
     }
     const newValues = { ...config, ...values }
     const newContent = { ...content, switchState: values.switchState, name: values.id }
