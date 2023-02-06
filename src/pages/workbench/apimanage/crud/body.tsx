@@ -223,6 +223,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
             update: KeyType.Optional,
             createDisableFlag: false,
             updateDisableFlag: false,
+            directive: '',
             sortDirection: SortDirection.Asc
           }
         } else {
@@ -241,7 +242,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
             create: field.required ? KeyType.Required : KeyType.Optional,
             update: field.name === props.model?.idField ? KeyType.Hidden : KeyType.Optional,
             createDisableFlag: false,
-            updateDisableFlag: false
+            updateDisableFlag: false,
+            directive: ''
           }
           if (field.name === props.model?.idField) {
             if (field.hasDefault) {
@@ -271,16 +273,18 @@ export default function CRUDBody(props: CRUDBodyProps) {
           data.updateDisableFlag = true
         }
         // 针对性屏蔽createAt和updateAt的更新和创建
-        if (
-          field.name === 'createdAt' ||
-          field.name === 'updatedAt' ||
-          field.name === 'created_at' ||
-          field.name === 'updated_at'
-        ) {
+        if (field.name === 'createdAt' || field.name === 'created_at') {
           data.createDisableFlag = true
           data.updateDisableFlag = true
           data.create = KeyType.Hidden
           data.update = KeyType.Hidden
+        }
+        if (field.name === 'updatedAt' || field.name === 'updated_at') {
+          data.createDisableFlag = true
+          data.updateDisableFlag = true
+          data.create = KeyType.Required
+          data.update = KeyType.Required
+          data.directive = ' @injectCurrentDateTime(format: UnixDate)'
         }
         tableData[field.tableId ?? ''] = data
       })

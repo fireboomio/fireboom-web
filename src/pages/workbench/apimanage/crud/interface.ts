@@ -56,6 +56,7 @@ export type TableAttr = {
   update: KeyType
   createDisableFlag: boolean
   updateDisableFlag: boolean
+  directive: string
 }
 export type ApiOptions = {
   dbName: string

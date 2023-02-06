@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import { useStorageList } from '@/hooks/store/storage'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import type { StorageResp } from '@/interfaces/storage'
@@ -37,7 +38,7 @@ interface PanelConfig {
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
   const intl = useIntl()
   const { mutate } = useSWRConfig()
-
+  const { mutate: refreshStorage } = useStorageList()
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
@@ -97,6 +98,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         newItem: '/workbench/storage/new',
         request: {
           getList: dispatch => {
+            refreshStorage()
             void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
               dispatch({
                 type: 'fetched',

@@ -88,7 +88,9 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
         //   type = `${options.dbName}_${type}`
         // }
         const type = field.createType
-        return `$${key}: ${type.name}${options.table[key].create === KeyType.Required ? '!' : ''}`
+        return `$${key}: ${type.name}${options.table[key].create === KeyType.Required ? '!' : ''}${
+          options.table[key].directive
+        }`
       })
       .join(', ')
     const dataStr = createFields
@@ -142,7 +144,7 @@ mutation ${options.prefix}DeleteOne${
           field =>
             `$${field.key}: ${field.name}${
               options.table[field.key].update === KeyType.Required ? '!' : ''
-            }`
+            }${options.table[field.key].directive}`
         )
         .join(', ')
     const updateStr = updateFields

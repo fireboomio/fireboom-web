@@ -120,9 +120,8 @@ export default function Graphql({ content, type }: Props) {
     const newValues = { ...values }
     //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
     let newContent: DatasourceResp
-    if (content.name === '' || content.id.toString().length > 10) {
+    if (!content.id) {
       const req = { ...content, config: newValues, name: values.apiNameSpace }
-      Reflect.deleteProperty(req, 'id')
       const result = await requests.post<unknown, number>('/dataSource', req)
       content.id = result
       newContent = content
@@ -805,7 +804,7 @@ export default function Graphql({ content, type }: Props) {
                 <Button
                   className={'btn-cancel ml-4'}
                   onClick={() => {
-                    if (content.name && content.name !== 'example_graphqlApi') {
+                    if (content.id) {
                       handleToggleDesigner('detail', content.id, content.sourceType)
                     } else {
                       navigate('/workbench/data-source/new')
