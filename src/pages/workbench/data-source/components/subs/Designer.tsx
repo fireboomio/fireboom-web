@@ -63,7 +63,7 @@ export default function Designer() {
           },
           { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
           { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB', coming: true },
-          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite', coming: true },
+          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
           {
             name: 'CockroachDB',
             icon: iconCockroachDB,

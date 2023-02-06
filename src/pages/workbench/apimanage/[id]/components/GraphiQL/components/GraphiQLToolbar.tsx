@@ -369,7 +369,7 @@ const GraphiQLToolbar = () => {
         </span>
       </Dropdown> */}
 
-      <span className="graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
+      <span className="ml-auto graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
         {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}
       </span>
     </div>

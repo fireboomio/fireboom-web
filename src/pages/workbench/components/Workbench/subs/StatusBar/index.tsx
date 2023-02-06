@@ -176,30 +176,38 @@ const StatusBar: React.FC<Props> = ({
             <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel}>
-            <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
             {engineStatus === ServiceStatus.NotStarted ? (
-              <Tooltip
-                open={true}
-                title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
-              >
+              <>
+                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+                <Tooltip
+                  open={true}
+                  title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
+                >
+                  <span className="ml-1 text-[#cd3021]">
+                    {statusMap[engineStatus as ServiceStatus] ?? ''}
+                  </span>
+                </Tooltip>
+              </>
+            ) : engineStatus === ServiceStatus.BuildFailed ||
+              engineStatus === ServiceStatus.StartFailed ? (
+              <>
+                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+                <Tooltip
+                  open={true}
+                  title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
+                >
+                  <span className="ml-1 text-[#cd3021]">
+                    {statusMap[engineStatus as ServiceStatus] ?? ''}
+                  </span>
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
                 <span className="ml-1 text-[#50C772]">
                   {statusMap[engineStatus as ServiceStatus] ?? ''}
                 </span>
-              </Tooltip>
-            ) : engineStatus === ServiceStatus.BuildFailed ||
-              engineStatus === ServiceStatus.StartFailed ? (
-              <Tooltip
-                open={true}
-                title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
-              >
-                <span className="ml-1 text-[#cd3021]">
-                  {statusMap[engineStatus as ServiceStatus] ?? ''}
-                </span>
-              </Tooltip>
-            ) : (
-              <span className="ml-1 text-[#50C772]">
-                {statusMap[engineStatus as ServiceStatus] ?? ''}
-              </span>
+              </>
             )}
           </span>
           <span className="ml-4.5">
