@@ -160,7 +160,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                 unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                 onChange={toggleOpen}
-                className="mr-4"
+                className="!mr-4"
               />
             ) : null}
             {content.sourceType === 1 ? (

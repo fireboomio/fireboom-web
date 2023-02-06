@@ -17,7 +17,7 @@ export interface DatasourceResp {
   name: string
   sourceType: number
   switch: number
-  config: Record<string, string | number | undefined>
+  config: Record<string, string | number | Record<string, any> | undefined>
 }
 
 export interface DMFResp {
