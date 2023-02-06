@@ -103,13 +103,12 @@ export default function SettingMainEnvironmentVariable() {
       title: intl.formatMessage({ defaultMessage: '变量名' }),
       dataIndex: 'key',
       key: 'key',
-      width: 200
+      width: 320
     },
     {
       title: intl.formatMessage({ defaultMessage: '变量值' }),
       dataIndex: 'devEnv',
       key: 'devEnv',
-      width: 200,
       render: (text, record) => {
         console.log(record)
         return (

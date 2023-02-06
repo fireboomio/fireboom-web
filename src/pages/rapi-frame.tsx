@@ -28,7 +28,7 @@ export default function RapiFrame() {
       default-api-server={customServerUrl}
       show-header="false"
       show-info="false"
-      allow-authentication="false"
+      allow-authentication="true"
       allow-server-selection="false"
       allow-api-list-style-selection="false"
       render-style="read"

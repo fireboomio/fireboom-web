@@ -207,7 +207,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             ) : null}
             <div
               className={styles.headBtn}
-              onClick={() => window.open('/#/workbench/rapi', '_blank')}
+              onClick={() => window.open('/#/workbench/rapi', 'fb_rapi')}
             >
               <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
             </div>
