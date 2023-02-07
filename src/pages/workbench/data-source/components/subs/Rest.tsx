@@ -424,73 +424,73 @@ export default function Rest({ content, type }: Props) {
                       )}
                     </Descriptions>
                   )
-                },
-                {
-                  key: '2',
-                  label: (
-                    <span className={styles['label-style']}>
-                      {intl.formatMessage({ defaultMessage: '授权' })}
-                      <FormToolTip title={intl.formatMessage({ defaultMessage: '授权' })} />
-                    </span>
-                  ),
-                  children: (
-                    <div className="flex mb-11 justify-center">
-                      <Descriptions
-                        bordered
-                        column={1}
-                        size="small"
-                        className={styles['descriptions-box']}
-                      >
-                        <Descriptions.Item
-                          label={intl.formatMessage({ defaultMessage: 'JWT获取' })}
-                        >
-                          {
-                            {
-                              0: intl.formatMessage({ defaultMessage: '无' }),
-                              1: intl.formatMessage({ defaultMessage: '静态' }),
-                              2: intl.formatMessage({ defaultMessage: '动态' })
-                            }[config.jwtType ?? 0]
-                          }
-                        </Descriptions.Item>
-                        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密钥' })}>
-                          {isEyeShow ? (
-                            <>
-                              <span className="mr-5">
-                                {(config.secret as unknown as DataType)?.val}
-                              </span>
-                              <img
-                                alt="xiaoyanjing-chakan"
-                                src="assets/iconfont/xiaoyanjing-chakan.svg"
-                                style={{ height: '1em', width: '1em' }}
-                                onClick={changeEyeState}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <span className="mr-5">********</span>
-                              <img
-                                alt="xiaoyanjing-yincang"
-                                src="assets/iconfont/xiaoyanjing-yincang.svg"
-                                style={{ height: '1em', width: '1em' }}
-                                onClick={changeEyeState}
-                              />
-                            </>
-                          )}
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                          label={intl.formatMessage({ defaultMessage: '签名方法' })}
-                        >
-                          {config.signingMethod}
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                          label={intl.formatMessage({ defaultMessage: 'Token端点' })}
-                        >
-                          {config.tokenPoint}
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </div>
-                  )
                 }
+                // {
+                //   key: '2',
+                //   label: (
+                //     <span className={styles['label-style']}>
+                //       {intl.formatMessage({ defaultMessage: '授权' })}
+                //       <FormToolTip title={intl.formatMessage({ defaultMessage: '授权' })} />
+                //     </span>
+                //   ),
+                //   children: (
+                //     <div className="flex mb-11 justify-center">
+                //       <Descriptions
+                //         bordered
+                //         column={1}
+                //         size="small"
+                //         className={styles['descriptions-box']}
+                //       >
+                //         <Descriptions.Item
+                //           label={intl.formatMessage({ defaultMessage: 'JWT获取' })}
+                //         >
+                //           {
+                //             {
+                //               0: intl.formatMessage({ defaultMessage: '无' }),
+                //               1: intl.formatMessage({ defaultMessage: '静态' }),
+                //               2: intl.formatMessage({ defaultMessage: '动态' })
+                //             }[config.jwtType ?? 0]
+                //           }
+                //         </Descriptions.Item>
+                //         <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密钥' })}>
+                //           {isEyeShow ? (
+                //             <>
+                //               <span className="mr-5">
+                //                 {(config.secret as unknown as DataType)?.val}
+                //               </span>
+                //               <img
+                //                 alt="xiaoyanjing-chakan"
+                //                 src="assets/iconfont/xiaoyanjing-chakan.svg"
+                //                 style={{ height: '1em', width: '1em' }}
+                //                 onClick={changeEyeState}
+                //               />
+                //             </>
+                //           ) : (
+                //             <>
+                //               <span className="mr-5">********</span>
+                //               <img
+                //                 alt="xiaoyanjing-yincang"
+                //                 src="assets/iconfont/xiaoyanjing-yincang.svg"
+                //                 style={{ height: '1em', width: '1em' }}
+                //                 onClick={changeEyeState}
+                //               />
+                //             </>
+                //           )}
+                //         </Descriptions.Item>
+                //         <Descriptions.Item
+                //           label={intl.formatMessage({ defaultMessage: '签名方法' })}
+                //         >
+                //           {config.signingMethod}
+                //         </Descriptions.Item>
+                //         <Descriptions.Item
+                //           label={intl.formatMessage({ defaultMessage: 'Token端点' })}
+                //         >
+                //           {config.tokenPoint}
+                //         </Descriptions.Item>
+                //       </Descriptions>
+                //     </div>
+                //   )
+                // }
               ]}
             />
           </div>
