@@ -214,7 +214,7 @@ export default function Designer() {
         sourceType: 3,
         config: {
           apiNameSpace: 'example_graphqlApi',
-          url: 'https://graphql-weather-api.herokuapp.com/',
+          url: 'https://countries.trevorblades.com/',
           loadSchemaFromString: '',
           internal: false,
           customFloatScalars: null,
