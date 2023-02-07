@@ -110,11 +110,18 @@ export const useAPIManager = create<APIState>((set, get) => ({
     refreshFns.forEach(fn => fn())
   },
   setQuery(query, fromEditor = false) {
-    console.trace('====111', query, fromEditor)
     if (!fromEditor || !query) {
       if (query) {
-        console.error(2)
-        set({ editorQuery: query })
+        // 为了防止和上次设置编辑器的内容一致导致不触发，所以在末尾加一个空格或移除末尾空格
+        if (get().editorQuery === query) {
+          if (query.endsWith(' ')) {
+            set({ editorQuery: get().editorQuery.slice(0, -1) })
+          } else {
+            set({ editorQuery: get().editorQuery + ' ' })
+          }
+        } else {
+          set({ editorQuery: query })
+        }
       } else {
         if (get().editorQuery === DEFAULT_QUERY) {
           console.error(3)

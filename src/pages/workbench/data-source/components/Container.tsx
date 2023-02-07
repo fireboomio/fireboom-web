@@ -24,6 +24,7 @@ interface Props {
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
+  const { handleSave } = useContext(DatasourceToggleContext)
   const intl = useIntl()
   const { mutate } = useSWRConfig()
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
@@ -33,15 +34,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const navigate = useNavigate()
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
-    content.switch ^= 1
     if (content) {
-      void (await requests.put('/dataSource', content))
+      const newContent = { ...content, switch: content.switch ^ 1 }
+      void (await requests.put('/dataSource', newContent))
+      handleSave(newContent)
     }
     // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
     if (content.sourceType === 4) {
       updateHookSwitch(`customize/${content.name}`, !!content.switch)
     }
-    onRefreshMenu('dataSource')
   }, [content])
 
   if (!content) {

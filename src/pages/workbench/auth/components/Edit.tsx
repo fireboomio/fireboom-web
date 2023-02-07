@@ -119,6 +119,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     // 开始请求前，先清空现有数据
     form.setFieldValue('jwksURL', '')
     form.setFieldValue('userInfoEndpoint', '')
+    form.setFieldValue('tokenEndpoint', '')
+    form.setFieldValue('authorizationEndpoint', '')
     try {
       const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
       // 如果当前url不是最新的，忽略本次请求
@@ -127,6 +129,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       }
       form.setFieldValue('jwksURL', res.data.jwks_uri)
       form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
+      form.setFieldValue('tokenEndpoint', res.data.token_endpoint)
+      form.setFieldValue('authorizationEndpoint', res.data.authorization_endpoint)
     } finally {
       currentInspecting.current = ''
     }
@@ -154,6 +158,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         jwksJSON: config.jwksJSON,
         jwksURL: config.jwksURL,
         userInfoEndpoint: config.userInfoEndpoint,
+        tokenEndpoint: config.tokenEndpoint,
+        authorizationEndpoint: config.authorizationEndpoint,
         switchState: content.switchState
       }
     : {
@@ -165,6 +171,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         jwksJSON: '',
         jwksURL: '',
         userInfoEndpoint: '',
+        tokenEndpoint: '',
+        authorizationEndpoint: '',
         switchState: []
       }
 
@@ -339,6 +347,12 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             label={intl.formatMessage({ defaultMessage: '用户端点' })}
             name="userInfoEndpoint"
           >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item hidden name="tokenEndpoint">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item hidden name="authorizationEndpoint">
             <Input disabled />
           </Form.Item>
           <Form.Item label={intl.formatMessage({ defaultMessage: '是否开启' })} name="switchState">
