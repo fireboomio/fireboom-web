@@ -203,7 +203,6 @@ export default function APIEditorContainer() {
   useEventBus('compileFinish', () => {
     engineStartCallback()
     refreshSchema()
-    refreshAPISetting()
   })
 
   useEffect(() => {

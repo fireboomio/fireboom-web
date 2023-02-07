@@ -77,6 +77,7 @@ export default function Index(props: Props) {
 
       // 刷新API菜单
       onRefreshMenu('api')
+      refreshAPI()
       return
     }
     setApiSetting({ ...apiSetting!, ...changedValues })

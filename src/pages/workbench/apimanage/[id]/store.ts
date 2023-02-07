@@ -69,7 +69,7 @@ export interface APIState {
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
   updateAPIName: (path: string) => Promise<void>
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
-  refreshAPI: () => void
+  refreshAPI: (keepCurrentQuery?: boolean) => void
   refreshAPISetting: () => void
   refreshSchema: () => void
   appendToAPIRefresh: (fn: () => void) => void
@@ -106,17 +106,21 @@ export const useAPIManager = create<APIState>((set, get) => ({
   apiID: '',
   setID: async (id: string) => {
     set({ apiID: id })
-    await get().refreshAPI()
+    await get().refreshAPI(false)
     refreshFns.forEach(fn => fn())
   },
   setQuery(query, fromEditor = false) {
+    console.trace('====111', query, fromEditor)
     if (!fromEditor || !query) {
       if (query) {
+        console.error(2)
         set({ editorQuery: query })
       } else {
         if (get().editorQuery === DEFAULT_QUERY) {
+          console.error(3)
           set({ editorQuery: DEFAULT_QUERY + ' ' })
         } else {
+          console.error(4)
           set({ editorQuery: DEFAULT_QUERY })
         }
       }
@@ -197,7 +201,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       }
       return false
     }
-    return requests.put(`/operateApi/content/${get().apiID}`, { content }).then(resp => {
+    return requests.put(`/operateApi/content/${get().apiID}`, { content }).then(async resp => {
       if (resp) {
         const query = content ?? ''
         // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
@@ -207,6 +211,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
         // 内容变更可能需要刷新api列表
         get()._workbenchContext?.onRefreshMenu('api')
+        // await new Promise(resolve => setTimeout(resolve, 5000))
         requests.get(`/operateApi/${get().apiID}`).then(api => {
           // @ts-ignore
           set({ apiDesc: { ...api, setting: get().apiDesc?.setting } })
@@ -217,9 +222,17 @@ export const useAPIManager = create<APIState>((set, get) => ({
     })
   },
   autoSave() {
-    return get().updateContent(get().editorQuery, false)
+    /**
+     * 2023-02-07 将editorQuery改为query，以解决保存的query不是最新内容的bug
+     *            需要注意区分editorQuery和query的区别，后者是最新的query内容，前者只有强制刷新编辑器时才会变更
+     */
+    return get().updateContent(get().query, false)
   },
-  refreshAPI: async () => {
+  /**
+   * 刷新api
+   * @param keepCurrentQuery 是否保持编辑器内容不变，默认为true
+   */
+  refreshAPI: async (keepCurrentQuery = true) => {
     const id = get().apiID
     try {
       const [api, setting] = await Promise.all([
@@ -228,11 +241,15 @@ export const useAPIManager = create<APIState>((set, get) => ({
       ])
       // @ts-ignore
       set({ apiDesc: { ...api, setting } })
-      // @ts-ignore
-      const content = api.content
-      get().setQuery(content)
-      set({ clearHistoryFlag: !get().clearHistoryFlag })
-      set({ lastSavedQuery: content })
+
+      // 如果不需要保留query，则更新编辑器内容
+      if (!keepCurrentQuery) {
+        // @ts-ignore
+        const content = api.content
+        get().setQuery(content)
+        set({ clearHistoryFlag: !get().clearHistoryFlag })
+        set({ lastSavedQuery: content })
+      }
     } catch (e) {
       // 接口请求错误就刷新api列表
       get()._workbenchContext?.onRefreshMenu('api')
