@@ -172,7 +172,7 @@ export default function APIEditorContainer() {
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema, query, onEditQuery])
+  }, [schema, editorQuery, onEditQuery])
 
   const onRefreshSchema = useCallback(async () => {
     setIsRefreshing(true)

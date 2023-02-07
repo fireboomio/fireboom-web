@@ -172,13 +172,19 @@ export default function FileList({
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          defaultValue={'./'}
+          defaultValue={
+            { '1': './upload/oas', '2': './wundergraph/.wundergraph', '3': './upload/graphql' }[
+              upType
+            ] ?? ''
+          }
+          readOnly
         />
         <Upload
           {...upProps}
-          className="cursor-pointer flex m-auto h-6 mr-3 w-12 items-center justify-center"
+          className="cursor-pointer flex m-auto h-6 mr-3 w-18 items-center justify-center"
         >
           <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
+          选择文件
         </Upload>
         <Input
           value={keyword}

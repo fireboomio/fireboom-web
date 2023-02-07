@@ -13,7 +13,7 @@ import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import commonPanelReducer from '@/lib/reducers/panelReducer'
-import { parsePrismaDBUrl } from '@/utils/db'
+import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
 import SidePanel from './SidePanel'
@@ -62,9 +62,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                         typeof row.config.databaseUrl === 'object' &&
                         row.config.databaseUrl?.val
                       ) {
-                        const database = parsePrismaDBUrl(row.config.databaseUrl.val)?.database
-                        if (database) {
-                          tip = database
+                        const dbName = parseDBUrl(row.config.databaseUrl.val)?.dbName
+                        if (dbName) {
+                          tip = dbName
                         }
                       }
                       svg =

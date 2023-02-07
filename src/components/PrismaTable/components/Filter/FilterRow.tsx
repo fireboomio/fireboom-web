@@ -1,6 +1,7 @@
 import type { Enums, SchemaModel } from '@paljs/types'
 import type { InputRef } from 'antd'
 import { DatePicker, Input, Select } from 'antd'
+import { isEqual } from 'lodash'
 import moment from 'moment'
 import { useEffect, useRef } from 'react'
 import { useImmer } from 'use-immer'
@@ -42,9 +43,15 @@ const FilterRow = ({
   const [operatorSelectValue, setOperatorSelectValue] = useImmer<string>(filter.operator)
 
   useEffect(() => {
-    setOperatorSelectValue(filter.operator)
-    setFieldNameSelectValue(filter.field.name)
-    setInputValue(filter.value)
+    if (operatorSelectValue !== filter.operator) {
+      setOperatorSelectValue(filter.operator)
+    }
+    if (fieldNameSelectValue !== filter.field.name) {
+      setFieldNameSelectValue(filter.field.name)
+    }
+    if (!isEqual(inputValue, filter.value)) {
+      setInputValue(filter.value)
+    }
   }, [filter])
 
   const fields = currentModel?.fields.filter(f => f.filter) ?? []

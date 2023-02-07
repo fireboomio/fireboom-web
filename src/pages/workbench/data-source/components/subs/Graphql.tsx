@@ -529,7 +529,7 @@ export default function Graphql({ content, type }: Props) {
                   {intl.formatMessage({ defaultMessage: '通过发送指令,自动内省Schema' })}
                 </Checkbox>
               </Form.Item>
-              {isShowUpSchema ? (
+              {!isShowUpSchema ? (
                 <Form.Item
                   label={
                     <div>
@@ -853,6 +853,7 @@ export default function Graphql({ content, type }: Props) {
           setVisible={setVisible}
           upType={3}
           beforeUpload={file => {
+            console.log(file.name)
             const isAllowed = file.name.endsWith('.graphql')
             if (!isAllowed) {
               message.error(intl.formatMessage({ defaultMessage: '只允许上传 graphql 格式文件' }))

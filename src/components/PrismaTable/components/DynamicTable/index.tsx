@@ -199,7 +199,10 @@ const DynamicTable = ({
               models={models}
               currentModelName={model}
               originalFilters={initialFilters}
-              updateOriginalFilters={updateInitialFilters}
+              updateOriginalFilters={filters => {
+                setPageState({ skip: 0, take: pageState.take })
+                updateInitialFilters(filters)
+              }}
               setFilterVisible={setFilterVisible}
             />
           }
@@ -229,6 +232,7 @@ const DynamicTable = ({
           onChange={(_page, _filter, sorter) => handleOrderByChange(sorter)}
           rowKey={(record: Record<string, any>) => String(record[currentIdField?.name ?? 'id'])}
           pagination={{
+            current: pageState.skip / pageState.take + 1,
             position: ['bottomRight'],
             showQuickJumper: true,
             defaultPageSize: DEFAULT_PAGE_SIZE,

@@ -1,6 +1,6 @@
 import { Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -10,6 +10,8 @@ import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasou
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { parseDBUrl } from '@/utils/db'
+import uploadLocal from '@/utils/uploadLocal'
 
 import styles from './DB.module.less'
 import FileList from './FileList'
@@ -73,8 +75,10 @@ export default function DB({ content, type }: Props) {
   const dbType = config.dbType
 
   const setUploadPath = (v: string) => {
+    console.log('setUploadPath', v)
     form.setFieldValue(['databaseUrl', 'val'], v)
     form.setFieldValue(['databaseUrl', 'kind'], '0')
+    console.log(form.getFieldsValue())
   }
 
   // 表单选择后规则校验改变
@@ -131,6 +135,35 @@ export default function DB({ content, type }: Props) {
     }
   }[dbProtocal]
 
+  const sqlLiteInputValue = useRef('')
+  const onCreateSqlite = async () => {
+    Modal.info({
+      title: intl.formatMessage({ defaultMessage: '请输入名称' }),
+      content: (
+        <Input
+          autoFocus
+          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+          onChange={e => {
+            sqlLiteInputValue.current = e.target.value
+          }}
+        />
+      ),
+      okText: '确定',
+      onOk: async () => {
+        const dbName = sqlLiteInputValue.current.trim()
+        if (!dbName) {
+          return message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
+        }
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
+        try {
+          await uploadLocal('2', '', dbName + '.db')
+        } finally {
+          hide()
+        }
+      }
+    })
+  }
+
   const initForm =
     dbType === 'SQLite' ? (
       <Form.Item
@@ -145,13 +178,20 @@ export default function DB({ content, type }: Props) {
         name={['databaseUrl', 'val']}
         style={{ marginBottom: '20px' }}
       >
-        <Input
-          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-          onClick={() => setVisible(true)}
-          // eslint-disable-next-line jsx-a11y/anchor-is-valid
-          suffix={<a onClick={() => setVisible(true)}>浏览</a>}
-          readOnly
-        />
+        <div className="flex">
+          <Form.Item name={['databaseUrl', 'val']} noStyle>
+            <Input
+              placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+              onClick={() => setVisible(true)}
+              // eslint-disable-next-line jsx-a11y/anchor-is-valid
+              suffix={<a onClick={() => setVisible(true)}>浏览</a>}
+              readOnly
+            />
+          </Form.Item>
+          <Button className="ml-4" onClick={onCreateSqlite}>
+            {intl.formatMessage({ defaultMessage: '创建' })}
+          </Button>
+        </div>
       </Form.Item>
     ) : (
       <Form.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
@@ -369,13 +409,15 @@ export default function DB({ content, type }: Props) {
     const values = form.getFieldsValue()
     if (_allValues.databaseUrl) {
       // url转参数
-      const [_, userName, password, host, port, dbName] =
-        values.databaseUrl.val.match(/^mysql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.*)$/) || []
-      form.setFieldValue(['userName', 'val'], userName)
-      form.setFieldValue(['password', 'val'], password)
-      form.setFieldValue('host', host)
-      form.setFieldValue('port', port)
-      form.setFieldValue('dbName', dbName)
+      const dbConfig = parseDBUrl(values.databaseUrl.val)
+      if (dbConfig) {
+        const { username, password, host, port, dbName } = dbConfig
+        form.setFieldValue(['userName', 'val'], username)
+        form.setFieldValue(['password', 'val'], password)
+        form.setFieldValue('host', host)
+        form.setFieldValue('port', port)
+        form.setFieldValue('dbName', dbName)
+      }
     } else if (
       _allValues.userName ||
       _allValues.password ||
@@ -585,12 +627,24 @@ export default function DB({ content, type }: Props) {
                 }
               }}
             >
-              <Form.Item hidden name={['databaseUrl']} />
-              <Form.Item hidden name={['userName']} />
-              <Form.Item hidden name={['password']} />
-              <Form.Item hidden name="port" />
-              <Form.Item hidden name="dbName" />
-              <Form.Item hidden name="host" />
+              <Form.Item hidden name={['databaseUrl']}>
+                <Input />
+              </Form.Item>
+              <Form.Item hidden name={['userName']}>
+                <Input />
+              </Form.Item>
+              <Form.Item hidden name={['password']}>
+                <Input />
+              </Form.Item>
+              <Form.Item hidden name="port">
+                <Input />
+              </Form.Item>
+              <Form.Item hidden name="dbName">
+                <Input />
+              </Form.Item>
+              <Form.Item hidden name="host">
+                <Input />
+              </Form.Item>
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '名称:' })}
                 name="apiNamespace"
