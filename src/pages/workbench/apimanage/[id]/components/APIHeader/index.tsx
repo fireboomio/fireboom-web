@@ -6,6 +6,7 @@ import { Kind, OperationTypeNode } from 'graphql'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { useApiGlobalSetting } from '@/hooks/store/api'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -35,6 +36,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
   const [name, setName] = useState('')
+  const { data: globalSetting } = useApiGlobalSetting()
 
   const startEdit = () => {
     setIsEditingName(true)
@@ -77,8 +79,10 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [])
 
   const isLive = useMemo(() => {
-    return apiDesc?.liveQuery
-  }, [apiDesc?.liveQuery])
+    return apiDesc?.setting.enable
+      ? apiDesc?.setting.liveQueryEnable
+      : globalSetting?.liveQueryEnable
+  }, [apiDesc?.setting.liveQueryEnable, apiDesc?.setting.enable, globalSetting])
 
   const method = useMemo(() => {
     if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {

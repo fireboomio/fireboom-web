@@ -61,6 +61,7 @@ export default function APIEditorContainer() {
     editorQuery,
     schema,
     setQuery,
+    refreshAPISetting,
     refreshSchema,
     setID,
     pureUpdateAPI,
@@ -75,6 +76,7 @@ export default function APIEditorContainer() {
     schemaAST: state.schemaAST,
     schema: state.schema,
     setQuery: state.setQuery,
+    refreshAPISetting: state.refreshAPISetting,
     refreshSchema: state.refreshSchema,
     setID: state.setID,
     pureUpdateAPI: state.pureUpdateAPI,
@@ -201,6 +203,7 @@ export default function APIEditorContainer() {
   useEventBus('compileFinish', () => {
     engineStartCallback()
     refreshSchema()
+    refreshAPISetting()
   })
 
   useEffect(() => {

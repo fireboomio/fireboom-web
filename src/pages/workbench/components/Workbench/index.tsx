@@ -17,7 +17,7 @@ import type {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
-import { sendMessageToSocket } from '@/lib/socket'
+import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
@@ -72,6 +72,11 @@ export default function Index(props: PropsWithChildren) {
       setEnv(res.env)
     })
   }, [])
+  const authKey = getAuthKey()
+  // authkey变化时启动socket
+  useEffect(() => {
+    initWebSocket(authKey ?? '')
+  }, [authKey])
   useWebSocket('engine', 'getStatus', data => {
     setInfo(data)
     if (data.engineStatus === ServiceStatus.Started) {

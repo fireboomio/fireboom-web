@@ -70,6 +70,7 @@ export interface APIState {
   updateAPIName: (path: string) => Promise<void>
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
   refreshAPI: () => void
+  refreshAPISetting: () => void
   refreshSchema: () => void
   appendToAPIRefresh: (fn: () => void) => void
   dispendToAPIRefresh: (fn: () => void) => void
@@ -236,6 +237,12 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // 接口请求错误就刷新api列表
       get()._workbenchContext?.onRefreshMenu('api')
     }
+  },
+  refreshAPISetting: async () => {
+    const id = get().apiID
+    const setting = await requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
+    // @ts-ignore
+    set({ apiDesc: { ...get().apiDesc, setting } })
   },
   refreshSchema: async () => {
     await engineStartPromise
