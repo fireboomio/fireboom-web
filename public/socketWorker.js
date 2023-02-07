@@ -4,6 +4,7 @@
 const sendQueue = []
 const connectedPorts = []
 // Create socket instance.
+let authKey = ''
 let socket = null
 const test = Math.random()
 const wsUrl = new URL(location)
@@ -15,7 +16,14 @@ wsUrl.pathname = '/ws'
 function openSocket() {
   let heartbeatTimer
   let pingCounter = 0
-  const _socket = new WebSocket(wsUrl.href)
+  if (socket) {
+    try {
+      socket.close()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  const _socket = new WebSocket(wsUrl.href+`?auth-key=${authKey}`)
   _socket.addEventListener('open', () => {
     sendQueue.forEach(item => {
       _socket.send(item)
@@ -51,7 +59,7 @@ function openSocket() {
   })
 }
 
-function sendSocket(data) {
+function sendSocket() {
   if (socket) {
     sendQueue.forEach(item => {
       socket.send(item)
@@ -67,7 +75,7 @@ function initQuery(socket){
   // socket.send('{"channel":"question", "event": "getQuestions"}')
 }
 
-openSocket()
+// openSocket()
 
 
 /**
@@ -98,6 +106,10 @@ self.addEventListener('connect', ({ ports }) => {
     } else if (action === 'unload') {
       const index = connectedPorts.indexOf(port)
       connectedPorts.splice(index, 1)
+    } else if (action === 'initWebSocket') {
+      console.log('=====')
+      authKey = value
+      openSocket()
     }
   })
 

@@ -200,9 +200,16 @@ const IdeContainer: FC<Props> = props => {
           }
           const monacoPath = `inmemory://model/hook/${path}`
           const model = monaco.editor.getModel(path)
+          if (path === hookPath + '.ts') {
+            return
+          }
           if (!model) {
             if (!monaco.editor.getModel(path)) {
-              monaco.editor.createModel(content, 'typescript', monaco.Uri.parse(monacoPath))
+              try {
+                monaco.editor.createModel(content, 'typescript', monaco.Uri.parse(monacoPath))
+              } catch (e) {
+                // console.error(e)
+              }
             }
           }
         })

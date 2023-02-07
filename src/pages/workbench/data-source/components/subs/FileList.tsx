@@ -88,11 +88,7 @@ export default function FileList({
         params: { names: filter }
       })
       .then(x => {
-        if (upType === 1) {
-          setData(x.files.filter(f => f.name.endsWith('.json') || f.name.endsWith('.yaml')))
-        } else {
-          setData(x.files)
-        }
+        setData(x.files)
       })
   }, [refreshFlag, upType])
 

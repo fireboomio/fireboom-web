@@ -39,7 +39,6 @@ export default function DatasourceContainer({ content, showType }: Props) {
     }
     // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
     if (content.sourceType === 4) {
-      console.log(content)
       updateHookSwitch(`customize/${content.name}`, !!content.switch)
     }
     onRefreshMenu('dataSource')
@@ -92,7 +91,6 @@ export default function DatasourceContainer({ content, showType }: Props) {
     await mutate(['/dataSource', String(content.id)])
   }
 
-  console.log(loading)
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
       {' '}
@@ -165,7 +163,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             ) : null}
             {content.sourceType === 1 ? (
               <Button
-                className={'btn-test'}
+                className={'btn-test !ml-4'}
                 onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
               >
                 <FormattedMessage defaultMessage="设计" />

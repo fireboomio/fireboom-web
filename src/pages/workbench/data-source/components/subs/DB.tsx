@@ -367,7 +367,6 @@ export default function DB({ content, type }: Props) {
   //表单item值改变回调
   const onValuesChange = (_allValues: FromValues) => {
     const values = form.getFieldsValue()
-    console.log(_allValues)
     if (_allValues.databaseUrl) {
       // url转参数
       const [_, userName, password, host, port, dbName] =
@@ -586,6 +585,12 @@ export default function DB({ content, type }: Props) {
                 }
               }}
             >
+              <Form.Item hidden name={['databaseUrl']} />
+              <Form.Item hidden name={['userName']} />
+              <Form.Item hidden name={['password']} />
+              <Form.Item hidden name="port" />
+              <Form.Item hidden name="dbName" />
+              <Form.Item hidden name="host" />
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '名称:' })}
                 name="apiNamespace"

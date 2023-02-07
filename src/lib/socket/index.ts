@@ -14,10 +14,16 @@ export default {}
  * Sends a message to the worker and passes that to the Web Socket.
  * @param {any} message
  */
-export const sendMessageToSocket = message => {
+export const sendMessageToSocket = (message: any) => {
   webSocketWorker.port.postMessage({
     action: 'send',
     value: message
+  })
+}
+export const initWebSocket = (key: string) => {
+  webSocketWorker.port.postMessage({
+    action: 'initWebSocket',
+    value: key
   })
 }
 
