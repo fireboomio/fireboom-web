@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
 import { useAuthList } from '@/hooks/store/auth'
+import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useStorageList } from '@/hooks/store/storage'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -42,6 +43,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const { mutate } = useSWRConfig()
   const { mutate: refreshStorage } = useStorageList()
   const { mutate: refreshAuth } = useAuthList()
+  const { mutate: refreshDataSource } = useDataSourceList()
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
@@ -50,6 +52,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         newItem: '/workbench/data-source/new',
         request: {
           getList: dispatch => {
+            refreshDataSource()
             void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
               dispatch({
                 type: 'fetched',
