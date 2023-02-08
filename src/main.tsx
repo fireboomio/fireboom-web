@@ -11,6 +11,7 @@ import App from './App'
 import Authentication from './components/Authentication'
 import IntlProvider from './providers/IntlProvider'
 
+console.log('fb version: ', '0.0.2')
 const container = document.getElementById('app')
 const root = createRoot(container!)
 root.render(

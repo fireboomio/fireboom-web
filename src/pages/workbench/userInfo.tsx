@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 
+import { getHeader } from '@/lib/fetchers'
+
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export default function UserInfo() {
@@ -18,7 +20,7 @@ export default function UserInfo() {
   }, [])
 
   const handleLogout = () => {
-    axios.get('/api/v1/oidc/logout').then(() => {
+    axios.get('/auth/cookie/user/logout', { headers: getHeader() }).then(() => {
       message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
       setTimeout(() => {
         window.close()
