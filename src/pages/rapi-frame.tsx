@@ -18,7 +18,7 @@ export default function RapiFrame() {
   // const customServerUrl = (
   //   config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
   // ).replace('9991', '9123')
-  const customServerUrl = `${location.origin}/wundergraph`
+  const customServerUrl = `${location.origin}`
 
   // const customServerUrl =
   //   'http://localhost:3000/api/v1/common/proxy?url=' + encodeURIComponent('http://localhost:9991')
