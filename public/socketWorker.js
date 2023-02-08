@@ -111,7 +111,6 @@ self.addEventListener('connect', ({ ports }) => {
       const index = connectedPorts.indexOf(port)
       connectedPorts.splice(index, 1)
     } else if (action === 'initWebSocket') {
-      console.log('=====')
       authKey = value
       openSocket()
     }

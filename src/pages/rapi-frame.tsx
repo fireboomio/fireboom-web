@@ -25,8 +25,8 @@ export default function RapiFrame() {
   }, [search])
   if (!config) return
 
-  // @ts-ignore
   return (
+    // @ts-ignore
     <rapi-doc
       key={search}
       theme={params.get('theme') || 'light'}
