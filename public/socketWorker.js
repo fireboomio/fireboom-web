@@ -8,7 +8,11 @@ let authKey = ''
 let socket = null
 const test = Math.random()
 const wsUrl = new URL(location)
-wsUrl.protocol = 'ws:'
+if (location.protocol === 'https:') {
+  wsUrl.protocol = 'wss:'
+} else {
+  wsUrl.protocol = 'ws:'
+}
 wsUrl.pathname = '/ws'
 // if(wsUrl.port === '3000') {
 //   wsUrl.port = '9123'
@@ -107,7 +111,6 @@ self.addEventListener('connect', ({ ports }) => {
       const index = connectedPorts.indexOf(port)
       connectedPorts.splice(index, 1)
     } else if (action === 'initWebSocket') {
-      console.log('=====')
       authKey = value
       openSocket()
     }

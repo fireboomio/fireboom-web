@@ -1,7 +1,8 @@
-import { useContext } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useContext, useEffect } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import requests from '@/lib/fetchers'
 
 if (window && document) {
   const script = document.createElement('script')
@@ -13,15 +14,21 @@ if (window && document) {
 export default function RapiFrame() {
   const [params] = useSearchParams()
   const { config } = useContext(ConfigContext)
-
+  const { search } = useLocation()
   const customServerUrl =
     config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
 
+  useEffect(() => {
+    requests.get<unknown, any>('/auth').then(res => {
+      console.log(res)
+    })
+  }, [search])
   if (!config) return
 
   return (
     // @ts-ignore
     <rapi-doc
+      key={search}
       theme={params.get('theme') || 'light'}
       spec-url={params.get('url')}
       server-url={customServerUrl}

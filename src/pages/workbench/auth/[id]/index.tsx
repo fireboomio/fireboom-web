@@ -81,7 +81,6 @@ export default function AuthConfigContainer() {
       target.hostname = location.hostname
       target.port = location.port
     }
-
     window.open(target.toString())
   }
 

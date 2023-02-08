@@ -2274,7 +2274,6 @@ class RootView extends React.PureComponent<
         newOperationDef.operation = operationType
       }
     }
-    console.log('=====operationType', operationType)
 
     return this.props.onEdit(newOperationDef, options)
   }

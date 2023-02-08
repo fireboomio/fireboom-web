@@ -81,7 +81,6 @@ function genTypeMap(dmf: string, prefix: string): TypeMap {
         field.isSet = true
         field.name = refType.set.name
       }
-      console.log('====', field.name, allTypeMap[field.name])
       // 增加类型前缀
       if (allTypeMap[field.name] || enumMap[field.name]) {
         field.name = prefix + field.name

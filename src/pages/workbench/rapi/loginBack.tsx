@@ -9,17 +9,10 @@ export default function Rapi() {
   const { search } = useLocation()
 
   useEffect(() => {
+    window.open('/#/workbench/rapi?t=' + Date.now(), 'fb_rapi')
     setHideSide(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    window.close()
   }, [])
 
-  return (
-    <iframe
-      title="rapi"
-      src={'/#/rapi-frame?url=/api/v1/file/postToSwag' + search.replace('?', '&')}
-      width={'100%'}
-      height={'100%'}
-      className="border-none"
-    ></iframe>
-  )
+  return ' '
 }
