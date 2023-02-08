@@ -6,13 +6,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests from '@/lib/fetchers'
+import requests, { getHeader } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
+import axios from 'axios'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
@@ -157,7 +158,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     window.open(target.toString())
   }
   const doLogout = () => {
-    requests.options('/auth/cookie/user/logout').then(res => {
+    axios.get('/auth/cookie/user/logout', { headers: getHeader() }).then(res => {
       console.log(res)
     })
   }
