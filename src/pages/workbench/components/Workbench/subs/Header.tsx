@@ -1,4 +1,5 @@
 import { Dropdown, Menu, message, Modal, Popover, Tooltip } from 'antd'
+import axios from 'axios'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -13,7 +14,6 @@ import { registerHotkeyHandler } from '@/services/hotkey'
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderPreview from '../assets/header-preview.png'
 import styles from './header.module.less'
-import axios from 'axios'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
@@ -158,9 +158,14 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     window.open(target.toString())
   }
   const doLogout = () => {
-    axios.get('/auth/cookie/user/logout', { headers: getHeader() }).then(res => {
-      console.log(res)
-    })
+    axios
+      .get('/auth/cookie/user/logout', {
+        headers: getHeader(),
+        params: { logout_openid_connect_provider: 'true' }
+      })
+      .then(res => {
+        console.log(res)
+      })
   }
 
   return (

@@ -55,6 +55,10 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      '^/auth/cookie': {
+        target: backendUrl,
+        changeOrigin: true
+      },
       '^/app/main': {
         target: backendUrl,
         changeOrigin: true
