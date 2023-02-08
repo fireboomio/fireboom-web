@@ -18,28 +18,27 @@ export default function RapiFrame() {
   const customServerUrl =
     config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
 
-  if (!config) return
   useEffect(() => {
     requests.get<unknown, any>('/auth').then(res => {
       console.log(res)
     })
   }, [search])
+  if (!config) return
 
+  // @ts-ignore
   return (
-    <div>
-      <rapi-doc
-        key={search}
-        theme={params.get('theme') || 'light'}
-        spec-url={params.get('url')}
-        server-url={customServerUrl}
-        default-api-server={customServerUrl}
-        show-header="false"
-        show-info="false"
-        allow-authentication="true"
-        allow-server-selection="false"
-        allow-api-list-style-selection="false"
-        render-style="read"
-      />
-    </div>
+    <rapi-doc
+      key={search}
+      theme={params.get('theme') || 'light'}
+      spec-url={params.get('url')}
+      server-url={customServerUrl}
+      default-api-server={customServerUrl}
+      show-header="false"
+      show-info="false"
+      allow-authentication="true"
+      allow-server-selection="false"
+      allow-api-list-style-selection="false"
+      render-style="read"
+    />
   )
 }
