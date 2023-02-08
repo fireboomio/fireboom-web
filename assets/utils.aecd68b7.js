@@ -1,0 +1,1 @@
+const n=t=>t==t.toUpperCase()&&t!=t.toLowerCase(),c=t=>[Object,Array].includes((t||{}).constructor)&&!Object.entries(t||{}).length,B=(t,o=2)=>{if(t===0||!t)return"0 Bytes";const e=1024,r=o<0?0:o,a=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],s=Math.floor(Math.log(t)/Math.log(e));return`${parseFloat((t/Math.pow(e,s)).toFixed(r))} ${a[s]}`};export{c as a,B as f,n as i};

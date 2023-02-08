@@ -1,0 +1,1 @@
+function s(e){const r=e.match(/^(\w+):\/\/([\w\d-_]+)(:(.+))?@([\w\d.]+)(:(.+))?\/([\w\d-_]+)(\?(.+))?/);if(!!r)return{schema:r[1],username:r[2],password:r[4],host:r[5],port:r[7],dbName:r[8],args:r[10]}}export{s as p};

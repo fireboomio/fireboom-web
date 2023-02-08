@@ -1,0 +1,1 @@
+import{i}from"./index.esm.0df65c6e.js";import{c as o}from"./index.e5e6c754.js";function p(){const{data:t}=i("/env",n=>o.get(n).then(s=>s.filter(e=>e.isDel===0).map(e=>({label:e.key,value:e.key}))));return t}export{p as u};
