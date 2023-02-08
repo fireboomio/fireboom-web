@@ -164,7 +164,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         params: { logout_openid_connect_provider: 'true' }
       })
       .then(res => {
-        console.log(res)
+        const url = res.data?.redirect
+        if (url) {
+          axios.get(url)
+        }
       })
   }
 

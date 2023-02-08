@@ -25,11 +25,15 @@ export default function UserInfo() {
         headers: getHeader(),
         params: { logout_openid_connect_provider: 'true' }
       })
-      .then(() => {
+      .then(res => {
         message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
-        // setTimeout(() => {
-        //   window.close()
-        // }, 3000)
+        const url = res.data?.redirect
+        if (url) {
+          axios.get(url)
+        }
+        setTimeout(() => {
+          window.close()
+        }, 3000)
       })
   }
 
