@@ -15,9 +15,12 @@ export default function RapiFrame() {
   const [params] = useSearchParams()
   const { config } = useContext(ConfigContext)
   const { search } = useLocation()
-  const customServerUrl =
-    config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
+  // const customServerUrl = (
+  //   config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
+  // ).replace('9991', '9123')
 
+  const customServerUrl =
+    'http://localhost:3000/api/v1/common/proxy?url=' + encodeURIComponent('http://localhost:9991')
   useEffect(() => {
     requests.get<unknown, any>('/auth').then(res => {
       console.log(res)

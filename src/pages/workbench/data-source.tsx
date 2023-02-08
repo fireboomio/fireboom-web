@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
-import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
+import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests from '@/lib/fetchers'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
 
 export default function DataSource() {
@@ -22,12 +21,7 @@ export default function DataSource() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
 
-  const { data: datasourceList, mutate } = useSWRImmutable<DatasourceResp[]>(
-    ['/dataSource', id],
-    function (url, id) {
-      return requests.get(url)
-    }
-  )
+  const { data: datasourceList } = useDataSourceList()
   useEffect(() => {
     // 当前状态为新建中且已选择数据源类型
     if (id === 'create') {
