@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import { useAuthList } from '@/hooks/store/auth'
 import { useStorageList } from '@/hooks/store/storage'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -40,6 +41,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const intl = useIntl()
   const { mutate } = useSWRConfig()
   const { mutate: refreshStorage } = useStorageList()
+  const { mutate: refreshAuth } = useAuthList()
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
@@ -154,6 +156,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         mutateKey: id => ['/auth', String(id)],
         request: {
           getList: dispatch => {
+            refreshAuth()
             void requests.get<unknown, any>('/auth').then(res => {
               const rows: Array<CommonPanelResp> = res.map((row: any) => {
                 const icon = 'other'

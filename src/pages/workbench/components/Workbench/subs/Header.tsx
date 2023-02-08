@@ -1,8 +1,9 @@
-import { message, Modal, Popover, Tooltip } from 'antd'
+import { Dropdown, Menu, message, Modal, Popover, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -75,6 +76,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isFullscreen } = useContext(WorkbenchContext)
+  const { data: authList = [] } = useAuthList()
 
   const [open, setOpen] = useState(false)
 
@@ -133,6 +135,32 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       unbind2()
     }
   }, [])
+  const doLogin = (auth: any) => {
+    // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
+    const callbackURL = new URL(location.toString())
+    callbackURL.hash = '#/workbench/rapi/loginBack'
+    let target
+    try {
+      target = new URL(auth?.point + encodeURIComponent(callbackURL.toString()))
+    } catch (e) {
+      message.error(
+        intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
+      )
+      console.error(e)
+      return
+    }
+    if (!config.apiHost) {
+      target.protocol = location.protocol
+      target.hostname = location.hostname
+      target.port = location.port
+    }
+    window.open(target.toString())
+  }
+  const doLogout = () => {
+    requests.options('/auth/cookie/user/logout').then(res => {
+      console.log(res)
+    })
+  }
 
   return (
     <>
@@ -150,6 +178,25 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         <div className="flex-1" />
         {pathname === '/workbench/rapi' ? (
           <>
+            <Dropdown
+              className="mr-4"
+              overlay={
+                <Menu
+                  items={[
+                    ...authList.map(auth => ({
+                      key: auth.id,
+                      label: <div onClick={() => doLogin(auth)}>{auth.name}</div>
+                    })),
+                    {
+                      key: '0',
+                      label: <div onClick={doLogout}>登出</div>
+                    }
+                  ]}
+                />
+              }
+            >
+              <div className="cursor-pointer">登录OIDC</div>
+            </Dropdown>
             <img src="/assets/share.svg" alt="" />
             <Popover
               color="#2A2B2CFF"
@@ -207,7 +254,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             ) : null}
             <div
               className={styles.headBtn}
-              onClick={() => window.open('/#/workbench/rapi', 'fb_rapi')}
+              onClick={() => window.open('/#/workbench/rapi?t=' + Date.now(), 'fb_rapi')}
             >
               <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
             </div>

@@ -1,7 +1,8 @@
-import { useContext } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useContext, useEffect } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import requests from '@/lib/fetchers'
 
 if (window && document) {
   const script = document.createElement('script')
@@ -13,25 +14,32 @@ if (window && document) {
 export default function RapiFrame() {
   const [params] = useSearchParams()
   const { config } = useContext(ConfigContext)
-
+  const { search } = useLocation()
   const customServerUrl =
     config.apiHost || `${location.protocol}//${location.hostname}:${config.apiPort}`
 
   if (!config) return
+  useEffect(() => {
+    requests.get<unknown, any>('/auth').then(res => {
+      console.log(res)
+    })
+  }, [search])
 
   return (
-    // @ts-ignore
-    <rapi-doc
-      theme={params.get('theme') || 'light'}
-      spec-url={params.get('url')}
-      server-url={customServerUrl}
-      default-api-server={customServerUrl}
-      show-header="false"
-      show-info="false"
-      allow-authentication="true"
-      allow-server-selection="false"
-      allow-api-list-style-selection="false"
-      render-style="read"
-    />
+    <div>
+      <rapi-doc
+        key={search}
+        theme={params.get('theme') || 'light'}
+        spec-url={params.get('url')}
+        server-url={customServerUrl}
+        default-api-server={customServerUrl}
+        show-header="false"
+        show-info="false"
+        allow-authentication="true"
+        allow-server-selection="false"
+        allow-api-list-style-selection="false"
+        render-style="read"
+      />
+    </div>
   )
 }

@@ -93,9 +93,7 @@ export default function FileList({
   }, [refreshFlag, upType])
 
   function rmFile(fname: string) {
-    void requests
-      .delete('/file/removeFile', { data: { name: fname, type: `${upType}` } })
-      .then(x => console.log(x))
+    void requests.delete('/file/removeFile', { data: { name: fname, type: `${upType}` } })
   }
 
   const columns: ColumnsType<TableType> = [
@@ -200,6 +198,7 @@ export default function FileList({
         dataSource={data.filter(x => x.name.includes(keyword))}
         pagination={false}
         scroll={{ x: 738, y: 455 }}
+        rowKey={rcd => rcd.name}
         onRow={rcd => {
           return {
             onClick: event => {

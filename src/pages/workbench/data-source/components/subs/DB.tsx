@@ -75,10 +75,8 @@ export default function DB({ content, type }: Props) {
   const dbType = config.dbType
 
   const setUploadPath = (v: string) => {
-    console.log('setUploadPath', v)
     form.setFieldValue(['databaseUrl', 'val'], v)
     form.setFieldValue(['databaseUrl', 'kind'], '0')
-    console.log(form.getFieldsValue())
   }
 
   // 表单选择后规则校验改变
@@ -150,13 +148,14 @@ export default function DB({ content, type }: Props) {
       ),
       okText: '确定',
       onOk: async () => {
-        const dbName = sqlLiteInputValue.current.trim()
+        const dbName = sqlLiteInputValue.current.trim().replace(/\.db$/, '').trim()
         if (!dbName) {
           return message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
         }
         const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
         try {
           await uploadLocal('2', '', dbName + '.db')
+          setUploadPath(dbName + '.db')
         } finally {
           hide()
         }
@@ -489,6 +488,7 @@ export default function DB({ content, type }: Props) {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
+        destroyOnClose
       >
         <FileList
           basePath={BASEPATH}
