@@ -40,6 +40,7 @@ export default function Designer() {
         icon: string
         sourceType?: number
         dbType?: string
+        dbSchema?: string
         coming?: boolean
       }[]
     }[]
@@ -55,21 +56,30 @@ export default function Designer() {
       {
         name: intl.formatMessage({ defaultMessage: '数据库' }),
         items: [
-          { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL' },
-          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite' },
+          { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL', dbSchema: 'mysql' },
+          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite', dbSchema: 'sqlite' },
           {
             name: 'PostgreSQL',
             icon: iconPostgreSQL,
             sourceType: 1,
             dbType: 'PostgreSQL',
+            dbSchema: 'postgresql'
+            // coming: true
+          },
+          {
+            name: 'MongoDB',
+            icon: iconMongoDB,
+            sourceType: 1,
+            dbType: 'MongoDB',
+            dbSchema: 'mongodb',
             coming: true
           },
-          { name: 'MongoDB', icon: iconMongoDB, sourceType: 1, dbType: 'MongoDB', coming: true },
           {
             name: 'CockroachDB',
             icon: iconCockroachDB,
             sourceType: 1,
             dbType: 'CockroachDB',
+            dbSchema: 'cockroachdb',
             coming: true
           },
           {
@@ -85,14 +95,15 @@ export default function Designer() {
             sourceType: 1,
             dbType: 'Plantscale',
             coming: true
-          },
-          {
-            name: 'MariaDB',
-            icon: iconMariaDB,
-            sourceType: 1,
-            dbType: 'MariaDB',
-            coming: true
           }
+          // {
+          //   name: 'MariaDB',
+          //   icon: iconMariaDB,
+          //   sourceType: 1,
+          //   dbSchema: 'mysql',
+          //   dbType: 'MariaDB',
+          //   coming: true
+          // }
         ]
       },
       {
@@ -286,14 +297,14 @@ export default function Designer() {
     })
   }
 
-  async function handleClick(sourceType: number, dbType: string, name: string) {
+  async function handleClick(sourceType: number, dbType: string, dbSchema: string, name: string) {
     if (sourceType === 4) {
       return createCustom()
     }
     let data = {
       id: 0,
       name: '',
-      config: { dbType: dbType },
+      config: { dbType, dbSchema },
       sourceType: sourceType,
       switch: 0
     } as DatasourceResp
@@ -323,7 +334,7 @@ export default function Designer() {
                 className="border rounded cursor-pointer flex bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 items-center relative hover:shadow-lg"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onClick={() => !x.coming && handleClick(x.sourceType, x.dbType, x.name)}
+                onClick={() => !x.coming && handleClick(x.sourceType, x.dbType, x.dbSchema, x.name)}
               >
                 {/* <Image
                     height={28}

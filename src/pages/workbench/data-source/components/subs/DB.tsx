@@ -428,7 +428,9 @@ export default function DB({ content, type }: Props) {
       // 参数转url
       form.setFieldValue(
         ['databaseUrl', 'val'],
-        `mysql://${values.userName.val}:${values.password.val}@${values.host}:${values.port}/${values.dbName}`
+        `${content.config.dbSchema}://${values.userName.val}${
+          values.password.val ? `:${values.password.val}` : ''
+        }@${values.host}:${values.port}/${values.dbName}`
       )
     }
 
