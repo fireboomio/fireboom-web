@@ -21,9 +21,9 @@ function openSocket() {
   let heartbeatTimer
   let pingCounter = 0
   if (socket) {
-    socket = null
     try {
       socket.close()
+      socket = null
     } catch (e) {
       console.error(e)
     }
