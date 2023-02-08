@@ -20,12 +20,17 @@ export default function UserInfo() {
   }, [])
 
   const handleLogout = () => {
-    axios.get('/auth/cookie/user/logout', { headers: getHeader() }).then(() => {
-      message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
-      setTimeout(() => {
-        window.close()
-      }, 3000)
-    })
+    axios
+      .get('/auth/cookie/user/logout', {
+        headers: getHeader(),
+        params: { logout_openid_connect_provider: 'true' }
+      })
+      .then(() => {
+        message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
+        // setTimeout(() => {
+        //   window.close()
+        // }, 3000)
+      })
   }
 
   return (
