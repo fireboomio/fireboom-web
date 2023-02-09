@@ -81,7 +81,7 @@ export default function Graphql({ content, type }: Props) {
   const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [rulesObj, setRulesObj] = useImmer<Rule>({})
   const [deleteFlag, setDeleteFlag] = useImmer(false)
-  const [isShowUpSchema, setIsShowUpSchema] = useImmer(false)
+  const [isShowUpSchema, setIsShowUpSchema] = useImmer(true)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
   const [isValue, setIsValue] = useImmer(true)
 
@@ -95,7 +95,7 @@ export default function Graphql({ content, type }: Props) {
   const urlReg = /^https?:\/\/[-.\w\d:/]+$/i
   // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
-    setIsShowUpSchema(!!config.loadSchemaFromString)
+    setIsShowUpSchema(!config.loadSchemaFromString)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
 
