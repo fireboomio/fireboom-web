@@ -460,7 +460,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             }}
           />
         ),
-        okText: '确定',
+        okText: intl.formatMessage({ defaultMessage: '确定' }),
         onOk: () => {
           const newName = inputValue.current?.replace(/ /g, '')
           if (!newName) {

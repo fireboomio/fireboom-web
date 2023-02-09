@@ -135,7 +135,7 @@ export default function DB({ content, type }: Props) {
 
   const sqlLiteInputValue = useRef('')
   const onCreateSqlite = async () => {
-    Modal.info({
+    Modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input
@@ -146,11 +146,14 @@ export default function DB({ content, type }: Props) {
           }}
         />
       ),
-      okText: '确定',
+      cancelText: intl.formatMessage({ defaultMessage: '取消' }),
+      onCancel() {},
+      okText: intl.formatMessage({ defaultMessage: '确定' }),
       onOk: async () => {
         const dbName = sqlLiteInputValue.current.trim().replace(/\.db$/, '').trim()
         if (!dbName) {
-          return message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
+          message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
+          return
         }
         const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
         try {
