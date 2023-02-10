@@ -94,7 +94,6 @@ export default function Custom({ content }: Props) {
       onChangeEnable={() => {
         onRefreshMenu('dataSource')
       }}
-      key={content.name}
       hookPath={`customize/${content.name}`}
       defaultLanguage="typescript"
     />
