@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DoubleRightOutlined } from '@ant-design/icons'
-import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
-import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-react'
-import { loader } from '@swordjs/monaco-editor-react'
+import { loader } from '@monaco-editor/react'
+// import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
+import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-react' // import { loader } from '@swordjs/monaco-editor-react'
 import { Button, message } from 'antd'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
@@ -242,16 +242,16 @@ const IdeContainer: FC<Props> = props => {
       // depend['@angular/cdk'] = '14.2.5'
       // 装载typings插件
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      void AutoTypings.create(editor, {
-        sourceCache: new LocalStorageCache(),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        monaco: monaco,
-        onlySpecifiedPackages: true,
-        preloadPackages: true,
-        versions: {}
-      }).then(t => {
-        typingsRef.current = t
-      })
+      // void AutoTypings.create(editor, {
+      //   sourceCache: new LocalStorageCache(),
+      //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      //   monaco: monaco,
+      //   onlySpecifiedPackages: true,
+      //   preloadPackages: true,
+      //   versions: {}
+      // }).then(t => {
+      //   typingsRef.current = t
+      // })
     }
   }, [editor, monaco, hookInfo?.depend])
 
