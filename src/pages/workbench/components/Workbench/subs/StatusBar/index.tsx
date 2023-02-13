@@ -3,7 +3,6 @@ import { Radio, Space, Tag, Tooltip } from 'antd'
 import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -81,8 +80,6 @@ const StatusBar: React.FC<Props> = ({
     setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
     if (config.hooksServerURL === webContainerUrl) {
       setHookSwitch(1)
-    } else if (config.hooksServerURL === 'http://127.0.0.1:9992') {
-      setHookSwitch(2)
     } else {
       setHookSwitch(3)
     }
@@ -280,7 +277,6 @@ const StatusBar: React.FC<Props> = ({
                       setHookSwitch(e.target.value)
                       const map: Record<string, string | undefined> = {
                         '1': webContainerUrl,
-                        '2': 'http://127.0.0.1:9992',
                         '3': hooksServerURL
                       }
                       const url: string = map[e.target.value] ?? ''
