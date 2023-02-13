@@ -77,6 +77,7 @@ export default function DB({ content, type }: Props) {
   const setUploadPath = (v: string) => {
     form.setFieldValue(['databaseUrl', 'val'], v)
     form.setFieldValue(['databaseUrl', 'kind'], '0')
+    form.validateFields()
   }
 
   // 表单选择后规则校验改变

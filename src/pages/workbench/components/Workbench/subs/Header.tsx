@@ -165,6 +165,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       })
       .then(res => {
         const url = res.data?.redirect
+        message.success(intl.formatMessage({ defaultMessage: '退出成功' }))
         if (url) {
           axios.get(url)
         }
@@ -204,7 +205,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
                 />
               }
             >
-              <div className="cursor-pointer">登录OIDC</div>
+              <div className="cursor-pointer h-1/1 flex items-center">登录OIDC</div>
             </Dropdown>
             <img src="/assets/share.svg" alt="" />
             <Popover

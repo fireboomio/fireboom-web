@@ -8,7 +8,7 @@ import { intl } from '@/providers/IntlProvider'
 
 const requests = axios.create({
   baseURL: '/api/v1',
-  timeout: 5000
+  timeout: -1
 })
 
 const errToast = throttle(str => message.error(str), 1000)
@@ -27,6 +27,11 @@ requests.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
+    // 请求超时提示
+    // if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {
+    //   // eslint-disable-next-line
+    //   return Promise.reject('请检查网络再重新连接')
+    // }
     if (error.response?.status === 401) {
       setAuthKey('')
     }
