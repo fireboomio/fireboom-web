@@ -67,7 +67,7 @@ export default function Index(props: PropsWithChildren) {
   }))
 
   useEffect(() => {
-    void requests.get<unknown, BarOnce>('/wdg/barOnce').then(res => {
+    void requests.get<unknown, BarOnce>('/engine/barOnce').then(res => {
       setVersion(res.version)
       setEnv(res.env)
     })

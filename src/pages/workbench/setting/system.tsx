@@ -320,7 +320,7 @@ export default function SettingMainVersion() {
             {/*<button*/}
             {/*  className={styles['edit-btn']}*/}
             {/*  onClick={() => {*/}
-            {/*    void requests.get('/wdg/reStart')*/}
+            {/*    void requests.get('/engine/reStart')*/}
             {/*  }}*/}
             {/*>*/}
             {/*  <span>重启</span>*/}
