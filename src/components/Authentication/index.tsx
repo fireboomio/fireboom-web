@@ -1,8 +1,11 @@
+import '@/lib/socket'
+
 import { Button, Form, Input } from 'antd'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { broadcast, useBroadcast } from '@/hooks/broadcast'
 import type { SystemConfigType } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
@@ -15,12 +18,17 @@ const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
   const authState = useAuthState()
+  useBroadcast('auth', 'setAuthKey', (key: string) => {
+    setAuthKey(key)
+    setAuthed(true)
+  })
   useEffect(() => {
     if (!authState) {
       setAuthed(false)
     }
   }, [authState])
   const onSubmit = ({ key }: { key: string }) => {
+    broadcast('auth', 'setAuthKey', key)
     setAuthKey(key)
     setAuthed(true)
   }

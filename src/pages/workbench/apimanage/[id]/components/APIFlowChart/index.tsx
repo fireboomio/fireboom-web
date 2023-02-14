@@ -10,7 +10,6 @@ import { useAPIManager } from '../../store'
 import EditPanel from './EditPanel'
 import type { FlowChartProps } from './FlowChart'
 import type {
-  BaseHookState,
   CommonChartProps,
   NormalGlobalHookState,
   SubscriptionGlobalHookState
@@ -78,10 +77,13 @@ const APIFlowChart = ({ id }: { id: string }) => {
     1000,
     [query, schemaAST?.definitions]
   )
+  const hookInfoPromise = useMemo(() => {
+    return requests.get(`/operateApi/hooks/${id}`)
+  }, [id])
 
   const loadHook = useCallback(() => {
     if (schemaAST) {
-      requests.get(`/operateApi/hooks/${id}`).then(resp => {
+      hookInfoPromise.then(resp => {
         // @ts-ignore
         const globalHooks = resp.globalHooks
         // @ts-ignore
