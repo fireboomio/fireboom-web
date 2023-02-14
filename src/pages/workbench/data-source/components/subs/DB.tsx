@@ -428,10 +428,15 @@ export default function DB({ content, type }: Props) {
       _allValues.port ||
       _allValues.dbName
     ) {
+      // @ts-ignore
+      const schema: string = { mysql: 'mysql', postgres: 'postgresql' }[dbType ?? ''] ?? ''
+      if (!schema) {
+        console.error('未配置当前数据库scheam', dbType)
+      }
       // 参数转url
       form.setFieldValue(
         ['databaseUrl', 'val'],
-        `${content.config.dbSchema}://${values.userName.val}${
+        `${schema}://${values.userName.val}${
           values.password.val ? `:${values.password.val}` : ''
         }@${values.host}:${values.port}/${values.dbName}`
       )

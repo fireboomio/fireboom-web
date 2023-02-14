@@ -8,7 +8,6 @@ const webSocketWorker = new SharedWorker(serverModule, {
   credentials: 'same-origin',
   name: '_socketWorker'
 })
-export default {}
 
 /**
  * Sends a message to the worker and passes that to the Web Socket.
@@ -28,9 +27,12 @@ export const initWebSocket = (key: string) => {
 }
 
 // Event to listen for incoming data from the worker and update the DOM.
-webSocketWorker.port.addEventListener('message', ({ data }) => {
-  if (data.channel) {
+webSocketWorker.port.addEventListener('message', e => {
+  const { data } = e
+  if (data.type === 'ws') {
     events.emit({ event: 'wsEvent', data })
+  } else if (data.type === 'broadcast') {
+    events.emit({ event: 'broadcastEvent', data })
   }
   // switch (data.channel) {
   //   case 'engine:state':
@@ -40,6 +42,10 @@ webSocketWorker.port.addEventListener('message', ({ data }) => {
 
 // Initialize the port connection.
 webSocketWorker.port.start()
+
+export function postSharedMessage(message: any) {
+  webSocketWorker.port.postMessage(message)
+}
 
 // Remove the current worker port from the connected ports list.
 // This way your connectedPorts list stays true to the actual connected ports,

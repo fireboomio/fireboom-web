@@ -60,6 +60,7 @@ function openSocket() {
       return
     }
     const payload = JSON.parse(data)
+    payload.type = 'ws'
     connectedPorts.forEach(port => port.postMessage(payload))
   })
 }
@@ -98,9 +99,10 @@ self.addEventListener('connect', ({ ports }) => {
    * actions it should take based on the received data.
    */
   port.addEventListener('message', ({ data }) => {
-
-    connectedPorts.forEach(port => port.postMessage(data))
     const { action, value } = data
+    if (action === 'broadcast') {
+      connectedPorts.forEach(port => port.postMessage({ ...value, type: 'broadcast' }))
+    }
 
     // Send message to socket.
     if (action === 'send') {

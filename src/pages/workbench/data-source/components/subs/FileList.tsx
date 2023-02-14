@@ -123,7 +123,7 @@ export default function FileList({
     },
     // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
     {
-      title: '',
+      title: intl.formatMessage({ defaultMessage: '操作' }),
       dataIndex: 'icon',
       key: 'icon',
       width: 80,
