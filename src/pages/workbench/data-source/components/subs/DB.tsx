@@ -435,8 +435,8 @@ export default function DB({ content, type }: Props) {
       _allValues.port ||
       _allValues.dbName
     ) {
-      // @ts-ignore
-      const schema: string = { mysql: 'mysql', postgres: 'postgresql' }[dbType ?? ''] ?? ''
+      const schemaMap: Record<string, string> = { mysql: 'mysql', postgresql: 'postgresql' }
+      const schema: string = schemaMap[dbType.toLowerCase() ?? ''] ?? ''
       if (!schema) {
         console.error('未配置当前数据库scheam', dbType)
       }

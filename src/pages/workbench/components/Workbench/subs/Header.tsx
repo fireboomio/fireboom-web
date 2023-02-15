@@ -1,4 +1,4 @@
-import { Dropdown, Menu, message, Modal, Popover, Tooltip } from 'antd'
+import { message, Modal, Popover, Tooltip } from 'antd'
 import axios from 'axios'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -9,6 +9,7 @@ import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getHeader } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import HeaderCompile from '../assets/header-compile.png'
@@ -188,25 +189,27 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         <div className="flex-1" />
         {pathname === '/workbench/rapi' ? (
           <>
-            <Dropdown
-              className="mr-4"
-              overlay={
-                <Menu
-                  items={[
-                    ...authList.map(auth => ({
-                      key: auth.id,
-                      label: <div onClick={() => doLogin(auth)}>{auth.name}</div>
-                    })),
-                    {
-                      key: '0',
-                      label: <div onClick={doLogout}>登出</div>
-                    }
-                  ]}
-                />
-              }
-            >
-              <div className="cursor-pointer h-1/1 flex items-center">登录OIDC</div>
-            </Dropdown>
+            <LoginPanel />
+            <div className={styles.splitLine} style={{ margin: '0 26px' }} />
+            {/*<Dropdown*/}
+            {/*  className="mr-4"*/}
+            {/*  overlay={*/}
+            {/*    <Menu*/}
+            {/*      items={[*/}
+            {/*        ...authList.map(auth => ({*/}
+            {/*          key: auth.id,*/}
+            {/*          label: <div onClick={() => doLogin(auth)}>{auth.name}</div>*/}
+            {/*        })),*/}
+            {/*        {*/}
+            {/*          key: '0',*/}
+            {/*          label: <div onClick={doLogout}>登出</div>*/}
+            {/*        }*/}
+            {/*      ]}*/}
+            {/*    />*/}
+            {/*  }*/}
+            {/*>*/}
+            {/*  <div className="cursor-pointer h-1/1 flex items-center">登录OIDC</div>*/}
+            {/*</Dropdown>*/}
             <img src="/assets/share.svg" alt="" />
             <Popover
               color="#2A2B2CFF"

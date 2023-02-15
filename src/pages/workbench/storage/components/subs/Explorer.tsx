@@ -28,7 +28,7 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import type { FileT } from '@/interfaces/storage'
-import requests from '@/lib/fetchers'
+import requests, { getHeader } from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 
 import iconCompress from '../assets/icon-compress.svg'
@@ -612,6 +612,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           </Dropdown>
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
+            headers={getHeader()}
             action="/api/v1/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
