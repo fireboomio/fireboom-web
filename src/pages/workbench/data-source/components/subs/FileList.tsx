@@ -171,9 +171,7 @@ export default function FileList({
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
           defaultValue={
-            { '1': './upload/oas', '2': './wundergraph/.wundergraph', '3': './upload/graphql' }[
-              upType
-            ] ?? ''
+            { '1': './upload/oas', '2': './exported/db', '3': './upload/graphql' }[upType] ?? ''
           }
           readOnly
         />

@@ -158,7 +158,14 @@ export default function DB({ content, type }: Props) {
         }
         const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
         try {
-          await uploadLocal('2', '', dbName + '.db')
+          try {
+            await uploadLocal('2', '', dbName + '.db')
+          } catch (e: any) {
+            const msgMap: any = { 10440011: intl.formatMessage({ defaultMessage: '文件名已存在' }) }
+            const msg = msgMap[e?.response?.data?.code]
+            message.error(msg || intl.formatMessage({ defaultMessage: '上传失败' }))
+            return
+          }
           setUploadPath(dbName + '.db')
         } finally {
           hide()
