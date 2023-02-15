@@ -252,6 +252,10 @@ const IdeContainer: FC<Props> = props => {
       // }).then(t => {
       //   typingsRef.current = t
       // })
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        allowSyntheticDefaultImports: true
+      })
     }
   }, [editor, monaco, hookInfo?.depend])
 

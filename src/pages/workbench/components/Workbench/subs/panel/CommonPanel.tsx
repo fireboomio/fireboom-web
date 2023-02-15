@@ -36,11 +36,13 @@ interface PanelConfig {
     menuPath: (id: number) => string
   }>
   navAction?: Array<{ icon: string; path: string; tooltip: string }>
+  bottom?: React.ReactNode
 }
 
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
   const intl = useIntl()
   const { mutate } = useSWRConfig()
+  const navigate = useNavigate()
   const { mutate: refreshStorage } = useStorageList()
   const { mutate: refreshAuth } = useAuthList()
   const { mutate: refreshDataSource } = useDataSourceList()
@@ -157,6 +159,15 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           }
         ],
         mutateKey: id => ['/auth', String(id)],
+        bottom: (
+          <div className={styles.bottomRowWrapper}>
+            <div className={styles.bottomRow}>
+              <span className={styles.btn} onClick={() => navigate('/workbench/setting/security')}>
+                <FormattedMessage defaultMessage="配置登录回调" />
+              </span>
+            </div>
+          </div>
+        ),
         request: {
           getList: dispatch => {
             refreshAuth()
@@ -188,7 +199,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     [intl]
   )
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type, intl])
-  const navigate = useNavigate()
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
   const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
@@ -395,6 +405,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             </div>
           )
         })}
+        {panelConfig.bottom}
       </div>
     </SidePanel>
   )

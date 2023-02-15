@@ -77,7 +77,7 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [window.location])
   useEffect(() => {
-    setHooksServerURL(config?.hooksServerURL || localStorage.getItem('hooksServerURL') || '')
+    setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
     if (config.hooksServerURL === webContainerUrl) {
       setHookSwitch(1)
     } else {

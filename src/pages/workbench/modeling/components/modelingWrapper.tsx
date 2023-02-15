@@ -38,10 +38,13 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])
   }, [data, setDataSources])
 
+  const hideRef = useRef<() => void>()
   useEffect(() => {
     paramIdRef.current = paramId
     if (dataSources.length > 0 && paramId) {
+      hideRef.current?.()
       const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
+      hideRef.current = hide
       fetchAndSaveToPrismaSchemaContext(
         Number(paramId),
         dispatch,
