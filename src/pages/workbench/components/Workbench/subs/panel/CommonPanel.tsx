@@ -7,6 +7,7 @@ import { useSWRConfig } from 'swr'
 
 import { useAuthList } from '@/hooks/store/auth'
 import { useDataSourceList } from '@/hooks/store/dataSource'
+import { mutateHookModel } from '@/hooks/store/hook/model'
 import { useStorageList } from '@/hooks/store/storage'
 import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
 import type { DatasourceResp } from '@/interfaces/datasource'
@@ -43,9 +44,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const intl = useIntl()
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
-  const { mutate: refreshStorage } = useStorageList()
-  const { mutate: refreshAuth } = useAuthList()
-  const { mutate: refreshDataSource } = useDataSourceList()
+  const { mutate: refreshStorage } = useStorageList(false)
+  const { mutate: refreshAuth } = useAuthList(false)
+  const { mutate: refreshDataSource } = useDataSourceList(false)
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
@@ -315,6 +316,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     await panelConfig.request.editItem(row)
     panelConfig.request.getList(dispatch)
     setEditTarget(undefined)
+    // 刷新hook编辑器文件列表
+    console.log('aaaaaa')
+    mutateHookModel()
     await mutate(panelConfig.mutateKey(String(editTarget?.id)))
   }
 

@@ -20,6 +20,8 @@ export interface Storage {
   switch: number
 }
 
-export function useStorageList() {
-  return useSWRImmutable<Storage[]>('/storageBucket', url => requests.get<unknown, any>(url))
+export function useStorageList(fetch = true) {
+  return useSWRImmutable<Storage[]>(fetch ? '/storageBucket' : null, url =>
+    requests.get<unknown, any>(url)
+  )
 }

@@ -11,6 +11,8 @@ export interface AuthProvResp {
   config: Record<string, string | number | boolean>
 }
 
-export function useAuthList() {
-  return useSWRImmutable<AuthProvResp[]>('/auth', url => requests.get<unknown, any>(url))
+export function useAuthList(fetch = true) {
+  return useSWRImmutable<AuthProvResp[]>(fetch ? '/auth' : null, url =>
+    requests.get<unknown, any>(url)
+  )
 }

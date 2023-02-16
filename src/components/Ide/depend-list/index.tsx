@@ -2,14 +2,14 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import type { SelectProps } from 'antd'
 import { Select, Spin, Tree } from 'antd'
-import { debounce, union } from 'lodash'
+import { cloneDeep, debounce, union } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import CollapsePanel from '@/components/CollapsePanel'
-import requests from '@/lib/fetchers'
+import { useHookModel } from '@/hooks/store/hook/model'
 import { getDependList, getDependVersions } from '@/lib/service/depend'
 
 import iconCross from '../assets/cross.svg'
@@ -319,6 +319,7 @@ const DependList = (props: DependListProps) => {
   const [treeData, setTreeData] = useState<any[]>([])
   const [enableMap, setEnableMap] = useImmer<Record<string, boolean>>({})
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
+  const hookModelData = useHookModel()
 
   useEffect(() => {
     // 自动选中当前钩子
@@ -333,57 +334,57 @@ const DependList = (props: DependListProps) => {
     setExpandedKeys(union(expandedKeys, parents))
   }, [props.hookPath])
   useEffect(() => {
-    requests.get<unknown, any[]>('hook/model').then(res => {
-      const map = {} as any
-      const scriptList: string[] = []
-      const markKey = (data: TreeNode[], key: string): TreeNode[] => {
-        return data.filter((item: TreeNode, index: number) => {
-          // 临时移除path开头的前缀，后续接口更新后可以移除该操作
-          item.path = item.path.replace('custom-ts/', '')
-          item.key = item.path
-          item.title = item.name
-          if (item.children) {
-            item.children = markKey(item.children || [], item.key)
-          }
-          map[item.path] = item.enable
-          if (!item.isDir) {
-            scriptList.push(item.path)
-          }
-          return !item.isDir || item.children?.length
-        })
-      }
-      // 检查当前树中是否有当前hook对应的节点，如果没有则添加
-      const blocks = props.hookPath.split('/')
-      let list = res
-      for (let i = 0; i < blocks.length; i++) {
-        const isDir = i !== blocks.length - 1
-        const curPath = blocks.slice(0, i + 1).join('/')
-        const found = list.find(item => item.path === curPath)
-        // 如果找到当前层级的节点
-        if (found) {
-          if (isDir) {
-            found.children = found.children || []
-          }
-          list = found.children
-        } else {
-          const newNode = {
-            isDir: isDir,
-            name: blocks[i],
-            path: curPath,
-            children: !isDir ? undefined : []
-          }
-          list.push(newNode)
-          if (isDir) {
-            list = newNode.children!
-          }
+    if (!hookModelData) return
+    let res = cloneDeep(hookModelData)
+    const map = {} as any
+    const scriptList: string[] = []
+    const markKey = (data: TreeNode[], key: string): TreeNode[] => {
+      return data.filter((item: TreeNode, index: number) => {
+        // 临时移除path开头的前缀，后续接口更新后可以移除该操作
+        item.path = item.path.replace('custom-ts/', '')
+        item.key = item.path
+        item.title = item.name
+        if (item.children) {
+          item.children = markKey(item.children || [], item.key)
+        }
+        map[item.path] = item.enable
+        if (!item.isDir) {
+          scriptList.push(item.path)
+        }
+        return !item.isDir || item.children?.length
+      })
+    }
+    // 检查当前树中是否有当前hook对应的节点，如果没有则添加
+    const blocks = props.hookPath.split('/')
+    let list = res
+    for (let i = 0; i < blocks.length; i++) {
+      const isDir = i !== blocks.length - 1
+      const curPath = blocks.slice(0, i + 1).join('/')
+      const found = list.find(item => item.path === curPath)
+      // 如果找到当前层级的节点
+      if (found) {
+        if (isDir) {
+          found.children = found.children || []
+        }
+        list = found.children
+      } else {
+        const newNode = {
+          isDir: isDir,
+          name: blocks[i],
+          path: curPath,
+          children: !isDir ? undefined : []
+        }
+        list.push(newNode)
+        if (isDir) {
+          list = newNode.children!
         }
       }
-      res = markKey(res, '')
-      props.onScriptListLoad?.(scriptList)
-      setEnableMap(map)
-      setTreeData(res)
-    })
-  }, [])
+    }
+    res = markKey(res, '')
+    props.onScriptListLoad?.(scriptList)
+    setEnableMap(map)
+    setTreeData(res)
+  }, [hookModelData])
 
   // 当hookInfo更新时，自动更新钩子树中对应钩子的状态
   useEffect(() => {
@@ -394,6 +395,7 @@ const DependList = (props: DependListProps) => {
     })
   }, [props.hookInfo])
 
+  console.log('====================', hookModelData)
   return (
     <div className={`${ideStyles['ide-container-depend-list']} relative`}>
       <span
