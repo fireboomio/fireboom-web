@@ -3,7 +3,6 @@ import path from 'path'
 
 import react from '@vitejs/plugin-react'
 import { defineConfig, type PluginOption } from 'vite'
-import vitePluginImp from 'vite-plugin-imp'
 import Pages from 'vite-plugin-pages'
 import WindiCSS from 'vite-plugin-windicss'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -29,14 +28,14 @@ const plugins: PluginOption[] = [
       ]
     }
   }),
-  vitePluginImp({
-    libList: [
-      {
-        libName: 'antd',
-        style: name => `antd/es/${name}/style/index.js`
-      }
-    ]
-  }),
+  // vitePluginImp({
+  //   libList: [
+  //     {
+  //       libName: 'antd',
+  //       style: name => `antd/es/${name}/style/index.js`
+  //     }
+  //   ]
+  // }),
   WindiCSS(),
   Pages({
     extensions: ['tsx'],
