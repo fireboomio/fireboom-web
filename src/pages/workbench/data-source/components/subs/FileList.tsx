@@ -38,6 +38,7 @@ export default function FileList({
 }: Props) {
   const intl = useIntl()
   const [data, setData] = useState<TableType[]>([])
+  const [path, setPath] = useState('')
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
   const [keyword, setKeyword] = useState('')
 
@@ -88,6 +89,8 @@ export default function FileList({
         params: { names: filter }
       })
       .then(x => {
+        console.log(x)
+        setPath(x.path)
         setData(x.files)
       })
   }, [refreshFlag, upType])
@@ -170,9 +173,7 @@ export default function FileList({
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          defaultValue={
-            { '1': './upload/oas', '2': './exported/db', '3': './upload/graphql' }[upType] ?? ''
-          }
+          value={path}
           readOnly
         />
         <Upload

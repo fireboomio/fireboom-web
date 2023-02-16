@@ -1,5 +1,4 @@
-import { message, Modal, Popover, Tooltip } from 'antd'
-import axios from 'axios'
+import { message, Modal, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -7,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests, { getHeader } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
@@ -137,42 +136,6 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       unbind2()
     }
   }, [])
-  const doLogin = (auth: any) => {
-    // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
-    const callbackURL = new URL(location.toString())
-    callbackURL.hash = '#/workbench/rapi/loginBack'
-    let target
-    try {
-      target = new URL(auth?.point + encodeURIComponent(callbackURL.toString()))
-    } catch (e) {
-      message.error(
-        intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
-      )
-      console.error(e)
-      return
-    }
-    if (!config.apiHost) {
-      target.protocol = location.protocol
-      target.hostname = location.hostname
-      target.port = location.port
-    }
-    window.open(target.toString())
-  }
-  const doLogout = () => {
-    axios
-      .get('/auth/cookie/user/logout', {
-        headers: getHeader(),
-        params: { logout_openid_connect_provider: 'true' }
-      })
-      .then(res => {
-        const url = res.data?.redirect
-        message.success(intl.formatMessage({ defaultMessage: '退出成功' }))
-        if (url) {
-          axios.get(url)
-        }
-      })
-  }
-
   return (
     <>
       <div className={styles.header}>
@@ -210,49 +173,15 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             {/*>*/}
             {/*  <div className="cursor-pointer h-1/1 flex items-center">登录OIDC</div>*/}
             {/*</Dropdown>*/}
-            <img src="/assets/share.svg" alt="" />
-            <Popover
-              color="#2A2B2CFF"
-              content={
-                <div>
-                  <a
-                    className="text-[#f0f8ff]"
-                    onClick={() => setOpen(false)}
-                    href="/api/v1/file/postToSwag"
-                    download="Swagger.json"
-                  >
-                    <FormattedMessage defaultMessage="下载 swagger" />
-                  </a>
-                  <br />
-                  <a
-                    className="text-[#f0f8ff]"
-                    onClick={() => setOpen(false)}
-                    href="/api/v1/file/postToSwag"
-                    download="OpenAPI"
-                  >
-                    <FormattedMessage defaultMessage="下载 OpenAPI" />
-                  </a>
-                  <br />
-                  <a
-                    className="text-[#f0f8ff]"
-                    onClick={() => setOpen(false)}
-                    href="/api/v1/operateApi/sdk"
-                    download="SDK"
-                  >
-                    <FormattedMessage defaultMessage="下载 React SDK" />
-                  </a>
-                </div>
-              }
-              title={false}
-              trigger="click"
-              open={open}
-              onOpenChange={v => setOpen(v)}
+
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                window.open('api/v1/file/postToSwag', '_blank')
+              }}
             >
-              <div className="cursor-pointer">
-                <img src="/assets/download.svg" alt="" className="ml-7" />
-                <img src="/assets/shape-down.svg" alt="" />
-              </div>
-            </Popover>
+              <img src="/assets/download.svg" alt="" />
+            </div>
           </>
         ) : (
           <>

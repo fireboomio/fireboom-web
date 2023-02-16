@@ -12,7 +12,7 @@ import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { isEmpty, isUpperCase } from '@/lib/utils'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
@@ -116,7 +116,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [treeData])
 
-  const { data: apiList, mutate: refreshApiList } = useApiList()
+  const { data: apiList, mutate: refreshApiList } = useApiList(panelOpened)
   useEffect(() => {
     const tree = convertToTree(apiList ?? [], '0')
 
@@ -133,7 +133,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [apiList])
   useEffect(() => {
     refreshApiList()
-  }, [panelOpened, refreshMap.api])
+  }, [refreshMap.api])
 
   useEffect(() => {
     if (currEditingNode) {
@@ -630,14 +630,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             <div
               className={styles.headerRefresh}
               onClick={() => {
-                void getFetcher<OperationResp[]>('/operateApi')
-                  .then(res => setTreeData(convertToTree(res)))
-                  // .then(() => setSelectedKey(''))
-                  .then(() => message.success(intl.formatMessage({ defaultMessage: '刷新完成！' })))
-                  .catch((err: Error) => {
-                    message.error(intl.formatMessage({ defaultMessage: '获取文件列表失败！' }))
-                    throw err
-                  })
+                refreshApiList()
+                // void getFetcher<OperationResp[]>('/operateApi')
+                //   .then(res => setTreeData(convertToTree(res)))
+                //   // .then(() => setSelectedKey(''))
+                //   .then(() => message.success(intl.formatMessage({ defaultMessage: '刷新完成！' })))
+                //   .catch((err: Error) => {
+                //     message.error(intl.formatMessage({ defaultMessage: '获取文件列表失败！' }))
+                //     throw err
+                //   })
               }}
             />
           </Tooltip>

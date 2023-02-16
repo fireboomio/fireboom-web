@@ -35,6 +35,6 @@ export interface OperationResp {
   updateTime: string
 }
 
-export function useApiList() {
-  return useSWRImmutable<OperationResp[]>('/operateApi', url => requests.get(url))
+export function useApiList(fetch = true) {
+  return useSWRImmutable<OperationResp[]>(fetch ? '/operateApi' : null, requests.get)
 }

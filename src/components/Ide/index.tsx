@@ -195,7 +195,11 @@ const IdeContainer: FC<Props> = props => {
       .get<unknown, { path: string; content: string }[]>('hook/ctree', { timeout: 60000 })
       .then(res => {
         res.forEach(({ path, content }) => {
+          // 屏蔽generated代码和node_modules中的代码
           if (path.startsWith('generated/') || path.startsWith('node_modules/')) {
+            return
+          }
+          if (!path.endsWith('.ts') && !path.endsWith('.js')) {
             return
           }
           const monacoPath = `inmemory://model/hook/${path}`

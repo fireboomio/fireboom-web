@@ -136,7 +136,8 @@ export default function DB({ content, type }: Props) {
 
   const sqlLiteInputValue = useRef('')
   const onCreateSqlite = async () => {
-    Modal.confirm({
+    sqlLiteInputValue.current = ''
+    const modal = Modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input
@@ -147,30 +148,47 @@ export default function DB({ content, type }: Props) {
           }}
         />
       ),
-      cancelText: intl.formatMessage({ defaultMessage: '取消' }),
-      onCancel() {},
-      okText: intl.formatMessage({ defaultMessage: '确定' }),
-      onOk: async () => {
-        const dbName = sqlLiteInputValue.current.trim().replace(/\.db$/, '').trim()
-        if (!dbName) {
-          message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
-          return
-        }
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
-        try {
-          try {
-            await uploadLocal('2', '', dbName + '.db')
-          } catch (e: any) {
-            const msgMap: any = { 10440011: intl.formatMessage({ defaultMessage: '文件名已存在' }) }
-            const msg = msgMap[e?.response?.data?.code]
-            message.error(msg || intl.formatMessage({ defaultMessage: '上传失败' }))
-            return
-          }
-          setUploadPath(dbName + '.db')
-        } finally {
-          hide()
-        }
-      }
+      footer: (
+        <div className="flex justify-end mt-2 common-form">
+          <Button
+            className="btn-cancel"
+            onClick={() => {
+              modal.destroy()
+            }}
+          >
+            <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
+          </Button>
+          <Button
+            className="ml-4 btn-save"
+            onClick={async () => {
+              const dbName = sqlLiteInputValue.current.trim().replace(/\.db$/, '').trim()
+              if (!dbName) {
+                message.error(intl.formatMessage({ defaultMessage: '请输入名称' }))
+                return
+              }
+              const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
+              try {
+                try {
+                  await uploadLocal('2', '', dbName + '.db')
+                } catch (e: any) {
+                  const msgMap: any = {
+                    10440011: intl.formatMessage({ defaultMessage: '文件名已存在' })
+                  }
+                  const msg = msgMap[e?.response?.data?.code]
+                  message.error(msg || intl.formatMessage({ defaultMessage: '上传失败' }))
+                  return
+                }
+                setUploadPath(dbName + '.db')
+                modal.destroy()
+              } finally {
+                hide()
+              }
+            }}
+          >
+            {intl.formatMessage({ defaultMessage: '确定' })}
+          </Button>
+        </div>
+      )
     })
   }
 

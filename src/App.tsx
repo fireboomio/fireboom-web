@@ -1,8 +1,8 @@
 import '@/lib/socket/index'
 
 import { ConfigProvider } from 'antd'
-import enUS from 'antd/lib/locale-provider/en_US'
-import zhCN from 'antd/lib/locale-provider/zh_CN'
+import enUS from 'antd/locale/en_US'
+import zhCN from 'antd/locale/zh_CN'
 import { Suspense } from 'react'
 import { useRoutes } from 'react-router-dom'
 

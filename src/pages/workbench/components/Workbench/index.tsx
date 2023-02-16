@@ -48,7 +48,7 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
-  const { mutate: refreshApiList } = useApiList()
+  const { mutate: refreshApiList } = useApiList(false)
   const prevStatus = useRef<any>()
 
   // context
