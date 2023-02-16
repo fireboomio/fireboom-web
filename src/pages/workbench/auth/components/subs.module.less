@@ -402,3 +402,21 @@
     height: 100%;
   }
 }
+
+.switchLabel {
+  position: relative;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 500;
+  color: #333333;
+  &::before {
+    content: ' ';
+    position: absolute;
+    left: -10px;
+    top: 0;
+    width: 3px;
+    height: 16px;
+    background: linear-gradient(180deg, #ff9797 0%, #ff5e5e 100%);
+    border-radius: 0px 3px 3px 0px;
+  }
+}
