@@ -1,7 +1,9 @@
 import { message } from 'antd'
 import axios from 'axios'
+import { useEffect } from 'react'
 import ReactJson from 'react-json-view'
-import useSWR from 'swr'
+import { useLocation } from 'react-router-dom'
+import useSWRMutation from 'swr/mutation'
 
 import { useAuthList } from '@/hooks/store/auth'
 import requests, { getHeader } from '@/lib/fetchers'
@@ -12,7 +14,13 @@ import logoutIcon from './assets/logout.svg'
 import styles from './index.module.less'
 
 export default function LoginPanel() {
-  const { data: userInfo, mutate } = useSWR<any>('/oidc/userInfo', requests.get)
+  const { data: userInfo, trigger } = useSWRMutation<any>('/oidc/userInfo', (key: string) => {
+    return requests.get(key)
+  })
+  const { search } = useLocation()
+  useEffect(() => {
+    trigger()
+  }, [search])
   const doLogout = () => {
     axios
       .get('/auth/cookie/user/logout', {
@@ -23,9 +31,9 @@ export default function LoginPanel() {
         const url = res.data?.redirect
         message.success(intl.formatMessage({ defaultMessage: '退出成功' }))
         if (url) {
-          axios.get(url).finally(() => mutate())
+          axios.get(url).finally(() => trigger())
         } else {
-          mutate()
+          trigger()
         }
       })
   }
@@ -82,10 +90,12 @@ export default function LoginPanel() {
             {auth.name}
           </div>
         ))}
-        <div className={styles.logoutLine} onClick={doLogout}>
-          <img src={logoutIcon} className="h-4 mr-2.5 w-4" alt="" />
-          {intl.formatMessage({ defaultMessage: '退出项目' })}
-        </div>
+        {userInfo?.userId ? (
+          <div className={styles.logoutLine} onClick={doLogout}>
+            <img src={logoutIcon} className="h-4 mr-2.5 w-4" alt="" />
+            {intl.formatMessage({ defaultMessage: '退出项目' })}
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
-import { Button, Checkbox, Form, Input, message, Radio, Select } from 'antd'
+import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
 import axios from 'axios'
 import type { ReactNode } from 'react'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -80,8 +80,15 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         return
       }
     }
+    const switchState = []
+    if (values.cookieBased) {
+      switchState.push('cookieBased')
+    }
+    if (values.tokenBased) {
+      switchState.push('tokenBased')
+    }
     const newValues = { ...config, ...values }
-    const newContent = { ...content, switchState: values.switchState, name: values.id }
+    const newContent = { ...content, switchState, name: values.id }
     if (content.name == '') {
       const req = { ...newContent, config: newValues }
       Reflect.deleteProperty(req, 'id')
@@ -160,7 +167,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         userInfoEndpoint: config.userInfoEndpoint,
         tokenEndpoint: config.tokenEndpoint,
         authorizationEndpoint: config.authorizationEndpoint,
-        switchState: content.switchState
+        switchState: content.switchState,
+        cookieBased: content.switchState.includes('cookieBased'),
+        tokenBased: content.switchState.includes('tokenBased')
       }
     : {
         id: '',
@@ -173,7 +182,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         userInfoEndpoint: '',
         tokenEndpoint: '',
         authorizationEndpoint: '',
-        switchState: []
+        cookieBased: false,
+        tokenBased: false
       }
 
   const saveJwksJSON = ({ updated_src }: { updated_src: Object }) => {
@@ -220,7 +230,35 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               autoFocus={true}
             />
           </Form.Item>
-
+          <Form.Item
+            label="Issuer"
+            name="issuer"
+            rules={[
+              { required: true, message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' }) },
+              {
+                // pattern: /^https?:\/\/[:.\w\d/]+$/,
+                type: 'url',
+                message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
+              }
+            ]}
+          >
+            <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+          </Form.Item>
+          <Form.Item
+            label={
+              <div className={styles.switchLabel}>
+                {intl.formatMessage({ defaultMessage: '基于 cookie' })}
+              </div>
+            }
+            name="cookieBased"
+            valuePropName="checked"
+            className="pt-5"
+          >
+            <Switch
+              checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+              unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+            />
+          </Form.Item>
           <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
             <Input.Group compact className="!flex">
               <Form.Item name={['clientId', 'kind']} noStyle>
@@ -288,18 +326,19 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Input.Group>
           </Form.Item>
           <Form.Item
-            label="Issuer"
-            name="issuer"
-            rules={[
-              { required: true, message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' }) },
-              {
-                // pattern: /^https?:\/\/[:.\w\d/]+$/,
-                type: 'url',
-                message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
-              }
-            ]}
+            label={
+              <div className={styles.switchLabel}>
+                {intl.formatMessage({ defaultMessage: '基于 Token' })}
+              </div>
+            }
+            name="tokenBased"
+            valuePropName="checked"
+            className="pt-5"
           >
-            <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+            <Switch
+              checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+              unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+            />
           </Form.Item>
           <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />
@@ -355,10 +394,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           <Form.Item hidden name="authorizationEndpoint">
             <Input disabled />
           </Form.Item>
-          <Form.Item label={intl.formatMessage({ defaultMessage: '是否开启' })} name="switchState">
-            <Checkbox.Group options={options} />
-          </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
             <Button
               className="btn-cancel"
