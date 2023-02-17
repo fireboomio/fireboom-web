@@ -1,0 +1,43 @@
+.toolbar {
+  width: 40px;
+  background: #f8f9fd;
+  border-left: 1px solid #5f626920;
+
+  .item {
+    height: 40px;
+    border-bottom: 1px solid #5f626920;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #eaebef;
+    }
+
+    &.active {
+      background: #fdecee;
+
+      &:hover {
+        background: #fdecee;
+      }
+    }
+  }
+}
+
+.panel {
+  border-left: 1px solid #5f626920;
+  display: flex;
+  flex-direction: column;
+  background: #fbfbfc;
+}
+
+.panelHead {
+  flex: 0 0 auto;
+  height: 40px;
+  border-bottom: 1px solid #5f626920;
+  padding-left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

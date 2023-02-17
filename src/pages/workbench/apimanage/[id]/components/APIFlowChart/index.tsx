@@ -1,6 +1,7 @@
 import type { OperationDefinitionNode, OperationTypeNode } from 'graphql'
 import { isEqual } from 'lodash'
-import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import useSWRImmutable from 'swr/immutable'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import requests from '@/lib/fetchers'
@@ -77,74 +78,74 @@ const APIFlowChart = ({ id }: { id: string }) => {
     1000,
     [query, schemaAST?.definitions]
   )
-  const hookInfoPromise = useMemo(() => {
-    return requests.get(`/operateApi/hooks/${id}`)
-  }, [id])
+
+  const { data: hookInfo } = useSWRImmutable<any>(
+    id ? `/operateApi/hooks/${id}` : null,
+    requests.get
+  )
 
   const loadHook = useCallback(() => {
-    if (schemaAST) {
-      hookInfoPromise.then(resp => {
-        // @ts-ignore
-        const globalHooks = resp.globalHooks
-        // @ts-ignore
-        const operationHooks = resp.operationHooks
-        setGlobalState({
-          onRequest: {
-            name: 'onRequest',
-            enable: globalHooks.onRequest?.switch ?? false,
-            path: globalHooks.onRequest?.path ?? ''
-          },
-          onResponse: {
-            name: 'onResponse',
-            enable: globalHooks.onResponse?.switch ?? false,
-            path: globalHooks.onResponse?.path ?? ''
-          },
-          // @ts-ignore
-          onConnectionInit: {
-            name: 'onConnectionInit',
-            enable: globalHooks.onConnectionInit?.switch ?? false,
-            path: globalHooks.onConnectionInit?.path ?? ''
-          }
-        })
-        const defs =
-          (schemaAST.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
-          []
-        setHookState({
-          customResolve: {
-            name: 'customResolve',
-            enable: operationHooks.customResolve.switch,
-            path: operationHooks.customResolve.path
-          },
-          mutatingPostResolve: {
-            name: 'mutatingPostResolve',
-            enable: operationHooks.mutatingPostResolve.switch,
-            path: operationHooks.mutatingPostResolve.path
-          },
-          mutatingPreResolve: {
-            name: 'mutatingPreResolve',
-            enable: operationHooks.mutatingPreResolve.switch,
-            can: defs?.length > 0 ?? false,
-            path: operationHooks.mutatingPreResolve.path
-          },
-          postResolve: {
-            name: 'postResolve',
-            enable: operationHooks.postResolve.switch,
-            path: operationHooks.postResolve.path
-          },
-          preResolve: {
-            name: 'preResolve',
-            enable: operationHooks.preResolve.switch,
-            path: operationHooks.preResolve.path
-          },
-          mockResolve: {
-            name: 'mockResolve',
-            enable: operationHooks.mockResolve.switch,
-            path: operationHooks.mockResolve.path
-          }
-        })
-      })
+    if (!hookInfo || !schemaAST) {
+      return
     }
-  }, [id, schemaAST])
+    // @ts-ignore
+    const globalHooks = hookInfo.globalHooks
+    // @ts-ignore
+    const operationHooks = hookInfo.operationHooks
+    setGlobalState({
+      onRequest: {
+        name: 'onRequest',
+        enable: globalHooks.onRequest?.switch ?? false,
+        path: globalHooks.onRequest?.path ?? ''
+      },
+      onResponse: {
+        name: 'onResponse',
+        enable: globalHooks.onResponse?.switch ?? false,
+        path: globalHooks.onResponse?.path ?? ''
+      },
+      // @ts-ignore
+      onConnectionInit: {
+        name: 'onConnectionInit',
+        enable: globalHooks.onConnectionInit?.switch ?? false,
+        path: globalHooks.onConnectionInit?.path ?? ''
+      }
+    })
+    const defs =
+      (schemaAST.definitions[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
+    setHookState({
+      customResolve: {
+        name: 'customResolve',
+        enable: operationHooks.customResolve.switch,
+        path: operationHooks.customResolve.path
+      },
+      mutatingPostResolve: {
+        name: 'mutatingPostResolve',
+        enable: operationHooks.mutatingPostResolve.switch,
+        path: operationHooks.mutatingPostResolve.path
+      },
+      mutatingPreResolve: {
+        name: 'mutatingPreResolve',
+        enable: operationHooks.mutatingPreResolve.switch,
+        can: defs?.length > 0 ?? false,
+        path: operationHooks.mutatingPreResolve.path
+      },
+      postResolve: {
+        name: 'postResolve',
+        enable: operationHooks.postResolve.switch,
+        path: operationHooks.postResolve.path
+      },
+      preResolve: {
+        name: 'preResolve',
+        enable: operationHooks.preResolve.switch,
+        path: operationHooks.preResolve.path
+      },
+      mockResolve: {
+        name: 'mockResolve',
+        enable: operationHooks.mockResolve.switch,
+        path: operationHooks.mockResolve.path
+      }
+    })
+  }, [id, schemaAST, hookInfo])
 
   useEffect(() => {
     loadHook()
@@ -165,7 +166,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
 
   return (
     <>
-      {apiDesc && (
+      {apiDesc && schemaAST && (
         <ChartWrapper
           apiSetting={apiDesc!.setting}
           directiveState={directiveState}
