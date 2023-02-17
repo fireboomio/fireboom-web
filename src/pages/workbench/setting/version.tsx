@@ -39,7 +39,15 @@ export default function SettingMainVersion() {
               ) : (
                 <div className="h-22px w-50px"> </div>
               )}
-              <div className={styles['check-info']}>
+              <div
+                className={styles['check-info']}
+                onClick={() => {
+                  window.open(
+                    'https://ansons-organization.gitbook.io/product-manual/geng-xin-ri-zhi',
+                    '_blank'
+                  )
+                }}
+              >
                 <FormattedMessage defaultMessage="查看更新日志" />
               </div>
             </div>

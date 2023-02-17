@@ -4,28 +4,26 @@
 
 import 'graphiql/graphiql.css'
 
-import { message, Tabs } from 'antd'
+import { message } from 'antd'
 import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
-import ApiConfig from '@/components/ApiConfig'
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
-import APIFlowChart from './components/APIFlowChart'
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
 // @ts-ignore
 // import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'
 import GraphiqlExplorer from './components/GraphQLExplorer/origin'
+import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
-import styles from './index.module.less'
 import { useAPIManager } from './store'
 
 async function fetcher(rec: Record<string, unknown>) {
@@ -97,30 +95,6 @@ export default function APIEditorContainer() {
     }),
     [intl]
   )
-
-  const tabs = useMemo(() => {
-    return (
-      <Tabs
-        className={styles.tabs}
-        centered
-        destroyInactiveTabPane
-        items={[
-          {
-            label: intl.formatMessage({ defaultMessage: '概览' }),
-            key: '1',
-            children: <APIFlowChart id={params.id as string} />
-          },
-          {
-            label: intl.formatMessage({ defaultMessage: '设置' }),
-            key: '2',
-            children: params.id ? (
-              <ApiConfig operationType={operationType} type="panel" id={Number(params.id)} />
-            ) : null
-          }
-        ]}
-      />
-    )
-  }, [intl, operationType, params.id])
 
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
@@ -235,11 +209,12 @@ export default function APIEditorContainer() {
     <>
       <div className="bg-white flex flex-col h-full relative" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />
-        <div className="flex flex-1 items-stretch overflow-hidden">
-          <div className="h-full relative" ref={elRef}>
-            <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
-            <div className="h-full w-full relative overflow-x-auto">
-              {/* <GraphiqlExplorer
+        <div className="flex-1 items-stretch min-h-0 flex flex-nowrap">
+          <div className="h-full flex items-stretch overflow-hidden flex-1 items-stretch min-w-0">
+            <div className="h-full relative" ref={elRef}>
+              <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
+              <div className="h-full w-full relative overflow-x-auto">
+                {/* <GraphiqlExplorer
                 actionRef={explorerRef}
                 schema={schema}
                 isLoading={isRefreshing}
@@ -249,31 +224,26 @@ export default function APIEditorContainer() {
                 onChange={setQuery}
                 onRefresh={onRefreshSchema}
               /> */}
-              <GraphiqlExplorer
-                ref={explorerRef}
-                schema={schema}
-                filtersMap={filtersMap}
-                query={query}
-                onEdit={setQuery}
-                isLoading={isRefreshing}
-                dataSourceList={dataSourceList}
-                explorerIsOpen
-                onRefresh={onRefreshSchema}
-                // onToggleExplorer={this._handleToggleExplorer}
-                // getDefaultScalarArgValue={getDefaultScalarArgValue}
-                // makeDefaultArg={makeDefaultArg}
-                notifyError={msg => message.error(msg)}
-              />
+                <GraphiqlExplorer
+                  ref={explorerRef}
+                  schema={schema}
+                  filtersMap={filtersMap}
+                  query={query}
+                  onEdit={setQuery}
+                  isLoading={isRefreshing}
+                  dataSourceList={dataSourceList}
+                  explorerIsOpen
+                  onRefresh={onRefreshSchema}
+                  // onToggleExplorer={this._handleToggleExplorer}
+                  // getDefaultScalarArgValue={getDefaultScalarArgValue}
+                  // makeDefaultArg={makeDefaultArg}
+                  notifyError={msg => message.error(msg)}
+                />
+              </div>
             </div>
+            {editor}
           </div>
-          {editor}
-          <div
-            className={`h-full w-102 overflow-x-hidden overflow-y-auto ${
-              workbenchCtx.isFullscreen ? 'hidden' : ''
-            }`}
-          >
-            {tabs}
-          </div>
+          <RightSider />
         </div>
       </div>
     </>
