@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { useAuthList } from '@/hooks/store/auth'
+import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -55,7 +55,7 @@ export default function AuthConfigContainer() {
   }, [authList, id])
 
   const onEdit = (content: AuthProvResp) => {
-    onRefreshMenu('auth')
+    void mutateAuth()
     setContent(content)
     navigate(`/workbench/auth/${content.id}`)
   }

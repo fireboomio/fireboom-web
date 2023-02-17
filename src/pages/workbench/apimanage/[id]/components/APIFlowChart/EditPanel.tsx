@@ -29,7 +29,7 @@ export default function EditPanel({ onClose, hook, apiName, hasParams = false }:
       onClose={onClose}
       open
       getContainer={() => apiContainerRef.current!}
-      style={{ position: 'absolute' }}
+      rootStyle={{ position: 'absolute' }}
       extra={
         <div className="flex items-center">
           <div className={styles.back} onClick={onClose}>

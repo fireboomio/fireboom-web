@@ -35,7 +35,6 @@ export default function FileStorage() {
   }, [id])
 
   useEffect(() => {
-    console.log(123123)
     // 保存成功后跳转到详情页时顺便清空错误标记
     if (showType === 'detail' && showErr) {
       setShowErr(false)

@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 
 import type { Question } from '@/hooks/global'
 import { QuestionType, useGlobal } from '@/hooks/global'
+import { mutateAuth } from '@/hooks/store/auth'
+import { mutateStorage } from '@/hooks/store/storage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
@@ -88,14 +90,14 @@ export default function Error() {
     const res = await requests.get<unknown, any>(`/auth/${id}`)
     if (res?.id) {
       await requests.put(`/auth`, { ...res, switch: 0 })
-      onRefreshMenu('auth')
+      void mutateAuth()
     }
   }
   async function closeStorage(id: number) {
     const res = await requests.get<unknown, any>(`/storageBucket/${id}`)
     if (res?.id) {
       await requests.put(`/storageBucket`, { ...res, switch: 0 })
-      onRefreshMenu('storage')
+      void mutateStorage()
     }
   }
 

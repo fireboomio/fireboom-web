@@ -117,7 +117,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         }
       })
     }
-  }, [dataSourceList, authList, props.type])
+  }, [dataSourceList, authList, storageList, props.type])
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
