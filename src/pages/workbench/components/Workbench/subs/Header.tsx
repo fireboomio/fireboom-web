@@ -77,7 +77,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isFullscreen } = useContext(WorkbenchContext)
-  const { data: authList = [] } = useAuthList()
+  const authList = useAuthList()
 
   const [open, setOpen] = useState(false)
 

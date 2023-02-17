@@ -53,7 +53,7 @@ export default function LoginPanel() {
     }
     window.open(target.toString())
   }
-  const { data: authList = [] } = useAuthList()
+  const authList = useAuthList()
   return (
     <div className={styles.entry}>
       <img src="/assets/icon/oidc.svg" className="h-3 mr-2 w-3" alt="" />

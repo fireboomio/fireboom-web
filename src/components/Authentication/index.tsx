@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { broadcast, useBroadcast } from '@/hooks/broadcast'
+import { useAuthList } from '@/hooks/store/auth'
+import { useDataSourceList } from '@/hooks/store/dataSource'
+import { useStorageList } from '@/hooks/store/storage'
 import type { SystemConfigType } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
@@ -18,6 +21,12 @@ const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
   const authState = useAuthState()
+
+  // 注册全局数据源，避免遗漏刷新
+  useStorageList()
+  useDataSourceList()
+  useAuthList()
+
   useBroadcast('auth', 'setAuthKey', (key: string) => {
     setAuthKey(key)
     setAuthed(true)

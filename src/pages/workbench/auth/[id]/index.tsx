@@ -2,8 +2,8 @@ import { Button, message } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
-import useSWRImmutable from 'swr/immutable'
 
+import { useAuthList } from '@/hooks/store/auth'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -21,9 +21,7 @@ export default function AuthConfigContainer() {
   const navigate = useNavigate()
   const { id } = useParams()
   const { config } = useContext(ConfigContext)
-  const { data: authList } = useSWRImmutable<AuthProvResp[]>(['/auth', id], function (url, id) {
-    return requests.get(url)
-  })
+  const authList = useAuthList()
   useEffect(() => {
     // 如果id为new，则视为新增
     if (id === 'new') {

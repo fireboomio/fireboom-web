@@ -1,21 +1,18 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
-import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import { useAuthList } from '@/hooks/store/auth'
-import { useDataSourceList } from '@/hooks/store/dataSource'
+import { mutateAuth, useAuthList } from '@/hooks/store/auth'
+import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
 import { mutateHookModel } from '@/hooks/store/hook/model'
-import { useStorageList } from '@/hooks/store/storage'
-import type { CommonPanelAction, CommonPanelResp } from '@/interfaces/commonPanel'
-import type { DatasourceResp } from '@/interfaces/datasource'
-import type { StorageResp } from '@/interfaces/storage'
+import { mutateStorage, useStorageList } from '@/hooks/store/storage'
+import type { CommonPanelResp } from '@/interfaces/commonPanel'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import commonPanelReducer from '@/lib/reducers/panelReducer'
 import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
@@ -25,9 +22,8 @@ interface PanelConfig {
   title: string
   openItem: (id: number) => string
   newItem: string
-  mutateKey: (id: string) => string[]
   request: {
-    getList: (dispatch: React.Dispatch<CommonPanelAction>) => void
+    getList: () => void
     editItem: (row: unknown) => Promise<unknown>
     delItem: (id: number) => Promise<unknown>
   }
@@ -44,9 +40,84 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const intl = useIntl()
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
-  const { mutate: refreshStorage } = useStorageList(false)
-  const { mutate: refreshAuth } = useAuthList(false)
-  const { mutate: refreshDataSource } = useDataSourceList(false)
+  const storageList = useStorageList()
+  const dataSourceList = useDataSourceList()
+  const authList = useAuthList()
+  const datasource = useMemo(() => {
+    if (props.type === 'dataSource') {
+      if (!dataSourceList) return []
+      return dataSourceList.map(row => {
+        let icon = 'other'
+        let svg = '/assets/icon/db-other.svg'
+        let tip = ''
+        switch (row.sourceType) {
+          case 1:
+            tip = String(row.config.dbName || '')
+            if (typeof row.config.databaseUrl === 'object' && row.config.databaseUrl?.val) {
+              const dbName = parseDBUrl(row.config.databaseUrl.val)?.dbName
+              if (dbName) {
+                tip = dbName
+              }
+            }
+            svg =
+              {
+                mysql: '/assets/icon/mysql.svg',
+                pgsql: '/assets/icon/pg.svg',
+                graphql: '/assets/icon/graphql.svg',
+                mongodb: '/assets/icon/mongodb.svg',
+                rest: '/assets/icon/rest.svg',
+                sqlite: '/assets/icon/sqlite.svg'
+              }[String(row.config.dbType).toLowerCase()] || svg
+            break
+          case 2:
+            svg = '/assets/icon/rest.svg'
+            break
+          case 3:
+            svg = '/assets/icon/graphql.svg'
+            break
+        }
+        return {
+          id: row.id,
+          name: row.name,
+          icon,
+          tip,
+          switch: row.switch,
+          _row: row,
+          svg
+        }
+      })
+    } else if (props.type === 'auth') {
+      if (!authList) return []
+      return authList.map((row: any) => {
+        const icon = 'other'
+        const tip = 'OIDC'
+        return {
+          id: row.id,
+          name: row.name,
+          icon,
+          tip,
+          switch: !!row.switchState?.length,
+          _row: row,
+          svg: '/assets/icon/oidc.svg'
+        }
+      })
+    } else if (props.type === 'storage') {
+      if (!storageList) return []
+      return storageList.map(row => {
+        const icon = 'other'
+        const tip = ''
+        return {
+          id: row.id,
+          name: row.name,
+          icon,
+          tip,
+          switch: row.switch,
+          _row: row,
+          svg: '/assets/icon/file.svg'
+        }
+      })
+    }
+  }, [dataSourceList, authList, props.type])
   const panelMap = useMemo<Record<string, PanelConfig>>(
     () => ({
       dataSource: {
@@ -54,92 +125,24 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         openItem: id => `/workbench/data-source/${id}`,
         newItem: '/workbench/data-source/new',
         request: {
-          getList: dispatch => {
-            refreshDataSource()
-            void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-              dispatch({
-                type: 'fetched',
-                data: res.map(row => {
-                  let icon = 'other'
-                  let svg = '/assets/icon/db-other.svg'
-                  let tip = ''
-                  switch (row.sourceType) {
-                    case 1:
-                      tip = String(row.config.dbName || '')
-                      if (
-                        typeof row.config.databaseUrl === 'object' &&
-                        row.config.databaseUrl?.val
-                      ) {
-                        const dbName = parseDBUrl(row.config.databaseUrl.val)?.dbName
-                        if (dbName) {
-                          tip = dbName
-                        }
-                      }
-                      svg =
-                        {
-                          mysql: '/assets/icon/mysql.svg',
-                          pgsql: '/assets/icon/pg.svg',
-                          graphql: '/assets/icon/graphql.svg',
-                          mongodb: '/assets/icon/mongodb.svg',
-                          rest: '/assets/icon/rest.svg',
-                          sqlite: '/assets/icon/sqlite.svg'
-                        }[String(row.config.dbType).toLowerCase()] || svg
-                      break
-                    case 2:
-                      svg = '/assets/icon/rest.svg'
-                      break
-                    case 3:
-                      svg = '/assets/icon/graphql.svg'
-                      break
-                  }
-                  return {
-                    id: row.id,
-                    name: row.name,
-                    icon,
-                    tip,
-                    switch: row.switch,
-                    _row: row,
-                    svg
-                  }
-                })
-              })
-            })
+          getList: () => {
+            mutateDataSource()
           },
           editItem: async row => await requests.put('/dataSource', row),
           delItem: async id => await requests.delete(`/dataSource/${id}`)
-        },
-        mutateKey: id => ['/dataSource', String(id)]
+        }
       },
       storage: {
         title: intl.formatMessage({ defaultMessage: '文件存储' }),
         openItem: id => `/workbench/storage/${id}/manage`,
         newItem: '/workbench/storage/new',
         request: {
-          getList: dispatch => {
-            refreshStorage()
-            void requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
-              dispatch({
-                type: 'fetched',
-                data: (res ?? []).map(row => {
-                  const icon = 'other'
-                  const tip = ''
-                  return {
-                    id: row.id,
-                    name: row.name,
-                    icon,
-                    tip,
-                    switch: row.switch,
-                    _row: row,
-                    svg: '/assets/icon/file.svg'
-                  }
-                })
-              })
-            })
+          getList: () => {
+            mutateStorage()
           },
           editItem: async row => await requests.put('/storageBucket', row),
           delItem: async id => await requests.delete(`/storageBucket/${id}`)
         },
-        mutateKey: id => ['/dataSource', String(id)],
         navMenu: [
           {
             icon: 'assets/iconfont/wenjian1.svg',
@@ -159,7 +162,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
           }
         ],
-        mutateKey: id => ['/auth', String(id)],
         bottom: (
           <div className={styles.bottomRowWrapper}>
             <div className={styles.bottomRow}>
@@ -170,27 +172,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           </div>
         ),
         request: {
-          getList: dispatch => {
-            refreshAuth()
-            void requests.get<unknown, any>('/auth').then(res => {
-              const rows: Array<CommonPanelResp> = res.map((row: any) => {
-                const icon = 'other'
-                const tip = 'OIDC'
-                return {
-                  id: row.id,
-                  name: row.name,
-                  icon,
-                  tip,
-                  switch: !!row.switchState?.length,
-                  _row: row,
-                  svg: '/assets/icon/oidc.svg'
-                }
-              })
-              dispatch({
-                type: 'fetched',
-                data: rows
-              })
-            })
+          getList: () => {
+            mutateAuth()
           },
           editItem: async row => await requests.put('/auth', row),
           delItem: async id => await requests.delete(`/auth/${id}`)
@@ -203,18 +186,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
   const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
-  const [datasource, dispatch] = useReducer(commonPanelReducer, [])
   const { refreshMap, navCheck } = useContext(WorkbenchContext)
   const [panelOpened, setPanelOpened] = useState(false)
-
-  const refreshFlag = refreshMap[props.type]
-  // 初始化列表
-  useEffect(() => {
-    if (!panelOpened) {
-      return
-    }
-    panelConfig.request.getList(dispatch)
-  }, [props.type, refreshFlag, panelOpened])
+  if (!datasource) return null
 
   const dropDownMenu = (row: CommonPanelResp) => {
     const menuItems: Array<{ key: string; label: React.ReactNode }> = [
@@ -290,7 +264,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       return
     }
     await panelConfig.request.delItem(id)
-    panelConfig.request.getList(dispatch)
+    panelConfig.request.getList()
     setDropDownId(undefined)
     // 当被删除对象是当前打开的页面时，需要跳转离开
     if (panelConfig.openItem(id) === location.pathname) {
@@ -314,15 +288,12 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     }
     row.name = value
     await panelConfig.request.editItem(row)
-    panelConfig.request.getList(dispatch)
+    panelConfig.request.getList()
     setEditTarget(undefined)
-    // 刷新hook编辑器文件列表
-    console.log('aaaaaa')
     mutateHookModel()
-    await mutate(panelConfig.mutateKey(String(editTarget?.id)))
   }
 
-  const handleItemNav = (item: CommonPanelResp) => {
+  const handleItemNav = (item: any) => {
     if (item.openInNewPage) {
       window.open(item.openInNewPage)
       return
@@ -373,7 +344,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   src={item.svg ?? `/assets/icon/github-fill.svg`}
                 />
               </div>
-              {editTarget?.id === item.id ? (
+              {editTarget?.id === item.id && editTarget ? (
                 <Input
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -391,21 +362,19 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 <div className={styles.title}>{item.name}</div>
               )}
               <div className={styles.tip}>{item.tip}</div>
-              {!item.disableMenu && (
-                <div onClick={e => e.stopPropagation()}>
-                  <Dropdown
-                    overlay={dropDownMenu(item)}
-                    trigger={['click']}
-                    open={dropDownId === item.id}
-                    onOpenChange={flag => {
-                      setDropDownId(flag ? item.id : undefined)
-                    }}
-                    placement="bottomRight"
-                  >
-                    <div className={styles.more} onClick={e => e.preventDefault()} />
-                  </Dropdown>
-                </div>
-              )}
+              <div onClick={e => e.stopPropagation()}>
+                <Dropdown
+                  overlay={dropDownMenu(item)}
+                  trigger={['click']}
+                  open={dropDownId === item.id}
+                  onOpenChange={flag => {
+                    setDropDownId(flag ? item.id : undefined)
+                  }}
+                  placement="bottomRight"
+                >
+                  <div className={styles.more} onClick={e => e.preventDefault()} />
+                </Dropdown>
+              </div>
             </div>
           )
         })}

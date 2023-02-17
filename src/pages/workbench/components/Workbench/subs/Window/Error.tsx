@@ -77,7 +77,7 @@ export default function Error() {
     const res = await requests.get<unknown, any>(`/dataSource/${id}`)
     if (res?.id) {
       await requests.put(`/dataSource`, { ...res, switch: 0 })
-      onRefreshMenu('dataSource')
+      void mutateDataSource()
     }
   }
   async function closeAPI(id: number) {

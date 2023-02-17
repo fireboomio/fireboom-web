@@ -3,7 +3,7 @@ import { useContext, useEffect, useReducer, useState } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import { useDataSourceList } from '@/hooks/store/dataSource'
+import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -21,7 +21,8 @@ export default function DataSource() {
   const { id } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
 
-  const { data: datasourceList } = useDataSourceList()
+  const datasourceList = useDataSourceList()
+  console.log('===ddd', datasourceList)
   useEffect(() => {
     // 当前状态为新建中且已选择数据源类型
     if (id === 'create') {
@@ -66,7 +67,7 @@ export default function DataSource() {
             content,
             handleToggleDesigner,
             handleSave: content => {
-              onRefreshMenu('dataSource')
+              void mutateDataSource()
               setContent(content)
               setShowType('detail')
               navigate(`/workbench/data-source/${content.id}`, { replace: true })
