@@ -645,9 +645,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <Tooltip title={intl.formatMessage({ defaultMessage: '全局设置' })}>
             <div className={styles.headerConfig} onClick={() => setIsModalVisible(true)} />
           </Tooltip>
-          <Tooltip title={intl.formatMessage({ defaultMessage: '新建目录' })}>
-            <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />
-          </Tooltip>
+          {/*<Tooltip title={intl.formatMessage({ defaultMessage: '新建目录' })}>*/}
+          {/*  <div className={styles.headerNewFold} onClick={() => handleAddNode('创建目录')} />*/}
+          {/*</Tooltip>*/}
           <Tooltip title={intl.formatMessage({ defaultMessage: '新建API' })}>
             <div className={styles.headerNewFile} onClick={() => handleAddNode('创建文件')} />
           </Tooltip>
