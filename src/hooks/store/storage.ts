@@ -1,3 +1,4 @@
+import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
@@ -20,8 +21,10 @@ export interface Storage {
   switch: number
 }
 
-export function useStorageList(fetch = true) {
-  return useSWRImmutable<Storage[]>(fetch ? '/storageBucket' : null, url =>
-    requests.get<unknown, any>(url)
-  )
+export function useStorageList() {
+  return useSWRImmutable<Storage[]>('/storageBucket', requests.get).data
+}
+
+export function mutateStorage() {
+  return mutate('/storageBucket')
 }

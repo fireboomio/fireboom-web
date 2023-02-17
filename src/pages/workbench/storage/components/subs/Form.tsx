@@ -30,7 +30,7 @@ export default function StorageForm({ content, showErr }: Props) {
   const secretAccessKeyKind = Form.useWatch(['secretAccessKey', 'kind'], form)
   const [testing, setTesting] = useState(false)
   const envOptions = useEnvOptions()
-  const { data: storageList } = useStorageList()
+  const storageList = useStorageList()
   useEffect(() => {
     form.resetFields()
   }, [content])

@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -92,7 +93,7 @@ export default function Custom({ content }: Props) {
   return (
     <IdeContainer
       onChangeEnable={() => {
-        onRefreshMenu('dataSource')
+        void mutateDataSource()
       }}
       hookPath={`customize/${content.name}`}
       defaultLanguage="typescript"

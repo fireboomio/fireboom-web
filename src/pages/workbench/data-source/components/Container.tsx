@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -87,7 +88,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     }
     const saveData = { ...content, name }
     await requests.put('/dataSource', saveData)
-    onRefreshMenu('dataSource')
+    void mutateDataSource()
     setIsEditing(false)
     await mutate(['/dataSource', String(content.id)])
   }
