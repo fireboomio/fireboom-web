@@ -233,7 +233,7 @@ export default function APIEditorContainer() {
 
   return (
     <>
-      <div className="bg-white flex flex-col h-full" id="api-editor-container">
+      <div className="bg-white flex flex-col h-full relative" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />
         <div className="flex flex-1 items-stretch overflow-hidden">
           <div className="h-full relative" ref={elRef}>

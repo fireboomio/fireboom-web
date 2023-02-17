@@ -3,19 +3,41 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import { useStorageList } from '@/hooks/store/storage'
+import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
+import imgAli from '../assets/ali.png'
+import imgGoogle from '../assets/google.png'
+import imgMinio from '../assets/minio.png'
+import imgTencent from '../assets/tencent.png'
 import styles from './subs.module.less'
 
 interface Props {
   content?: StorageResp
   showErr?: boolean
 }
+const supportList = [
+  {
+    img: imgAli,
+    link: 'https://help.aliyun.com/product/31815.html'
+  },
+  {
+    img: imgTencent,
+    link: 'https://cloud.tencent.com/document/product/436'
+  },
+  {
+    img: imgGoogle,
+    link: 'https://cloud.google.com/storage/docs'
+  },
+  {
+    img: imgMinio,
+    link: 'https://docs.min.io/docs/minio-quickstart-guide.html'
+  }
+]
 
 export default function StorageForm({ content, showErr }: Props) {
   const intl = useIntl()
@@ -53,7 +75,7 @@ export default function StorageForm({ content, showErr }: Props) {
       resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
     }
     navigate(`/workbench/storage/${resp.id}`, { replace: true })
-    onRefreshMenu('storage')
+    void mutateStorage()
     handleSwitch('detail', resp.id)
   }
 
@@ -82,7 +104,7 @@ export default function StorageForm({ content, showErr }: Props) {
   }
 
   return (
-    <div className={`${styles['form-contain']}`}>
+    <div className={`${styles['form-contain']} flex flex-column`}>
       {showErr && (
         <div className="-mt-4 pb-4">
           <Alert
@@ -92,16 +114,17 @@ export default function StorageForm({ content, showErr }: Props) {
           />
         </div>
       )}
+
       <Form
         form={form}
         name="basic"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 11 }}
+        labelCol={{ span: 7 }}
+        wrapperCol={{ span: 17 }}
         onFinish={values => void onFinish(values as StorageConfig)}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         validateTrigger="onBlur"
-        className="ml-3"
+        className="ml-3 w-3/5 "
         initialValues={{ accessKeyID: { kind: '0' }, secretAccessKey: { kind: '0' }, ...config }}
       >
         <Form.Item
@@ -204,7 +227,10 @@ export default function StorageForm({ content, showErr }: Props) {
           label={intl.formatMessage({ defaultMessage: '桶名称' })}
           name="bucketName"
           rules={[
-            { required: true, message: intl.formatMessage({ defaultMessage: '请输入bucketName' }) }
+            {
+              required: true,
+              message: intl.formatMessage({ defaultMessage: '请输入bucketName' })
+            }
           ]}
         >
           <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
@@ -217,7 +243,7 @@ export default function StorageForm({ content, showErr }: Props) {
         >
           <Switch className={styles['switch-set-btn']} size="small" />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+        <Form.Item wrapperCol={{ offset: 7, span: 17 }}>
           <Button
             className="btn-cancel"
             onClick={() => {
@@ -239,6 +265,20 @@ export default function StorageForm({ content, showErr }: Props) {
           </Button>
         </Form.Item>
       </Form>
+      <div className={`w-2/5 ${styles.supportList}`}>
+        <div className="title">{intl.formatMessage({ defaultMessage: '我们支持' })}</div>
+        {supportList.map((item, index) => (
+          <a
+            key={index}
+            className={styles.supportItem}
+            href={item.link}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img src={item.img} alt="" className="w-40" />
+          </a>
+        ))}
+      </div>
     </div>
   )
 }

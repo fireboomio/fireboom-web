@@ -15,7 +15,14 @@ import { useAppIntl } from './providers/IntlProvider'
 export default function App() {
   const { locale } = useAppIntl()
   return (
-    <ConfigProvider locale={{ 'zh-CN': zhCN, en: enUS }[locale]}>
+    <ConfigProvider
+      locale={{ 'zh-CN': zhCN, en: enUS }[locale]}
+      theme={{
+        token: {
+          colorPrimary: '#E92E5E'
+        }
+      }}
+    >
       <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
     </ConfigProvider>
   )

@@ -395,7 +395,6 @@ const DependList = (props: DependListProps) => {
     })
   }, [props.hookInfo])
 
-  console.log('====================', hookModelData)
   return (
     <div className={`${ideStyles['ide-container-depend-list']} relative`}>
       <span

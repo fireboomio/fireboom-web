@@ -22,7 +22,6 @@ export default function DataSource() {
   const [showType, setShowType] = useImmer<ShowType>('detail')
 
   const datasourceList = useDataSourceList()
-  console.log('===ddd', datasourceList)
   useEffect(() => {
     // 当前状态为新建中且已选择数据源类型
     if (id === 'create') {
