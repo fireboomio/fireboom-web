@@ -10,6 +10,7 @@ import type { DMFResp } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
 import { ENTITY_NAME_REGEX, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
+import { useEventBus } from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { PrismaSchemaBlockOperator } from '@/lib/helpers/PrismaSchemaBlockOperator'
 import useBlocks from '@/lib/hooks/useBlocks'
@@ -21,14 +22,13 @@ import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconAdd from '../../assets/add.svg'
 import iconAt from '../../assets/at.svg'
-import iconDesignMode from '../../assets/design-mode.svg'
 import iconDesignModeActive from '../../assets/design-mode-active.svg'
 import iconEditMode from '../../assets/edit-mode.svg'
-import iconEditModeActive from '../../assets/edit-mode-active.svg'
 import ModelEditor from './editor'
 import EnumDesigner from './enum'
 import styles from './index.module.less'
 import ModelDesigner from './model'
+import Tabs from './Tabs'
 
 type EditType = 'add' | 'edit'
 type EntityType = 'enum' | 'model'
@@ -51,7 +51,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const { getNextId } = useEntities()
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
     useBlocks()
-  const { id: dbSourceId } = useDBSource()
+  const { id: dbSourceId, name: dbSourceName } = useDBSource()
   const { syncEditorFlag, panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
@@ -60,7 +60,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   if (initMode !== 'editor' && initMode !== 'designer') {
     initMode = 'designer'
   }
-  const [mode, setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
+  const [mode, _setMode] = useState<'editor' | 'designer'>(initMode as 'editor' | 'designer')
   // 编辑器当前内容, 仅用于向编辑器传值，并不代表编辑器实时内容
   const [editorContent, setEditorContent] = useState<string>()
   // 编辑器当前内容, 仅用于向编辑器传值，并不代表编辑器实时内容
@@ -74,6 +74,23 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [editTitle, setEditTitle] = useState<boolean>(false)
   const [editorValidate, setEditorValidate] = useState<boolean>(true) // 当前编辑器内容是否合法
   const [titleValue, setTitleValue] = useState<string>('')
+  const [activeTab, setActiveTab] = useState<any>()
+  const setMode = (mode: 'editor' | 'designer') => {
+    setEditorContent(transferToEditor())
+    _setMode(mode)
+  }
+  useEventBus('openModelingTab', ({ data }: any) => {
+    setActiveTab(data)
+    setMode(data.isSource ? 'editor' : 'designer')
+  })
+  // 首次进入设计器页面时，自动打开当前tab
+  useEffect(() => {
+    if (mode === 'designer') {
+      setActiveTab(currentEntity)
+    } else {
+      setActiveTab({ name: dbSourceName, isSource: true })
+    }
+  }, [])
 
   // 编辑模式 变更时存入本地存储中
   useEffect(() => {
@@ -342,8 +359,20 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
 
   return (
     <div className="flex flex-col h-full">
+      <Tabs
+        active={activeTab}
+        onClick={(item: any) => {
+          setActiveTab(item)
+          if (item.isSource) {
+            setMode('editor')
+          } else {
+            setMode('designer')
+            handleClickEntity(item)
+          }
+        }}
+      />
       <div
-        className="bg-white flex h-10 pr-4 pl-7 justify-start items-center"
+        className="bg-white flex flex-shrink-0 h-10 pr-4 pl-7 justify-start items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
         {currentEntity ? (
@@ -437,30 +466,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
           {intl.formatMessage({ defaultMessage: '迁移' })}
         </Button>
-        <Radio.Group
-          disabled={!editorValidate}
-          className={styles.modeRadio}
-          value={mode}
-          onChange={e => {
-            if (e.target.value === 'editor') {
-              setEditorContent(transferToEditor())
-            }
-            setMode(e.target.value)
-          }}
-        >
-          <Popover content={intl.formatMessage({ defaultMessage: '普通视图' })} trigger="hover">
-            <Radio.Button value="designer">
-              <img src={mode === 'designer' ? iconDesignModeActive : iconDesignMode} alt="" />
-            </Radio.Button>
-          </Popover>
-          <Popover content={intl.formatMessage({ defaultMessage: '源码视图' })} trigger="hover">
-            <Radio.Button value="editor">
-              <img src={mode === 'editor' ? iconEditModeActive : iconEditMode} alt="" />
-            </Radio.Button>
-          </Popover>
-        </Radio.Group>
       </div>
-
       {type === 'model' &&
         (mode === 'designer' ? (
           <ModelDesigner
@@ -496,7 +502,6 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             />
           </div>
         ))}
-
       {type === 'enum' &&
         (mode === 'designer' ? (
           <EnumDesigner

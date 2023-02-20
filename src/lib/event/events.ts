@@ -33,6 +33,10 @@ type CompileFinishEvent = {
 type CompileFailEvent = {
   event: 'compileFail'
 }
+type OpenModelingTabEvent = {
+  event: 'openModelingTab'
+  data: any
+}
 
 type EventTypes =
   | TitleChangeEvent
@@ -41,6 +45,7 @@ type EventTypes =
   | WsEvent
   | ApiEnableChangeEvent
   | BroadCastEvent
+  | OpenModelingTabEvent
 
 const events = new EventEmitter<any, EventTypes>()
 
@@ -52,6 +57,7 @@ export function useEventBus(event: 'compileFinish', cb: EventHandler<CompileFini
 export function useEventBus(event: 'compileFail', cb: EventHandler<CompileFailEvent>): void
 export function useEventBus(event: 'wsEvent', cb: EventHandler<WsEvent>): void
 export function useEventBus(event: 'broadcastEvent', cb: EventHandler<BroadCastEvent>): void
+export function useEventBus(event: 'openModelingTab', cb: EventHandler<OpenModelingTabEvent>): void
 export function useEventBus(event: string, cb: EventHandler) {
   useEffect(() => {
     events.on(event, cb)

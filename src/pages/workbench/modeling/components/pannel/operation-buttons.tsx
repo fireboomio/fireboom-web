@@ -2,10 +2,12 @@ import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
+import events from '@/lib/event/events'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
+import useDBSource from '@/lib/hooks/useDBSource'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
-import iconER from '../../assets/er.svg'
+import iconEdit from '../../assets/edit-mode.svg'
 import iconSwitch from '../../assets/modeling-switch.svg'
 import styles from './pannel.module.less'
 
@@ -19,6 +21,7 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
   const { panel } = useContext(PrismaSchemaContext)
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
+  const { name: dbSourceName } = useDBSource()
   const { currentEntity } = useCurrentEntity()
   let title = inEdit
     ? intl.formatMessage({ defaultMessage: '数据建模' })
@@ -47,6 +50,16 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
       <div onClick={addNewModel} className={styles.addEntityBtn}>
         +
       </div>
+      {inEdit && (
+        <div
+          onClick={() => {
+            events.emit({ event: 'openModelingTab', data: { name: dbSourceName, isSource: true } })
+          }}
+          className={styles.editBtn}
+        >
+          <img src={iconEdit} alt="" />
+        </div>
+      )}
     </div>
   )
 }
