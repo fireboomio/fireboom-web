@@ -4,13 +4,13 @@ import statusOn from './assets/status-on.svg'
 interface StatusDirectiveProps {
   enabled: boolean
   label: string
-  onDoubleClick?: () => void
+  onClick?: () => void
 }
 
-const StatusDirective = ({ enabled, label, onDoubleClick }: StatusDirectiveProps) => {
+const StatusDirective = ({ enabled, label, onClick }: StatusDirectiveProps) => {
   return (
     <div
-      onDoubleClick={onDoubleClick}
+      onClick={onClick}
       style={{
         display: 'block',
         padding: '0 5px',
