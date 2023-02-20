@@ -29,6 +29,7 @@ import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
 
 import FileList from './FileList'
 // import GraphiQLApp from '../../../pages/graphiql'
@@ -115,27 +116,30 @@ export default function Graphql({ content, type }: Props) {
   }, [])
 
   //表单提交成功回调
-  const onFinish = async (values: FromValues) => {
-    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    const newValues = { ...values }
-    //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
-    let newContent: DatasourceResp
-    if (!content.id) {
-      const req = { ...content, config: newValues, name: values.apiNameSpace }
-      const result = await requests.post<unknown, number>('/dataSource', req)
-      content.id = result
-      newContent = content
-    } else {
-      newContent = {
-        ...content,
-        config: newValues,
-        name: values.apiNameSpace
-      } as DatasourceResp
-      await requests.put('/dataSource', newContent)
-    }
+  const { loading, fun: onFinish } = useLock(
+    async (values: FromValues) => {
+      values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+      const newValues = { ...values }
+      //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
+      let newContent: DatasourceResp
+      if (!content.id) {
+        const req = { ...content, config: newValues, name: values.apiNameSpace }
+        const result = await requests.post<unknown, number>('/dataSource', req)
+        content.id = result
+        newContent = content
+      } else {
+        newContent = {
+          ...content,
+          config: newValues,
+          name: values.apiNameSpace
+        } as DatasourceResp
+        await requests.put('/dataSource', newContent)
+      }
 
-    handleSave(newContent)
-  }
+      handleSave(newContent)
+    },
+    [content, handleSave]
+  )
 
   //表单提交失败回调
   const onFinishFailed = (errorInfo: object) => {
@@ -822,6 +826,7 @@ export default function Graphql({ content, type }: Props) {
                   {intl.formatMessage({ defaultMessage: '测试' })}
                 </Button>
                 <Button
+                  loading={loading}
                   className={'btn-save ml-4'}
                   onClick={() => {
                     form.submit()
