@@ -703,7 +703,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
             <div className={styles.authContainer}>
               <Form.Item
                 name="authApiList"
-                label={intl.formatMessage({ defaultMessage: '接口角色' })}
+                label={intl.formatMessage({ defaultMessage: '授权接口' })}
               >
                 <Checkbox.Group options={apiOptions} />
               </Form.Item>

@@ -277,7 +277,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
-                  {intl.formatMessage({ defaultMessage: '基于 cookie' })}
+                  {intl.formatMessage({ defaultMessage: '授权码模式' })}
                 </div>
               }
               name="cookieBased"
@@ -358,7 +358,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
-                  {intl.formatMessage({ defaultMessage: '基于 Token' })}
+                  {intl.formatMessage({ defaultMessage: '隐式模式' })}
                 </div>
               }
               name="tokenBased"
