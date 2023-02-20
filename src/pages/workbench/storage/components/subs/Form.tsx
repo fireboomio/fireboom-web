@@ -8,6 +8,7 @@ import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 import imgAli from '../assets/ali.png'
@@ -57,27 +58,30 @@ export default function StorageForm({ content, showErr }: Props) {
     form.resetFields()
   }, [content])
 
-  const onFinish = async (values: StorageConfig) => {
-    if (
-      storageList?.find(item => {
-        return item.name === values.name && item.id !== content?.id
-      })
-    ) {
-      void message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
-      return
-    }
-    const payload = { name: values.name, config: values, useSSL: true }
+  const { loading, fun: onFinish } = useLock(
+    async (values: StorageConfig) => {
+      if (
+        storageList?.find(item => {
+          return item.name === values.name && item.id !== content?.id
+        })
+      ) {
+        void message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
+        return
+      }
+      const payload = { name: values.name, config: values, useSSL: true }
 
-    let resp: StorageResp
-    if (content) {
-      resp = await requests.put('/storageBucket ', { ...payload, id: content.id })
-    } else {
-      resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
-    }
-    navigate(`/workbench/storage/${resp.id}`, { replace: true })
-    void mutateStorage()
-    handleSwitch('detail', resp.id)
-  }
+      let resp: StorageResp
+      if (content) {
+        resp = await requests.put('/storageBucket ', { ...payload, id: content.id })
+      } else {
+        resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
+      }
+      navigate(`/workbench/storage/${resp.id}`, { replace: true })
+      void mutateStorage()
+      handleSwitch('detail', resp.id)
+    },
+    [content, handleSwitch, intl, navigate, storageList]
+  )
 
   const onFinishFailed = (_errorInfo: object) => {
     void message.error(intl.formatMessage({ defaultMessage: '保存失败！' }))
@@ -260,7 +264,7 @@ export default function StorageForm({ content, showErr }: Props) {
           <Button className="ml-4 btn-test" onClick={() => handleTest()} loading={testing}>
             <FormattedMessage defaultMessage="测试" />
           </Button>
-          <Button className="ml-4 btn-save" onClick={() => form.submit()}>
+          <Button loading={loading} className="ml-4 btn-save" onClick={() => form.submit()}>
             <FormattedMessage defaultMessage="保存" />
           </Button>
         </Form.Item>

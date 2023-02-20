@@ -65,7 +65,7 @@ export default function RightSider() {
       title: intl.formatMessage({ defaultMessage: '配置' }),
       iconActive: iconConfigActive,
       content: (
-        <div className="w-80 h-full">
+        <div className="w-70 h-full">
           <ApiConfig operationType={operationType} type="panel" id={Number(params.id)} />
         </div>
       )

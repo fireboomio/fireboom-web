@@ -9,6 +9,7 @@ import Error50x from '@/components/ErrorPage/50x'
 import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import { parseDBUrl } from '@/utils/db'
 import uploadLocal from '@/utils/uploadLocal'
@@ -382,9 +383,6 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValue])
 
-  //查看页面逻辑
-  if (!content) return <Error50x />
-
   //是否开启数据源开关回调
   const connectSwitchOnChange = (isChecked: boolean) => {
     void requests
@@ -403,30 +401,35 @@ export default function DB({ content, type }: Props) {
   //编辑页面逻辑
 
   //表单提交成功回调
-  const onFinish = async (values: FromValues) => {
-    const newValues = { ...config, ...values }
-    if (newValues.databaseUrl === undefined) {
-      newValues.databaseUrl = {}
-    } else if (newValues.databaseUrl.kind === undefined) {
-      newValues.databaseUrl.kind = '0'
-    }
-    let newContent: DatasourceResp
-    if (!content.id) {
-      const req = { ...content, config: newValues, name: values.apiNamespace }
-      Reflect.deleteProperty(req, 'id')
-      const result = await requests.post<unknown, number>('/dataSource', req)
-      content.id = result
-      newContent = content
-    } else {
-      newContent = {
-        ...content,
-        config: newValues,
-        name: values.apiNamespace
-      } as DatasourceResp
-      await requests.put('/dataSource', newContent)
-    }
-    handleSave(newContent)
-  }
+  const { loading, fun: onFinish } = useLock(
+    async (values: FromValues) => {
+      const newValues = { ...config, ...values }
+      if (newValues.databaseUrl === undefined) {
+        newValues.databaseUrl = {}
+      } else if (newValues.databaseUrl.kind === undefined) {
+        newValues.databaseUrl.kind = '0'
+      }
+      let newContent: DatasourceResp
+      if (!content.id) {
+        const req = { ...content, config: newValues, name: values.apiNamespace }
+        Reflect.deleteProperty(req, 'id')
+        const result = await requests.post<unknown, number>('/dataSource', req)
+        content.id = result
+        newContent = content
+      } else {
+        newContent = {
+          ...content,
+          config: newValues,
+          name: values.apiNamespace
+        } as DatasourceResp
+        await requests.put('/dataSource', newContent)
+      }
+      handleSave(newContent)
+    },
+    [config, content, handleSave]
+  )
+  //查看页面逻辑
+  if (!content) return <Error50x />
 
   const onFinishFailed = (errorInfo: object) => {
     console.log('Failed:', errorInfo)
@@ -737,6 +740,7 @@ export default function DB({ content, type }: Props) {
                   {intl.formatMessage({ defaultMessage: '测试' })}
                 </Button>
                 <Button
+                  loading={loading}
                   className="ml-4 btn-save"
                   onClick={() => {
                     form.submit()

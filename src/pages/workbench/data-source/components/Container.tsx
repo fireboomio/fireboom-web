@@ -117,9 +117,25 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : (
           <>
+            {!content.id ? (
+              <div
+                className="mr-1 flex items-center justify-center h-5 w-5 cursor-pointer"
+                onClick={() => history.back()}
+              >
+                <Image
+                  style={{ transform: 'rotate(90deg)' }}
+                  width={12}
+                  height={12}
+                  src="/assets/workbench/panel-arrow.png"
+                  alt="返回"
+                  preview={false}
+                />
+              </div>
+            ) : (
+              ''
+            )}
             <img className="h-14px mr-1.5 w-14px" src={icon} alt="数据源" />
             {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
-
             {showType === 'detail' ? (
               isEditing ? (
                 <Input
