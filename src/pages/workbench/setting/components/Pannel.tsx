@@ -55,17 +55,17 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
     //   type: 'API Token',
     //   icon: <img alt="a-APItoken" src="assets/iconfont/a-APItoken.svg" style={{height:'1em', width: '1em'}} />,
     // },
-    {
-      name: intl.formatMessage({ defaultMessage: 'SDK 模板' }),
-      type: 'sdk-template',
-      icon: (
-        <img
-          alt="huanjingbianliang"
-          src="assets/iconfont/huanjingbianliang.svg"
-          style={{ height: '1em', width: '1em' }}
-        />
-      )
-    },
+    // {
+    //   name: intl.formatMessage({ defaultMessage: 'SDK 模板' }),
+    //   type: 'sdk-template',
+    //   icon: (
+    //     <img
+    //       alt="huanjingbianliang"
+    //       src="assets/iconfont/huanjingbianliang.svg"
+    //       style={{ height: '1em', width: '1em' }}
+    //     />
+    //   )
+    // },
     {
       name: intl.formatMessage({ defaultMessage: '环境变量' }),
       type: 'environment-variable',

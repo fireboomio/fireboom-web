@@ -3,7 +3,7 @@ import copy from 'copy-to-clipboard'
 import type { ReactNode } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { CopyOutlined } from '../../../icons'
+import { CopyOutlined } from '@/components/icons'
 
 interface DirectiveDescriptionProps {
   name: string

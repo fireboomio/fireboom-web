@@ -282,7 +282,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   const validateName = (name: string, isDir = false) => {
-    if (!isUpperCase(name[0])) {
+    if (!isUpperCase(name[0]) && !isDir) {
       message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
       return false
     }
@@ -332,10 +332,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             refreshApiList()
           })
         } else {
-          if (!isUpperCase(inputValue[0])) {
-            message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
-            return
-          }
           void renameApi(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
             if (res) {
@@ -774,17 +770,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 className={styles.graphqlEntry}
                 onClick={() => {
                   const current = new URL(window.location.href)
-                  if (config.apiHost) {
-                    window.open(
-                      `${current.protocol}//localhost:${current.port}/app/main/graphql`,
-                      '_blank'
-                    )
-                  } else {
-                    window.open(
-                      `${current.protocol}//${current.hostname}:${config.apiPort}/app/main/graphql`,
-                      '_blank'
-                    )
-                  }
+                  window.open(
+                    `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                    '_blank'
+                  )
                 }}
               >
                 <img alt="" src="/assets/icon/graphql2.svg" />

@@ -1,11 +1,15 @@
-import { EditFilled } from '@ant-design/icons'
-import { Card, Col, message, Row, Switch } from 'antd'
+import { CloudDownloadOutlined, EditFilled } from '@ant-design/icons'
+import { Button, Card, Col, Descriptions, message, Modal, Row, Switch } from 'antd'
 import type { KeyboardEventHandler } from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR from 'swr'
 
 import requests from '@/lib/fetchers'
+import { useLock } from '@/lib/helpers/lock'
+import { intl } from '@/providers/IntlProvider'
+
+import styles from './index.module.less'
 
 type SDKItem = {
   author: string
@@ -15,13 +19,37 @@ type SDKItem = {
   outputPath: string
   switch: boolean
 }
+type RemoteSDKItem = {
+  defaultOutputPath: string
+  description: string
+  name: string
+  title: string
+  url: string
+}
 
 const SDKTemplate = () => {
   const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const { data: remoteSdk } = useSWR<{ official: RemoteSDKItem[]; community: RemoteSDKItem[] }>(
+    '/sdk/remote',
+    requests.get
+  )
+  const existSdkMap = useMemo(() => {
+    return new Set(data?.map(x => x.dirName) ?? [])
+  }, [data])
+  const [showRemote, setShowRemote] = useState(false)
 
   const onUpdate = (index: number, sdk: SDKItem) => {
     mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
   }
+  const { fun: downloadSdk } = useLock(
+    async sdk => {
+      await requests.post('/sdk/remote/download', sdk)
+      await mutate()
+      message.success('下载成功')
+      setShowRemote(false)
+    },
+    [mutate]
+  )
 
   return (
     <Card>
@@ -32,6 +60,10 @@ const SDKTemplate = () => {
         <div className="text-xs ml-4 text-[#787D8B]">
           <FormattedMessage defaultMessage="系统将实时覆盖开启的SDK" />
         </div>
+        <div className="flex-1" />
+        <Button onClick={() => setShowRemote(true)}>
+          {intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
+        </Button>
       </div>
       <Row className="" gutter={[32, 32]}>
         {data?.map((sdk, index) => (
@@ -40,6 +72,27 @@ const SDKTemplate = () => {
           </Col>
         ))}
       </Row>
+      <Modal
+        width="80vw"
+        footer={null}
+        open={showRemote}
+        onCancel={() => setShowRemote(false)}
+        title={intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
+      >
+        <Row className="" gutter={[32, 32]}>
+          {remoteSdk?.official?.map((sdk, index) => (
+            <Col key={index} xl={8} xxl={6} md={12}>
+              <RemoteSDKCard
+                exist={existSdkMap.has(sdk.name)}
+                sdk={sdk}
+                onSelect={() => {
+                  downloadSdk(sdk)
+                }}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Modal>
     </Card>
   )
 }
@@ -117,5 +170,38 @@ const SDKTemplateItem = ({
         <EditFilled className="cursor-pointer top-2 right-3 absolute" size={8} />
       </div>
     </div>
+  )
+}
+
+const RemoteSDKCard = ({
+  onSelect,
+  sdk,
+  exist
+}: {
+  sdk: RemoteSDKItem
+  onSelect: () => void
+  exist: boolean
+}) => {
+  const intl = useIntl()
+
+  return (
+    <Card title={sdk.title} className={styles.remoteCard} extra={exist ? <div>已下载</div> : null}>
+      <Descriptions size="small" column={1} labelStyle={{ width: 100 }}>
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '文件夹名称' })}>
+          {sdk.name}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '详情' })}>
+          {sdk.description}
+        </Descriptions.Item>
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '默认生成路径' })}>
+          {sdk.defaultOutputPath}
+        </Descriptions.Item>
+      </Descriptions>
+      {exist ? null : (
+        <div className={styles.download} onClick={onSelect}>
+          <CloudDownloadOutlined className="text-100px text-[#666]" />
+        </div>
+      )}
+    </Card>
   )
 }

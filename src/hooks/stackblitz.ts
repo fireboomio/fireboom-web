@@ -9,7 +9,7 @@ interface DebugResp {
 }
 
 export type StackblitzProps = {
-  // apiHost: string
+  // apiAddr: string
 }
 export function useStackblitz() {
   const [loading, setLoading] = useState(false)

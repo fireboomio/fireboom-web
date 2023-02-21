@@ -4,11 +4,11 @@ import type { VariableDefinitionNode } from 'graphql'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { CircleCloseOutlined } from '@/components/icons'
 import { useDebounceEffect } from '@/hooks/debounce'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../../store'
-import { CircleCloseOutlined } from '../../icons'
 import requiredIcon from '../assets/required.svg'
 import type { InputValueType, SingleInputValueType } from './ArgumentInput'
 import ArgumentInput from './ArgumentInput'

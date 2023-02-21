@@ -6,6 +6,7 @@ import { Kind, OperationTypeNode } from 'graphql'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '@/components/icons'
 import { useApiGlobalSetting } from '@/hooks/store/api'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -14,7 +15,6 @@ import { useLock } from '@/lib/helpers/lock'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../store'
-import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '../icons'
 import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
@@ -126,12 +126,6 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       message.success(intl.formatMessage({ defaultMessage: '内部 API 无法通过链接访问' }))
       return
     }
-    if (!config.apiHost) {
-      const url = new URL(apiDesc?.restUrl!)
-      url.hostname = location.hostname
-      url.port = config.apiPort
-      link = url.toString()
-    }
     let query: string[] = []
     let argValueMap: Record<string, any> = {}
     try {
@@ -177,15 +171,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
 
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
-  }, [
-    apiDesc?.liveQuery,
-    apiDesc?.restUrl,
-    apiID,
-    config.apiHost,
-    config.apiPort,
-    intl,
-    schemaAST?.definitions
-  ])
+  }, [apiDesc?.liveQuery, apiDesc?.restUrl, apiID, intl, schemaAST?.definitions])
 
   const save = async () => {
     try {

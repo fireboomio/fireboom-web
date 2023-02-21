@@ -6,8 +6,7 @@ export type SystemConfigType = {
   forcedJumpSwitch: boolean
   logLevel: string
   middlewarePort: string
-  apiHost: string
-  apiPort: string
+  apiAddr: string
   oidcHost: string
   oidcPort: string
   hooksServerURL: string

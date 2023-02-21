@@ -15,8 +15,7 @@ import styles from './components/subs/subs.module.less'
 dayjs.extend(duration)
 
 interface systemConfig {
-  apiHost: string
-  apiPort: string
+  apiAddr: string
   listenHost: string
   listenPort: string
   debugSwitch: boolean
@@ -35,7 +34,6 @@ interface Runtime {
 export default function SettingMainVersion() {
   const intl = useIntl()
   const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
-  const [isApiPortEditing, setIsApiPortEditing] = useImmer(false)
   const [isListenHostEditing, setisListenHostEditing] = useImmer(false)
   const [isListenPortEditing, setIsListenPortEditing] = useImmer(false)
   const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
@@ -90,14 +88,14 @@ export default function SettingMainVersion() {
   }
 
   const editPort = (key: string, value: string) => {
-    if (value == '' && !['apiHost'].includes(key)) return
+    if (value == '' && !['apiAddr'].includes(key)) return
     void requests.post('/setting', { key: key, val: value }).then(() => {
       setRefreshFlag(!refreshFlag)
     })
   }
   return (
     <>
-      {systemConfig.apiPort ? (
+      {systemConfig.apiAddr ? (
         <div className="pt-8 pl-8">
           <Descriptions
             colon
@@ -111,26 +109,26 @@ export default function SettingMainVersion() {
               {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
             </Descriptions.Item>
             <Descriptions.Item
-              label={intl.formatMessage({ defaultMessage: 'API域名' })}
+              label={intl.formatMessage({ defaultMessage: 'API地址' })}
               className="w-20"
             >
               {isApiHostEditing ? (
                 <Input
-                  defaultValue={systemConfig.apiHost}
+                  defaultValue={systemConfig.apiAddr}
                   autoFocus
                   style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
                   type="text"
                   onBlur={e => {
                     setIsApiHostEditing(!isApiHostEditing)
-                    void editPort('apiHost', e.target.value)
+                    void editPort('apiAddr', e.target.value)
                   }}
                   onPressEnter={e => {
                     setIsApiHostEditing(!isApiHostEditing)
-                    void editPort('apiHost', e.currentTarget.value)
+                    void editPort('apiAddr', e.currentTarget.value)
                   }}
                 />
               ) : (
-                <span>{systemConfig.apiHost}</span>
+                <span>{systemConfig.apiAddr}</span>
               )}
               <img
                 alt="bianji"
@@ -142,38 +140,6 @@ export default function SettingMainVersion() {
                 }}
               />
             </Descriptions.Item>
-            {/* <Descriptions.Item
-              label={intl.formatMessage({ defaultMessage: 'API端口' })}
-              className="w-20"
-            >
-              {isApiPortEditing ? (
-                <Input
-                  defaultValue={systemConfig.apiPort}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setIsApiPortEditing(!isApiPortEditing)
-                    void editPort('apiPort', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsApiPortEditing(!isApiPortEditing)
-                    void editPort('apiPort', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.apiPort}</span>
-              )}
-              <img
-                alt="bianji"
-                src="assets/iconfont/bianji.svg"
-                style={{ height: '1em', width: '1em' }}
-                className="ml-2"
-                onClick={() => {
-                  setIsApiPortEditing(!isApiPortEditing)
-                }}
-              />
-            </Descriptions.Item> */}
             <Descriptions.Item
               label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
               className="w-20"

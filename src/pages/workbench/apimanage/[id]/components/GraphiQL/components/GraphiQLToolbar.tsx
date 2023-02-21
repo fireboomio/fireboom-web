@@ -9,14 +9,14 @@ import type {
   SelectionSetNode
 } from 'graphql'
 import { Kind } from 'graphql'
-import { lazy, Suspense, useContext, useEffect, useMemo, useState } from 'react'
+import { lazy, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { ExitFullscreenOutlined, FullscreenOutlined } from '@/components/icons'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../../store'
-import { ExitFullscreenOutlined, FullscreenOutlined } from '../../icons'
 import { printSchemaAST } from '../utils'
 import ArgumentDirectivePopup from './ArgumentDirectivePopup'
 import CrossOriginPopup from './CrossOriginPopup'

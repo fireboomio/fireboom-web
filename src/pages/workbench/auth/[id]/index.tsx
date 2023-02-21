@@ -74,11 +74,6 @@ export default function AuthConfigContainer() {
       console.error(e)
       return
     }
-    if (!config.apiHost) {
-      target.protocol = location.protocol
-      target.hostname = location.hostname
-      target.port = location.port
-    }
     window.open(target.toString())
   }
 

@@ -3,6 +3,8 @@ import { Radio, Space, Tag, Tooltip } from 'antd'
 import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
+import useSWRImmutable from 'swr/immutable'
 
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -14,6 +16,7 @@ import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/inte
 import styles from './index.module.less'
 
 const UrlInput = React.lazy(() => import('@/components/UrlInput'))
+
 interface Props {
   className?: string
   env?: string
@@ -69,8 +72,8 @@ const StatusBar: React.FC<Props> = ({
   const [hookSwitch, setHookSwitch] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
-  // const { openHookServer, loading: hookServerLoading } = useStackblitz()
-  const [showHookServerInput, setShowHookServerInput] = useState<boolean>()
+  const navigate = useNavigate()
+  const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
   const webContainerUrl = useMemo(() => {
     const url = new URL(window.location.href)
     url.port = '9123'
@@ -213,7 +216,7 @@ const StatusBar: React.FC<Props> = ({
             {' '}
             <FormattedMessage defaultMessage="钩子" />:{' '}
           </span>
-          <span className={styles.errLabel + ' cursor-pointer'}>
+          <span className={styles.errLabel + ' cursor-pointer mr-2'}>
             <div
               className="flex h-full items-center"
               onClick={() => {
@@ -344,6 +347,16 @@ const StatusBar: React.FC<Props> = ({
                 </div>
               </>
             )}
+          </span>
+          <span
+            className={styles.errLabel + ' mr-2 cursor-pointer'}
+            onClick={() => navigate('/workbench/sdk-template')}
+          >
+            <span>
+              <FormattedMessage defaultMessage="SDK 模板:" />
+              &nbsp;
+              {sdkList?.length ?? 0}
+            </span>
           </span>
           <span className="ml-4.5">
             <FormattedMessage defaultMessage="编译时间" />:{' '}

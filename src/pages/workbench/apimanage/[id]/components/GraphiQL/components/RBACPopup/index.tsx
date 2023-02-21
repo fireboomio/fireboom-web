@@ -2,11 +2,11 @@ import { Checkbox, Dropdown, Radio, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 
+import { CircleCloseOutlined, CircleRemoveOutlined, PlusCircleFilled } from '@/components/icons'
 import RoleDiagram from '@/components/RoleDiagram'
 import type { Role } from '@/interfaces/user'
 import requests from '@/lib/fetchers'
 
-import { CircleCloseOutlined, CircleRemoveOutlined, PlusCircleFilled } from '../../../icons'
 import styles from './index.module.less'
 
 interface RBACPopupProps {

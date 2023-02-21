@@ -1,4 +1,4 @@
-import { LocationOutlined } from '../../../icons'
+import { LocationOutlined } from '@/components/icons'
 
 interface CustomLabelProps {
   label: string

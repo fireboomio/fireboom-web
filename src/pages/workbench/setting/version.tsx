@@ -1,8 +1,10 @@
-import { Descriptions } from 'antd'
+import { Descriptions, Modal } from 'antd'
+import copy from 'copy-to-clipboard'
 import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
+import { Copy, SmileFace } from '@/components/icons'
 import type { VersionConfig } from '@/interfaces/setting'
 import requests from '@/lib/fetchers'
 
@@ -20,6 +22,10 @@ export default function SettingMainVersion() {
     void getData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const copyUpdateLink = () => {
+    copy('curl -fsSL https://www.fireboom.io/update.sh | bash')
+  }
 
   return (
     <>
@@ -49,6 +55,38 @@ export default function SettingMainVersion() {
                 }}
               >
                 <FormattedMessage defaultMessage="查看更新日志" />
+              </div>
+              <div
+                className={styles['check-info']}
+                onClick={() => {
+                  copyUpdateLink()
+                  Modal.info({
+                    closable: true,
+                    icon: null,
+                    width: 'fit-content',
+                    content: (
+                      <div className="px-2 py-3">
+                        <div className="bg-[#f5f7f9] rounded-4px p-5">
+                          <div className="font-14px leading-20px"># 升级飞布命令行</div>
+                          <div className="font-14px leading-20px mt-5px flex items-center">
+                            <span className="text-[#a484e8]">curl&nbsp;</span>
+                            <span className="text-[#294c7c]">-fsSL&nbsp;</span>
+                            <span>https://www.fireboom.io/update.sh&nbsp;|&nbsp;</span>
+                            <span className="text-[#a484e8]">bash</span>
+                            <Copy className="ml-2 cursor-pointer" onClick={copyUpdateLink} />
+                          </div>
+                        </div>
+                        <div className="mt-14 h-5 flex items-center justify-center font-14px leading-20px text-[#333]">
+                          <SmileFace className="mr-2" />
+                          <span>升级脚本已复制，进入根目录执行即可。</span>
+                        </div>
+                      </div>
+                    ),
+                    footer: null
+                  })
+                }}
+              >
+                <FormattedMessage defaultMessage="升级" />
               </div>
             </div>
           </Descriptions.Item>

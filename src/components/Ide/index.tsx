@@ -440,7 +440,7 @@ const IdeContainer: FC<Props> = props => {
           hideSwitch={props.hideSwitch ?? false}
           hookPath={hookPath}
           hookInfo={hookInfo}
-          hostUrl={globalConfig.apiHost}
+          hostUrl={globalConfig.apiAddr}
           tabSize={tabSize}
           setTabSize={size => {
             setTabSize(size)
