@@ -10,6 +10,7 @@ import {
   Input,
   message,
   Modal,
+  Radio,
   Select,
   Space,
   Switch,
@@ -30,7 +31,6 @@ import Error50x from '@/components/ErrorPage/50x'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
-import { useLock } from '@/lib/helpers/lock'
 
 import FileList from './FileList'
 import styles from './Rest.module.less'
@@ -203,7 +203,9 @@ export default function Rest({ content, type }: Props) {
       })
   }
 
-  const config = content?.config as Config
+  if (!content) return <Error50x />
+
+  const config = content.config as Config
 
   //密码显示与隐藏
   const changeEyeState = () => {
@@ -250,31 +252,27 @@ export default function Rest({ content, type }: Props) {
     })
   }
   //表单上传成功回调
-  const { loading, fun: onFinish } = useLock(
-    async (values: FromValues) => {
-      values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-      const newValues = { ...values }
+  const onFinish = async (values: FromValues) => {
+    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+    const newValues = { ...values }
 
-      //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
-      let newContent: DatasourceResp
-      if (!content.id) {
-        const req = { ...content, config: newValues, name: values.apiNameSpace }
-        const result = await requests.post<unknown, number>('/dataSource', req)
-        content.id = result
-        newContent = content
-      } else {
-        newContent = {
-          ...content,
-          config: newValues,
-          name: values.apiNameSpace
-        } as DatasourceResp
-        await requests.put('/dataSource', newContent)
-      }
-      handleSave(newContent)
-    },
-    [content, handleSave]
-  )
-  if (!content) return <Error50x />
+    //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
+    let newContent: DatasourceResp
+    if (!content.id) {
+      const req = { ...content, config: newValues, name: values.apiNameSpace }
+      const result = await requests.post<unknown, number>('/dataSource', req)
+      content.id = result
+      newContent = content
+    } else {
+      newContent = {
+        ...content,
+        config: newValues,
+        name: values.apiNameSpace
+      } as DatasourceResp
+      await requests.put('/dataSource', newContent)
+    }
+    handleSave(newContent)
+  }
 
   //表单上传失败回调
   const onFinishFailed = (errorInfo: object) => {
@@ -951,11 +949,7 @@ export default function Rest({ content, type }: Props) {
                   {/*>*/}
                   {/*  {intl.formatMessage({ defaultMessage: '测试' })}*/}
                   {/*</Button>*/}
-                  <Button
-                    className={'btn-save ml-4'}
-                    onClick={() => form.submit()}
-                    loading={loading}
-                  >
+                  <Button className={'btn-save ml-4'} onClick={() => form.submit()}>
                     {content.name == ''
                       ? intl.formatMessage({ defaultMessage: '创建' })
                       : intl.formatMessage({ defaultMessage: '保存' })}

@@ -15,7 +15,6 @@ import UrlInput from '@/components/UrlInput'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import requests, { getHeader } from '@/lib/fetchers'
-import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
 import imgAuth0 from '../assets/Auth0.png'
@@ -100,49 +99,46 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     setJwksJSON(JSON.stringify(jwksObj))
   }, [content])
 
-  const { loading, fun: onFinish } = useLock(
-    async (values: FromValues) => {
-      if (values.jwks == 1) {
-        values.jwksJSON = jwksJSON
-      } else {
-        if (!values.jwksURL && !values.userInfoEndpoint) {
-          message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
-          return
-        }
-      }
-      const switchState = []
-      if (values.cookieBased) {
-        switchState.push('cookieBased')
-      }
-      if (values.tokenBased) {
-        switchState.push('tokenBased')
-      }
-      const newValues = { ...config, ...values }
-      const newContent = { ...content, switchState, name: values.id }
-      if (content.name == '') {
-        const req = { ...newContent, config: newValues }
-        Reflect.deleteProperty(req, 'id')
-        const result = await requests.post<unknown, number>('/auth', req)
-        content.id = result
-      } else {
-        await requests.put('/auth', {
-          ...newContent,
-          config: newValues
-        })
-      }
-      void requests
-        .get<unknown, AuthProvResp[]>('/auth')
-        .then(res => {
-          onChange(res.filter(row => row.id === content.id)[0])
-        })
-        .then(() => {
-          handleBottomToggleDesigner('data', content.id)
-        })
-    },
-    [config, content, handleBottomToggleDesigner, jwksJSON, onChange]
-  )
   if (!content) {
     return <Error50x />
+  }
+  const onFinish = async (values: FromValues) => {
+    if (values.jwks == 1) {
+      values.jwksJSON = jwksJSON
+    } else {
+      if (!values.jwksURL && !values.userInfoEndpoint) {
+        message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
+        return
+      }
+    }
+    const switchState = []
+    if (values.cookieBased) {
+      switchState.push('cookieBased')
+    }
+    if (values.tokenBased) {
+      switchState.push('tokenBased')
+    }
+    const newValues = { ...config, ...values }
+    const newContent = { ...content, switchState, name: values.id }
+    if (content.name == '') {
+      const req = { ...newContent, config: newValues }
+      Reflect.deleteProperty(req, 'id')
+      const result = await requests.post<unknown, number>('/auth', req)
+      content.id = result
+    } else {
+      await requests.put('/auth', {
+        ...newContent,
+        config: newValues
+      })
+    }
+    void requests
+      .get<unknown, AuthProvResp[]>('/auth')
+      .then(res => {
+        onChange(res.filter(row => row.id === content.id)[0])
+      })
+      .then(() => {
+        handleBottomToggleDesigner('data', content.id)
+      })
   }
 
   const typeChange = (value: string) => {
@@ -451,7 +447,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               {/*  <FormattedMessage defaultMessage="测试" />*/}
               {/*</Button>*/}
               <Button
-                loading={loading}
                 className="ml-4 btn-save"
                 onClick={() => {
                   form.submit()

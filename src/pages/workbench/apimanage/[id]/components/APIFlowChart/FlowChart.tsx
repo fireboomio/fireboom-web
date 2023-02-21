@@ -3,6 +3,7 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
 import type { Edge, Node } from '@antv/x6'
 import { Graph, Shape } from '@antv/x6'
+import { isEqual } from 'lodash'
 import React, { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -437,7 +438,7 @@ const FlowChart = ({
               <StatusDirective
                 enabled={globalHookState.onRequest.enable}
                 label="onRequest"
-                onClick={() => onEditHook?.(globalHookState.onRequest)}
+                onDoubleClick={() => onEditHook?.(globalHookState.onRequest)}
               />
             ),
             x: 290,
@@ -690,7 +691,7 @@ const FlowChart = ({
           <StatusDirective
             enabled={hookState.preResolve.enable}
             label="preResolve"
-            onClick={() => onEditHook?.(hookState.preResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.preResolve)}
           />
         ),
         x: 290,
@@ -704,7 +705,7 @@ const FlowChart = ({
           <StatusDirective
             enabled={hookState.customResolve.enable}
             label="customResolve"
-            onClick={() => onEditHook?.(hookState.customResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.customResolve)}
           />
         ),
         x: 290,
@@ -721,7 +722,7 @@ const FlowChart = ({
           <StatusDirective
             enabled={hookState.mutatingPreResolve.enable}
             label="mutatingPreResolve"
-            onClick={() => onEditHook?.(hookState.mutatingPreResolve)}
+            onDoubleClick={() => onEditHook?.(hookState.mutatingPreResolve)}
           />
         ),
         x: 280,
@@ -749,7 +750,7 @@ const FlowChart = ({
             border: `1px solid rgb(233, 46, 94)`,
             background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
           }}
-          onClick={() => onEditHook?.(hookState.mockResolve)}
+          onDoubleClick={() => onEditHook?.(hookState.mockResolve)}
         >
           mockResolve
         </div>
@@ -820,7 +821,7 @@ const FlowChart = ({
             <StatusDirective
               enabled={hookState.postResolve.enable}
               label="postResolve"
-              onClick={() => onEditHook?.(hookState.postResolve)}
+              onDoubleClick={() => onEditHook?.(hookState.postResolve)}
             />
           ),
           x: 290,
@@ -834,7 +835,7 @@ const FlowChart = ({
             <StatusDirective
               enabled={hookState.mutatingPostResolve.enable}
               label="mutatingPostResolve"
-              onClick={() => onEditHook?.(hookState.mutatingPostResolve)}
+              onDoubleClick={() => onEditHook?.(hookState.mutatingPostResolve)}
             />
           ),
           x: 280,
@@ -1000,7 +1001,7 @@ const FlowChart = ({
             <StatusDirective
               enabled={globalHookState.onResponse.enable}
               label="onResponse"
-              onClick={() => onEditHook?.(globalHookState.onResponse)}
+              onDoubleClick={() => onEditHook?.(globalHookState.onResponse)}
             />
           ),
           x: 290,

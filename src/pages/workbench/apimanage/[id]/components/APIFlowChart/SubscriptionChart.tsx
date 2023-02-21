@@ -3,6 +3,7 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
 import type { Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
+import { isEqual } from 'lodash'
 import React, { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -456,7 +457,7 @@ const SubscriptionChart = ({
             <StatusDirective
               enabled={globalHookState.onConnectionInit.enable}
               label="onConnectionInit"
-              onClick={() => {
+              onDoubleClick={() => {
                 onEditHook?.(globalHookState.onConnectionInit)
               }}
             />
@@ -480,7 +481,7 @@ const SubscriptionChart = ({
           <StatusDirective
             enabled={hookState.preResolve.enable}
             label="preResolve"
-            onClick={() => {
+            onDoubleClick={() => {
               onEditHook?.(hookState.preResolve)
             }}
           />
@@ -499,7 +500,7 @@ const SubscriptionChart = ({
           <StatusDirective
             enabled={hookState.mutatingPreResolve.enable}
             label="mutatingPreResolve"
-            onClick={() => {
+            onDoubleClick={() => {
               onEditHook?.(hookState.mutatingPreResolve)
             }}
           />
@@ -530,7 +531,7 @@ const SubscriptionChart = ({
             <StatusDirective
               enabled={hookState.mutatingPostResolve.enable}
               label="mutatingPostResolve"
-              onClick={() => {
+              onDoubleClick={() => {
                 onEditHook?.(hookState.mutatingPostResolve)
               }}
             />
@@ -546,7 +547,7 @@ const SubscriptionChart = ({
             <StatusDirective
               enabled={hookState.postResolve.enable}
               label="postResolve"
-              onClick={() => {
+              onDoubleClick={() => {
                 onEditHook?.(hookState.postResolve)
               }}
             />

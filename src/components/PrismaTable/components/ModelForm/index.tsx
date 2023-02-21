@@ -96,7 +96,7 @@ const ModelFormContainer = ({
             htmlType="submit"
             form={model.id}
             disabled={loading}
-            className={`${styles['add-btn']} cursor-default`}
+            className={`${styles['add-btn']} cursor-default p-0`}
           >
             <FormattedMessage defaultMessage="保存" />
           </Button>

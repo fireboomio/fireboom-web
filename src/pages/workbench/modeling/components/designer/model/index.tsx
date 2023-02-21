@@ -449,7 +449,7 @@ const ModelDesigner = forwardRef(
     }
 
     return (
-      <div className="px-7 py-4 bg-white flex-1 overflow-y-auto">
+      <div className="px-7 py-4 bg-white flex-1">
         {fields?.map((field, idx) => FieldRow(idx, field))}
 
         <ModelAttributes

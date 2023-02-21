@@ -7,7 +7,6 @@ import type { Updater } from 'use-immer'
 import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
-import events from '@/lib/event/events'
 import { buildBlocks } from '@/lib/helpers/ModelingHelpers'
 import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
@@ -77,7 +76,6 @@ const ModelPannel = ({
     // 触发编辑器同步
     triggerSyncEditor()
     setTimeout(() => {
-      events.emit({ event: 'openModelingTab', data: newBlocks[newBlocks.length - 1] })
       handleClickEntity(newBlocks[newBlocks.length - 1])
       handleSetInEdit(true)
     }, 100)
@@ -108,10 +106,7 @@ const ModelPannel = ({
             setShowType={setShowType}
             key={entity.id}
             entity={entity}
-            onClick={() => {
-              events.emit({ event: 'openModelingTab', data: entity })
-              onClickEntity(entity)
-            }}
+            onClick={() => onClickEntity(entity)}
             onToggleDesigner={onToggleDesigner}
           />
         ))}
