@@ -372,6 +372,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     } catch (e) {
       console.error(e)
     }
+    setConfirmModal(undefined)
     hide()
     onRefreshMenu('api')
     setResultPanel(
@@ -689,7 +690,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
           expandIcon={({ isActive }) => (
             <img
               alt="xiala"
-              src="assets/iconfont/xiala.svg"
+              src="assets/iconfont/xiala1.svg"
               style={{ height: '1em', width: '1em', transform: isActive ? '' : 'rotate(-90deg)' }}
             />
           )}
@@ -813,52 +814,53 @@ export default function CRUDBody(props: CRUDBodyProps) {
           <Input />
         </Form.Item>
       </Form>
-      <Modal
-        open={!!confirmModal}
-        title={intl.formatMessage({ defaultMessage: '批量新建预览' })}
-        onCancel={() => {
-          setConfirmModal(undefined)
-        }}
-        footer={
-          <div className="common-form">
-            <Button
-              className="btn-cancel"
-              onClick={() => {
-                setConfirmModal(undefined)
-                confirmResolve.current?.(0)
-              }}
-            >
-              <FormattedMessage defaultMessage="取消" />
-            </Button>
-            {existPathFlag && (
+      {confirmModal && (
+        <Modal
+          key="confirmModal"
+          open={true}
+          title={intl.formatMessage({ defaultMessage: '批量新建预览' })}
+          onCancel={() => {
+            setConfirmModal(undefined)
+          }}
+          footer={
+            <div className="common-form">
+              <Button
+                className="btn-cancel"
+                onClick={() => {
+                  setConfirmModal(undefined)
+                  confirmResolve.current?.(0)
+                }}
+              >
+                <FormattedMessage defaultMessage="取消" />
+              </Button>
+              {existPathFlag && (
+                <Button
+                  className="btn-save"
+                  onClick={() => {
+                    confirmResolve.current?.(1)
+                  }}
+                >
+                  <FormattedMessage defaultMessage="跳过已有API" />
+                </Button>
+              )}
               <Button
                 className="btn-save"
                 onClick={() => {
-                  setConfirmModal(undefined)
-                  confirmResolve.current?.(1)
+                  confirmResolve.current?.(2)
                 }}
               >
-                <FormattedMessage defaultMessage="跳过已有API" />
+                {existPathFlag ? (
+                  <FormattedMessage defaultMessage="全部覆盖" />
+                ) : (
+                  <FormattedMessage defaultMessage="全部创建" />
+                )}
               </Button>
-            )}
-            <Button
-              className="btn-save"
-              onClick={() => {
-                setConfirmModal(undefined)
-                confirmResolve.current?.(2)
-              }}
-            >
-              {existPathFlag ? (
-                <FormattedMessage defaultMessage="全部覆盖" />
-              ) : (
-                <FormattedMessage defaultMessage="全部创建" />
-              )}
-            </Button>
-          </div>
-        }
-      >
-        {confirmModal}
-      </Modal>
+            </div>
+          }
+        >
+          {confirmModal}
+        </Modal>
+      )}
       {resultPanel}
     </div>
   )

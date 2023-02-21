@@ -744,7 +744,7 @@ const FlowChart = ({
       // },
       component: (
         <div
-          className="rounded-xl h-5 text-xs text-center px-1 leading-5 "
+          className="rounded-xl h-5 text-xs text-center px-1 leading-5 cursor-pointer"
           style={{
             border: `1px solid rgb(233, 46, 94)`,
             background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`

@@ -12,6 +12,7 @@ const StatusDirective = ({ enabled, label, onClick }: StatusDirectiveProps) => {
     <div
       onClick={onClick}
       style={{
+        cursor: 'pointer',
         display: 'block',
         padding: '0 5px',
         textOverflow: 'ellipsis',

@@ -165,6 +165,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     (selectedKeys: Key[], e: { node: DirTreeNode; nativeEvent: { shiftKey: boolean } }) => {
       ;(async () => {
         let { node } = e
+        // 处理文件夹自动展开
+        if (node.isDir) {
+          if (expandedKeys.includes(node.key)) {
+            setExpandedKeys(expandedKeys.filter(x => x !== node.key))
+          } else {
+            setExpandedKeys([...expandedKeys, node.key])
+          }
+        }
         // 如果按下shift键，表示多选
         if (e.nativeEvent.shiftKey) {
           let selections
@@ -190,7 +198,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }
         setMultiSelection([])
         if (node.isDir) {
-          navigate(`/workbench/apimanage`, { replace: true })
+          // navigate(`/workbench/apimanage`, { replace: true })
         } else {
           navigate(`/workbench/apimanage/${node.id}`, { replace: true })
         }
@@ -201,7 +209,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }
       })()
     },
-    [navCheck, multiSelection]
+    [navCheck, multiSelection, expandedKeys, treeData]
   )
   // console.log(multiSelection)
 
@@ -739,13 +747,19 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 showIcon
                 defaultExpandParent
                 expandedKeys={expandedKeys}
-                onExpand={setExpandedKeys}
+                // onExpand={x => {
+                //   console.log(x)
+                //   setExpandedKeys(x)
+                // }}
                 // @ts-ignore
                 treeData={treeData}
                 multiple
                 selectedKeys={multiSelection}
                 // @ts-ignore
                 onSelect={handleSelectTreeNode}
+                onDoubleClick={e => {
+                  console.log(e)
+                }}
               />
             ) : null}
             {currEditingKey && ['创建文件', '创建目录'].includes(action ?? '') && (
