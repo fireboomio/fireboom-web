@@ -200,7 +200,6 @@ export default function ApiSearch() {
                       name="radiogroup"
                       value={filterMap[row.key]?.value}
                       onChange={e => {
-                        console.log(e.target.value)
                         setFilterMap({
                           ...filterMap,
                           [row.key]: { value: e.target.value, fun: row.filterFun(e.target.value) }
