@@ -41,12 +41,17 @@ const SDKTemplate = () => {
   const onUpdate = (index: number, sdk: SDKItem) => {
     mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
   }
-  const { fun: downloadSdk } = useLock(
+  const { loading, fun: downloadSdk } = useLock(
     async sdk => {
-      await requests.post('/sdk/remote/download', sdk)
-      await mutate()
-      message.success('下载成功')
-      setShowRemote(false)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '下载' }), -1)
+      try {
+        await requests.post('/sdk/remote/download', sdk)
+        await mutate()
+        message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
+      } catch (e) {
+        message.error(intl.formatMessage({ defaultMessage: '下载失败' }))
+      }
+      hide()
     },
     [mutate]
   )
@@ -74,6 +79,7 @@ const SDKTemplate = () => {
       </Row>
       <Modal
         width="80vw"
+        bodyStyle={{ minHeight: '60vh' }}
         footer={null}
         open={showRemote}
         onCancel={() => setShowRemote(false)}

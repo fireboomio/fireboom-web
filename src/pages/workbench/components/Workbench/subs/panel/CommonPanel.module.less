@@ -58,7 +58,7 @@
   }
 
   .title {
-    flex: 1 1 0;
+    flex: 1 1 auto;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -70,11 +70,15 @@
   }
 
   .tip {
-    flex: 0 0 auto;
+    flex: 1 1 0;
+    min-width: 40px;
     margin-left: 6px;
     font-size: 12px;
     font-weight: 300;
     color: rgba(153, 153, 153, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &:hover .more {

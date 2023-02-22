@@ -464,7 +464,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
 
   async function batchSwitch(flag: boolean) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
-    const ids = selectedNode.map(x => x.id)
+    const ids = selectedNode.filter(x => !x.isDir).map(x => x.id)
     try {
       await requests.post('operateApi/batchOnline', {
         Ids: ids,
@@ -704,7 +704,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                       modal.confirm({
                         title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
                         onOk: () => {
-                          const ids = selectedNode.map(x => x.id).filter(x => x)
+                          const ids = selectedNode
+                            .filter(x => !x.isDir)
+                            .map(x => x.id)
+                            .filter(x => x)
                           requests.post('operateApi/batchDelete', { ids }).then(() => {
                             ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
                             message.success(intl.formatMessage({ defaultMessage: '删除成功' }))

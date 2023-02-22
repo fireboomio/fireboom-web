@@ -12,6 +12,7 @@ import { useEventBus } from '@/lib/event/events'
 import { intl } from '@/providers/IntlProvider'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
+import iconEmpty from './assets/empty.svg'
 import styles from './index.module.less'
 
 export default function ApiSearch() {
@@ -157,6 +158,14 @@ export default function ApiSearch() {
 
         <div className={styles.bodyContainer}>
           <div className={styles.resultContainer}>
+            {filteredList.length === 0 && (
+              <div className="w-full h-full flex items-center justify-center flex-col">
+                <img src={iconEmpty} alt="" />
+                <div className="mt-6 font-14px leading-20px text-[#787D8B]">
+                  没有找到相关文件，请重新搜索
+                </div>
+              </div>
+            )}
             {filteredList.map(item => (
               <div
                 onClick={() => gotoAPI(item)}
