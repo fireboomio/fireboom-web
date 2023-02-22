@@ -79,7 +79,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
     [query, schemaAST?.definitions]
   )
 
-  const { data: hookInfo } = useSWRImmutable<any>(
+  const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
     id ? `/operateApi/hooks/${id}` : null,
     requests.get
   )
@@ -183,7 +183,10 @@ const APIFlowChart = ({ id }: { id: string }) => {
           apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
           hasParams={!!(query ?? '').match(/\(\$\w+/)}
           hook={editingHook}
-          onClose={() => setEditingHook(null)}
+          onClose={() => {
+            void mutateHookInfo()
+            setEditingHook(null)
+          }}
         />
       )}
     </>

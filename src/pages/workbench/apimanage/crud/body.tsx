@@ -20,6 +20,7 @@ import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import RoleDiagram from '@/components/RoleDiagram'
+import { mutateApi } from '@/hooks/store/api'
 import type { DMFModel } from '@/interfaces/datasource'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -374,7 +375,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     }
     setConfirmModal(undefined)
     hide()
-    onRefreshMenu('api')
+    void mutateApi()
     setResultPanel(
       <div className={styles.successInfo}>
         <img

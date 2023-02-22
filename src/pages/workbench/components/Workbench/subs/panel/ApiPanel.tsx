@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import { useApiList } from '@/hooks/store/api'
+import { mutateApi, useApiList } from '@/hooks/store/api'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -116,7 +116,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [treeData])
 
-  const { data: apiList, mutate: refreshApiList } = useApiList(panelOpened)
+  const apiList = useApiList()
   useEffect(() => {
     const tree = convertToTree(apiList ?? [], '0')
 
@@ -131,9 +131,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }
     }
   }, [apiList])
-  useEffect(() => {
-    refreshApiList()
-  }, [refreshMap.api])
 
   useEffect(() => {
     if (currEditingNode) {
@@ -148,7 +145,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     if (!isModalVisible && isBlur) {
       setAction(null)
       setCurrEditingKey(null)
-      refreshApiList()
+      void mutateApi()
     }
     setIsBlur(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -337,7 +334,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         if (currEditingNode.isDir) {
           void renameNode(currEditingNode, inputValue).then(res => {
             setCurrEditingKey(null)
-            refreshApiList()
+            void mutateApi()
           })
         } else {
           void renameApi(currEditingNode, inputValue).then(res => {
@@ -348,20 +345,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 data: { title: inputValue, path: `${currEditingNode.baseDir}/${inputValue}` }
               })
             }
-            refreshApiList()
+            void mutateApi()
           })
         }
         break
       case '创建目录':
         void createNode(currEditingNode, inputValue).then(() => {
           setCurrEditingKey(null)
-          refreshApiList()
+          void mutateApi()
         })
         break
       case '创建文件':
         if (isEmpty(inputValue)) {
           setCurrEditingKey(null)
-          refreshApiList()
+          void mutateApi()
           // @ts-ignore
         } else if (!isUpperCase(inputValue.at(0))) {
           void message.warn(intl.formatMessage({ defaultMessage: '接口名称必须大写开头！' }))
@@ -386,7 +383,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           if (result?.id) {
             navigate(`/workbench/apimanage/${result?.id}`)
             setCurrEditingKey(null)
-            refreshApiList()
+            void mutateApi()
           }
           // void message.success('保存成功')
         })
@@ -425,7 +422,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     setAction(null)
     void deleteNode(node).then(() => {
       setCurrEditingKey(null)
-      refreshApiList()
+      void mutateApi()
       localStorage.removeItem(`_api_args_${node.id}`)
       postDelete([node.id])
     })
@@ -475,7 +472,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       hide()
     }
     message.success(intl.formatMessage({ defaultMessage: '操作成功' }))
-    refreshApiList()
+    void mutateApi()
     events.emit({
       event: 'apiEnableChange',
       data: { ids, enable: flag }
@@ -634,7 +631,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             <div
               className={styles.headerRefresh}
               onClick={() => {
-                refreshApiList()
+                void mutateApi()
                 // void getFetcher<OperationResp[]>('/operateApi')
                 //   .then(res => setTreeData(convertToTree(res)))
                 //   // .then(() => setSelectedKey(''))
@@ -705,7 +702,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                             ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
                             message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
                             postDelete(ids)
-                            refreshApiList()
+                            void mutateApi()
                           })
                           // setEditFlag(false)
                           // resolve(true)

@@ -3,7 +3,7 @@ import { OperationTypeNode } from 'graphql/index'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { useApiGlobalSetting } from '@/hooks/store/api'
+import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
@@ -76,7 +76,7 @@ export default function Index(props: Props) {
       setApiSetting({ ...apiSetting!, enable: changedValues.enable })
 
       // 刷新API菜单
-      onRefreshMenu('api')
+      void mutateApi()
       refreshAPI()
       return
     }
@@ -90,7 +90,7 @@ export default function Index(props: Props) {
       .then(() => {
         // 如果修改的是实时查询，则需要刷新api面板=
         if (changedValues.liveQueryEnable !== undefined) {
-          onRefreshMenu('api')
+          void mutateApi()
           refreshAPI()
         }
         // 如果修改的是开启授权，则需要刷新当前api页面

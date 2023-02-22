@@ -50,7 +50,6 @@ export default function Sider() {
     // setTab(targetTab)
     // 跳转到目标tab默认路由
     navigate(tapPathMap[targetTab])
-    // onRefreshMenu('api')
   }
 
   return (

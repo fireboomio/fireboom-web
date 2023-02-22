@@ -1,4 +1,5 @@
-import { values } from 'lodash'
+import type { OperationDefinitionNode } from 'graphql/index'
+import { sortBy, values } from 'lodash'
 import React, { useMemo } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
@@ -16,7 +17,12 @@ export default function HookPanel({ id }: { id?: string }) {
     apiDesc: state.apiDesc,
     query: state.query
   }))
-  const { data: hookInfo } = useSWRImmutable<any>(
+  const { schemaAST } = useAPIManager(state => ({
+    schemaAST: state.schemaAST
+  }))
+  const defs =
+    (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
+  const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
     id ? `/operateApi/hooks/${id}` : null,
     requests.get
   )
@@ -24,14 +30,26 @@ export default function HookPanel({ id }: { id?: string }) {
     if (!hookInfo) {
       return []
     }
-    return [...values(hookInfo.globalHooks), ...values(hookInfo.operationHooks)].map(
-      (hook: any) => ({
+    const list = sortBy(
+      [...values(hookInfo.globalHooks), ...values(hookInfo.operationHooks)].map((hook: any) => ({
         name: hook.path.split('/').pop(),
         path: hook.path,
         switch: hook.switch
-      })
-    )
-  }, [hookInfo])
+      })),
+      x =>
+        ({
+          onRequest: 1,
+          preResolve: 2,
+          mutatingPreResolve: 3,
+          customResolve: 4,
+          postResolve: 5,
+          mutatingPostResolve: 6,
+          onResponse: 7,
+          mockResolve: 8
+        }[x.name as string] ?? 0)
+    ).filter(x => x.name !== 'mutatingPreResolve' || defs?.length > 0)
+    return list
+  }, [hookInfo, defs])
   if (!id) {
     return null
   }
@@ -58,7 +76,10 @@ export default function HookPanel({ id }: { id?: string }) {
           apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
           hasParams={!!(query ?? '').match(/\(\$\w+/)}
           hook={editingHook}
-          onClose={() => setEditingHook(null)}
+          onClose={() => {
+            void mutateHookInfo()
+            setEditingHook(null)
+          }}
         />
       )}
     </>

@@ -7,7 +7,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '@/components/icons'
-import { useApiGlobalSetting } from '@/hooks/store/api'
+import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -108,7 +108,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         message.success(
           intl.formatMessage({ defaultMessage: '已复制接口 {path}' }, { path: destPath })
         )
-        workbenchCtx.onRefreshMenu('api')
+        void mutateApi()
       } catch (error) {
         //
       }

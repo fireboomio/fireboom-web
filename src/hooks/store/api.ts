@@ -1,3 +1,4 @@
+import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
@@ -35,6 +36,10 @@ export interface OperationResp {
   updateTime: string
 }
 
-export function useApiList(fetch = true) {
-  return useSWRImmutable<OperationResp[]>(fetch ? '/operateApi' : null, requests.get)
+export function useApiList() {
+  return useSWRImmutable<OperationResp[]>('/operateApi', requests.get).data
+}
+
+export function mutateApi() {
+  return mutate('/operateApi')
 }

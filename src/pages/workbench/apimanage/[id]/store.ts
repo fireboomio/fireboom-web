@@ -10,6 +10,7 @@ import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
 import { isEqual, keyBy } from 'lodash'
 import create from 'zustand'
 
+import { mutateApi } from '@/hooks/store/api'
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
@@ -173,14 +174,14 @@ export const useAPIManager = create<APIState>((set, get) => ({
     return requests.put(`/operateApi/${get().apiID}`, newAPI).then(resp => {
       get().pureUpdateAPI(newAPI)
       // 刷新api列表
-      get()._workbenchContext?.onRefreshMenu('api')
+      void mutateApi()
     })
   },
   changeEnable: (enable: boolean) => {
     return requests.put(`/operateApi/switch/${get().apiID}`, { enable }).then(resp => {
       get().pureUpdateAPI({ enable })
       // 刷新api列表
-      get()._workbenchContext?.onRefreshMenu('api')
+      void mutateApi()
     })
   },
   updateAPIName: path => {
@@ -190,7 +191,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
       })
       // 刷新api列表
-      get()._workbenchContext?.onRefreshMenu('api')
+      void mutateApi()
     })
   },
   updateContent: (content: string, showMessage = true) => {
@@ -217,7 +218,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // @ts-ignore
         // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
         // 内容变更可能需要刷新api列表
-        get()._workbenchContext?.onRefreshMenu('api')
+        void mutateApi()
         // await new Promise(resolve => setTimeout(resolve, 5000))
         requests.get(`/operateApi/${get().apiID}`).then(api => {
           // @ts-ignore
@@ -259,7 +260,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       }
     } catch (e) {
       // 接口请求错误就刷新api列表
-      get()._workbenchContext?.onRefreshMenu('api')
+      void mutateApi()
     }
   },
   refreshAPISetting: async () => {

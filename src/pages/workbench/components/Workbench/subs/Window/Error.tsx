@@ -6,9 +6,12 @@ import { useNavigate } from 'react-router-dom'
 
 import type { Question } from '@/hooks/global'
 import { QuestionType, useGlobal } from '@/hooks/global'
+import { mutateApi } from '@/hooks/store/api'
 import { mutateAuth } from '@/hooks/store/auth'
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import { mutateStorage } from '@/hooks/store/storage'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 
 import styles from './error.module.less'
@@ -82,9 +85,14 @@ export default function Error() {
       void mutateDataSource()
     }
   }
+
   async function closeAPI(id: number) {
     await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enable: false })
-    onRefreshMenu('api')
+    events.emit({
+      event: 'apiEnableChange',
+      data: { ids: [id], enable: false }
+    })
+    void mutateApi()
   }
   async function closeAuth(id: number) {
     const res = await requests.get<unknown, any>(`/auth/${id}`)

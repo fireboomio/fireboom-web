@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import { useGlobal } from '@/hooks/global'
-import { useApiList } from '@/hooks/store/api'
+import { mutateApi } from '@/hooks/store/api'
 import type { Info } from '@/interfaces/common'
 import type {
   MenuName,
@@ -48,7 +48,6 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
-  const { mutate: refreshApiList } = useApiList(false)
   const prevStatus = useRef<any>()
 
   // context
@@ -80,7 +79,7 @@ export default function Index(props: PropsWithChildren) {
   useWebSocket('engine', 'getStatus', data => {
     setInfo(data)
     if (data.engineStatus === ServiceStatus.Started) {
-      refreshApiList()
+      void mutateApi()
       events.emit({ event: 'compileFinish' })
     }
   })
@@ -88,7 +87,7 @@ export default function Index(props: PropsWithChildren) {
     // @ts-ignore
     setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
     if (data.engineStatus === ServiceStatus.Started) {
-      refreshApiList()
+      void mutateApi()
       events.emit({ event: 'compileFinish' })
     }
   })
