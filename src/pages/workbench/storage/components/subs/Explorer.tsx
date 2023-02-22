@@ -6,6 +6,7 @@ import {
   SyncOutlined
 } from '@ant-design/icons'
 import {
+  App,
   Button,
   Cascader,
   Collapse,
@@ -15,7 +16,6 @@ import {
   Input,
   Menu,
   message,
-  Modal,
   Popconfirm,
   Popover,
   Tooltip,
@@ -444,11 +444,12 @@ export default function StorageExplorer({ bucketId }: Props) {
     await loadMenu(path)
   }
 
+  const { modal } = App.useApp()
   const doRename = async (name: string) => {
     inputValue.current = ''
     const originFileName = name.replace(/\/&/, '').split('/').pop()
     return new Promise<string>(resolve => {
-      Modal.info({
+      modal.info({
         title: intl.formatMessage({ defaultMessage: '请输入名称' }),
         content: (
           <Input
@@ -501,7 +502,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const createFold = () => {
     let dir = uploadPath
     inputValue.current = ''
-    Modal.info({
+    modal.info({
       title: intl.formatMessage({ defaultMessage: '请输入文件夹名称' }),
       content: (
         <Input

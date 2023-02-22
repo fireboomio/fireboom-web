@@ -1,4 +1,4 @@
-import { message, Modal, Tooltip } from 'antd'
+import { App, message, Modal, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -98,9 +98,10 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译' })))
   }
 
+  const { modal } = App.useApp()
   const showHotkey = useCallback(() => {
     Modal.destroyAll()
-    Modal.info({
+    modal.info({
       width: '800px',
       icon: null,
       title: intl.formatMessage({ defaultMessage: '页面快捷键' }),

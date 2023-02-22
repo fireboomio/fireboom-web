@@ -1,7 +1,8 @@
+import type { InputRef } from 'antd'
 import { Input, Radio } from 'antd'
 import clsx from 'clsx'
 import { curry, flatMapDeep, get, omit, values } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Close, File, Filter, Search } from '@/components/icons'
@@ -20,6 +21,7 @@ export default function ApiSearch() {
     setOpen(true)
   })
   const [searchInput, setSearchInput] = useState('')
+  const inputRef = useRef<InputRef>(null)
 
   // tab相关变量
   const [activeTab, setActiveTab] = useState('')
@@ -92,6 +94,11 @@ export default function ApiSearch() {
     setFilterMap({})
     setFilterOpen(true)
     setActiveTab('')
+    if (open) {
+      setTimeout(() => {
+        inputRef.current?.focus?.()
+      }, 100)
+    }
   }, [open])
 
   function gotoAPI(api: any) {
@@ -110,6 +117,12 @@ export default function ApiSearch() {
         <div className={styles.search}>
           <Search className="ml-18px text-[#333]" />
           <Input
+            ref={inputRef}
+            onKeyUp={e => {
+              if (e.key === 'Escape') {
+                setOpen(false)
+              }
+            }}
             onChange={e => setSearchInput(e.target.value)}
             value={searchInput}
             bordered={false}
@@ -153,7 +166,10 @@ export default function ApiSearch() {
                 })}
                 key={item.id}
               >
-                <File className={styles.icon} />
+                <div className={styles.icon}>
+                  <File />
+                  {item.liveQuery && <div className={styles.dot} />}
+                </div>
                 <span
                   className={`${styles.method} ${
                     {

@@ -1,4 +1,4 @@
-import { Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from 'antd'
+import { App, Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from 'antd'
 import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
 import type React from 'react'
@@ -24,6 +24,7 @@ import SidePanel from './SidePanel'
 type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
 export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
+  const { modal } = App.useApp()
   const intl = useIntl()
   const { config } = useConfigContext()
   const navigate = useNavigate()
@@ -700,7 +701,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                   <div
                     onClick={() => {
                       setMultiSelection([])
-                      Modal.confirm({
+                      modal.confirm({
                         title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
                         onOk: () => {
                           const ids = selectedNode.map(x => x.id).filter(x => x)

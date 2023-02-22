@@ -1,4 +1,4 @@
-import { Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
+import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
 import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -136,9 +136,10 @@ export default function DB({ content, type }: Props) {
   }[dbProtocal]
 
   const sqlLiteInputValue = useRef('')
+  const { modal } = App.useApp()
   const onCreateSqlite = async () => {
     sqlLiteInputValue.current = ''
-    const modal = Modal.confirm({
+    const modal = modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input

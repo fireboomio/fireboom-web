@@ -1,4 +1,4 @@
-import { Input, message, Modal } from 'antd'
+import { App, Input, message } from 'antd'
 import { omit } from 'lodash'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -16,7 +16,6 @@ import iconAli from '../assets/ali.svg'
 import iconCockroachDB from '../assets/CockroachDB.svg'
 import iconFaas from '../assets/Faas.svg'
 import iconGraphalAPI from '../assets/GraphalAPI.svg'
-import iconMariaDB from '../assets/MariaDB.svg'
 import iconMongoDB from '../assets/MongoDB.svg'
 import iconMySQL from '../assets/MySQL.svg'
 import iconNode from '../assets/node.js.svg'
@@ -260,9 +259,10 @@ export default function Designer() {
       })
     )
   }, [])
+  const { modal } = App.useApp()
 
   function createCustom() {
-    const { destroy } = Modal.confirm({
+    const { destroy } = modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入数据源名称' }),
       content: (
         <Input

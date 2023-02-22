@@ -1,4 +1,4 @@
-import { Layout as ALayout, Modal } from 'antd'
+import { App, Layout as ALayout } from 'antd'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -132,12 +132,13 @@ export default function Index(props: PropsWithChildren) {
   const markEdit = (flag: boolean) => {
     setEditFlag(flag)
   }
+  const { modal } = App.useApp()
   const navCheck = useCallback(async () => {
     if (!editFlag) {
       return true
     }
     return await new Promise<boolean>(resolve => {
-      Modal.confirm({
+      modal.confirm({
         title: intl.formatMessage({
           defaultMessage: '即将离开当前页面，未保存的内容将被丢失，是否确认？'
         }),

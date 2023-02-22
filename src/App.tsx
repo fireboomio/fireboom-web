@@ -1,6 +1,6 @@
 import '@/lib/socket/index'
 
-import { ConfigProvider } from 'antd'
+import { App as AntApp, ConfigProvider } from 'antd'
 import enUS from 'antd/locale/en_US'
 import zhCN from 'antd/locale/zh_CN'
 import { Suspense } from 'react'
@@ -24,8 +24,10 @@ export default function App() {
         }
       }}
     >
-      <ApiSearch />
-      <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
+      <AntApp>
+        <ApiSearch />
+        <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
+      </AntApp>
     </ConfigProvider>
   )
 }

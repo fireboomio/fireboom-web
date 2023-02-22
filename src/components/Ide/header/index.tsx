@@ -1,5 +1,5 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Modal, Radio, Select, Switch } from 'antd'
+import { App, Button, Checkbox, Radio, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
@@ -105,12 +105,13 @@ const IdeHeaderContainer: FC<Props> = props => {
     openHookServer(`${props.hookPath}.ts:L3`)
   }, [])
 
+  const { modal } = App.useApp()
   const localDebug = useCallback(() => {
     const remember = localStorage.getItem(stackblitzRememberKey)
     if (remember) {
       window.open('https://stackblitz.com/local')
     } else {
-      Modal.info({
+      modal.info({
         closable: true,
         title: intl.formatMessage({ defaultMessage: '在线调试使用指南' }),
         width: 720,
