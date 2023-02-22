@@ -6,10 +6,10 @@ export const saveScript = (data: any) => {
 }
 
 // 更新开关
-export const updateHookSwitch = (path: string, value: boolean) => {
-  return requests.post('/hook/switch', {
+export const updateHookEnabled = (path: string, value: boolean) => {
+  return requests.post('/hook/enable', {
     path: path,
-    switch: value
+    enabled: value
   })
 }
 

@@ -17,7 +17,7 @@ interface CorsConfiguration {
   allowedMethods: Array<string>
   allowedHeaders: Array<string>
   allowCredentials: boolean
-  allowedOriginsEnable: boolean
+  allowedOriginsEnabled: boolean
   exposedHeaders: Array<string>
   maxAge: number
 }
@@ -93,10 +93,10 @@ export default function SettingCrossdomain() {
             >
               <Switch
                 className={styles['switch-edit-btn']}
-                checked={corsConfig.allowedOriginsEnable}
+                checked={corsConfig.allowedOriginsEnabled}
                 size="small"
                 onChange={isChecked => {
-                  void postRequest('allowedOriginsEnable', isChecked).then(() => {
+                  void postRequest('allowedOriginsEnabled', isChecked).then(() => {
                     setRefreshFlag(!refreshFlag)
                   })
                 }}
@@ -105,7 +105,7 @@ export default function SettingCrossdomain() {
                 <FormattedMessage defaultMessage="允许全部" />
               </span>
             </Form.Item>
-            {!corsConfig.allowedOriginsEnable && (
+            {!corsConfig.allowedOriginsEnabled && (
               <Form.Item
                 wrapperCol={{
                   offset: 3,

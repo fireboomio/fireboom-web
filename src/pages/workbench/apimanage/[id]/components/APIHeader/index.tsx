@@ -80,9 +80,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const isLive = useMemo(() => {
     return apiDesc?.setting.enable
-      ? apiDesc?.setting.liveQueryEnable
-      : globalSetting?.liveQueryEnable
-  }, [apiDesc?.setting.liveQueryEnable, apiDesc?.setting.enable, globalSetting])
+      ? apiDesc?.setting.liveQueryEnabled
+      : globalSetting?.liveQueryEnabled
+  }, [apiDesc?.setting.liveQueryEnabled, apiDesc?.setting.enable, globalSetting])
 
   const method = useMemo(() => {
     if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {

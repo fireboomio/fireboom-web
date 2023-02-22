@@ -42,7 +42,7 @@ export interface HookResp {
   content: string
   fileName: string
   hookName: string
-  hookSwitch: boolean
+  enabled: boolean
 }
 
 export type HookName = 'postAuthentication' | 'mutatingPostAuthenti'

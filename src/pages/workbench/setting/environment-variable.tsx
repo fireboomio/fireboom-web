@@ -13,7 +13,7 @@ interface DataType {
   createTime: string
   envType: number
   id: number
-  isDel: number
+  deleteTime: string
   updateTime: string
   key: string
   oldKey?: string

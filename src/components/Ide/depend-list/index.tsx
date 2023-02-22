@@ -390,7 +390,7 @@ const DependList = (props: DependListProps) => {
   useEffect(() => {
     setEnableMap(map => {
       if (props.hookInfo?.path) {
-        map[props.hookInfo?.path] = props.hookInfo?.switch
+        map[props.hookInfo?.path] = props.hookInfo?.enabled
       }
     })
   }, [props.hookInfo])

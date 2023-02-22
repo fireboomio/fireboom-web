@@ -34,7 +34,7 @@ export default function HookPanel({ id }: { id?: string }) {
       [...values(hookInfo.globalHooks), ...values(hookInfo.operationHooks)].map((hook: any) => ({
         name: hook.path.split('/').pop(),
         path: hook.path,
-        switch: hook.switch
+        enabled: hook.enabled
       })),
       x =>
         ({
@@ -58,14 +58,14 @@ export default function HookPanel({ id }: { id?: string }) {
       <div className="pt-2.5 w-45">
         {hookList.map((hook: any) => (
           <div
-            className={`${styles.line} ${hook.switch ? styles.active : ''}`}
+            className={`${styles.line} ${hook.enabled ? styles.active : ''}`}
             key={hook.name}
             onClick={() => {
               setEditingHook(hook)
             }}
           >
             <div className={styles.iconWrapper}>
-              <img alt="" src={hook.switch ? iconOn : iconOff} />
+              <img alt="" src={hook.enabled ? iconOn : iconOff} />
             </div>
             {hook.name}
           </div>

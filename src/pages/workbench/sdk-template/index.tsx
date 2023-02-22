@@ -17,7 +17,7 @@ type SDKItem = {
   dirName: string
   name: string
   outputPath: string
-  switch: boolean
+  enabled: boolean
 }
 type RemoteSDKItem = {
   defaultOutputPath: string
@@ -138,11 +138,11 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put('/sdk/switch', { switch: checked, dirName: sdk.dirName }).then(res => {
+      requests.put('/sdk/enable', { enabled: checked, dirName: sdk.dirName }).then(res => {
         console.log('res', res)
         onChange({
           ...sdk,
-          switch: checked
+          enabled: checked
         })
       })
     },
@@ -159,7 +159,7 @@ const SDKTemplateItem = ({
             <div className="text-xs ml-1 text-[#5F6269]">{sdk.author}</div>
           </div>
         </div>
-        <Switch className="flex-shrink-0" checked={sdk.switch} onChange={onSwitch} />
+        <Switch className="flex-shrink-0" checked={sdk.enabled} onChange={onSwitch} />
       </div>
       <div className="bg-[rgba(95,98,105,0.1)] h-0.5 mt-2 mb-3"></div>
       <div className="text-xs text-[#787D8B] line-clamp-2">{sdk.description || '-'}</div>

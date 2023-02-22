@@ -108,8 +108,7 @@ export default function DB({ content, type }: Props) {
   useEffect(() => {
     void getFetcher('/env')
       // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .then(x => setEnvOpts(x))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,7 +138,7 @@ export default function DB({ content, type }: Props) {
   const { modal } = App.useApp()
   const onCreateSqlite = async () => {
     sqlLiteInputValue.current = ''
-    const modal = modal.confirm({
+    const _modal = modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input
@@ -151,11 +150,11 @@ export default function DB({ content, type }: Props) {
         />
       ),
       footer: (
-        <div className="flex justify-end mt-2 common-form">
+        <div className="flex mt-2 justify-end common-form">
           <Button
             className="btn-cancel"
             onClick={() => {
-              modal.destroy()
+              _modal.destroy()
             }}
           >
             <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
@@ -181,7 +180,7 @@ export default function DB({ content, type }: Props) {
                   return
                 }
                 setUploadPath(dbName + '.db')
-                modal.destroy()
+                _modal.destroy()
               } finally {
                 hide()
               }
@@ -383,23 +382,6 @@ export default function DB({ content, type }: Props) {
     setViewerForm(initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValue])
-
-  //是否开启数据源开关回调
-  const connectSwitchOnChange = (isChecked: boolean) => {
-    void requests
-      .put('/dataSource', {
-        ...content,
-        switch: isChecked == true ? 0 : 1
-      })
-      .then(() => {
-        handleSave({
-          ...content,
-          switch: isChecked == true ? 0 : 1
-        })
-      })
-  }
-
-  //编辑页面逻辑
 
   //表单提交成功回调
   const { loading, fun: onFinish } = useLock(

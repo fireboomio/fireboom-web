@@ -37,10 +37,10 @@ export interface APIDesc {
   setting: {
     enable: boolean
     authenticationRequired: boolean
-    cachingEnable: boolean
+    cachingEnabled: boolean
     cachingMaxAge: number
     cachingStaleWhileRevalidate: number
-    liveQueryEnable: boolean
+    liveQueryEnabled: boolean
     liveQueryPollingIntervalSeconds: number
   }
 }
@@ -178,7 +178,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
     })
   },
   changeEnable: (enable: boolean) => {
-    return requests.put(`/operateApi/switch/${get().apiID}`, { enable }).then(resp => {
+    return requests.put(`/operateApi/enable/${get().apiID}`, { enable }).then(resp => {
       get().pureUpdateAPI({ enable })
       // 刷新api列表
       void mutateApi()

@@ -744,7 +744,7 @@ const FlowChart = ({
       // },
       component: (
         <div
-          className="rounded-xl h-5 text-xs text-center px-1 leading-5 cursor-pointer"
+          className="rounded-xl cursor-pointer h-5 text-xs text-center px-1 leading-5"
           style={{
             border: `1px solid rgb(233, 46, 94)`,
             background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
@@ -848,7 +848,7 @@ const FlowChart = ({
     const loopEndPoint = y - 6
 
     // 轮询
-    if (apiSetting.liveQueryEnable) {
+    if (apiSetting.liveQueryEnabled) {
       const centerY = (loopEndPoint - loopStartPoint) / 2 + loopStartPoint
       const flowHook = hookState.mockResolve.enable
       // 开始

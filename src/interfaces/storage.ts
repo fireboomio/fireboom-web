@@ -8,8 +8,8 @@ export interface StorageT {
   id?: number
   name: string
   config: StorageConfig
-  isDel: number
-  switch: number
+  enabled: number
+  deleteTime: string
 }
 
 export interface StorageConfig {

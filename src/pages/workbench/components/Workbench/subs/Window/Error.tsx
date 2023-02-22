@@ -25,7 +25,7 @@ type Block = {
     name: string
     icon: string
     msg: string
-    switch: boolean
+    enabled: boolean
   }[]
 }
 export default function Error() {
@@ -81,13 +81,13 @@ export default function Error() {
   async function closeDatasource(id: number) {
     const res = await requests.get<unknown, any>(`/dataSource/${id}`)
     if (res?.id) {
-      await requests.put(`/dataSource`, { ...res, switch: 0 })
+      await requests.put(`/dataSource`, { ...res, enabled: false })
       void mutateDataSource()
     }
   }
 
   async function closeAPI(id: number) {
-    await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enable: false })
+    await requests.put<unknown, any>(`/operateApi/enable/${id}`, { enable: false })
     events.emit({
       event: 'apiEnableChange',
       data: { ids: [id], enable: false }
@@ -97,14 +97,14 @@ export default function Error() {
   async function closeAuth(id: number) {
     const res = await requests.get<unknown, any>(`/auth/${id}`)
     if (res?.id) {
-      await requests.put(`/auth`, { ...res, switch: 0 })
+      await requests.put(`/auth`, { ...res, enabled: false })
       void mutateAuth()
     }
   }
   async function closeStorage(id: number) {
     const res = await requests.get<unknown, any>(`/storageBucket/${id}`)
     if (res?.id) {
-      await requests.put(`/storageBucket`, { ...res, switch: 0 })
+      await requests.put(`/storageBucket`, { ...res, enabled: false })
       void mutateStorage()
     }
   }
@@ -155,7 +155,7 @@ export default function Error() {
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="编辑" />
-                      {item.switch && (
+                      {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeAPI(item.id)}>
@@ -178,7 +178,7 @@ export default function Error() {
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="编辑" />
-                      {item.switch && (
+                      {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeAuth(item.id)}>
@@ -201,7 +201,7 @@ export default function Error() {
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="编辑" />
-                      {item.switch && (
+                      {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeStorage(item.id)}>
@@ -226,7 +226,7 @@ export default function Error() {
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="编辑" />
-                      {item.switch && (
+                      {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
                           <span className={styles.action} onClick={() => closeStorage(item.id)}>

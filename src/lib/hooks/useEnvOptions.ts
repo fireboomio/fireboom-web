@@ -10,8 +10,8 @@ export default function useEnvOptions() {
     }[]
   >('/env', url =>
     requests
-      .get<unknown, Array<{ isDel: number; key: string }>>(url)
-      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      .get<unknown, Array<{ deleteTime: string; key: string }>>(url)
+      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
   )
   return envOptions
 }

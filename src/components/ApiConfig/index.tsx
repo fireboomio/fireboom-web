@@ -23,10 +23,10 @@ interface Setting {
   authenticationQueriesRequired: boolean
   authenticationMutationsRequired: boolean
   authenticationSubscriptionsRequired: boolean
-  cachingEnable: boolean
+  cachingEnabled: boolean
   cachingMaxAge: number
   cachingStaleWhileRevalidate: number
-  liveQueryEnable: boolean
+  liveQueryEnabled: boolean
   liveQueryPollingIntervalSeconds: number
 }
 
@@ -89,7 +89,7 @@ export default function Index(props: Props) {
       })
       .then(() => {
         // 如果修改的是实时查询，则需要刷新api面板=
-        if (changedValues.liveQueryEnable !== undefined) {
+        if (changedValues.liveQueryEnabled !== undefined) {
           void mutateApi()
           refreshAPI()
         }
@@ -243,7 +243,7 @@ export default function Index(props: Props) {
 
               <Form.Item label={intl.formatMessage({ defaultMessage: '查询缓存' })}>
                 <>
-                  <Form.Item noStyle name="cachingEnable" valuePropName="checked">
+                  <Form.Item noStyle name="cachingEnabled" valuePropName="checked">
                     <Switch
                       disabled={disabled}
                       checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
@@ -287,7 +287,7 @@ export default function Index(props: Props) {
 
               <Form.Item label={intl.formatMessage({ defaultMessage: '实时查询' })}>
                 <>
-                  <Form.Item noStyle name="liveQueryEnable" valuePropName="checked">
+                  <Form.Item noStyle name="liveQueryEnabled" valuePropName="checked">
                     <Switch
                       disabled={disabled}
                       checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}

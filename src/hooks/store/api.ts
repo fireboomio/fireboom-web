@@ -9,10 +9,10 @@ interface ApiSetting {
   authenticationQueriesRequired: boolean
   authenticationMutationsRequired: boolean
   authenticationSubscriptionsRequired: boolean
-  cachingEnable: boolean
+  cachingEnabled: boolean
   cachingMaxAge: number
   cachingStaleWhileRevalidate: number
-  liveQueryEnable: boolean
+  liveQueryEnabled: boolean
   liveQueryPollingIntervalSeconds: number
 }
 export function useApiGlobalSetting() {

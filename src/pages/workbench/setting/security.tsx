@@ -12,7 +12,7 @@ import tipGraphql from './components/subs/assets/tip-graphql.png'
 import styles from './components/subs/subs.module.less'
 
 interface SecurConfig {
-  allowedHostsEnable: boolean
+  allowedHostsEnabled: boolean
   enableGraphQLEndpoint: boolean
   allowedHosts: Array<string>
 }
@@ -258,10 +258,10 @@ export default function SettingMainSecurity() {
             >
               <Switch
                 className={styles['switch-edit-btn']}
-                checked={securConfig.allowedHostsEnable}
+                checked={securConfig.allowedHostsEnabled}
                 size="small"
                 onChange={isChecked => {
-                  void postRequest('allowedHostsEnable', isChecked).then(() => {
+                  void postRequest('allowedHostsEnabled', isChecked).then(() => {
                     setRefreshFlag(!refreshFlag)
                   })
                 }}
@@ -270,7 +270,7 @@ export default function SettingMainSecurity() {
                 {intl.formatMessage({ defaultMessage: '允许全部' })}
               </span>
             </Form.Item>
-            {!securConfig.allowedHostsEnable && (
+            {!securConfig.allowedHostsEnabled && (
               <Form.Item
                 wrapperCol={{
                   offset: 4,

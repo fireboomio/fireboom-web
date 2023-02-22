@@ -16,7 +16,7 @@ export interface DatasourceResp {
   id: number
   name: string
   sourceType: number
-  switch: number
+  enabled: boolean
   config: Record<string, string | number | Record<string, any> | undefined>
 }
 

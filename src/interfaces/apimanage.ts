@@ -76,7 +76,7 @@ export type HookName =
 export interface HookResp {
   fileName: string
   content: string
-  hookSwitch: boolean
+  enabled: boolean
   hookName: HookName
 }
 
@@ -87,9 +87,9 @@ export interface MockResp {
 
 export interface SettingResp {
   authenticationRequired?: boolean
-  cachingEnable?: boolean
+  cachingEnabled?: boolean
   cachingMaxAge?: number
   cachingStaleWhileRevalidate?: number
-  liveQueryEnable?: boolean
+  liveQueryEnabled?: boolean
   liveQueryPollingIntervalSeconds?: number
 }
