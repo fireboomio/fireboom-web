@@ -118,49 +118,6 @@ export default function Index(props: PropsWithChildren) {
     const signal = controller.signal
     const headers = new Headers()
     headers.set('X-FB-Authentication', getAuthKey() ?? '')
-    // fetch(`/api/v1/wdg/state`, { signal, headers }).then(res => {
-    //   const reader = res.body?.getReader()
-    //   if (!reader) return
-    //
-    //   // @ts-ignore
-    //   const process = ({ value, done }) => {
-    //     if (done) return
-    //
-    //     try {
-    //       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    //       const data = new Response(value)
-    //       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    //       void data.text().then(res => {
-    //         const status = matchJson(res).pop()
-    //         status.engineStatus = ServiceStatus.Running
-    //         if (status) {
-    //           setInfo(status)
-    //           // 发生变化才通知
-    //           if (prevStatus.current) {
-    //             if (status.engineStatus === ServiceStatus.Running) {
-    //               events.emit({ event: 'compileFinish' })
-    //             } else if (
-    //               status.engineStatus === ServiceStatus.CompileFail ||
-    //               status.engineStatus === ServiceStatus.StartFail
-    //             ) {
-    //               events.emit({ event: 'compileFail' })
-    //             }
-    //           }
-    //           prevStatus.current = status
-    //         }
-    //       })
-    //     } catch (error) {
-    //       // eslint-disable-next-line no-console
-    //       console.log(error)
-    //     }
-    //
-    //     // @ts-ignore
-    //     void reader.read().then(process)
-    //   }
-    //
-    //   // @ts-ignore
-    //   void reader.read().then(process)
-    // })
 
     return () => {
       controller.abort()

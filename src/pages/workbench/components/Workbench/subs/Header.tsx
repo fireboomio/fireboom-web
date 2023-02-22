@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
@@ -131,9 +132,13 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     const unbind2 = registerHotkeyHandler('alt+h,^+h', () => {
       showHotkey()
     })
+    const unbind3 = registerHotkeyHandler('alt+k,^+k', () => {
+      events.emit({ event: 'openApiSearch' })
+    })
     return () => {
       unbind1()
       unbind2()
+      unbind3()
     }
   }, [])
   return (

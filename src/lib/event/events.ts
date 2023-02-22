@@ -33,6 +33,9 @@ type CompileFinishEvent = {
 type CompileFailEvent = {
   event: 'compileFail'
 }
+type OpenApiSearchEvent = {
+  event: 'openApiSearch'
+}
 
 type EventTypes =
   | TitleChangeEvent
@@ -41,6 +44,7 @@ type EventTypes =
   | WsEvent
   | ApiEnableChangeEvent
   | BroadCastEvent
+  | OpenApiSearchEvent
 
 const events = new EventEmitter<any, EventTypes>()
 
@@ -50,6 +54,7 @@ export function useEventBus(event: 'titleChange', cb: EventHandler<TitleChangeEv
 export function useEventBus(event: 'apiEnableChange', cb: EventHandler<ApiEnableChangeEvent>): void
 export function useEventBus(event: 'compileFinish', cb: EventHandler<CompileFinishEvent>): void
 export function useEventBus(event: 'compileFail', cb: EventHandler<CompileFailEvent>): void
+export function useEventBus(event: 'openApiSearch', cb: EventHandler<OpenApiSearchEvent>): void
 export function useEventBus(event: 'wsEvent', cb: EventHandler<WsEvent>): void
 export function useEventBus(event: 'broadcastEvent', cb: EventHandler<BroadCastEvent>): void
 export function useEventBus(event: string, cb: EventHandler) {

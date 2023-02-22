@@ -8,9 +8,10 @@ import { useRoutes } from 'react-router-dom'
 
 import routes from '~react-pages'
 
-import { useAppIntl } from './providers/IntlProvider'
 // import Layout from './components/layout'
 // import Workbench from './components/workbench'
+import ApiSearch from './components/ApiSearch'
+import { useAppIntl } from './providers/IntlProvider'
 
 export default function App() {
   const { locale } = useAppIntl()
@@ -23,6 +24,7 @@ export default function App() {
         }
       }}
     >
+      <ApiSearch />
       <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
     </ConfigProvider>
   )

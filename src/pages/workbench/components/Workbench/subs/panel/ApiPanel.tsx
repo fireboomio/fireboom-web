@@ -97,6 +97,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           const currentNode = getNodeById(pathId, treeData)
           if (currentNode) {
             setMultiSelection([currentNode.key])
+            openApi(treeData, pathId)
           }
         }
       }
@@ -624,9 +625,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }}
       action={
         <>
-          {/*<Tooltip title="筛选" >*/}
-          {/*  <div className={styles.headerFilter} />*/}
-          {/*</Tooltip>*/}
+          <Tooltip title="筛选">
+            <div
+              className={styles.headerFilter}
+              onClick={() => {
+                events.emit({ event: 'openApiSearch' })
+              }}
+            />
+          </Tooltip>
           <Tooltip title={intl.formatMessage({ defaultMessage: '刷新列表' })}>
             <div
               className={styles.headerRefresh}
