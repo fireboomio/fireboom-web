@@ -172,7 +172,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType !== 4 ? (
               <Switch
                 loading={loading}
-                checked={content?.enabled === 1}
+                checked={content?.enabled}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                 unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                 onChange={toggleOpen}
