@@ -12,7 +12,7 @@ import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
 
 interface SecurityConfig {
-  allowedHostsEnable: boolean
+  allowedHostsEnabled: boolean
   enableGraphQLEndpoint: boolean
   allowedHosts: Array<string>
 }
@@ -21,7 +21,7 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const { config, refreshConfig } = useConfigContext()
   const [form] = Form.useForm()
-  const allowedHostsEnable = Form.useWatch('allowedHostsEnable', form)
+  const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
   const { data: securityConfig, mutate: mutateSecurityConfig } = useSWRImmutable<SecurityConfig>(
     '/setting/securityConfig',
     requests.get
@@ -97,7 +97,7 @@ export default function SettingMainVersion() {
             rootClassName: 'max-w-80vw max-h-80vh'
           }}
           label={intl.formatMessage({ defaultMessage: '允许主机' })}
-          name="allowedHostsEnable"
+          name="allowedHostsEnabled"
           valuePropName="checked"
         >
           <Switch />
@@ -107,7 +107,7 @@ export default function SettingMainVersion() {
             <>
               {fields.map((field, index) => (
                 <Form.Item
-                  hidden={allowedHostsEnable}
+                  hidden={allowedHostsEnabled}
                   label={intl.formatMessage({ defaultMessage: '允许HOST' }) + (index + 1)}
                   key={field.key}
                 >
@@ -120,7 +120,7 @@ export default function SettingMainVersion() {
                   />
                 </Form.Item>
               ))}
-              <Form.Item wrapperCol={{ offset: 5, span: 12 }} hidden={allowedHostsEnable}>
+              <Form.Item wrapperCol={{ offset: 5, span: 12 }} hidden={allowedHostsEnabled}>
                 <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
                   {intl.formatMessage({ defaultMessage: '增加允许HOST' })}
                 </Button>
