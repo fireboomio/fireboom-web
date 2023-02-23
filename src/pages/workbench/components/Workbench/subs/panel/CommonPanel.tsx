@@ -96,7 +96,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           name: row.name,
           icon,
           tip,
-          switch: !!row.switchState?.length,
+          enabled: !!row.switchState?.length,
           _row: row,
           svg: '/assets/icon/oidc.svg'
         }
