@@ -1,18 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import type { RadioChangeEvent } from 'antd'
-import { Alert, Descriptions, Input, Radio, Switch } from 'antd'
+import { Button, Form, Input, message, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { useEffect } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
+import UrlInput from '@/components/UrlInput'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
-
-import styles from './components/subs/subs.module.less'
-
-dayjs.extend(duration)
+import styles from '@/pages/workbench/setting/components/subs/subs.module.less'
 
 interface systemConfig {
   apiAddr: string
@@ -33,43 +30,39 @@ interface Runtime {
 }
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const [isApiHostEditing, setIsApiHostEditing] = useImmer(false)
-  const [isListenHostEditing, setisListenHostEditing] = useImmer(false)
-  const [isListenPortEditing, setIsListenPortEditing] = useImmer(false)
-  const [systemConfig, setSystemConfig] = useImmer({} as systemConfig)
+  const { config, refreshConfig } = useConfigContext()
   const [count, setCount] = useImmer(0)
-  const [refreshFlag, setRefreshFlag] = useState<boolean | null | undefined>()
-  // const [value, setValue] = useState(true)
-
   useEffect(() => {
-    void requests.get<unknown, systemConfig>('/setting/systemConfig').then(res => {
-      setSystemConfig(res)
+    void requests.get<unknown, string>('/setting/getTime').then(res => {
+      const count = Date.parse(res)
+      setCount(count)
     })
-  }, [refreshFlag])
-
-  useEffect(() => {
-    void requests
-      .get<unknown, string>('/setting/getTime')
-      .then(res => {
-        const count = Date.parse(res)
-        setCount(count)
-      })
-      .then(() => {
-        setRefreshFlag(!refreshFlag)
-      })
-  }, [])
-
-  useEffect(() => {
     const timer = setInterval(() => setCount(count => count + 1), 1000)
     return () => {
       clearInterval(timer)
     }
   }, [])
 
-  const onChange = (e: RadioChangeEvent, key: string) => {
-    void requests.post('/setting', { key: key, val: e.target.value as boolean }).then(() => {
-      setRefreshFlag(!refreshFlag)
-    })
+  const [form] = Form.useForm()
+
+  function onFinish(values: any) {
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
+    Promise.all(
+      Object.keys(values).map(key => {
+        // @ts-ignore
+        if (values[key] !== config[key]) {
+          return requests.post('/setting', { key: key, val: values[key] })
+        }
+      })
+    )
+      .then(() => {
+        refreshConfig()
+        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+      })
+      .catch(() => {
+        message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+      })
+      .finally(hide)
   }
 
   const calTime = (initTime: string) => {
@@ -86,219 +79,59 @@ export default function SettingMainVersion() {
       }
     )
   }
-
-  const editPort = (key: string, value: string) => {
-    if (value == '' && !['apiAddr'].includes(key)) return
-    void requests.post('/setting', { key: key, val: value }).then(() => {
-      setRefreshFlag(!refreshFlag)
-    })
-  }
   return (
-    <>
-      {systemConfig.apiAddr ? (
-        <div className="pt-8 pl-8">
-          <Descriptions
-            colon
-            column={1}
-            className={styles['descriptions-box']}
-            labelStyle={{
-              width: '15%'
-            }}
-          >
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
-              {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({ defaultMessage: 'API地址' })}
-              className="w-20"
-            >
-              {isApiHostEditing ? (
-                <Input
-                  defaultValue={systemConfig.apiAddr}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setIsApiHostEditing(!isApiHostEditing)
-                    void editPort('apiAddr', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsApiHostEditing(!isApiHostEditing)
-                    void editPort('apiAddr', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.apiAddr}</span>
-              )}
-              <img
-                alt="bianji"
-                src="assets/iconfont/bianji.svg"
-                style={{ height: '1em', width: '1em' }}
-                className="ml-2"
-                onClick={() => {
-                  setIsApiHostEditing(!isApiHostEditing)
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
-              className="w-20"
-            >
-              {isListenHostEditing ? (
-                <Input
-                  defaultValue={systemConfig.listenHost}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setisListenHostEditing(!isListenHostEditing)
-                    void editPort('listenHost', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setisListenHostEditing(!isListenHostEditing)
-                    void editPort('listenHost', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.listenHost}</span>
-              )}
-              <img
-                alt="bianji"
-                src="assets/iconfont/bianji.svg"
-                style={{ height: '1em', width: '1em' }}
-                className="ml-2"
-                onClick={() => {
-                  setisListenHostEditing(!isListenHostEditing)
-                }}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={intl.formatMessage({ defaultMessage: '服务器监听端口' })}
-              className="w-20"
-            >
-              {isListenPortEditing ? (
-                <Input
-                  defaultValue={systemConfig.listenPort}
-                  autoFocus
-                  style={{ width: '300px', height: '24px', paddingLeft: '6px' }}
-                  type="text"
-                  onBlur={e => {
-                    setIsListenPortEditing(!isListenPortEditing)
-                    void editPort('listenPort', e.target.value)
-                  }}
-                  onPressEnter={e => {
-                    setIsListenPortEditing(!isListenPortEditing)
-                    void editPort('listenPort', e.currentTarget.value)
-                  }}
-                />
-              ) : (
-                <span>{systemConfig.listenPort}</span>
-              )}
-              <img
-                alt="bianji"
-                src="assets/iconfont/bianji.svg"
-                style={{ height: '1em', width: '1em' }}
-                className="ml-2"
-                onClick={() => {
-                  setIsListenPortEditing(!isListenPortEditing)
-                }}
-              />
-            </Descriptions.Item>
-            {/*<Descriptions.Item label="中间件端口:">*/}
-            {/*  {isMidPortEditing ? (*/}
-            {/*    <Input*/}
-            {/*      defaultValue={systemConfig.middlewarePort}*/}
-            {/*      autoFocus*/}
-            {/*      type="text"*/}
-            {/*      style={{ width: '300px', height: '24px', paddingLeft: '6px' }}*/}
-            {/*      onBlur={e => {*/}
-            {/*        setIsMidPortEditing(!isMidPortEditing)*/}
-            {/*        void editPort('middlewarePort', e.target.value)*/}
-            {/*      }}*/}
-            {/*      onPressEnter={e => {*/}
-            {/*        setIsMidPortEditing(!isMidPortEditing)*/}
-            {/*        void editPort('middlewarePort', e.currentTarget.value)*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  ) : (*/}
-            {/*    <span>{systemConfig.middlewarePort}</span>*/}
-            {/*  )}*/}
-            {/*  <img alt="bianji" src="assets/iconfont/bianji.svg" style={{height:'1em', width: '1em'}}*/}
-            {/*    className="ml-2"*/}
-            {/*    onClick={() => {*/}
-            {/*      setIsMidPortEditing(!isMidPortEditing)*/}
-            {/*    }}*/}
-            {/*  />*/}
-            {/*</Descriptions.Item>*/}
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '日志水平' })}>
-              <Radio.Group
-                value={systemConfig.logLevel}
-                onChange={e => {
-                  onChange(e, 'logLevel')
-                }}
-              >
-                <Radio value={-1}>Debug</Radio>
-                <Radio value={0}>Info</Radio>
-                <Radio value={1}>Warn</Radio>
-                <Radio value={2}>Error</Radio>
-                {/* <Radio value={5}>Fatal</Radio> */}
-              </Radio.Group>
-            </Descriptions.Item>
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '调试' })}>
-              <Switch
-                onChange={value => {
-                  void requests
-                    .post('/setting', {
-                      key: 'debugSwitch',
-                      val: value
-                    })
-                    .then(() => {
-                      setRefreshFlag(!refreshFlag)
-                    })
-                }}
-                defaultChecked={systemConfig.debugSwitch}
-                className={styles['switch-edit-btn']}
-                size="small"
-              />
-            </Descriptions.Item>
-            {!systemConfig.devSwitch ? (
-              <Descriptions.Item label={intl.formatMessage({ defaultMessage: '强制跳转' })}>
-                <Switch
-                  checked={systemConfig.forcedJumpSwitch}
-                  className={styles['switch-edit-btn']}
-                  size="small"
-                  onChange={value => {
-                    void requests
-                      .post('/setting', {
-                        key: 'forcedJumpSwitch',
-                        val: value
-                      })
-                      .then(() => {
-                        setRefreshFlag(!refreshFlag)
-                      })
-                  }}
-                />
-              </Descriptions.Item>
-            ) : null}
-          </Descriptions>
-
-          <div className="w-2/3">
-            {/*<button*/}
-            {/*  className={styles['edit-btn']}*/}
-            {/*  onClick={() => {*/}
-            {/*    void requests.get('/engine/reStart')*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <span>重启</span>*/}
-            {/*</button>*/}
-            <Alert
-              message={intl.formatMessage({ defaultMessage: '修改设置后，请重新编译' })}
-              type="warning"
-              showIcon
-            />
-          </div>
-        </div>
-      ) : null}
-    </>
+    <div className="pt-6">
+      <Form
+        className="common-form"
+        form={form}
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 12 }}
+        onFinish={onFinish}
+        labelAlign="right"
+        initialValues={config}
+      >
+        <Form.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
+          {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
+        </Form.Item>
+        <Form.Item label={intl.formatMessage({ defaultMessage: 'API地址' })} name="apiAddr">
+          <UrlInput />
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
+          name="listenHost"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '服务器监听端口' })}
+          name="listenPort"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item label={intl.formatMessage({ defaultMessage: '日志水平' })} name="logLevel">
+          <Radio.Group>
+            <Radio value={-1}>Debug</Radio>
+            <Radio value={0}>Info</Radio>
+            <Radio value={1}>Warn</Radio>
+            <Radio value={2}>Error</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '调试' })}
+          name="debugSwitch"
+          valuePropName="checked"
+        >
+          <Switch className={styles['switch-edit-btn']} size="small" />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
+          <Button className={'btn-cancel mr-4'} onClick={() => form.resetFields()}>
+            <FormattedMessage defaultMessage="重置" />
+          </Button>
+          <Button className={'btn-save'} onClick={form.submit}>
+            <FormattedMessage defaultMessage="保存" />
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   )
 }

@@ -389,8 +389,8 @@ const DependList = (props: DependListProps) => {
   // 当hookInfo更新时，自动更新钩子树中对应钩子的状态
   useEffect(() => {
     setEnableMap(map => {
-      if (props.hookInfo?.path) {
-        map[props.hookInfo?.path] = props.hookInfo?.switch
+      if (props.hookPath) {
+        map[props.hookPath] = !!props.hookInfo?.switch
       }
     })
   }, [props.hookInfo])

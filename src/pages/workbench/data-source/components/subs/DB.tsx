@@ -1,5 +1,4 @@
 import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
-import type { NotificationPlacement } from 'antd/lib/notification'
 import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -139,7 +138,7 @@ export default function DB({ content, type }: Props) {
   const { modal } = App.useApp()
   const onCreateSqlite = async () => {
     sqlLiteInputValue.current = ''
-    const modal = modal.confirm({
+    const _modal = modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入名称' }),
       content: (
         <Input
@@ -155,7 +154,7 @@ export default function DB({ content, type }: Props) {
           <Button
             className="btn-cancel"
             onClick={() => {
-              modal.destroy()
+              _modal.destroy()
             }}
           >
             <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>
@@ -476,7 +475,7 @@ export default function DB({ content, type }: Props) {
   }
 
   //测试连接 成功与失败提示
-  const testLink = (placement: NotificationPlacement) => {
+  const testLink = () => {
     const newValues = { ...config, ...form.getFieldsValue() }
     if (newValues.databaseUrl === undefined) {
       newValues.databaseUrl = {}

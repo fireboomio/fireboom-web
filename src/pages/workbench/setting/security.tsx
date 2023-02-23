@@ -1,363 +1,169 @@
-import { PlusOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Select, Switch } from 'antd'
-import { useContext, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { MinusCircleOutlined } from '@ant-design/icons'
+import { Button, Form, message, Switch } from 'antd'
+import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useImmer } from 'use-immer'
+import useSWRImmutable from 'swr/immutable'
 
-import FormToolTip from '@/components/common/FormTooltip'
-import { ConfigContext } from '@/lib/context/ConfigContext'
+import UrlInput from '@/components/UrlInput'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
+import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
 
-import tipGraphql from './components/subs/assets/tip-graphql.png'
-import styles from './components/subs/subs.module.less'
-
-interface SecurConfig {
+interface SecurityConfig {
   allowedHostsEnable: boolean
   enableGraphQLEndpoint: boolean
   allowedHosts: Array<string>
 }
 
-const formItemLayoutWithOutLabel = {
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 }
-  }
-}
-
-function AuthMainSetting() {
+export default function SettingMainVersion() {
   const intl = useIntl()
-  const [redirectURLs, setRedirectURLs] = useImmer<string[]>([])
-  const [redirectURLsShow, setRedirectURLsShow] = useImmer(false)
+  const { config, refreshConfig } = useConfigContext()
   const [form] = Form.useForm()
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  useEffect(() => {
-    void requests.get<unknown, string[]>('/auth/redirectUrl').then(res => {
-      setRedirectURLs(res)
-      setRedirectURLsShow(true)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
-
-  return (
-    <>
-      {redirectURLsShow ? (
-        <div className={`${styles['form-contain']} `}>
-          <Form
-            form={form}
-            initialValues={{ redirectURLs: redirectURLs }}
-            labelAlign="left"
-            labelCol={{
-              xs: { span: 4 },
-              sm: { span: 4 }
-            }}
-            wrapperCol={{
-              xs: { span: 10 },
-              sm: { span: 9 }
-            }}
-          >
-            <Form.Item
-              label={intl.formatMessage({ defaultMessage: '重定向URL' })}
-              wrapperCol={{
-                xs: { span: 20 },
-                sm: { span: 20 }
-              }}
-            >
-              <Form.List name="redirectURLs">
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => {
-                      const current = form.getFieldValue(['redirectURLs', field.name]) || 'https://'
-                      const setFieldValue = (part: 'protocol' | 'path', value: string) => {
-                        let [, protocol = 'https://', path = ''] =
-                          current?.match(/(^https?:\/\/)(.*)/) || []
-                        if (part === 'protocol') {
-                          protocol = value
-                        } else {
-                          path = value
-                        }
-                        const url = `${protocol}${path}`
-                        form.setFieldValue(['redirectURLs', field.name], url)
-                        if (part === 'protocol') {
-                          doSave()
-                        }
-                      }
-                      const doSave = () => {
-                        const urlList = (
-                          form.getFieldValue('redirectURLs') as Array<string>
-                        ).filter(url => url?.replace(/https?:\/\//, '').trim())
-                        // 不用过滤后的数据进行覆盖，以防止用户输入过程中的数据被丢弃
-                        // form.setFieldValue('redirectURLs', urlList)
-                        void requests
-                          .post('/auth/redirectUrl', {
-                            redirectURLs: urlList
-                          })
-                          .then(() => {
-                            setRefreshFlag(!refreshFlag)
-                          })
-                      }
-                      return (
-                        <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                          <Form.Item validateTrigger={['onChange', 'onBlur']} noStyle>
-                            <div>
-                              <div>
-                                {intl.formatMessage({ defaultMessage: '域名' }) +
-                                  (index + 1).toString() +
-                                  ':'}
-                              </div>
-                              <Input
-                                addonBefore={
-                                  <Select
-                                    defaultValue={current.match(/^https?:\/\//)?.[0]}
-                                    className="select-before"
-                                    onChange={e => setFieldValue('protocol', e)}
-                                  >
-                                    <Select.Option value="https://">https://</Select.Option>
-                                    <Select.Option value="http://">http://</Select.Option>
-                                  </Select>
-                                }
-                                placeholder={intl.formatMessage({ defaultMessage: '请输入域名' })}
-                                style={{ width: '60%' }}
-                                onChange={e => setFieldValue('path', e.target.value)}
-                                defaultValue={current.replace(/^https?:\/\//, '')}
-                                onBlur={doSave}
-                                onPressEnter={doSave}
-                              />
-
-                              <span
-                                className={`${styles['form-delete-icon']}`}
-                                onClick={() => {
-                                  void requests
-                                    .post('/auth/redirectUrl', {
-                                      redirectURLs: (
-                                        form.getFieldValue('redirectURLs') as Array<string>
-                                      ).filter((_, i) => i != index)
-                                    })
-                                    .then(() => {
-                                      remove(index)
-                                      setRefreshFlag(!refreshFlag)
-                                    })
-                                }}
-                              >
-                                <img src="/assets/deleteIcon.svg" alt=" " />
-                              </span>
-                            </div>
-                          </Form.Item>
-                        </Form.Item>
-                      )
-                    })}
-                    <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
-                      <Button
-                        type="dashed"
-                        style={{ width: '48%' }}
-                        icon={<PlusOutlined />}
-                        className="text-gray-500/60"
-                        onClick={() => add()}
-                      >
-                        <FormattedMessage defaultMessage="新增URL" />
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
-            </Form.Item>
-          </Form>
-        </div>
-      ) : null}
-    </>
+  const allowedHostsEnable = Form.useWatch('allowedHostsEnable', form)
+  const { data: securityConfig, mutate: mutateSecurityConfig } = useSWRImmutable<SecurityConfig>(
+    '/setting/securityConfig',
+    requests.get
   )
-}
+  const { data: redirectUrl, mutate: mutateRedirectUrl } = useSWRImmutable(
+    '/auth/redirectUrl',
+    requests.get
+  )
+  useEffect(() => {
+    form.resetFields()
+  }, [securityConfig, redirectUrl])
 
-export default function SettingMainSecurity() {
-  const intl = useIntl()
-  const [form] = Form.useForm()
-  const [securConfig, setSecurConfig] = useImmer({} as SecurConfig)
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const urlReg = /^(http(s?)|):\/\/(.+)$/
-  const { config: globalConfig } = useContext(ConfigContext)
-
-  const postRequest = async (key: string, value: string | Array<string> | number | boolean) => {
-    await requests.post('/global', {
-      key: key,
-      val: value
-    })
+  function onFinish(values: any) {
+    const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
+    Promise.all(
+      Object.keys(values).map(key => {
+        // @ts-ignore
+        if (key === 'redirectUrl') {
+          if (JSON.stringify(values[key]) !== JSON.stringify(redirectUrl)) {
+            return requests.post('/auth/redirectUrl', {
+              redirectURLs: values.redirectUrl
+            })
+          }
+        } else {
+          // @ts-ignore
+          if (JSON.stringify(values[key]) !== JSON.stringify(securityConfig?.[key])) {
+            return requests.post('/global', { key: key, val: values[key] })
+          }
+        }
+      })
+    )
+      .then(() => {
+        refreshConfig()
+        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+      })
+      .catch(() => {
+        message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+      })
+      .finally(hide)
   }
 
-  useEffect(() => {
-    void requests.get<unknown, SecurConfig>('/setting/securityConfig').then(res => {
-      setSecurConfig(res)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshFlag])
-
   return (
-    <div className="bg-white h-full pt-4 pl-8">
-      {securConfig.allowedHosts ? (
-        <div className={`${styles['security-form-contain']}`}>
-          <Form
-            form={form}
-            name="dynamic_form_item"
-            initialValues={{
-              allowedHosts: securConfig?.allowedHosts,
-              enableGraphQLEndpoint: securConfig.enableGraphQLEndpoint
-            }}
-            labelAlign="left"
-            labelCol={{
-              xs: { span: 4 },
-              sm: { span: 4 }
-            }}
-            wrapperCol={{
-              xs: { span: 10 },
-              sm: { span: 9 }
-            }}
-          >
-            <Form.Item label="GraphQL端点：">
-              <Form.Item
-                // valuePropName="checked"
-                name="enableGraphQLEndpoint"
-                noStyle
-                required
-              >
-                <Switch
-                  disabled={globalConfig.devSwitch}
-                  className={styles['switch-edit-btn']}
-                  checked={securConfig.enableGraphQLEndpoint}
-                  size="small"
-                  onChange={isChecked => {
-                    void postRequest('enableGraphQLEndpoint', isChecked).then(() => {
-                      setRefreshFlag(!refreshFlag)
-                    })
-                  }}
-                />
-              </Form.Item>
-              <span className={styles.setTitle}>
-                <img
-                  alt="zhuyi"
-                  src="assets/iconfont/zhuyi.svg"
-                  style={{ height: '1em', width: '1em' }}
-                  className="mr-1 text-[14px]"
-                />
-                <span>https://localhost:9991/api/main/graphql</span>
-              </span>
-            </Form.Item>
-
-            <Form.Item
-              label={
-                <div>
-                  <span>{intl.formatMessage({ defaultMessage: '允许主机' })}</span>
-                  <FormToolTip
-                    className="!left-4"
-                    title={<img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />}
+    <div className="pt-6">
+      <Form
+        className="common-form"
+        form={form}
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 12 }}
+        onFinish={onFinish}
+        labelAlign="right"
+        initialValues={securityConfig && redirectUrl && ({ ...securityConfig, redirectUrl } as any)}
+      >
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}
+          name="enableGraphQLEndpoint"
+          valuePropName="checked"
+        >
+          <div className="flex items-center">
+            <Switch />
+            <img
+              alt="zhuyi"
+              src="assets/iconfont/zhuyi.svg"
+              className="mr-1 ml-2 h-3 text-[14px]"
+            />
+            <span className="text-[#ff4d4f] text-[12px]">
+              https://localhost:9991/api/main/graphql
+            </span>
+          </div>
+        </Form.Item>
+        <Form.Item
+          tooltip={{
+            title: <img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />,
+            rootClassName: 'max-w-80vw max-h-80vh'
+          }}
+          label={intl.formatMessage({ defaultMessage: '允许主机' })}
+          name="allowedHostsEnable"
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
+        <Form.List name="allowedHosts">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item
+                  hidden={allowedHostsEnable}
+                  label={intl.formatMessage({ defaultMessage: '允许HOST' }) + (index + 1)}
+                  key={field.key}
+                >
+                  <Form.Item {...field} noStyle>
+                    <UrlInput />
+                  </Form.Item>
+                  <MinusCircleOutlined
+                    className="absolute right-0 top-0 mt-2 -mr-6"
+                    onClick={() => remove(field.name)}
                   />
-                </div>
-              }
-              wrapperCol={{
-                xs: { span: 2 },
-                sm: { span: 20 }
-              }}
-            >
-              <Switch
-                className={styles['switch-edit-btn']}
-                checked={securConfig.allowedHostsEnable}
-                size="small"
-                onChange={isChecked => {
-                  void postRequest('allowedHostsEnable', isChecked).then(() => {
-                    setRefreshFlag(!refreshFlag)
-                  })
-                }}
-              />
-              <span className="text-default ml-4">
-                {intl.formatMessage({ defaultMessage: '允许全部' })}
-              </span>
-            </Form.Item>
-            {!securConfig.allowedHostsEnable && (
-              <Form.Item
-                wrapperCol={{
-                  offset: 4,
-                  xs: { span: 2 },
-                  sm: { span: 20 }
-                }}
-              >
-                <Form.List name="allowedHosts">
-                  {(fields, { add, remove }, { errors }) => (
-                    <>
-                      {fields.map((field, index) => (
-                        <Form.Item {...formItemLayoutWithOutLabel} required={false} key={field.key}>
-                          <Form.Item
-                            {...field}
-                            validateTrigger={['onChange', 'onBlur']}
-                            noStyle
-                            rules={[]}
-                          >
-                            <div className="">
-                              <div>{'域名' + (index + 1).toString() + ':'}</div>
-                              <Input
-                                addonBefore="http(s)://"
-                                placeholder="OIDC跳转的回调地址"
-                                style={{ width: '60%' }}
-                                defaultValue={securConfig.allowedHosts[index]}
-                                onBlur={e => {
-                                  if (e.target.value == '') return
-                                  void postRequest(
-                                    'allowedHosts',
-                                    form.getFieldValue('allowedHosts') as Array<string>
-                                  ).then(() => {
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                                }}
-                                onPressEnter={e => {
-                                  // @ts-ignore
-                                  if (e.target.value == '') return
-                                  void postRequest(
-                                    'allowedHosts',
-                                    form.getFieldValue('allowedHosts') as Array<string>
-                                  ).then(() => {
-                                    setRefreshFlag(!refreshFlag)
-                                  })
-                                }}
-                              />
-                              <span
-                                className={`${styles['form-delete-icon']}`}
-                                onClick={() => {
-                                  void requests
-                                    .post('/global', {
-                                      key: 'allowedHosts',
-                                      val: (
-                                        form.getFieldValue('allowedHosts') as Array<string>
-                                      ).filter((_, i) => i != index)
-                                    })
-                                    .then(() => {
-                                      remove(index)
-                                    })
-                                }}
-                              >
-                                <img src="/assets/deleteIcon.svg" alt=" " />
-                              </span>
-                            </div>
-                          </Form.Item>
-                        </Form.Item>
-                      ))}
-                      <Form.Item wrapperCol={{ span: 20 }} className="mt-4">
-                        <Button
-                          type="dashed"
-                          style={{ width: '48%' }}
-                          onClick={() => add()}
-                          icon={<PlusOutlined />}
-                          className="text-gray-500/60"
-                        >
-                          新增HOST
-                        </Button>
-                        <Form.ErrorList errors={errors} />
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
+                </Form.Item>
+              ))}
+              <Form.Item wrapperCol={{ offset: 5, span: 12 }} hidden={allowedHostsEnable}>
+                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                  {intl.formatMessage({ defaultMessage: '增加允许HOST' })}
+                </Button>
+                <Form.ErrorList errors={errors} />
               </Form.Item>
-            )}
-          </Form>
-        </div>
-      ) : null}
-      <AuthMainSetting />
+            </>
+          )}
+        </Form.List>
+        <Form.List name="redirectUrl">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item
+                  label={intl.formatMessage({ defaultMessage: '重定向URL' }) + (index + 1)}
+                  key={field.key}
+                >
+                  <Form.Item {...field} noStyle>
+                    <UrlInput />
+                  </Form.Item>
+                  <MinusCircleOutlined
+                    className="absolute right-0 top-0 mt-2 -mr-6"
+                    onClick={() => remove(field.name)}
+                  />
+                </Form.Item>
+              ))}
+              <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
+                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                  {intl.formatMessage({ defaultMessage: '增加重定向URL' })}
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+        <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
+          <Button className={'btn-cancel mr-4'} onClick={() => form.resetFields()}>
+            <FormattedMessage defaultMessage="重置" />
+          </Button>
+          <Button className={'btn-save'} onClick={form.submit}>
+            <FormattedMessage defaultMessage="保存" />
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

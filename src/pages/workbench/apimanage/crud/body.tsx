@@ -1,16 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Collapse,
-  Form,
-  Input,
-  message,
-  Modal,
-  Popover,
-  Radio,
-  Select,
-  Table
-} from 'antd'
+import { Button, Checkbox, Form, Input, message, Modal, Popover, Radio, Select, Table } from 'antd'
 import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -168,6 +156,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const [showColMap, setShowColMap] = useState<Record<string, boolean>>()
   // api提示的promise对应的resolve，用于实现对话框promise化
   const confirmResolve = useRef<(value: unknown) => void>()
+  const [openMoreField, setOpenMoreField] = useState(false)
   const { data: roles } = useSWRImmutable<{ id: number; code: string; remark: string }[]>(
     '/role',
     (url: string) =>
@@ -684,99 +673,99 @@ export default function CRUDBody(props: CRUDBodyProps) {
         >
           <Input />
         </Form.Item>
-        <Collapse
-          ghost
-          bordered={false}
-          defaultActiveKey={[]}
-          expandIcon={({ isActive }) => (
-            <img
-              alt="xiala"
-              src="assets/iconfont/xiala1.svg"
-              style={{ height: '1em', width: '1em', transform: isActive ? '' : 'rotate(-90deg)' }}
-            />
-          )}
-          className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}
-        >
-          <Collapse.Panel
-            header={intl.formatMessage({ defaultMessage: '更多设置' })}
-            key="1"
-            forceRender
-          >
-            <div className={styles.authContainer}>
-              <Form.Item
-                name="authApiList"
-                label={intl.formatMessage({ defaultMessage: '授权接口' })}
-              >
-                <Checkbox.Group options={apiOptions} />
-              </Form.Item>
-              <Form.Item name="auth" label={intl.formatMessage({ defaultMessage: '登录鉴权' })}>
-                <Radio.Group>
-                  <Radio value={-1}>
-                    <FormattedMessage defaultMessage="默认" />
-                  </Radio>
-                  <Radio value={1}>
-                    <FormattedMessage defaultMessage="开启" />
-                  </Radio>
-                  <Radio value={0}>
-                    <FormattedMessage defaultMessage="关闭" />
-                  </Radio>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-                <Radio.Group>
-                  <Radio value={AuthType.RequireMatchAll}>
-                    <div>
-                      requireMatchAll
-                      <RoleDiagram className="mt-1" rule="requireMatchAll" />
-                    </div>
-                  </Radio>
-                  <Radio value={AuthType.RequireMatchAny}>
-                    <div>
-                      requireMatchAny
-                      <RoleDiagram className="mt-1" rule="requireMatchAny" />
-                    </div>
-                  </Radio>
-                  <Radio value={AuthType.DenyMatchAll}>
-                    <div>
-                      denyMatchAll
-                      <RoleDiagram className="mt-1" rule="denyMatchAll" />
-                    </div>
-                  </Radio>
-                  <Radio value={AuthType.DenyMatchAny}>
-                    <div>
-                      denyMatchAny
-                      <RoleDiagram className="mt-1" rule="denyMatchAny" />
-                    </div>
-                  </Radio>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
-                <Select
-                  className="disable-common-select"
-                  mode="multiple"
-                  showArrow
-                  options={roles ?? []}
-                  fieldNames={{ label: 'full', value: 'code' }}
-                  optionLabelProp="code"
-                />
-              </Form.Item>
-            </div>
-            <Form.Item
-              name="alias"
-              label={intl.formatMessage({ defaultMessage: '别名' })}
-              rules={[
-                {
-                  required: true,
-                  pattern: /^[a-zA-Z0-9_]*$/,
-                  message: intl.formatMessage({ defaultMessage: '请输入字母数字或下划线组合' })
-                }
-              ]}
+        <Form.Item
+          label={
+            <div
+              className="cursor-pointer flex items-center"
+              onClick={() => {
+                setOpenMoreField(!openMoreField)
+              }}
             >
-              <Input />
+              <img
+                alt=""
+                className="w-5"
+                style={{ transform: openMoreField ? '' : 'rotate(-90deg)' }}
+                src="/assets/shape-down.svg"
+              />
+              {intl.formatMessage({ defaultMessage: '更多设置' })}
+            </div>
+          }
+        ></Form.Item>
+        <div style={{ display: openMoreField ? 'block' : 'none' }}>
+          <div className={styles.authContainer}>
+            <Form.Item
+              name="authApiList"
+              label={intl.formatMessage({ defaultMessage: '授权接口' })}
+            >
+              <Checkbox.Group options={apiOptions} />
             </Form.Item>
-          </Collapse.Panel>
-        </Collapse>
-        <Form.Item name="table" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+            <Form.Item name="auth" label={intl.formatMessage({ defaultMessage: '登录鉴权' })}>
+              <Radio.Group>
+                <Radio value={-1}>
+                  <FormattedMessage defaultMessage="默认" />
+                </Radio>
+                <Radio value={1}>
+                  <FormattedMessage defaultMessage="开启" />
+                </Radio>
+                <Radio value={0}>
+                  <FormattedMessage defaultMessage="关闭" />
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="authType" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+              <Radio.Group>
+                <Radio value={AuthType.RequireMatchAll}>
+                  <div>
+                    requireMatchAll
+                    <RoleDiagram className="mt-1" rule="requireMatchAll" />
+                  </div>
+                </Radio>
+                <Radio value={AuthType.RequireMatchAny}>
+                  <div>
+                    requireMatchAny
+                    <RoleDiagram className="mt-1" rule="requireMatchAny" />
+                  </div>
+                </Radio>
+                <Radio value={AuthType.DenyMatchAll}>
+                  <div>
+                    denyMatchAll
+                    <RoleDiagram className="mt-1" rule="denyMatchAll" />
+                  </div>
+                </Radio>
+                <Radio value={AuthType.DenyMatchAny}>
+                  <div>
+                    denyMatchAny
+                    <RoleDiagram className="mt-1" rule="denyMatchAny" />
+                  </div>
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="roleList" wrapperCol={{ offset: 4, xs: { offset: 5 } }}>
+              <Select
+                className="disable-common-select"
+                mode="multiple"
+                showArrow
+                options={roles ?? []}
+                fieldNames={{ label: 'full', value: 'code' }}
+                optionLabelProp="code"
+              />
+            </Form.Item>
+          </div>
+          <Form.Item
+            name="alias"
+            label={intl.formatMessage({ defaultMessage: '别名' })}
+            rules={[
+              {
+                required: true,
+                pattern: /^[a-zA-Z0-9_]*$/,
+                message: intl.formatMessage({ defaultMessage: '请输入字母数字或下划线组合' })
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+        <Form.Item name="table" label={intl.formatMessage({ defaultMessage: '选择字段' })}>
           <Table
             className={styles.table}
             expandable={{
