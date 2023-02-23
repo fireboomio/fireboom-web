@@ -7,10 +7,10 @@ export default function buildApi(
   options: ApiOptions
 ): { path: string; content: string; setting?: string }[] {
   let setting: string | undefined = undefined
-  if (options.auth === AuthOptions.enable) {
-    setting = `{"enable":true,"authenticationRequired":true,"settingType":1}`
-  } else if (options.auth === AuthOptions.disable) {
-    setting = `{"enable":true,"authenticationRequired":false,"settingType":1}`
+  if (options.auth === AuthOptions.enabled) {
+    setting = `{"enabled":true,"authenticationRequired":true,"settingType":1}`
+  } else if (options.auth === AuthOptions.disabled) {
+    setting = `{"enabled":true,"authenticationRequired":false,"settingType":1}`
   }
   return options.apiList.map(api => {
     return {

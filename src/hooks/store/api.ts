@@ -4,15 +4,15 @@ import useSWRImmutable from 'swr/immutable'
 import requests from '@/lib/fetchers'
 
 interface ApiSetting {
-  enable: boolean
+  enabled: boolean
   authenticationRequired: boolean
   authenticationQueriesRequired: boolean
   authenticationMutationsRequired: boolean
   authenticationSubscriptionsRequired: boolean
-  cachingEnable: boolean
+  cachingEnabled: boolean
   cachingMaxAge: number
   cachingStaleWhileRevalidate: number
-  liveQueryEnable: boolean
+  liveQueryEnabled: boolean
   liveQueryPollingIntervalSeconds: number
 }
 export function useApiGlobalSetting() {
@@ -26,7 +26,7 @@ export interface OperationResp {
   remark: string
   isDir: boolean
   liveQuery: boolean
-  enable: boolean
+  enabled: boolean
   inlegal: boolean
   isPublic: boolean
   method: 'GET' | 'POST'

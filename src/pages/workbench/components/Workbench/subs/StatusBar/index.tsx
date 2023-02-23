@@ -69,7 +69,7 @@ const StatusBar: React.FC<Props> = ({
     customer: HookStatus
     default: HookStatus
   }>()
-  const [hookSwitch, setHookSwitch] = useState<number>()
+  const [hookEnabled, setHookEnabled] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { config, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
@@ -81,12 +81,12 @@ const StatusBar: React.FC<Props> = ({
   }, [window.location])
   useEffect(() => {
     if (config.hooksServerURL === webContainerUrl) {
-      setHookSwitch(1)
+      setHookEnabled(1)
       setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
     } else {
       setHooksServerURL(config.hooksServerURL)
       localStorage.setItem('hooksServerURL', config.hooksServerURL)
-      setHookSwitch(3)
+      setHookEnabled(3)
     }
   }, [config.hooksServerURL, showHookSetting])
   useEffect(() => {
@@ -220,7 +220,7 @@ const StatusBar: React.FC<Props> = ({
             <div
               className="flex h-full items-center"
               onClick={() => {
-                if (hookSwitch === 1) {
+                if (hookEnabled === 1) {
                   onlineDebug()
                 }
                 // setShowHookSetting(true)
@@ -253,7 +253,7 @@ const StatusBar: React.FC<Props> = ({
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
               <div className={styles.hookEntry}>
-                {hookSwitch === 1 ? 'WebContainer' : config.hooksServerURL}
+                {hookEnabled === 1 ? 'WebContainer' : config.hooksServerURL}
               </div>
               <div
                 className="mr-5px ml-8px"
@@ -279,7 +279,7 @@ const StatusBar: React.FC<Props> = ({
                 >
                   <Radio.Group
                     onChange={e => {
-                      setHookSwitch(e.target.value)
+                      setHookEnabled(e.target.value)
                       const map: Record<string, string | undefined> = {
                         '1': webContainerUrl,
                         '3': hooksServerURL
@@ -299,7 +299,7 @@ const StatusBar: React.FC<Props> = ({
                       //   saveHookServerURL('')
                       // }
                     }}
-                    value={hookSwitch}
+                    value={hookEnabled}
                   >
                     <Space direction="vertical">
                       <Radio value={1}>
@@ -336,7 +336,7 @@ const StatusBar: React.FC<Props> = ({
                       selectClassName="!z-13000"
                       value={hooksServerURL}
                       onChange={val => {
-                        if (hookSwitch === 3) {
+                        if (hookEnabled === 3) {
                           saveHookServerURL(val)
                         }
                         setHooksServerURL(val)

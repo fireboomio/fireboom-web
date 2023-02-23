@@ -17,8 +17,8 @@ export interface Storage {
   id?: number
   name: string
   config: StorageConfig
-  isDel: number
-  switch: number
+  enabled: number
+  deteleTime?: String
 }
 
 export function useStorageList() {

@@ -3,6 +3,7 @@ import { Input, Radio } from 'antd'
 import clsx from 'clsx'
 import { curry, flatMapDeep, get, omit, values } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { Close, File, Filter, Search } from '@/components/icons'
@@ -54,7 +55,7 @@ export default function ApiSearch() {
   })
   const filterFields = [
     buildBaseFilter('inlegal', intl.formatMessage({ defaultMessage: '是否非法' })),
-    buildBaseFilter('enable', intl.formatMessage({ defaultMessage: '是否开启' })),
+    buildBaseFilter('enabled', intl.formatMessage({ defaultMessage: '是否开启' })),
     buildBaseFilter('isPublic', intl.formatMessage({ defaultMessage: '是否公开' })),
     buildBaseFilter('liveQuery', intl.formatMessage({ defaultMessage: '是否实时' }))
   ]
@@ -84,9 +85,16 @@ export default function ApiSearch() {
 
   //快捷键
   useEffect(() => {
-    return registerHotkeyHandler('esc', () => {
+    const unbind1 = registerHotkeyHandler('ctrl+k,command+k', () => {
+      setOpen(true)
+    })
+    const unbind2 = registerHotkeyHandler('esc', () => {
       setOpen(false)
     })
+    return () => {
+      unbind1()
+      unbind2()
+    }
   }, [])
 
   // 状态清空
@@ -114,24 +122,21 @@ export default function ApiSearch() {
   return (
     <div className={styles.mask} onClick={() => setOpen(false)}>
       <div className={styles.panel} onClick={e => e.stopPropagation()}>
-        <Close className={styles.panelClose} onClick={() => setOpen(false)} />
-        <div className={styles.search}>
-          <Search className="ml-18px text-[#333]" />
-          <Input
-            ref={inputRef}
-            onKeyUp={e => {
-              if (e.key === 'Escape') {
-                setOpen(false)
-              }
-            }}
-            onChange={e => setSearchInput(e.target.value)}
-            value={searchInput}
-            bordered={false}
-            className={styles.searchInput}
-            allowClear
-          />
-        </div>
-
+        {/* <Close className={styles.panelClose} onClick={() => setOpen(false)} /> */}
+        <Input
+          ref={inputRef}
+          prefix={<Search className="mx-2" />}
+          onKeyUp={e => {
+            if (e.key === 'Escape') {
+              setOpen(false)
+            }
+          }}
+          placeholder={intl.formatMessage({ defaultMessage: '搜索API' })}
+          onChange={e => setSearchInput(e.target.value)}
+          value={searchInput}
+          className={styles.search}
+          allowClear
+        />
         <div className={styles.tabLine}>
           {tabs.map(tab => (
             <div
@@ -159,10 +164,10 @@ export default function ApiSearch() {
         <div className={styles.bodyContainer}>
           <div className={styles.resultContainer}>
             {filteredList.length === 0 && (
-              <div className="w-full h-full flex items-center justify-center flex-col">
+              <div className="flex flex-col h-full w-full items-center justify-center">
                 <img src={iconEmpty} alt="" />
-                <div className="mt-6 font-14px leading-20px text-[#787D8B]">
-                  没有找到相关文件，请重新搜索
+                <div className="font-14px mt-6 text-[#787D8B] leading-20px">
+                  <FormattedMessage defaultMessage="没有找到相关文件，请重新搜索" />
                 </div>
               </div>
             )}
@@ -170,7 +175,7 @@ export default function ApiSearch() {
               <div
                 onClick={() => gotoAPI(item)}
                 className={clsx(styles.item, {
-                  [styles.disable]: !item.enable,
+                  [styles.disable]: !item.enabled,
                   [styles.illegal]: item.inlegal
                 })}
                 key={item.id}

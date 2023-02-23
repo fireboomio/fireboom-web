@@ -435,7 +435,7 @@ const FlowChart = ({
             height: 20,
             component: (
               <StatusDirective
-                enabled={globalHookState.onRequest.enable}
+                enabled={globalHookState.onRequest.enabled}
                 label="onRequest"
                 onClick={() => onEditHook?.(globalHookState.onRequest)}
               />
@@ -662,7 +662,7 @@ const FlowChart = ({
         image: {
           width: 54,
           height: 36,
-          'xlink:href': hookState.mockResolve.enable ? routerLeftImg : routerBottomImg
+          'xlink:href': hookState.mockResolve.enabled ? routerLeftImg : routerBottomImg
         }
       }
     })
@@ -688,7 +688,7 @@ const FlowChart = ({
         height: 20,
         component: (
           <StatusDirective
-            enabled={hookState.preResolve.enable}
+            enabled={hookState.preResolve.enabled}
             label="preResolve"
             onClick={() => onEditHook?.(hookState.preResolve)}
           />
@@ -702,7 +702,7 @@ const FlowChart = ({
         height: 20,
         component: (
           <StatusDirective
-            enabled={hookState.customResolve.enable}
+            enabled={hookState.customResolve.enabled}
             label="customResolve"
             onClick={() => onEditHook?.(hookState.customResolve)}
           />
@@ -719,7 +719,7 @@ const FlowChart = ({
         height: 20,
         component: (
           <StatusDirective
-            enabled={hookState.mutatingPreResolve.enable}
+            enabled={hookState.mutatingPreResolve.enabled}
             label="mutatingPreResolve"
             onClick={() => onEditHook?.(hookState.mutatingPreResolve)}
           />
@@ -744,7 +744,7 @@ const FlowChart = ({
       // },
       component: (
         <div
-          className="rounded-xl h-5 text-xs text-center px-1 leading-5 cursor-pointer"
+          className="rounded-xl cursor-pointer h-5 text-xs text-center px-1 leading-5"
           style={{
             border: `1px solid rgb(233, 46, 94)`,
             background: `linear-gradient(316deg, #FFF3F8 0%, #FFDBDD 100%)`
@@ -818,7 +818,7 @@ const FlowChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.postResolve.enable}
+              enabled={hookState.postResolve.enabled}
               label="postResolve"
               onClick={() => onEditHook?.(hookState.postResolve)}
             />
@@ -832,7 +832,7 @@ const FlowChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.mutatingPostResolve.enable}
+              enabled={hookState.mutatingPostResolve.enabled}
               label="mutatingPostResolve"
               onClick={() => onEditHook?.(hookState.mutatingPostResolve)}
             />
@@ -848,9 +848,9 @@ const FlowChart = ({
     const loopEndPoint = y - 6
 
     // 轮询
-    if (apiSetting.liveQueryEnable) {
+    if (apiSetting.liveQueryEnabled) {
       const centerY = (loopEndPoint - loopStartPoint) / 2 + loopStartPoint
-      const flowHook = hookState.mockResolve.enable
+      const flowHook = hookState.mockResolve.enabled
       // 开始
       const s = new Shape.Rect({
         x: HOOK_X,
@@ -998,7 +998,7 @@ const FlowChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={globalHookState.onResponse.enable}
+              enabled={globalHookState.onResponse.enabled}
               label="onResponse"
               onClick={() => onEditHook?.(globalHookState.onResponse)}
             />
@@ -1051,7 +1051,7 @@ const FlowChart = ({
         }
       },
 
-      ...(hookState.mockResolve.enable
+      ...(hookState.mockResolve.enabled
         ? {
             stroke: '#1034FF',
             attrs: {
@@ -1069,7 +1069,7 @@ const FlowChart = ({
       shape: 'rejectArrow',
       source: { x: 100, y: routerSwitch.getBBox().y + 18 },
       target: { x: 96, y: routerSwitch.getBBox().y + 18 },
-      ...(hookState.mockResolve.enable
+      ...(hookState.mockResolve.enabled
         ? {
             attrs: {
               line: {
@@ -1091,7 +1091,7 @@ const FlowChart = ({
             source: node,
             target: arrowNodes[index + 1],
             // mock 开启，灰色
-            ...(hookState.mockResolve.enable &&
+            ...(hookState.mockResolve.enabled &&
             index >= routerIndex &&
             index !== arrowNodes.length - 2
               ? {

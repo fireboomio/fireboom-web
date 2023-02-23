@@ -179,7 +179,7 @@ export default function Rest({ content, type }: Props) {
     void getFetcher('/env')
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-      .then(envs => envs.filter(x => x.isDel === 0).map(x => ({ label: x.key, value: x.key })))
+      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .then(x => setEnvOpts(x))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -189,19 +189,19 @@ export default function Rest({ content, type }: Props) {
     setEnvVal(value)
   }
 
-  const connectSwitchOnChange = (isChecked: boolean) => {
-    void requests
-      .put('/dataSource', {
-        ...content,
-        switch: isChecked == true ? 0 : 1
-      })
-      .then(() => {
-        handleSave({
-          ...content,
-          switch: isChecked == true ? 0 : 1
-        })
-      })
-  }
+  // const connectSwitchOnChange = (isChecked: boolean) => {
+  //   void requests
+  //     .put('/dataSource', {
+  //       ...content,
+  //       switch: isChecked == true ? 0 : 1
+  //     })
+  //     .then(() => {
+  //       handleSave({
+  //         ...content,
+  //         switch: isChecked == true ? 0 : 1
+  //       })
+  //     })
+  // }
 
   const config = content?.config as Config
 

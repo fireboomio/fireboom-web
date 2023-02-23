@@ -165,7 +165,7 @@ export default function APIEditorContainer() {
   })
   useEventBus('apiEnableChange', ({ data }) => {
     if (data.ids.includes(Number(params.id))) {
-      pureUpdateAPI({ enable: data.enable })
+      pureUpdateAPI({ enabled: data.enabled })
     }
   })
   useEffect(() => {
@@ -201,7 +201,7 @@ export default function APIEditorContainer() {
   useEffect(() => {
     requests('/dataSource').then(res => {
       // @ts-ignore
-      setDataSourceList(res.filter(item => item.switch === 1).map(item => item.name))
+      setDataSourceList(res.filter(item => item.enabled).map(item => item.name))
     })
   }, [])
 
@@ -209,8 +209,8 @@ export default function APIEditorContainer() {
     <>
       <div className="bg-white flex flex-col h-full relative" id="api-editor-container">
         <APIHeader onGetQuery={() => editingContent.current} />
-        <div className="flex-1 items-stretch min-h-0 flex flex-nowrap">
-          <div className="h-full flex items-stretch overflow-hidden flex-1 items-stretch min-w-0">
+        <div className="flex flex-nowrap flex-1 min-h-0 items-stretch">
+          <div className="flex h-full flex-1 min-w-0 items-stretch overflow-hidden ">
             <div className="h-full relative" ref={elRef}>
               <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
               <div className="h-full w-full relative overflow-x-auto">

@@ -125,33 +125,6 @@ export default function AuthRole() {
     })
   }, [activeKey])
 
-  // const save = () => {
-  //   void requests.post('/auth/hooks', {
-  //     hookName: activeKey,
-  //     content: currHook?.content,
-  //     hookSwitch: currHook?.hookSwitch
-  //   })
-  //   setRefreshFlag(!refreshFlag)
-  // }
-
-  // function handleEditorChange(value: string | undefined) {
-  //   if (!value) return
-
-  //   setHooks(draft => {
-  //     let hook = draft.find(x => x.hookName === activeKey)
-  //     if (!hook) hook = { content: '', fileName: '', hookName: activeKey, hookSwitch: false }
-  //     hook.content = value
-  //   })
-  // }
-
-  // function toggleSwitch() {
-  //   void requests.post('/auth/hooks', {
-  //     hookName: activeKey,
-  //     hookSwitch: !currHook?.hookSwitch,
-  //     content: currHook?.content
-  //   })
-  //   setRefreshFlag(!refreshFlag)
-  // }
   const [tab, setTab] = useState<string>('role')
   return (
     <div className="bg-[#fbfbfc] h-full p-3">

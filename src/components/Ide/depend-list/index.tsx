@@ -347,7 +347,7 @@ const DependList = (props: DependListProps) => {
         if (item.children) {
           item.children = markKey(item.children || [], item.key)
         }
-        map[item.path] = item.enable
+        map[item.path] = item.enabled
         if (!item.isDir) {
           scriptList.push(item.path)
         }
@@ -389,8 +389,8 @@ const DependList = (props: DependListProps) => {
   // 当hookInfo更新时，自动更新钩子树中对应钩子的状态
   useEffect(() => {
     setEnableMap(map => {
-      if (props.hookPath) {
-        map[props.hookPath] = !!props.hookInfo?.switch
+      if (props.hookInfo?.path) {
+        map[props.hookInfo?.path] = props.hookInfo?.enabled
       }
     })
   }, [props.hookInfo])

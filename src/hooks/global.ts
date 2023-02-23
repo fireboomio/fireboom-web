@@ -22,7 +22,7 @@ export type Question = {
   name: string
   icon: string
   msg: string
-  switch: boolean
+  enabled: boolean
   model: QuestionType
 }
 

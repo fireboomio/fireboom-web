@@ -133,13 +133,9 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     const unbind2 = registerHotkeyHandler('alt+h,^+h', () => {
       showHotkey()
     })
-    const unbind3 = registerHotkeyHandler('alt+k,^+k', () => {
-      events.emit({ event: 'openApiSearch' })
-    })
     return () => {
       unbind1()
       unbind2()
-      unbind3()
     }
   }, [])
   return (
@@ -177,7 +173,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             {/*    />*/}
             {/*  }*/}
             {/*>*/}
-            {/*  <div className="cursor-pointer h-1/1 flex items-center">登录OIDC</div>*/}
+            {/*  <div className="cursor-pointer flex h-1/1 items-center">登录OIDC</div>*/}
             {/*</Dropdown>*/}
 
             <div

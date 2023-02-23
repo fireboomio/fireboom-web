@@ -174,10 +174,10 @@ export default function Designer() {
             val: ''
           }
         },
-        switch: 0,
+        enabled: false,
         createTime: '',
         updateTime: '',
-        isDel: 0
+        deleteTime: ''
       },
       {
         name: 'example_restApi',
@@ -197,10 +197,10 @@ export default function Designer() {
           statusCodeUnions: false,
           headers: []
         },
-        switch: 0,
+        enabled: false,
         createTime: '',
         updateTime: '',
-        isDel: 0,
+        deleteTime: '',
         onSelect: () => {
           uploadLocal('1', JSON.stringify(restExampleJson), 'example_rest.json')
         }
@@ -218,10 +218,10 @@ export default function Designer() {
           skipRenameRootFields: null,
           headers: []
         },
-        switch: 0,
+        enabled: false,
         createTime: '',
         updateTime: '',
-        isDel: 0
+        deleteTime: ''
       },
       {
         name: 'example_customer',
@@ -233,10 +233,10 @@ export default function Designer() {
           schema:
             "new GraphQLSchema({\n\t\t\t\tquery: new GraphQLObjectType({\n\t\t\t\t\tname: 'RootQueryType',\n\t\t\t\t\tfields: {\n\t\t\t\t\t\thello: {\n\t\t\t\t\t\t\ttype: GraphQLString,\n\t\t\t\t\t\t\tresolve() {\n\t\t\t\t\t\t\t\treturn 'world';\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t}),\n\t\t\t}"
         },
-        switch: 0,
+        enabled: false,
         createTime: '',
         updateTime: '',
-        isDel: 0
+        deleteTime: ''
       }
     ]
     setExamples(exampleList as any)
@@ -286,7 +286,7 @@ export default function Designer() {
             name: inputValue.current,
             config: { apiNamespace: inputValue.current, serverName: inputValue.current },
             sourceType: 4,
-            switch: 0
+            enabled: false
           } as any
           const result = await requests.post<unknown, number>('/dataSource', data)
           data.id = result
@@ -306,7 +306,7 @@ export default function Designer() {
       name: '',
       config: { dbType, dbSchema },
       sourceType: sourceType,
-      switch: 0
+      enabled: false
     } as DatasourceResp
 
     if (name.startsWith('example_')) {

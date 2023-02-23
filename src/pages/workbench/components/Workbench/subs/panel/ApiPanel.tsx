@@ -468,7 +468,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     try {
       await requests.post('operateApi/batchOnline', {
         Ids: ids,
-        enable: flag
+        enabled: flag
       })
     } finally {
       hide()
@@ -477,7 +477,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     void mutateApi()
     events.emit({
       event: 'apiEnableChange',
-      data: { ids, enable: flag }
+      data: { ids, enabled: flag }
     })
   }
 
@@ -488,7 +488,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       itemTypeClass = styles.treeItemDir
     } else if (nodeData.inlegal) {
       itemTypeClass = styles.treeItemErr
-    } else if (!nodeData.enable) {
+    } else if (!nodeData.enabled) {
       itemTypeClass = styles.treeItemDisable
     } else {
       itemTypeClass = styles.treeItemFile
@@ -667,12 +667,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <Menu
             items={[
               {
-                disabled: !selectedNode.some(x => !x.enable),
-                key: 'enable',
+                disabled: !selectedNode.some(x => !x.enabled),
+                key: 'enabled',
                 label: (
                   <div
                     onClick={() => {
-                      if (!selectedNode.some(x => !x.enable)) return
+                      if (!selectedNode.some(x => !x.enabled)) return
                       void batchSwitch(true)
                     }}
                   >
@@ -681,12 +681,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 )
               },
               {
-                disabled: !selectedNode.some(x => x.enable),
-                key: 'disable',
+                disabled: !selectedNode.some(x => x.enabled),
+                key: 'disabled',
                 label: (
                   <div
                     onClick={() => {
-                      if (!selectedNode.some(x => x.enable)) return
+                      if (!selectedNode.some(x => x.enabled)) return
                       void batchSwitch(false)
                     }}
                   >

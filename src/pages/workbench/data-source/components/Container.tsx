@@ -11,7 +11,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
-import { updateHookSwitch } from '@/lib/service/hook'
+import { updateHookEnabled } from '@/lib/service/hook'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -36,13 +36,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
     if (content) {
-      const newContent = { ...content, switch: content.switch ^ 1 }
+      const newContent = { ...content, enabled: !content.enabled }
       void (await requests.put('/dataSource', newContent))
       handleSave(newContent)
     }
     // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
     if (content.sourceType === 4) {
-      updateHookSwitch(`customize/${content.name}`, !!content.switch)
+      updateHookEnabled(`customize/${content.name}`, !!content.enabled)
     }
   }, [content])
 
@@ -119,7 +119,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             {!content.id ? (
               <div
-                className="mr-1 flex items-center justify-center h-5 w-5 cursor-pointer"
+                className="cursor-pointer flex h-5 mr-1 w-5 items-center justify-center"
                 onClick={() => history.back()}
               >
                 <Image
@@ -172,7 +172,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType !== 4 ? (
               <Switch
                 loading={loading}
-                checked={content?.switch === 1}
+                checked={content?.enabled}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                 unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                 onChange={toggleOpen}

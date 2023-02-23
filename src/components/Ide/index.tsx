@@ -22,7 +22,7 @@ import {
   getTypes,
   saveHookDepend,
   saveHookScript,
-  updateHookSwitch
+  updateHookEnabled
 } from '@/lib/service/hook'
 
 import IdeCodeContainer from './code/index'
@@ -55,7 +55,7 @@ export type HookInfo = {
   path: string
   depend: { dependencies: Depend[]; devDependencies: Depend[] }
   input: Input | null
-  switch: boolean
+  enabled: boolean
 }
 export type RunHookResponse = { logs: any[][]; result: any }
 
@@ -455,13 +455,13 @@ const IdeContainer: FC<Props> = props => {
           {...{
             savePayload,
             fullScreen,
-            disabled: hookInfo?.switch === false,
+            disabled: !hookInfo?.enabled,
             onSave: () => {
               handleSave('active')
             },
             onToggleHook: async value => {
-              hookInfo && setHookInfo({ ...hookInfo, switch: value })
-              await updateHookSwitch(hookPath, value)
+              hookInfo && setHookInfo({ ...hookInfo, enabled: value })
+              await updateHookEnabled(hookPath, value)
               props.onChangeEnable?.()
             },
             onFullScreen: () => {

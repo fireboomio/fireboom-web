@@ -2,7 +2,7 @@ import type { APIDesc } from '../../store'
 
 export type BaseHookState = {
   name: string
-  enable: boolean
+  enabled: boolean
   path: string
 }
 

@@ -95,18 +95,18 @@ const APIFlowChart = ({ id }: { id: string }) => {
     setGlobalState({
       onRequest: {
         name: 'onRequest',
-        enable: globalHooks.onRequest?.switch ?? false,
+        enabled: globalHooks.onRequest?.enabled ?? false,
         path: globalHooks.onRequest?.path ?? ''
       },
       onResponse: {
         name: 'onResponse',
-        enable: globalHooks.onResponse?.switch ?? false,
+        enabled: globalHooks.onResponse?.enabled ?? false,
         path: globalHooks.onResponse?.path ?? ''
       },
       // @ts-ignore
       onConnectionInit: {
         name: 'onConnectionInit',
-        enable: globalHooks.onConnectionInit?.switch ?? false,
+        enabled: globalHooks.onConnectionInit?.enabled ?? false,
         path: globalHooks.onConnectionInit?.path ?? ''
       }
     })
@@ -115,33 +115,33 @@ const APIFlowChart = ({ id }: { id: string }) => {
     setHookState({
       customResolve: {
         name: 'customResolve',
-        enable: operationHooks.customResolve.switch,
+        enabled: operationHooks.customResolve.enabled,
         path: operationHooks.customResolve.path
       },
       mutatingPostResolve: {
         name: 'mutatingPostResolve',
-        enable: operationHooks.mutatingPostResolve.switch,
+        enabled: operationHooks.mutatingPostResolve.enabled,
         path: operationHooks.mutatingPostResolve.path
       },
       mutatingPreResolve: {
         name: 'mutatingPreResolve',
-        enable: operationHooks.mutatingPreResolve.switch,
+        enabled: operationHooks.mutatingPreResolve.enabled,
         can: defs?.length > 0 ?? false,
         path: operationHooks.mutatingPreResolve.path
       },
       postResolve: {
         name: 'postResolve',
-        enable: operationHooks.postResolve.switch,
+        enabled: operationHooks.postResolve.enabled,
         path: operationHooks.postResolve.path
       },
       preResolve: {
         name: 'preResolve',
-        enable: operationHooks.preResolve.switch,
+        enabled: operationHooks.preResolve.enabled,
         path: operationHooks.preResolve.path
       },
       mockResolve: {
         name: 'mockResolve',
-        enable: operationHooks.mockResolve.switch,
+        enabled: operationHooks.mockResolve.enabled,
         path: operationHooks.mockResolve.path
       }
     })
