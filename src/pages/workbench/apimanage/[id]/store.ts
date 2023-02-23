@@ -21,7 +21,7 @@ const DEFAULT_QUERY = `# Generate operation by click graphql schema on the left 
 
 export interface APIDesc {
   // content: string
-  enable: boolean
+  enabled: boolean
   id: number
   isDir: boolean
   isPublic: boolean
@@ -35,7 +35,7 @@ export interface APIDesc {
   restUrl: string
   liveQuery: boolean
   setting: {
-    enable: boolean
+    enabled: boolean
     authenticationRequired: boolean
     cachingEnabled: boolean
     cachingMaxAge: number
@@ -65,7 +65,7 @@ export interface APIState {
   }
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => void
 
-  changeEnable: (enable: boolean) => void
+  changeEnable: (enabled: boolean) => void
   autoSave: () => boolean | Promise<boolean>
   updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
   updateAPIName: (path: string) => Promise<void>
@@ -177,9 +177,9 @@ export const useAPIManager = create<APIState>((set, get) => ({
       void mutateApi()
     })
   },
-  changeEnable: (enable: boolean) => {
-    return requests.put(`/operateApi/switch/${get().apiID}`, { enable }).then(resp => {
-      get().pureUpdateAPI({ enable })
+  changeEnable: (enabled: boolean) => {
+    return requests.put(`/operateApi/switch/${get().apiID}`, { enabled }).then(resp => {
+      get().pureUpdateAPI({ enabled })
       // 刷新api列表
       void mutateApi()
     })

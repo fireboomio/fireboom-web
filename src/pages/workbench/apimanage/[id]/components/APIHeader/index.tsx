@@ -79,10 +79,10 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [])
 
   const isLive = useMemo(() => {
-    return apiDesc?.setting.enable
+    return apiDesc?.setting.enabled
       ? apiDesc?.setting.liveQueryEnabled
       : globalSetting?.liveQueryEnabled
-  }, [apiDesc?.setting.liveQueryEnabled, apiDesc?.setting.enable, globalSetting])
+  }, [apiDesc?.setting.liveQueryEnabled, apiDesc?.setting.enabled, globalSetting])
 
   const method = useMemo(() => {
     if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {
@@ -264,9 +264,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       </button>
       <Switch
         loading={loading}
-        disabled={(apiDesc?.inlegal || !schemaAST) && !apiDesc?.enable}
-        className={`${styles.enableBtn} ${apiDesc?.enable ? styles.enableBtnEnabled : ''}`}
-        checked={apiDesc?.enable}
+        disabled={(apiDesc?.inlegal || !schemaAST) && !apiDesc?.enabled}
+        className={`${styles.enableBtn} ${apiDesc?.enabled ? styles.enableBtnEnabled : ''}`}
+        checked={apiDesc?.enabled}
         onChange={toggleEnable}
       />
     </div>

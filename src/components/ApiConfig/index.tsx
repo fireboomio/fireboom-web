@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface Setting {
-  enable: boolean
+  enabled: boolean
   authenticationRequired: boolean
   authenticationQueriesRequired: boolean
   authenticationMutationsRequired: boolean
@@ -46,7 +46,7 @@ export default function Index(props: Props) {
   }, [props.id])
   useEffect(() => {
     let setting
-    if (apiSetting?.enable) {
+    if (apiSetting?.enabled) {
       setting = apiSetting
     } else if (globalSetting) {
       setting = globalSetting
@@ -66,14 +66,14 @@ export default function Index(props: Props) {
       return
     }
     // 修改开关的情况下，只修改开关容纳后保存
-    if (changedValues.enable !== undefined) {
+    if (changedValues.enabled !== undefined) {
       void requests.put<unknown, any>(`/operateApi/setting/${props.id}`, {
         ...apiSetting,
-        enable: changedValues.enable,
+        enabled: changedValues.enabled,
         settingType: props.id ? 1 : 2,
         id: props.id || 0
       })
-      setApiSetting({ ...apiSetting!, enable: changedValues.enable })
+      setApiSetting({ ...apiSetting!, enabled: changedValues.enabled })
 
       // 刷新API菜单
       void mutateApi()
@@ -111,7 +111,7 @@ export default function Index(props: Props) {
   }
 
   // let setting = globalSetting
-  // if (apiSetting?.enable) {
+  // if (apiSetting?.enabled) {
   //   setting = apiSetting
   // }
   // if (!setting) {
@@ -132,7 +132,7 @@ export default function Index(props: Props) {
       })
   }
 
-  const disabled = !apiSetting?.enable && props.type !== 'global'
+  const disabled = !apiSetting?.enabled && props.type !== 'global'
 
   return (
     <div className={styles[props.type]}>
@@ -149,7 +149,7 @@ export default function Index(props: Props) {
           <>
             <Form.Item
               // noStyle
-              name="enable"
+              name="enabled"
               valuePropName="checked"
             >
               <Checkbox>

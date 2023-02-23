@@ -454,7 +454,7 @@ const SubscriptionChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={globalHookState.onConnectionInit.enable}
+              enabled={globalHookState.onConnectionInit.enabled}
               label="onConnectionInit"
               onClick={() => {
                 onEditHook?.(globalHookState.onConnectionInit)
@@ -478,7 +478,7 @@ const SubscriptionChart = ({
         height: 20,
         component: (
           <StatusDirective
-            enabled={hookState.preResolve.enable}
+            enabled={hookState.preResolve.enabled}
             label="preResolve"
             onClick={() => {
               onEditHook?.(hookState.preResolve)
@@ -497,7 +497,7 @@ const SubscriptionChart = ({
         height: 20,
         component: (
           <StatusDirective
-            enabled={hookState.mutatingPreResolve.enable}
+            enabled={hookState.mutatingPreResolve.enabled}
             label="mutatingPreResolve"
             onClick={() => {
               onEditHook?.(hookState.mutatingPreResolve)
@@ -528,7 +528,7 @@ const SubscriptionChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.mutatingPostResolve.enable}
+              enabled={hookState.mutatingPostResolve.enabled}
               label="mutatingPostResolve"
               onClick={() => {
                 onEditHook?.(hookState.mutatingPostResolve)
@@ -544,7 +544,7 @@ const SubscriptionChart = ({
           height: 20,
           component: (
             <StatusDirective
-              enabled={hookState.postResolve.enable}
+              enabled={hookState.postResolve.enabled}
               label="postResolve"
               onClick={() => {
                 onEditHook?.(hookState.postResolve)

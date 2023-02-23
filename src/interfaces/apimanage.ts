@@ -17,7 +17,7 @@ export interface OperationResp {
   remark: string
   isDir: boolean
   liveQuery: boolean
-  enable: boolean
+  enabled: boolean
   inlegal: boolean
   isPublic: boolean
   method: 'GET' | 'POST'

@@ -99,7 +99,7 @@ type TreeNode = {
   path: string
   key: string
   isDir?: boolean
-  enable: boolean
+  enabled: boolean
   children?: TreeNode[]
 }
 
@@ -347,7 +347,7 @@ const DependList = (props: DependListProps) => {
         if (item.children) {
           item.children = markKey(item.children || [], item.key)
         }
-        map[item.path] = item.enable
+        map[item.path] = item.enabled
         if (!item.isDir) {
           scriptList.push(item.path)
         }

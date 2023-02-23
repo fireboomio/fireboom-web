@@ -74,8 +74,8 @@ export type ApiOptions = {
 
 export enum AuthOptions {
   default = -1,
-  enable = 1,
-  disable = 0
+  enabled = 1,
+  disabled = 0
 }
 
 export enum API {

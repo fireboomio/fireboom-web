@@ -165,7 +165,7 @@ export default function APIEditorContainer() {
   })
   useEventBus('apiEnableChange', ({ data }) => {
     if (data.ids.includes(Number(params.id))) {
-      pureUpdateAPI({ enable: data.enable })
+      pureUpdateAPI({ enabled: data.enabled })
     }
   })
   useEffect(() => {
