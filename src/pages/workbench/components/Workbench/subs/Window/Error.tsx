@@ -87,7 +87,7 @@ export default function Error() {
   }
 
   async function closeAPI(id: number) {
-    await requests.put<unknown, any>(`/operateApi/enable/${id}`, { enable: false })
+    await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enable: false })
     events.emit({
       event: 'apiEnableChange',
       data: { ids: [id], enable: false }

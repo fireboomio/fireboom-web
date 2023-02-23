@@ -7,7 +7,7 @@ export const saveScript = (data: any) => {
 
 // 更新开关
 export const updateHookEnabled = (path: string, value: boolean) => {
-  return requests.post('/hook/enable', {
+  return requests.post('/hook/switch', {
     path: path,
     enabled: value
   })

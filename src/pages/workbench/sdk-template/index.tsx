@@ -138,7 +138,7 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put('/sdk/enable', { enabled: checked, dirName: sdk.dirName }).then(res => {
+      requests.put('/sdk/switch', { enabled: checked, dirName: sdk.dirName }).then(res => {
         console.log('res', res)
         onChange({
           ...sdk,
