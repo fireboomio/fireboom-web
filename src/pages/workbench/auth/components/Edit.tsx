@@ -2,8 +2,9 @@
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
 import axios from 'axios'
+import { debounce } from 'lodash'
 import type { ReactNode } from 'react'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
@@ -78,6 +79,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const issuer = Form.useWatch('issuer', form)
   const clientIdKind = Form.useWatch(['clientId', 'kind'], form)
   const clientSecretKind = Form.useWatch(['clientSecret', 'kind'], form)
+  const tokenBased = Form.useWatch('tokenBased', form)
+  const cookieBased = Form.useWatch('cookieBased', form)
   const jwksURL = Form.useWatch('jwksURL', form)
   const [value, setValue] = useImmer('')
   const config = content.config as unknown as Config
@@ -141,6 +144,34 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     },
     [config, content, handleBottomToggleDesigner, jwksJSON, onChange]
   )
+
+  const inspect = useCallback(
+    debounce(async (host: string) => {
+      const url = `${host.replace(/\/+$/, '')}/.well-known/openid-configuration`
+      try {
+        new URL(url)
+      } catch (e) {
+        return
+      }
+      currentInspecting.current = url
+      // 开始请求前，先清空现有数据
+      form.setFieldValue('jwksURL', '')
+      form.setFieldValue('userInfoEndpoint', '')
+      form.setFieldValue('tokenEndpoint', '')
+      form.setFieldValue('authorizationEndpoint', '')
+      const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
+      // 如果当前url不是最新的，忽略本次请求
+      if (currentInspecting.current !== url) {
+        return
+      }
+      form.setFieldValue('jwksURL', res.data.jwks_uri)
+      form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
+      form.setFieldValue('tokenEndpoint', res.data.token_endpoint)
+      form.setFieldValue('authorizationEndpoint', res.data.authorization_endpoint)
+    }, 1000),
+    [form]
+  )
+
   if (!content) {
     return <Error50x />
   }
@@ -148,30 +179,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const typeChange = (value: string) => {
     setValue(value)
     setIsRadioShow(value == '1')
-  }
-
-  const inspect = async (host: string) => {
-    const url = `${host.replace(/\/+$/, '')}/.well-known/openid-configuration`
-    try {
-      new URL(url)
-    } catch (e) {
-      return
-    }
-    currentInspecting.current = url
-    // 开始请求前，先清空现有数据
-    form.setFieldValue('jwksURL', '')
-    form.setFieldValue('userInfoEndpoint', '')
-    form.setFieldValue('tokenEndpoint', '')
-    form.setFieldValue('authorizationEndpoint', '')
-    const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
-    // 如果当前url不是最新的，忽略本次请求
-    if (currentInspecting.current !== url) {
-      return
-    }
-    form.setFieldValue('jwksURL', res.data.jwks_uri)
-    form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
-    form.setFieldValue('tokenEndpoint', res.data.token_endpoint)
-    form.setFieldValue('authorizationEndpoint', res.data.authorization_endpoint)
   }
 
   const onValuesChange = (changedValues: object, allValues: FromValues) => {
@@ -296,7 +303,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientId', 'kind']} noStyle>
-                  <Select className="flex-0 w-100px">
+                  <Select className="flex-0 w-100px" disabled={!cookieBased}>
                     <Select.Option value="0">
                       <FormattedMessage defaultMessage="值" />
                     </Select.Option>
@@ -317,6 +324,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 >
                   {clientIdKind === '0' ? (
                     <Input
+                      disabled={!cookieBased}
                       className="flex-1"
                       placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                     />
@@ -329,7 +337,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Form.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })} required>
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientSecret', 'kind']} noStyle>
-                  <Select className="flex-0 w-100px">
+                  <Select className="flex-0 w-100px" disabled={!cookieBased}>
                     <Select.Option value="0">
                       <FormattedMessage defaultMessage="值" />
                     </Select.Option>
@@ -350,6 +358,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 >
                   {clientSecretKind === '0' ? (
                     <Input
+                      disabled={!cookieBased}
                       className="flex-1"
                       placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                     />
@@ -379,6 +388,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })} name="jwks">
               <Radio.Group
+                disabled={!tokenBased}
                 onChange={e => {
                   typeChange(e.target.value as string)
                 }}

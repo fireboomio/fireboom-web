@@ -123,6 +123,13 @@ export default function SettingMainVersion() {
         >
           <Switch className={styles['switch-edit-btn']} size="small" />
         </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '日志上报' })}
+          name="usageReport"
+          valuePropName="checked"
+        >
+          <Switch className={styles['switch-edit-btn']} size="small" />
+        </Form.Item>
         <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
           <Button className={'btn-cancel mr-4'} onClick={() => form.resetFields()}>
             <FormattedMessage defaultMessage="重置" />

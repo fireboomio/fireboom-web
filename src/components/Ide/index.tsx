@@ -305,14 +305,13 @@ const IdeContainer: FC<Props> = props => {
         clearTimeout(saveTimer.current)
         saveTimer.current = null
       }
+      if (!editor) {
+        return
+      }
       setPayload({
         type,
         status: AutoSaveStatus.SAVEING
       })
-
-      if (!editor) {
-        return
-      }
       // 保存脚本内容
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       void saveHookScript(hookPath, editor.getValue()).finally(() => {

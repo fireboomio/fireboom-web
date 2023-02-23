@@ -54,7 +54,8 @@ export default function SettingMainVersion() {
       })
     )
       .then(() => {
-        refreshConfig()
+        mutateSecurityConfig()
+        mutateRedirectUrl()
         message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
       })
       .catch(() => {
@@ -97,10 +98,13 @@ export default function SettingMainVersion() {
             rootClassName: 'max-w-80vw max-h-80vh'
           }}
           label={intl.formatMessage({ defaultMessage: '允许主机' })}
-          name="allowedHostsEnabled"
-          valuePropName="checked"
         >
-          <Switch />
+          <div className="flex items-center">
+            <Form.Item noStyle name="allowedHostsEnabled" valuePropName="checked">
+              <Switch />
+            </Form.Item>
+            <span className="align-middle ml-2">允许全部</span>
+          </div>
         </Form.Item>
         <Form.List name="allowedHosts">
           {(fields, { add, remove }, { errors }) => (
