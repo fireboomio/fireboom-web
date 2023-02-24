@@ -2,6 +2,7 @@ import { Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
+import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 
 import styles from './home.module.less'
@@ -21,18 +22,20 @@ export function Notice({ handleToggleDesigner }: Props) {
   const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
   const calcTime = useCalcTime()
   useEffect(() => {
-    void fetch('https://raw.githubusercontent.com/fireboomio/fb-news/main/news.json').then(
-      async res => {
-        const result = await res.json()
-        const news = result.map((item: any) => ({
-          content: item.content,
-          title: item.title,
-          date: calcTime(item.time),
-          url: item.url
-        }))
-        setNoticeConfig(news)
+    requests('/common/proxy', {
+      params: {
+        url: 'https://raw.githubusercontent.com/fireboomio/files/main/news.json'
       }
-    )
+    }).then(async res => {
+      // @ts-ignore
+      const news = res.map((item: any) => ({
+        content: item.content,
+        title: item.title,
+        date: calcTime(item.time),
+        url: item.url
+      }))
+      setNoticeConfig(news)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
