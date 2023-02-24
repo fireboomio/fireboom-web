@@ -49,7 +49,12 @@ function openSocket() {
   })
   _socket.addEventListener('close', () => {
     clearInterval(heartbeatTimer)
-    setTimeout(openSocket, 5000)
+    setTimeout(()=>{
+      // 如果正在关闭的是当前socket，则尝试重启，否则不重启
+      if(socket === _socket){
+        openSocket()
+      }
+    }, 5000)
   })
 
 // Send data from socket to all open tabs.
