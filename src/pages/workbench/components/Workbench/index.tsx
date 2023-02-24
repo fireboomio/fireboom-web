@@ -96,7 +96,7 @@ export default function Index(props: PropsWithChildren) {
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('log', 'getLogs', data => {
-    setLogs(data.logs)
+    setLogs(data.logs || [])
   })
   useWebSocket('log', 'appendLog', data => {
     setLogs(logs.concat(data.logs))
