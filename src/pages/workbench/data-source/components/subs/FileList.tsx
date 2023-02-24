@@ -176,12 +176,18 @@ export default function FileList({
           value={path}
           readOnly
         />
-        <Upload
-          {...upProps}
-          className="cursor-pointer flex m-auto h-6 mr-3 w-18 items-center justify-center"
-        >
-          <Image height={16} width={16} src="/assets/upload.svg" alt="上传" preview={false} />
-          选择文件
+        <Upload {...upProps} className="m-auto h-6 mr-3 w-20 cursor-pointer">
+          <div className="flex items-center justify-center">
+            <Image
+              rootClassName="mr-1"
+              height={16}
+              width={16}
+              src="/assets/upload.svg"
+              alt="上传"
+              preview={false}
+            />
+            选择文件
+          </div>
         </Upload>
         <Input
           value={keyword}

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Form, Input, Modal, Popconfirm, Table } from 'antd'
+import { AutoComplete, Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -196,7 +196,7 @@ export default function SettingMainEnvironmentVariable() {
               <FormattedMessage defaultMessage="环境变量" />
             </span>
           </div>
-          <button className={`btn-save mb-4 border-none font-14px`} onClick={showModal}>
+          <Button className="mb-2mb-2" type="default" onClick={showModal}>
             <span
               className="h-7"
               onClick={() => {
@@ -207,7 +207,7 @@ export default function SettingMainEnvironmentVariable() {
             >
               <FormattedMessage defaultMessage="新建环境变量" />
             </span>
-          </button>
+          </Button>
         </div>
         <Modal
           mask={false}
@@ -284,7 +284,9 @@ export default function SettingMainEnvironmentVariable() {
                 }
               ]}
             >
-              <Input />
+              <AutoComplete
+                options={[{ value: 'GITHUB_PROXY_URL' }, { value: 'GITHUB_RAW_PROXY_URL' }]}
+              />
             </Form.Item>
             <Form.Item name="oldKey" hidden></Form.Item>
             <Form.Item

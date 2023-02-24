@@ -190,7 +190,9 @@ const IdeHeaderContainer: FC<Props> = props => {
                   checked={props.disabled === false}
                   disabled={
                     toggleLoading ||
-                    props.savePayload.status === AutoSaveStatus.DEFAULT || // 示例代码状态下不允许启用
+                    ![AutoSaveStatus.SAVED, AutoSaveStatus.LOADED].includes(
+                      props.savePayload.status!
+                    ) || // 仅允许在已保存或已加载内容的情况下启用
                     !props.hookInfo?.script.trim() // 代码内容为空时不允许启用
                   }
                   onChange={onToggleHookChange}
