@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
+import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -50,6 +51,7 @@ const BASEPATH = '/static/upload/sqlite'
 
 export default function DB({ content, type }: Props) {
   const intl = useIntl()
+  const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [_disabled, setDisabled] = useImmer(false)
@@ -674,12 +676,7 @@ export default function DB({ content, type }: Props) {
                     required: true,
                     message: intl.formatMessage({ defaultMessage: '名称不能为空' })
                   },
-                  {
-                    pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                    message: intl.formatMessage({
-                      defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
-                    })
-                  }
+                  ...ruleMap.name
                 ]}
               >
                 <Input

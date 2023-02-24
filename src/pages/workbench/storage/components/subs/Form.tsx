@@ -4,6 +4,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
+import { useValidate } from '@/hooks/validate'
 import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -42,6 +43,7 @@ const supportList = [
 
 export default function StorageForm({ content, showErr }: Props) {
   const intl = useIntl()
+  const { ruleMap } = useValidate()
   const { handleSwitch } = useContext(StorageSwitchContext)
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -134,7 +136,8 @@ export default function StorageForm({ content, showErr }: Props) {
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '名称' })}
           rules={[
-            { required: true, message: intl.formatMessage({ defaultMessage: '请输入名称' }) }
+            { required: true, message: intl.formatMessage({ defaultMessage: '请输入名称' }) },
+            ...ruleMap.name
           ]}
           name="name"
         >

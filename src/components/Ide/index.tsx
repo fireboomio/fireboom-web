@@ -181,9 +181,11 @@ const IdeContainer: FC<Props> = props => {
     } else if (path.startsWith('customize/')) {
       return getDefaultCode('custom')
     } else {
+      const pathList = list.slice(1)
+      pathList.push(apiName)
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return getDefaultCode(tmplPath).then((res: string) => {
-        return res.replaceAll('$HOOK_NAME$', apiName)
+        return res.replaceAll('$HOOK_NAME$', pathList.join('$'))
       })
     }
   }

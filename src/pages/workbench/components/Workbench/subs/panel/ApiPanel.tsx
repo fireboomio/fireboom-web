@@ -1,3 +1,4 @@
+import { CopyOutlined } from '@ant-design/icons'
 import { App, Dropdown, Input, Menu, message, Modal, Popconfirm, Tooltip, Tree } from 'antd'
 import type { Key } from 'antd/lib/table/interface'
 import uniq from 'lodash/uniq'
@@ -8,12 +9,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
 import { mutateApi, useApiList } from '@/hooks/store/api'
+import { useValidate } from '@/hooks/validate'
 import type { DirTreeNode, OperationResp } from '@/interfaces/apimanage'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
-import { isEmpty, isUpperCase } from '@/lib/utils'
+import { isEmpty } from '@/lib/utils'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 // import GraphiQLApp from '@/pages/graphiql'
@@ -71,6 +73,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [multiSelection, keyMap])
 
   const { refreshMap, navCheck, triggerPageEvent } = useContext(WorkbenchContext)
+  const { validateName, validateAPI } = useValidate()
 
   // 快捷键
   useEffect(() => {
@@ -210,6 +213,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [navCheck, multiSelection, expandedKeys, treeData]
   )
+
   // console.log(multiSelection)
 
   function calcMiniStatus(nodeData: DirTreeNode) {
@@ -241,9 +245,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       return
     }
     if (!panelOpened) {
-      setDelayAction(action)
       setPanelOpened(true)
-      return
+      if (!treeData) {
+        setDelayAction(action)
+        return
+      }
     }
     setAction(action)
 
@@ -288,14 +294,19 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     setTreeData([...tree])
   }
 
-  const validateName = (name: string, isDir = false) => {
-    if (!isUpperCase(name[0]) && !isDir) {
-      message.error(intl.formatMessage({ defaultMessage: '接口名称必须大写开头' }))
-      return false
-    }
-    if (!name.match(/^\w[a-zA-Z0-9]*$/)) {
-      message.error(intl.formatMessage({ defaultMessage: '请输入字母或数字' }))
-      return false
+  const onValidateName = (name: string, isDir = false) => {
+    if (isDir) {
+      let err = validateName(name)
+      if (err) {
+        message.error(err)
+        return false
+      }
+    } else {
+      let err = validateAPI(name)
+      if (err) {
+        message.error(err)
+        return false
+      }
     }
     return true
   }
@@ -327,7 +338,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       setAction(null)
       return
     }
-    if (!validateName(inputValue, currEditingNode.isDir)) {
+    if (!onValidateName(inputValue, currEditingNode.isDir)) {
       return
     }
 
@@ -362,8 +373,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           setCurrEditingKey(null)
           void mutateApi()
           // @ts-ignore
-        } else if (!isUpperCase(inputValue.at(0))) {
-          void message.warn(intl.formatMessage({ defaultMessage: '接口名称必须大写开头！' }))
         } else {
           handleSaveGql()
           currEditingNode.title = inputValue
@@ -440,6 +449,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         break
       }
     }
+
     function findApi(node: DirTreeNode): DirTreeNode | undefined {
       if (!node.isDir) {
         if (!id || id === node.id) {
@@ -454,6 +464,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }
       }
     }
+
     if (fond) {
       setExpandedKeys(uniq([...expandedKeys, ...expandList]))
       return fond
@@ -494,6 +505,30 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       itemTypeClass = styles.treeItemFile
     }
     let menuItems = [
+      {
+        key: 'copy',
+        label: (
+          <div
+            onClick={async () => {
+              console.log(nodeData)
+              const destPath = `${nodeData.path}Copy${Math.random().toString(36).substring(2, 5)}`
+              await requests.post('/operateApi/copy', {
+                path: destPath,
+                id: nodeData.id
+              })
+              message.success(
+                intl.formatMessage({ defaultMessage: '已复制接口 {path}' }, { path: destPath })
+              )
+              void mutateApi()
+            }}
+          >
+            <CopyOutlined />
+            <span className="ml-1.5">
+              <FormattedMessage defaultMessage="复制" />{' '}
+            </span>
+          </div>
+        )
+      },
       {
         key: 'rename',
         label: (
@@ -548,7 +583,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }
     ]
     if (nodeData.isDir) {
-      menuItems = menuItems.filter(x => x.key !== 'edit')
+      menuItems = menuItems.filter(x => x.key !== 'copy')
     }
     const menu = (
       <Menu
@@ -573,7 +608,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             defaultValue={nodeData.title}
             onPressEnter={handlePressEnter}
             onBlur={() => {
-              if (inputValue && validateName(inputValue, currEditingNode?.isDir)) {
+              if (inputValue && onValidateName(inputValue, currEditingNode?.isDir)) {
                 handlePressEnter()
               } else {
                 setCurrEditingKey(null)
@@ -896,6 +931,7 @@ function renameNode(node: DirTreeNode, value: string) {
     newPath: `${node.baseDir}/${value}`
   })
 }
+
 function renameApi(node: DirTreeNode, value: string) {
   return requests
     .put(`/operateApi/rename/${node.id}`, {

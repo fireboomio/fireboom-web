@@ -27,6 +27,7 @@ import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
+import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -123,6 +124,7 @@ const { TabPane } = Tabs
 
 export default function Rest({ content, type }: Props) {
   const intl = useIntl()
+  const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
@@ -587,12 +589,7 @@ export default function Rest({ content, type }: Props) {
                     required: true,
                     message: intl.formatMessage({ defaultMessage: '请输入名称' })
                   },
-                  {
-                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-                    message: intl.formatMessage({
-                      defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
-                    })
-                  }
+                  ...ruleMap.name
                 ]}
                 name="apiNameSpace"
                 colon={false}

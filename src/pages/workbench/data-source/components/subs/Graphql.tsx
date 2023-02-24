@@ -25,6 +25,7 @@ import { useImmer } from 'use-immer'
 
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
+import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -76,6 +77,7 @@ const HEADER_LIST = HttpRequestHeaders.map(x => ({ label: x, value: x }))
 
 export default function Graphql({ content, type }: Props) {
   const intl = useIntl()
+  const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const config = content.config as Config
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
@@ -485,12 +487,7 @@ export default function Graphql({ content, type }: Props) {
                     required: true,
                     message: intl.formatMessage({ defaultMessage: '名称不能为空' })
                   },
-                  {
-                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/g,
-                    message: intl.formatMessage({
-                      defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
-                    })
-                  }
+                  ...ruleMap.name
                 ]}
               >
                 <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />

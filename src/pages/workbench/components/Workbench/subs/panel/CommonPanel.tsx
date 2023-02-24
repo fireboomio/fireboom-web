@@ -9,6 +9,7 @@ import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
 import { mutateHookModel } from '@/hooks/store/hook/model'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
+import { useValidate } from '@/hooks/validate'
 import type { CommonPanelResp } from '@/interfaces/commonPanel'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -38,6 +39,7 @@ interface PanelConfig {
 
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
   const intl = useIntl()
+  const { validateName } = useValidate()
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
   const storageList = useStorageList()
@@ -282,8 +284,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     if (row === undefined) {
       return
     }
-    if (!value.match(/^\w[a-zA-Z0-9_]*$/)) {
-      message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
+    const err = validateName(value)
+    if (err) {
+      message.error(err)
       return
     }
     row.name = value
@@ -361,7 +364,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               ) : (
                 <div className={styles.title}>{item.name}</div>
               )}
-              <div className={styles.tip}>{item.tip}</div>
+              <div className={styles.tip} title={item.tip}>
+                {item.tip}
+              </div>
               <div onClick={e => e.stopPropagation()}>
                 <Dropdown
                   overlay={dropDownMenu(item)}

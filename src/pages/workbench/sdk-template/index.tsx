@@ -1,10 +1,11 @@
 import { CloudDownloadOutlined, EditFilled } from '@ant-design/icons'
-import { Button, Card, Col, Descriptions, message, Modal, Row, Switch } from 'antd'
+import { Button, Card, Col, Descriptions, message, Modal, Row, Spin, Switch } from 'antd'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR from 'swr'
 
+import Error50x from '@/components/ErrorPage/50x'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { intl } from '@/providers/IntlProvider'
@@ -29,10 +30,14 @@ type RemoteSDKItem = {
 
 const SDKTemplate = () => {
   const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
-  const { data: remoteSdk } = useSWR<{ official: RemoteSDKItem[]; community: RemoteSDKItem[] }>(
-    '/sdk/remote',
-    requests.get
-  )
+  const {
+    data: remoteSdk,
+    isLoading,
+    error
+  } = useSWR<{
+    official: RemoteSDKItem[]
+    community: RemoteSDKItem[]
+  }>('/sdk/remote', requests.get)
   const existSdkMap = useMemo(() => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])
@@ -85,19 +90,32 @@ const SDKTemplate = () => {
         onCancel={() => setShowRemote(false)}
         title={intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
       >
-        <Row className="" gutter={[32, 32]}>
-          {remoteSdk?.official?.map((sdk, index) => (
-            <Col key={index} xl={8} xxl={6} md={12}>
-              <RemoteSDKCard
-                exist={existSdkMap.has(sdk.name)}
-                sdk={sdk}
-                onSelect={() => {
-                  downloadSdk(sdk)
-                }}
-              />
-            </Col>
-          ))}
-        </Row>
+        {isLoading ? (
+          <div className="h-40vh w-full flex items-center justify-center">
+            <Spin tip="Loading" size="large" />
+          </div>
+        ) : null}
+        {!isLoading && error ? (
+          <div className="h-40vh w-full flex items-center justify-center">
+            <Error50x />
+          </div>
+        ) : null}
+
+        {!isLoading && !error && (
+          <Row className="" gutter={[32, 32]}>
+            {remoteSdk?.official?.map((sdk, index) => (
+              <Col key={index} xl={8} xxl={6} md={12}>
+                <RemoteSDKCard
+                  exist={existSdkMap.has(sdk.name)}
+                  sdk={sdk}
+                  onSelect={() => {
+                    downloadSdk(sdk)
+                  }}
+                />
+              </Col>
+            ))}
+          </Row>
+        )}
       </Modal>
     </Card>
   )

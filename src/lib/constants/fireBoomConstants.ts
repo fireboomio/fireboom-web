@@ -31,3 +31,6 @@ export const MAGIC_DELETE_ENTITY: Model = {
     }
   ]
 }
+
+export const REGEX_FIELD_NAME = /^([A-Za-z][A-Za-z0-9_]*[A-Za-z0-9])|[A-Za-z]$/
+export const REGEX_FILED_NAME_UPPER_FIRST = /^([A-Z][A-Za-z0-9_]*[A-Za-z0-9])|[A-Z]$/

@@ -1,6 +1,7 @@
 import type { OperationDefinitionNode } from 'graphql/index'
 import { sortBy, values } from 'lodash'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
@@ -12,6 +13,7 @@ import iconOn from './assets/on.svg'
 import styles from './index.module.less'
 
 export default function HookPanel({ id }: { id?: string }) {
+  const location = useLocation()
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
   const { apiDesc, query } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
@@ -50,6 +52,11 @@ export default function HookPanel({ id }: { id?: string }) {
     ).filter(x => x.name !== 'mutatingPreResolve' || defs?.length > 0)
     return list
   }, [hookInfo, defs])
+
+  useEffect(() => {
+    setEditingHook(null)
+  }, [location])
+
   if (!id) {
     return null
   }

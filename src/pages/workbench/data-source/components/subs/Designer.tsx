@@ -3,6 +3,7 @@ import { omit } from 'lodash'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -30,6 +31,7 @@ import styles from './Designer.module.less'
 
 export default function Designer() {
   const intl = useIntl()
+  const { validateName } = useValidate()
   const initData = useMemo<
     {
       name: string
@@ -278,8 +280,9 @@ export default function Designer() {
       cancelText: intl.formatMessage({ defaultMessage: '取消' }),
       okButtonProps: {
         async onClick() {
-          if (!inputValue.current) {
-            message.error(intl.formatMessage({ defaultMessage: '请输入数据源名称' }))
+          const err = validateName(inputValue.current)
+          if (err) {
+            message.error(err)
             return
           }
           let data = {

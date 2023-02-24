@@ -13,6 +13,7 @@ import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import UrlInput from '@/components/UrlInput'
+import { useValidate } from '@/hooks/validate'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import requests, { getHeader } from '@/lib/fetchers'
@@ -73,6 +74,7 @@ const supportList = [
 
 export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const intl = useIntl()
+  const { ruleMap } = useValidate()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
@@ -256,10 +258,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   required: true,
                   message: intl.formatMessage({ defaultMessage: '供应商ID不能为空' })
                 },
-                {
-                  pattern: new RegExp('^\\w+$', 'g'),
-                  message: intl.formatMessage({ defaultMessage: '只允许包含字母，数字，下划线' })
-                }
+                ...ruleMap.name
               ]}
             >
               <Input

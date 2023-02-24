@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { Tooltip } from 'antd'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
@@ -21,8 +22,9 @@ import styles from './index.module.less'
 export default function RightSider() {
   const params = useParams()
   const [active, setActive] = useState<string>('hook')
-  const { operationType } = useAPIManager(state => ({
-    operationType: state.computed.operationType
+  const { operationType, schemaAST } = useAPIManager(state => ({
+    operationType: state.computed.operationType,
+    schemaAST: state.schemaAST
   }))
 
   function clickToolbar(item: string) {
@@ -46,11 +48,12 @@ export default function RightSider() {
       icon: iconFlow,
       title: intl.formatMessage({ defaultMessage: '流程图' }),
       iconActive: iconFlowActive,
-      content: (
+      content: schemaAST ? (
         <div className="w-102 h-full">
           <APIFlowChart id={params.id as string} />
         </div>
-      )
+      ) : null,
+      disableTip: !schemaAST ? intl.formatMessage({ defaultMessage: 'API内容为空' }) : null
     },
     {
       key: 'hook',
@@ -79,6 +82,13 @@ export default function RightSider() {
   const currentContent = currentItem?.content ?? ''
   const currentTitle = currentItem?.title ?? ''
 
+  useEffect(() => {
+    // 如果当前项被禁用，则自动关闭
+    if (currentItem?.disableTip) {
+      setActive('')
+    }
+  }, [currentItem])
+
   return (
     <div className="flex flex-shrink-0">
       {currentContent && (
@@ -97,13 +107,18 @@ export default function RightSider() {
       )}
       <div className={styles.toolbar}>
         {items.map(item => (
-          <div
-            key={item.key}
-            className={`${styles.item} ${active === item.key ? styles.active : ''}`}
-            onClick={() => clickToolbar(item.key)}
-          >
-            <img alt="" src={active === item.key ? item.iconActive : item.icon} className="w-4.5" />
-          </div>
+          <Tooltip title={item.disableTip} placement="left" key={item.key}>
+            <div
+              className={`${styles.item} ${active === item.key ? styles.active : ''}`}
+              onClick={() => clickToolbar(item.key)}
+            >
+              <img
+                alt=""
+                src={active === item.key ? item.iconActive : item.icon}
+                className="w-4.5"
+              />
+            </div>
+          </Tooltip>
         ))}
       </div>
     </div>
