@@ -47,8 +47,13 @@ const Authentication = (props: AuthenticationProps) => {
   }, [])
   const refreshConfig = async () => {
     void requests.get<unknown, SystemConfigType>('/setting/systemConfig').then(res => {
-      window.__bl.setConfig({ disabled: !res.usageReport })
       setConfig(res)
+      try {
+        // @ts-ignore
+        window.__bl.setConfig({ disabled: !res.usageReport })
+      } catch (_) {
+        // ignore
+      }
     })
   }
   if (!config) {

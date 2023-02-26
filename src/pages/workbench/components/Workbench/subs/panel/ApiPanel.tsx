@@ -776,7 +776,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             ]}
           />
         }
-        trigger={['contextMenu']}
+        trigger={multiSelection.length ? ['contextMenu'] : []}
       >
         <div className="flex flex-col h-full justify-between">
           <div className={styles.treeContainer}>

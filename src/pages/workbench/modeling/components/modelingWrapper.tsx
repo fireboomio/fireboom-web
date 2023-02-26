@@ -56,6 +56,9 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
         setSyncEditorFlag(!syncEditorFlag)
       })
     }
+    return () => {
+      hideRef.current?.()
+    }
   }, [dataSources, paramId])
   useEffect(() => {
     // 如果当前blocks有内容(表示数据源已经加载完成)，且blocks中没有model或enum，则自动切换到编辑模式
