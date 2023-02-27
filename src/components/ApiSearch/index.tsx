@@ -2,16 +2,16 @@ import type { InputRef } from 'antd'
 import { Input, Radio } from 'antd'
 import clsx from 'clsx'
 import { curry, flatMapDeep, get, omit, values } from 'lodash'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import { Close, File, Filter, Search } from '@/components/icons'
+import { File, Filter, Search } from '@/components/icons'
 import type { OperationResp } from '@/hooks/store/api'
 import { useApiList } from '@/hooks/store/api'
 import { useEventBus } from '@/lib/event/events'
 import { intl } from '@/providers/IntlProvider'
-import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconEmpty from './assets/empty.svg'
 import styles from './index.module.less'
@@ -61,6 +61,7 @@ export default function ApiSearch() {
   ]
 
   // api相关变量
+  const [selectIndex, setSelectIndex] = useState(0)
   const apiList = useApiList()
   const filteredList = useMemo(
     () =>
@@ -82,20 +83,62 @@ export default function ApiSearch() {
       }) ?? [],
     [apiList, enabledFilter, searchInput, activeTab]
   )
+  // 搜索项变化时，重置选中项
+  useEffect(() => {
+    setSelectIndex(0)
+  }, [filteredList])
 
   //快捷键
+  const goUp = useCallback(() => {
+    const max = filteredList.length - 1
+    setSelectIndex(index => (index > 0 ? index - 1 : max))
+  }, [filteredList])
+  const goDown = useCallback(() => {
+    const max = filteredList.length - 1
+    setSelectIndex(index => (index < max ? index + 1 : 0))
+  }, [filteredList])
+  useHotkeys('up', goUp, { enableOnFormTags: true, enabled: open }, [goUp])
+  useHotkeys('down', goDown, { enableOnFormTags: true, enabled: open }, [goDown])
+  useHotkeys('ctrl+k,command+k', () => setOpen(true), [])
+  useHotkeys('esc', () => setOpen(false), { enableOnFormTags: true, enabled: open }, [])
+  // tab栏导航
+  const tabNav = useCallback(
+    (invert: boolean) => {
+      const max = tabs.length - 1
+      const index = tabs.findIndex(x => x.key === activeTab)
+      const nextIndex = invert ? (index > 0 ? index - 1 : max) : index < max ? index + 1 : 0
+      setActiveTab(tabs[nextIndex].key)
+    },
+    [activeTab]
+  )
+  useHotkeys(
+    'tab',
+    () => tabNav(false),
+    { enableOnFormTags: true, preventDefault: true, enabled: open },
+    [tabNav]
+  )
+  useHotkeys(
+    'shift+tab',
+    () => tabNav(true),
+    { enableOnFormTags: true, preventDefault: true, enabled: open },
+    [tabNav]
+  )
+
+  // 监听滚动，确保选中项在可视区域
+  const listRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const unbind1 = registerHotkeyHandler('ctrl+k,command+k', () => {
-      setOpen(true)
-    })
-    const unbind2 = registerHotkeyHandler('esc', () => {
-      setOpen(false)
-    })
-    return () => {
-      unbind1()
-      unbind2()
+    if (!listRef.current) {
+      return
     }
-  }, [])
+
+    const top = selectIndex * 26 + 24 - 10
+    const bottom = (selectIndex + 1) * 26 + 24 + 10
+    if (listRef.current.scrollTop > top) {
+      listRef.current.scrollTop = top
+    } else if (listRef.current.scrollTop + listRef.current.clientHeight < bottom) {
+      listRef.current.scrollTop = bottom - listRef.current.clientHeight
+    }
+  }, [selectIndex])
 
   // 状态清空
   useEffect(() => {
@@ -124,13 +167,9 @@ export default function ApiSearch() {
       <div className={styles.panel} onClick={e => e.stopPropagation()}>
         {/* <Close className={styles.panelClose} onClick={() => setOpen(false)} /> */}
         <Input
+          id="t-input"
           ref={inputRef}
           prefix={<Search className="mx-2" />}
-          onKeyUp={e => {
-            if (e.key === 'Escape') {
-              setOpen(false)
-            }
-          }}
           placeholder={intl.formatMessage({ defaultMessage: '搜索API' })}
           onChange={e => setSearchInput(e.target.value)}
           value={searchInput}
@@ -162,7 +201,7 @@ export default function ApiSearch() {
         </div>
 
         <div className={styles.bodyContainer}>
-          <div className={styles.resultContainer}>
+          <div className={styles.resultContainer} ref={listRef}>
             {filteredList.length === 0 && (
               <div className="flex flex-col h-full w-full items-center justify-center">
                 <img src={iconEmpty} alt="" />
@@ -171,12 +210,13 @@ export default function ApiSearch() {
                 </div>
               </div>
             )}
-            {filteredList.map(item => (
+            {filteredList.map((item, index) => (
               <div
                 onClick={() => gotoAPI(item)}
                 className={clsx(styles.item, {
                   [styles.disable]: !item.enabled,
-                  [styles.illegal]: item.illegal
+                  [styles.illegal]: item.illegal,
+                  [styles.active]: selectIndex === index
                 })}
                 key={item.id}
               >

@@ -4,7 +4,6 @@ import { DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } f
 import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
 import dayjs from 'dayjs'
-import moment from 'moment'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
@@ -63,7 +62,7 @@ const Datetime = ({ field: { name, required, title }, disabled, initialValues }:
 
   const handleDateChange = (dateString: string) => {
     if (!form) return
-    form.setFieldValue(name, moment(dateString))
+    form.setFieldValue(name, dayjs(dateString))
   }
   const initialValue = initialValues[name]
   const initialDatetime = initialValue ? dayjs(initialValue as string) : null

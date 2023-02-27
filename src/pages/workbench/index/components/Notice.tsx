@@ -2,7 +2,7 @@ import { Image } from 'antd'
 import { useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import requests from '@/lib/fetchers'
+import { proxy } from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 
 import styles from './home.module.less'
@@ -22,11 +22,7 @@ export function Notice({ handleToggleDesigner }: Props) {
   const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
   const calcTime = useCalcTime()
   useEffect(() => {
-    requests('/common/proxy', {
-      params: {
-        url: 'https://raw.githubusercontent.com/fireboomio/files/main/news.json'
-      }
-    }).then(async res => {
+    proxy('https://raw.githubusercontent.com/fireboomio/files/main/news.json').then(async res => {
       // @ts-ignore
       const news = res.map((item: any) => ({
         content: item.content,

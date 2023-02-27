@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
-import axios from 'axios'
 import { debounce } from 'lodash'
 import type { ReactNode } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -16,7 +15,7 @@ import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
-import requests, { getHeader } from '@/lib/fetchers'
+import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 
@@ -161,7 +160,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       form.setFieldValue('userInfoEndpoint', '')
       form.setFieldValue('tokenEndpoint', '')
       form.setFieldValue('authorizationEndpoint', '')
-      const res = await axios.get('/api/v1/common/proxy', { headers: getHeader(), params: { url } })
+      const res = proxy(url)
       // 如果当前url不是最新的，忽略本次请求
       if (currentInspecting.current !== url) {
         return

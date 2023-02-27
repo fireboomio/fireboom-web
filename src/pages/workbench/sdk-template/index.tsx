@@ -6,7 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR from 'swr'
 
 import Error50x from '@/components/ErrorPage/50x'
-import requests from '@/lib/fetchers'
+import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { intl } from '@/providers/IntlProvider'
 
@@ -37,7 +37,7 @@ const SDKTemplate = () => {
   } = useSWR<{
     official: RemoteSDKItem[]
     community: RemoteSDKItem[]
-  }>('/sdk/remote', requests.get)
+  }>('https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json', proxy)
   const existSdkMap = useMemo(() => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])

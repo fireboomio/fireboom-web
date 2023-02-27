@@ -71,6 +71,7 @@ specifiers:
   react-draggable: ^4.4.5
   react-full-screen: ^1.1.1
   react-helmet: ^6.1.0
+  react-hotkeys-hook: ^4.3.7
   react-intl: ^6.2.5
   react-json-editor-ajrm: ^2.5.13
   react-json-view: ^1.21.3
@@ -137,6 +138,7 @@ dependencies:
   react-draggable: registry.npmmirror.com/react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y
   react-full-screen: registry.npmmirror.com/react-full-screen/1.1.1_react@18.2.0
   react-helmet: registry.npmmirror.com/react-helmet/6.1.0_react@18.2.0
+  react-hotkeys-hook: registry.npmmirror.com/react-hotkeys-hook/4.3.7_biqbaboplfbrettd7655fr4n2y
   react-intl: registry.npmmirror.com/react-intl/6.2.5_n4upredruleo7vrbwztywbpoxq
   react-json-editor-ajrm: registry.npmmirror.com/react-json-editor-ajrm/2.5.13_biqbaboplfbrettd7655fr4n2y
   react-json-view: registry.npmmirror.com/react-json-view/1.21.3_7ey2zzynotv32rpkwno45fsx4e
@@ -9449,6 +9451,19 @@ packages:
       react: registry.npmmirror.com/react/18.2.0
       react-fast-compare: registry.npmmirror.com/react-fast-compare/3.2.0
       react-side-effect: registry.npmmirror.com/react-side-effect/2.1.2_react@18.2.0
+    dev: false
+
+  registry.npmmirror.com/react-hotkeys-hook/4.3.7_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-qUcA5vl/liGWr9wLYI5/8oppHLa6nExFqOAMC6CyZhpj7C56PIzYZ76xAtJ+5lgxObgl4A4pQz8upy+nq7orSQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-hotkeys-hook/-/react-hotkeys-hook-4.3.7.tgz}
+    id: registry.npmmirror.com/react-hotkeys-hook/4.3.7
+    name: react-hotkeys-hook
+    version: 4.3.7
+    peerDependencies:
+      react: '>=16.8.1'
+      react-dom: '>=16.8.1'
+    dependencies:
+      react: registry.npmmirror.com/react/18.2.0
+      react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
     dev: false
 
   registry.npmmirror.com/react-intl/6.2.5_n4upredruleo7vrbwztywbpoxq:

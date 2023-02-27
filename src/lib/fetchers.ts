@@ -100,3 +100,9 @@ export const getFetcher = <T>(
 export const NPM_RESOLVE_HOSE = 'http://8.142.115.204:9801'
 
 export default requests
+
+export const proxy = (url: string) => {
+  return axios
+    .get(`/api/v1/common/proxy?url=${encodeURIComponent(url)}`, { headers: getHeader() })
+    .then(x => x.data)
+}
