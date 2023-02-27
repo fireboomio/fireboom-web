@@ -264,7 +264,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       </button>
       <Switch
         loading={loading}
-        disabled={(apiDesc?.inlegal || !schemaAST) && !apiDesc?.enabled}
+        disabled={(apiDesc?.illegal || !schemaAST) && !apiDesc?.enabled}
         className={`${styles.enableBtn} ${apiDesc?.enabled ? styles.enableBtnEnabled : ''}`}
         checked={apiDesc?.enabled}
         onChange={toggleEnable}

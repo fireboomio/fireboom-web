@@ -25,7 +25,7 @@ export interface APIDesc {
   id: number
   isDir: boolean
   isPublic: boolean
-  inlegal: boolean
+  illegal: boolean
   method: string
   operationType: string
   path: string
