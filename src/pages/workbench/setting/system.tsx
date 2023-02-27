@@ -10,18 +10,6 @@ import UrlInput from '@/components/UrlInput'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import styles from '@/pages/workbench/setting/components/subs/subs.module.less'
-
-interface systemConfig {
-  apiAddr: string
-  listenHost: string
-  listenPort: string
-  debugSwitch: boolean
-  devSwitch: boolean
-  forcedJumpSwitch: boolean
-  logLevel: string
-  middlewarePort: string
-  envType: string
-}
 interface Runtime {
   days: number
   hours: number
@@ -93,18 +81,28 @@ export default function SettingMainVersion() {
         <Form.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
           {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
         </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: 'API地址' })} name="apiAddr">
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: 'API外网地址' })}
+          name="apiPublicAddr"
+        >
           <UrlInput />
         </Form.Item>
         <Form.Item
-          label={intl.formatMessage({ defaultMessage: '服务器监听Host' })}
-          name="listenHost"
+          label={intl.formatMessage({ defaultMessage: 'API内网地址' })}
+          name="apiInernalAddr"
+          tooltip={intl.formatMessage({ defaultMessage: '钩子服务对内地址，一般不需要修改' })}
+        >
+          <UrlInput />
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: 'API服务监听Host' })}
+          name="apiListenHost"
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label={intl.formatMessage({ defaultMessage: '服务器监听端口' })}
-          name="listenPort"
+          label={intl.formatMessage({ defaultMessage: 'API服务监听端口' })}
+          name="apiListenPort"
         >
           <Input />
         </Form.Item>
@@ -116,13 +114,13 @@ export default function SettingMainVersion() {
             <Radio value={2}>Error</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label={intl.formatMessage({ defaultMessage: '调试' })}
-          name="debugSwitch"
+          name="debugEnabled"
           valuePropName="checked"
         >
           <Switch className={styles['switch-edit-btn']} size="small" />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '日志上报' })}
           name="usageReport"

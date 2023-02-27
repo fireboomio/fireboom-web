@@ -61,7 +61,7 @@ const Authentication = (props: AuthenticationProps) => {
   }
   return (
     <ConfigContext.Provider value={{ config, refreshConfig }}>
-      {authed || config.devSwitch ? (
+      {authed || config.isDev ? (
         props.children
       ) : (
         <div className="flex flex-col h-screen bg-warm-gray-200 w-screen items-center justify-center">

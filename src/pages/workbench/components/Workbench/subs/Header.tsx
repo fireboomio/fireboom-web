@@ -86,7 +86,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
 
   const doCompile = () => {
-    if (!config.devSwitch) {
+    if (!config.isDev) {
       message.error('生产环境禁止重新编译')
       return
     }
@@ -187,7 +187,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            {config.devSwitch ? (
+            {config.isDev ? (
               <div className={styles.headBtn} onClick={doCompile}>
                 {!compiling ? (
                   <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />

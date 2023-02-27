@@ -1,15 +1,15 @@
 import { createContext, useContext } from 'react'
 
 export type SystemConfigType = {
-  debugSwitch: boolean
-  devSwitch: boolean
-  forcedJumpSwitch: boolean
-  logLevel: string
-  middlewarePort: string
-  apiAddr: string
-  oidcHost: string
-  oidcPort: string
+  apiPublicAddr: string
+  apiInternalAddr: string
+  apiListenHost: string
+  apiListenPort: string
   hooksServerURL: string
+  debugEnabled: boolean
+  isDev: boolean
+  forcedJumpEnabled: boolean
+  logLevel: string
   usageReport: boolean
 }
 
