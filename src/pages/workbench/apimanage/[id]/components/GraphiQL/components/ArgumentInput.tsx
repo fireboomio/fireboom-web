@@ -1,8 +1,8 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import Editor from '@monaco-editor/react'
 import { Checkbox, DatePicker, Input, InputNumber, Modal } from 'antd'
+import dayjs from 'dayjs'
 import type { IntrospectionEnumValue } from 'graphql'
-import moment from 'moment'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -96,7 +96,7 @@ const SingleArgumentInput = ({
       return (
         <DatePicker
           className="text-xs w-full"
-          value={value ? moment(value as string) : null}
+          value={value ? dayjs(value as string) : null}
           onChange={e => {
             onChange?.(e?.toISOString())
           }}

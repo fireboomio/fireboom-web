@@ -3,6 +3,7 @@ import type { FormItemProps } from 'antd'
 import { DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd'
 import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
+import dayjs from 'dayjs'
 import moment from 'moment'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
@@ -65,7 +66,7 @@ const Datetime = ({ field: { name, required, title }, disabled, initialValues }:
     form.setFieldValue(name, moment(dateString))
   }
   const initialValue = initialValues[name]
-  const initialDatetime = initialValue ? moment(initialValue as string) : null
+  const initialDatetime = initialValue ? dayjs(initialValue as string) : null
   return (
     <FormItem label={title} name={name} required={required} initialValue={initialDatetime}>
       <DatePicker

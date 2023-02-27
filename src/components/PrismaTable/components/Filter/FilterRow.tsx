@@ -1,6 +1,7 @@
 import type { Enums, SchemaModel } from '@paljs/types'
 import type { InputRef } from 'antd'
 import { DatePicker, Input, Select } from 'antd'
+import dayjs from 'dayjs'
 import { isEqual } from 'lodash'
 import moment from 'moment'
 import { useEffect, useRef } from 'react'
@@ -207,7 +208,7 @@ const FilterValue = ({ inputValue, handleValueChange, fieldType, enums }: Filter
 
   switch (fieldType) {
     case 'DateTime': {
-      const defaultDate = inputValue ? moment(inputValue as string, 'YYYY-MM-DD') : moment()
+      const defaultDate = inputValue ? dayjs(inputValue as string, 'YYYY-MM-DD') : moment()
       return (
         <DatePicker
           defaultValue={defaultDate}

@@ -61,11 +61,6 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
           init(monaco, editor)
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
-          // editor.onKeyUp(e => {
-          //   if (isInputKey(e.keyCode)) {
-          //     editor.trigger('', 'editor.action.triggerSuggest', '')
-          //   }
-          // })
         }}
         defaultValue={defaultRef.current}
         onChange={value => {

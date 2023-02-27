@@ -39,7 +39,39 @@ export default async function init(monaco: any, editor: any) {
   console.log('registry', registry)
   console.log('grammars', grammars)
 
-  await new Promise(resolve => setTimeout(resolve, 500))
-  await wireTmGrammars(monaco, registry, grammars, editor)
-  console.log('prisma高亮——二次执行完成')
+  editor.onKeyUp((e: { keyCode: number }) => {
+    // 按下回车时触发ai
+    if (e.keyCode === 3) {
+      const { lineNumber } = editor.getPosition()
+      const content = editor.getModel().getLineContent(lineNumber - 1)
+      const match = content.match(/^\s*\/\/\s*[qQ]:(.*)$/)
+      if (match?.[1]) {
+        const question = match[1].trim()
+        editor.executeEdits('', [
+          {
+            range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+            text:
+              `//[${question}]的提示内容，第1行\n//[${question}]的提示内容，第2行\n//[${question}]的提示内容，第3行` +
+              `\n// ai end`
+          }
+        ])
+      }
+    }
+  })
+
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    await wireTmGrammars(monaco, registry, grammars, editor)
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    await wireTmGrammars(monaco, registry, grammars, editor)
+
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    await wireTmGrammars(monaco, registry, grammars, editor)
+
+    await new Promise(resolve => setTimeout(resolve, 5000))
+    await wireTmGrammars(monaco, registry, grammars, editor)
+  } catch (_) {
+    // ignore
+  }
 }
