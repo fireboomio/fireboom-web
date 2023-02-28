@@ -52,10 +52,10 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
 
   return (
     <div className="flex h-7 w-full items-center ">
-      <Button type="link" className="mr-4 !p-0" onClick={handleEditOne}>
+      <Button type="link" className="mr-4" onClick={handleEditOne}>
         <FormattedMessage defaultMessage="编辑" />
       </Button>
-      <Button type="link" className="mr-4 !p-0" onClick={onclickDelete}>
+      <Button type="link" className="mr-4" onClick={onclickDelete}>
         <FormattedMessage defaultMessage="删除" />
       </Button>
       <Modal
@@ -69,7 +69,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
             <Button onClick={() => setDeleteModalVisible(false)}>
               <FormattedMessage defaultMessage="取消" />
             </Button>
-            <Button className={`${styles['add-btn']} cursor-default p-0`} onClick={handleDeleteOne}>
+            <Button className={`${styles['add-btn']} cursor-default`} onClick={handleDeleteOne}>
               <FormattedMessage defaultMessage="确认" />
             </Button>
           </ButtonGroup>

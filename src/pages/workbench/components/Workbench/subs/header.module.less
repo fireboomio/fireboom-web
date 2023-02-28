@@ -74,25 +74,29 @@
 }
 
 .helpIcon {
-  width: 14px;
-  height: 14px;
-  background: url(/assets/workbench/header-help.png) no-repeat center/contain;
+  width: 20px;
+  height: 20px;
   margin-left: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .configIcon {
-  width: 14px;
-  height: 14px;
-  background: url(/assets/workbench/header-setting.png) no-repeat center/contain;
+  width: 20px;
+  height: 20px;
   margin-left: 16px;
   cursor: pointer;
+  font-size: 0;
+  color: #000;
+  display: flex;
+  align-items: center;
 }
 .avatar {
   @apply flex items-center;
   width: 28px;
   height: 28px;
   border-radius: 28px;
-  box-shadow: 0px 2px 4px 0px rgba(120, 125, 139, 0.17);
+  box-shadow: 0 2px 4px 0 rgba(120, 125, 139, 0.17);
   border: 1px solid rgba(255, 147, 120, 1);
   margin-left: 22px;
   padding: 3px;

@@ -6,14 +6,17 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
+import iconGithub from '../assets/github.svg'
 import HeaderCompile from '../assets/header-compile.png'
 import HeaderPreview from '../assets/header-preview.png'
+import iconKeyboard from '../assets/keyboard.svg'
+import iconQuestion from '../assets/question.svg'
+import iconSetting from '../assets/setting.svg'
 import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
@@ -224,30 +227,25 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </svg>
         </Tooltip> */}
         <div
-          className="cursor-pointer flex-0 h-4 text-0px w-4"
+          className="cursor-pointer flex-0 h-5 text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
-          <img className="h-4 w-4" src="/assets/github.svg" alt="" />
+          <img src={iconGithub} alt="" />
         </div>
         <div
           className={styles.helpIcon}
           onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
-        />
+        >
+          <img src={iconQuestion} alt="" />
+        </div>
         <Tooltip title={intl.formatMessage({ defaultMessage: '快捷键' })}>
-          <svg
-            className="cursor-pointer ml-4"
-            onClick={showHotkey}
-            width="1.25em"
-            height="1.25em"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="M20 3H4c-1.1 0-1.99.9-1.99 2L2 15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12H4V5h16v10zm-9-9h2v2h-2zm0 3h2v2h-2zM8 6h2v2H8zm0 3h2v2H8zM5 9h2v2H5zm0-3h2v2H5zm3 6h8v2H8zm6-3h2v2h-2zm0-3h2v2h-2zm3 3h2v2h-2zm0-3h2v2h-2zm-5 17l4-4H8z"
-            ></path>
-          </svg>
+          <div className="ml-4 h-5 flex items-center cursor-pointer" onClick={showHotkey}>
+            <img src={iconKeyboard} alt="" />
+          </div>
         </Tooltip>
-        <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')} />
+        <div className={styles.configIcon} onClick={() => navigate('/workbench/setting')}>
+          <img src={iconSetting} alt="" />
+        </div>
         {/*<div className={styles.avatar}>*/}
         {/*  <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />*/}
         {/*</div>*/}

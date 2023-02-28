@@ -473,7 +473,7 @@ const ModelDesigner = forwardRef(
                 key="submit"
                 htmlType="submit"
                 form="new_model_name_form"
-                className={`${styles['save-btn']} cursor-default p-0`}
+                className={`${styles['save-btn']} cursor-default`}
               >
                 保存
               </Button>

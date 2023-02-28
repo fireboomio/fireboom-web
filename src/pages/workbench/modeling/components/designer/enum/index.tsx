@@ -256,7 +256,7 @@ const EnumDesigner = forwardRef(
                 key="submit"
                 htmlType="submit"
                 form="new_enum_name_form"
-                className={`${styles['save-btn']} cursor-default p-0`}
+                className={`${styles['save-btn']} cursor-default`}
               >
                 {intl.formatMessage({ defaultMessage: '保存' })}
               </Button>
