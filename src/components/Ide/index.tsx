@@ -14,6 +14,7 @@ import { useImmer } from 'use-immer'
 import type { LocalLib } from '@/components/Ide/dependLoader'
 import { DependManager } from '@/components/Ide/dependLoader'
 import { getDefaultCode } from '@/components/Ide/getDefaultCode'
+import { setUp } from '@/lib/ai'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -292,6 +293,7 @@ const IdeContainer: FC<Props> = props => {
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
     setEditor(monacoEditor)
     setMonaco(monaco)
+    setUp(editor)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
