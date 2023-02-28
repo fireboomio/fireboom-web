@@ -2,12 +2,12 @@
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, Modal, Popconfirm, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import IdeContainer from '@/components/Ide'
-import getDefaultCode from '@/components/Ide/getDefaultCode'
+import { getDefaultCode } from '@/components/Ide/getDefaultCode'
 import type { HookName, HookResp } from '@/interfaces/auth'
 import requests from '@/lib/fetchers'
 

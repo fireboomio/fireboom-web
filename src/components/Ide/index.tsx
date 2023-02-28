@@ -13,7 +13,7 @@ import { useImmer } from 'use-immer'
 
 import type { LocalLib } from '@/components/Ide/dependLoader'
 import { DependManager } from '@/components/Ide/dependLoader'
-import getDefaultCode from '@/components/Ide/getDefaultCode'
+import { getDefaultCode } from '@/components/Ide/getDefaultCode'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -447,6 +447,9 @@ const IdeContainer: FC<Props> = props => {
           hookInfo={hookInfo}
           hostUrl={globalConfig.apiPublicAddr}
           tabSize={tabSize}
+          onSetContent={value => {
+            editor.setValue(value)
+          }}
           setTabSize={size => {
             setTabSize(size)
             localStorage.setItem(tabSizeKey, String(size))

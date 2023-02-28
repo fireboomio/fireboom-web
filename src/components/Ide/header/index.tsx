@@ -1,10 +1,11 @@
 import { LoadingOutlined, SaveOutlined } from '@ant-design/icons'
-import { App, Button, Checkbox, Radio, Select, Switch } from 'antd'
+import { App, Button, Checkbox, Dropdown, Radio, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import { getExampleList } from '@/components/Ide/getDefaultCode'
 import { useStackblitz } from '@/hooks/stackblitz'
 
 import iconCloud from '../assets/cloud.svg'
@@ -32,6 +33,8 @@ interface Props {
   onToggleHook?: (value: boolean) => Promise<void>
   // 点击手动保存按钮
   onSave?: () => void
+  // 点击手动保存按钮
+  onSetContent?: (value: string) => void
   // hook内容信息
   hookInfo?: HookInfo
   tabSize: number
@@ -104,6 +107,27 @@ const IdeHeaderContainer: FC<Props> = props => {
   const onlineDebug = useCallback(() => {
     openHookServer(`${props.hookPath}.ts:L3`)
   }, [])
+
+  // 代码模板
+  const [exampleList, setExampleList] = useState<{ name: string; code: string }[]>([])
+  useEffect(() => {
+    setExampleList([])
+    const list = props.hookPath.split('/')
+    const name = list.pop()
+    if (props.hookPath.startsWith('global/')) {
+      getExampleList(`example.${name}`).then(res => {
+        setExampleList(res)
+      })
+    } else if (props.hookPath.startsWith('auth/')) {
+      getExampleList(`example.${name}`).then(res => {
+        setExampleList(res)
+      })
+    } else if (props.hookPath.startsWith('customize/')) {
+      getExampleList(`example.custom`).then(res => {
+        setExampleList(res)
+      })
+    }
+  }, [props.hookPath])
 
   const { modal } = App.useApp()
   const localDebug = useCallback(() => {
@@ -205,7 +229,29 @@ const IdeHeaderContainer: FC<Props> = props => {
         </div>
         {/* 右侧区域 */}
         <div className="flex items-center">
-          <div className="name">
+          {exampleList.length && (
+            <Dropdown
+              menu={{
+                items: exampleList.map(x => ({
+                  key: x.name,
+                  label: (
+                    <div
+                      onClick={() => {
+                        props.onSetContent?.(x.code)
+                      }}
+                    >
+                      {x.name}
+                    </div>
+                  )
+                }))
+              }}
+              placement="bottomLeft"
+              arrow
+            >
+              <Button>选择模板</Button>
+            </Dropdown>
+          )}
+          <div className="ml-2">
             <FormattedMessage defaultMessage="tab宽度" />
           </div>
           <div className="ml-2">

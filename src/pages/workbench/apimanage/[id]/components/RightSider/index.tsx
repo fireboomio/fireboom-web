@@ -27,6 +27,11 @@ export default function RightSider() {
     schemaAST: state.schemaAST
   }))
 
+  // @ts-ignore
+  const isInternal = !!schemaAST?.definitions?.[0]?.directives?.find(
+    (x: any) => x?.name?.value === 'internalOperation'
+  )
+
   function clickToolbar(item: string) {
     if (active === item) {
       setActive('')
@@ -60,7 +65,8 @@ export default function RightSider() {
       icon: iconHook,
       title: intl.formatMessage({ defaultMessage: '钩子' }),
       iconActive: iconHookActive,
-      content: <HookPanel id={params.id} />
+      content: <HookPanel id={params.id} />,
+      disableTip: isInternal ? intl.formatMessage({ defaultMessage: '内部API' }) : null
     },
     {
       key: 'config',
