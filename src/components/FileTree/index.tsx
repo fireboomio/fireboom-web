@@ -3,6 +3,7 @@ import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import { cloneDeep, get, set } from 'lodash'
 import type React from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 export interface FileTreeNode {
   key: string
@@ -39,6 +40,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     addItem,
     editItem
   }))
+  const intl = useIntl()
   const [treeData, setTreeData] = useState<InnerNode[]>([]) // 文件树
   const [tempItem, setTempItem] = useState<{ isDir: boolean; parentKey: string } | null>(null)
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
@@ -84,7 +86,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     }
 
     return newTree
-  }, [treeData, tempItem, editingKey, keyMap])
+  }, [treeData, tempItem, editingKey])
 
   // 初始化数据
   useEffect(() => {
@@ -99,7 +101,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
 
     treeData?.map(markParent)
     setTreeData(newTree)
-  }, [props.treeData])
+  }, [props.treeData, treeData])
 
   // 初始化选中状态
   useEffect(() => {
@@ -114,7 +116,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       setTempItem({ isDir: isDir, parentKey: parent?.key ?? '' })
       setExpandedKeys([...expandedKeys, lastClickKey])
     },
-    [keyMap, lastClickKey]
+    [expandedKeys, keyMap, lastClickKey]
   )
   // 编辑节点
   const editItem = useCallback(
@@ -202,8 +204,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         onContextMenu={e => {
           if (!get(e, 'isFromChild')) {
             setDropDownItems([
-              { key: '1', label: '新建文件', onClick: () => addItem(false) },
-              { key: '2', label: '新建文件夹', onClick: () => addItem(true) }
+              {
+                key: '1',
+                label: intl.formatMessage({ defaultMessage: '新建文件' }),
+                onClick: () => addItem(false)
+              },
+              {
+                key: '2',
+                label: intl.formatMessage({ defaultMessage: '新建文件夹' }),
+                onClick: () => addItem(true)
+              }
             ])
           }
         }}
