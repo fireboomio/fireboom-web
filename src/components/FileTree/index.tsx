@@ -1,5 +1,6 @@
-import { Input, Tree } from 'antd'
-import { cloneDeep } from 'lodash'
+import { Dropdown, Input, Tree } from 'antd'
+import type { ItemType } from 'antd/es/menu/hooks/useItems'
+import { cloneDeep, get, set } from 'lodash'
 import type React from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 
@@ -21,10 +22,11 @@ export interface FileTreeProps {
   titleRender?: (nodeData: any) => React.ReactNode
   treeData: FileTreeNode[]
   rootClassName?: string
-  selectedKeys?: string[]
+  selectedKey?: string
   onSelectFile?: (nodeData: any) => void
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
   onRename?: (nodeData: FileTreeNode, newName: string) => Promise<boolean>
+  onContextMenu?: (nodeList: FileTreeNode[]) => ItemType[]
 }
 
 export interface FileTreeRef {
@@ -43,8 +45,19 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const [lastClickKey, setLastClickKey] = useState<string>('')
   const [editingKey, setEditingKey] = useState<string>('')
+  const keyMap = useMemo<Record<string, InnerNode>>(() => {
+    function markKey(node: InnerNode) {
+      map[node.key] = node
+      node.children?.forEach(markKey)
+    }
+
+    const map: Record<string, InnerNode> = {}
+    treeData?.forEach(markKey)
+    return map
+  }, [treeData])
+  // 用于渲染的数据，加入了临时新增节点和编辑节点的状态
   const showTree = useMemo(() => {
-    if (!treeData || !tempItem) return treeData
+    if (!treeData || (!tempItem && !editingKey)) return treeData
     const newTree = cloneDeep(treeData)
 
     // 修改编辑节点状态
@@ -53,25 +66,27 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       editNode.isInput = true
     }
     // 插入临时新增节点
-    const newItem = {
-      name: '',
-      key: 'temp' + Date.now(),
-      isDir: tempItem.isDir,
-      data: { name: '' },
-      isInput: true,
-      isNew: true
+    if (tempItem) {
+      const newItem = {
+        name: '',
+        key: 'temp' + Date.now(),
+        isDir: tempItem.isDir,
+        data: { name: '' },
+        isInput: true,
+        isNew: true
+      }
+      const parent = findItemByKey(newTree, tempItem?.parentKey)
+      if (parent) {
+        parent.children?.unshift(newItem)
+      } else {
+        newTree.unshift(newItem)
+      }
     }
-    const parent = findItemByKey(newTree, tempItem?.parentKey)
 
-    console.log(tempItem, parent)
-    if (parent) {
-      parent.children?.unshift(newItem)
-    } else {
-      newTree.unshift(newItem)
-    }
     return newTree
-  }, [treeData, tempItem])
+  }, [treeData, tempItem, editingKey, keyMap])
 
+  // 初始化数据
   useEffect(() => {
     const newTree = cloneDeep(props.treeData)
 
@@ -86,23 +101,28 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     setTreeData(newTree)
   }, [props.treeData])
 
+  // 初始化选中状态
   useEffect(() => {
-    setSelectedKeys(props.selectedKeys ?? [])
-  }, [props.selectedKeys])
+    setSelectedKeys(props.selectedKey ? [props.selectedKey] : [])
+  }, [props.selectedKey])
 
   // 增加节点
   const addItem = useCallback(
     (isDir: boolean) => {
-      const target = findItemByKey(treeData, lastClickKey)
-      setTempItem({ isDir: false, parentKey: target?.key ?? '' })
+      const target = keyMap[lastClickKey]
+      const parent = target?.isDir ? target : target?.parent
+      setTempItem({ isDir: isDir, parentKey: parent?.key ?? '' })
       setExpandedKeys([...expandedKeys, lastClickKey])
     },
-    [treeData, lastClickKey]
+    [keyMap, lastClickKey]
   )
   // 编辑节点
-  const editItem = useCallback((key: string) => {
-    setEditingKey(key)
-  }, [])
+  const editItem = useCallback(
+    (key: string) => {
+      setEditingKey(key)
+    },
+    [setEditingKey]
+  )
 
   // 处理点击树节点
   const onSelect = useCallback(
@@ -153,50 +173,96 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setTempItem(null)
       }
     } else {
+      if (node.name === str) {
+        setEditingKey('')
+        return
+      }
       // 处理重命名
-      // 处理新增保存
-      const success = await props.onRename?.(node.parent ?? null, node.isDir, str)
+      const success = await props.onRename?.(node, str)
       if (success || closeOnFail) {
-        setTempItem(null)
+        setEditingKey('')
       }
     }
   }
 
+  const [dropDownItems, setDropDownItems] = useState<ItemType[]>([])
   return (
-    <Tree
-      rootClassName={props.rootClassName}
-      titleRender={node => {
-        if (node.isInput) {
-          return (
-            <Input
-              size="small"
-              autoFocus
-              onPressEnter={e => {
-                // @ts-ignore
-                saveInput(node, e.target.value!, false)
-              }}
-              onBlur={e => {
-                // @ts-ignore
-                saveInput(node, e.target.value!, true)
-              }}
-            />
-          )
-        } else {
-          return props.titleRender?.(node)
-        }
+    <Dropdown
+      open={dropDownItems.length > 0}
+      onOpenChange={open => !open && setDropDownItems([])}
+      menu={{
+        items: dropDownItems,
+        // 目录点击后自动关闭
+        onClick: () => setDropDownItems([])
       }}
-      defaultExpandParent
-      treeData={showTree}
-      multiple
-      expandedKeys={expandedKeys}
-      selectedKeys={selectedKeys}
-      onSelect={onSelect}
-    />
+      trigger={['contextMenu']}
+    >
+      <div
+        className="h-full w-full"
+        onContextMenu={e => {
+          if (!get(e, 'isFromChild')) {
+            setDropDownItems([
+              { key: '1', label: '新建文件', onClick: () => addItem(false) },
+              { key: '2', label: '新建文件夹', onClick: () => addItem(true) }
+            ])
+          }
+        }}
+      >
+        <Tree
+          rootClassName={props.rootClassName}
+          titleRender={node => {
+            if (node.isInput) {
+              return (
+                <Input
+                  size="small"
+                  autoFocus
+                  defaultValue={node.name}
+                  onPressEnter={e => {
+                    // @ts-ignore
+                    saveInput(node, e.target.value!, false)
+                  }}
+                  onBlur={e => {
+                    // @ts-ignore
+                    saveInput(node, e.target.value!, true)
+                  }}
+                />
+              )
+            } else {
+              return (
+                <div
+                  onContextMenu={e => {
+                    set(e, 'isFromChild', true)
+                    if (!selectedKeys.includes(node.key)) {
+                      setSelectedKeys([node.key])
+                      props.onSelectFile?.(node)
+                    }
+                    const targets = selectedKeys.includes(node.key)
+                      ? selectedKeys.map(x => keyMap[x])
+                      : [node]
+                    setDropDownItems(props.onContextMenu?.(targets) ?? [])
+                  }}
+                >
+                  {props.titleRender?.(node)}
+                </div>
+              )
+            }
+          }}
+          defaultExpandParent
+          treeData={showTree}
+          multiple
+          expandedKeys={expandedKeys}
+          selectedKeys={selectedKeys}
+          onSelect={onSelect}
+        />
+      </div>
+    </Dropdown>
   )
 })
+
 FileTree.displayName = 'FileTree'
 export default FileTree
 
+// 注意，此方法不能被keyMap替代，因为此处的treeData是经过cloneDeep的，keyMap中的node是原始数据
 function findItemByKey(tree: InnerNode[], key: string) {
   const lists = [...tree]
   while (lists.length) {
