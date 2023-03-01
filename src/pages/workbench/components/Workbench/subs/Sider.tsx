@@ -6,7 +6,7 @@ import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
-import ApiPanel from './panel/ApiPanel'
+import ApiPanel from './panel/ApiPanel2'
 import CommonPanel from './panel/CommonPanel'
 import styles from './Sider.module.less'
 
