@@ -160,15 +160,15 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       form.setFieldValue('userInfoEndpoint', '')
       form.setFieldValue('tokenEndpoint', '')
       form.setFieldValue('authorizationEndpoint', '')
-      const res = proxy(url)
+      const res = await proxy(url)
       // 如果当前url不是最新的，忽略本次请求
       if (currentInspecting.current !== url) {
         return
       }
-      form.setFieldValue('jwksURL', res.data.jwks_uri)
-      form.setFieldValue('userInfoEndpoint', res.data.userinfo_endpoint)
-      form.setFieldValue('tokenEndpoint', res.data.token_endpoint)
-      form.setFieldValue('authorizationEndpoint', res.data.authorization_endpoint)
+      form.setFieldValue('jwksURL', res.jwks_uri)
+      form.setFieldValue('userInfoEndpoint', res.userinfo_endpoint)
+      form.setFieldValue('tokenEndpoint', res.token_endpoint)
+      form.setFieldValue('authorizationEndpoint', res.authorization_endpoint)
     }, 1000),
     [form]
   )
