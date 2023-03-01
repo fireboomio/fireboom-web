@@ -1,6 +1,7 @@
-import { message, Modal, Tooltip } from 'antd'
+import { CopyOutlined } from '@ant-design/icons'
+import { Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type React from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -11,6 +12,7 @@ import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
 import type { OperationResp } from '@/interfaces/apimanage'
 import events from '@/lib/event/events'
+import requests from '@/lib/fetchers'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 // import GraphiQLApp from '@/pages/graphiql'
@@ -26,21 +28,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const location = useLocation()
   const [action, setAction] = useState<ActionT>(null)
   const [treeData, setTreeData] = useState<FileTreeNode[]>([])
-  // 多选状态，用于批量操作
-  const [currEditingKey, setCurrEditingKey] = useState<string | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
   // const [query, setQuery] = useState<string>()
-  const [isBlur, setIsBlur] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [scrollBottom, setScrollBottom] = useState<boolean>() // 滚动到底部
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const fileTree = useRef<FileTreeRef>({
     addItem: () => {}
   })
-  const currEditingNode = useMemo(() => {
-    if (!currEditingKey) return null
-    return getNodeByKey(currEditingKey, treeData)
-  }, [currEditingKey, treeData])
 
   // 快捷键
   useEffect(() => {
@@ -81,25 +76,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     setTreeData(tree)
   }, [apiList])
 
-  useEffect(() => {
-    if (currEditingNode) {
-      const node = findEmptyTitleNode(treeData)
-      if (!node) return
-      setCurrEditingKey(node.key)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [treeData])
-
-  useEffect(() => {
-    if (!isModalVisible && isBlur) {
-      setAction(null)
-      setCurrEditingKey(null)
-      void mutateApi()
-    }
-    setIsBlur(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalVisible, isBlur])
-
   // useEffect(() => {
   //   if (action === '编辑' && selectedKey) {
   //     handleEdit()
@@ -122,6 +98,19 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       // return nodeData.method
     }
   }
+
+  const handleDelete = async (node: FileTreeNode) => {
+    setAction(null)
+    if (node.isDir) {
+      await requests.delete('/operateApi/dir', { data: { path: node.data.path } })
+    } else {
+      await requests.delete(`/operateApi/${node.data.id}`)
+    }
+    void mutateApi()
+    localStorage.removeItem(`_api_args_${node.data.id}`)
+    // TODO 删除后的自动跳转逻辑
+  }
+  const handleAddNode = (name: string, isDir: boolean) => {}
 
   const titleRender = (nodeData: FileTreeNode) => {
     const miniStatus = calcMiniStatus(nodeData)
@@ -151,7 +140,107 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           </div>
           <div className={styles.title}>{nodeData.data.title}</div>
           <div className={styles.suffix}>{miniStatus}</div>
-          <div onClick={e => e.stopPropagation()}></div>
+
+          <div onClick={e => e.stopPropagation()}>
+            <Dropdown
+              // open={dropDownId === nodeData.key}
+              // onOpenChange={flag => {
+              //   setDropDownId(flag ? nodeData.key : undefined)
+              // }}
+              destroyPopupOnHide
+              menu={{
+                items: [
+                  {
+                    key: 'copy',
+                    label: (
+                      <div
+                        onClick={async () => {
+                          console.log(nodeData)
+                          const destPath = `${nodeData.data.path}Copy${Math.random()
+                            .toString(36)
+                            .substring(2, 5)}`
+                          await requests.post('/operateApi/copy', {
+                            path: destPath,
+                            id: nodeData.data.id
+                          })
+                          message.success(
+                            intl.formatMessage(
+                              { defaultMessage: '已复制接口 {path}' },
+                              { path: destPath }
+                            )
+                          )
+                          void mutateApi()
+                        }}
+                      >
+                        <CopyOutlined />
+                        <span className="ml-1.5">
+                          <FormattedMessage defaultMessage="复制" />{' '}
+                        </span>
+                      </div>
+                    )
+                  },
+                  {
+                    key: 'rename',
+                    label: (
+                      <div
+                        onClick={() => {
+                          // 记录当前名称
+                          // setInputValue(nodeData.title)
+                          setAction('重命名')
+                        }}
+                      >
+                        <img
+                          alt="zhongmingming"
+                          src="assets/iconfont/zhongmingming.svg"
+                          style={{ height: '1em', width: '1em' }}
+                        />
+                        <span className="ml-1.5">
+                          <FormattedMessage defaultMessage="重命名" />{' '}
+                        </span>
+                      </div>
+                    )
+                  },
+                  {
+                    key: 'delete',
+                    label: (
+                      <div
+                        onClick={e => {
+                          // @ts-ignore
+                          if (e.target?.dataset?.stoppropagation) {
+                            e.stopPropagation()
+                          }
+                        }}
+                      >
+                        <Popconfirm
+                          zIndex={9999}
+                          title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
+                          onConfirm={() => {
+                            handleDelete(nodeData)
+                          }}
+                          okText={intl.formatMessage({ defaultMessage: '删除' })}
+                          cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                          placement="right"
+                        >
+                          <img
+                            alt="shanchu"
+                            src="assets/iconfont/shanchu.svg"
+                            style={{ height: '1em', width: '1em' }}
+                          />
+                          <span className="ml-1.5" data-stoppropagation>
+                            <FormattedMessage defaultMessage="删除" />
+                          </span>
+                        </Popconfirm>
+                      </div>
+                    )
+                  }
+                ]
+              }}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <div className={styles.more} onClick={e => e.preventDefault()} />
+            </Dropdown>
+          </div>
         </>
       </div>
     )
@@ -200,14 +289,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               className={styles.headerRefresh}
               onClick={() => {
                 void mutateApi()
-                // void getFetcher<OperationResp[]>('/operateApi')
-                //   .then(res => setTreeData(convertToTree(res)))
-                //   // .then(() => setSelectedKey(''))
-                //   .then(() => message.success(intl.formatMessage({ defaultMessage: '刷新完成！' })))
-                //   .catch((err: Error) => {
-                //     message.error(intl.formatMessage({ defaultMessage: '获取文件列表失败！' }))
-                //     throw err
-                //   })
               }}
             />
           </Tooltip>
@@ -231,7 +312,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           }
         }}
         onCreateItem={async (parent, isDir, name) => {
-          if (name && onValidateName(name, currEditingNode?.isDir)) {
+          if (name && onValidateName(name, isDir)) {
             // handlePressEnter()
           }
           return false

@@ -13,6 +13,7 @@ export interface FileTreeNode {
 
 interface InnerNode extends FileTreeNode {
   isInput?: boolean
+  isNew?: boolean
   parent?: InnerNode
 }
 
@@ -23,30 +24,42 @@ export interface FileTreeProps {
   selectedKeys?: string[]
   onSelectFile?: (nodeData: any) => void
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
+  onRename?: (nodeData: FileTreeNode, newName: string) => Promise<boolean>
 }
 
 export interface FileTreeRef {
   addItem: (isDir: boolean) => void
+  editItem: (key: string) => void
 }
 
 const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, ref) => {
   useImperativeHandle(ref, () => ({
-    addItem
+    addItem,
+    editItem
   }))
   const [treeData, setTreeData] = useState<InnerNode[]>([]) // 文件树
-  const [tempItem, setTempItem] = useState<{ idDir: boolean; parentKey: string } | null>(null)
+  const [tempItem, setTempItem] = useState<{ isDir: boolean; parentKey: string } | null>(null)
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const [lastClickKey, setLastClickKey] = useState<string>('')
-  const treeWithTemp = useMemo(() => {
+  const [editingKey, setEditingKey] = useState<string>('')
+  const showTree = useMemo(() => {
     if (!treeData || !tempItem) return treeData
     const newTree = cloneDeep(treeData)
+
+    // 修改编辑节点状态
+    const editNode = findItemByKey(newTree, editingKey)
+    if (editNode) {
+      editNode.isInput = true
+    }
+    // 插入临时新增节点
     const newItem = {
       name: '',
       key: 'temp' + Date.now(),
-      isDir: tempItem.idDir,
+      isDir: tempItem.isDir,
       data: { name: '' },
-      isInput: true
+      isInput: true,
+      isNew: true
     }
     const parent = findItemByKey(newTree, tempItem?.parentKey)
 
@@ -81,11 +94,15 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const addItem = useCallback(
     (isDir: boolean) => {
       const target = findItemByKey(treeData, lastClickKey)
-      setTempItem({ idDir: false, parentKey: target?.key ?? '' })
+      setTempItem({ isDir: false, parentKey: target?.key ?? '' })
       setExpandedKeys([...expandedKeys, lastClickKey])
     },
     [treeData, lastClickKey]
   )
+  // 编辑节点
+  const editItem = useCallback((key: string) => {
+    setEditingKey(key)
+  }, [])
 
   // 处理点击树节点
   const onSelect = useCallback(
@@ -128,17 +145,18 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   )
 
   // 保存输入框内容
-  const saveInput = async (str: string, closeOnFail: boolean) => {
-    if (!tempItem) return
-    const success = await props.onCreateItem?.(
-      findItemByKey(treeData, tempItem.parentKey) ?? null,
-      tempItem.idDir,
-      str
-    )
-    if (success) {
-      setTempItem(null)
+  const saveInput = async (node: InnerNode, str: string, closeOnFail: boolean) => {
+    if (node.isNew) {
+      // 处理新增保存
+      const success = await props.onCreateItem?.(node.parent ?? null, node.isDir, str)
+      if (success || closeOnFail) {
+        setTempItem(null)
+      }
     } else {
-      if (closeOnFail) {
+      // 处理重命名
+      // 处理新增保存
+      const success = await props.onRename?.(node.parent ?? null, node.isDir, str)
+      if (success || closeOnFail) {
         setTempItem(null)
       }
     }
@@ -155,11 +173,11 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
               autoFocus
               onPressEnter={e => {
                 // @ts-ignore
-                saveInput(e.target.value!, false)
+                saveInput(node, e.target.value!, false)
               }}
               onBlur={e => {
                 // @ts-ignore
-                saveInput(e.target.value!, true)
+                saveInput(node, e.target.value!, true)
               }}
             />
           )
@@ -168,7 +186,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         }
       }}
       defaultExpandParent
-      treeData={treeWithTemp}
+      treeData={showTree}
       multiple
       expandedKeys={expandedKeys}
       selectedKeys={selectedKeys}
