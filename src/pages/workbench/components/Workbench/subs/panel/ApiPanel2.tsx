@@ -1,7 +1,6 @@
 import { CopyOutlined } from '@ant-design/icons'
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import type React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -16,12 +15,9 @@ import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
-// import GraphiQLApp from '@/pages/graphiql'
 import styles from './ApiPanel.module.less'
 import type { SidePanelProps } from './SidePanel'
 import SidePanel from './SidePanel'
-
-type ActionT = '创建文件' | '创建目录' | '编辑' | '重命名' | null
 
 export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const intl = useIntl()
@@ -49,7 +45,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       unbind1()
       unbind2()
     }
-  }, [])
+  }, [navigate])
 
   // 监听location变化，及时清空选中状态
   useEffect(() => {
@@ -91,18 +87,37 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   // 对所有修改操作进行一次封装，提供loading和刷新效果
-  const executeWrapper = (fn: Function) => {
-    return async (...args: any) => {
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
-      try {
-        await fn(...args)
-        await mutateApi()
-      } catch (_) {
-        // ignore
-      }
-      hide()
-    }
-  }
+  const executeWrapper = useCallback(
+    function <T extends Function>(fn: T): T {
+      return (async (...args: any) => {
+        const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
+        try {
+          await fn(...args)
+          await mutateApi()
+        } catch (_) {
+          // ignore
+        }
+        hide()
+      }) as any
+    },
+    [intl]
+  )
+  // 对所有修改操作进行一次封装，提供loading和刷新效果
+  // const executeWrapper = useCallback(
+  //   (fn: Function) => {
+  //     return (async (...args: any) => {
+  //       const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
+  //       try {
+  //         await fn(...args)
+  //         await mutateApi()
+  //       } catch (_) {
+  //         // ignore
+  //       }
+  //       hide()
+  //     }) as typeof fn
+  //   },
+  //   [intl]
+  // )
   const handleBatchSwitch = executeWrapper(async (nodes: FileTreeNode[], flag: boolean) => {
     const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
     await requests.post('operateApi/batchOnline', {
@@ -114,7 +129,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       data: { ids, enabled: flag }
     })
   })
-  const handleBatchDelete = async (nodes: FileTreeNode[]) => {
+  const handleBatchDelete = executeWrapper(async (nodes: FileTreeNode[]) => {
     modal.confirm({
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
@@ -127,7 +142,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       okText: intl.formatMessage({ defaultMessage: '确认' }),
       cancelText: intl.formatMessage({ defaultMessage: '取消' })
     })
-  }
+  })
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (node.isDir) {
       await requests.delete('/operateApi/dir', { data: { path: node.data.path } })
@@ -155,6 +170,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       await requests.put(`/operateApi/rename/${node.data.id}`, { path: newPath })
     }
   })
+  const handleMove = executeWrapper(
+    async (dragNode: FileTreeNode, dropNode: FileTreeNode | null) => {
+      const oldPath = dragNode.data.path
+      const newPath = `${dropNode?.data?.path ?? ''}/${dragNode.name}`
+      if (dragNode.isDir) {
+        await requests.put('/operateApi/dir', { oldPath, newPath })
+      } else {
+        await requests.put(`/operateApi/rename/${dragNode.data.id}`, { path: newPath })
+      }
+    }
+  )
 
   const titleRender = (nodeData: FileTreeNode) => {
     const miniStatus = calcMiniStatus(nodeData)
@@ -263,7 +289,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                             src="assets/iconfont/shanchu.svg"
                             style={{ height: '1em', width: '1em' }}
                           />
-                          <span className="ml-1.5" data-stoppropagation>
+                          <span className="ml-1.5" data-stoppropagation="1">
                             <FormattedMessage defaultMessage="删除" />
                           </span>
                         </Popconfirm>
@@ -288,47 +314,50 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     if (isDir) {
       let err = validateName(name)
       if (err) {
-        message.error(err)
+        void message.error(err)
         return false
       }
     } else {
       let err = validateAPI(name)
       if (err) {
-        message.error(err)
+        void message.error(err)
         return false
       }
     }
     return true
   }
 
-  const buildContextMenu = useCallback((nodeList: FileTreeNode[]) => {
-    const menu: ItemType[] = []
-    const hasApi = nodeList.some(x => !x.isDir)
-    if (hasApi) {
-      menu.push(
-        ...[
-          {
-            key: 'on',
-            onClick: () => void handleBatchSwitch(nodeList, true),
-            disabled: !nodeList.some(x => !x.isDir && !x.data.enabled),
-            label: <FormattedMessage defaultMessage="上线" />
-          },
-          {
-            key: 'off',
-            onClick: () => void handleBatchSwitch(nodeList, false),
-            disabled: !nodeList.some(x => !x.isDir && x.data.enabled),
-            label: <FormattedMessage defaultMessage="下线" />
-          },
-          {
-            key: 'delete',
-            onClick: () => void handleBatchDelete(nodeList),
-            label: <FormattedMessage defaultMessage="删除" />
-          }
-        ]
-      )
-    }
-    return menu
-  }, [])
+  const buildContextMenu = useCallback(
+    (nodeList: FileTreeNode[]) => {
+      const menu: ItemType[] = []
+      const hasApi = nodeList.some(x => !x.isDir)
+      if (hasApi) {
+        menu.push(
+          ...[
+            {
+              key: 'on',
+              onClick: () => void handleBatchSwitch(nodeList, true),
+              disabled: !nodeList.some(x => !x.isDir && !x.data.enabled),
+              label: <FormattedMessage defaultMessage="上线" />
+            },
+            {
+              key: 'off',
+              onClick: () => void handleBatchSwitch(nodeList, false),
+              disabled: !nodeList.some(x => !x.isDir && x.data.enabled),
+              label: <FormattedMessage defaultMessage="下线" />
+            },
+            {
+              key: 'delete',
+              onClick: () => void handleBatchDelete(nodeList),
+              label: <FormattedMessage defaultMessage="删除" />
+            }
+          ]
+        )
+      }
+      return menu
+    },
+    [handleBatchDelete, handleBatchSwitch]
+  )
 
   return (
     <SidePanel
@@ -413,6 +442,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           }
           return false
         }}
+        onMove={handleMove}
         onContextMenu={buildContextMenu}
         selectedKey={selectedKey}
         rootClassName={styles.treeContainer}

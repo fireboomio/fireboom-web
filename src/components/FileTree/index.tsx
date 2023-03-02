@@ -27,6 +27,7 @@ export interface FileTreeProps {
   onSelectFile?: (nodeData: any) => void
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
   onRename?: (nodeData: FileTreeNode, newName: string) => Promise<boolean>
+  onMove?: (dragNode: FileTreeNode, dropNode: FileTreeNode | null) => Promise<void>
   onContextMenu?: (nodeList: FileTreeNode[]) => ItemType[]
 }
 
@@ -99,9 +100,9 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       })
     }
 
-    treeData?.map(markParent)
+    newTree?.map(markParent)
     setTreeData(newTree)
-  }, [props.treeData, treeData])
+  }, [props.treeData])
 
   // 初始化选中状态
   useEffect(() => {
@@ -163,7 +164,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         }
       }
     },
-    [treeData, expandedKeys, selectedKeys]
+    [selectedKeys, props, expandedKeys]
   )
 
   // 保存输入框内容
@@ -220,6 +221,13 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       >
         <Tree
           rootClassName={props.rootClassName}
+          draggable
+          onDrop={({ node, dragNode, dropToGap }) =>
+            props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
+          }
+          onDragEnter={e => {
+            setExpandedKeys([...expandedKeys, e.node.key])
+          }}
           titleRender={node => {
             if (node.isInput) {
               return (
@@ -228,12 +236,10 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
                   autoFocus
                   defaultValue={node.name}
                   onPressEnter={e => {
-                    // @ts-ignore
-                    saveInput(node, e.target.value!, false)
+                    void saveInput(node, get(e, 'target.value'), false)
                   }}
                   onBlur={e => {
-                    // @ts-ignore
-                    saveInput(node, e.target.value!, true)
+                    void saveInput(node, e.target.value!, true)
                   }}
                 />
               )
