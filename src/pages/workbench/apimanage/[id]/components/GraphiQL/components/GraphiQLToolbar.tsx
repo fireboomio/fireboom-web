@@ -323,7 +323,7 @@ const GraphiQLToolbar = () => {
     <div className="graphiql-toolbar">
       <ExecuteButton className="cursor-pointer mr-4" />
       <Dropdown
-        overlay={<RBACPopup value={selectedRole} onChange={injectRole} />}
+        dropdownRender={() => <RBACPopup value={selectedRole} onChange={injectRole} />}
         trigger={['click']}
       >
         <button className="graphiql-toolbar-btn">
@@ -331,7 +331,9 @@ const GraphiQLToolbar = () => {
         </button>
       </Dropdown>
       <Dropdown
-        overlay={<InternalPopup value={isInternal} onChange={injectInternalOperation} />}
+        dropdownRender={() => (
+          <InternalPopup value={isInternal} onChange={injectInternalOperation} />
+        )}
         trigger={['click']}
       >
         <button className="graphiql-toolbar-btn">
@@ -342,7 +344,7 @@ const GraphiQLToolbar = () => {
       <Dropdown
         open={argOpen}
         onOpenChange={onArgOpenChange}
-        overlay={<ArgumentDirectivePopup onInject={injectArgument} />}
+        dropdownRender={() => <ArgumentDirectivePopup onInject={injectArgument} />}
         trigger={['click']}
       >
         <button className="graphiql-toolbar-btn">
@@ -352,7 +354,7 @@ const GraphiQLToolbar = () => {
       <button className="graphiql-toolbar-btn" onClick={injectTransform}>
         <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
       </button>
-      <Dropdown overlay={<CrossOriginPopup />} trigger={['click']}>
+      <Dropdown dropdownRender={() => <CrossOriginPopup />} trigger={['click']}>
         <button className="graphiql-toolbar-btn">
           <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
         </button>
