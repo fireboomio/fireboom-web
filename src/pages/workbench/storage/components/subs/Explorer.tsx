@@ -193,64 +193,60 @@ export default function StorageExplorer({ bucketId }: Props) {
     }
   }
 
-  const orderMenu = (
-    <Menu
-      items={[
-        {
-          key: '0',
-          label: (
-            <div onClick={() => setSort('name')}>
-              <FormattedMessage defaultMessage="按名称" />
-              {sortField === 'name' && (
-                <span className="ml-2 text-red-500">
-                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                </span>
-              )}
-            </div>
-          )
-        },
-        {
-          key: '1',
-          label: (
-            <div onClick={() => setSort('size')}>
-              <FormattedMessage defaultMessage="按文件大小" />
-              {sortField === 'size' && (
-                <span className="ml-2 text-red-500">
-                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                </span>
-              )}
-            </div>
-          )
-        },
-        {
-          key: '2',
-          label: (
-            <div onClick={() => setSort('createTime')}>
-              <FormattedMessage defaultMessage="按创建时间" />
-              {sortField === 'createTime' && (
-                <span className="ml-2 text-red-500">
-                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                </span>
-              )}
-            </div>
-          )
-        },
-        {
-          key: '3',
-          label: (
-            <div onClick={() => setSort('updateTime')}>
-              <FormattedMessage defaultMessage="按修改时间" />
-              {sortField === 'updateTime' && (
-                <span className="ml-2 text-red-500">
-                  {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                </span>
-              )}
-            </div>
-          )
-        }
-      ]}
-    />
-  )
+  const orderMenu = [
+    {
+      key: '0',
+      label: (
+        <div onClick={() => setSort('name')}>
+          <FormattedMessage defaultMessage="按名称" />
+          {sortField === 'name' && (
+            <span className="ml-2 text-red-500">
+              {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            </span>
+          )}
+        </div>
+      )
+    },
+    {
+      key: '1',
+      label: (
+        <div onClick={() => setSort('size')}>
+          <FormattedMessage defaultMessage="按文件大小" />
+          {sortField === 'size' && (
+            <span className="ml-2 text-red-500">
+              {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            </span>
+          )}
+        </div>
+      )
+    },
+    {
+      key: '2',
+      label: (
+        <div onClick={() => setSort('createTime')}>
+          <FormattedMessage defaultMessage="按创建时间" />
+          {sortField === 'createTime' && (
+            <span className="ml-2 text-red-500">
+              {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            </span>
+          )}
+        </div>
+      )
+    },
+    {
+      key: '3',
+      label: (
+        <div onClick={() => setSort('updateTime')}>
+          <FormattedMessage defaultMessage="按修改时间" />
+          {sortField === 'updateTime' && (
+            <span className="ml-2 text-red-500">
+              {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            </span>
+          )}
+        </div>
+      )
+    }
+  ]
 
   const onChange = (value: string[], selectedOptions: Option[]) => {
     setBreads(
@@ -365,40 +361,38 @@ export default function StorageExplorer({ bucketId }: Props) {
           label: (
             <Dropdown
               trigger={['contextMenu']}
-              overlay={
-                <Menu
-                  items={[
-                    {
-                      key: 'rename',
-                      label: intl.formatMessage({ defaultMessage: '重命名' }),
-                      onClick: e => {
-                        e.domEvent.stopPropagation()
-                        doRename(x.name).then(newName => {
-                          if (newName) {
-                            // FIXME 子目录中并不能实时修改页面显示
-                            x.name = newName
-                          }
-                        })
-                      }
-                    },
-                    {
-                      key: 'delete',
-                      label: (
-                        <Popconfirm
-                          title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
-                          onConfirm={() => deleteFile(x as Option)}
-                          okText={intl.formatMessage({ defaultMessage: '删除' })}
-                          cancelText={intl.formatMessage({ defaultMessage: '取消' })}
-                        >
-                          <div>
-                            <FormattedMessage defaultMessage="删除" />
-                          </div>
-                        </Popconfirm>
-                      )
+              menu={{
+                items: [
+                  {
+                    key: 'rename',
+                    label: intl.formatMessage({ defaultMessage: '重命名' }),
+                    onClick: e => {
+                      e.domEvent.stopPropagation()
+                      doRename(x.name).then(newName => {
+                        if (newName) {
+                          // FIXME 子目录中并不能实时修改页面显示
+                          x.name = newName
+                        }
+                      })
                     }
-                  ]}
-                />
-              }
+                  },
+                  {
+                    key: 'delete',
+                    label: (
+                      <Popconfirm
+                        title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
+                        onConfirm={() => deleteFile(x as Option)}
+                        okText={intl.formatMessage({ defaultMessage: '删除' })}
+                        cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                      >
+                        <div>
+                          <FormattedMessage defaultMessage="删除" />
+                        </div>
+                      </Popconfirm>
+                    )
+                  }
+                ]
+              }}
             >
               <div className="flex">
                 <span>
@@ -606,7 +600,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           {/*    列表*/}
           {/*  </Button>*/}
           {/*</Dropdown>*/}
-          <Dropdown overlay={orderMenu} placement="bottom">
+          <Dropdown menu={{ items: orderMenu }} placement="bottom">
             <Button icon={<BarsOutlined />} className="mr-2 !border-0 !p-1">
               <FormattedMessage defaultMessage="排序" />
             </Button>

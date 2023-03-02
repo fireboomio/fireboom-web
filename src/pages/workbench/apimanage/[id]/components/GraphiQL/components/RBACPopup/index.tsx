@@ -115,7 +115,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
             trigger={['click']}
             placement="bottomLeft"
             disabled={!rule}
-            overlay={
+            dropdownRender={() => (
               <div className="bg-white">
                 <div className="border-solid flex border-0 border-[rgba(95,98,105,0.1)] text-xs py-2.5 pr-2 pl-3 !border-b">
                   <Checkbox
@@ -146,7 +146,7 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
                   ))}
                 </div>
               </div>
-            }
+            )}
           >
             {!rule ? (
               <Tooltip title={<FormattedMessage defaultMessage="请先选择匹配模式" />}>

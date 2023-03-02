@@ -192,7 +192,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const [panelOpened, setPanelOpened] = useState(false)
   if (!datasource) return null
 
-  const dropDownMenu = (row: CommonPanelResp) => {
+  const dropDownMenu = (row: any) => {
     const menuItems: Array<{ key: string; label: React.ReactNode }> = [
       {
         key: 'rename',
@@ -369,7 +369,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               </div>
               <div onClick={e => e.stopPropagation()}>
                 <Dropdown
-                  overlay={dropDownMenu(item)}
+                  dropdownRender={() => dropDownMenu(item)}
                   trigger={['click']}
                   open={dropDownId === item.id}
                   onOpenChange={flag => {

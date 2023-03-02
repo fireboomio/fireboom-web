@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DoubleRightOutlined } from '@ant-design/icons'
-import { loader } from '@monaco-editor/react'
 // import { AutoTypings, LocalStorageCache } from '@swordjs/monaco-editor-auto-typings'
-import type { BeforeMount, EditorProps, OnMount } from '@swordjs/monaco-editor-react' // import { loader } from '@swordjs/monaco-editor-react'
+import type { BeforeMount, EditorProps, OnMount } from '@monaco-editor/react' // import { loader } from '@swordjs/monaco-editor-react'
+import { loader } from '@monaco-editor/react'
 import { Button, message } from 'antd'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
@@ -15,6 +15,7 @@ import type { LocalLib } from '@/components/Ide/dependLoader'
 import { DependManager } from '@/components/Ide/dependLoader'
 import { getDefaultCode } from '@/components/Ide/getDefaultCode'
 import { setUp } from '@/lib/ai'
+import { registerCodeLens } from '@/lib/ai/codelens'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -290,10 +291,18 @@ const IdeContainer: FC<Props> = props => {
     })
   }
 
+  const codeLensRef = useRef<any>(null)
+  useEffect(() => {
+    return () => {
+      codeLensRef.current?.dispose?.()
+    }
+  }, [])
   const handleEditorMount: OnMount = (monacoEditor, monaco) => {
+    codeLensRef.current = registerCodeLens(monaco, monacoEditor, 'typescript')
     setEditor(monacoEditor)
     setMonaco(monaco)
-    setUp(editor)
+    // @ts-ignore
+    setUp(monacoEditor, 'typescript')
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }

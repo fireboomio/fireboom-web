@@ -204,7 +204,7 @@ const ModelEntityItem = ({
       {editFlag ? <div className={styles.editMark}></div> : null}
       {newFlag ? <div className={styles.addMark}></div> : null}
       <Dropdown
-        overlay={MenuContainer}
+        dropdownRender={MenuContainer}
         trigger={['click']}
         placement="bottomRight"
         open={visible}
