@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 
 import { setUp } from '@/lib/ai'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
-import init from '@/lib/prisma/prismaInit'
+import init, { registerCodeLens } from '@/lib/prisma/prismaInit'
 
 interface Props {
   onChange?: (value: string) => void
@@ -47,6 +47,13 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
       editorRef.current.setValue(defaultContent)
     }
   }, [defaultContent])
+  const codeLensRef = useRef<any>()
+  useEffect(() => {
+    return () => {
+      console.log('========unmount')
+      codeLensRef.current?.dispose()
+    }
+  }, [])
   return (
     <div className="h-full bg-red">
       <Editor
@@ -60,7 +67,9 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
         }}
         onMount={editor => {
           init(monaco, editor)
-          setUp(editor)
+          console.log('========unmount111')
+          codeLensRef.current = registerCodeLens(monaco, editor)
+          setUp(editor, 'prisma')
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
         }}

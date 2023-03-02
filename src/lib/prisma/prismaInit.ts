@@ -1,3 +1,4 @@
+import type { editor } from 'monaco-editor'
 import { wireTmGrammars } from 'monaco-editor-textmate'
 import { Registry } from 'monaco-textmate' // peer dependency
 import { loadWASM } from 'onigasm'
@@ -28,39 +29,6 @@ export default async function init(monaco: any, editor: any) {
   // https://github.com/Nishkalkashyap/monaco-vscode-textmate-theme-converter#monaco-vscode-textmate-theme-converter
   monaco.editor.defineTheme('prisma-theme', theme)
   monaco.editor.setTheme('prisma-theme')
-  const commandId = editor.addCommand(0, function (_: unknown, lineNumber: number) {
-    triggerAI(editor, lineNumber)
-  })
-  monaco.languages.registerCodeLensProvider('prisma', {
-    provideCodeLenses: function (model: any) {
-      const lines = model.getLinesContent()
-      const codeLens = lines
-        .map((line: string, index: number) => {
-          const question = matchQuestion(line)
-          if (question) {
-            return {
-              range: {
-                startLineNumber: index + 1,
-                startColumn: 1,
-                endLineNumber: index + 1,
-                endColumn: 1
-              },
-              id: 'ai',
-              command: {
-                id: commandId,
-                title: 'AI生成',
-                arguments: [index + 1]
-              }
-            }
-          }
-        })
-        .filter((x: any) => x)
-      return {
-        lenses: codeLens,
-        dispose: () => {}
-      }
-    }
-  })
   await wireTmGrammars(monaco, registry, grammars, editor)
 
   try {
@@ -78,4 +46,56 @@ export default async function init(monaco: any, editor: any) {
   } catch (_) {
     // ignore
   }
+}
+
+export function registerCodeLens(monaco: any, editor: editor.IStandaloneCodeEditor) {
+  const commandId1 = editor.addCommand(0, function (_: unknown, lineNumber: number) {
+    triggerAI(editor, lineNumber, 'prisma')
+  })
+  const commandId2 = editor.addCommand(0, function (_: unknown, lineNumber: number) {
+    triggerAI(editor, lineNumber, 'prisma', true)
+  })
+  return monaco.languages.registerCodeLensProvider('prisma', {
+    provideCodeLenses: function (model: any) {
+      const lines = model.getLinesContent()
+      const codeLens: any = []
+      lines.forEach((line: string, index: number) => {
+        const question = matchQuestion(line)
+        if (question) {
+          codeLens.push({
+            range: {
+              startLineNumber: index + 1,
+              startColumn: 1,
+              endLineNumber: index + 1,
+              endColumn: 1
+            },
+            id: 'ai',
+            command: {
+              id: commandId1,
+              title: 'AI生成',
+              arguments: [index + 1]
+            }
+          })
+          codeLens.push({
+            range: {
+              startLineNumber: index + 1,
+              startColumn: 1,
+              endLineNumber: index + 1,
+              endColumn: 1
+            },
+            id: 'ai2',
+            command: {
+              id: commandId2,
+              title: 'AI优化',
+              arguments: [index + 1]
+            }
+          })
+        }
+      })
+      return {
+        lenses: codeLens,
+        dispose: () => {}
+      }
+    }
+  })
 }
