@@ -20,12 +20,20 @@ const createPrompt = {
   typeScript: '后续问题请使用typeScript代码回答，符合typeScript语法，包含代码和注释'
 }
 const optimizePrompt = {
-  prisma: '请根据后续要求优化下列代码,请使用prisma代码回答，符合prisma规范，包含表和字段注释',
+  prisma:
+    '请根据后续要求优化下列代码，输出内容需要保持完整，未优化部分也要原样回传。请使用prisma代码回答，符合prisma规范，包含表和字段注释',
   typeScript:
-    '请根据后续要求优化下列代码,使用typeScript代码回答，符合typeScript语法，包含代码和注释'
+    '请根据后续要求优化下列代码，输出内容需要保持完整，未优化部分也要原样回传。使用typeScript代码回答，符合typeScript语法，包含代码和注释'
 }
 
 async function getSuggestion(question: string, language: Language, currentCode?: string) {
+  let questionRow = question
+  if (currentCode) {
+    questionRow = questionRow + ',其他内容不变'
+  }
+  if (language === 'prisma') {
+    questionRow = questionRow + ',不要使用外键'
+  }
   const result = await axios.post('http://8.142.115.204:9801/ai', {
     messages: [
       {
@@ -36,7 +44,7 @@ async function getSuggestion(question: string, language: Language, currentCode?:
       },
       {
         role: 'user',
-        content: question
+        content: questionRow
       }
     ]
   })
