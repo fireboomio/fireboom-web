@@ -13,7 +13,7 @@ function matchEndMark(line: string) {
   return !!line.match(REGEX_END)
 }
 
-export type Language = 'prisma' | 'typeScript'
+export type Language = 'prisma' | 'typescript'
 
 const createPrompt = {
   prisma: '后续问题请使用prisma代码回答，符合prisma规范，包含表和字段注释',
@@ -95,7 +95,7 @@ function locationQuestion(
       }
     }
   })
-  if (questionLine) {
+  if (questionLine !== undefined) {
     return new monaco.Range(questionLine + 2, 1, endLine ? endLine + 2 : questionLine + 2, 1)
   }
 }
@@ -107,7 +107,6 @@ function insert(
   questionIndex: number
 ) {
   const range = locationQuestion(editor, question, questionIndex)
-
   if (range === undefined) {
     return
   }
@@ -150,6 +149,8 @@ export async function triggerAI(
     if (optimize) {
       const currentCodeRange = locationQuestion(editor, question, questionIndex)
       if (currentCodeRange) {
+        // 修正范围，去掉ai end标记
+        currentCodeRange.setEndPosition(currentCodeRange.endLineNumber - 1, 1)
         currentCode = editor.getModel()?.getValueInRange?.(currentCodeRange) ?? ''
       }
       if (!currentCode) {

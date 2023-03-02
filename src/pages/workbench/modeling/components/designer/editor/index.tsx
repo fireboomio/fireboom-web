@@ -5,8 +5,9 @@ import * as monaco from 'monaco-editor'
 import { useEffect, useRef } from 'react'
 
 import { setUp } from '@/lib/ai'
+import { registerCodeLens } from '@/lib/ai/codelens'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
-import init, { registerCodeLens } from '@/lib/prisma/prismaInit'
+import init from '@/lib/prisma/prismaInit'
 
 interface Props {
   onChange?: (value: string) => void
@@ -67,8 +68,7 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
         }}
         onMount={editor => {
           init(monaco, editor)
-          console.log('========unmount111')
-          codeLensRef.current = registerCodeLens(monaco, editor)
+          codeLensRef.current = registerCodeLens(monaco, editor, 'prisma')
           setUp(editor, 'prisma')
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
