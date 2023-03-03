@@ -11,7 +11,7 @@ import App from './App'
 import Authentication from './components/Authentication'
 import IntlProvider from './providers/IntlProvider'
 
-console.log('fe version: ', '0.0.17')
+console.log('fe version: ', '0.1.0')
 const container = document.getElementById('app')
 const root = createRoot(container!)
 root.render(
