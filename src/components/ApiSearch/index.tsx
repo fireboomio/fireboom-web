@@ -97,10 +97,14 @@ export default function ApiSearch() {
     const max = filteredList.length - 1
     setSelectIndex(index => (index < max ? index + 1 : 0))
   }, [filteredList])
+  const gotoSelected = useCallback(() => {
+    filteredList[selectIndex] && gotoAPI(filteredList[selectIndex])
+  }, [filteredList, selectIndex])
   useHotkeys('up', goUp, { enableOnFormTags: true, enabled: open }, [goUp])
   useHotkeys('down', goDown, { enableOnFormTags: true, enabled: open }, [goDown])
   useHotkeys('ctrl+k,command+k', () => setOpen(true), [])
   useHotkeys('esc', () => setOpen(false), { enableOnFormTags: true, enabled: open }, [])
+  useHotkeys('enter', gotoSelected, { enableOnFormTags: true, enabled: open }, [gotoSelected])
   // tab栏导航
   const tabNav = useCallback(
     (invert: boolean) => {
