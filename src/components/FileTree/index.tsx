@@ -221,7 +221,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       >
         <Tree
           rootClassName={props.rootClassName}
-          draggable
+          draggable={{ icon: false }}
           onDrop={({ node, dragNode, dropToGap }) => {
             props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
           }}
