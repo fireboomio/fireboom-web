@@ -34,7 +34,14 @@ export default function UrlInput({
           <Select.Option value="http://">http://</Select.Option>
         </Select>
       }
-      onChange={e => onChange?.(`${prefix}${e.target.value}`)}
+      onChange={e => {
+        const { value } = e.target
+        if (value.match(/^(https?:\/\/)/)) {
+          onChange?.(value)
+        } else {
+          onChange?.(`${prefix}${e.target.value}`)
+        }
+      }}
       value={url}
       placeholder={placeholder}
     />

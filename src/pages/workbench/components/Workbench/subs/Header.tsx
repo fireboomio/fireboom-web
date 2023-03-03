@@ -12,10 +12,10 @@ import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconGithub from '../assets/github.svg'
-import HeaderCompile from '../assets/header-compile.png'
-import HeaderPreview from '../assets/header-preview.png'
 import iconKeyboard from '../assets/keyboard.svg'
+import iconPreview from '../assets/preview.svg'
 import iconQuestion from '../assets/question.svg'
+import iconRefresh from '../assets/refresh.svg'
 import iconSetting from '../assets/setting.svg'
 import styles from './header.module.less'
 
@@ -193,7 +193,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             {config.isDev ? (
               <div className={styles.headBtn} onClick={doCompile}>
                 {!compiling ? (
-                  <img src={HeaderCompile} className="h-5 w-5.25" alt="编译" />
+                  <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />
                 ) : (
                   <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />
                 )}
@@ -203,7 +203,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
               className={styles.headBtn}
               onClick={() => window.open('/#/workbench/rapi?t=' + Date.now(), 'fb_rapi')}
             >
-              <img src={HeaderPreview} className="h-5 w-5" alt="预览" />
+              <img src={iconPreview} className="h-5 w-5" alt="预览" />
             </div>
             {/*<div className={styles.headBtn}>*/}
             {/*  <img src={HeaderDeploy} className="h-5 w-5" alt="部署" />*/}

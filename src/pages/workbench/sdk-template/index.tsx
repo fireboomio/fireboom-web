@@ -88,7 +88,7 @@ const SDKTemplate = () => {
         footer={null}
         open={showRemote}
         onCancel={() => setShowRemote(false)}
-        title={intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
+        title={intl.formatMessage({ defaultMessage: 'SDK模板市场' })}
       >
         {isLoading ? (
           <div className="h-40vh w-full flex items-center justify-center">
@@ -211,13 +211,13 @@ const RemoteSDKCard = ({
   return (
     <Card title={sdk.title} className={styles.remoteCard} extra={exist ? <div>已下载</div> : null}>
       <Descriptions size="small" column={1} labelStyle={{ width: 100 }}>
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '文件夹名称' })}>
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '模板ID' })}>
           {sdk.name}
         </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '详情' })}>
-          {sdk.description}
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '功能描述' })}>
+          <div className={styles.descLine}>{sdk.description}</div>
         </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '默认生成路径' })}>
+        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '生成路径' })}>
           {sdk.defaultOutputPath}
         </Descriptions.Item>
       </Descriptions>
