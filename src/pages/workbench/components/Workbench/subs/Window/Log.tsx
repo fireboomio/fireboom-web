@@ -53,7 +53,18 @@ const Log: React.FC<Props> = ({ actionRef }) => {
             <span className="mr-8">{x.time}</span>{' '}
             <span
               className="mr-1 w-100"
-              style={{ color: { WARNING: '#5c3c00', ERROR: '#de7c79' }[x.level] || '#000' }}
+              style={{
+                color:
+                  {
+                    INFO: 'blue',
+                    WARN: 'yellow',
+                    ERROR: 'magenta',
+                    DPANIC: 'red',
+                    PANIC: 'red',
+                    FATAL: 'red',
+                    DEBUG: 'red'
+                  }[x.level] || '#333'
+              }}
             >
               {x.level}
             </span>{' '}

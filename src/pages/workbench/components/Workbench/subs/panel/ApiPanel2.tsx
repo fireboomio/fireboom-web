@@ -55,7 +55,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       if (pathId) {
         const currentNode = getNodeById(pathId, treeData)
         if (currentNode) {
+          // 自动选中当前节点
           setSelectedKey(currentNode.key)
+        } else {
+          // 未找到当前节点，跳转至空白页
+          navigate(`/workbench/apimanage`)
         }
       }
     }
