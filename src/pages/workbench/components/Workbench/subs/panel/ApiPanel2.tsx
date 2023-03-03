@@ -480,7 +480,7 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): FileTreeNode[] {
       title: x.path.split('/')[x.path.split('/').length - 1]
     },
     name: x.path.split('/')[x.path.split('/').length - 1],
-    key: x.path,
+    key: `${x.isDir ? 1 : 0}-${x.path}`,
     isDir: x.isDir,
     children: convertToTree(x.children, `${lv}-${idx}`)
   }))

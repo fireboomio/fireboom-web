@@ -171,7 +171,11 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const saveInput = async (node: InnerNode, str: string, closeOnFail: boolean) => {
     if (node.isNew) {
       // 处理新增保存
-      const success = await props.onCreateItem?.(node.parent ?? null, node.isDir, str)
+      const success = await props.onCreateItem?.(
+        findItemByKey(treeData, lastClickKey) ?? null,
+        node.isDir,
+        str
+      )
       if (success || closeOnFail) {
         setTempItem(null)
       }
