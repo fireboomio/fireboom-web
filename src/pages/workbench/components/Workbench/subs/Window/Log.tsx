@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -10,13 +9,10 @@ export type LogAction = {
 }
 
 type Props = {
-  // log: LogMessage[]
   actionRef?: MutableRefObject<LogAction | undefined>
 }
 
-// eslint-disable-next-line react/prop-types
 const Log: React.FC<Props> = ({ actionRef }) => {
-  // const [logs, setLogs] = useState<LogMessage[]>([])
   const logRef = useRef(null)
 
   const { logs, setLogs } = useGlobal(state => ({ logs: state.logs, setLogs: state.setLogs }))
@@ -54,7 +50,13 @@ const Log: React.FC<Props> = ({ actionRef }) => {
             className="font-normal text-xs text-[#333333] leading-25px hover:bg-gray-100"
             key={idx}
           >
-            <span className="mr-8">{x.time}</span> <span className="mr-1 w-100">{x.level}</span>{' '}
+            <span className="mr-8">{x.time}</span>{' '}
+            <span
+              className="mr-1 w-100"
+              style={{ color: { WARNING: '#5c3c00', ERROR: '#de7c79' }[x.level] || '#000' }}
+            >
+              {x.level}
+            </span>{' '}
             <span>{x.msg}</span>
           </div>
         ))}

@@ -34,7 +34,7 @@ async function getSuggestion(question: string, language: Language, currentCode?:
   if (language === 'prisma') {
     questionRow = questionRow + ',不要使用外键'
   }
-  const result = await axios.post('http://8.142.115.204:9801/ai', {
+  const result = await axios.post('https://fb-node-server.onrender.com/ai', {
     messages: [
       {
         role: 'user',

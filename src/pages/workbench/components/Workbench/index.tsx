@@ -1,4 +1,5 @@
 import { App, Layout as ALayout } from 'antd'
+import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -96,13 +97,13 @@ export default function Index(props: PropsWithChildren) {
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('log', 'getLogs', data => {
-    setLogs(data.logs || [])
+    setLogs((data || []).map(parseLog))
   })
   useWebSocket('log', 'appendLog', data => {
-    setLogs(logs.concat(data.logs))
+    setLogs(logs.concat((data || []).map(parseLog)))
   })
   useWebSocket('question', 'getQuestions', data => {
-    setQuestions(data.questions)
+    setQuestions(data?.questions || [])
   })
   useWebSocket('question', 'setQuestions', data => {
     setQuestions(data.questions)
@@ -236,5 +237,14 @@ export default function Index(props: PropsWithChildren) {
         {body}
       </WorkbenchContext.Provider>
     )
+  }
+}
+
+function parseLog(log: string) {
+  const [, time, level, msg] = log.match(/([^Z]+?Z) (\w+) (.*)/) || []
+  return {
+    time: dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
+    level,
+    msg
   }
 }

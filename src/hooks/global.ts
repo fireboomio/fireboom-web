@@ -2,7 +2,6 @@ import create from 'zustand'
 
 type Log = {
   level: string
-  logType: string
   msg: string
   time: string
 }
