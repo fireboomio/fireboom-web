@@ -222,9 +222,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         <Tree
           rootClassName={props.rootClassName}
           draggable
-          onDrop={({ node, dragNode, dropToGap }) =>
+          onDrop={({ node, dragNode, dropToGap }) => {
             props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
-          }
+          }}
+          allowDrop={({ dropNode, dropPosition }) => {
+            if (!dropNode.isDir && dropPosition === 0) {
+              // 不允许拖到文件内部
+              return false
+            }
+            return true
+          }}
           onDragEnter={e => {
             setExpandedKeys([...expandedKeys, e.node.key])
           }}
