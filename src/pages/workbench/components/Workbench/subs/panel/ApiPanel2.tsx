@@ -1,7 +1,7 @@
 import { CopyOutlined } from '@ant-design/icons'
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -333,27 +333,28 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   const buildContextMenu = useCallback(
-    (nodeList: FileTreeNode[]) => {
-      const menu: ItemType[] = []
-      const hasApi = nodeList.some(x => !x.isDir)
+    (selectList: FileTreeNode[], deepList: FileTreeNode[]) => {
+      const menu: ItemType[] = [
+        {
+          key: 'on',
+          onClick: () => void handleBatchSwitch(deepList, true),
+          disabled: !deepList.some(x => !x.isDir && !x.data.enabled),
+          label: <FormattedMessage defaultMessage="上线" />
+        },
+        {
+          key: 'off',
+          onClick: () => void handleBatchSwitch(deepList, false),
+          disabled: !deepList.some(x => !x.isDir && x.data.enabled),
+          label: <FormattedMessage defaultMessage="下线" />
+        }
+      ]
+      const hasApi = selectList.some(x => !x.isDir)
       if (hasApi) {
         menu.push(
           ...[
             {
-              key: 'on',
-              onClick: () => void handleBatchSwitch(nodeList, true),
-              disabled: !nodeList.some(x => !x.isDir && !x.data.enabled),
-              label: <FormattedMessage defaultMessage="上线" />
-            },
-            {
-              key: 'off',
-              onClick: () => void handleBatchSwitch(nodeList, false),
-              disabled: !nodeList.some(x => !x.isDir && x.data.enabled),
-              label: <FormattedMessage defaultMessage="下线" />
-            },
-            {
               key: 'delete',
-              onClick: () => void handleBatchDelete(nodeList),
+              onClick: () => void handleBatchDelete(selectList),
               label: <FormattedMessage defaultMessage="删除" />
             }
           ]
@@ -417,6 +418,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }
     >
       <FileTree
+        fileText="API"
         ref={fileTree}
         onSelectFile={nodeData => {
           if (!nodeData.isDir) {
@@ -454,6 +456,34 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         treeData={treeData}
         titleRender={titleRender}
       />
+      <div className={styles.createRowWrapper}>
+        <div className={styles.createRow}>
+          <span className={styles.btn} onClick={() => fileTree.current.addItem(false)}>
+            <FormattedMessage defaultMessage="新建" />
+          </span>
+          <span>
+            {' '}
+            <FormattedMessage defaultMessage="或者" />{' '}
+          </span>
+          <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+            <FormattedMessage defaultMessage="批量新建" />
+          </span>
+        </div>
+        <Tooltip title={intl.formatMessage({ defaultMessage: '测试' })}>
+          <div
+            className={styles.graphqlEntry}
+            onClick={() => {
+              const current = new URL(window.location.href)
+              window.open(
+                `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                '_blank'
+              )
+            }}
+          >
+            <img alt="" src="/assets/icon/graphql2.svg" />
+          </div>
+        </Tooltip>
+      </div>
       <Modal
         title={intl.formatMessage({ defaultMessage: 'API全局设置' })}
         open={isModalVisible}

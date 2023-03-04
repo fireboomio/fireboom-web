@@ -20,15 +20,26 @@ interface InnerNode extends FileTreeNode {
 }
 
 export interface FileTreeProps {
+  // 节点渲染
   titleRender?: (nodeData: any) => React.ReactNode
+  // 文件树数据
   treeData: FileTreeNode[]
+  // 在显示中替换[文件]
+  fileText?: string
+  // 根节点样式
   rootClassName?: string
+  // 选中的节点
   selectedKey?: string
+  // 选中文件时的回调 nodeData: 当前选中的节点
   onSelectFile?: (nodeData: any) => void
+  // 创建新项目时的回调 parent: 父节点 isDir: 是否是文件夹 name: 新项目名称
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
+  // 重命名时的回调 nodeData: 当前节点 newName: 新名称
   onRename?: (nodeData: FileTreeNode, newName: string) => Promise<boolean>
+  // 移动时的回调 dragNode: 拖拽的节点 dropNode: 放置的节点
   onMove?: (dragNode: FileTreeNode, dropNode: FileTreeNode | null) => Promise<void>
-  onContextMenu?: (nodeList: FileTreeNode[]) => ItemType[]
+  // 构造右键菜单 selectList: 当前选中的节点 deepList: 当前选中节点及其递归后的子节点
+  onContextMenu?: (selectList: FileTreeNode[], deepList: FileTreeNode[]) => ItemType[]
 }
 
 export interface FileTreeRef {
@@ -70,15 +81,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     }
     // 插入临时新增节点
     if (tempItem) {
+      const parent = findItemByKey(newTree, tempItem?.parentKey)
       const newItem = {
         name: '',
         key: 'temp' + Date.now(),
         isDir: tempItem.isDir,
         data: { name: '' },
         isInput: true,
-        isNew: true
+        isNew: true,
+        parent: parent
       }
-      const parent = findItemByKey(newTree, tempItem?.parentKey)
       if (parent) {
         parent.children?.unshift(newItem)
       } else {
@@ -109,10 +121,14 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     setSelectedKeys(props.selectedKey ? [props.selectedKey] : [])
   }, [props.selectedKey])
 
-  // 增加节点
+  /**
+   * 增加新节点
+   * @param isDir 是否是目录
+   * @param forceRoot 是否强制添加到根目录
+   */
   const addItem = useCallback(
-    (isDir: boolean) => {
-      const target = keyMap[lastClickKey]
+    (isDir: boolean, forceRoot = false) => {
+      const target = forceRoot ? null : keyMap[lastClickKey]
       const parent = target?.isDir ? target : target?.parent
       setTempItem({ isDir: isDir, parentKey: parent?.key ?? '' })
       setExpandedKeys([...expandedKeys, lastClickKey])
@@ -172,7 +188,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     if (node.isNew) {
       // 处理新增保存
       const success = await props.onCreateItem?.(
-        findItemByKey(treeData, lastClickKey) ?? null,
+        findItemByKey(treeData, node.parent?.key ?? '') ?? null,
         node.isDir,
         str
       )
@@ -190,6 +206,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setEditingKey('')
       }
     }
+  }
+
+  const buildContextMenu = (node: InnerNode) => {
+    // 如果当前节点不在选中列表中，就选中当前节点，否则使用所有选择项作为目标
+    if (!selectedKeys.includes(node.key)) {
+      setSelectedKeys([node.key])
+      props.onSelectFile?.(node)
+    }
+    const targets = selectedKeys.includes(node.key) ? selectedKeys.map(x => keyMap[x]) : [node]
+    setDropDownItems(props.onContextMenu?.(targets, flattenTree(targets)) ?? [])
   }
 
   const [dropDownItems, setDropDownItems] = useState<ItemType[]>([])
@@ -211,13 +237,15 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
             setDropDownItems([
               {
                 key: '1',
-                label: intl.formatMessage({ defaultMessage: '新建文件' }),
-                onClick: () => addItem(false)
+                label:
+                  intl.formatMessage({ defaultMessage: '新建' }) +
+                  (props.fileText || intl.formatMessage({ defaultMessage: '文件' })),
+                onClick: () => addItem(false, true)
               },
               {
                 key: '2',
                 label: intl.formatMessage({ defaultMessage: '新建文件夹' }),
-                onClick: () => addItem(true)
+                onClick: () => addItem(true, true)
               }
             ])
           }
@@ -230,11 +258,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
             props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
           }}
           allowDrop={({ dropNode, dropPosition }) => {
-            if (!dropNode.isDir && dropPosition === 0) {
-              // 不允许拖到文件内部
-              return false
-            }
-            return true
+            return !(!dropNode.isDir && dropPosition === 0)
           }}
           onDragEnter={e => {
             setExpandedKeys([...expandedKeys, e.node.key])
@@ -259,14 +283,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
                 <div
                   onContextMenu={e => {
                     set(e, 'isFromChild', true)
-                    if (!selectedKeys.includes(node.key)) {
-                      setSelectedKeys([node.key])
-                      props.onSelectFile?.(node)
-                    }
-                    const targets = selectedKeys.includes(node.key)
-                      ? selectedKeys.map(x => keyMap[x])
-                      : [node]
-                    setDropDownItems(props.onContextMenu?.(targets) ?? [])
+                    buildContextMenu(node)
                   }}
                 >
                   {props.titleRender?.(node)}
@@ -300,4 +317,18 @@ function findItemByKey(tree: InnerNode[], key: string) {
       lists.push(...item.children)
     }
   }
+}
+
+// 展平树，将所有节点放到一个数组中
+function flattenTree(tree: InnerNode[]) {
+  const lists = [...tree]
+  const result: InnerNode[] = []
+  while (lists.length) {
+    const item = lists.pop()!
+    result.push(item)
+    if (item.children) {
+      lists.push(...item.children)
+    }
+  }
+  return result
 }

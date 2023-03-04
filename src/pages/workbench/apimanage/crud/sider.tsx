@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { mutateDataSource } from '@/hooks/store/dataSource'
+import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
@@ -26,15 +26,12 @@ interface CRUDSiderProps {
 export default function CRUDSider(props: CRUDSiderProps) {
   const intl = useIntl()
   // 刷新列表
-  const [dataSourceList, setDataSourceList] = useState<Datasource[]>([])
+  const dataSourceList = useDataSourceList()
   const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>([])
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
-  useEffect(() => {
-    void mutateDataSource()
-  }, [])
 
   useEffect(() => {
     void loadModelList()
