@@ -231,7 +231,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       trigger={['contextMenu']}
     >
       <div
-        className="h-full w-full"
+        className=""
         onContextMenu={e => {
           if (!get(e, 'isFromChild')) {
             setDropDownItems([

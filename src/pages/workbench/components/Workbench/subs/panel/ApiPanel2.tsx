@@ -338,7 +338,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         {
           key: 'on',
           onClick: () => void handleBatchSwitch(deepList, true),
-          disabled: !deepList.some(x => !x.isDir && !x.data.enabled),
+          disabled: !deepList.some(x => !x.isDir && !x.data.enabled && !x.data.illegal),
           label: <FormattedMessage defaultMessage="上线" />
         },
         {
@@ -456,6 +456,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         treeData={treeData}
         titleRender={titleRender}
       />
+      <div className="h-2"></div>
       <div className={styles.createRowWrapper}>
         <div className={styles.createRow}>
           <span className={styles.btn} onClick={() => fileTree.current.addItem(false)}>

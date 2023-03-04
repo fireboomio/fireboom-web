@@ -1,8 +1,9 @@
 import { message, Select } from 'antd'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import type { DatasourceResp } from '@/hooks/store/dataSource'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -10,13 +11,12 @@ import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
 
 import styles from './index.module.less'
-import type { Datasource } from './interface'
 
 interface CRUDSiderProps {
   onEmpty: () => void
   onSelectedModelChange: (
     model: DMFModel,
-    datasource: Datasource,
+    datasource: DatasourceResp,
     models: DMFModel[],
     relationMap: RelationMap,
     dmf: string
@@ -33,6 +33,21 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
 
+  const filterDataSourceList = useMemo(() => {
+    return dataSourceList ? dataSourceList.filter(item => item.sourceType === 1) : dataSourceList
+  }, [dataSourceList])
+
+  useEffect(() => {
+    if (!filterDataSourceList) {
+      return
+    }
+    if (filterDataSourceList.length === 0) {
+      props.onEmpty()
+    }
+    if (!filterDataSourceList.find(item => item.id === currentDataSourceId)) {
+      setCurrentDataSourceId(filterDataSourceList?.[0]?.id)
+    }
+  }, [filterDataSourceList, currentDataSourceId])
   useEffect(() => {
     void loadModelList()
   }, [currentDataSourceId])
@@ -62,17 +77,21 @@ export default function CRUDSider(props: CRUDSiderProps) {
     hide()
   }
   useEffect(() => {
-    if (!currentModel) {
+    if (!currentModel || !filterDataSourceList) {
       return
     }
     props.onSelectedModelChange(
       currentModel,
-      dataSourceList.find(item => item.id === currentDataSourceId)!,
+      filterDataSourceList.find(item => item.id === currentDataSourceId)!,
       modelList,
       relationMaps?.[currentModel.name]!,
       dmf
     )
-  }, [currentModel])
+  }, [currentDataSourceId, currentModel, dmf, filterDataSourceList, modelList, props, relationMaps])
+
+  if (!filterDataSourceList) {
+    return null
+  }
 
   return (
     <div className={'common-form ' + styles.sider}>
@@ -83,7 +102,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
             setCurrentDataSourceId(value)
           }}
           className="flex-1"
-          options={dataSourceList.map(x => {
+          options={filterDataSourceList.map(x => {
             let svg = '/assets/icon/db-other.svg'
             switch (x.sourceType) {
               case 1:
