@@ -383,11 +383,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           onClick: () => void handleBatchSwitch(deepList, false),
           disabled: !deepList.some(x => !x.isDir && x.data.enabled),
           label: <FormattedMessage defaultMessage="下线" />
-        },
-        {
-          key: 'delete',
-          onClick: () => void handleBatchDelete(selectList),
-          label: <FormattedMessage defaultMessage="删除" />
         }
       ]
       const hasApi = selectList.some(x => !x.isDir)

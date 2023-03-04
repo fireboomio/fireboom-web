@@ -45,7 +45,7 @@ export default function Error() {
       list: groups[key].map((x: any) => {
         const type = (x.dbType ?? '').toLowerCase()
         if (key === String(QuestionType.DatasourceQuestion)) {
-          switch (x.datasource) {
+          switch (x.sourceType) {
             case 1:
               x.icon =
                 {

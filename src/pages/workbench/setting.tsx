@@ -1,32 +1,22 @@
 import { Col } from 'antd'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import type { SettingType } from '@/interfaces/setting'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 import Pannel from './setting/components/Pannel'
 
 export default function Setting() {
   const location = useLocation()
-  const { setHideSide } = useContext(WorkbenchContext)
   const navigate = useNavigate()
-
-  // 进入设置页面时，自动全屏
-  useEffect(() => {
-    setHideSide(true)
-  }, [])
-
-  // TODO: need refine
 
   const showType = location.pathname.match(/^\/workbench\/setting\/.+$/)?.[0]
   useEffect(() => {
-    console.log('showType', showType)
     if (!showType) {
       navigate('/workbench/setting/appearance', { replace: true })
     }
-  }, [showType])
+  }, [navigate, showType])
 
   function handleToggleDesigner(settingType: SettingType) {
     navigate(`/workbench/setting/${settingType.type}`, { replace: true })

@@ -237,6 +237,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       trigger={['contextMenu']}
     >
       <div
+        onClick={() => setSelectedKeys([])}
         className=""
         onContextMenu={e => {
           if (!get(e, 'isFromChild')) {
@@ -258,6 +259,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         }}
       >
         <Tree
+          onClick={e => e.stopPropagation()}
           rootClassName={props.treeClassName}
           draggable={{ icon: false }}
           onDrop={({ node, dragNode, dropToGap }) => {
@@ -337,5 +339,6 @@ function flattenTree(tree: InnerNode[]) {
       lists.push(...item.children)
     }
   }
+  result.reverse()
   return result
 }

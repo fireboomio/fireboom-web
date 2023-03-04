@@ -234,7 +234,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
         </div>
         <div
           className={styles.helpIcon}
-          onClick={() => window.open('https://doc.fireboom.io/', '_blank')}
+          onClick={() => window.open('https://www.fireboom.io/', '_blank')}
         >
           <img src={iconQuestion} alt="" />
         </div>

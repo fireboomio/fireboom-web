@@ -51,15 +51,12 @@ export function useValidate() {
     [caseMap]
   )
 
-  const runValidate = useCallback(
-    (rules: Case[], value: string) => {
-      const errorCase = rules.find(item => {
-        return !item.pattern.test(value)
-      })
-      return errorCase?.message
-    },
-    [caseMap]
-  )
+  const runValidate = useCallback((rules: Case[], value: string) => {
+    const errorCase = rules.find(item => {
+      return !item.pattern.test(value)
+    })
+    return errorCase?.message
+  }, [])
 
   return {
     ruleMap,

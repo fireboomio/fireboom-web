@@ -101,7 +101,7 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/${options.prefix}CreateOne${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/CreateOne${options.alias}`
     const content = `
 mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
@@ -116,7 +116,7 @@ mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
   delete(options: ApiOptions) {
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
-    const path = `/${options.prefix}DeleteOne${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/DeleteOne${options.alias}`
     const content = `
 mutation ${options.prefix}DeleteOne${
       options.alias
@@ -154,7 +154,7 @@ mutation ${options.prefix}DeleteOne${
       .join(', ')
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/${options.prefix}UpdateOne${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/UpdateOne${options.alias}`
     const content = `
 mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
       options,
@@ -174,7 +174,7 @@ mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
     const primaryKeyType = options.table[primaryKey].type
     const returnStr = buildReturnStr(options, 'detail')
 
-    const path = `/${options.prefix}GetOne${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/GetOne${options.alias}`
     const content = `
 query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
       options,
@@ -202,7 +202,7 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
     const filterStrInDataQuery = hasFilter ? '\n    where: {AND: $query}' : ''
     const filterStrInCountQuery = hasFilter ? '(where: {AND: $query})' : ''
 
-    const path = `/${options.prefix}Get${options.alias}List`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/Get${options.alias}List`
     const content = `
 query ${options.prefix}Get${
       options.alias
@@ -226,7 +226,7 @@ query ${options.prefix}Get${
     const primaryKey = options.primaryKey
     const primaryKeyType = options.table[primaryKey].type
 
-    const path = `/${options.prefix}DeleteMany${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/DeleteMany${options.alias}`
 
     const content = `
 mutation ${options.prefix}DeleteMany${
@@ -243,7 +243,7 @@ mutation ${options.prefix}DeleteMany${
   export(options: ApiOptions) {
     const returnStr = buildReturnStr(options, 'list')
 
-    const path = `/${options.prefix}GetMany${options.alias}`
+    const path = (options.prefix ? `/${options.prefix}` : '') + `/GetMany${options.alias}`
     const content = `
 query ${options.prefix}GetMany${options.alias}${buildAuthStr(options, API.Export)} {
   data: ${options.dbName}_findMany${options.modelName} {

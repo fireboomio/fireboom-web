@@ -1,7 +1,7 @@
 import type { InputRef } from 'antd'
 import { Input, Radio } from 'antd'
 import clsx from 'clsx'
-import { curry, flatMapDeep, get, omit, values } from 'lodash'
+import { curry, get, omit, values } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { FormattedMessage } from 'react-intl'
@@ -65,7 +65,7 @@ export default function ApiSearch() {
   const apiList = useApiList()
   const filteredList = useMemo(
     () =>
-      flatMapDeep(apiList, x => (x.children ? x.children : x))?.filter(api => {
+      flattenApi(apiList || [])?.filter(api => {
         // 过滤掉目录
         if (api.isDir) {
           return false
@@ -295,4 +295,18 @@ export default function ApiSearch() {
       </div>
     </div>
   )
+}
+
+function flattenApi(list: OperationResp[]) {
+  const lists = [...list]
+  const result: OperationResp[] = []
+  while (lists.length) {
+    const item = lists.pop()!
+    result.push(item)
+    if (item.children) {
+      lists.push(...item.children)
+    }
+  }
+  result.reverse()
+  return result
 }

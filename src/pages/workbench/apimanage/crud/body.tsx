@@ -1,16 +1,28 @@
-import { Button, Checkbox, Form, Input, message, Modal, Popover, Radio, Select, Table } from 'antd'
+import {
+  AutoComplete,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popover,
+  Radio,
+  Select,
+  Table
+} from 'antd'
 import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import RoleDiagram from '@/components/RoleDiagram'
-import { mutateApi } from '@/hooks/store/api'
+import { mutateApi, useApiList } from '@/hooks/store/api'
+import { useValidate } from '@/hooks/validate'
 import type { DMFModel } from '@/interfaces/datasource'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
@@ -139,6 +151,8 @@ export default function CRUDBody(props: CRUDBodyProps) {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)
+  const prefix = Form.useWatch('prefix', form)
+  const { validateName } = useValidate()
   // 当前选择的模型
   const [model, setModel] = useImmer<DMFModel | undefined>(void 0)
   // 表单初始化数据
@@ -169,8 +183,22 @@ export default function CRUDBody(props: CRUDBodyProps) {
           return res
         })
   )
+  const apiList = useApiList()
+  const dirOptions = useMemo(() => {
+    const list = apiList ? [...apiList] : []
+    const result: { value: string }[] = []
+    while (list.length) {
+      const item = list.pop()!
+      if (item.isDir) {
+        if (item.path.includes(prefix)) {
+          result.push({ value: item.path.substring(1) })
+        }
+        list.push(...(item.children ?? []))
+      }
+    }
+    return result
+  }, [apiList, prefix])
 
-  const { onRefreshMenu } = useContext(WorkbenchContext)
   useEffect(() => {
     if (!props.model) {
       return
@@ -352,6 +380,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
 
     // 处理登录鉴权
     let result
+    console.log(apiList)
     try {
       result = await requests.post<unknown, { Code: number; Path: string; ID: string }[]>(
         `/operateApi/batch`,
@@ -661,17 +690,29 @@ export default function CRUDBody(props: CRUDBodyProps) {
         </Form.Item>
         <Form.Item
           name="prefix"
-          label={intl.formatMessage({ defaultMessage: 'API前缀' })}
+          label={intl.formatMessage({ defaultMessage: 'API目录' })}
           rules={[
             {
-              pattern: /^[A-Z][a-zA-Z0-9_]*$/,
-              message: intl.formatMessage({
-                defaultMessage: '请输入字母数字或下划线组合，以大写字母开头'
-              })
+              validator(_, value) {
+                if (!value) {
+                  return Promise.resolve()
+                }
+                const parts = value.split('/')
+                for (let i = 0; i < parts.length; i++) {
+                  const part = parts[i]
+                  const err = validateName(part)
+                  if (err) {
+                    return Promise.reject(
+                      new Error(intl.formatMessage({ defaultMessage: '每一级目录' }) + err)
+                    )
+                  }
+                }
+                return Promise.resolve()
+              }
             }
           ]}
         >
-          <Input />
+          <AutoComplete options={dirOptions} />
         </Form.Item>
         <Form.Item
           label={
