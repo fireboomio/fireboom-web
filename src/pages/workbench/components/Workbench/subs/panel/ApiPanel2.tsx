@@ -77,6 +77,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, [apiList])
 
   function calcMiniStatus(nodeData: FileTreeNode) {
+    if (nodeData.isDir) {
+      return ''
+    }
     if (nodeData.data.illegal) {
       return (
         <div className={styles.errLabel}>
@@ -174,16 +177,50 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       await requests.put(`/operateApi/rename/${node.data.id}`, { path: newPath })
     }
   })
+
   const handleMove = executeWrapper(
-    async (dragNode: FileTreeNode, dropNode: FileTreeNode | null) => {
+    async (dragNode: FileTreeNode, dropNode: FileTreeNode | null, confirm = false) => {
       const oldPath = dragNode.data.path
       const newPath = `${dropNode?.data?.path ?? ''}/${dragNode.name}`
       if (dragNode.isDir) {
-        await requests.put('/operateApi/dir', { oldPath, newPath })
+        await requests.put(
+          '/operateApi/dir',
+          { oldPath, newPath, coverRepeat: confirm },
+          {
+            onError: async ({ code, result }) => {
+              if (code === '20000000') {
+                await confirmExecute(result, () => handleMove(dragNode, dropNode, true))
+              }
+            }
+          }
+        )
       } else {
-        await requests.put(`/operateApi/rename/${dragNode.data.id}`, { path: newPath })
+        await requests.put(
+          `/operateApi/rename/${dragNode.data.id}`,
+          { path: newPath, coverRepeat: confirm },
+          {
+            onError: async ({ code, result }) => {
+              if (code === '20000000') {
+                await confirmExecute([result], () => handleMove(dragNode, dropNode, true))
+              }
+            }
+          }
+        )
       }
     }
+  )
+
+  const confirmExecute = useCallback(
+    (data: any, callback: any) => {
+      modal.confirm({
+        title: intl.formatMessage({ defaultMessage: '以下API已存在，是否覆盖？' }),
+        content: data.map((x: any) => <div key={x.path}>{x.path}</div>),
+        onOk: callback,
+        okText: intl.formatMessage({ defaultMessage: '覆盖' }),
+        cancelText: intl.formatMessage({ defaultMessage: '取消' })
+      })
+    },
+    [intl, modal]
   )
 
   const titleRender = (nodeData: FileTreeNode) => {
@@ -346,6 +383,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           onClick: () => void handleBatchSwitch(deepList, false),
           disabled: !deepList.some(x => !x.isDir && x.data.enabled),
           label: <FormattedMessage defaultMessage="下线" />
+        },
+        {
+          key: 'delete',
+          onClick: () => void handleBatchDelete(selectList),
+          label: <FormattedMessage defaultMessage="删除" />
         }
       ]
       const hasApi = selectList.some(x => !x.isDir)
@@ -452,39 +494,42 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         onMove={handleMove}
         onContextMenu={buildContextMenu}
         selectedKey={selectedKey}
-        rootClassName={styles.treeContainer}
+        rootClassName="h-full"
+        treeClassName={styles.treeContainer}
         treeData={treeData}
         titleRender={titleRender}
-      />
-      <div className="h-2"></div>
-      <div className={styles.createRowWrapper}>
-        <div className={styles.createRow}>
-          <span className={styles.btn} onClick={() => fileTree.current.addItem(false)}>
-            <FormattedMessage defaultMessage="新建" />
-          </span>
-          <span>
-            {' '}
-            <FormattedMessage defaultMessage="或者" />{' '}
-          </span>
-          <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
-            <FormattedMessage defaultMessage="批量新建" />
-          </span>
-        </div>
-        <Tooltip title={intl.formatMessage({ defaultMessage: '测试' })}>
-          <div
-            className={styles.graphqlEntry}
-            onClick={() => {
-              const current = new URL(window.location.href)
-              window.open(
-                `${current.protocol}//localhost:${current.port}/app/main/graphql`,
-                '_blank'
-              )
-            }}
-          >
-            <img alt="" src="/assets/icon/graphql2.svg" />
+        footer={
+          <div className={styles.createRowWrapper}>
+            <div className={styles.createRow} onContextMenu={e => e.stopPropagation()}>
+              <span className={styles.btn} onClick={() => fileTree.current.addItem(false)}>
+                <FormattedMessage defaultMessage="新建" />
+              </span>
+              <span>
+                {' '}
+                <FormattedMessage defaultMessage="或者" />{' '}
+              </span>
+              <span className={styles.btn} onClick={() => navigate(`/workbench/apimanage/crud`)}>
+                <FormattedMessage defaultMessage="批量新建" />
+              </span>
+            </div>
+            <Tooltip title={intl.formatMessage({ defaultMessage: '测试' })}>
+              <div
+                onContextMenu={e => e.stopPropagation()}
+                className={styles.graphqlEntry}
+                onClick={() => {
+                  const current = new URL(window.location.href)
+                  window.open(
+                    `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                    '_blank'
+                  )
+                }}
+              >
+                <img alt="" src="/assets/icon/graphql2.svg" />
+              </div>
+            </Tooltip>
           </div>
-        </Tooltip>
-      </div>
+        }
+      />
       <Modal
         title={intl.formatMessage({ defaultMessage: 'API全局设置' })}
         open={isModalVisible}

@@ -34,6 +34,7 @@ export default function CRUDIndex() {
             }}
             onSelectedModelChange={(model, datasource, modelList, relationMap, dmf) => {
               setCurrentModel(model)
+              // @ts-ignore
               setCurrentDatasource(datasource)
               setModelList(modelList)
               setRelationMap(relationMap)

@@ -28,6 +28,8 @@ export interface FileTreeProps {
   fileText?: string
   // 根节点样式
   rootClassName?: string
+  // 树组件根节点点样式
+  treeClassName?: string
   // 选中的节点
   selectedKey?: string
   // 选中文件时的回调 nodeData: 当前选中的节点
@@ -40,6 +42,9 @@ export interface FileTreeProps {
   onMove?: (dragNode: FileTreeNode, dropNode: FileTreeNode | null) => Promise<void>
   // 构造右键菜单 selectList: 当前选中的节点 deepList: 当前选中节点及其递归后的子节点
   onContextMenu?: (selectList: FileTreeNode[], deepList: FileTreeNode[]) => ItemType[]
+
+  // footer元素
+  footer?: React.ReactNode
 }
 
 export interface FileTreeRef {
@@ -221,6 +226,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const [dropDownItems, setDropDownItems] = useState<ItemType[]>([])
   return (
     <Dropdown
+      className={props.rootClassName}
       open={dropDownItems.length > 0}
       onOpenChange={open => !open && setDropDownItems([])}
       menu={{
@@ -252,7 +258,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         }}
       >
         <Tree
-          rootClassName={props.rootClassName}
+          rootClassName={props.treeClassName}
           draggable={{ icon: false }}
           onDrop={({ node, dragNode, dropToGap }) => {
             props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
@@ -298,6 +304,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
           selectedKeys={selectedKeys}
           onSelect={onSelect}
         />
+        {props.footer}
       </div>
     </Dropdown>
   )

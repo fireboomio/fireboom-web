@@ -17,6 +17,10 @@ requests.interceptors.response.use(
   <T>(resp: AxiosResponse<any, any>) => {
     if (resp.status >= 200 && resp.status < 300) {
       // FIXME: 生效代码适配文件存储列表接口
+      if (resp?.data?.code !== '10000000' && resp?.data?.code) {
+        console.log(123123, resp.config)
+        return resp.config.onError?.(resp.data)
+      }
       // return resp.data.result ?? (resp.data as unknown as T)
       return resp.data.result
     } else {

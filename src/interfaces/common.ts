@@ -36,6 +36,7 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 declare module 'axios' {
   export interface AxiosRequestConfig {
     resolveErrorMsg?: (response?: AxiosResponse) => string
+    onError?: (result: { code: string; msg: string; result: any }) => void
   }
 }
 declare module '@paljs/types' {
