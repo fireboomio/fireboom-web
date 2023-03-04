@@ -237,7 +237,10 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       trigger={['contextMenu']}
     >
       <div
-        onClick={() => setSelectedKeys([])}
+        onClick={() => {
+          setSelectedKeys([])
+          setLastClickKey('')
+        }}
         className=""
         onContextMenu={e => {
           if (!get(e, 'isFromChild')) {
