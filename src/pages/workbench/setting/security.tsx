@@ -75,13 +75,11 @@ export default function SettingMainVersion() {
         labelAlign="right"
         initialValues={securityConfig && redirectUrl && ({ ...securityConfig, redirectUrl } as any)}
       >
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}
-          name="enableGraphQLEndpoint"
-          valuePropName="checked"
-        >
+        <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
-            <Switch />
+            <Form.Item name="enableGraphQLEndpoint" valuePropName="checked" noStyle>
+              <Switch />
+            </Form.Item>
             <img
               alt="zhuyi"
               src="assets/iconfont/zhuyi.svg"

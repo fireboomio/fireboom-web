@@ -14,7 +14,7 @@ import styles from './pannel.module.less'
 
 interface Props {
   sourceOptions: DBSourceResp[]
-  onChangeSource: (value: string) => void
+  onChangeSource: (value: number) => void
 }
 
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
@@ -34,7 +34,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
     if (sourceOptions.length > 0 && !paramId) {
       navigate(`/workbench/modeling/${sourceOptions[0].id}`)
     }
-  }, [sourceOptions, paramId])
+  }, [sourceOptions, paramId, navigate])
 
   return (
     <div className={'common-form ' + styles['select-contain']}>

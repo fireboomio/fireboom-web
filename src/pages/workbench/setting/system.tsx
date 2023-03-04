@@ -89,7 +89,7 @@ export default function SettingMainVersion() {
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: 'API内网地址' })}
-          name="apiInernalAddr"
+          name="apiInternalAddr"
           tooltip={intl.formatMessage({ defaultMessage: '钩子服务对内地址，一般不需要修改' })}
         >
           <UrlInput />

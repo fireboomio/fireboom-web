@@ -20,7 +20,7 @@ import styles from './pannel.module.less'
 
 interface Props {
   sourceOptions: DBSourceResp[]
-  onChangeSource: (value: string) => void
+  onChangeSource: (value: number) => void
   onClickEntity: (entity: Entity) => void
   onToggleDesigner: (entity: Entity) => void
   changeToER: () => void
