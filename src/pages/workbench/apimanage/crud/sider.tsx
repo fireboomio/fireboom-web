@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
@@ -32,7 +33,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
   useEffect(() => {
-    void queryDataSourceList()
+    void mutateDataSource()
   }, [])
 
   useEffect(() => {
@@ -75,17 +76,6 @@ export default function CRUDSider(props: CRUDSiderProps) {
       dmf
     )
   }, [currentModel])
-
-  const queryDataSourceList = async () => {
-    const result = await requests.get<unknown, Datasource[]>('/dataSource?datasourceType=1')
-    setDataSourceList(result)
-    if (!result?.length || result?.length <= 0) {
-      props.onEmpty()
-    }
-    if (!result.find(item => item.id === currentDataSourceId)) {
-      setCurrentDataSourceId(result?.[0]?.id)
-    }
-  }
 
   return (
     <div className={'common-form ' + styles.sider}>

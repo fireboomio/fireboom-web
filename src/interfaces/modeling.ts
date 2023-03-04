@@ -5,7 +5,7 @@ import type { Schema } from '@paljs/types'
 export type DBSourceType = 'SQLITE' | 'MONGODB' | 'PGSQL' | 'MySQL'
 
 export interface DBSourceResp {
-  id: number
+  id: string
   name: string
   sourceType: number // 1-db 2-rest 3-graphql 4-自定义
   config: {

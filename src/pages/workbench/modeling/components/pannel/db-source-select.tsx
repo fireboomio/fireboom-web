@@ -14,7 +14,7 @@ import styles from './pannel.module.less'
 
 interface Props {
   sourceOptions: DBSourceResp[]
-  onChangeSource: (value: number) => void
+  onChangeSource: (value: string) => void
 }
 
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {

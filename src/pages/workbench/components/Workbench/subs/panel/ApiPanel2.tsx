@@ -212,7 +212,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           >
             {nodeData.data.method?.toUpperCase()}
           </div>
-          <div className={styles.title}>{nodeData.data.title}</div>
+          <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
           <div onClick={e => e.stopPropagation()}>
@@ -222,25 +222,24 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 items: [
                   {
                     key: 'copy',
+                    onClick: async () => {
+                      const destPath = `${nodeData.data.path}Copy${Math.random()
+                        .toString(36)
+                        .substring(2, 5)}`
+                      await requests.post('/operateApi/copy', {
+                        path: destPath,
+                        id: nodeData.data.id
+                      })
+                      message.success(
+                        intl.formatMessage(
+                          { defaultMessage: '已复制接口 {path}' },
+                          { path: destPath }
+                        )
+                      )
+                      void mutateApi()
+                    },
                     label: (
-                      <div
-                        onClick={async () => {
-                          const destPath = `${nodeData.data.path}Copy${Math.random()
-                            .toString(36)
-                            .substring(2, 5)}`
-                          await requests.post('/operateApi/copy', {
-                            path: destPath,
-                            id: nodeData.data.id
-                          })
-                          message.success(
-                            intl.formatMessage(
-                              { defaultMessage: '已复制接口 {path}' },
-                              { path: destPath }
-                            )
-                          )
-                          void mutateApi()
-                        }}
-                      >
+                      <div>
                         <CopyOutlined />
                         <span className="ml-1.5">
                           <FormattedMessage defaultMessage="复制" />{' '}
@@ -250,12 +249,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                   },
                   {
                     key: 'rename',
+                    onClick: () => {
+                      fileTree.current.editItem(nodeData.key)
+                    },
                     label: (
-                      <div
-                        onClick={() => {
-                          fileTree.current.editItem(nodeData.key)
-                        }}
-                      >
+                      <div>
                         <img
                           alt="zhongmingming"
                           src="assets/iconfont/zhongmingming.svg"
@@ -272,6 +270,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                     label: (
                       <div
                         onClick={e => {
+                          console.log(e)
                           // @ts-ignore
                           if (e.target?.dataset?.stoppropagation) {
                             e.stopPropagation()
@@ -288,14 +287,16 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                           cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                           placement="right"
                         >
-                          <img
-                            alt="shanchu"
-                            src="assets/iconfont/shanchu.svg"
-                            style={{ height: '1em', width: '1em' }}
-                          />
-                          <span className="ml-1.5" data-stoppropagation="1">
-                            <FormattedMessage defaultMessage="删除" />
-                          </span>
+                          <div className={styles.menuItem} data-stoppropagation="1">
+                            <img
+                              alt="shanchu"
+                              src="assets/iconfont/shanchu.svg"
+                              style={{ height: '1em', width: '1em' }}
+                            />
+                            <span className="ml-1.5">
+                              <FormattedMessage defaultMessage="删除" />
+                            </span>
+                          </div>
                         </Popconfirm>
                       </div>
                     )
@@ -476,10 +477,10 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): FileTreeNode[] {
   if (!data) return []
   return data.map((x, idx) => ({
     data: {
-      ...x,
-      title: x.path.split('/')[x.path.split('/').length - 1]
+      ...x
     },
     name: x.path.split('/')[x.path.split('/').length - 1],
+    title: x.path.split('/')[x.path.split('/').length - 1],
     key: `${x.isDir ? 1 : 0}-${x.path}`,
     isDir: x.isDir,
     children: convertToTree(x.children, `${lv}-${idx}`)

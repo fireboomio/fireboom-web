@@ -1,10 +1,8 @@
 import { Col, Empty, Row } from 'antd'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import useSWRImmutable from 'swr/immutable'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import { fetchDBSources } from '@/lib/clients/fireBoomAPIOperator'
-import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 
 import DesignerContainer from '../components/designer'
@@ -13,15 +11,25 @@ import PreviewContainer from '../components/preview'
 
 const Modeling = () => {
   const intl = useIntl()
+  const navigate = useNavigate()
   const {
-    panel: { showType, setShowType }
+    panel: { showType, setShowType, dataSources }
   } = useContext(PrismaSchemaContext)
 
-  const { data: _, error } = useSWRImmutable(DATABASE_SOURCE, fetchDBSources, {
-    revalidateOnMount: true
-  })
+  const { id: paramId } = useParams()
+  useEffect(() => {
+    if (paramId && dataSources) {
+      if (!dataSources.find((x: { id: string }) => x.id === paramId)) {
+        if (dataSources.length) {
+          navigate(`/workbench/modeling/${dataSources[0].id}`)
+        } else {
+          navigate(`/workbench/modeling`)
+        }
+      }
+    }
+  }, [dataSources, navigate, paramId])
 
-  if (error)
+  if (!dataSources)
     return (
       <Empty
         className="pt-20"

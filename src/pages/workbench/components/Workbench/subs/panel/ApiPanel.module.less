@@ -271,3 +271,17 @@
 .method_post {
   color: #faad14;
 }
+
+.menuItem {
+  position: relative;
+
+  &:after {
+    content: ' ';
+    position: absolute;
+    z-index: 1;
+    left: -12px;
+    right: -12px;
+    top: -6px;
+    bottom: -6px;
+  }
+}
