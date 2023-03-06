@@ -303,6 +303,7 @@ const IdeContainer: FC<Props> = props => {
     setMonaco(monaco)
     // @ts-ignore
     setUp(monacoEditor, 'typescript')
+    console.log('=123123', `inmemory://model/hook/${hookPath}`)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }

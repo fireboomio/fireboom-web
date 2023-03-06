@@ -50,12 +50,12 @@ export default function Error() {
               x.icon =
                 {
                   mysql: '/assets/icon/mysql.svg',
-                  pgsql: '/assets/icon/pg.svg',
+                  postgresql: '/assets/icon/pgsql.svg',
                   graphql: '/assets/icon/graphql.svg',
                   mongodb: '/assets/icon/mongodb.svg',
                   rest: '/assets/icon/rest.svg',
                   sqlite: '/assets/icon/sqlite.svg'
-                }[String(x.dbType).toLowerCase()] || ''
+                }[String(x.dbType).toLowerCase()] || '/assets/icon/file.svg'
               break
             case 2:
               x.icon = '/assets/icon/rest.svg'

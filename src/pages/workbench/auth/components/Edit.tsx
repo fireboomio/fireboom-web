@@ -283,20 +283,24 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             >
               <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
             </Form.Item>
+
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
-                  {intl.formatMessage({ defaultMessage: '授权码模式' })}
+                  {intl.formatMessage({ defaultMessage: '基于cookie' })}
                 </div>
               }
-              name="cookieBased"
-              valuePropName="checked"
               className="pt-5"
             >
-              <Switch
-                checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
-              />
+              <div className="flex items-center">
+                <Form.Item noStyle name="cookieBased" valuePropName="checked">
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  />
+                </Form.Item>
+                <div className="text-12px text-[#333] ml-2">授权码模式</div>
+              </div>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
               <Input.Group compact className="!flex">
@@ -369,17 +373,20 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
-                  {intl.formatMessage({ defaultMessage: '隐式模式' })}
+                  {intl.formatMessage({ defaultMessage: '基于Token' })}
                 </div>
               }
-              name="tokenBased"
-              valuePropName="checked"
               className="pt-5"
             >
-              <Switch
-                checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
-              />
+              <div className="flex items-center">
+                <Form.Item noStyle name="tokenBased" valuePropName="checked">
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  />
+                </Form.Item>
+                <div className="text-12px text-[#333] ml-2">隐式模式</div>
+              </div>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
               <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />

@@ -5,6 +5,7 @@ type Case = {
   pattern: RegExp
   message: string
 }
+export type Validator = (value: string) => string | undefined
 
 export function useValidate() {
   const intl = useIntl()

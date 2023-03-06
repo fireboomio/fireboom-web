@@ -64,7 +64,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             svg =
               {
                 mysql: '/assets/icon/mysql.svg',
-                pgsql: '/assets/icon/pg.svg',
+                postgresql: '/assets/icon/pgsql.svg',
                 graphql: '/assets/icon/graphql.svg',
                 mongodb: '/assets/icon/mongodb.svg',
                 rest: '/assets/icon/rest.svg',

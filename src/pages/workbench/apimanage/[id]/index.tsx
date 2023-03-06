@@ -117,6 +117,7 @@ export default function APIEditorContainer() {
 
   const onEditQuery = useCallback(
     (v: string) => {
+      console.log('edit', v)
       editingContent.current = v
       if (contentUpdateTimeout.current) {
         clearTimeout(contentUpdateTimeout.current)

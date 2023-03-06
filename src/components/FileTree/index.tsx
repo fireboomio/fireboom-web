@@ -2,7 +2,15 @@ import { Dropdown, Input, Tree } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import { cloneDeep, get, set } from 'lodash'
 import type React from 'react'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
 import { useIntl } from 'react-intl'
 
 export interface FileTreeNode {
@@ -121,8 +129,13 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     setTreeData(newTree)
   }, [props.treeData])
 
-  // 初始化选中状态
+  // 根据props种传入的selectedKey，自动选中并展开节点，仅当selectedKey变化时执行
+  const lastPropSelectedKey = useRef<string>()
   useEffect(() => {
+    if (lastPropSelectedKey.current === props.selectedKey && props.selectedKey) {
+      return
+    }
+    lastPropSelectedKey.current = props.selectedKey
     setSelectedKeys(props.selectedKey ? [props.selectedKey] : [])
     // 自动展开选中节点
     if (props.selectedKey) {

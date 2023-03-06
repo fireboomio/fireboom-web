@@ -1,14 +1,11 @@
-import { App, Input, message } from 'antd'
 import { omit } from 'lodash'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { usePrompt } from '@/hooks/prompt'
 import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp } from '@/interfaces/datasource'
-import {
-  DatasourceDispatchContext,
-  DatasourceToggleContext
-} from '@/lib/context/datasource-context'
+import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
 import uploadLocal from '@/utils/uploadLocal'
@@ -139,11 +136,9 @@ export default function Designer() {
     })
     return iconMap
   }, [initData])
-  const dispatch = useContext(DatasourceDispatchContext)
   const { handleToggleDesigner, handleCreate, handleSave } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
   const [examples, setExamples] = useState([])
-  const inputValue = useRef<string>('')
 
   useEffect(() => {
     const exampleList = [
@@ -260,42 +255,22 @@ export default function Designer() {
         })
       })
     )
-  }, [])
-  const { modal } = App.useApp()
+  }, [iconMap, intl])
+  const prompt = usePrompt()
 
-  function createCustom() {
-    const { destroy } = modal.confirm({
-      title: intl.formatMessage({ defaultMessage: '请输入数据源名称' }),
-      content: (
-        <Input
-          placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-          onChange={e => {
-            inputValue.current = e.target.value.replace(/ /g, '')
-          }}
-        />
-      ),
-      okText: intl.formatMessage({ defaultMessage: '创建' }),
-      cancelText: intl.formatMessage({ defaultMessage: '取消' }),
-      okButtonProps: {
-        async onClick() {
-          const err = validateName(inputValue.current)
-          if (err) {
-            message.error(err)
-            return
-          }
-          let data = {
-            name: inputValue.current,
-            config: { apiNamespace: inputValue.current, serverName: inputValue.current },
-            sourceType: 4,
-            enabled: false
-          } as any
-          const result = await requests.post<unknown, number>('/dataSource', data)
-          data.id = result
-          handleSave(data)
-          destroy()
-        }
-      }
-    })
+  async function createCustom() {
+    const { confirm, value } = await prompt({ title: '请输入数据源名称', validator: validateName })
+    if (!confirm) {
+      return
+    }
+    let data = {
+      name: value,
+      config: { apiNamespace: value, serverName: value },
+      sourceType: 4,
+      enabled: false
+    } as any
+    data.id = await requests.post<unknown, number>('/dataSource', data)
+    handleSave(data)
   }
 
   async function handleClick(sourceType: number, dbType: string, dbSchema: string, name: string) {
