@@ -124,7 +124,20 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   // 初始化选中状态
   useEffect(() => {
     setSelectedKeys(props.selectedKey ? [props.selectedKey] : [])
-  }, [props.selectedKey])
+    // 自动展开选中节点
+    if (props.selectedKey) {
+      const node = keyMap[props.selectedKey]
+      if (node) {
+        const keys = []
+        let parent = node.parent
+        while (parent) {
+          keys.push(parent.key)
+          parent = parent.parent
+        }
+        setExpandedKeys([...expandedKeys, ...keys])
+      }
+    }
+  }, [props.selectedKey, keyMap])
 
   /**
    * 增加新节点

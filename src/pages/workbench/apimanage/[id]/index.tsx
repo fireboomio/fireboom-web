@@ -9,6 +9,7 @@ import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { mutate } from 'swr'
 
 import { useDragResize } from '@/hooks/resize'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -162,6 +163,7 @@ export default function APIEditorContainer() {
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
+    void mutate(`/operateApi/hooks/${params.id}`)
   })
   useEventBus('apiEnableChange', ({ data }) => {
     if (data.ids.includes(Number(params.id))) {

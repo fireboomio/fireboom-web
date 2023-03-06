@@ -116,7 +116,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [apiDesc, intl, workbenchCtx])
 
   const copyLink = useCallback(async () => {
-    let link = apiDesc?.restUrl
+    let link = `${config.apiPublicAddr ?? ''}/operation${apiDesc?.path}`
     if (!link) {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return

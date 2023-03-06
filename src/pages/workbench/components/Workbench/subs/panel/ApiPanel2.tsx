@@ -1,7 +1,7 @@
 import { CopyOutlined } from '@ant-design/icons'
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -24,7 +24,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
-  const [treeData, setTreeData] = useState<FileTreeNode[]>([])
+  const [treeData, setTreeData] = useState<FileTreeNode[]>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [selectedKey, setSelectedKey] = useState<string>('')
@@ -47,23 +47,24 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [navigate])
 
+  const pathId = useMemo(() => {
+    return Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
+  }, [location.pathname])
+
   // 监听location变化，及时清空选中状态
   useEffect(() => {
     // 尝试自动选中当前项
-    if (treeData) {
-      const pathId = Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
-      if (pathId) {
-        const currentNode = getNodeById(pathId, treeData)
-        if (currentNode) {
-          // 自动选中当前节点
-          setSelectedKey(currentNode.key)
-        } else {
-          // 未找到当前节点，跳转至空白页
-          navigate(`/workbench/apimanage`)
-        }
+    if (treeData && pathId) {
+      const currentNode = getNodeById(pathId, treeData)
+      if (currentNode) {
+        // 自动选中当前节点
+        setSelectedKey(currentNode.key)
+      } else {
+        // 未找到当前节点，跳转至空白页
+        navigate(`/workbench/apimanage`)
       }
     }
-  }, [location, treeData])
+  }, [location, navigate, pathId, treeData])
   useEffect(() => {
     if (props.defaultOpen) {
       setPanelOpened(true)
@@ -93,14 +94,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }
 
-  // 对所有修改操作进行一次封装，提供loading和刷新效果
+  /**
+   * 对所有修改操作进行一次封装，提供loading和刷新效果
+   * 被封装对象的执行结果将延迟到mutate完成之后执行
+   */
   const executeWrapper = useCallback(
     function <T extends Function>(fn: T): T {
       return (async (...args: any) => {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
         try {
-          await fn(...args)
-          await mutateApi()
+          const afterMutate = await fn(...args)
+          const apiList = await mutateApi()
+          afterMutate?.(apiList)
         } catch (_) {
           // ignore
         }
@@ -109,22 +114,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [intl]
   )
-  // 对所有修改操作进行一次封装，提供loading和刷新效果
-  // const executeWrapper = useCallback(
-  //   (fn: Function) => {
-  //     return (async (...args: any) => {
-  //       const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
-  //       try {
-  //         await fn(...args)
-  //         await mutateApi()
-  //       } catch (_) {
-  //         // ignore
-  //       }
-  //       hide()
-  //     }) as typeof fn
-  //   },
-  //   [intl]
-  // )
   const handleBatchSwitch = executeWrapper(async (nodes: FileTreeNode[], flag: boolean) => {
     const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
     await requests.post('operateApi/batchOnline', {
@@ -165,7 +154,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       await requests.post('/operateApi/dir', { path })
     } else {
       const result = await requests.post<unknown, { id: number }>('/operateApi', { path })
-      navigate(`/workbench/apimanage/${result?.id}`)
+      return () => {
+        navigate(`/workbench/apimanage/${result?.id}`)
+      }
     }
   })
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
@@ -175,6 +166,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       await requests.put('/operateApi/dir', { oldPath, newPath })
     } else {
       await requests.put(`/operateApi/rename/${node.data.id}`, { path: newPath })
+      if (node.data.id === pathId) {
+        events.emit({
+          event: 'titleChange',
+          data: { title: newName, path: newPath }
+        })
+      }
     }
   })
 
@@ -182,6 +179,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     async (dragNode: FileTreeNode, dropNode: FileTreeNode | null, confirm = false) => {
       const oldPath = dragNode.data.path
       const newPath = `${dropNode?.data?.path ?? ''}/${dragNode.name}`
+      // 判断移动目标是否包含当前已打开的api， 如果有，则需要更新api信息
+      const hasCurrent = !!getNodeById(pathId, [dragNode])
       if (dragNode.isDir) {
         await requests.put(
           '/operateApi/dir',
@@ -206,6 +205,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             }
           }
         )
+      }
+      // 如果移动的是当前打开的api，则需要更新api信息
+      if (hasCurrent) {
+        return (apiList: any) => {
+          const api = getApiById(pathId, apiList)
+          if (api) {
+            events.emit({
+              event: 'titleChange',
+              data: { title: api.path.split('/').pop() ?? '', path: api.path }
+            })
+          }
+        }
       }
     }
   )
@@ -491,7 +502,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         selectedKey={selectedKey}
         rootClassName="h-full"
         treeClassName={styles.treeContainer}
-        treeData={treeData}
+        treeData={treeData ?? []}
         titleRender={titleRender}
         footer={
           <div className={styles.createRowWrapper}>
@@ -550,6 +561,7 @@ function convertToTree(data: OperationResp[] | null, lv = '0'): FileTreeNode[] {
     data: {
       ...x
     },
+    id: x.id,
     name: x.path.split('/')[x.path.split('/').length - 1],
     title: x.path.split('/')[x.path.split('/').length - 1],
     key: `${x.isDir ? 1 : 0}-${x.path}`,
@@ -563,6 +575,18 @@ function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | unde
   while (lists.length) {
     const item = lists.pop()!
     if (item.data.id === id) {
+      return item
+    } else if (item.children) {
+      lists.push(...item.children)
+    }
+  }
+}
+
+function getApiById(id: number, data: OperationResp[] = []): OperationResp | undefined {
+  const lists = [...data!]
+  while (lists.length) {
+    const item = lists.pop()!
+    if (item.id === id) {
       return item
     } else if (item.children) {
       lists.push(...item.children)

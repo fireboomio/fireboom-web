@@ -8,6 +8,7 @@ import type {
 } from 'graphql'
 import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
 import { isEqual, keyBy } from 'lodash'
+import { mutate } from 'swr'
 import create from 'zustand'
 
 import { mutateApi } from '@/hooks/store/api'
@@ -192,6 +193,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       })
       // 刷新api列表
       void mutateApi()
+      void mutate(`/operateApi/hooks/${get().apiID}`)
     })
   },
   updateContent: (content: string, showMessage = true) => {
