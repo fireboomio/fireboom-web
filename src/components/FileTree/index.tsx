@@ -137,7 +137,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setExpandedKeys(expandedKeys => [...expandedKeys, ...keys])
       }
     }
-  }, [props.selectedKey, keyMap])
+  }, [props.selectedKey, keyMap, expandedKeys])
 
   /**
    * 增加新节点
