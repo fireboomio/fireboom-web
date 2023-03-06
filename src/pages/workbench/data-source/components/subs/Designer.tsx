@@ -268,8 +268,6 @@ export default function Designer() {
       title: intl.formatMessage({ defaultMessage: '请输入数据源名称' }),
       content: (
         <Input
-          autoFocus
-          required
           placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
           onChange={e => {
             inputValue.current = e.target.value.replace(/ /g, '')

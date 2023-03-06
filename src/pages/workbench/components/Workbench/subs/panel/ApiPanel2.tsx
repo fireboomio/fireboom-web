@@ -99,13 +99,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
    * 被封装对象的执行结果将延迟到mutate完成之后执行
    */
   const executeWrapper = useCallback(
-    function <T extends Function>(fn: T): T {
+    function <T extends Function>(fn: T, skipMutate = false): T {
       return (async (...args: any) => {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '执行中' }))
         try {
-          const afterMutate = await fn(...args)
-          const apiList = await mutateApi()
-          afterMutate?.(apiList)
+          await fn(...args)
+          !skipMutate && (await mutateApi())
         } catch (_) {
           // ignore
         }
@@ -145,20 +144,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     } else {
       await requests.delete(`/operateApi/${node.data.id}`)
     }
-    void mutateApi()
     localStorage.removeItem(`_api_args_${node.data.id}`)
-    // TODO 删除后的自动跳转逻辑
   })
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
       await requests.post('/operateApi/dir', { path })
     } else {
       const result = await requests.post<unknown, { id: number }>('/operateApi', { path })
-      return () => {
-        navigate(`/workbench/apimanage/${result?.id}`)
-      }
+      await mutateApi()
+      navigate(`/workbench/apimanage/${result?.id}`)
     }
-  })
+  }, true)
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     const oldPath = node.data.path
     const newPath = oldPath.replace(/[^/]+$/, newName)
@@ -206,19 +202,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           }
         )
       }
+
+      const apiList = await mutateApi()
       // 如果移动的是当前打开的api，则需要更新api信息
       if (hasCurrent) {
-        return (apiList: any) => {
-          const api = getApiById(pathId, apiList)
-          if (api) {
-            events.emit({
-              event: 'titleChange',
-              data: { title: api.path.split('/').pop() ?? '', path: api.path }
-            })
-          }
+        const api = getApiById(pathId, apiList)
+        if (api) {
+          events.emit({
+            event: 'titleChange',
+            data: { title: api.path.split('/').pop() ?? '', path: api.path }
+          })
         }
       }
-    }
+    },
+    true
   )
 
   const confirmExecute = useCallback(

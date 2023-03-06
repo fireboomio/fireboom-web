@@ -171,7 +171,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
 
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
-  }, [apiDesc?.liveQuery, apiDesc?.restUrl, apiID, intl, schemaAST?.definitions])
+  }, [apiDesc?.liveQuery, apiDesc?.path, apiID, config.apiPublicAddr, intl, schemaAST?.definitions])
 
   const save = async () => {
     try {

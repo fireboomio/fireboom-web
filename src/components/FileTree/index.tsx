@@ -279,6 +279,10 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
           rootClassName={props.treeClassName}
           draggable={{ icon: false }}
           onDrop={({ node, dragNode, dropToGap }) => {
+            const dropTarget = dropToGap ? node.parent ?? null : node
+            if (dragNode.parent?.key === dropTarget?.key) {
+              return
+            }
             props.onMove?.(dragNode, dropToGap ? node.parent ?? null : node)
           }}
           allowDrop={({ dropNode, dropPosition }) => {
