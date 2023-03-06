@@ -9,6 +9,7 @@ import type { FC } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useFullScreenHandle } from 'react-full-screen'
 import { useIntl } from 'react-intl'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import type { LocalLib } from '@/components/Ide/dependLoader'
@@ -192,12 +193,15 @@ const IdeContainer: FC<Props> = props => {
     }
   }
 
+  const { data: cTree } = useSWRImmutable('hook/ctree', () =>
+    requests.get<unknown, { path: string; content: string }[]>('hook/ctree', { timeout: 60000 })
+  )
   // scriptList和monaco加载完毕后，将所有scriptList中的代码加载到monaco中
   useEffect(() => {
-    if (!scriptList || !monaco) return
+    if (!scriptList || !monaco || !editor || !cTree) return
     requests
       .get<unknown, { path: string; content: string }[]>('hook/ctree', { timeout: 60000 })
-      .then(res => {
+      .then(async res => {
         res.forEach(({ path, content }) => {
           // 屏蔽generated代码和node_modules中的代码
           if (path.startsWith('generated/') || path.startsWith('node_modules/')) {
@@ -208,9 +212,9 @@ const IdeContainer: FC<Props> = props => {
           }
           const monacoPath = `inmemory://model/hook/${path}`
           const model = monaco.editor.getModel(path)
-          if (path === hookPath + '.ts') {
-            return
-          }
+          // if (path === hookPath + '.ts') {
+          //   return
+          // }
           if (!model) {
             if (!monaco.editor.getModel(path)) {
               try {
@@ -221,8 +225,9 @@ const IdeContainer: FC<Props> = props => {
             }
           }
         })
+        editor.setValue(editor.getValue())
       })
-  }, [scriptList, monaco])
+  }, [scriptList, monaco, editor, cTree])
 
   useEffect(() => {
     // 监听键盘的ctrl+s事件
@@ -303,7 +308,6 @@ const IdeContainer: FC<Props> = props => {
     setMonaco(monaco)
     // @ts-ignore
     setUp(monacoEditor, 'typescript')
-    console.log('=123123', `inmemory://model/hook/${hookPath}`)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
