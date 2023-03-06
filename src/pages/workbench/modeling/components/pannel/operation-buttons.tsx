@@ -41,9 +41,9 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
       <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
         <img src={iconSwitch} alt="switch" />
       </div>
-      {/* <div onClick={changeToER} className={styles.erBtn}>
+      <div onClick={changeToER} className={styles.erBtn}>
         <img src={iconER} alt="ER" />
-      </div> */}
+      </div>
       <div onClick={addNewModel} className={styles.addEntityBtn}>
         +
       </div>
