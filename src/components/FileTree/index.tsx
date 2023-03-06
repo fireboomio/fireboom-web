@@ -128,16 +128,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     if (props.selectedKey) {
       const node = keyMap[props.selectedKey]
       if (node) {
-        const keys = []
+        const keys: string[] = []
         let parent = node.parent
         while (parent) {
           keys.push(parent.key)
           parent = parent.parent
         }
-        setExpandedKeys([...expandedKeys, ...keys])
+        setExpandedKeys(expandedKeys => [...expandedKeys, ...keys])
       }
     }
-  }, [props.selectedKey, keyMap, expandedKeys])
+  }, [props.selectedKey, keyMap])
 
   /**
    * 增加新节点
