@@ -317,7 +317,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
       auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
       table: tableData,
-      prefix: '',
+      prefix: props?.model?.name,
       alias: props?.model?.name,
       modelName: props?.model?.name,
       primaryKey: props.model.idField

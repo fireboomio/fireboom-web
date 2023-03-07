@@ -113,7 +113,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
   },
   setQuery(query, fromEditor = false) {
     if (!fromEditor || !query) {
-      console.trace('编辑器更新')
       if (query) {
         // 为了防止和上次设置编辑器的内容一致导致不触发，所以在末尾加一个空格或移除末尾空格
         if (get().editorQuery === query) {

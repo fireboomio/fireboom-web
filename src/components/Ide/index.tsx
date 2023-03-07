@@ -155,19 +155,21 @@ const IdeContainer: FC<Props> = props => {
   // 获取hook信息
   useEffect(() => {
     void getHook<HookInfo>(hookPath).then(async data => {
-      const defaultCode = await resolveDefaultCode(hookPath)
-      // 如果data中的script为空, 就用defaultCode
-      if (data.script === '' || (data.script === null && defaultCode)) {
-        setPayload({
-          type: 'passive',
-          status: AutoSaveStatus.DEFAULT
-        })
-        data.script = defaultCode
-      } else {
+      if (data.script) {
         setPayload({
           type: 'passive',
           status: AutoSaveStatus.LOADED
         })
+      } else {
+        // 如果data中的script为空, 就用defaultCode
+        const defaultCode = await resolveDefaultCode(hookPath)
+        if (defaultCode) {
+          setPayload({
+            type: 'passive',
+            status: AutoSaveStatus.DEFAULT
+          })
+          data.script = defaultCode
+        }
       }
       data.path = hookPath
       setHookInfo(data)
