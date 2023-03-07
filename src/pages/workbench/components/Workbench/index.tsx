@@ -19,7 +19,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
-import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
@@ -40,7 +40,12 @@ interface BarOnce {
 
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
-  const [info, setInfo] = useState<Info>()
+  const [info, setInfo] = useState<Info>({
+    errorInfo: { errTotal: 0, warnTotal: 0 },
+    engineStatus: ServiceStatus.NotStarted,
+    hookStatus: HookStatus.Stopped,
+    startTime: ''
+  })
   const [version, setVersion] = useState<string>('--')
   const [env, setEnv] = useState<string>('--')
   const [showWindow, setShowWindow] = useState(false)
@@ -85,7 +90,6 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'pushStatus', data => {
-    // @ts-ignore
     setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
@@ -93,7 +97,9 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'getHookStatus', data => {
-    // @ts-ignore
+    setInfo({ ...info, hookStatus: data.hookStatus })
+  })
+  useWebSocket('engine', 'pushHookStatus', data => {
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('log', 'getLogs', data => {

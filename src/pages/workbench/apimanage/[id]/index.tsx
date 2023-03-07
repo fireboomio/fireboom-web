@@ -85,7 +85,6 @@ export default function APIEditorContainer() {
     operationType: state.computed.operationType
   }))
   const editingContent = useRef(query)
-  const contentUpdateTimeout = useRef<number>()
   const isEditingRef = useRef(false)
   const explorerRef = useRef<any>()
   const filtersMap = useMemo(
@@ -117,22 +116,10 @@ export default function APIEditorContainer() {
 
   const onEditQuery = useCallback(
     (v: string) => {
-      console.log('edit', v)
       editingContent.current = v
-      if (contentUpdateTimeout.current) {
-        clearTimeout(contentUpdateTimeout.current)
-      }
-      // 加个延迟 让鼠标事件先执行
-      setTimeout(() => {
-        // 2023-01-18 移除isEditing的判断，因为command组合键在松开字母键时不会触发keyup，导致isEditing状态不能及时更新
-        // 避免一直输入时更改query导致数据不一致而使得光标跑到最前面
-        if (!isEditingRef.current) {
-          // 节流设置值
-          contentUpdateTimeout.current = window.setTimeout(() => {
-            setQuery(editingContent.current, true)
-          }, 500)
-        }
-      }, 100)
+      // 2023-03-07，setQuery改为立刻执行，现在setQuery已经不会再触发编辑器更新，无需担心光标跳转问题。
+      //             改为立刻更新后，可以避免自动保存时存入错误的数据。
+      setQuery(v, true)
     },
     [setQuery]
   )
