@@ -7,13 +7,18 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import { File, Filter, Search } from '@/components/icons'
+import { Close, File, Filter, Search } from '@/components/icons'
 import type { OperationResp } from '@/hooks/store/api'
 import { useApiList } from '@/hooks/store/api'
 import { useEventBus } from '@/lib/event/events'
 import { intl } from '@/providers/IntlProvider'
 
+import keyDown from './assets/down.svg'
 import iconEmpty from './assets/empty.svg'
+import keyEnter from './assets/enter.svg'
+import keyEsc from './assets/esc.svg'
+import keyTab from './assets/tab.svg'
+import keyUp from './assets/up.svg'
 import styles from './index.module.less'
 
 export default function ApiSearch() {
@@ -39,7 +44,7 @@ export default function ApiSearch() {
     Record<string, { value: any; fun: (api: OperationResp) => boolean }>
   >({})
   const enabledFilter = useMemo(() => values(filterMap), [filterMap])
-  const [filterOpen, setFilterOpen] = useState(true)
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const buildBaseFilter = (key: string, title: string) => ({
     key,
@@ -148,7 +153,7 @@ export default function ApiSearch() {
   useEffect(() => {
     setSearchInput('')
     setFilterMap({})
-    setFilterOpen(true)
+    setFilterOpen(false)
     setActiveTab('')
     if (open) {
       setTimeout(() => {
@@ -170,16 +175,20 @@ export default function ApiSearch() {
     <div className={styles.mask} onClick={() => setOpen(false)}>
       <div className={styles.panel} onClick={e => e.stopPropagation()}>
         {/* <Close className={styles.panelClose} onClick={() => setOpen(false)} /> */}
-        <Input
-          id="t-input"
-          ref={inputRef}
-          prefix={<Search className="mx-2" />}
-          placeholder={intl.formatMessage({ defaultMessage: '搜索API' })}
-          onChange={e => setSearchInput(e.target.value)}
-          value={searchInput}
-          className={styles.search}
-          allowClear
-        />
+        <div className={styles.searchWrapper}>
+          <Input
+            id="t-input"
+            ref={inputRef}
+            prefix={<Search className="mx-2" />}
+            placeholder={intl.formatMessage({ defaultMessage: '搜索API' })}
+            onChange={e => setSearchInput(e.target.value)}
+            value={searchInput}
+            className={styles.search}
+          />
+          <div className={styles.cancel} onClick={() => setOpen(false)}>
+            {intl.formatMessage({ defaultMessage: '取消' })}
+          </div>
+        </div>
         <div className={styles.tabLine}>
           {tabs.map(tab => (
             <div
@@ -255,6 +264,9 @@ export default function ApiSearch() {
                 <span className={styles.clear} onClick={() => setFilterMap({})}>
                   清空
                 </span>
+                <span className={styles.close} onClick={() => setFilterOpen(false)}>
+                  <Close />
+                </span>
               </div>
               <div className="pt-3">
                 {filterFields.map(row => (
@@ -291,6 +303,18 @@ export default function ApiSearch() {
               </div>
             </div>
           )}
+        </div>
+        {/*footer*/}
+        <div className={styles.footer}>
+          <img className={styles.key} src={keyEnter} alt="" />
+          <span className={styles.text}>{intl.formatMessage({ defaultMessage: '打开' })}</span>
+          <img className={styles.key} src={keyUp} alt="" />
+          <img className={styles.key} src={keyDown} alt="" />
+          <span className={styles.text}>{intl.formatMessage({ defaultMessage: '选择' })}</span>
+          <img className={styles.key} src={keyTab} alt="" />
+          <span className={styles.text}>{intl.formatMessage({ defaultMessage: '切换分类' })}</span>
+          <img className={styles.key} src={keyEsc} alt="" />
+          <span className={styles.text}>{intl.formatMessage({ defaultMessage: '关闭' })}</span>
         </div>
       </div>
     </div>
