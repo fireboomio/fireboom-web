@@ -16,7 +16,6 @@ const ErDiagram = () => {
   const run = useCallback(() => {
     if (dmmf) {
       // prisma-client-go 结构内容有缺失
-      dmmf.datamodel.types = []
       dmmf.datamodel.models.forEach(model => {
         model.uniqueFields = model.fields.reduce<string[][]>((arr, field) => {
           if (field.isUnique) {
@@ -47,14 +46,14 @@ const ErDiagram = () => {
 
   useEffect(() => {
     run()
-  }, [dmmf])
+  }, [dmmf, run])
 
   useEffect(() => {
     frameRef.current!.contentWindow!.addEventListener('DOMContentLoaded', () => {
       loadRef.current = true
       run()
     })
-  }, [])
+  }, [run])
 
   return (
     <div className="flex flex-col h-full p-6">
