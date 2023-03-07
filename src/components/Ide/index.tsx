@@ -169,6 +169,7 @@ const IdeContainer: FC<Props> = props => {
           status: AutoSaveStatus.LOADED
         })
       }
+      data.path = hookPath
       setHookInfo(data)
     })
   }, [hookPath])
