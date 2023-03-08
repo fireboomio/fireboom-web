@@ -150,7 +150,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 />
               ) : (
                 <>
-                  {content?.name}
+                  <span className="max-w-200px overflow-hidden text-ellipsis" title={content?.name}>
+                    {content?.name}
+                  </span>
                   <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
                     <img
                       alt="bianji"

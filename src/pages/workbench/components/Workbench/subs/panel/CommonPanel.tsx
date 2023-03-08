@@ -225,7 +225,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             <div>
               <img
                 alt="a-shanchu2"
-                src="assets/iconfont/a-shanchu2.svg"
+                src="assets/iconfont/shanchu.svg"
                 style={{ height: '1em', width: '1em' }}
               />
               <span className="ml-1.5">

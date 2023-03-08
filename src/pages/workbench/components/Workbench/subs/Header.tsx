@@ -80,7 +80,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   )
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { isFullscreen } = useContext(WorkbenchContext)
+  const { isHideSide } = useContext(WorkbenchContext)
   const authList = useAuthList()
 
   const [open, setOpen] = useState(false)
@@ -126,7 +126,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       ),
       okText: intl.formatMessage({ defaultMessage: '知道了' })
     })
-  }, [])
+  }, [hotkeys, intl, modal])
 
   // 快捷键
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     <>
       <div className={styles.header}>
         <div
-          className={!isFullscreen ? styles.dashboardIcon : styles.dashboardIcon2}
+          className={!isHideSide ? styles.dashboardIcon : styles.dashboardIcon2}
           onClick={() => props.onToggleSider()}
         />
         <div className={styles.logo} onClick={() => navigate('/workbench')} />

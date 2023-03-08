@@ -302,7 +302,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <div className="text-12px text-[#333] ml-2">授权码模式</div>
               </div>
             </Form.Item>
-            <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
+            <Form.Item
+              label={intl.formatMessage({ defaultMessage: 'App ID' })}
+              required={cookieBased}
+            >
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientId', 'kind']} noStyle>
                   <Select className="flex-0 w-100px" disabled={!cookieBased}>
@@ -317,12 +320,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <Form.Item
                   name={['clientId', 'val']}
                   noStyle
-                  rules={[
-                    {
-                      required: true,
-                      message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
-                    }
-                  ]}
+                  rules={
+                    cookieBased
+                      ? [
+                          {
+                            required: true,
+                            message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                          }
+                        ]
+                      : []
+                  }
                 >
                   {clientIdKind === '0' ? (
                     <Input
@@ -336,7 +343,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 </Form.Item>
               </Input.Group>
             </Form.Item>
-            <Form.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })} required>
+            <Form.Item
+              label={intl.formatMessage({ defaultMessage: 'App Secret' })}
+              required={cookieBased}
+            >
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientSecret', 'kind']} noStyle>
                   <Select className="flex-0 w-100px" disabled={!cookieBased}>
@@ -351,12 +361,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <Form.Item
                   name={['clientSecret', 'val']}
                   noStyle
-                  rules={[
-                    {
-                      required: true,
-                      message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
-                    }
-                  ]}
+                  rules={
+                    cookieBased
+                      ? [
+                          {
+                            required: true,
+                            message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
+                          }
+                        ]
+                      : []
+                  }
                 >
                   {clientSecretKind === '0' ? (
                     <Input

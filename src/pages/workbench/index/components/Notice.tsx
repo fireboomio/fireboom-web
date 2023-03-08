@@ -1,6 +1,6 @@
 import { Image } from 'antd'
-import { useEffect } from 'react'
-import { useImmer } from 'use-immer'
+import { useMemo } from 'react'
+import useSWRImmutable from 'swr/immutable'
 
 import { proxy } from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
@@ -19,21 +19,19 @@ interface NoticeConfig {
 }
 
 export function Notice({ handleToggleDesigner }: Props) {
-  const [_noticeConfig, setNoticeConfig] = useImmer([] as NoticeConfig[])
   const calcTime = useCalcTime()
-  useEffect(() => {
-    proxy('https://raw.githubusercontent.com/fireboomio/files/main/news.json').then(async res => {
-      // @ts-ignore
-      const news = res.map((item: any) => ({
-        content: item.content,
-        title: item.title,
-        date: calcTime(item.time),
-        url: item.url
-      }))
-      setNoticeConfig(news)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { data: news } = useSWRImmutable(
+    'https://raw.githubusercontent.com/fireboomio/files/main/news.json',
+    proxy
+  )
+  const noticeConfig = useMemo(() => {
+    return (news ?? []).map((item: any) => ({
+      content: item.content,
+      title: item.title,
+      date: calcTime(item.time),
+      url: item.url
+    }))
+  }, [calcTime, news])
 
   const handleClick = () => {
     handleToggleDesigner('guide')
@@ -52,7 +50,7 @@ export function Notice({ handleToggleDesigner }: Props) {
         </a>
       </div>
       <div className={styles.rowList}>
-        {_noticeConfig.map((row, index) => (
+        {noticeConfig.map((row, index) => (
           <div
             className={styles.noticeRow}
             key={index}
