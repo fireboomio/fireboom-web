@@ -149,6 +149,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
       await requests.post('/operateApi/dir', { path })
+      await mutateApi()
     } else {
       const result = await requests.post<unknown, { id: number }>('/operateApi', { path })
       await mutateApi()
