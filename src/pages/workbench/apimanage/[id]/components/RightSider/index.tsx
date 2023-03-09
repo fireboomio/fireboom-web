@@ -22,9 +22,10 @@ import styles from './index.module.less'
 export default function RightSider() {
   const params = useParams()
   const [active, setActive] = useState<string>('hook')
-  const { operationType, schemaAST } = useAPIManager(state => ({
+  const { operationType, schemaAST, apiDesc } = useAPIManager(state => ({
     operationType: state.computed.operationType,
-    schemaAST: state.schemaAST
+    schemaAST: state.schemaAST,
+    apiDesc: state.apiDesc
   }))
 
   // @ts-ignore
@@ -65,7 +66,7 @@ export default function RightSider() {
       icon: iconHook,
       title: intl.formatMessage({ defaultMessage: '钩子' }),
       iconActive: iconHookActive,
-      content: <HookPanel id={params.id} />,
+      content: <HookPanel id={params.id} key={apiDesc?.path} />,
       disableTip: isInternal ? intl.formatMessage({ defaultMessage: '内部API' }) : null
     },
     {

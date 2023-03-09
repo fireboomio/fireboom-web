@@ -121,6 +121,7 @@ const StatusBar: React.FC<Props> = ({
   async function saveHookServerURL(str: string) {
     void requests.post('/setting', { key: 'hooksServerURL', val: str }).then(() => {
       refreshConfig()
+      sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
     })
   }
 
