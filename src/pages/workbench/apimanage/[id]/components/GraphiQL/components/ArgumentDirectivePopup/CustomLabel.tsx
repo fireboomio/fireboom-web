@@ -3,11 +3,12 @@ import { LocationOutlined } from '@/components/icons'
 interface CustomLabelProps {
   label: string
   onInject?: () => void
+  onMouseEnter?: () => void
 }
 
-const CustomLabel = ({ label, onInject }: CustomLabelProps) => {
+const CustomLabel = ({ label, onInject, onMouseEnter }: CustomLabelProps) => {
   return (
-    <div className="w-full py-1 pr-8 pl-4 relative">
+    <div className="w-full py-1 pr-8 pl-4 relative" onMouseEnter={onMouseEnter}>
       {label}
       <LocationOutlined
         onClick={onInject}

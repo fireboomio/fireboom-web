@@ -88,7 +88,7 @@ const ModelFormContainer = ({
       onCancel={() => setModalVisible(false)}
       footer={
         <ButtonGroup className="gap-2">
-          <Button onClick={() => setModalVisible(false)}>
+          <Button className="btn-cancel" onClick={() => setModalVisible(false)}>
             <FormattedMessage defaultMessage="取消" />
           </Button>
           <Button
@@ -96,7 +96,7 @@ const ModelFormContainer = ({
             htmlType="submit"
             form={model.id}
             disabled={loading}
-            className={`${styles['add-btn']} cursor-default`}
+            className={`btn-save cursor-default`}
           >
             <FormattedMessage defaultMessage="保存" />
           </Button>

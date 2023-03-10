@@ -1,6 +1,7 @@
 import { Tabs } from 'antd'
 import type { ConstDirectiveNode } from 'graphql'
 import { Kind } from 'graphql'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import CustomLabel from './CustomLabel'
@@ -14,15 +15,19 @@ interface ArgumentDirectivePopupProps {
 
 const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePopupProps) => {
   const intl = useIntl()
+  const [activeKey, setActiveKey] = useState('fromClaim')
   return (
     <div className="bg-white rounded flex shadow">
       <Tabs
         className={styles.tabs}
         tabPosition="left"
+        activeKey={activeKey}
+        onChange={setActiveKey}
         items={[
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('fromClaim')}
                 label="@fromClaim"
                 onInject={() =>
                   onInject?.('fromClaim', {
@@ -54,6 +59,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('jsonSchema')}
                 label="@jsonSchema"
                 onInject={() =>
                   onInject?.('jsonSchema', {
@@ -100,6 +106,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('hooksVariable')}
                 label="@hooksVariable"
                 // onInject={() => onInject?.('@hooksVariable')}
                 onInject={() =>
@@ -124,6 +131,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('injectGeneratedUUID')}
                 label="@injectGeneratedUUID"
                 onInject={() =>
                   onInject?.('injectGeneratedUUID', {
@@ -145,6 +153,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('injectCurrentDatetime')}
                 label="@injectCurrentDatetime"
                 onInject={() =>
                   onInject?.('injectCurrentDateTime', {
@@ -173,6 +182,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('injectEnvironmentVariable')}
                 label="@injectEnvironmentVariable"
                 onInject={() =>
                   onInject?.('injectEnvironmentVariable', {
@@ -201,6 +211,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
           {
             label: (
               <CustomLabel
+                onMouseEnter={() => setActiveKey('internal')}
                 label="@internal"
                 onInject={() =>
                   onInject?.('internal', {

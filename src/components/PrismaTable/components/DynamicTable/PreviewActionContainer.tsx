@@ -5,7 +5,6 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import ModelFormContainer from '@/components/PrismaTable/components/ModelForm'
-import styles from '@/pages/workbench/modeling/components/pannel/pannel.module.less'
 
 interface Props {
   record: Record<string, any>
@@ -66,10 +65,10 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
         onCancel={() => setDeleteModalVisible(false)}
         footer={
           <ButtonGroup className="gap-2">
-            <Button onClick={() => setDeleteModalVisible(false)}>
+            <Button className="btn-cancel" onClick={() => setDeleteModalVisible(false)}>
               <FormattedMessage defaultMessage="取消" />
             </Button>
-            <Button className={`${styles['add-btn']} cursor-default`} onClick={handleDeleteOne}>
+            <Button className={`btn-save cursor-default`} onClick={handleDeleteOne}>
               <FormattedMessage defaultMessage="确认" />
             </Button>
           </ButtonGroup>

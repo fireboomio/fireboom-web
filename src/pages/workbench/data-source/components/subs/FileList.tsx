@@ -176,7 +176,7 @@ export default function FileList({
           value={path}
           readOnly
         />
-        <Upload {...upProps} className="m-auto h-6 mr-3 w-20 cursor-pointer">
+        <Upload {...upProps} className="m-auto h-6 ml-3 w-20 cursor-pointer">
           <div className="flex items-center justify-center">
             <Image
               rootClassName="mr-1"
