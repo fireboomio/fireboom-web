@@ -360,20 +360,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     )
   }
 
-  const { validateName, validateAPI } = useValidate()
+  const { validateAPI } = useValidate()
   const onValidateName = (name: string, isDir = false) => {
-    if (isDir) {
-      let err = validateName(name)
-      if (err) {
-        void message.error(err)
-        return false
-      }
-    } else {
-      let err = validateAPI(name)
-      if (err) {
-        void message.error(err)
-        return false
-      }
+    let err = validateAPI(name)
+    if (err) {
+      void message.error(err)
+      return false
     }
     return true
   }
