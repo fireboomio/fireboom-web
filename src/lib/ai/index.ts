@@ -17,12 +17,12 @@ export type Language = 'prisma' | 'typescript'
 
 const createPrompt = {
   prisma: '后续问题请使用prisma代码回答，符合prisma规范，包含表和字段注释',
-  typeScript: '后续问题请使用typeScript代码回答，符合typeScript语法，包含代码和注释'
+  typescript: '后续问题请使用typeScript代码回答，符合typeScript语法，包含代码和注释'
 }
 const optimizePrompt = {
   prisma:
     '请根据后续要求优化下列代码，输出内容需要保持完整，未优化部分也要原样回传。请使用prisma代码回答，符合prisma规范，包含表和字段注释',
-  typeScript:
+  typescript:
     '请根据后续要求优化下列代码，输出内容需要保持完整，未优化部分也要原样回传。使用typeScript代码回答，符合typeScript语法，包含代码和注释'
 }
 

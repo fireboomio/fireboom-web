@@ -15,11 +15,11 @@ export function parseDBUrl(url: string): DBConnectionConfig | undefined {
   }
   return {
     schema: ret[1],
-    username: ret[2],
-    password: ret[4],
+    username: decodeURIComponent(ret[2]),
+    password: decodeURIComponent(ret[4]),
     host: ret[5],
     port: ret[7],
-    dbName: ret[8],
-    args: ret[10]
+    dbName: decodeURIComponent(ret[8]),
+    args: decodeURIComponent(ret[10])
   }
 }

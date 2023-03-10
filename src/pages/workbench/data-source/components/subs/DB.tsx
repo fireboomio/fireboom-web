@@ -448,9 +448,9 @@ export default function DB({ content, type }: Props) {
       // 参数转url
       form.setFieldValue(
         ['databaseUrl', 'val'],
-        `${schema}://${values.userName.val}${
-          values.password.val ? `:${values.password.val}` : ''
-        }@${values.host}:${values.port}/${values.dbName}`
+        `${schema}://${encodeURIComponent(values.userName.val)}${
+          values.password.val ? `:${encodeURIComponent(values.password.val)}` : ''
+        }@${values.host}:${values.port}/${encodeURIComponent(values.dbName)}`
       )
     }
 
