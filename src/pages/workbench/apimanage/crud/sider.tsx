@@ -1,6 +1,6 @@
 import { message, Select } from 'antd'
 import clsx from 'clsx'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import type { DatasourceResp } from '@/hooks/store/dataSource'
@@ -33,6 +33,9 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
 
+  const readyRef = useRef(false)
+  const currentId = useRef<number>()
+
   const filterDataSourceList = useMemo(() => {
     return dataSourceList ? dataSourceList.filter(item => item.sourceType === 1) : dataSourceList
   }, [dataSourceList])
@@ -55,6 +58,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
     if (!currentDataSourceId) {
       return
     }
+    currentId.current = currentDataSourceId
     const hide = message.loading(intl.formatMessage({ defaultMessage: '正在加载模型列表' }))
     try {
       const nativeSDL = await requests.get<unknown, string>(
@@ -63,21 +67,24 @@ export default function CRUDSider(props: CRUDSiderProps) {
           timeout: 15e3
         }
       )
-      setDmf(nativeSDL)
       const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
         `/prisma/dmf/${currentDataSourceId}`,
         { timeout: 15e3 }
       )
-      setModelList(res.models || [])
-      setCurrentModel(res.models?.[0])
-      setRelationMaps(findAllRelationInSchema(res.schemaContent))
+      if (currentId.current === currentDataSourceId) {
+        setDmf(nativeSDL)
+        setModelList(res.models || [])
+        setCurrentModel(res.models?.[0])
+        setRelationMaps(findAllRelationInSchema(res.schemaContent))
+        readyRef.current = true
+      }
     } catch (e) {
       console.error(e)
     }
     hide()
   }
   useEffect(() => {
-    if (!currentModel || !filterDataSourceList) {
+    if (!currentModel || !filterDataSourceList || !readyRef.current) {
       return
     }
     props.onSelectedModelChange(
@@ -87,7 +94,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
       relationMaps?.[currentModel.name]!,
       dmf
     )
-  }, [currentDataSourceId, currentModel, dmf, filterDataSourceList, modelList, props, relationMaps])
+  }, [currentDataSourceId, currentModel, dmf, filterDataSourceList, modelList, relationMaps])
 
   if (!filterDataSourceList) {
     return null
@@ -99,6 +106,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
         <Select
           value={currentDataSourceId}
           onChange={value => {
+            readyRef.current = false
             setCurrentDataSourceId(value)
           }}
           className="flex-1"

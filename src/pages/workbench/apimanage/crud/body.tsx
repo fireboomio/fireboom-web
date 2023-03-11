@@ -134,7 +134,7 @@ function expandForeignField(
   })
 }
 
-export default function CRUDBody(props: CRUDBodyProps) {
+export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps }) {
   const intl = useIntl()
   const apiOptions = useMemo(
     () => [
@@ -326,7 +326,7 @@ export default function CRUDBody(props: CRUDBodyProps) {
     onApiListChange(Object.values(API))
     setModel(model)
     setResultPanel(undefined)
-  }, [props.model])
+  }, [props.dbName, props.dmf, props.model, props.modelList, props.relationMap])
   useEffect(() => {
     form.resetFields()
   }, [initData])

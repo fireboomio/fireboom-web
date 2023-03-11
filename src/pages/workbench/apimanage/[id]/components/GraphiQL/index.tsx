@@ -402,7 +402,7 @@ const GraphiInputAndResponse = ({
         </div>
       )}
       <Tabs
-        className="graphiql-editor-tool-tabs"
+        className="graphiql-editor-tool-tabs !h-full"
         activeKey={activeKey}
         onChange={v => setActiveKey(v)}
         onTabClick={onTabChange}
@@ -410,6 +410,7 @@ const GraphiInputAndResponse = ({
           {
             label: intl.formatMessage({ defaultMessage: '输入' }),
             key: 'arguments',
+            className: '!h-full',
             children: (
               <>
                 {variableMode === 'form' ? (

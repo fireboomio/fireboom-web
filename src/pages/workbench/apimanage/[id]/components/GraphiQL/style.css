@@ -253,6 +253,6 @@
   pointer-events: none;
 }
 
-.graphiql-editor-tool-tabs .ant-tabs-tabpane, .graphiql-editor-tool-tabs .ant-tabs-content {
+.graphiql-editor-tool-tabs .ant-tabs-content {
   height: 100% !important;
 }

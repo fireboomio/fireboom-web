@@ -2,21 +2,13 @@ import { Empty } from 'antd'
 import { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 
-import type { DMFModel } from '@/interfaces/datasource'
-import type { RelationMap } from '@/lib/helpers/prismaRelation'
-import type { Datasource } from '@/pages/workbench/apimanage/crud/interface'
-
 import Body from './body'
 import styles from './index.module.less'
 import Sider from './sider'
 
 export default function CRUDIndex() {
-  const [currentModel, setCurrentModel] = useState<DMFModel>()
-  const [modelList, setModelList] = useState<DMFModel[]>()
-  const [relationMap, setRelationMap] = useState<RelationMap>()
   const [isEmpty, setIsEmpty] = useState<boolean>()
-  const [dmf, setDmf] = useState<string>()
-  const [currentDatasource, setCurrentDatasource] = useState<Datasource>()
+  const [bodyData, setBodyData] = useState<any>()
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -33,13 +25,15 @@ export default function CRUDIndex() {
               setIsEmpty(true)
             }}
             onSelectedModelChange={(model, datasource, modelList, relationMap, dmf) => {
-              setCurrentModel(model)
               // @ts-ignore
-              setCurrentDatasource(datasource)
-              setModelList(modelList)
-              setRelationMap(relationMap)
-              setDmf(dmf)
               setIsEmpty(false)
+              setBodyData({
+                dmf,
+                relationMap,
+                model,
+                modelList,
+                dbName: datasource?.config.apiNamespace
+              })
             }}
           />
           {isEmpty ? (
@@ -54,13 +48,7 @@ export default function CRUDIndex() {
               />
             </div>
           ) : (
-            <Body
-              model={currentModel}
-              dbName={currentDatasource?.config.apiNamespace ?? ''}
-              modelList={modelList}
-              relationMap={relationMap}
-              dmf={dmf}
-            />
+            bodyData && <Body bodyData={bodyData} />
           )}
         </div>
       </div>
