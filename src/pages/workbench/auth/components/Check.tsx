@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { Descriptions } from 'antd'
-import { useContext } from 'react'
+import { Descriptions, Tag } from 'antd'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
+
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
@@ -44,6 +44,18 @@ export default function AuthMainCheck({ content }: Props) {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {config.id}
           </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
+            {config.issuer}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label={intl.formatMessage({ defaultMessage: '基于cookie（授权码模式）' })}
+          >
+            {content.switchState.includes('cookieBased') ? (
+              <Tag color="success">开启</Tag>
+            ) : (
+              <Tag color="error">关闭</Tag>
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
             {config.clientId?.val ?? ''}
           </Descriptions.Item>
@@ -64,8 +76,14 @@ export default function AuthMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
-            {config.issuer}
+          <Descriptions.Item
+            label={intl.formatMessage({ defaultMessage: '基于token（隐式模式）' })}
+          >
+            {content.switchState.includes('tokenBased') ? (
+              <Tag color="success">开启</Tag>
+            ) : (
+              <Tag color="error">关闭</Tag>
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             {`${config.issuer as string}/.well-known/openid-configuration`}
@@ -84,9 +102,6 @@ export default function AuthMainCheck({ content }: Props) {
           )}
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
             {config.userInfoEndpoint}
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '是否开启' })}>
-            {switchState}
           </Descriptions.Item>
         </Descriptions>
       </div>
