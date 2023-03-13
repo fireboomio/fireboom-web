@@ -17,7 +17,7 @@ import type {
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
-import requests, { getAuthKey } from '@/lib/fetchers'
+import { getAuthKey } from '@/lib/fetchers'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
@@ -33,28 +33,22 @@ const ModelingWrapper = React.lazy(
 const Window = React.lazy(() => import('@/pages/workbench/components/Workbench/subs/Window'))
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
-interface BarOnce {
-  version: string
-  env: string
-}
-
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
     engineStatus: ServiceStatus.NotStarted,
     hookStatus: HookStatus.Stopped,
-    startTime: ''
+    startTime: '',
+    fbVersion: '--',
+    fbCommit: '--'
   })
-  const [version, setVersion] = useState<string>('--')
-  const [env, setEnv] = useState<string>('--')
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
-  const prevStatus = useRef<any>()
 
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
@@ -71,12 +65,6 @@ export default function Index(props: PropsWithChildren) {
     setQuestions: state.setQuestions
   }))
 
-  useEffect(() => {
-    void requests.get<unknown, BarOnce>('/engine/barOnce').then(res => {
-      setVersion(res.version)
-      setEnv(res.env)
-    })
-  }, [])
   const authKey = getAuthKey()
   // authkey变化时启动socket
   useEffect(() => {
@@ -195,8 +183,8 @@ export default function Index(props: PropsWithChildren) {
       {!fullScreen && (
         <AFooter className={styles.footer}>
           <StatusBar
-            version={version}
-            env={env}
+            version={info?.fbVersion}
+            commit={info?.fbCommit}
             startTime={info?.startTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}

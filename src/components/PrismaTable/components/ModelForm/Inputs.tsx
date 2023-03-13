@@ -81,7 +81,7 @@ const Datetime = ({ field: { name, required, title }, disabled, initialValues }:
 
 const Boolean = ({ field: { name, required, title }, disabled, initialValues }: Props) => (
   <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-    <Radio.Group name="radiogroup" disabled={disabled}>
+    <Radio.Group name={name} disabled={disabled}>
       <Radio value={true}>true</Radio>
       <Radio value={false}>false</Radio>
     </Radio.Group>

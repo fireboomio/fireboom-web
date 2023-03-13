@@ -7,6 +7,7 @@ import Pages from 'vite-plugin-pages'
 import WindiCSS from 'vite-plugin-windicss'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { argv } from 'process'
+import pkg from './package.json'
 
 // const backendUrl = 'http://120.26.62.151:9123'
 // const backendUrl = 'http://192.168.166.143:9123'
@@ -48,6 +49,8 @@ const plugins: PluginOption[] = [
 if (argv[2] === 'build' && argv[3] === '--' && argv[4] === 'report') {
   plugins.push(visualizer())
 }
+
+process.env.VITE_FB_VERSION = pkg.version
 
 // https://vitejs.dev/config/
 export default defineConfig({

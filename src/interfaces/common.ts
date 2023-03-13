@@ -25,6 +25,8 @@ export interface Info {
   engineStatus: ServiceStatus
   hookStatus: HookStatus
   startTime: string
+  fbVersion: string
+  fbCommit: string
 }
 
 export interface WithClassNames {

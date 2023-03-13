@@ -40,7 +40,7 @@ export const getValueByType = ({ value, field, useSet = true }: GetValueOptions)
         })
         break
       case 'Boolean':
-        result.forEach((v: string, index) => (result[index] = v === 'true'))
+        result.forEach((v: string, index) => (result[index] = v))
         break
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -57,7 +57,7 @@ export const getValueByType = ({ value, field, useSet = true }: GetValueOptions)
         result = parseFloat(value)
         break
       case 'Boolean':
-        result = 'true' === value
+        result = value
         break
       default:
         result = value
@@ -95,6 +95,7 @@ const useActions = (
   }
 
   const onUpdateHandler = async (newData: Record<string, any>) => {
+    console.log('newData', JSON.stringify(newData))
     const updateData: Record<string, any> = {}
 
     Object.keys(newData).forEach(key => {
@@ -120,6 +121,7 @@ const useActions = (
             updateData[key] = { disconnect: true }
           }
         } else if (newData[key] !== originalData[key]) {
+          console.log(newData[key], field)
           updateData[key] = getValueByType({ value: newData[key], field })
         }
       }

@@ -38,7 +38,7 @@ export default function SettingMainVersion() {
             width: '15%'
           }}
         >
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '版本' })}>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布版本' })}>
             <div className="flex items-center">
               {verConfig.versionNum ? (
                 <div>{verConfig.versionNum}</div>
@@ -89,6 +89,9 @@ export default function SettingMainVersion() {
                 <FormattedMessage defaultMessage="升级" />
               </div>
             </div>
+          </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布控制台版本' })}>
+            {import.meta.env.VITE_FB_VERSION}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'prisma版本' })}>
             {verConfig.prismaVersion}

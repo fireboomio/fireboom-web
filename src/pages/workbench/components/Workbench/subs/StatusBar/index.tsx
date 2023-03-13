@@ -19,7 +19,7 @@ const UrlInput = React.lazy(() => import('@/components/UrlInput'))
 
 interface Props {
   className?: string
-  env?: string
+  commit?: string
   version?: string
   startTime?: string
   engineStatus?: ServiceStatus
@@ -30,12 +30,12 @@ interface Props {
 // eslint-disable-next-line react/prop-types
 const StatusBar: React.FC<Props> = ({
   className,
-  env,
-  version,
   startTime,
   engineStatus,
   hookStatus,
-  toggleWindow
+  toggleWindow,
+  commit,
+  version
 }) => {
   const intl = useIntl()
   const calcTime = useCalcTime()
@@ -138,11 +138,16 @@ const StatusBar: React.FC<Props> = ({
           {/*<span className={styles.gitIcon} />*/}
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
-            <span>{env}</span>
+            <span>
+              {config?.isDev === true ? intl.formatMessage({ defaultMessage: '开发模式' }) : ''}
+              {config?.isDev === false ? intl.formatMessage({ defaultMessage: '生产模式' }) : ''}
+            </span>
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
             <span>FB:</span>
-            <span className="">{version}</span>
+            <Tooltip title={commit}>
+              <span className="">{version}</span>
+            </Tooltip>
           </span>
 
           <span

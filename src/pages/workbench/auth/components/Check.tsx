@@ -47,14 +47,17 @@ export default function AuthMainCheck({ content }: Props) {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
             {config.issuer}
           </Descriptions.Item>
-          <Descriptions.Item
-            label={intl.formatMessage({ defaultMessage: '基于cookie（授权码模式）' })}
-          >
+        </Descriptions>
+        <Descriptions bordered column={1} size="small" className="mt-3">
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于cookie' })}>
             {content.switchState.includes('cookieBased') ? (
               <Tag color="success">开启</Tag>
             ) : (
-              <Tag color="error">关闭</Tag>
+              <Tag color="default" className="text-[#999]">
+                关闭
+              </Tag>
             )}
+            <span className="text-[#aaa] ml-1">授权码模式</span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
             {config.clientId?.val ?? ''}
@@ -76,14 +79,17 @@ export default function AuthMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item
-            label={intl.formatMessage({ defaultMessage: '基于token（隐式模式）' })}
-          >
+        </Descriptions>
+        <Descriptions bordered column={1} size="small" className="mt-3">
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于token' })}>
             {content.switchState.includes('tokenBased') ? (
               <Tag color="success">开启</Tag>
             ) : (
-              <Tag color="error">关闭</Tag>
+              <Tag color="default" className="text-[#999]">
+                关闭
+              </Tag>
             )}
+            <span className="text-[#aaa] ml-1">隐式模式</span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             {`${config.issuer as string}/.well-known/openid-configuration`}
