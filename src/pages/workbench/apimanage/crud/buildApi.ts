@@ -51,6 +51,7 @@ const buildReturnStr = (options: ApiOptions, type: 'detail' | 'list') => {
   // console.log(convertReturnObjToStr(obj))
   return convertReturnObjToStr(obj)
 }
+
 function convertReturnObjToStr(obj: any, depth = 0): string {
   const prefix = '\n' + `  `.repeat(depth + 2)
   return Object.keys(obj)
@@ -103,10 +104,7 @@ const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: 
 
     const path = (options.prefix ? `/${options.prefix}` : '') + `/CreateOne${options.alias}`
     const content = `
-mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
-      options,
-      API.Create
-    )} {
+mutation CreateOne${options.alias}(${paramStr})${buildAuthStr(options, API.Create)} {
   data: ${options.dbName}_createOne${options.modelName}(data: {${dataStr}}) {
     ${returnStr}
   }
@@ -118,9 +116,10 @@ mutation ${options.prefix}CreateOne${options.alias}(${paramStr})${buildAuthStr(
     const primaryKeyType = options.table[primaryKey].type
     const path = (options.prefix ? `/${options.prefix}` : '') + `/DeleteOne${options.alias}`
     const content = `
-mutation ${options.prefix}DeleteOne${
-      options.alias
-    }($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(options, API.Delete)} {
+mutation DeleteOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
+      options,
+      API.Delete
+    )} {
   data: ${options.dbName}_deleteOne${options.modelName}(where: {${primaryKey}: $${primaryKey}}) {
     ${primaryKey}
   }
@@ -156,10 +155,7 @@ mutation ${options.prefix}DeleteOne${
 
     const path = (options.prefix ? `/${options.prefix}` : '') + `/UpdateOne${options.alias}`
     const content = `
-mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
-      options,
-      API.Update
-    )} {
+mutation UpdateOne${options.alias}(${paramStr})${buildAuthStr(options, API.Update)} {
   data: ${options.dbName}_updateOne${options.modelName}(
     data: {${updateStr}}
     where: {${primaryKey}: $${primaryKey}}
@@ -176,7 +172,7 @@ mutation ${options.prefix}UpdateOne${options.alias}(${paramStr})${buildAuthStr(
 
     const path = (options.prefix ? `/${options.prefix}` : '') + `/GetOne${options.alias}`
     const content = `
-query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
+query GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
       options,
       API.Detail
     )} {
@@ -204,9 +200,10 @@ query ${options.prefix}GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!
 
     const path = (options.prefix ? `/${options.prefix}` : '') + `/Get${options.alias}List`
     const content = `
-query ${options.prefix}Get${
-      options.alias
-    }List($take: Int = 10, $skip: Int = 0${sortStr}${filterStr})${buildAuthStr(options, API.List)} {
+query Get${options.alias}List($take: Int = 10, $skip: Int = 0${sortStr}${filterStr})${buildAuthStr(
+      options,
+      API.List
+    )} {
   data: ${options.dbName}_findMany${options.modelName}(
     skip: $skip
     take: $take${sortStr2}${filterStrInDataQuery}) {
@@ -229,9 +226,10 @@ query ${options.prefix}Get${
     const path = (options.prefix ? `/${options.prefix}` : '') + `/DeleteMany${options.alias}`
 
     const content = `
-mutation ${options.prefix}DeleteMany${
-      options.alias
-    }($${primaryKey}s: [${primaryKeyType}]!)${buildAuthStr(options, API.BatchDelete)} {
+mutation DeleteMany${options.alias}($${primaryKey}s: [${primaryKeyType}]!)${buildAuthStr(
+      options,
+      API.BatchDelete
+    )} {
   data: ${options.dbName}_deleteMany${
       options.modelName
     }(where: {${primaryKey}: {in: $${primaryKey}s}}) {
@@ -245,7 +243,7 @@ mutation ${options.prefix}DeleteMany${
 
     const path = (options.prefix ? `/${options.prefix}` : '') + `/GetMany${options.alias}`
     const content = `
-query ${options.prefix}GetMany${options.alias}${buildAuthStr(options, API.Export)} {
+query GetMany${options.alias}${buildAuthStr(options, API.Export)} {
   data: ${options.dbName}_findMany${options.modelName} {
     ${returnStr}
   }

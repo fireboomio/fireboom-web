@@ -391,7 +391,7 @@ const IdeContainer: FC<Props> = props => {
 
   const dependRemove = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    typingsRef.current.removePackage(name)
+    dependManager.current?.removeDepend(name)
   }
   const insertLocalDepend = (name: string) => {
     name = name.replace(/.ts$/, '')

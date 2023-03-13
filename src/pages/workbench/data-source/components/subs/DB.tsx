@@ -218,8 +218,8 @@ export default function DB({ content, type }: Props) {
               readOnly
             />
           </Form.Item>
-          <Button className="ml-4" onClick={onCreateSqlite}>
-            {intl.formatMessage({ defaultMessage: '创建' })}
+          <Button className="ml-4 text-[#f5587a]" onClick={onCreateSqlite}>
+            {intl.formatMessage({ defaultMessage: '创建空数据库' })}
           </Button>
         </div>
       </Form.Item>
