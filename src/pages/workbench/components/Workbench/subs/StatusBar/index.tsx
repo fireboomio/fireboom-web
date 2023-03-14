@@ -119,10 +119,12 @@ const StatusBar: React.FC<Props> = ({
   }, [startTime, calcTime])
 
   async function saveHookServerURL(str: string) {
-    void requests.post('/setting', { key: 'hooksServerURL', val: str }).then(() => {
-      refreshConfig()
-      sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
-    })
+    void requests
+      .put('/setting/system', { values: [{ key: 'system.hooksServerURL', val: str }] })
+      .then(() => {
+        refreshConfig()
+        sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
+      })
   }
 
   // 在线stackbliz调试

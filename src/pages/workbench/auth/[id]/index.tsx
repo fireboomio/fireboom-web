@@ -1,13 +1,11 @@
 import { Button, message } from 'antd'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
-import { ConfigContext } from '@/lib/context/ConfigContext'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import AuthCheck from '../components/Check'
@@ -15,12 +13,10 @@ import AuthEdit from '../components/Edit'
 
 export default function AuthConfigContainer() {
   const intl = useIntl()
-  const { onRefreshMenu } = useContext(WorkbenchContext)
   const [content, setContent] = useState<AuthProvResp>()
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
   const { id } = useParams()
-  const { system: config } = useContext(ConfigContext)
   const authList = useAuthList()
   useEffect(() => {
     // 如果id为new，则视为新增
