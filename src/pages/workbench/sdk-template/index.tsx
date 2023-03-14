@@ -1,5 +1,6 @@
-import { CloudDownloadOutlined, EditFilled } from '@ant-design/icons'
+import { EditFilled } from '@ant-design/icons'
 import { Button, Card, Col, Descriptions, message, Modal, Row, Spin, Switch } from 'antd'
+import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -26,6 +27,7 @@ type RemoteSDKItem = {
   name: string
   title: string
   url: string
+  icon: string
 }
 
 const SDKTemplate = () => {
@@ -88,7 +90,9 @@ const SDKTemplate = () => {
         footer={null}
         open={showRemote}
         onCancel={() => setShowRemote(false)}
-        title={intl.formatMessage({ defaultMessage: 'SDK模板市场' })}
+        title={
+          <div className="text-center">{intl.formatMessage({ defaultMessage: 'SDK模板市场' })}</div>
+        }
       >
         {isLoading ? (
           <div className="h-40vh w-full flex items-center justify-center">
@@ -207,10 +211,29 @@ const RemoteSDKCard = ({
   exist: boolean
 }) => {
   const intl = useIntl()
-
   return (
-    <Card title={sdk.title} className={styles.remoteCard} extra={exist ? <div>已下载</div> : null}>
-      <Descriptions size="small" column={1} labelStyle={{ width: 100 }}>
+    <Card
+      title={
+        <div className="flex items-center">
+          <img
+            alt=""
+            className={styles.icon}
+            src={`data:image/svg+xml;base64,${base64.fromByteArray(
+              new TextEncoder().encode(`${sdk.icon}`)
+            )}`}
+          />
+          sdk.title
+        </div>
+      }
+      className={styles.remoteCard}
+      extra={exist ? <div className="text-[#787D8B]">已下载</div> : null}
+    >
+      <Descriptions
+        size="small"
+        column={1}
+        labelStyle={{ width: 100 }}
+        contentStyle={{ color: '#787D8B' }}
+      >
         <Descriptions.Item label={intl.formatMessage({ defaultMessage: '模板ID' })}>
           {sdk.name}
         </Descriptions.Item>
@@ -222,8 +245,10 @@ const RemoteSDKCard = ({
         </Descriptions.Item>
       </Descriptions>
       {exist ? null : (
-        <div className={styles.download} onClick={onSelect}>
-          <CloudDownloadOutlined className="text-100px text-[#666]" />
+        <div className={styles.download}>
+          <div className={styles.btn} onClick={onSelect}>
+            点击下载
+          </div>
         </div>
       )}
     </Card>

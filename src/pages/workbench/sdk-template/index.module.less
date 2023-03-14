@@ -7,12 +7,31 @@
   bottom: 0;
   background: #ffffff99;
 }
+.remoteCard {
+  background: #fbfbfc;
+  .icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+}
 .remoteCard :hover {
   .download {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    cursor: pointer;
+    .btn {
+      cursor: pointer;
+      width: 160px;
+      line-height: 32px;
+      border-radius: 4px;
+      border: 1px solid rgba(120, 125, 139, 0.6);
+      background: white;
+      color: #787d8b;
+      text-align: center;
+      margin-bottom: 20px;
+    }
   }
 }
 

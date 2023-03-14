@@ -81,6 +81,10 @@ export default defineConfig({
         target: backendUrl,
         changeOrigin: true
       },
+      '^/operations': {
+        target: backendUrl,
+        changeOrigin: true
+      },
       '^/ws': {
         target: backendUrl,
         ws: true,
