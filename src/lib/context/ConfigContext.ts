@@ -12,9 +12,18 @@ export type SystemConfigType = {
   logLevel: string
   usageReport: boolean
 }
+export type EnvType = {}
+export type VersionType = {
+  copyright: string
+  prismaEngineVersion: string
+  prismaVersion: string
+  versionNum: string
+}
 
 type SystemConfigContext = {
-  config: SystemConfigType
+  system: SystemConfigType
+  environment?: EnvType
+  version?: VersionType
   refreshConfig: () => Promise<void>
 }
 

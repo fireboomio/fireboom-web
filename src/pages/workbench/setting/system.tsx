@@ -10,6 +10,7 @@ import UrlInput from '@/components/UrlInput'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import styles from '@/pages/workbench/setting/components/subs/subs.module.less'
+
 interface Runtime {
   days: number
   hours: number
@@ -18,7 +19,7 @@ interface Runtime {
 }
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { config, refreshConfig } = useConfigContext()
+  const { system, refreshConfig } = useConfigContext()
   const [count, setCount] = useImmer(0)
   useEffect(() => {
     void requests.get<unknown, string>('/setting/getTime').then(res => {
@@ -33,24 +34,23 @@ export default function SettingMainVersion() {
 
   const [form] = Form.useForm()
 
-  function onFinish(values: any) {
+  async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    Promise.all(
-      Object.keys(values).map(key => {
-        // @ts-ignore
-        if (values[key] !== config[key]) {
-          return requests.post('/setting', { key: key, val: values[key] })
+    const saveValues = Object.keys(values)
+      .map(key => {
+        if (values[key] !== (system as any)[key]) {
+          return { key: `system.${key}`, val: values[key] }
         }
       })
-    )
-      .then(() => {
-        refreshConfig()
-        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-      })
-      .catch(() => {
-        message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
-      })
-      .finally(hide)
+      .filter(x => x)
+    try {
+      await requests.put('/setting/system', { values: saveValues })
+      refreshConfig()
+      message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+    } catch (e) {
+      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+    }
+    hide()
   }
 
   const calTime = (initTime: string) => {
@@ -76,7 +76,7 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={config}
+        initialValues={system}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
           {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}

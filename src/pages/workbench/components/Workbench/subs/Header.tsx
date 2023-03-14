@@ -21,7 +21,7 @@ import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
-  const { config } = useConfigContext()
+  const { system } = useConfigContext()
 
   const hotkeys = useMemo(
     () => [
@@ -89,7 +89,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
 
   const doCompile = () => {
-    if (!config.isDev) {
+    if (!system.isDev) {
       message.error('生产环境禁止重新编译')
       return
     }
@@ -180,7 +180,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             {/*</Dropdown>*/}
 
             <div
-              className="cursor-pointer"
+              className="cursor-pointer h-5 text-0px"
               onClick={() => {
                 window.open('api/v1/file/postToSwag', '_blank')
               }}
@@ -190,7 +190,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            {config.isDev ? (
+            {system.isDev ? (
               <div className={styles.headBtn} onClick={doCompile}>
                 {!compiling ? (
                   <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />

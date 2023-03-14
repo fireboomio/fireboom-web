@@ -7,11 +7,10 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import UrlInput from '@/components/UrlInput'
-import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
 
-interface SecurityConfig {
+interface security {
   allowedHostsEnabled: boolean
   enableGraphQLEndpoint: boolean
   allowedHosts: Array<string>
@@ -19,49 +18,45 @@ interface SecurityConfig {
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { config, refreshConfig } = useConfigContext()
   const [form] = Form.useForm()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
-  const { data: securityConfig, mutate: mutateSecurityConfig } = useSWRImmutable<SecurityConfig>(
-    '/setting/securityConfig',
-    requests.get
-  )
-  const { data: redirectUrl, mutate: mutateRedirectUrl } = useSWRImmutable(
-    '/auth/redirectUrl',
-    requests.get
-  )
+
+  const { data: global, mutate: mutate } = useSWRImmutable<any>('/setting/global', requests.get)
+
   useEffect(() => {
     form.resetFields()
-  }, [securityConfig, redirectUrl])
+  }, [global])
+  if (!global) {
+    return null
+  }
+  const { authorizedRedirectUris, configureWunderGraphApplication } = global
+  const { security } = configureWunderGraphApplication
 
-  function onFinish(values: any) {
+  async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    Promise.all(
-      Object.keys(values).map(key => {
-        // @ts-ignore
-        if (key === 'redirectUrl') {
-          if (JSON.stringify(values[key]) !== JSON.stringify(redirectUrl)) {
-            return requests.post('/auth/redirectUrl', {
-              redirectURLs: values.redirectUrl
-            })
+    const saveValues = Object.keys(values)
+      .map(key => {
+        if (key === 'authorizedRedirectUris') {
+          if (JSON.stringify(values[key]) !== JSON.stringify(authorizedRedirectUris)) {
+            return { key: `authorizedRedirectUris`, val: values[key] }
           }
         } else {
           // @ts-ignore
-          if (JSON.stringify(values[key]) !== JSON.stringify(securityConfig?.[key])) {
-            return requests.post('/global', { key: key, val: values[key] })
+          if (JSON.stringify(values[key]) !== JSON.stringify(security?.[key])) {
+            return { key: `configureWunderGraphApplication.security.${key}`, val: values[key] }
           }
         }
       })
-    )
-      .then(() => {
-        mutateSecurityConfig()
-        mutateRedirectUrl()
-        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-      })
-      .catch(() => {
-        message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
-      })
-      .finally(hide)
+      .filter(x => x)
+    try {
+      await requests.put('/setting/global', { values: saveValues })
+      message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+    } catch (e) {
+      console.error(e)
+
+      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+    }
+    hide()
   }
 
   return (
@@ -73,7 +68,9 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={securityConfig && redirectUrl && ({ ...securityConfig, redirectUrl } as any)}
+        initialValues={
+          security && authorizedRedirectUris && ({ ...security, authorizedRedirectUris } as any)
+        }
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
@@ -131,7 +128,7 @@ export default function SettingMainVersion() {
             </>
           )}
         </Form.List>
-        <Form.List name="redirectUrl">
+        <Form.List name="authorizedRedirectUris">
           {(fields, { add, remove }, { errors }) => (
             <>
               {fields.map((field, index) => (

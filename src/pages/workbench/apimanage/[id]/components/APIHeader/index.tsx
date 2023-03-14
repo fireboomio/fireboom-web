@@ -31,7 +31,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       query: state.query
     }))
   const workbenchCtx = useContext(WorkbenchContext)
-  const { config } = useContext(ConfigContext)
+  const { system: config } = useContext(ConfigContext)
 
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
@@ -123,7 +123,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
     // @ts-ignore
     if (schemaAST?.definitions[0].directives.find(x => x?.name?.value === 'internalOperation')) {
-      message.success(intl.formatMessage({ defaultMessage: '内部 API 无法通过链接访问' }))
+      message.warning(intl.formatMessage({ defaultMessage: '内部 API 无法通过链接访问' }))
       return
     }
     let query: string[] = []

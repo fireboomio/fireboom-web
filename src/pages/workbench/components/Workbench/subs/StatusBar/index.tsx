@@ -71,7 +71,7 @@ const StatusBar: React.FC<Props> = ({
   }>()
   const [hookEnabled, setHookEnabled] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
-  const { config, refreshConfig } = useConfigContext()
+  const { system, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
   const webContainerUrl = useMemo(() => {
@@ -80,15 +80,15 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [window.location])
   useEffect(() => {
-    if (config.hooksServerURL === webContainerUrl) {
+    if (system.hooksServerURL === webContainerUrl) {
       setHookEnabled(1)
       setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
     } else {
-      setHooksServerURL(config.hooksServerURL)
-      localStorage.setItem('hooksServerURL', config.hooksServerURL)
+      setHooksServerURL(system.hooksServerURL)
+      localStorage.setItem('hooksServerURL', system.hooksServerURL)
       setHookEnabled(3)
     }
-  }, [config.hooksServerURL, showHookSetting])
+  }, [system.hooksServerURL, showHookSetting])
   useEffect(() => {
     if (showHookSetting) {
       fetchHookOptionStatus(hooksServerURL ?? '')
@@ -139,8 +139,8 @@ const StatusBar: React.FC<Props> = ({
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
             <span>
-              {config?.isDev === true ? intl.formatMessage({ defaultMessage: '开发模式' }) : ''}
-              {config?.isDev === false ? intl.formatMessage({ defaultMessage: '生产模式' }) : ''}
+              {system?.isDev === true ? intl.formatMessage({ defaultMessage: '开发模式' }) : ''}
+              {system?.isDev === false ? intl.formatMessage({ defaultMessage: '生产模式' }) : ''}
             </span>
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
@@ -259,7 +259,7 @@ const StatusBar: React.FC<Props> = ({
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
               <div className={styles.hookEntry}>
-                {hookEnabled === 1 ? 'WebContainer' : config.hooksServerURL}
+                {hookEnabled === 1 ? 'WebContainer' : system.hooksServerURL}
               </div>
               <div
                 className="mr-5px ml-8px"

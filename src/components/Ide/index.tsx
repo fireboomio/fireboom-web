@@ -144,7 +144,7 @@ const IdeContainer: FC<Props> = props => {
     status: null
   })
   const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
-  const { config: globalConfig } = useContext(ConfigContext)
+  const { system: globalConfig } = useContext(ConfigContext)
 
   const [hookPath, setHookPath] = useState(props.hookPath)
   // 将hookPath保存到本地， 用以支持动态更换

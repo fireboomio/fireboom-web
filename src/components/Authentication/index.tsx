@@ -41,13 +41,17 @@ const Authentication = (props: AuthenticationProps) => {
     setAuthKey(key)
     setAuthed(true)
   }
-  const [config, setConfig] = useState<SystemConfigType>()
+  const [system, setSystem] = useState<SystemConfigType>()
+  const [environment, setEnvironment] = useState()
+  const [version, setVersion] = useState()
   useEffect(() => {
     void refreshConfig()
   }, [])
   const refreshConfig = async () => {
-    void requests.get<unknown, SystemConfigType>('/setting/systemConfig').then(res => {
-      setConfig(res)
+    void requests.get<unknown, any>('/setting/system').then(res => {
+      setSystem(res.system)
+      setVersion(res.version)
+      setEnvironment(res.environment)
       try {
         // @ts-ignore
         window.__bl.setConfig({ disabled: !res.usageReport })
@@ -56,12 +60,12 @@ const Authentication = (props: AuthenticationProps) => {
       }
     })
   }
-  if (!config) {
+  if (!system) {
     return null
   }
   return (
-    <ConfigContext.Provider value={{ config, refreshConfig }}>
-      {authed || config.isDev ? (
+    <ConfigContext.Provider value={{ system, environment, version, refreshConfig }}>
+      {authed || system.isDev ? (
         props.children
       ) : (
         <div className="flex flex-col h-screen bg-warm-gray-200 w-screen items-center justify-center">

@@ -1,30 +1,21 @@
 import { Descriptions, Modal } from 'antd'
 import copy from 'copy-to-clipboard'
-import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useImmer } from 'use-immer'
 
 import { Copy, SmileFace } from '@/components/icons'
-import type { VersionConfig } from '@/interfaces/setting'
-import requests from '@/lib/fetchers'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 
 import styles from './components/subs/subs.module.less'
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const [verConfig, setVerConfig] = useImmer({} as VersionConfig)
-
-  useEffect(() => {
-    async function getData() {
-      const result = await requests.get<unknown, VersionConfig>('/setting/versionConfig')
-      setVerConfig(result)
-    }
-    void getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { version } = useConfigContext()
 
   const copyUpdateLink = () => {
     copy('curl -fsSL https://www.fireboom.io/update.sh | bash')
+  }
+  if (!version) {
+    return null
   }
 
   return (
@@ -40,8 +31,8 @@ export default function SettingMainVersion() {
         >
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布版本' })}>
             <div className="flex items-center">
-              {verConfig.versionNum ? (
-                <div>{verConfig.versionNum}</div>
+              {version.versionNum ? (
+                <div>{version.versionNum}</div>
               ) : (
                 <div className="h-22px w-50px"> </div>
               )}
@@ -94,13 +85,13 @@ export default function SettingMainVersion() {
             {import.meta.env.VITE_FB_VERSION}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'prisma版本' })}>
-            {verConfig.prismaVersion}
+            {version.prismaVersion}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'prisma引擎版本' })}>
-            {verConfig.prismaEngineVersion}
+            {version.prismaEngineVersion}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '版权' })}>
-            {verConfig.copyright}
+            {version.copyright}
           </Descriptions.Item>
         </Descriptions>
       </div>

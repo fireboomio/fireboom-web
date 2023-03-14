@@ -20,7 +20,7 @@ export default function AuthConfigContainer() {
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
   const { id } = useParams()
-  const { config } = useContext(ConfigContext)
+  const { system: config } = useContext(ConfigContext)
   const authList = useAuthList()
   useEffect(() => {
     // 如果id为new，则视为新增

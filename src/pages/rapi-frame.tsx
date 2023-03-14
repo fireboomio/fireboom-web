@@ -13,7 +13,7 @@ if (window && document) {
 
 export default function RapiFrame() {
   const [params] = useSearchParams()
-  const { config } = useContext(ConfigContext)
+  const { system: config } = useContext(ConfigContext)
   const { search } = useLocation()
   const customServerUrl = `${location.origin}`
 

@@ -13,29 +13,34 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const [form] = Form.useForm()
   const allowedOriginsEnabled = Form.useWatch('allowedOriginsEnabled', form)
-  const { data, mutate } = useSWRImmutable('/setting/corsConfiguration', requests.get)
+  const { data: globalConfig, mutate } = useSWRImmutable('/setting/global', requests.get)
   useEffect(() => {
     form.resetFields()
-  }, [data])
+  }, [globalConfig])
+  if (!globalConfig) {
+    return
+  }
+  const { configureWunderGraphApplication } = globalConfig as any
+  const { cors: data } = configureWunderGraphApplication
 
-  function onFinish(values: any) {
+  async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    Promise.all(
-      Object.keys(values).map(key => {
+    const saveValues = Object.keys(values)
+      .map(key => {
         // @ts-ignore
         if (JSON.stringify(values[key]) !== JSON.stringify(data[key])) {
-          return requests.post('/global', { key: key, val: values[key] })
+          return { key: `configureWunderGraphApplication.cors.${key}`, val: values[key] }
         }
       })
-    )
-      .then(() => {
-        mutate()
-        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-      })
-      .catch(() => {
-        message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
-      })
-      .finally(hide)
+      .filter(x => x)
+    try {
+      await requests.put('/setting/global', { values: saveValues })
+      mutate()
+      message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+    } catch (e) {
+      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+    }
+    hide()
   }
 
   return (
@@ -126,7 +131,7 @@ export default function SettingMainVersion() {
           <InputNumber addonAfter="秒" />
         </Form.Item>
         <Form.Item
-          label={intl.formatMessage({ defaultMessage: '允许证书' })}
+          label={intl.formatMessage({ defaultMessage: '允许 Credentials' })}
           name="allowCredentials"
           valuePropName="checked"
         >
