@@ -222,7 +222,7 @@ const RemoteSDKCard = ({
               new TextEncoder().encode(`${sdk.icon}`)
             )}`}
           />
-          sdk.title
+          {sdk.title}
         </div>
       }
       className={styles.remoteCard}
