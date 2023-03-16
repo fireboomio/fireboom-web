@@ -18,7 +18,7 @@ interface RBACPopupProps {
 }
 
 const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
-  const [rule, setRule] = useState(value?.rule ?? 'requireMatchAll')
+  const [rule, setRule] = useState(value?.rule ?? 'requireMatchAny')
   const [selected, setSelected] = useState(value?.value ?? [])
   const [roles, setRoles] = useState<Role[]>([])
 
@@ -79,10 +79,10 @@ const RBACPopup = ({ value, onChange }: RBACPopupProps) => {
           className={styles.radioGroup}
           value={rule}
           options={[
-            { label: 'requireMatchAll', value: 'requireMatchAll' },
             { label: 'requireMatchAny', value: 'requireMatchAny' },
-            { label: 'denyMatchAll', value: 'denyMatchAll' },
-            { label: 'denyMatchAny', value: 'denyMatchAny' }
+            { label: 'requireMatchAll', value: 'requireMatchAll' },
+            { label: 'denyMatchAny', value: 'denyMatchAny' },
+            { label: 'denyMatchAll', value: 'denyMatchAll' }
           ]}
           size="small"
           onChange={e => onSetRule(e.target.value)}
