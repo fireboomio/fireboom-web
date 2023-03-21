@@ -1,23 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { MinusCircleOutlined } from '@ant-design/icons'
+import { MinusCircleOutlined, PaperClipOutlined } from '@ant-design/icons'
 import { Button, Form, message, Switch } from 'antd'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import UrlInput from '@/components/UrlInput'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
 
 interface security {
   allowedHostsEnabled: boolean
   enableGraphQLEndpoint: boolean
+  enableCSRF: boolean
   allowedHosts: Array<string>
 }
 
 export default function SettingMainVersion() {
   const intl = useIntl()
+  const { system: globalConfig } = useContext(ConfigContext)
   const [form] = Form.useForm()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
@@ -80,12 +83,30 @@ export default function SettingMainVersion() {
             <img
               alt="zhuyi"
               src="assets/iconfont/zhuyi.svg"
-              className="mr-1 ml-2 h-3 text-[14px]"
+              className="h-3 mr-1 ml-2 text-[14px]"
             />
             <span className="text-[#ff4d4f] text-[12px]">
-              https://localhost:9991/api/main/graphql
+              {globalConfig.apiPublicAddr}/app/main/graphql
             </span>
           </div>
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: 'CSRF 保护' })}
+          tooltip={intl.formatMessage({
+            defaultMessage: '为POST请求添加 CSRF token 保护'
+          })}
+        >
+          <Form.Item name="enableCSRF" valuePropName="checked" noStyle>
+            <Switch />
+          </Form.Item>
+          <Button
+            type="link"
+            icon={<PaperClipOutlined />}
+            href="https://ansons-organization.gitbook.io/product-manual/kai-fa-wen-dang/security/csrf-token-protection"
+            target="csrf"
+          >
+            <FormattedMessage defaultMessage="查看文档" />
+          </Button>
         </Form.Item>
         <Form.Item
           tooltip={{
@@ -98,7 +119,7 @@ export default function SettingMainVersion() {
             <Form.Item noStyle name="allowedHostsEnabled" valuePropName="checked">
               <Switch />
             </Form.Item>
-            <span className="align-middle ml-2">允许全部</span>
+            <span className="ml-2 align-middle">允许全部</span>
           </div>
         </Form.Item>
         <Form.List name="allowedHosts">
@@ -114,7 +135,7 @@ export default function SettingMainVersion() {
                     <UrlInput />
                   </Form.Item>
                   <MinusCircleOutlined
-                    className="absolute right-0 top-0 mt-2 -mr-6"
+                    className="mt-2 -mr-6 top-0 right-0 absolute"
                     onClick={() => remove(field.name)}
                   />
                 </Form.Item>
@@ -140,7 +161,7 @@ export default function SettingMainVersion() {
                     <UrlInput />
                   </Form.Item>
                   <MinusCircleOutlined
-                    className="absolute right-0 top-0 mt-2 -mr-6"
+                    className="mt-2 -mr-6 top-0 right-0 absolute"
                     onClick={() => remove(field.name)}
                   />
                 </Form.Item>

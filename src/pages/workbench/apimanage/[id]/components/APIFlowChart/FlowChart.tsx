@@ -418,38 +418,6 @@ const FlowChart = ({
     arrowNodes.push(start)
     y += 16 + TERMINAL_HEIGHT
 
-    // 请求拦截
-    if (globalHookState.onRequest) {
-      const globalPreHookMetadata: Node.Metadata = {
-        shape: 'globalHook',
-        x: HOOK_X,
-        y
-      }
-      // 全局请求前置指令
-      const globalPreDirective = new ActionGroup(
-        globalPreHookMetadata,
-        [
-          {
-            shape: 'react-shape',
-            width: 114,
-            height: 20,
-            component: (
-              <StatusDirective
-                enabled={globalHookState.onRequest.enabled}
-                label="onRequest"
-                onClick={() => onEditHook?.(globalHookState.onRequest)}
-              />
-            ),
-            x: 290,
-            y
-          }
-        ],
-        'arrow'
-      )
-      directiveNodes.push(globalPreDirective)
-      y += 10 + HOOK_HEIGHT
-    }
-
     // 登录校验
     // fromClaim会隐式要求登录
     if (directiveState.fromClaim || apiSetting.authenticationRequired) {
@@ -669,7 +637,7 @@ const FlowChart = ({
     renderNodes.push(routerSwitch)
     // 记录路由索引
     const routerIndex = arrowNodes.push(routerSwitch) - 1
-    y += 12 + 36
+    y += 12 + 30
 
     const loopStartPoint = y - 6
 
@@ -730,7 +698,7 @@ const FlowChart = ({
     }
     const preOperationDirective = new ActionGroup(preHookMetadata, preHookRefs, 'arrow')
     directiveNodes.push(preOperationDirective)
-    y += 14 + HOOK_HEIGHT
+    y += 24 + HOOK_HEIGHT
 
     // mockResolve
     const mockResolve = graph.createNode({
@@ -756,6 +724,38 @@ const FlowChart = ({
       )
     })
 
+    // onOriginRequest
+    if (globalHookState.onRequest) {
+      const globalPreHookMetadata: Node.Metadata = {
+        shape: 'globalHook',
+        x: HOOK_X,
+        y
+      }
+      // 全局请求前置指令
+      const globalPreDirective = new ActionGroup(
+        globalPreHookMetadata,
+        [
+          {
+            shape: 'react-shape',
+            width: 114,
+            height: 20,
+            component: (
+              <StatusDirective
+                enabled={globalHookState.onRequest.enabled}
+                label="onRequest"
+                onClick={() => onEditHook?.(globalHookState.onRequest)}
+              />
+            ),
+            x: 290,
+            y
+          }
+        ],
+        'arrow'
+      )
+      directiveNodes.push(globalPreDirective)
+      y += 16 + HOOK_HEIGHT
+    }
+
     // 执行
     const operation = graph.createNode({
       shape: 'operation',
@@ -766,6 +766,36 @@ const FlowChart = ({
     renderNodes.push(operation)
     arrowNodes.push(operation)
     y += 12 + OPERATION_HEIGHT
+
+    // 全局后置钩子
+    const globalPostHookMetadata: Node.Metadata = {
+      shape: 'globalHook',
+      x: HOOK_X,
+      y
+    }
+    // 全局后置指令
+    const globalPostDirective = new ActionGroup(
+      globalPostHookMetadata,
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={globalHookState.onResponse.enabled}
+              label="onResponse"
+              onClick={() => onEditHook?.(globalHookState.onResponse)}
+            />
+          ),
+          x: 290,
+          y
+        }
+      ],
+      'arrow'
+    )
+    directiveNodes.push(globalPostDirective)
+    y += 12 + HOOK_HEIGHT
 
     // 响应转换
     if (directiveState.transform) {
@@ -981,36 +1011,6 @@ const FlowChart = ({
         }
       })
     }
-
-    // 全局后置钩子
-    const globalPostHookMetadata: Node.Metadata = {
-      shape: 'globalHook',
-      x: HOOK_X,
-      y
-    }
-    // 全局后置指令
-    const globalPostDirective = new ActionGroup(
-      globalPostHookMetadata,
-      [
-        {
-          shape: 'react-shape',
-          width: 114,
-          height: 20,
-          component: (
-            <StatusDirective
-              enabled={globalHookState.onResponse.enabled}
-              label="onResponse"
-              onClick={() => onEditHook?.(globalHookState.onResponse)}
-            />
-          ),
-          x: 290,
-          y
-        }
-      ],
-      'arrow'
-    )
-    directiveNodes.push(globalPostDirective)
-    y += 12 + HOOK_HEIGHT
 
     // 发送响应到客户端
     const sendResponse = graph.createNode({

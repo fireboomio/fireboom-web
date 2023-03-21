@@ -141,8 +141,8 @@ const DenyMatchAnyIcon = (props: SVGProps<SVGSVGElement>) => {
 }
 
 const iconMap = {
-  requireMatchAll: <RequireMatchAllIcon className="my-auto" />,
   requireMatchAny: <RequireMatchAnyIcon className="my-auto" />,
+  requireMatchAll: <RequireMatchAllIcon className="my-auto" />,
   denyMatchAll: <DenyMatchAllIcon className="my-auto" />,
   denyMatchAny: <DenyMatchAnyIcon className="my-auto" />
 }
