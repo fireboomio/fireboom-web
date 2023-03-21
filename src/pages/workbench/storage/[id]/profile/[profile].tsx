@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import IdeContainer from '@/components/Ide'
 import Tabs from '@/components/Tabs'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
@@ -13,9 +14,10 @@ import Form from './Form'
 export default function StorageProfile() {
   const { id, profile } = useParams()
   const navigate = useNavigate()
-  const currentId = useRef<string>()
+  const currentId = useRef<string>() // 当前storageId，用于在切换storage时清空tabs
   const [tabs, setTabs] = useState<{ key: string; label: string }[]>([])
   const storageList = useStorageList()
+  const [activeTab, setActiveTab] = useState('base')
   useEffect(() => {
     if (currentId.current !== id) {
       currentId.current = id
@@ -33,6 +35,9 @@ export default function StorageProfile() {
     }
   }, [id, profile])
   // 当前选中的配置
+  const currentStorage = useMemo(() => {
+    return storageList?.find(x => String(x.id) === id)
+  }, [storageList, id])
   const currentProfile = useMemo(() => {
     const storage = storageList?.find(x => String(x.id) === id)
     if (storage) {
@@ -65,20 +70,34 @@ export default function StorageProfile() {
       />
       <div className={styles.content}>
         <AtTabs
+          onChange={key => setActiveTab(key)}
           items={[
             {
               key: 'base',
-              label: '基本设置',
-              children: <Form onSave={saveProfile} profile={currentProfile} />
+              label: '基本设置'
             },
             {
               key: 'pre',
-              label: '前置钩子',
-              children: '123'
+              label: '前置钩子'
             },
-            { key: 'post', label: '后置钩子', children: '123' }
+            { key: 'post', label: '后置钩子' }
           ]}
         />
+        {activeTab === 'base' && <Form onSave={saveProfile} profile={currentProfile} />}
+        {activeTab === 'pre' && (
+          <IdeContainer
+            onChangeEnable={void 0}
+            hookPath={`uploads/${currentStorage?.name}/${profile}/preUpload`}
+            defaultLanguage="typescript"
+          />
+        )}
+        {activeTab === 'post' && (
+          <IdeContainer
+            onChangeEnable={void 0}
+            hookPath={`uploads/${currentStorage?.name}/${profile}/postUpload`}
+            defaultLanguage="typescript"
+          />
+        )}
       </div>
     </div>
   )

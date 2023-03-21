@@ -179,15 +179,20 @@ const IdeContainer: FC<Props> = props => {
   const resolveDefaultCode = async (path: string): Promise<string> => {
     const list = path.split('/')
     const name = list.pop()
-    const apiName = list.pop() as string
     if (path.startsWith('global/')) {
       return getDefaultCode(`global.${name}`)
     } else if (path.startsWith('auth/')) {
       return getDefaultCode(`auth.${name}`)
     } else if (path.startsWith('customize/')) {
       return getDefaultCode('custom')
+    } else if (path.startsWith('uploads/')) {
+      const profileName = list.pop() as string
+      const storageName = list.pop() as string
+      const code = await getDefaultCode(`upload.${name}`)
+      return code.replaceAll('$STORAGE_NAME$', storageName).replace('$PROFILE_NAME$', profileName)
     } else {
       const pathList = list.slice(1)
+      const apiName = list.pop() as string
       pathList.push(apiName)
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return getDefaultCode(tmplPath).then((res: string) => {
