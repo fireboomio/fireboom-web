@@ -14,6 +14,7 @@ import {
 import { useIntl } from 'react-intl'
 
 export interface FileTreeNode {
+  parent?: FileTreeNode
   key: string
   name: string
   isDir: boolean
@@ -56,7 +57,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean) => void
+  addItem: (isDir: boolean, forceRoot: boolean) => void
   editItem: (key: string) => void
 }
 
@@ -129,16 +130,22 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     setTreeData(newTree)
   }, [props.treeData])
 
-  // 根据props种传入的selectedKey，自动选中并展开节点，仅当selectedKey变化时执行
+  // 根据props种传入的selectedKey，自动选中并展开节点，仅当selectedKey或keyMap变化时执行
   const lastPropSelectedKey = useRef<string>()
+  const lastKeyMap = useRef<any>()
   useEffect(() => {
-    if (lastPropSelectedKey.current === props.selectedKey && props.selectedKey) {
+    if (
+      lastPropSelectedKey.current === props.selectedKey &&
+      lastKeyMap.current === keyMap &&
+      props.selectedKey
+    ) {
       return
     }
     lastPropSelectedKey.current = props.selectedKey
     setSelectedKeys(props.selectedKey ? [props.selectedKey] : [])
     // 自动展开选中节点
     if (props.selectedKey) {
+      console.log(keyMap)
       const node = keyMap[props.selectedKey]
       if (node) {
         const keys: string[] = []

@@ -1,0 +1,260 @@
+.headerFilter,
+.headerConfig,
+.headerRefresh,
+.headerNewFold,
+.headerNewFile {
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+}
+.headerFilter {
+  background: url(/assets/workbench/header-filter.png) no-repeat center/contain;
+}
+.headerRefresh {
+  background: url(/assets/workbench/header-refresh.png) no-repeat center/contain;
+}
+.headerConfig {
+  background: url(/assets/workbench/header-config.png) no-repeat center/contain;
+}
+.headerNewFold {
+  background: url(/assets/workbench/header-new-fold.png) no-repeat center/contain;
+}
+.headerNewFile {
+  background: url(/assets/workbench/panel-add.png) no-repeat center/contain;
+}
+.createRowWrapper {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: center;
+}
+.createRow {
+  padding: 0 15px;
+  line-height: 27px;
+  text-align: center;
+  background: #fafafc;
+  border-radius: 14px;
+  white-space: nowrap;
+  .btn {
+    cursor: pointer;
+    color: #649fff;
+  }
+}
+.graphqlEntry {
+  width: 31px;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafc;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+.treeContainer {
+  padding: 7px 0px 37px 10px;
+
+  :global {
+    // 调整tree组件样式，如果需要可以将此处移入全局，移动后请注意优先级问题
+    .ant-tree-treenode {
+      position: relative;
+      padding: 0 2px;
+      height: 26px;
+      display: flex;
+      width: 210px; // 在折叠展开时，节点父元素会被切换，从而导致丢失父元素宽度，因此不能使用100%
+      .ant-tree-node-content-wrapper {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0;
+        height: 100%;
+        background: none;
+      }
+
+      & > * {
+        position: relative;
+        z-index: 10;
+      }
+    }
+
+    .ant-tree-switcher-icon {
+      width: 12px;
+      height: 12px;
+      background: url(/assets/ant-tree/tree-arrow.png) no-repeat center/contain;
+
+      > * {
+        display: none;
+      }
+
+      transition: transform 0.3s;
+    }
+
+    .ant-tree-switcher_close .ant-tree-switcher-icon {
+      transform: rotate(-90deg);
+    }
+
+    .ant-tree-switcher,
+    .ant-tree-switcher-noop {
+      width: 6px !important;
+    }
+
+    .ant-tree-indent-unit {
+      width: 8px !important;
+    }
+
+    .ant-tree-treenode-selected {
+      background: linear-gradient(
+        270deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(253, 240, 241, 0.08) 27%,
+        rgba(238, 98, 108, 0.11) 100%
+      ) !important;
+      border-radius: 4px;
+
+      &::before {
+        content: ' ';
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        width: 2px;
+        top: 0;
+        bottom: 0;
+        background: #ee626c;
+      }
+    }
+
+    .ant-tree-treenode:hover {
+      background: linear-gradient(
+        270deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(238, 98, 108, 0.05) 100%
+      );
+      border-radius: 4px;
+    }
+    .ant-tree-node-selected {
+      :local {
+        .treeItem {
+          .title {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  .treeItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-left: 5px;
+
+    &.treeItemDir {
+      .icon {
+        position: relative;
+        background: url(/assets/icon/file.svg) no-repeat center/contain;
+      }
+    }
+    &.treeItemFile {
+      .icon {
+        width: 6px;
+        position: relative;
+        //background: url(/assets/icon/file.svg) no-repeat center/contain;
+        .lighting {
+          //background: url(/assets/icon/file.svg) no-repeat center/contain;
+        }
+      }
+    }
+
+    .icon {
+      width: 12px;
+      height: 12px;
+
+      .lighting {
+        content: ' ';
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        left: -4px;
+        top: -2px;
+        background: #3ae375;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
+      }
+    }
+
+    .title {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 400;
+      color: #333333;
+      margin-left: 8px;
+    }
+
+    .suffix {
+      flex: 0 0 auto;
+      font-size: 12px;
+      color: rgba(153, 153, 153, 0.6);
+
+      .errLabel {
+        // 为了突破最小字号进行了2倍放大后缩放50%，并通过负margin进行补偿
+        width: 64px;
+        height: 32px;
+        line-height: 32px;
+        margin: -8px -16px;
+        background: rgba(253, 162, 162, 0.22);
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 400;
+        color: #f21212;
+        text-align: center;
+        transform: scale(0.5);
+      }
+    }
+    &:hover .more {
+      display: block;
+      width: 12px;
+      height: 12px;
+      margin-left: 8px;
+      background: url(/assets/workbench/icon-menu.png) no-repeat center/contain;
+    }
+    .more {
+      display: none;
+    }
+  }
+}
+
+.method {
+  font-size: 12px;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.method_get {
+  color: #52c41a;
+}
+
+.method_post {
+  color: #faad14;
+}
+
+.menuItem {
+  position: relative;
+
+  &:after {
+    content: ' ';
+    position: absolute;
+    z-index: 1;
+    left: -12px;
+    right: -12px;
+    top: -6px;
+    bottom: -6px;
+  }
+}

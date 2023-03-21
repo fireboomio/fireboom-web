@@ -11,6 +11,16 @@ export interface StorageConfig {
   bucketName: string
   endpoint: string
   useSSL: boolean
+  uploadProfiles: Record<string, Profile>
+}
+
+export interface Profile {
+  maxAllowedUploadSizeBytes: number
+  maxAllowedFiles: number
+  allowedMimeTypes: string[]
+  allowedFileExtensions: string[]
+  metadataJSONSchema: string
+  hooks: { preUpload: boolean; postUpload: boolean }
 }
 
 export interface Storage {

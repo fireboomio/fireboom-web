@@ -227,7 +227,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </svg>
         </Tooltip> */}
         <div
-          className="cursor-pointer flex-0 h-5 text-0px w-4"
+          className="cursor-pointer flex-0 h-5 text-0px w-4 mb-1px"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
           <img src={iconGithub} alt="" />

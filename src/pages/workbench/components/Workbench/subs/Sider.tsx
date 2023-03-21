@@ -6,8 +6,9 @@ import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
-import ApiPanel from './panel/ApiPanel2'
+import ApiPanel from './panel/ApiPanel'
 import CommonPanel from './panel/CommonPanel'
+import StoragePanel from './panel/StoragePanel'
 import styles from './Sider.module.less'
 
 const ModelPannel = React.lazy(() => import('@/pages/workbench/modeling/components/pannel'))
@@ -85,10 +86,7 @@ export default function Sider() {
             defaultOpen={location.pathname.startsWith('/workbench/data-source/')}
           />
           <CommonPanel type="auth" defaultOpen={location.pathname.startsWith('/workbench/auth/')} />
-          <CommonPanel
-            type="storage"
-            defaultOpen={location.pathname.startsWith('/workbench/storage/')}
-          />
+          <StoragePanel defaultOpen={location.pathname.startsWith('/workbench/storage/')} />
         </div>
       ) : null}
       {tab === 'data' && panel ? (
