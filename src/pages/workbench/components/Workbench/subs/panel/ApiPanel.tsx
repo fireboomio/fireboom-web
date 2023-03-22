@@ -456,6 +456,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       }
     >
       <FileTree
+        draggable
         fileText="API"
         ref={fileTree}
         onSelectFile={nodeData => {

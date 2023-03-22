@@ -54,6 +54,7 @@ export interface FileTreeProps {
 
   // footer元素
   footer?: React.ReactNode
+  draggable?: boolean
 }
 
 export interface FileTreeRef {
@@ -297,7 +298,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         <Tree
           onClick={e => e.stopPropagation()}
           rootClassName={props.treeClassName}
-          draggable={{ icon: false }}
+          draggable={props.draggable ? { icon: false } : false}
           onDrop={({ node, dragNode, dropToGap }) => {
             const dropTarget = dropToGap ? node.parent ?? null : node
             if (dragNode.parent?.key === dropTarget?.key) {

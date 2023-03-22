@@ -255,6 +255,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
       }
     >
       <FileTree
+        draggable={false}
         fileText={intl.formatMessage({ defaultMessage: '文件存储' })}
         ref={fileTree}
         onSelectFile={nodeData => {
