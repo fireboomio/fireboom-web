@@ -93,10 +93,9 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (!node.isDir) {
-      // ts-ignore
-      const data = cloneDeep(node.parent!.data)
-      delete data.config.uploadProfiles[node.name]
-      await requests.put('/storageBucket ', data)
+      await requests.delete(`/storageBucket/${node.parent!.data.id}`, {
+        data: { profileNames: [node.name] }
+      })
     } else {
       await requests.delete(`/storageBucket/${node.data.id}`)
     }
@@ -111,19 +110,17 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   }
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     if (!node.isDir) {
-      const data = cloneDeep(node.parent!.data)
-      // ts-ignore
-      data.config.uploadProfiles[newName] = data.config.uploadProfiles[node.name]
-      delete data.config.uploadProfiles[node.name]
-      await requests.put('/storageBucket ', data)
+      await requests.put(`/storageBucket/rename/${node.parent!.data.id}`, {
+        oldProfileName: node.name,
+        newProfileName: newName
+      })
       await mutateStorage()
       if (params.id === String(node.parent!.data.id) && params.profile === node.name) {
         navigate(`/workbench/storage/${node.parent!.data.id}/profile/${newName}`)
       }
     } else {
-      const data = cloneDeep(node!.data)
-      data.name = newName
-      await requests.put('/storageBucket ', data)
+      await requests.put(`/storageBucket/rename/${node.data.id}`, { newStorageName: newName })
+      await mutateStorage()
     }
   }, true)
 
