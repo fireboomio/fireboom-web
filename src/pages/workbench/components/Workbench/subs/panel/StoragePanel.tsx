@@ -2,7 +2,7 @@ import { App, Dropdown, message, Popconfirm, Tooltip } from 'antd'
 import { cloneDeep, set } from 'lodash'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
@@ -18,6 +18,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   const intl = useIntl()
   const { modal } = App.useApp()
   const navigate = useNavigate()
+  const location = useLocation()
   const params = useParams()
   const [treeData, setTreeData] = useState<FileTreeNode[]>()
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
@@ -31,7 +32,12 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   // // 监听location变化，及时清空选中状态
   useEffect(() => {
     // 如果当前url不是/storage/xxx的形式，清空选中状态
-    if (!treeData || !params.id || params.id === 'new') {
+    if (
+      !treeData ||
+      !params.id ||
+      params.id === 'new' ||
+      !location.pathname.startsWith('/workbench/storage')
+    ) {
       setSelectedKey('')
       return
     }
