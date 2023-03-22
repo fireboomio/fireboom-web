@@ -51,6 +51,7 @@ export default function ProfileForm({ profile, onSave }: Props) {
       }}
     >
       <Form.Item
+        tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
         label={intl.formatMessage({ defaultMessage: '最大尺寸' })}
         name="maxAllowedUploadSizeBytes"
       >
@@ -58,15 +59,19 @@ export default function ProfileForm({ profile, onSave }: Props) {
           style={{ width: 200 }}
           addonAfter="M"
           max={1024}
-          min={0}
+          min={-1}
           placeholder={intl.formatMessage({ defaultMessage: '输入数值不大于1024M' })}
         />
       </Form.Item>
-      <Form.Item label={intl.formatMessage({ defaultMessage: '文件数量' })} name="maxAllowedFiles">
+      <Form.Item
+        tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
+        label={intl.formatMessage({ defaultMessage: '文件数量' })}
+        name="maxAllowedFiles"
+      >
         <InputNumber
           style={{ width: 200 }}
           max={50}
-          min={0}
+          min={-1}
           placeholder={intl.formatMessage({ defaultMessage: '输入数值不大于50' })}
         />
       </Form.Item>
