@@ -30,6 +30,23 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
 
   // // 监听location变化，及时清空选中状态
   useEffect(() => {
+    // 如果当前url不是/storage/xxx的形式，清空选中状态
+    if (!treeData || !params.id || params.id === 'new') {
+      setSelectedKey('')
+      return
+    }
+    // 如果当前url对应的项目不存在，跳转到/storage
+    const node = treeData.find(x => String(x.data.id) === params.id)
+    if (!node) {
+      navigate('/workbench/storage', { replace: true })
+      return
+    }
+    // 如果当前url对应的项目存在，但是profile不存在，跳转到/storage/xxx
+    if (params.profile && !node.children?.find(x => x.key === `${params.id}_${params.profile}`)) {
+      navigate(`/workbench/storage/${params.id}`, { replace: true })
+      return
+    }
+    // 如果当前url对应的项目存在，且profile存在，选中对应的节点
     setSelectedKey((params.profile ? `${params.id}_${params.profile}` : params.id) ?? '')
   }, [location, navigate, params, treeData])
   useEffect(() => {
@@ -54,23 +71,6 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
     }))
     setTreeData(tree)
   }, [storageList])
-
-  function calcMiniStatus(nodeData: FileTreeNode) {
-    if (nodeData.isDir) {
-      return ''
-    }
-    if (nodeData.data.illegal) {
-      return (
-        <div className={styles.errLabel}>
-          <FormattedMessage defaultMessage="非法" />
-        </div>
-      )
-    } else if (!nodeData.data.isPublic) {
-      return <FormattedMessage defaultMessage="内部" />
-    } else {
-      // return nodeData.method
-    }
-  }
 
   /**
    * 对所有修改操作进行一次封装，提供loading和刷新效果
