@@ -18,6 +18,7 @@ import {
 } from 'antd'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { Rule } from 'antd/lib/form'
+import type React from 'react'
 import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -327,44 +328,49 @@ export default function Graphql({ content, type }: Props) {
               )}
             </Descriptions>
           </div>
-          <div className="font-medium text-base mb-3 ml-3">
-            {intl.formatMessage({ defaultMessage: '请求头' })}
-          </div>
-          <div className={`${styles['table-contain']} mb-8`}>
-            <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
-              {((config?.headers as unknown as DataType[]) ?? []).map(
-                ({ key = '', kind = '', val = '' }) => (
-                  <Descriptions.Item
-                    key={key}
-                    label={
-                      <div>
-                        <span className={styles['label-style']}>
-                          {key}
-                          <FormToolTip title={key} />
-                        </span>
-                      </div>
-                    }
-                    className="justify-start"
-                    style={{ wordBreak: 'break-all' }}
-                  >
-                    <div className="flex items-center">
-                      <div className="text-0px">{renderIcon(kind)}</div>
-                      <div className="flex-1 ml-2 min-w-0">{val}</div>
-                    </div>
-                  </Descriptions.Item>
-                )
-              )}
-            </Descriptions>
-          </div>
+          {config?.headers?.length > 0 && (
+            <>
+              <div className="font-medium text-base mb-3 ml-3">
+                {intl.formatMessage({ defaultMessage: '请求头' })}
+              </div>
+              <div className={`${styles['table-contain']} mb-8`}>
+                <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
+                  {((config?.headers as unknown as DataType[]) ?? []).map(
+                    ({ key = '', kind = '', val = '' }) => (
+                      <Descriptions.Item
+                        key={key}
+                        label={
+                          <div>
+                            <span className={styles['label-style']}>
+                              {key}
+                              <FormToolTip title={key} />
+                            </span>
+                          </div>
+                        }
+                        className="justify-start"
+                        style={{ wordBreak: 'break-all' }}
+                      >
+                        <div className="flex items-center">
+                          <div className="text-0px">{renderIcon(kind)}</div>
+                          <div className="flex-1 ml-2 min-w-0">{val}</div>
+                        </div>
+                      </Descriptions.Item>
+                    )
+                  )}
+                </Descriptions>
+              </div>
+            </>
+          )}
           <Collapse
             ghost
             bordered={false}
             defaultActiveKey={['1']}
             expandIcon={({ isActive }) => (
               <img
-                alt="xiala"
-                src="assets/iconfont/xiala.svg"
-                style={{ height: '1em', width: '1em', transform: isActive ? '' : 'rotate(-90deg)' }}
+                alt=""
+                className="w-5"
+                style={{ transform: isActive ? '' : 'rotate(-90deg)' }}
+                src="/assets/shape-down.svg"
               />
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}

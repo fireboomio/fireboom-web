@@ -5,7 +5,7 @@ import ReactJson from 'react-json-view'
 import { useLocation } from 'react-router-dom'
 import useSWRMutation from 'swr/mutation'
 
-import { useAuthList } from '@/hooks/store/auth'
+import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import requests, { getHeader } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
@@ -20,6 +20,7 @@ export default function LoginPanel() {
   const { search } = useLocation()
   useEffect(() => {
     trigger()
+    mutateAuth()
   }, [search])
   const doLogout = () => {
     axios
@@ -54,7 +55,7 @@ export default function LoginPanel() {
     window.open(target.toString())
   }
   const authList = useAuthList() ?? []
-  const filterAuthList = authList?.filter(x => x.type === 'openid_connect_provider')
+  const filterAuthList = authList?.filter(x => x.name !== userInfo?.providerId)
   return (
     <div className={styles.entry}>
       <img src="/assets/icon/oidc.svg" className="h-3 mr-2 w-3" alt="" />

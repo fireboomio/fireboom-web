@@ -14,6 +14,7 @@ type Props = {
 
 const Log: React.FC<Props> = ({ actionRef }) => {
   const logRef = useRef(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const { logs, setLogs } = useGlobal(state => ({ logs: state.logs, setLogs: state.setLogs }))
 
@@ -40,11 +41,15 @@ const Log: React.FC<Props> = ({ actionRef }) => {
         }
       }
     }
+    // 自动滚动到底部
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 1e10
+    }
   }, [actionRef, logs])
 
   return (
-    <div className="flex flex-1 w-full overflow-hidden">
-      <div className="h-full mb-0 w-10/10 overflow-auto">
+    <div className="flex flex-1 w-full h-full overflow-hidden">
+      <div className="h-full mb-0 w-10/10 overflow-auto" ref={scrollRef}>
         {logs.map((x, idx) => (
           <div
             className="font-normal text-xs text-[#333333] leading-25px hover:bg-gray-100"

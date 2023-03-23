@@ -31,9 +31,6 @@ async function getSuggestion(question: string, language: Language, currentCode?:
   if (currentCode) {
     questionRow = questionRow + ',其他内容不变'
   }
-  if (language === 'prisma') {
-    questionRow = questionRow + ',不要使用外键'
-  }
   const result = await axios.post('https://fb-node-server.onrender.com/ai', {
     messages: [
       {
