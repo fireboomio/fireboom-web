@@ -117,7 +117,7 @@ const tabSizeKey = 'editorTabSize'
 const IdeContainer: FC<Props> = props => {
   const intl = useIntl()
   const workbenchCtx = useContext(WorkbenchContext)
-  const defaultRunResult = { logs: [], result: '' }
+  // const defaultRunResult = { logs: [], result: '' }
   // 防止主动保存和被动保存冲突的timer
   const saveTimer = useRef<number | null>(null)
   const handle = useFullScreenHandle()
@@ -127,8 +127,8 @@ const IdeContainer: FC<Props> = props => {
   const [monaco, setMonaco] = useState<any>()
   const dependManager = useRef<DependManager>()
   // 运行结果
-  const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
-  const typingsRef = useRef<any>(null)
+  // const [runResult, setRunResult] = useState<RunHookResponse>(defaultRunResult)
+  // const typingsRef = useRef<any>(null)
   // hook详情
   const [hookInfo, setHookInfo] = useImmer<HookInfo | undefined>(undefined)
   // 是否展开输入和输出区域
