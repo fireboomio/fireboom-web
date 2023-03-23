@@ -95,6 +95,9 @@ const ModelEntityItem = ({
 
   const renameEntity = (newName: string) => {
     setIsEditing(false)
+    if (newName === entity.name) {
+      return
+    }
     if (!newName) {
       void message.error(intl.formatMessage({ defaultMessage: '实体名不可为空！' }))
       return

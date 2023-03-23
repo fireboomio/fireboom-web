@@ -53,7 +53,8 @@ export default function LoginPanel() {
     }
     window.open(target.toString())
   }
-  const authList = useAuthList()
+  const authList = useAuthList() ?? []
+  const filterAuthList = authList?.filter(x => x.type === 'openid_connect_provider')
   return (
     <div className={styles.entry}>
       <img src="/assets/icon/oidc.svg" className="h-3 mr-2 w-3" alt="" />
@@ -66,7 +67,7 @@ export default function LoginPanel() {
             <img src={fireBg} alt="" className={styles.fireBg} />
             <div className={styles.head}>
               <img src="/assets/icon/oidc.svg" className="h-6 mr-2 w-6" alt="" />
-              {userInfo.provider}
+              {userInfo.providerId}
             </div>
             <div className={styles.content}>
               <ReactJson
@@ -81,10 +82,12 @@ export default function LoginPanel() {
           </div>
         ) : null}
 
-        <div className={styles.switchLine}>
-          {intl.formatMessage({ defaultMessage: '切换项目' })}
-        </div>
-        {authList.map(auth => (
+        {filterAuthList.length > 0 && (
+          <div className={styles.switchLine}>
+            {intl.formatMessage({ defaultMessage: '切换项目' })}
+          </div>
+        )}
+        {filterAuthList.map(auth => (
           <div className={styles.itemLine} key={auth.name} onClick={() => doLogin(auth)}>
             <img src="/assets/icon/oidc.svg" className="h-4 mr-2.5 w-4" alt="" />
             {auth.name}

@@ -150,7 +150,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         query.push('wg_sse=true')
       }
       // 对于实时接口需要添加wg_live
-      if (apiDesc?.liveQuery) {
+      if (apiDesc?.liveQuery && operationType === 'query') {
         query.push('wg_live=true')
       }
       if (query.length) {
@@ -254,7 +254,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口' })}>
           <CopyOutlined className="cursor-pointer ml-3 text-[#6F6F6F]" onClick={copyAPI} />
         </Tooltip>
-        <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口 URL 地址' })}>
+        <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口URL地址，上线API方可测试' })}>
           <LinkOutlined className="cursor-pointer ml-2 text-[#6F6F6F]" onClick={copyLink} />
         </Tooltip>
       </div>
