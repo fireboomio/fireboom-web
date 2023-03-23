@@ -1,4 +1,4 @@
-import { App, Layout as ALayout } from 'antd'
+import { App, Layout as ALayout, message } from 'antd'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
@@ -85,6 +85,7 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'getHookStatus', data => {
+    message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('engine', 'pushHookStatus', data => {

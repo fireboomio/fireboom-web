@@ -168,7 +168,11 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                         i++
                       }
                       const data = cloneDeep(nodeData.data)
-                      set(data, `config.uploadProfiles.NewProfile${i}`, { hooks: {} })
+                      set(data, `config.uploadProfiles.NewProfile${i}`, {
+                        hooks: {},
+                        maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+                        maxAllowedFiles: 1
+                      })
                       await requests.put('/storageBucket ', data)
                       await mutateStorage()
                       navigate(`/workbench/storage/${nodeData.data.id}/profile/NewProfile${i}`)

@@ -1,6 +1,7 @@
-import { Tabs as AtTabs } from 'antd'
+import { message, Tabs as AtTabs } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import IdeContainer from '@/components/Ide'
@@ -12,6 +13,7 @@ import styles from './[profile].module.less'
 import Form from './Form'
 
 export default function StorageProfile() {
+  const intl = useIntl()
   const { id, profile } = useParams()
   const navigate = useNavigate()
   const currentId = useRef<string>() // 当前storageId，用于在切换storage时清空tabs
@@ -51,6 +53,7 @@ export default function StorageProfile() {
       ...values
     }
     await requests.put('/storageBucket ', storage)
+    message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     void mutateStorage()
   }
   if (!currentProfile) {
