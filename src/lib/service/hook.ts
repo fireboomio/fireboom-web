@@ -44,23 +44,23 @@ export const saveHookDepend = (path: string, depend: Record<string, string>[]) =
 }
 
 // 运行hook
-export const runHook = <R>(
-  path: string,
-  params: {
-    depend: Record<string, string>[]
-    input: Record<string, string>
-    script: string
-    scriptType: string
-  }
-) => {
-  return requests.post<any, R>('/hook/run', {
-    path,
-    depend: params.depend,
-    input: params.input,
-    script: params.script,
-    scriptType: params.scriptType
-  })
-}
+// export const runHook = <R>(
+//   path: string,
+//   params: {
+//     depend: Record<string, string>[]
+//     input: Record<string, string>
+//     script: string
+//     scriptType: string
+//   }
+// ) => {
+//   return requests.post<any, R>('/hook/run', {
+//     path,
+//     depend: params.depend,
+//     input: params.input,
+//     script: params.script,
+//     scriptType: params.scriptType
+//   })
+// }
 // 获取全部类型声明文件
 export const getTypes = <R>() => {
   return requests.get<any, R>('/hook/types')
