@@ -24,7 +24,7 @@ export default function SettingMainVersion() {
   const [form] = Form.useForm()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
-  const { data: global, mutate: mutate } = useSWRImmutable<any>('/setting/global', requests.get)
+  const { data: global, mutate } = useSWRImmutable<any>('/setting/global', requests.get)
 
   useEffect(() => {
     form.resetFields()
@@ -32,14 +32,19 @@ export default function SettingMainVersion() {
   if (!global) {
     return null
   }
-  const { authorizedRedirectUris, configureWunderGraphApplication } = global
+  const { authorizedRedirectUris, disableForceHttpsRedirects, configureWunderGraphApplication } =
+    global
   const { security } = configureWunderGraphApplication
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
     const saveValues = Object.keys(values)
       .map(key => {
-        if (key === 'authorizedRedirectUris') {
+        if (key === 'disableForceHttpsRedirects') {
+          if (JSON.stringify(values[key]) !== disableForceHttpsRedirects) {
+            return { key: `disableForceHttpsRedirects`, val: values[key] }
+          }
+        } else if (key === 'authorizedRedirectUris') {
           if (JSON.stringify(values[key]) !== JSON.stringify(authorizedRedirectUris)) {
             return { key: `authorizedRedirectUris`, val: values[key] }
           }
@@ -53,6 +58,7 @@ export default function SettingMainVersion() {
       .filter(x => x)
     try {
       await requests.put('/setting/global', { values: saveValues })
+      mutate()
       message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     } catch (e) {
       console.error(e)
@@ -72,7 +78,7 @@ export default function SettingMainVersion() {
         onFinish={onFinish}
         labelAlign="right"
         initialValues={
-          security && authorizedRedirectUris && ({ ...security, authorizedRedirectUris } as any)
+          security && ({ ...security, disableForceHttpsRedirects, authorizedRedirectUris } as any)
         }
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
@@ -107,6 +113,16 @@ export default function SettingMainVersion() {
           >
             <FormattedMessage defaultMessage="查看文档" />
           </Button>
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '禁用强制 HTTPS 跳转' })}
+          tooltip={intl.formatMessage({
+            defaultMessage: '如果在https场景回调地址不正确，请取消该配置'
+          })}
+        >
+          <Form.Item name="disableForceHttpsRedirects" valuePropName="checked" noStyle>
+            <Switch />
+          </Form.Item>
         </Form.Item>
         <Form.Item
           tooltip={{
