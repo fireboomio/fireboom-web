@@ -10,7 +10,7 @@ import {
   MIME_LIST,
   SCHEMA_FOR_JSON_SCHEMA
 } from '@/lib/constants/fireBoomConstants'
-import { isInputKey } from '@/lib/helpers/utils'
+import { makeSuggest } from '@/lib/helpers/utils'
 
 import styles from './[profile].module.less'
 
@@ -135,11 +135,7 @@ export default function ProfileForm({ profile, onSave }: Props) {
             monaco.editor.createModel('', 'json', uri)
           }}
           onMount={editor => {
-            editor.onKeyUp(e => {
-              if (isInputKey(e.keyCode)) {
-                // editor.trigger('', 'editor.action.triggerSuggest', '')
-              }
-            })
+            makeSuggest(editor)
           }}
         />
       </Form.Item>

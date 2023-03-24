@@ -20,6 +20,7 @@ import { registerCodeLens } from '@/lib/ai/codelens'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { makeSuggest } from '@/lib/helpers/utils'
 import {
   getHook,
   getTypes,
@@ -316,6 +317,7 @@ const IdeContainer: FC<Props> = props => {
     setMonaco(monaco)
     // @ts-ignore
     setUp(monacoEditor, 'typescript')
+    makeSuggest(editor)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }

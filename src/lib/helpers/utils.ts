@@ -1,4 +1,5 @@
 import moment from 'moment'
+import type { editor } from 'monaco-editor'
 
 import { DATETIME_FORMAT } from '@/components/PrismaTable/constants'
 
@@ -26,8 +27,28 @@ const formatDate = (date: string): string => {
   return moment(date).format(DATETIME_FORMAT)
 }
 
-const isInputKey = (keyCode: number): boolean => {
-  return (keyCode >= 48 && keyCode <= 90) || keyCode === 3
+const makeSuggest = (editor: editor.IStandaloneCodeEditor) => {
+  editor.onKeyDown(e => {
+    // 阻止默认行为
+    if (e.keyCode === 85 && (e.altKey || e.ctrlKey)) {
+      // ctrl+/ 或者 alt+/
+      e.preventDefault()
+    }
+  })
+  editor.onKeyUp(e => {
+    let isSuggestKey = false
+    if (e.keyCode === 85 && (e.altKey || e.ctrlKey)) {
+      // ctrl+/ 或者 alt+/
+      e.preventDefault()
+      isSuggestKey = true
+    } else {
+      // 回车，点，左花括号，冒号
+      isSuggestKey = [87, 84, 80, 3].includes(e.keyCode)
+    }
+    if (isSuggestKey) {
+      editor.trigger('', 'editor.action.triggerSuggest', '')
+    }
+  })
 }
 
-export { capitalize, formatBytes, formatDate, isEmpty, isInputKey }
+export { capitalize, formatBytes, formatDate, isEmpty, makeSuggest }

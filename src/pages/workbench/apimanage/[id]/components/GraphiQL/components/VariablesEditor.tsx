@@ -4,7 +4,7 @@ import Editor, { loader } from '@monaco-editor/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { useDebounceEffect } from '@/hooks/debounce'
-import { isInputKey } from '@/lib/helpers/utils'
+import { makeSuggest } from '@/lib/helpers/utils'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 // import testData from './testdata'
 
@@ -120,11 +120,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
           if (valuesRef.current) {
             editor.setValue(valuesRef.current)
           }
-          editor.onKeyUp(e => {
-            if (isInputKey(e.keyCode)) {
-              editor.trigger('', 'editor.action.triggerSuggest', '')
-            }
-          })
+          makeSuggest(editor)
         }}
       />
     </div>

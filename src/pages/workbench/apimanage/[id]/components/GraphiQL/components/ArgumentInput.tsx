@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import type { ParameterT } from '@/interfaces/apimanage'
-import { isInputKey } from '@/lib/helpers/utils'
+import { makeSuggest } from '@/lib/helpers/utils'
 
 export type SingleInputValueType = string | number | boolean | object | undefined
 export type InputValueType = SingleInputValueType | SingleInputValueType[]
@@ -161,11 +161,7 @@ const SingleArgumentInput = ({
                   monaco.editor.createModel(editorValue, 'json', uri)
                 }}
                 onMount={editor => {
-                  editor.onKeyUp(e => {
-                    if (isInputKey(e.keyCode)) {
-                      editor.trigger('', 'editor.action.triggerSuggest', '')
-                    }
-                  })
+                  makeSuggest(editor)
                 }}
               />
             </Modal>

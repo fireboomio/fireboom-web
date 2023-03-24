@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 
 import { setUp } from '@/lib/ai'
 import { registerCodeLens } from '@/lib/ai/codelens'
+import { makeSuggest } from '@/lib/helpers/utils'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import init from '@/lib/prisma/prismaInit'
 
@@ -72,6 +73,7 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
           setUp(editor, 'prisma')
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
+          makeSuggest(editor)
         }}
         defaultValue={defaultRef.current}
         onChange={value => {
