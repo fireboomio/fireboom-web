@@ -24,9 +24,11 @@ interface Props {
 export default function ProfileForm({ profile, onSave }: Props) {
   const intl = useIntl()
   const [form] = useForm()
+  const maxAllowedUploadSizeBytes = Form.useWatch('maxAllowedUploadSizeBytes', form)
   const reset = () => {
     form.setFieldsValue({
-      maxAllowedUploadSizeBytes: (profile.maxAllowedUploadSizeBytes ?? 0) / 1024 / 1024,
+      maxAllowedUploadSizeBytes:
+        Math.round(((profile.maxAllowedUploadSizeBytes ?? 0) / 1024 / 1024) * 100) / 100,
       allowedMimeTypes: profile.allowedMimeTypes ?? [],
       allowedFileExtensions: profile.allowedFileExtensions ?? [],
       metadataJSONSchema: profile.metadataJSONSchema,
@@ -46,22 +48,28 @@ export default function ProfileForm({ profile, onSave }: Props) {
       onFinish={values => {
         onSave({
           ...values,
-          maxAllowedUploadSizeBytes: values.maxAllowedUploadSizeBytes * 1024 * 1024
+          maxAllowedUploadSizeBytes: Math.round(values.maxAllowedUploadSizeBytes * 1024 * 1024)
         })
       }}
     >
       <Form.Item
         tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
         label={intl.formatMessage({ defaultMessage: '最大尺寸' })}
-        name="maxAllowedUploadSizeBytes"
       >
-        <InputNumber
-          style={{ width: 200 }}
-          addonAfter="M"
-          max={1024}
-          min={-1}
-          placeholder={intl.formatMessage({ defaultMessage: '输入数值不大于1024M' })}
-        />
+        <div className="flex items-center">
+          <Form.Item noStyle name="maxAllowedUploadSizeBytes">
+            <InputNumber
+              style={{ width: 200 }}
+              addonAfter="M"
+              max={1024}
+              min={-1}
+              placeholder={intl.formatMessage({ defaultMessage: '输入数值不大于1024M' })}
+            />
+          </Form.Item>
+          <span className="ml-2 text-[#999]">
+            {Math.round(maxAllowedUploadSizeBytes * 1024 * 1024)} Bytes
+          </span>
+        </div>
       </Form.Item>
       <Form.Item
         tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}

@@ -1,11 +1,11 @@
-import { message, Tabs as AtTabs } from 'antd'
+import { message, Tabs } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import IdeContainer from '@/components/Ide'
-import Tabs from '@/components/Tabs'
+import FbTabs from '@/components/Tabs'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
 
@@ -61,7 +61,7 @@ export default function StorageProfile() {
   }
   return (
     <div className={styles.container}>
-      <Tabs
+      <FbTabs
         activeKey={profile!}
         onClick={item => {
           navigate(`/workbench/storage/${id}/profile/${item.key}`)
@@ -72,7 +72,9 @@ export default function StorageProfile() {
         }}
       />
       <div className={styles.content}>
-        <AtTabs
+        <Tabs
+          animated={false}
+          activeKey={activeTab}
           onChange={key => setActiveTab(key)}
           items={[
             {
@@ -89,6 +91,7 @@ export default function StorageProfile() {
         {activeTab === 'base' && <Form onSave={saveProfile} profile={currentProfile} />}
         {activeTab === 'pre' && (
           <IdeContainer
+            key={profile}
             onChangeEnable={void 0}
             hookPath={`uploads/${currentStorage?.name}/${profile}/preUpload`}
             defaultLanguage="typescript"
@@ -96,6 +99,7 @@ export default function StorageProfile() {
         )}
         {activeTab === 'post' && (
           <IdeContainer
+            key={profile}
             onChangeEnable={void 0}
             hookPath={`uploads/${currentStorage?.name}/${profile}/postUpload`}
             defaultLanguage="typescript"
