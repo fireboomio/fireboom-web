@@ -317,7 +317,7 @@ const IdeContainer: FC<Props> = props => {
     setMonaco(monaco)
     // @ts-ignore
     setUp(monacoEditor, 'typescript')
-    makeSuggest(editor)
+    makeSuggest(monacoEditor)
     const model = monaco.editor.getModel(monaco.Uri.parse(`inmemory://model/hook/${hookPath}`))
     model?.updateOptions({ tabSize: tabSize, indentSize: tabSize })
   }
