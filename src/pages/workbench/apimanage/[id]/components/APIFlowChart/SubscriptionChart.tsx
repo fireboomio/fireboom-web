@@ -18,7 +18,7 @@ export type SubscriptionChartProps = CommonChartProps & {
   globalHookState: SubscriptionGlobalHookState
 }
 
-const CANVAS_PADDING = 30
+const CANVAS_PADDING = 24
 const CANVAS_WIDTH = 410
 
 const ENDPOINT_WIDTH = 320
@@ -287,7 +287,7 @@ const SubscriptionChart = ({
       shape: 'operation',
       label: 'Subscription Operation',
       x: ENDPOINT_X,
-      y: 416
+      y: 356
     })
 
     // 事件源
@@ -295,7 +295,7 @@ const SubscriptionChart = ({
       shape: 'endpoint',
       label: intl.formatMessage({ description: '流程图', defaultMessage: '事件源' }),
       x: ENDPOINT_X,
-      y: 587
+      y: 507
     })
 
     // 主节点
@@ -305,39 +305,33 @@ const SubscriptionChart = ({
     graph.addEdges([
       {
         shape: 'orange',
-        source: { x: 160, y: 58 },
-        target: { x: 160, y: 416 }
+        source: { x: 160, y: 52 },
+        target: { x: 160, y: 356 }
       },
       {
         shape: 'blue',
-        source: { x: 232, y: 58 },
-        target: { x: 232, y: 416 }
+        source: { x: 240, y: 356 },
+        target: { x: 240, y: 52 }
       },
       {
         shape: 'orange',
-        source: { x: 300, y: 58 },
-        target: { x: 300, y: 416 }
+        source: { x: 300, y: 52 },
+        target: { x: 300, y: 356 }
       },
       {
         shape: 'orange',
-        // source: { x: 142, y: 450 },
-        // target: { x: 142, y: 587 }
-        source: { x: 176, y: 450 },
-        target: { x: 176, y: 587 }
+        source: { x: 176, y: 400 },
+        target: { x: 176, y: 507 }
       },
       {
         shape: 'blue',
-        // source: { x: 210, y: 450 },
-        // target: { x: 210, y: 587 }
-        source: { x: 248, y: 450 },
-        target: { x: 248, y: 587 }
+        source: { x: 220, y: 507 },
+        target: { x: 220, y: 400 }
       },
       {
         shape: 'orange',
-        // source: { x: 281, y: 450 },
-        // target: { x: 281, y: 587 }
-        source: { x: 315, y: 450 },
-        target: { x: 315, y: 587 }
+        source: { x: 322, y: 400 },
+        target: { x: 322, y: 507 }
       }
     ])
 
@@ -346,21 +340,21 @@ const SubscriptionChart = ({
       graph.addNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
-        x: 95,
-        y: 80
+        x: 104,
+        y: 72
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 95, y: 106 },
-        target: { x: 32, y: 106 }
+        source: { x: 100, y: 97 },
+        target: { x: 32, y: 97 }
       })
       graph.addNode({
         shape: 'flowLabel',
         label: '401',
         width: 26,
         height: 14,
-        x: 57,
-        y: 98
+        x: 58,
+        y: 90
       })
     }
 
@@ -369,13 +363,13 @@ const SubscriptionChart = ({
       graph.addNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '授权校验?' }),
-        x: 95,
-        y: 160
+        x: 104,
+        y: 139
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 95, y: 186 },
-        target: { x: 32, y: 186 }
+        source: { x: 100, y: 164 },
+        target: { x: 32, y: 164 }
       })
       graph.addNode({
         shape: 'flowLabel',
@@ -383,7 +377,7 @@ const SubscriptionChart = ({
         width: 26,
         height: 14,
         x: 57,
-        y: 178
+        y: 157
       })
     }
 
@@ -392,13 +386,13 @@ const SubscriptionChart = ({
       graph.addNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '入参校验?' }),
-        x: 95,
-        y: 236
+        x: 104,
+        y: 208
       })
       graph.addEdge({
         shape: 'rejectLine',
-        source: { x: 95, y: 262 },
-        target: { x: 32, y: 262 }
+        source: { x: 100, y: 233 },
+        target: { x: 32, y: 233 }
       })
       graph.addNode({
         shape: 'flowLabel',
@@ -406,7 +400,7 @@ const SubscriptionChart = ({
         width: 26,
         height: 14,
         x: 57,
-        y: 254
+        y: 226
       })
     }
 
@@ -419,11 +413,14 @@ const SubscriptionChart = ({
     ) {
       graph.addNode({
         shape: 'rect',
-        label: intl.formatMessage({ description: '流程图', defaultMessage: '结\n\n\n束' }),
+        label: intl.formatMessage(
+          { description: '流程图', defaultMessage: '结{br}束' },
+          { br: '\n' }
+        ),
         x: 11,
         y: 82,
         width: 21,
-        height: 212,
+        height: 164,
         attrs: {
           body: {
             stroke: '#E9EBF3',
@@ -445,7 +442,7 @@ const SubscriptionChart = ({
         shape: 'globalHook',
         // x: 132,
         x: 166,
-        y: 520
+        y: 450
       },
       [
         {
@@ -461,14 +458,22 @@ const SubscriptionChart = ({
               }}
             />
           ),
-          // x: 24,
-          // y: 543
-          x: 10,
-          y: 536
+          x: 50,
+          y: 480
         }
       ],
       'arrow'
-    ).addToGraph(graph, { position: 'left' })
+    ).addToGraph(graph, {
+      position: 'left',
+      fixedTargetPort: 'top',
+      customVertices: [
+        {
+          x: 120,
+          y: 464
+        }
+        // { x: 64, y: 470 }
+      ]
+    })
 
     // pre 钩子
     const preHooks: Node.Metadata[] = [
@@ -486,7 +491,7 @@ const SubscriptionChart = ({
           />
         ),
         x: 4,
-        y: 292
+        y: 264
       }
     ]
     // 根据是否支持 mutatingPreResolve 钩子显示
@@ -505,14 +510,14 @@ const SubscriptionChart = ({
           />
         ),
         x: 4,
-        y: 336
+        y: 298
       })
     }
     new ActionGroup(
       {
         shape: 'hook',
         x: 150,
-        y: 315
+        y: 280
       },
       preHooks,
       'arrow'
@@ -520,7 +525,7 @@ const SubscriptionChart = ({
 
     // post 钩子
     new ActionGroup(
-      { shape: 'hook', x: 222, y: 315 },
+      { shape: 'hook', x: 230, y: 240 },
       [
         {
           shape: 'react-shape',
@@ -535,8 +540,8 @@ const SubscriptionChart = ({
               }}
             />
           ),
-          x: 280,
-          y: 292
+          x: 288,
+          y: 224
         },
         {
           shape: 'react-shape',
@@ -551,8 +556,8 @@ const SubscriptionChart = ({
               }}
             />
           ),
-          x: 280,
-          y: 336
+          x: 288,
+          y: 258
         }
       ],
       'arrow'
@@ -562,9 +567,8 @@ const SubscriptionChart = ({
     const steps: Node.Metadata[] = [
       {
         shape: 'react-shape',
-        // x: 108,
-        x: 148,
-        y: 482,
+        x: 132,
+        y: 315,
         component: (
           <IndexNode
             index="1"
@@ -574,8 +578,9 @@ const SubscriptionChart = ({
       },
       {
         shape: 'react-shape',
-        x: 132,
-        y: 375,
+        // x: 108,
+        x: 148,
+        y: 415,
         component: (
           <IndexNode
             index="2"
@@ -586,8 +591,8 @@ const SubscriptionChart = ({
       {
         shape: 'react-shape',
         // x: 181,
-        x: 218,
-        y: 482,
+        x: 192,
+        y: 466,
         component: (
           <IndexNode
             index="3"
@@ -598,7 +603,7 @@ const SubscriptionChart = ({
       {
         shape: 'react-shape',
         x: 204,
-        y: 204,
+        y: 188,
         component: (
           <IndexNode
             index="4"
@@ -608,9 +613,8 @@ const SubscriptionChart = ({
       },
       {
         shape: 'react-shape',
-        // x: 253,
-        x: 287,
-        y: 482,
+        x: 272,
+        y: 305,
         component: (
           <IndexNode
             index="5"
@@ -620,8 +624,8 @@ const SubscriptionChart = ({
       },
       {
         shape: 'react-shape',
-        x: 272,
-        y: 375,
+        x: 292,
+        y: 442,
         component: (
           <IndexNode
             index="6"

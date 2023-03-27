@@ -24,6 +24,9 @@
   "+l43TG": {
     "defaultMessage": "用户:"
   },
+  "+pOhR+": {
+    "defaultMessage": "文件类型"
+  },
   "+scveH": {
     "defaultMessage": "{field}应为字符串，使用大小写字母或者下划线！"
   },
@@ -32,6 +35,10 @@
   },
   "+zhQOH": {
     "defaultMessage": "{days}天 {hours}时 {minutes}分 {seconds}秒"
+  },
+  "/02P6e": {
+    "defaultMessage": "结\\n束",
+    "description": "流程图"
   },
   "/0bwX0": {
     "defaultMessage": "联合索引"
@@ -73,6 +80,9 @@
   "/mrUV7": {
     "defaultMessage": "自定义"
   },
+  "/q0fxx": {
+    "defaultMessage": "必须以字母或数字结尾"
+  },
   "/yVpDb": {
     "defaultMessage": "默认"
   },
@@ -112,9 +122,6 @@
   "17LOYz": {
     "defaultMessage": "手动设置"
   },
-  "18cXOV": {
-    "defaultMessage": "复制接口 URL 地址"
-  },
   "1GUffX": {
     "defaultMessage": "请上传 OAS 文件"
   },
@@ -132,9 +139,6 @@
   },
   "1j0lPi": {
     "defaultMessage": "操作成功！"
-  },
-  "1jRYJf": {
-    "defaultMessage": "允许全部"
   },
   "1kGGA/": {
     "defaultMessage": "已关闭"
@@ -156,9 +160,6 @@
   },
   "2FVy0L": {
     "defaultMessage": "数据库名不能为空"
-  },
-  "2FgMsD": {
-    "defaultMessage": "请输入字母数字或下划线组合，以大写字母开头"
   },
   "2GUa4t": {
     "defaultMessage": "请选择正确的参数节点",
@@ -194,6 +195,9 @@
   "3+qPlN": {
     "defaultMessage": "排查, 或"
   },
+  "3+t6nd": {
+    "defaultMessage": "搜索API"
+  },
   "32k+gD": {
     "defaultMessage": "创建文件存储"
   },
@@ -225,6 +229,9 @@
   "4WvYRq": {
     "defaultMessage": "未登录"
   },
+  "4godzk": {
+    "defaultMessage": "以下API已存在，是否覆盖？"
+  },
   "4rbyCQ": {
     "defaultMessage": "端口:"
   },
@@ -234,9 +241,6 @@
   },
   "53xMJk": {
     "defaultMessage": "请输入角色编码"
-  },
-  "5BzHRY": {
-    "defaultMessage": "新增Origin"
   },
   "5FboZ/": {
     "defaultMessage": "类型"
@@ -271,6 +275,15 @@
   "6UDCIR": {
     "defaultMessage": "转发自客户端"
   },
+  "6Wvms6": {
+    "defaultMessage": "META"
+  },
+  "6l+xcm": {
+    "defaultMessage": "输入数值不大于50"
+  },
+  "6tkLn7": {
+    "defaultMessage": "必须以大写字母开头"
+  },
   "799kEA": {
     "defaultMessage": "修改时间"
   },
@@ -303,6 +316,9 @@
   },
   "88kUM2": {
     "defaultMessage": "共{count}项数据"
+  },
+  "8ATxSY": {
+    "defaultMessage": "日志上报"
   },
   "8AtCIp": {
     "defaultMessage": "请输入数据源名"
@@ -341,6 +357,9 @@
   "9HZKLw": {
     "defaultMessage": "字段别名"
   },
+  "9K5ZRj": {
+    "defaultMessage": "输入-1禁用限制"
+  },
   "9Qz9G/": {
     "defaultMessage": "退出项目"
   },
@@ -354,17 +373,20 @@
   "9YT9eI": {
     "defaultMessage": "正在加载模型列表"
   },
+  "9gNsec": {
+    "defaultMessage": "禁用强制 HTTPS 跳转"
+  },
   "9huOMe": {
     "defaultMessage": "请输入合法字符串，使用双引号包括"
   },
   "9n8LjV": {
     "defaultMessage": "登录用户"
   },
+  "9sTPgx": {
+    "defaultMessage": "允许HOST"
+  },
   "9stmhe": {
     "defaultMessage": "操作失败！"
-  },
-  "9u4ypf": {
-    "defaultMessage": "默认生成路径"
   },
   "9x/veC": {
     "defaultMessage": "联合主键"
@@ -423,9 +445,6 @@
   "B9XR0F": {
     "defaultMessage": "确认删除该实体吗？将会同时删除引用字段！"
   },
-  "BFO9oi": {
-    "defaultMessage": "授权码模式"
-  },
   "BLQNDV": {
     "defaultMessage": "请编辑"
   },
@@ -435,6 +454,12 @@
   },
   "BX00L6": {
     "defaultMessage": "请输入长度不大于128的非空值"
+  },
+  "BZ2F1l": {
+    "defaultMessage": "输入数值不大于1024M"
+  },
+  "BZbOTA": {
+    "defaultMessage": "钩子状态已刷新"
   },
   "BbdcOe": {
     "defaultMessage": "是否状态联合"
@@ -478,14 +503,17 @@
   "CZeyZ7": {
     "defaultMessage": "对外API"
   },
+  "ChJY+S": {
+    "defaultMessage": "钩子服务对内地址，一般不需要修改"
+  },
   "DLG2Yy": {
     "defaultMessage": "连接类型"
   },
   "DPch2e": {
     "defaultMessage": "已刷新"
   },
-  "DWjAJJ": {
-    "defaultMessage": "只允许包含字母，数字，下划线"
+  "DnyK/f": {
+    "defaultMessage": "每一级目录"
   },
   "DpfSLU": {
     "defaultMessage": "参数"
@@ -501,6 +529,9 @@
   },
   "E6yn6S": {
     "defaultMessage": "文件存储"
+  },
+  "EAf4NI": {
+    "defaultMessage": "切换分类"
   },
   "EBMdAL": {
     "defaultMessage": "创建成功"
@@ -545,6 +576,9 @@
   "G5QYm7": {
     "defaultMessage": "客户端"
   },
+  "GEfsgi": {
+    "defaultMessage": "增加允许HOST"
+  },
   "GHE+9W": {
     "defaultMessage": "变量名"
   },
@@ -572,23 +606,20 @@
   "HPWQD3": {
     "defaultMessage": "登出"
   },
-  "HSZ1vp": {
-    "defaultMessage": "是否允许证书"
-  },
   "HalctF": {
     "defaultMessage": "开始编译"
   },
   "Hu2hE9": {
     "defaultMessage": "已存在，请勿重复引入"
   },
-  "Hv6ThW": {
-    "defaultMessage": "对应请求响应中的: Access-Control-Allow-Origin"
-  },
   "Hxs6Qn": {
     "defaultMessage": "列表"
   },
   "I0f7tt": {
     "defaultMessage": "确认删除吗？"
+  },
+  "I2iPb9": {
+    "defaultMessage": "查看文档"
   },
   "IAf7JP": {
     "defaultMessage": "服务发现地址"
@@ -651,10 +682,6 @@
   "LKhNTW": {
     "defaultMessage": "变更授权"
   },
-  "LOLrph": {
-    "defaultMessage": "结 束",
-    "description": "流程图"
-  },
   "LWXiI7": {
     "defaultMessage": "基于Token"
   },
@@ -703,9 +730,6 @@
   "NSax9B": {
     "defaultMessage": "App Secret"
   },
-  "NYgxWS": {
-    "defaultMessage": "请填写范围内的跨域时间,范围为0 - 86400 秒"
-  },
   "NcChip": {
     "defaultMessage": "订阅是否需要登录"
   },
@@ -718,14 +742,17 @@
   "O1HTOa": {
     "defaultMessage": "管理"
   },
+  "O4FcLe": {
+    "defaultMessage": "SDK模板市场"
+  },
   "O8A9zp": {
     "defaultMessage": "开启授权"
   },
   "OF2wA3": {
     "defaultMessage": "关联 {type} 表数据"
   },
-  "OPt+As": {
-    "defaultMessage": "只能选择一个节点"
+  "OMtVLl": {
+    "defaultMessage": "是否公开"
   },
   "Oww89Y": {
     "defaultMessage": "上传中"
@@ -735,9 +762,6 @@
   },
   "P/eul9": {
     "defaultMessage": "否"
-  },
-  "P3/nym": {
-    "defaultMessage": "隐式模式"
   },
   "P9Qnez": {
     "defaultMessage": "JWKS"
@@ -758,8 +782,8 @@
   "Pdx/YD": {
     "defaultMessage": "密码"
   },
-  "Pge30O": {
-    "defaultMessage": "API前缀"
+  "Ph2Nn+": {
+    "defaultMessage": "功能描述"
   },
   "PpQOV5": {
     "defaultMessage": "已启动"
@@ -778,6 +802,9 @@
   },
   "QpRtOT": {
     "defaultMessage": "执行中"
+  },
+  "QsAe0/": {
+    "defaultMessage": "保存失败"
   },
   "R2D5Dv": {
     "defaultMessage": "创建时间"
@@ -812,11 +839,11 @@
   "Rv5Swi": {
     "defaultMessage": "选择字段"
   },
+  "RzYytI": {
+    "defaultMessage": "最大尺寸"
+  },
   "S6iTyu": {
     "defaultMessage": "实体未设置主键"
-  },
-  "S8cTgj": {
-    "defaultMessage": "请输入数据源名称"
   },
   "SHeOyn": {
     "defaultMessage": "未保存"
@@ -826,6 +853,9 @@
   },
   "SU89De": {
     "defaultMessage": "按创建时间"
+  },
+  "SVbC+g": {
+    "defaultMessage": "增加允许源"
   },
   "Sa7tEZ": {
     "defaultMessage": "实体名"
@@ -842,17 +872,20 @@
   "TDqc4L": {
     "defaultMessage": "权限"
   },
+  "TEs+AV": {
+    "defaultMessage": "覆盖"
+  },
   "TFEmmD": {
     "defaultMessage": "以字母或下划线开头，只能由字母、下划线和数字组成"
   },
   "THkRPD": {
     "defaultMessage": "添加角色"
   },
+  "TM6vEk": {
+    "defaultMessage": "打开"
+  },
   "TbflcV": {
     "defaultMessage": "刚刚"
-  },
-  "Tm3YfU": {
-    "defaultMessage": "接口名称必须大写开头！"
   },
   "U0ZvW8": {
     "defaultMessage": "每一个实体只能有一个主键！"
@@ -878,6 +911,9 @@
   "UU3d6B": {
     "defaultMessage": "钩子"
   },
+  "Ucswcs": {
+    "defaultMessage": "只能包含字母、数字和下划线"
+  },
   "UifjEZ": {
     "defaultMessage": "日志水平"
   },
@@ -902,9 +938,6 @@
   "Uzsm7t": {
     "defaultMessage": "API全局设置"
   },
-  "V0RiZp": {
-    "defaultMessage": "操作成功"
-  },
   "V8cvxi": {
     "defaultMessage": "连接类型:"
   },
@@ -926,17 +959,26 @@
   "VmsX4o": {
     "defaultMessage": "以字母或下划线开头，只能由数字、字母、下划线组成"
   },
+  "VtOp3i": {
+    "defaultMessage": "基于cookie"
+  },
   "W7e9Ff": {
     "defaultMessage": "角色列表"
   },
   "WHN1dG": {
     "defaultMessage": "保存成功！"
   },
-  "WNS/6E": {
-    "defaultMessage": "允许证书"
+  "WJWR3q": {
+    "defaultMessage": "下载成功"
   },
   "WWNrrS": {
     "defaultMessage": "权限管理"
+  },
+  "WeEtDm": {
+    "defaultMessage": "新建 Profile"
+  },
+  "WeuMpp": {
+    "defaultMessage": "生产模式"
   },
   "WfVg3t": {
     "defaultMessage": "APP ID"
@@ -953,20 +995,26 @@
   "WtlUhL": {
     "defaultMessage": "URL 地址已复制"
   },
-  "X3Sony": {
-    "defaultMessage": "API地址"
-  },
   "XEPmlP": {
     "defaultMessage": "秒"
   },
   "XIRdkO": {
     "defaultMessage": "请检查项目配置并重启fireboom"
   },
+  "XUAQFk": {
+    "defaultMessage": "文件后缀"
+  },
   "XeiAal": {
     "defaultMessage": "删除"
   },
+  "XfNNuN": {
+    "defaultMessage": "如果在https场景回调地址不正确，请取消该配置"
+  },
   "Xhn2gT": {
     "defaultMessage": "请选择"
+  },
+  "Xra/7/": {
+    "defaultMessage": "是否实时"
   },
   "XseOZ1": {
     "defaultMessage": "注：2 → 3 → 4 → 5 重复执行",
@@ -1002,6 +1050,9 @@
   "ZIqHdN": {
     "defaultMessage": "响应"
   },
+  "ZK6VCI": {
+    "defaultMessage": "允许 Credentials"
+  },
   "ZMK5E4": {
     "defaultMessage": "服务端实时查询"
   },
@@ -1017,8 +1068,14 @@
   "ZUhyFj": {
     "defaultMessage": "全局依赖"
   },
+  "Zlo7bL": {
+    "defaultMessage": "生成路径"
+  },
   "ZnzCll": {
     "defaultMessage": "别名"
+  },
+  "ZrgikE": {
+    "defaultMessage": "为POST请求添加 CSRF token 保护"
   },
   "Zz7nBV": {
     "defaultMessage": "已编译"
@@ -1075,9 +1132,6 @@
     "defaultMessage": "取消",
     "description": "流程图"
   },
-  "bpeH07": {
-    "defaultMessage": "修改设置后，请重新编译"
-  },
   "bqbDVw": {
     "defaultMessage": "查询"
   },
@@ -1097,6 +1151,9 @@
   "cJXZNP": {
     "defaultMessage": "只允许上传 db 格式文件"
   },
+  "cJoF5u": {
+    "defaultMessage": "复制接口URL地址，上线API方可测试"
+  },
   "cLvrI5": {
     "defaultMessage": "过滤"
   },
@@ -1105,6 +1162,9 @@
   },
   "dEbvz0": {
     "defaultMessage": "name应为字符串，使用大小写字母或者下划线！"
+  },
+  "dGBGbt": {
+    "defaultMessage": "全部"
   },
   "dKVEuY": {
     "defaultMessage": "字段 {name} 的参数未提供"
@@ -1131,6 +1191,9 @@
   "eHYMSo": {
     "defaultMessage": "请配置或开启数据源"
   },
+  "eJ2viL": {
+    "defaultMessage": "下载失败"
+  },
   "eL3Qi6": {
     "defaultMessage": "用户"
   },
@@ -1146,14 +1209,14 @@
   "ekxzlF": {
     "defaultMessage": "名称"
   },
+  "eqz7K0": {
+    "defaultMessage": "API内网地址"
+  },
   "esvors": {
     "defaultMessage": "设计"
   },
   "etnuPx": {
     "defaultMessage": "安全"
-  },
-  "ezUs/G": {
-    "defaultMessage": "请输入域名"
   },
   "f0XHRN": {
     "defaultMessage": "修改环境变量"
@@ -1192,9 +1255,6 @@
   "gb9fzG": {
     "defaultMessage": "订阅授权"
   },
-  "gehpuG": {
-    "defaultMessage": "服务器监听Host"
-  },
   "ghoLaJ": {
     "defaultMessage": "入参指令",
     "description": "插入指令处"
@@ -1207,9 +1267,6 @@
   },
   "gpEzjP": {
     "defaultMessage": "问题"
-  },
-  "gxjC5l": {
-    "defaultMessage": "请输入字母或数字"
   },
   "h+6xKv": {
     "defaultMessage": "手动保存中"
@@ -1263,12 +1320,15 @@
   "io7fqu": {
     "defaultMessage": "请填写规范域名"
   },
+  "iveGBB": {
+    "defaultMessage": "新建文件夹"
+  },
+  "jD5jDy": {
+    "defaultMessage": "API服务监听Host"
+  },
   "jD7VUp": {
     "defaultMessage": "@角色",
     "description": "插入指令处"
-  },
-  "jGexDU": {
-    "defaultMessage": "接口名称必须大写开头"
   },
   "jPMqvu": {
     "defaultMessage": "指定 OAS"
@@ -1276,8 +1336,14 @@
   "jUwANU": {
     "defaultMessage": "通过发送指令,自动内省Schema"
   },
+  "jbDTHt": {
+    "defaultMessage": "飞布控制台版本"
+  },
   "jhfb/7": {
     "defaultMessage": "保存成功"
+  },
+  "jiM9+b": {
+    "defaultMessage": "模板ID"
   },
   "jxZEU/": {
     "defaultMessage": "文件列表加载失败"
@@ -1302,6 +1368,12 @@
   },
   "l3H/GZ": {
     "defaultMessage": "删除确认"
+  },
+  "lEfA98": {
+    "defaultMessage": "API目录"
+  },
+  "lMyO3E": {
+    "defaultMessage": "增加重定向URL"
   },
   "lPNqbT": {
     "defaultMessage": "授权校验?",
@@ -1352,6 +1424,9 @@
   "mfZMW6": {
     "defaultMessage": "名称不能为空"
   },
+  "mnyTZ7": {
+    "defaultMessage": "CSRF 保护"
+  },
   "mzPDCn": {
     "defaultMessage": "新增枚举"
   },
@@ -1373,6 +1448,9 @@
   "nS8PfW": {
     "defaultMessage": "确定要删除?"
   },
+  "nTlFd6": {
+    "defaultMessage": "创建空数据库"
+  },
   "nc6GYZ": {
     "defaultMessage": "注释描述"
   },
@@ -1384,6 +1462,9 @@
   },
   "nooQRz": {
     "defaultMessage": "请输入外部数据源名"
+  },
+  "nv3mLY": {
+    "defaultMessage": "是否非法"
   },
   "nwr0JF": {
     "defaultMessage": "创建当前API的拷贝"
@@ -1403,6 +1484,9 @@
   "oOGLP0": {
     "defaultMessage": "联合唯一索引"
   },
+  "oOThrp": {
+    "defaultMessage": "API外网地址"
+  },
   "oyIdrj": {
     "defaultMessage": "Graphql 端点"
   },
@@ -1414,6 +1498,9 @@
   },
   "p/NHCA": {
     "defaultMessage": "校验中"
+  },
+  "p53sbe": {
+    "defaultMessage": "内部API"
   },
   "p6z/hH": {
     "defaultMessage": "数据库"
@@ -1435,9 +1522,6 @@
   },
   "pzponE": {
     "defaultMessage": "Issuer不能为空"
-  },
-  "q9QWoH": {
-    "defaultMessage": "服务器监听端口"
   },
   "qJFIkj": {
     "defaultMessage": "自定义INT标量"
@@ -1470,6 +1554,12 @@
   "qb9HEL": {
     "defaultMessage": "返回上一级"
   },
+  "qd0uEq": {
+    "defaultMessage": "选择"
+  },
+  "qr+6Ba": {
+    "defaultMessage": "基于token"
+  },
   "qutiEk": {
     "defaultMessage": "内部 API 无法通过链接访问"
   },
@@ -1494,6 +1584,9 @@
   "rCo8W8": {
     "defaultMessage": "个"
   },
+  "rOTKi+": {
+    "defaultMessage": "GraphQL端点"
+  },
   "rbmyiL": {
     "defaultMessage": "编译失败"
   },
@@ -1513,6 +1606,9 @@
   "sLFK3g": {
     "defaultMessage": "前往"
   },
+  "sP8PlF": {
+    "defaultMessage": "没有找到相关文件，请重新搜索"
+  },
   "sRc1VN": {
     "defaultMessage": "SDK模板"
   },
@@ -1523,11 +1619,17 @@
   "sRkj0b": {
     "defaultMessage": "快捷键"
   },
+  "sRnfeX": {
+    "defaultMessage": "文件数量"
+  },
   "saR+wi": {
     "defaultMessage": "服务端"
   },
   "saeFbf": {
     "defaultMessage": "文件"
+  },
+  "sc19NF": {
+    "defaultMessage": "不能包含连续的两个下划线"
   },
   "slR1VF": {
     "defaultMessage": "+ 新增筛选条件"
@@ -1537,9 +1639,6 @@
   },
   "t2iHNJ": {
     "defaultMessage": "更新"
-  },
-  "t6feUX": {
-    "defaultMessage": "文件夹名称"
   },
   "tFmMiG": {
     "defaultMessage": "消息队列"
@@ -1556,8 +1655,8 @@
   "tXvcEA": {
     "defaultMessage": "阿里云物联网平台"
   },
-  "tdD1O3": {
-    "defaultMessage": "域名"
+  "tjlVGr": {
+    "defaultMessage": "API服务监听端口"
   },
   "tmMwuy": {
     "defaultMessage": "响应类型"
@@ -1571,14 +1670,14 @@
   "uOSn0p": {
     "defaultMessage": "请输入区域"
   },
+  "uY5Slp": {
+    "defaultMessage": "开发模式"
+  },
   "ueuJlz": {
     "defaultMessage": "数据建模"
   },
   "uhTa0i": {
     "defaultMessage": "预览"
-  },
-  "uhcx5v": {
-    "defaultMessage": "新增URL"
   },
   "uj6mcB": {
     "defaultMessage": "示例: {dbProtocal}://user:password@localhost/db-name"
@@ -1601,6 +1700,9 @@
   },
   "vChpIH": {
     "defaultMessage": "ER 图"
+  },
+  "vHJsEy": {
+    "defaultMessage": "API内容为空"
   },
   "vHOsVf": {
     "defaultMessage": "输入"
@@ -1630,11 +1732,17 @@
   "wLS1Dj": {
     "defaultMessage": "全部覆盖"
   },
+  "wYtVcK": {
+    "defaultMessage": "必须以字母开头"
+  },
   "wZkLCJ": {
     "defaultMessage": "编译时间"
   },
   "waeVf8": {
     "defaultMessage": "数据迁移失败！error: {error}"
+  },
+  "wyRshi": {
+    "defaultMessage": "过滤选项"
   },
   "x0YFe8": {
     "defaultMessage": "以 mongodb:// 开头，不超过128位"
@@ -1663,6 +1771,9 @@
   },
   "xc9ERZ": {
     "defaultMessage": "输入类型"
+  },
+  "xg+tVB": {
+    "defaultMessage": "飞布版本"
   },
   "xzl0Bm": {
     "defaultMessage": "配置登录回调"
@@ -1696,9 +1807,6 @@
   },
   "zQEdCX": {
     "defaultMessage": "API管理"
-  },
-  "zZ6RPo": {
-    "defaultMessage": "强制跳转"
   },
   "zbqD5q": {
     "defaultMessage": "值"

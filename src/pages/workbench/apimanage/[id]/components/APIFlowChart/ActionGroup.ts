@@ -17,12 +17,17 @@ export class ActionGroup {
   public addToGraph(
     graph: Graph,
     {
-      position = 'right'
+      position = 'right',
+      fixedTargetPort,
+      customVertices
     }: {
       position?: 'right' | 'left'
+      fixedTargetPort?: string
+      customVertices?: { x: number; y: number }[]
     } = {}
   ) {
-    const revertPosition = position === 'right' ? 'left' : 'right'
+    const targetPosition = fixedTargetPort || (position === 'right' ? 'left' : 'right')
+    console.log(targetPosition)
     this.trigger = graph.createNode({
       ...this._trigger,
       ports: {
@@ -50,8 +55,8 @@ export class ActionGroup {
         ...ref,
         ports: {
           groups: {
-            [revertPosition]: {
-              position: revertPosition,
+            [targetPosition]: {
+              position: targetPosition,
               attrs: {
                 circle: {
                   r: 0,
@@ -62,8 +67,8 @@ export class ActionGroup {
           },
           items: [
             {
-              id: revertPosition,
-              group: revertPosition
+              id: targetPosition,
+              group: targetPosition
             }
           ]
         }
@@ -81,7 +86,7 @@ export class ActionGroup {
               },
               target: {
                 cell: ref,
-                port: revertPosition
+                port: targetPosition
               },
               attrs: {
                 line: {
@@ -100,8 +105,9 @@ export class ActionGroup {
               },
               target: {
                 cell: ref,
-                port: revertPosition
+                port: targetPosition
               },
+              vertices: customVertices,
               connector: 'smooth',
               attrs: {
                 line: {
