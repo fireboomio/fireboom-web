@@ -24,8 +24,9 @@ export function Notice({ handleToggleDesigner }: Props) {
     'https://raw.githubusercontent.com/fireboomio/files/main/news.json',
     proxy
   )
+  console.log(news, 'news')
   const noticeConfig = useMemo(() => {
-    return (news ?? []).map((item: any) => ({
+    return (news || []).map((item: any) => ({
       content: item.content,
       title: item.title,
       date: calcTime(item.time),
