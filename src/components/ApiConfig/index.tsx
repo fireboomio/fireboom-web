@@ -316,6 +316,7 @@ export default function Index(props: Props) {
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button
               className={'btn-save'}
+              type="primary"
               onClick={() => {
                 form.submit()
               }}
