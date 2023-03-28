@@ -16,9 +16,11 @@ export function useHookModel(fetch = true) {
     revalidateOnMount: true
   }).data
   if (data) {
+    // 向数据中注入静态钩子
     Object.keys(staticInject).forEach(key => {
       const target = data.find(x => x.name === key)
-      if (target?.children) {
+      if (target) {
+        target.children = target.children || []
         staticInject[key as StaticInjectKeys].forEach(hook => {
           target.children.push({
             name: hook,
