@@ -708,7 +708,7 @@ export default function Rest({ content, type }: Props) {
                                   wrapperCol={{ span: 24 }}
                                   name={[field.name, 'val']}
                                   rules={
-                                    form.getFieldValue(['headers', field.name, 'kind']) === '0'
+                                    form.getFieldValue(['headers', field.name, 'kind']) !== '1'
                                       ? [
                                           {
                                             pattern: /^.{1,128}$/g,
@@ -720,7 +720,7 @@ export default function Rest({ content, type }: Props) {
                                       : []
                                   }
                                 >
-                                  {form.getFieldValue(['headers', field.name, 'kind']) === '0' ? (
+                                  {form.getFieldValue(['headers', field.name, 'kind']) !== '1' ? (
                                     <Input
                                       style={{ width: '80%' }}
                                       placeholder={intl.formatMessage({ defaultMessage: '请输入' })}

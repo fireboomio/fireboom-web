@@ -17,6 +17,7 @@ export interface DatasourceResp {
   name: string
   sourceType: number
   enabled: boolean
+  readonly?: boolean
   config: Record<string, string | number | Record<string, any> | undefined>
 }
 

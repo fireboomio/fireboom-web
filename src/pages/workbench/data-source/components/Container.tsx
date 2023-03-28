@@ -153,13 +153,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   <span className="max-w-200px overflow-hidden text-ellipsis" title={content?.name}>
                     {content?.name}
                   </span>
-                  <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
-                    <img
-                      alt="bianji"
-                      src="assets/iconfont/bianji.svg"
-                      style={{ height: '1em', width: '1em' }}
-                    />
-                  </span>
+                  {!content.readonly && (
+                    <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
+                      <img
+                        alt="bianji"
+                        src="assets/iconfont/bianji.svg"
+                        style={{ height: '1em', width: '1em' }}
+                      />
+                    </span>
+                  )}
                 </>
               )
             ) : (
@@ -173,6 +175,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             {content.sourceType !== 4 ? (
               <Switch
+                disabled={content.readonly}
                 loading={loading}
                 checked={content?.enabled}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
@@ -196,6 +199,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 <Button
                   className={'btn-save !ml-4 mr-11'}
                   onClick={() => handleToggleDesigner('form')}
+                  disabled={content.readonly}
                 >
                   <FormattedMessage defaultMessage="编辑" />
                 </Button>

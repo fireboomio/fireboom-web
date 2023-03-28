@@ -641,7 +641,7 @@ export default function Graphql({ content, type }: Props) {
                             className="flex-0 w-135"
                             name={[field.name, 'val']}
                             rules={
-                              form.getFieldValue(['headers', field.name, 'kind']) === '0'
+                              form.getFieldValue(['headers', field.name, 'kind']) !== '1'
                                 ? [
                                     {
                                       pattern: /^.{1,2000}$/g,
@@ -653,7 +653,7 @@ export default function Graphql({ content, type }: Props) {
                                 : []
                             }
                           >
-                            {form.getFieldValue(['headers', field.name, 'kind']) === '0' ? (
+                            {form.getFieldValue(['headers', field.name, 'kind']) !== '1' ? (
                               <Input
                                 placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                               />

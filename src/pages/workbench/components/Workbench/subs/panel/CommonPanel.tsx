@@ -8,7 +8,7 @@ import { useSWRConfig } from 'swr'
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
 import { mutateHookModel } from '@/hooks/store/hook/model'
-import { mutateStorage, useStorageList } from '@/hooks/store/storage'
+import { useStorageList } from '@/hooks/store/storage'
 import { useValidate } from '@/hooks/validate'
 import type { CommonPanelResp } from '@/interfaces/commonPanel'
 import type { MenuName } from '@/lib/context/workbenchContext'
@@ -79,6 +79,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             break
         }
         return {
+          readonly: row.readonly,
           id: row.id,
           name: row.name,
           icon,
@@ -134,25 +135,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           delItem: async id => await requests.delete(`/dataSource/${id}`)
         }
       },
-      storage: {
-        title: intl.formatMessage({ defaultMessage: '文件存储' }),
-        openItem: id => `/workbench/storage/${id}/manage`,
-        newItem: '/workbench/storage/new',
-        request: {
-          getList: () => {
-            mutateStorage()
-          },
-          editItem: async row => await requests.put('/storageBucket', row),
-          delItem: async id => await requests.delete(`/storageBucket/${id}`)
-        },
-        navMenu: [
-          {
-            icon: 'assets/iconfont/wenjian1.svg',
-            name: intl.formatMessage({ defaultMessage: '查看' }),
-            menuPath: id => `/workbench/storage/${id}`
-          }
-        ]
-      },
       auth: {
         title: intl.formatMessage({ defaultMessage: '身份验证' }),
         openItem: id => `/workbench/auth/${id}`,
@@ -193,11 +175,12 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   if (!datasource) return null
 
   const dropDownMenu = (row: any) => {
-    const menuItems: Array<{ key: string; label: React.ReactNode }> = [
+    const menuItems: Array<{ key: string; label: React.ReactNode; disabled?: boolean }> = [
       {
         key: 'rename',
+        disabled: row.readonly,
         label: (
-          <div onClick={() => setEditTarget(row)}>
+          <div onClick={() => !row.readonly && setEditTarget(row)}>
             <img
               alt="zhongmingming"
               src="assets/iconfont/zhongmingming.svg"
@@ -211,6 +194,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       },
       {
         key: 'delete',
+        disabled: row.readonly,
         label: (
           <Popconfirm
             zIndex={9999}
@@ -221,6 +205,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             overlayClassName={styles['delete-label']}
             okType="danger"
+            trigger={row.readonly ? '' : 'click'}
           >
             <div>
               <img
