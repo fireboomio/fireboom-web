@@ -91,7 +91,7 @@ export default function StorageProfile() {
         {activeTab === 'base' && <Form onSave={saveProfile} profile={currentProfile} />}
         {activeTab === 'pre' && (
           <IdeContainer
-            key={profile}
+            key={profile + 'preUpload'}
             onChangeEnable={void 0}
             hookPath={`uploads/${currentStorage?.name}/${profile}/preUpload`}
             defaultLanguage="typescript"
@@ -99,7 +99,7 @@ export default function StorageProfile() {
         )}
         {activeTab === 'post' && (
           <IdeContainer
-            key={profile}
+            key={profile + 'postUpload'}
             onChangeEnable={void 0}
             hookPath={`uploads/${currentStorage?.name}/${profile}/postUpload`}
             defaultLanguage="typescript"

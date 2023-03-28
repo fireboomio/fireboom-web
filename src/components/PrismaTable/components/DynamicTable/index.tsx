@@ -223,7 +223,7 @@ const DynamicTable = ({
       <div className={styles.tableWrapper}>
         <Table
           loading={loading}
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: 'max-content', y: 'calc(100vh - 250px)' }}
           bordered={false}
           dataSource={tableData}
           columns={columns}

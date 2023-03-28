@@ -20,6 +20,7 @@ export interface StorageConfig {
   bucketName: string
   endpoint: string
   useSSL: boolean
+  uploadProfiles: any
 }
 
 export interface FileT {

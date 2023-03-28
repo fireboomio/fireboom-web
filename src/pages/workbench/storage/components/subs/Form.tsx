@@ -42,6 +42,7 @@ const supportList = [
 ]
 
 export default function StorageForm({ content, showErr }: Props) {
+  console.log(content)
   const intl = useIntl()
   const { ruleMap } = useValidate()
   const { handleSwitch } = useContext(StorageSwitchContext)
@@ -70,7 +71,11 @@ export default function StorageForm({ content, showErr }: Props) {
         void message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
         return
       }
-      const payload = { name: values.name, config: values, useSSL: true }
+      const payload = {
+        name: values.name,
+        config: { ...values, uploadProfiles: content?.config.uploadProfiles },
+        useSSL: true
+      }
 
       let resp: StorageResp
       if (content) {
