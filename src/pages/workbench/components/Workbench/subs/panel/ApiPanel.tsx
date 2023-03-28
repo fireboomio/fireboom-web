@@ -251,13 +251,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           {nodeData.data.liveQuery ? <div className={styles.lighting}></div> : null}
         </div>
         <>
-          <div
-            className={`${styles.method} ${
-              styles[`method_${nodeData.data.method?.toLowerCase()}`]
-            }`}
-          >
-            {nodeData.data.method?.toUpperCase()}
-          </div>
+          {nodeData.data.method && (
+            <div
+              className={`${styles.method} ${
+                styles[`method_${nodeData.data.method?.toLowerCase()}`]
+              }`}
+            >
+              {nodeData.data.method?.toUpperCase()}
+            </div>
+          )}
           <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
