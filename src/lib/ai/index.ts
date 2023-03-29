@@ -1,4 +1,3 @@
-import axios from 'axios'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 
 const REGEX_QUESTION = /^\s*\/\/\s*[qQ]:(.*)$/
@@ -26,36 +25,148 @@ const optimizePrompt = {
     '请根据后续要求优化下列代码，输出内容需要保持完整，未优化部分也要原样回传。使用typeScript代码回答，符合typeScript语法，包含代码和注释'
 }
 
-async function getSuggestion(question: string, language: Language, currentCode?: string) {
+function startPrint(editor: monaco.editor.IStandaloneCodeEditor, _range: monaco.Range) {
+  let isInCodeBlock = false
+  let backticksCount = 0
+  let isLineStart = true
+  let isFirstChar = true
+  let range = _range
+
+  function type(char: string) {
+    editor.executeEdits('', [{ range: range, text: char }])
+    if (char === '\n') {
+      range = new monaco.Range(range.startLineNumber + 1, 1, range.endLineNumber + 1, 1)
+    } else {
+      range = new monaco.Range(
+        range.startLineNumber,
+        range.startColumn + char.length,
+        range.endLineNumber,
+        range.endColumn + char.length
+      )
+    }
+  }
+
+  return function (str: string) {
+    if (isFirstChar) {
+      isFirstChar = false
+      if (str[0] !== '`') {
+        type('// ')
+      }
+    }
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i]
+      if (char === '`' && isLineStart) {
+        backticksCount++
+        if (backticksCount === 3) {
+          isInCodeBlock = !isInCodeBlock
+        }
+        continue
+      }
+      backticksCount = 0
+      if (char === '\n') {
+        type(char)
+        if (!isInCodeBlock) {
+          type('// ')
+        }
+        isLineStart = true
+      } else {
+        if (!isInCodeBlock && range.startColumn >= 60) {
+          console.log(isInCodeBlock, range.startColumn)
+          type('\n')
+          type('// ')
+        }
+        type(char)
+        isLineStart = false
+      }
+    }
+  }
+}
+
+async function getSuggestion(
+  question: string,
+  language: Language,
+  editor: monaco.editor.IStandaloneCodeEditor,
+  range: monaco.IRange,
+  currentCode?: string
+) {
   let questionRow = question
   if (currentCode) {
     questionRow = questionRow + ',其他内容不变'
   }
-  const result = await axios.post('https://fb-node-server.onrender.com/ai', {
-    messages: [
-      {
-        role: 'user',
-        content: currentCode
-          ? optimizePrompt[language] + `\n\`\`\`\n${currentCode}\n\`\`\``
-          : createPrompt[language]
-      },
-      {
-        role: 'user',
-        content: questionRow
-      }
-    ]
+
+  const print = startPrint(editor, range)
+  const response = await fetch('https://fb-node-server.onrender.com/ai_stream', {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    }),
+    body: JSON.stringify({
+      messages: [
+        {
+          role: 'system',
+          content: currentCode
+            ? optimizePrompt[language] + `\n\`\`\`\n${currentCode}\n\`\`\``
+            : createPrompt[language]
+        },
+        {
+          role: 'user',
+          content: questionRow
+        }
+      ]
+    })
   })
-  const message = result?.data?.[0]?.message
-  const answer = message?.content ?? ''
-  let inCode = false
-  const codeLines = answer.split('\n').filter((x: string) => {
-    if (x.startsWith('```')) {
-      inCode = !inCode
-      return false
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) {
+      break
     }
-    return inCode
-  })
-  return codeLines.join('\n')
+    // 处理接收到的数据
+    const str = decoder.decode(value)
+    str
+      .split('\n')
+      .map((x: string) => x.trim())
+      .filter(Boolean)
+      .forEach((x: string) => {
+        const row = x.substring(6)
+        try {
+          if (row === '[DONE]') {
+            // 结束
+          } else {
+            const data = JSON.parse(row)
+            if (data?.choices?.[0]?.delta?.content) {
+              const content = data.choices[0].delta.content
+              print(content)
+              // msgList.push(data.choices[0].delta.content)
+              // let inCode = false
+              // const codeLines = msgList
+              //   .join('')
+              //   .split('\n')
+              //   .map((x: string) => {
+              //     if (x.startsWith('```')) {
+              //       inCode = !inCode
+              //       return ''
+              //     }
+              //     return inCode
+              //       ? x
+              //       : chunk(x, 60)
+              //           .map(arr => `// ${arr.join('')}`)
+              //           .join('\n')
+              //   })
+              // codeLines
+              //   .join('')
+              //   .split('')
+              //   .forEach((x, index) => {
+              //     editor.trigger('keyboard', 'type', { text: x })
+              //   })
+            }
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      })
+  }
 }
 
 // 定位问题所在位置
@@ -156,15 +267,21 @@ export async function triggerAI(
       }
     }
 
-    insert(editor, '\n// 正在询问AI，请稍后...' + '\n' + END_MARK, question, questionIndex)
-    let suggestion = ''
-    if (optimize) {
-      suggestion = await getSuggestion(question, language, currentCode)
-    } else {
-      suggestion = await getSuggestion(question, language)
+    const range = locationQuestion(editor, question, questionIndex)
+    if (!range) {
+      return
     }
-    const addContent = suggestion + '\n' + END_MARK
-    insert(editor, addContent, question, questionIndex)
+    editor.executeEdits('', [
+      {
+        range: range,
+        text: '\n' + END_MARK
+      }
+    ])
+    if (optimize) {
+      getSuggestion(question, language, editor, range, currentCode)
+    } else {
+      getSuggestion(question, language, editor, range)
+    }
   }
 }
 

@@ -35,7 +35,7 @@ export default function StorageProfile() {
         return tabs
       })
     }
-  }, [id, profile])
+  }, [id, profile, storageList])
   // 当前选中的配置
   const currentStorage = useMemo(() => {
     return storageList?.find(x => String(x.id) === id)
