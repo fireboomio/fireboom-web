@@ -193,7 +193,6 @@ const IdeContainer: FC<Props> = props => {
       return code.replaceAll('$STORAGE_NAME$', storageName).replace('$PROFILE_NAME$', profileName)
     } else {
       const pathList = list.slice(1)
-      const apiName = list.pop() as string
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return getDefaultCode(tmplPath).then((res: string) => {
         return res.replaceAll('$HOOK_NAME$', pathList.join('__'))
