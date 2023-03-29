@@ -117,6 +117,7 @@ async function getSuggestion(
   })
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
+  const msgs: string[] = []
   while (true) {
     const { done, value } = await reader.read()
     if (done) {
@@ -138,28 +139,7 @@ async function getSuggestion(
             if (data?.choices?.[0]?.delta?.content) {
               const content = data.choices[0].delta.content
               print(content)
-              // msgList.push(data.choices[0].delta.content)
-              // let inCode = false
-              // const codeLines = msgList
-              //   .join('')
-              //   .split('\n')
-              //   .map((x: string) => {
-              //     if (x.startsWith('```')) {
-              //       inCode = !inCode
-              //       return ''
-              //     }
-              //     return inCode
-              //       ? x
-              //       : chunk(x, 60)
-              //           .map(arr => `// ${arr.join('')}`)
-              //           .join('\n')
-              //   })
-              // codeLines
-              //   .join('')
-              //   .split('')
-              //   .forEach((x, index) => {
-              //     editor.trigger('keyboard', 'type', { text: x })
-              //   })
+              msgs.push(content)
             }
           }
         } catch (e) {
@@ -167,6 +147,7 @@ async function getSuggestion(
         }
       })
   }
+  console.log(msgs.join(''))
 }
 
 // 定位问题所在位置
