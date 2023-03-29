@@ -52,7 +52,19 @@ monaco.languages.register({
  * 为了解决这个问题，我们需要自定义分词器，把@也作为分词结果的一部分
  */
 monaco.languages.setLanguageConfiguration('prisma', {
-  wordPattern: /(-?\d*\.\d\w*)|([^`~!#%^&*()\-=+[{\]}\\|;:'",.<>/?\s]+)/g
+  wordPattern: /(-?\d*\.\d\w*)|([^`~!#%^&*()\-=+[{\]}\\|;:'",.<>/?\s]+)/g,
+  brackets: [
+    ['(', ')'],
+    ['[', ']'],
+    ['{', '}']
+    // 添加你需要自动补全的括号对
+  ],
+  autoClosingPairs: [
+    { open: '(', close: ')' },
+    { open: '[', close: ']' },
+    { open: '{', close: '}' }
+    // 添加你需要自动补全的括号对
+  ]
 })
 
 function createLanguageClient(transports: MessageTransports): MonacoLanguageClient {

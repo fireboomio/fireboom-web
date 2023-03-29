@@ -52,7 +52,6 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
   const codeLensRef = useRef<any>()
   useEffect(() => {
     return () => {
-      console.log('========unmount')
       codeLensRef.current?.dispose()
     }
   }, [])
@@ -61,13 +60,17 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
       <Editor
         language="prisma"
         defaultLanguage="prisma"
+        options={{
+          autoClosingBrackets: 'always'
+        }}
         onValidate={markers => {
           onUpdateValidate?.(!markers.length)
         }}
         beforeMount={monaco => {
           // console.log(monaco.languages.prisma)
         }}
-        onMount={editor => {
+        onMount={(editor, monaco) => {
+          console.log('prisma editor mounted', editor, monaco)
           init(monaco, editor)
           codeLensRef.current = registerCodeLens(monaco, editor, 'prisma')
           setUp(editor, 'prisma')
