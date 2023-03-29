@@ -43,7 +43,7 @@ const makeSuggest = (editor: editor.IStandaloneCodeEditor) => {
       isSuggestKey = true
     } else {
       // 回车，点，左花括号，冒号
-      isSuggestKey = [87, 84, 80, 3].includes(e.keyCode)
+      // isSuggestKey = [87, 84, 80, 3].includes(e.keyCode)
     }
     if (isSuggestKey) {
       editor.trigger('', 'editor.action.triggerSuggest', '')
