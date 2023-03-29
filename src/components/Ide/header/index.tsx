@@ -229,7 +229,7 @@ const IdeHeaderContainer: FC<Props> = props => {
         </div>
         {/* 右侧区域 */}
         <div className="flex items-center">
-          {exampleList.length && (
+          {exampleList.length ? (
             <Dropdown
               menu={{
                 items: exampleList.map(x => ({
@@ -250,6 +250,8 @@ const IdeHeaderContainer: FC<Props> = props => {
             >
               <Button>选择模板</Button>
             </Dropdown>
+          ) : (
+            <></>
           )}
           <div className="ml-2">
             <FormattedMessage defaultMessage="tab宽度" />
@@ -269,7 +271,7 @@ const IdeHeaderContainer: FC<Props> = props => {
               buttonStyle="solid"
             />
           </div>
-          <div className="name ml-2">
+          <div className="ml-2 name">
             <FormattedMessage defaultMessage="脚本语言" />
           </div>
           <div className="ml-2">
