@@ -26,7 +26,8 @@ export default function HookPanel({ id }: { id?: string }) {
     (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
   const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
     id ? `/operateApi/hooks/${id}` : null,
-    requests.get
+    requests.get,
+    { revalidateOnMount: true }
   )
   const hookList = useMemo(() => {
     if (!hookInfo) {

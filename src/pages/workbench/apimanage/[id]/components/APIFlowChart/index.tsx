@@ -81,7 +81,8 @@ const APIFlowChart = ({ id }: { id: string }) => {
 
   const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
     id ? `/operateApi/hooks/${id}` : null,
-    requests.get
+    requests.get,
+    { revalidateOnMount: true }
   )
 
   const loadHook = useCallback(() => {
