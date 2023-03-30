@@ -146,7 +146,14 @@ const getRenderFuncMap = (
 }
 
 const renderTableColumn = (field: SchemaField) => {
-  return <span className="whitespace-nowrap">{field.title}</span>
+  return (
+    <span
+      className="whitespace-nowrap w-full block"
+      style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+    >
+      {field.title}
+    </span>
+  )
 }
 
 export const getTableColumns = (
