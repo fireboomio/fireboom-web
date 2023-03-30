@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { Profile } from '@/hooks/store/storage'
+import jsonInit from '@/lib/ai/jsonInit'
 import {
   FILE_EXTENSION_LIST,
   MIME_LIST,
@@ -118,6 +119,7 @@ export default function ProfileForm({ profile, onSave }: Props) {
             form.setFieldValue('metadataJSONSchema', v)
           }}
           beforeMount={monaco => {
+            jsonInit(monaco)
             monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
               validate: true,
               schemas: [
@@ -136,6 +138,9 @@ export default function ProfileForm({ profile, onSave }: Props) {
           }}
           onMount={editor => {
             makeSuggest(editor)
+            // editor.setPosition({ lineNumber: 1, column: 1 })
+            editor.focus()
+            editor.trigger('', 'editor.action.inlineSuggest.trigger', '')
           }}
         />
       </Form.Item>

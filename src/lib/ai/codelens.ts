@@ -15,14 +15,6 @@ export function registerCodeLens(
     triggerAI(editor, lineNumber, language, true)
   })
 
-  // class InlineCompleter {
-  //   async provideInlineCompletions() {
-  //     await new Promise(resolve => setTimeout(resolve, 100))
-  //     return { items: [{ insertText: 'hellooooooo!' }] }
-  //   }
-  //   freeInlineCompletions() {}
-  // }
-  // monaco.languages.registerInlineCompletionsProvider(language, new InlineCompleter())
   return monaco.languages.registerCodeLensProvider(language, {
     provideCodeLenses: function (model: any) {
       const lines = model.getLinesContent()
