@@ -48,7 +48,8 @@ export default function HookPanel({ id }: { id?: string }) {
           postResolve: 5,
           mutatingPostResolve: 6,
           onResponse: 7,
-          mockResolve: 8
+          mockResolve: 8,
+          onConnectionInit: 9
         }[x.name as string] ?? 0)
     ).filter(x => x.name !== 'mutatingPreResolve' || defs?.length > 0)
     return list

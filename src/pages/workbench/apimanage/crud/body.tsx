@@ -218,6 +218,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     }
     const tableData: Record<string, TableAttr> = {}
     const genTableData = (fields: _DMFField[]) => {
+      console.log(fields)
       fields.forEach(field => {
         if (field.children) {
           // 取消级联生成，子字段目前不做任何默认数据
@@ -268,6 +269,10 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             } else {
               data.create = KeyType.Required
             }
+          } else {
+            if (field.hasDefault) {
+              data.create = KeyType.Hidden
+            }
           }
           if (data.createType === undefined) {
             data.create = KeyType.Hidden
@@ -280,7 +285,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
           data.createDisableFlag = true
           data.updateDisableFlag = true
         }
-        if (field.required) {
+        if (field.required && !field.hasDefault) {
           data.createDisableFlag = true
         }
         if (data.createType === undefined) {
