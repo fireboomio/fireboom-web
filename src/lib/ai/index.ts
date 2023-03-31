@@ -118,7 +118,7 @@ async function getSuggestion(
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   const msgs: string[] = []
-  while (true) {
+  for (;;) {
     const { done, value } = await reader.read()
     if (done) {
       break
@@ -147,7 +147,6 @@ async function getSuggestion(
         }
       })
   }
-  console.log(msgs.join(''))
 }
 
 // 定位问题所在位置
@@ -258,11 +257,25 @@ export async function triggerAI(
         text: '\n' + END_MARK
       }
     ])
-    if (optimize) {
-      getSuggestion(question, language, editor, range, currentCode)
-    } else {
-      getSuggestion(question, language, editor, range)
+
+    const keyUpListener = editor.onKeyUp(e => {
+      e.preventDefault()
+    })
+    const keyDownListener = editor.onKeyDown(e => {
+      e.preventDefault()
+    })
+    try {
+      if (optimize) {
+        await getSuggestion(question, language, editor, range, currentCode)
+      } else {
+        await getSuggestion(question, language, editor, range)
+      }
+    } catch (e) {
+      console.error(e)
     }
+
+    keyUpListener.dispose()
+    keyDownListener.dispose()
   }
 }
 
