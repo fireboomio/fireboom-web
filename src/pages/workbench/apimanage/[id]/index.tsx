@@ -9,6 +9,7 @@ import { debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
 import { useDragResize } from '@/hooks/resize'
@@ -26,6 +27,48 @@ import GraphiqlExplorer from './components/GraphQLExplorer/origin'
 import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import { useAPIManager } from './store'
+
+async function fetchSubscription(rec: Record<string, unknown>, controller: AbortController) {
+  return new Observable(observer => {
+    fetch('/app/main/graphql', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-FB-Authentication': getAuthKey() || ''
+      },
+      body: JSON.stringify(rec),
+      signal: controller.signal
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      // 处理响应流
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+
+      // 递归处理数据
+      function readData() {
+        reader.read().then(({ done, value }) => {
+          console.log('read', value)
+          if (done) {
+            console.log('Stream is complete')
+            return
+          }
+
+          // 处理数据
+          const messages = decoder.decode(value)
+          observer.next({ data: JSON.parse(messages) })
+          // 继续读取
+          readData()
+        })
+      }
+
+      readData()
+    })
+  })
+}
 
 async function fetcher(rec: Record<string, unknown>) {
   try {
@@ -67,7 +110,8 @@ export default function APIEditorContainer() {
     setWorkbenchContext,
     saved,
     autoSave,
-    operationType
+    operationType,
+    saveSubscriptionController
   } = useAPIManager(state => ({
     engineStartCallback: state.engineStartCallback,
     query: state.query,
@@ -82,7 +126,8 @@ export default function APIEditorContainer() {
     setWorkbenchContext: state.setWorkbenchContext,
     saved: state.computed.saved,
     autoSave: state.autoSave,
-    operationType: state.computed.operationType
+    operationType: state.computed.operationType,
+    saveSubscriptionController: state.saveSubscriptionController
   }))
   const editingContent = useRef(query)
   const isEditingRef = useRef(false)
@@ -124,10 +169,22 @@ export default function APIEditorContainer() {
     [setQuery]
   )
 
+  const dispatchFetcher = (rec: Record<string, unknown>) => {
+    // @ts-ignore
+    const isSubscription = rec.query.trim().startsWith('subscription')
+    if (isSubscription) {
+      const controller = new AbortController()
+      saveSubscriptionController(controller)
+      return fetchSubscription(rec, controller)
+    } else {
+      return fetcher(rec)
+    }
+  }
+
   const editor = useMemo(() => {
     return (
       <GraphiQL
-        fetcher={fetcher}
+        fetcher={dispatchFetcher}
         schema={schema}
         query={editorQuery}
         // ref={x => (ref.current = x)}

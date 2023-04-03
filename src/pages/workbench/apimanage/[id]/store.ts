@@ -60,6 +60,7 @@ export interface APIState {
   clearHistoryFlag: boolean // 通知编辑器需要清空历史记录，用于切换api时清除旧api的内容
   schemaAST: DocumentNode | undefined
   _workbenchContext: WorkbenchContextType | undefined
+  subscriptionController: AbortController | undefined
   computed: {
     operationType: Readonly<OperationTypeNode | undefined>
     saved: boolean
@@ -78,6 +79,8 @@ export interface APIState {
   dispendToAPIRefresh: (fn: () => void) => void
   setWorkbenchContext: (ctx: WorkbenchContextType) => void
   engineStartCallback: () => void
+  abortSubscription: () => void
+  saveSubscriptionController: (controller: AbortController) => void
 }
 
 const refreshFns: (() => void)[] = []
@@ -152,6 +155,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
   schemaAST: undefined,
   schemaTypeMap: {},
   _workbenchContext: undefined,
+  subscriptionController: undefined,
   computed: {
     get operationType() {
       const defs = get().schemaAST?.definitions
@@ -166,6 +170,13 @@ export const useAPIManager = create<APIState>((set, get) => ({
       if (query === DEFAULT_QUERY && !lastSavedQuery) return true
       return lastSavedQuery === query
     }
+  },
+  abortSubscription: () => {
+    get().subscriptionController?.abort()
+    set({ subscriptionController: undefined })
+  },
+  saveSubscriptionController: (controller: AbortController) => {
+    set({ subscriptionController: controller })
   },
   pureUpdateAPI: (newAPI: Partial<APIDesc>) => {
     // @ts-ignore

@@ -10,8 +10,10 @@ import RunIcon from '../assets/run.svg'
 type ExecuteButtonProps = ImgHTMLAttributes<HTMLImageElement>
 
 const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
-  const { apiID } = useAPIManager(state => ({
-    apiID: state.apiID
+  const { apiID, subscriptionController, abortSubscription } = useAPIManager(state => ({
+    apiID: state.apiID,
+    subscriptionController: state.subscriptionController,
+    abortSubscription: state.abortSubscription
   }))
 
   const { isFetching, run, stop } = useExecutionContext({
@@ -20,6 +22,11 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   })
 
   const toggleExecute = () => {
+    if (subscriptionController) {
+      abortSubscription()
+      stop()
+      return
+    }
     if (isFetching) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       stop()
@@ -32,6 +39,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   // 切换时 stop 前一个
   useEffect(() => {
     if (isFetching) {
+      abortSubscription()
       stop()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +55,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <img {...props} src={RunIcon} width="28" height="28" alt="run" onClick={toggleExecute} />
 
-      {isFetching && (
+      {(isFetching || subscriptionController) && (
         <svg
           className="h-7 text-white top-0 right-0 bottom-0 left-0 w-7 z-2 absolute"
           viewBox="0 0 24 24"

@@ -242,7 +242,7 @@ export default function DB({ content, type }: Props) {
               <Input
                 style={{ width: '80%' }}
                 placeholder={intl.formatMessage(
-                  { defaultMessage: '示例: {dbProtocal}://user:password@localhost/db-name' },
+                  { defaultMessage: '示例: {dbProtocal}://user:password@localhost:3306/db-name' },
                   { dbProtocal }
                 )}
               />
