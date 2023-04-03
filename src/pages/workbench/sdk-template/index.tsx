@@ -35,7 +35,8 @@ const SDKTemplate = () => {
   const {
     data: remoteSdk,
     isLoading,
-    error
+    error,
+    mutate: mutateRemote
   } = useSWR<{
     official: RemoteSDKItem[]
     community: RemoteSDKItem[]
@@ -100,8 +101,15 @@ const SDKTemplate = () => {
           </div>
         ) : null}
         {!isLoading && error ? (
-          <div className="h-40vh w-full flex items-center justify-center">
+          <div className="h-40vh w-full flex flex-col items-center justify-center">
             <Error50x />
+            <Button
+              onClick={() => {
+                void mutateRemote()
+              }}
+            >
+              {intl.formatMessage({ defaultMessage: '重试' })}
+            </Button>
           </div>
         ) : null}
 
