@@ -114,9 +114,5 @@
   },
   "stylelint": {
     "extends": "@doremijs/stylelint-config"
-  },
-  "workspaces": [
-    "src/lib/prisma",
-    "src/lib/socket"
-  ]
+  }
 }

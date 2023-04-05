@@ -150,7 +150,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 />
               ) : (
                 <>
-                  <span className="max-w-200px overflow-hidden text-ellipsis" title={content?.name}>
+                  <span className="text-ellipsis max-w-200px overflow-hidden" title={content?.name}>
                     {content?.name}
                   </span>
                   {!content.readonly && (
@@ -175,7 +175,6 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             {content.sourceType !== 4 ? (
               <Switch
-                disabled={content.readonly}
                 loading={loading}
                 checked={content?.enabled}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
