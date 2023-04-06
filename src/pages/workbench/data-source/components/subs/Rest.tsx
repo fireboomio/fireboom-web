@@ -363,7 +363,17 @@ export default function Rest({ content, type }: Props) {
                   </>
                 }
               >
-                <div className="flex items-center">
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={() =>
+                    window.open(
+                      `/api/v1/file/downloadFile?type=1&inline=1&fileName=${encodeURIComponent(
+                        config.filePath!
+                      )}`,
+                      '_blank'
+                    )
+                  }
+                >
                   <Image
                     src="/assets/upload-file.png"
                     width={14}
