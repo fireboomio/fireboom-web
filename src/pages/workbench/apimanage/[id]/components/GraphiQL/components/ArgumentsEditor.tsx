@@ -90,7 +90,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
           )
           if (item.isRequired) {
             if (item.isList) {
-              if ((val as SingleInputValueType[]).length) {
+              if (!(val as SingleInputValueType[]).length) {
                 message.error(requiredMsg)
                 throw new Error(requiredMsg)
               }
@@ -114,6 +114,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
                       throw new Error(notValidMsg)
                     }
                   }
+                  return vItem
+                } else {
                   return vItem
                 }
               })
