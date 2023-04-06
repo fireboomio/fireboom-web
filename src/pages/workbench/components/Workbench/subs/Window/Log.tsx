@@ -73,7 +73,7 @@ const Log: React.FC<Props> = ({ actionRef }) => {
             >
               {x.level}
             </span>{' '}
-            <span>{x.msg}</span>
+            <span style={{ whiteSpace: 'pre-line' }}>{x.msg}</span>
           </div>
         ))}
 

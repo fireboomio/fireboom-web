@@ -92,10 +92,11 @@ export default function Index(props: PropsWithChildren) {
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('log', 'getLogs', data => {
-    setLogs((data || []).map(parseLog))
+    setLogs(parseLogs(data))
   })
   useWebSocket('log', 'appendLog', data => {
-    setLogs(logs.concat((data || []).map(parseLog)))
+    console.log(logs, data)
+    setLogs(logs.concat(parseLogs(data)))
   })
   useWebSocket('question', 'getQuestions', data => {
     setQuestions(data?.questions || [])
@@ -233,6 +234,27 @@ export default function Index(props: PropsWithChildren) {
       </WorkbenchContext.Provider>
     )
   }
+}
+
+function parseLogs(logs: string[]) {
+  const result: { time: string; level: string; msg: string }[] = []
+  let lastLog: any
+  logs.forEach(log => {
+    const [, time, level, msg] = log.match(/([^Z]+?Z) (\w+) (.*)/) || []
+    if (time) {
+      lastLog = {
+        time: dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
+        level,
+        msg
+      }
+      result.push(lastLog)
+    } else {
+      if (lastLog) {
+        lastLog.msg += '\n' + log.trim()
+      }
+    }
+  })
+  return result
 }
 
 function parseLog(log: string) {

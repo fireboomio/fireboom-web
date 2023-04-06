@@ -15,6 +15,7 @@ import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
@@ -73,10 +74,12 @@ const supportList = [
 
 export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const intl = useIntl()
+  const { system: globalConfig } = useContext(ConfigContext)
   const { ruleMap } = useValidate()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm()
+  const id = Form.useWatch('id', form)
   const issuer = Form.useWatch('issuer', form)
   const clientIdKind = Form.useWatch(['clientId', 'kind'], form)
   const clientSecretKind = Form.useWatch(['clientSecret', 'kind'], form)
@@ -265,6 +268,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 autoComplete="off"
                 autoFocus={true}
               />
+            </Form.Item>
+            <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
+              {globalConfig.apiPublicAddr}/auth/cookie/authorize/{id}
             </Form.Item>
             <Form.Item
               label="Issuer"

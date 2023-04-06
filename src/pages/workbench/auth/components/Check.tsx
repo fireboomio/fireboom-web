@@ -2,11 +2,13 @@
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions, Tag } from 'antd'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
+import { ConfigContext } from '@/lib/context/ConfigContext'
 
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
@@ -17,6 +19,7 @@ type Config = Record<string, any>
 
 export default function AuthMainCheck({ content }: Props) {
   const intl = useIntl()
+  const { system: globalConfig } = useContext(ConfigContext)
   // const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const config = content.config as unknown as Config
@@ -43,6 +46,9 @@ export default function AuthMainCheck({ content }: Props) {
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {config.id}
+          </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
+            {globalConfig.apiPublicAddr}/auth/cookie/authorize/{config.id}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
             {config.issuer}
