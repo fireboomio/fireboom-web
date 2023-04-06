@@ -25,16 +25,16 @@ export default function AuthMainCheck({ content }: Props) {
     setIsShowSecret(!isShowSecret)
   }
 
-  const switchState =
-    content.switchState?.length == 0
-      ? intl.formatMessage({ defaultMessage: '不开启' })
-      : content.switchState?.length == 2
-      ? intl.formatMessage({ defaultMessage: '基于Token和Cookie' })
-      : content.switchState[0] == 'tokenBased'
-      ? intl.formatMessage({ defaultMessage: '基于Token' })
-      : content.switchState[0] == 'cookieBased'
-      ? intl.formatMessage({ defaultMessage: '基于Cookie' })
-      : ''
+  // const switchState =
+  //   content.switchState?.length == 0
+  //     ? intl.formatMessage({ defaultMessage: '不开启' })
+  //     : content.switchState?.length == 2
+  //     ? intl.formatMessage({ defaultMessage: '基于Token和Cookie' })
+  //     : content.switchState[0] == 'tokenBased'
+  //     ? intl.formatMessage({ defaultMessage: '基于Token' })
+  //     : content.switchState[0] == 'cookieBased'
+  //     ? intl.formatMessage({ defaultMessage: '基于Cookie' })
+  //     : ''
 
   if (!content) return <Error50x />
   return (
@@ -63,17 +63,17 @@ export default function AuthMainCheck({ content }: Props) {
             {config.clientId?.val ?? ''}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
-            <span onClick={handleToggleSecret}>
+            <span className="flex items-center">
               {isShowSecret ? (
-                <div>
-                  {config.clientSecret?.val ?? ''}
-                  <EyeOutlined className="ml-6" />
-                </div>
+                <>
+                  <span>{config.clientSecret?.val ?? ''}</span>
+                  <EyeOutlined className="ml-4" onClick={handleToggleSecret} />
+                </>
               ) : config.clientSecret?.val ? (
-                <div>
-                  ***********
-                  <EyeInvisibleOutlined className="ml-6" />
-                </div>
+                <>
+                  <span>***********</span>
+                  <EyeInvisibleOutlined className="ml-4" onClick={handleToggleSecret} />
+                </>
               ) : (
                 ''
               )}

@@ -1,3 +1,4 @@
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
 import { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -582,27 +583,25 @@ export default function DB({ content, type }: Props) {
                         {config.userName?.val}
                       </Descriptions.Item>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密码' })}>
-                        {isSecretShow ? (
-                          <span>
-                            {config.password?.val}
-                            <img
-                              alt="xiaoyanjing-chakan"
-                              src="assets/iconfont/xiaoyanjing-chakan.svg"
-                              style={{ height: '1em', width: '1em' }}
-                              onClick={() => setIsSecretShow(!isSecretShow)}
-                            />
-                          </span>
-                        ) : (
-                          <span>
-                            **********
-                            <img
-                              alt="xiaoyanjing-yincang"
-                              src="assets/iconfont/xiaoyanjing-yincang.svg"
-                              style={{ height: '1em', width: '1em' }}
-                              onClick={() => setIsSecretShow(!isSecretShow)}
-                            />
-                          </span>
-                        )}
+                        <span className="flex items-center">
+                          {isSecretShow ? (
+                            <>
+                              <span>{config.password?.val}</span>
+                              <EyeOutlined
+                                className="ml-4"
+                                onClick={() => setIsSecretShow(!isSecretShow)}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <span>***********</span>
+                              <EyeInvisibleOutlined
+                                className="ml-4"
+                                onClick={() => setIsSecretShow(!isSecretShow)}
+                              />
+                            </>
+                          )}
+                        </span>
                       </Descriptions.Item>
                     </>
                   ) : (

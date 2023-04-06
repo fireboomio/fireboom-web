@@ -122,25 +122,36 @@ const ModelFormContainer = ({
                 field: field,
                 disabled: (action === 'update' && !field.update) || action === 'view'
               }
-              if (field.kind === 'object') {
-                return <Inputs.Object key={field.name} {...options} />
+              switch (field.kind) {
+                case 'object':
+                  return <Inputs.Object key={field.name} {...options} />
+                case 'enum':
+                  return <Inputs.Enum key={field.name} {...options} />
+
+                case 'scalar':
+                  switch (field.type) {
+                    case 'String':
+                      return <Inputs.String key={field.name} {...options} />
+                    case 'Boolean':
+                      return <Inputs.Boolean key={field.name} {...options} />
+                    case 'Int':
+                    case 'BigInt':
+                      return <Inputs.Int key={field.name} {...options} />
+                    case 'Float':
+                    case 'Decimal':
+                      return <Inputs.Float key={field.name} {...options} />
+                    case 'DateTime':
+                      return <Inputs.Datetime key={field.name} {...options} />
+                    case 'Json':
+                      return <Inputs.Json key={field.name} {...options} />
+                    case 'Bytes':
+                      return <Inputs.Bytes key={field.name} {...options} />
+                    default:
+                      return <Inputs.Unsupported key={field.name} {...options} />
+                  }
+                default:
+                  return <Inputs.Unsupported key={field.name} {...options} />
               }
-              if (field.kind === 'enum') {
-                return <Inputs.Enum key={field.name} {...options} />
-              }
-              if (field.type === 'DateTime') {
-                return <Inputs.Datetime key={field.name} {...options} />
-              }
-              if (field.type === 'Boolean') {
-                return <Inputs.Boolean key={field.name} {...options} />
-              }
-              if (field.type === 'Json') {
-                return <Inputs.Json key={field.name} {...options} />
-              }
-              if (['Int', 'BigInt', 'Float', 'Decimal'].includes(field.type)) {
-                return <Inputs.Number key={field.name} {...options} />
-              }
-              return <Inputs.Json key={field.name} {...options} />
             })}
         </Form>
       </div>
