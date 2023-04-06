@@ -1,10 +1,10 @@
-import { CaretDownOutlined } from '@ant-design/icons'
+import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons'
 import { useMutation, useQuery } from '@apollo/client'
-import { Button, Empty, Popover, Table } from 'antd'
+import { Button, Empty, Popover, Table, Tooltip } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
 import type { SorterResult } from 'antd/lib/table/interface'
 import { useEffect } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import { getTableColumns } from '@/components/PrismaTable/components/DynamicTable/DynamicTableHelper'
@@ -51,6 +51,7 @@ const DynamicTable = ({
   handleConnect,
   connectedRecord
 }: Props) => {
+  const intl = useIntl()
   const [pageState, setPageState] = useImmer<PageState>({ skip: 0, take: DEFAULT_PAGE_SIZE })
   const [orderByState, setOrderByState] = useImmer<OrderByState>({ orderBy: [] })
 
@@ -186,6 +187,9 @@ const DynamicTable = ({
       <div className="bg-white flex flex-shrink-0 h-54px px-11 justify-start items-center">
         <span className="font-medium text-16px">{currentModel.name}</span>
         <span className="mr-auto ml-3 text-14px text-[#118aD1]">model</span>
+        <Tooltip title={intl.formatMessage({ defaultMessage: '刷新' })} placement="bottom">
+          <SyncOutlined spin={loading} onClick={() => refetch()} className="mr-4 text-lg" />
+        </Tooltip>
         <Popover
           destroyTooltipOnHide
           trigger="click"

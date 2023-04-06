@@ -5,7 +5,7 @@ import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
 import dayjs from 'dayjs'
 import { useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import DynamicTable from '@/components/PrismaTable/components/DynamicTable'
@@ -44,17 +44,27 @@ interface Props {
   namespace: string
 }
 
-const Default = ({ field: { name, required, title }, disabled, initialValues }: Props) => (
-  <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-    <Input disabled={disabled} />
-  </FormItem>
-)
+const String = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
+  return (
+    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+      <Input disabled={disabled} placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+    </FormItem>
+  )
+}
 
-const Json = ({ field: { name, required, title }, disabled, initialValues }: Props) => (
-  <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-    <TextArea disabled={disabled} autoSize={{ minRows: 1 }} />
-  </FormItem>
-)
+const Json = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
+  return (
+    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+      <TextArea
+        disabled={disabled}
+        autoSize={{ minRows: 1 }}
+        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+      />
+    </FormItem>
+  )
+}
 
 const Datetime = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
   const intl = useIntl()
@@ -88,15 +98,37 @@ const Boolean = ({ field: { name, required, title }, disabled, initialValues }: 
   </FormItem>
 )
 
-const Number = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+const Int = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
   return (
     <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-      <InputNumber className="w-full" disabled={disabled} controls />
+      <InputNumber
+        className="w-full"
+        disabled={disabled}
+        controls
+        precision={0}
+        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+      />
+    </FormItem>
+  )
+}
+
+const Float = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
+  return (
+    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+      <InputNumber
+        className="w-full"
+        disabled={disabled}
+        controls
+        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+      />
     </FormItem>
   )
 }
 
 const Enum = ({ field: { name, required, title, type }, disabled, initialValues }: Props) => {
+  const intl = useIntl()
   const {
     schema: { enums }
   } = useTableSchema()
@@ -104,7 +136,11 @@ const Enum = ({ field: { name, required, title, type }, disabled, initialValues 
   const options = enumType?.fields ?? []
   return (
     <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-      <Select allowClear disabled={disabled}>
+      <Select
+        allowClear
+        disabled={disabled}
+        placeholder={intl.formatMessage({ defaultMessage: '请选择' })}
+      >
         {options.map((enumValue, idx) => (
           <Select.Option key={idx} value={enumValue}>
             {enumValue}
@@ -140,7 +176,7 @@ const Object = ({
 
   useEffect(() => {
     initialObjectValue && setDisplayValue(getDisplayName(initialObjectValue, relationModel!))
-  }, [initialObjectValue])
+  }, [initialObjectValue, relationModel, setDisplayValue])
 
   const handleConnect = (record: Record<string, any>) => {
     const connectedValue = record[relationModelIdField!.name]
@@ -208,12 +244,58 @@ const Object = ({
   )
 }
 
+const Bytes = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  return (
+    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+      {/* TODO */}
+      <FormattedMessage defaultMessage="暂不支持 Blob 类型直接修改" />
+      {/* <BlobFile /> */}
+    </FormItem>
+  )
+}
+
+// const BlobFile = ({
+//   value,
+//   onChange
+// }: {
+//   value?: ArrayBuffer
+//   onChange?: (value: ArrayBuffer) => void
+// }) => {
+//   return (
+//     <input
+//       type="file"
+//       onChange={e => {
+//         const file = e.target.files && e.target.files[0]
+//         if (file) {
+//           const reader = new FileReader()
+//           // 读取文件内容为 uintArrayBuffer
+//           reader.readAsArrayBuffer(file)
+//           reader.onload = () => {
+//             onChange && onChange(reader.result as ArrayBuffer)
+//           }
+//         }
+//       }}
+//     />
+//   )
+// }
+
+const Unsupported = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+  return (
+    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+      <FormattedMessage defaultMessage="暂不支持的类型" />
+    </FormItem>
+  )
+}
+
 export const Inputs = {
-  Default,
+  String,
   Datetime,
   Boolean,
   Object,
   Enum,
-  Number,
-  Json
+  Int,
+  Float,
+  Json,
+  Bytes,
+  Unsupported
 }

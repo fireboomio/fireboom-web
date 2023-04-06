@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { AutoComplete, Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
@@ -110,37 +111,24 @@ export default function SettingMainEnvironmentVariable() {
       dataIndex: 'devEnv',
       key: 'devEnv',
       render: (text, record) => {
-        console.log(record)
+        const toggle = () =>
+          setShowMap(showMap => {
+            showMap[record.key] = !showMap[record.key]
+          })
         return (
-          <span
-            onClick={() =>
-              setShowMap(showMap => {
-                showMap[record.key] = !showMap[record.key]
-              })
-            }
-          >
+          <div className="flex items-center">
             {showMap[record.key] ? (
-              <div>
-                {text}
-                <img
-                  alt="xiaoyanjing-chakan"
-                  src="assets/iconfont/xiaoyanjing-chakan.svg"
-                  style={{ height: '1em', width: '1em' }}
-                  className="ml-6"
-                />
-              </div>
+              <>
+                <span>{text}</span>
+                <EyeOutlined onClick={toggle} className="ml-4" />
+              </>
             ) : (
-              <div>
-                <span>**************</span>
-                <img
-                  alt="xiaoyanjing-yincang"
-                  src="assets/iconfont/xiaoyanjing-yincang.svg"
-                  style={{ height: '1em', width: '1em' }}
-                  className="ml-6"
-                />
-              </div>
+              <>
+                <span>***********</span>
+                <EyeInvisibleOutlined onClick={toggle} className="ml-4" />
+              </>
             )}
-          </span>
+          </div>
         )
       }
     },
