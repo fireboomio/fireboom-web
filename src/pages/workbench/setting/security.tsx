@@ -16,7 +16,7 @@ interface Security {
   enableGraphQLEndpoint: boolean
   enableCSRF: boolean
   allowedHosts: Array<string>
-  forceHttpsRedirects: boolean
+  // forceHttpsRedirects: boolean
 }
 
 export default function SettingMainVersion() {
@@ -33,18 +33,19 @@ export default function SettingMainVersion() {
   if (!global) {
     return null
   }
-  const { authorizedRedirectUris, forceHttpsRedirects, configureWunderGraphApplication } = global
+  const { authorizedRedirectUris, configureWunderGraphApplication } = global
   const { security } = configureWunderGraphApplication
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
     const saveValues = Object.keys(values)
       .map(key => {
-        if (key === 'forceHttpsRedirects') {
-          if (JSON.stringify(values[key]) !== forceHttpsRedirects) {
-            return { key: `forceHttpsRedirects`, val: values[key] }
-          }
-        } else if (key === 'authorizedRedirectUris') {
+        // if (key === 'forceHttpsRedirects') {
+        //   if (JSON.stringify(values[key]) !== forceHttpsRedirects) {
+        //     return { key: `forceHttpsRedirects`, val: values[key] }
+        //   }
+        // } else
+        if (key === 'authorizedRedirectUris') {
           if (JSON.stringify(values[key]) !== JSON.stringify(authorizedRedirectUris)) {
             return { key: `authorizedRedirectUris`, val: values[key] }
           }
@@ -77,9 +78,7 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={
-          security && ({ ...security, forceHttpsRedirects, authorizedRedirectUris } as any)
-        }
+        initialValues={security && ({ ...security, authorizedRedirectUris } as any)}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
@@ -155,7 +154,7 @@ export default function SettingMainVersion() {
             </>
           )}
         </Form.List>
-        <Form.Item
+        {/* <Form.Item
           label={intl.formatMessage({ defaultMessage: '强制 HTTPS 跳转' })}
           tooltip={intl.formatMessage({
             defaultMessage: '如果在https场景回调地址不正确，请启用该配置'
@@ -164,7 +163,7 @@ export default function SettingMainVersion() {
           valuePropName="checked"
         >
           <Switch />
-        </Form.Item>
+        </Form.Item> */}
         <Form.List name="authorizedRedirectUris">
           {(fields, { add, remove }, { errors }) => (
             <>
