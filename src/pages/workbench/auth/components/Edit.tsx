@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
+import copy from 'copy-to-clipboard'
 import { debounce } from 'lodash'
 import type { ReactNode } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -11,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
+import { CopyOutlined } from '@/components/icons'
 import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
 import type { AuthProvResp } from '@/interfaces/auth'
@@ -269,9 +271,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 autoFocus={true}
               />
             </Form.Item>
-            <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
-              {globalConfig.apiPublicAddr}/auth/cookie/authorize/{id}
-            </Form.Item>
             <Form.Item
               label="Issuer"
               name="issuer"
@@ -289,7 +288,58 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             >
               <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
             </Form.Item>
-
+            <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
+              <Input.Group compact className="!flex">
+                <Form.Item name={['clientId', 'kind']} noStyle>
+                  <Select className="flex-0 w-100px">
+                    <Select.Option value="0">
+                      <FormattedMessage defaultMessage="值" />
+                    </Select.Option>
+                    <Select.Option value="1">
+                      <FormattedMessage defaultMessage="环境变量" />
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name={['clientId', 'val']}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                    }
+                  ]}
+                >
+                  {clientIdKind === '0' ? (
+                    <Input
+                      className="flex-1"
+                      placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                    />
+                  ) : (
+                    <Select className="flex-1" options={envOptions} />
+                  )}
+                </Form.Item>
+              </Input.Group>
+            </Form.Item>
+            <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
+              <Input
+                value={
+                  !issuer
+                    ? intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })
+                    : `${issuer as string}/.well-known/openid-configuration`
+                }
+                disabled
+              />
+            </Form.Item>
+            <Form.Item
+              label={intl.formatMessage({ defaultMessage: '用户端点' })}
+              name="userInfoEndpoint"
+            >
+              <Input
+                placeholder={intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
+                disabled
+              />
+            </Form.Item>
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
@@ -305,49 +355,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                   />
                 </Form.Item>
-                <div className="text-12px text-[#333] ml-2">授权码模式</div>
+                <div className="ml-2 text-12px text-[#333]">授权码模式</div>
               </div>
-            </Form.Item>
-            <Form.Item
-              label={intl.formatMessage({ defaultMessage: 'App ID' })}
-              required={cookieBased}
-            >
-              <Input.Group compact className="!flex">
-                <Form.Item name={['clientId', 'kind']} noStyle>
-                  <Select className="flex-0 w-100px" disabled={!cookieBased}>
-                    <Select.Option value="0">
-                      <FormattedMessage defaultMessage="值" />
-                    </Select.Option>
-                    <Select.Option value="1">
-                      <FormattedMessage defaultMessage="环境变量" />
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name={['clientId', 'val']}
-                  noStyle
-                  rules={
-                    cookieBased
-                      ? [
-                          {
-                            required: true,
-                            message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
-                          }
-                        ]
-                      : []
-                  }
-                >
-                  {clientIdKind === '0' ? (
-                    <Input
-                      disabled={!cookieBased}
-                      className="flex-1"
-                      placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                    />
-                  ) : (
-                    <Select className="flex-1" options={envOptions} />
-                  )}
-                </Form.Item>
-              </Input.Group>
             </Form.Item>
             <Form.Item
               label={intl.formatMessage({ defaultMessage: 'App Secret' })}
@@ -390,6 +399,20 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 </Form.Item>
               </Input.Group>
             </Form.Item>
+            {id && cookieBased && (
+              <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
+                <div className="flex items-center">
+                  {globalConfig.apiPublicAddr}/auth/cookie/authorize/{id}
+                  <CopyOutlined
+                    className="cursor-pointer ml-4"
+                    onClick={() => {
+                      copy(`${globalConfig.apiPublicAddr}/auth/cookie/authorize/${id}`)
+                      message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                    }}
+                  />
+                </div>
+              </Form.Item>
+            )}
             <Form.Item
               label={
                 <div className={styles.switchLabel}>
@@ -405,11 +428,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                   />
                 </Form.Item>
-                <div className="text-12px text-[#333] ml-2">隐式模式</div>
+                <div className="ml-2 text-12px text-[#333]">隐式模式</div>
               </div>
-            </Form.Item>
-            <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-              <Input value={`${issuer as string}/.well-known/openid-configuration`} disabled />
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })} name="jwks">
               <Radio.Group
@@ -454,12 +474,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 />
               </Form.Item>
             )}
-            <Form.Item
-              label={intl.formatMessage({ defaultMessage: '用户端点' })}
-              name="userInfoEndpoint"
-            >
-              <Input disabled />
-            </Form.Item>
             <Form.Item hidden name="tokenEndpoint">
               <Input disabled />
             </Form.Item>

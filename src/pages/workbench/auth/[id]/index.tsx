@@ -85,9 +85,11 @@ export default function AuthConfigContainer() {
         <div className="flex-1"></div>
         {!editFlag ? (
           <>
-            <Button className={'btn-test  mr-4'} onClick={onTest}>
-              <FormattedMessage defaultMessage="测试" />
-            </Button>
+            {content?.switchState.includes('cookieBased') && (
+              <Button className={'btn-test  mr-4'} onClick={onTest}>
+                <FormattedMessage defaultMessage="测试" />
+              </Button>
+            )}
             <Button className={'btn-save  mr-11'} onClick={() => setEditFlag(true)}>
               <FormattedMessage defaultMessage="编辑" />
             </Button>
