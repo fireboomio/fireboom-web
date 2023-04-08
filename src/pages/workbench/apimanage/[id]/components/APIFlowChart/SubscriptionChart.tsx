@@ -642,10 +642,10 @@ const SubscriptionChart = ({
     graph.addNode({
       shape: 'rect',
       x: 286,
-      y: 632,
+      y: 552,
       label: intl.formatMessage({
         description: '流程图',
-        defaultMessage: '注：2 → 3 → 4 → 5 重复执行'
+        defaultMessage: '注：3 → 4 重复执行'
       }),
       attrs: {
         body: {
