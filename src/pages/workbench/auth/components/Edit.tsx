@@ -271,23 +271,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 autoFocus={true}
               />
             </Form.Item>
-            <Form.Item
-              label="Issuer"
-              name="issuer"
-              rules={[
-                {
-                  required: true,
-                  message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' })
-                },
-                {
-                  // pattern: /^https?:\/\/[:.\w\d/]+$/,
-                  type: 'url',
-                  message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
-                }
-              ]}
-            >
-              <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
-            </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientId', 'kind']} noStyle>
@@ -320,6 +303,23 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   )}
                 </Form.Item>
               </Input.Group>
+            </Form.Item>
+            <Form.Item
+              label="Issuer"
+              name="issuer"
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' })
+                },
+                {
+                  // pattern: /^https?:\/\/[:.\w\d/]+$/,
+                  type: 'url',
+                  message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
+                }
+              ]}
+            >
+              <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
               <Input
@@ -402,11 +402,11 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             {id && cookieBased && (
               <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
                 <div className="flex items-center">
-                  {globalConfig.apiPublicAddr}/auth/cookie/authorize/{id}
+                  {globalConfig.apiPublicAddr}/auth/cookie/callback/{id}
                   <CopyOutlined
                     className="cursor-pointer ml-4"
                     onClick={() => {
-                      copy(`${globalConfig.apiPublicAddr}/auth/cookie/authorize/${id}`)
+                      copy(`${globalConfig.apiPublicAddr}/auth/cookie/callback/${id}`)
                       message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                     }}
                   />
