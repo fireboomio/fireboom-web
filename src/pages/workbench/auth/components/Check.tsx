@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { Descriptions, Tag } from 'antd'
+import { CopyOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { Descriptions, message, Tag } from 'antd'
+import copy from 'copy-to-clipboard'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
@@ -47,11 +48,17 @@ export default function AuthMainCheck({ content }: Props) {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {config.id}
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
-            {globalConfig.apiPublicAddr}/auth/cookie/authorize/{config.id}
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
+            {config.clientId?.val ?? ''}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
             {config.issuer}
+          </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
+            {`${config.issuer as string}/.well-known/openid-configuration`}
+          </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
+            {config.userInfoEndpoint}
           </Descriptions.Item>
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
@@ -64,9 +71,6 @@ export default function AuthMainCheck({ content }: Props) {
               </Tag>
             )}
             <span className="text-[#aaa] ml-1">授权码模式</span>
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
-            {config.clientId?.val ?? ''}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
             <span className="flex items-center">
@@ -85,6 +89,18 @@ export default function AuthMainCheck({ content }: Props) {
               )}
             </span>
           </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
+            <div className="flex items-center">
+              {globalConfig.apiPublicAddr}/auth/cookie/callback/{config.id}
+              <CopyOutlined
+                className="cursor-pointer ml-4"
+                onClick={() => {
+                  copy(`${globalConfig.apiPublicAddr}/auth/cookie/callback/${config.id}`)
+                  message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                }}
+              />
+            </div>
+          </Descriptions.Item>
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于token' })}>
@@ -96,9 +112,6 @@ export default function AuthMainCheck({ content }: Props) {
               </Tag>
             )}
             <span className="text-[#aaa] ml-1">隐式模式</span>
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-            {`${config.issuer as string}/.well-known/openid-configuration`}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })}>
             {config.jwks == 0 ? 'URL' : 'JSON'}
@@ -112,9 +125,6 @@ export default function AuthMainCheck({ content }: Props) {
               <pre>{config.jwksJSON}</pre>
             </Descriptions.Item>
           )}
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
-            {config.userInfoEndpoint}
-          </Descriptions.Item>
         </Descriptions>
       </div>
     </>

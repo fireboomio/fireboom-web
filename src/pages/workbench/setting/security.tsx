@@ -11,17 +11,18 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
 
-interface security {
+interface Security {
   allowedHostsEnabled: boolean
   enableGraphQLEndpoint: boolean
   enableCSRF: boolean
   allowedHosts: Array<string>
+  // forceHttpsRedirects: boolean
 }
 
 export default function SettingMainVersion() {
   const intl = useIntl()
   const { system: globalConfig } = useContext(ConfigContext)
-  const [form] = Form.useForm()
+  const [form] = Form.useForm<Security>()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
   const { data: global, mutate } = useSWRImmutable<any>('/setting/global', requests.get)
@@ -32,19 +33,19 @@ export default function SettingMainVersion() {
   if (!global) {
     return null
   }
-  const { authorizedRedirectUris, disableForceHttpsRedirects, configureWunderGraphApplication } =
-    global
+  const { authorizedRedirectUris, configureWunderGraphApplication } = global
   const { security } = configureWunderGraphApplication
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
     const saveValues = Object.keys(values)
       .map(key => {
-        if (key === 'disableForceHttpsRedirects') {
-          if (JSON.stringify(values[key]) !== disableForceHttpsRedirects) {
-            return { key: `disableForceHttpsRedirects`, val: values[key] }
-          }
-        } else if (key === 'authorizedRedirectUris') {
+        // if (key === 'forceHttpsRedirects') {
+        //   if (JSON.stringify(values[key]) !== forceHttpsRedirects) {
+        //     return { key: `forceHttpsRedirects`, val: values[key] }
+        //   }
+        // } else
+        if (key === 'authorizedRedirectUris') {
           if (JSON.stringify(values[key]) !== JSON.stringify(authorizedRedirectUris)) {
             return { key: `authorizedRedirectUris`, val: values[key] }
           }
@@ -77,9 +78,7 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={
-          security && ({ ...security, disableForceHttpsRedirects, authorizedRedirectUris } as any)
-        }
+        initialValues={security && ({ ...security, authorizedRedirectUris } as any)}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
@@ -113,16 +112,6 @@ export default function SettingMainVersion() {
           >
             <FormattedMessage defaultMessage="查看文档" />
           </Button>
-        </Form.Item>
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: '禁用强制 HTTPS 跳转' })}
-          tooltip={intl.formatMessage({
-            defaultMessage: '如果在https场景回调地址不正确，请取消该配置'
-          })}
-        >
-          <Form.Item name="disableForceHttpsRedirects" valuePropName="checked" noStyle>
-            <Switch />
-          </Form.Item>
         </Form.Item>
         <Form.Item
           tooltip={{
@@ -165,6 +154,16 @@ export default function SettingMainVersion() {
             </>
           )}
         </Form.List>
+        {/* <Form.Item
+          label={intl.formatMessage({ defaultMessage: '强制 HTTPS 跳转' })}
+          tooltip={intl.formatMessage({
+            defaultMessage: '如果在https场景回调地址不正确，请启用该配置'
+          })}
+          name="forceHttpsRedirects"
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item> */}
         <Form.List name="authorizedRedirectUris">
           {(fields, { add, remove }, { errors }) => (
             <>
