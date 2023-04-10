@@ -1,5 +1,5 @@
 import { EditFilled } from '@ant-design/icons'
-import { Button, Card, Col, Descriptions, message, Modal, Row, Spin, Switch } from 'antd'
+import { Button, Card, Col, Descriptions, Dropdown, message, Modal, Row, Spin, Switch } from 'antd'
 import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
@@ -190,10 +190,39 @@ const SDKTemplateItem = ({
           </div>
         </div>
         <Switch className="flex-shrink-0" checked={sdk.enabled} onChange={onSwitch} />
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: 'delete',
+                icon: '',
+                label: intl.formatMessage({ defaultMessage: '删除' }),
+                onClick: () => {}
+              },
+              {
+                key: 'update',
+                label: intl.formatMessage({ defaultMessage: '升级' }),
+                onClick: () => {}
+              }
+            ]
+          }}
+          trigger={['hover']}
+        >
+          <img
+            alt=""
+            className="w-3 h-3 ml-2 cursor-pointer"
+            src="assets/workbench/icon-menu.png"
+          />
+        </Dropdown>
       </div>
       <div className="bg-[rgba(95,98,105,0.1)] h-0.5 mt-2 mb-3"></div>
-      <div className="text-xs text-[#787D8B] line-clamp-2">{sdk.description || '-'}</div>
-      <div className="h-8 mt-3 relative">
+      <div className="text-xs text-[#787D8B] line-clamp-2">
+        {intl.formatMessage({ defaultMessage: '功能描述' })}：{sdk.description || '-'}
+      </div>
+      <div className="h-8 mt-3 relative flex items-center">
+        <span className="text-xs text-[#787D8B] line-clamp-2 flex-shrink-0">
+          {intl.formatMessage({ defaultMessage: '生成路径' })}：
+        </span>
         <input
           value={editingValue}
           readOnly={!editing}
