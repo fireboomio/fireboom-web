@@ -32,5 +32,6 @@ yarn-error.log*
 .history
 
 dist/
+!public/vscode/vscode-web/dist/
 
 lang.zip
