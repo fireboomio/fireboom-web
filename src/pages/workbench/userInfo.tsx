@@ -45,7 +45,7 @@ export default function UserInfo() {
           <FormattedMessage defaultMessage="登出" />
         </Button>
       </div>
-      <div className="h-full flex-1 p-4">
+      <div className="h-full flex-1 p-4 overflow-auto">
         {info ? <ReactJson src={info} iconStyle="triangle" name={false} /> : null}
       </div>
     </div>
