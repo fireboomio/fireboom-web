@@ -20,7 +20,7 @@
   },
   "folderUri": {
     "scheme": "fbfs",
-    "path": "/fireboom"
+    "path": "/custom-ts"
   },
   "additionalBuiltinExtensions": [
     {

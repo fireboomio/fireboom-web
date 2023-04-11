@@ -1,6 +1,6 @@
 const vscode = require('vscode')
 
-const rootPath = vscode.workspace.rootPath
+const rootPath = vscode.workspace.workspaceFolders
 
 class VirtualFileSystemProvider {
   _emitter = new vscode.EventEmitter()
@@ -12,26 +12,56 @@ class VirtualFileSystemProvider {
 
   async readFile(uri) {
     console.log('readFile', uri)
-    return Uint8Array.from([104, 101, 108, 108, 111])
+    fetch(`/api/v1/vscode/readFile?uri=${uri.path}`)
+      .then(resp => resp.json())
+      .then(console.log)
   }
 
   async writeFile(uri, content, options) {
     console.log('writeFile', uri, content, options)
-    // 这里实现写入文件的逻辑
+    fetch(`/api/v1/vscode/writeFile`, {
+      method: 'post',
+      body: JSON.stringify({
+        uri: uri.path,
+        content: content
+      })
+    })
+      .then(resp => resp.json())
+      .then(console.log)
   }
 
-  async delete(uri) {
+  async delete(uri, options) {
     console.log('delete', uri)
-    // 这里实现删除文件的逻辑
+    fetch(`/api/v1/vscode/delete`, {
+      method: 'delete',
+      body: JSON.stringify({
+        uri: uri.path,
+        recursive: options.recursive
+      })
+    })
+      .then(resp => resp.json())
+      .then(console.log)
   }
 
   async rename(oldUri, newUri, options) {
     console.log('rename', oldUri, newUri, options)
-    // 这里实现重命名文件的逻辑
+    fetch(`/api/v1/vscode/rename`, {
+      method: 'put',
+      body: JSON.stringify({
+        oldUri: oldUri.path,
+        newUri: newUri.path,
+        overwrite: options.overwrite
+      })
+    })
+      .then(resp => resp.json())
+      .then(console.log)
   }
 
   async stat(uri) {
     console.log('stat', uri)
+    fetch(`/api/v1/vscode/state?uri=${uri.path}`)
+      .then(resp => resp.json())
+      .then(console.log)
     return {
       type: uri.path.split('/').pop().includes('.')
         ? vscode.FileType.File
@@ -43,20 +73,31 @@ class VirtualFileSystemProvider {
   }
 
   async readDirectory(uri) {
+    fetch(`/api/v1/vscode/readDirectory?uri=${uri.path.replace(/^\//, '')}`)
+      .then(resp => resp.json())
+      .then(console.log)
     console.log('readDirectory', uri)
-    if (uri.path === rootPath) {
-      return [
-        ['foo', vscode.FileType.Directory],
-        ['bar', vscode.FileType.Directory],
-        ['baz.txt', vscode.FileType.File]
-      ]
-    }
+    // if (uri.path === rootPath) {
+    //   return [
+    //     ['foo', vscode.FileType.Directory],
+    //     ['bar', vscode.FileType.Directory],
+    //     ['baz.txt', vscode.FileType.File]
+    //   ]
+    // }
     // 这里实现读取目录的逻辑
   }
 
   async createDirectory(uri) {
     console.log('createDirectory', uri)
     // 这里实现创建目录的逻辑
+    fetch(`/api/v1/vscode/createDirectory`, {
+      method: 'post',
+      body: JSON.stringify({
+        uri: uri.path
+      })
+    })
+      .then(resp => resp.json())
+      .then(console.log)
   }
 
   watch(uri, options) {

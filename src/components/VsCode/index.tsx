@@ -1,7 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import useSWRImmutable from 'swr/immutable'
 
-export default function Editor() {
-  const vscodeWebIframe = useRef<HTMLIFrameElement>()
+import requests from '@/lib/fetchers'
+
+type HookOption = {
+  relativeDir: string
+}
+
+export default function VsCode({ visible }: { visible: boolean }) {
+  const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
+
+  const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
+
   useEffect(() => {
     console.log('========', vscodeWebIframe)
 
@@ -23,12 +33,14 @@ export default function Editor() {
       sendCommandToVscodeWeb('openFile', { path: '/file.js' })
     }, 6000)
   }, [])
-  return (
+  return visible && data?.relativeDir ? (
     <iframe
       ref={vscodeWebIframe}
-      className="w-100vw h-100vh border-0"
-      src="./vscode/index.html"
+      className="border-0 h-100vh top-0 left-0 w-100vw z-1000 fixed"
+      src={`/vscode/index.html?baseDir=${data?.relativeDir}`}
       title="vscode"
     />
+  ) : (
+    <></>
   )
 }

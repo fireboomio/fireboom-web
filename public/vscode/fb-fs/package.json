@@ -11,7 +11,7 @@
     "Other"
   ],
   "private": true,
-  "publisher": "vscode",
+  "publisher": "fireboom",
   "activationEvents": ["onFileSystem:fbfs"],
   "main": "./extension.js",
   "contributes": {

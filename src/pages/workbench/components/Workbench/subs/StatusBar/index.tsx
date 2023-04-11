@@ -6,6 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
+import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
@@ -74,6 +75,7 @@ const StatusBar: React.FC<Props> = ({
   const { system, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
+  const [vscodeVisible, setVscodeVisible] = useState<boolean>(false)
   const webContainerUrl = useMemo(() => {
     const url = new URL(window.location.href)
     url.port = '9123'
@@ -374,7 +376,16 @@ const StatusBar: React.FC<Props> = ({
             <span className="ml-1 text-[#649FFF]">{compileTime}</span>
           </span>
         </span>
+        <span
+          className="bg-white rounded-sm cursor-pointer ml-auto mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
+          onClick={() => {
+            setVscodeVisible(!vscodeVisible)
+          }}
+        >
+          <FormattedMessage defaultMessage="钩子编辑器⇪" />
+        </span>
       </div>
+      <VsCode visible={vscodeVisible} />
     </div>
   )
 }
