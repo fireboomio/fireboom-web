@@ -15,15 +15,17 @@ import styles from './index.module.less'
 export default function HookPanel({ id }: { id?: string }) {
   const location = useLocation()
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
-  const { apiDesc, query } = useAPIManager(state => ({
+  const { apiDesc, query, operationType } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
-    query: state.query
+    query: state.query,
+    operationType: state.computed.operationType
   }))
   const { schemaAST } = useAPIManager(state => ({
     schemaAST: state.schemaAST
   }))
   const defs =
     (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
+
   const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
     id ? `/operateApi/hooks/${id}` : null,
     requests.get,
@@ -51,7 +53,30 @@ export default function HookPanel({ id }: { id?: string }) {
           mockResolve: 8,
           onConnectionInit: 9
         }[x.name as string] ?? 0)
-    ).filter(x => x.name !== 'mutatingPreResolve' || defs?.length > 0)
+    ).filter(x => {
+      // 无参数的请求不显示 mutatingPreResolve
+      if (x.name === 'mutatingPreResolve' && !defs?.length) {
+        return false
+      }
+      if (operationType === 'subscription') {
+        if (
+          ![
+            'preResolve',
+            'mutatingPostResolve',
+            'mutatingPreResolve',
+            'postResolve',
+            'onConnectionInit'
+          ].includes(x.name)
+        ) {
+          return false
+        }
+      } else {
+        if (x.name === 'onConnectionInit') {
+          return false
+        }
+      }
+      return true
+    })
     return list
   }, [hookInfo, defs])
 
