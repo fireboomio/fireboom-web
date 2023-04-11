@@ -1,0 +1,23 @@
+{
+  "name": "fb-controller",
+  "displayName": "fb-controller",
+  "description": "",
+  "version": "0.0.1",
+  "browser": "./extension",
+  "engines": {
+    "vscode": "^1.48.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "private": true,
+  "publisher": "vscode",
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [{
+      "command": "fb-controller.helloWorld",
+      "title": "Hello World"
+    }]
+  }
+}

@@ -95,7 +95,6 @@ export default function Index(props: PropsWithChildren) {
     setLogs(parseLogs(data))
   })
   useWebSocket('log', 'appendLog', data => {
-    console.log(logs, data)
     setLogs(logs.concat(parseLogs(data)))
   })
   useWebSocket('question', 'getQuestions', data => {
