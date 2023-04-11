@@ -1,7 +1,7 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Form, InputNumber, Select } from 'antd'
+import { Button, Checkbox, Form, InputNumber, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { Profile } from '@/hooks/store/storage'
@@ -24,10 +24,11 @@ interface Props {
 
 export default function ProfileForm({ profile, onSave }: Props) {
   const intl = useIntl()
-  const [form] = useForm()
+  const [form] = useForm<Profile>()
   const maxAllowedUploadSizeBytes = Form.useWatch('maxAllowedUploadSizeBytes', form)
-  const reset = () => {
+  const reset = useCallback(() => {
     form.setFieldsValue({
+      requireAuthentication: profile.requireAuthentication,
       maxAllowedUploadSizeBytes:
         Math.round(((profile.maxAllowedUploadSizeBytes ?? 0) / 1024 / 1024) * 100) / 100,
       allowedMimeTypes: profile.allowedMimeTypes ?? [],
@@ -35,14 +36,14 @@ export default function ProfileForm({ profile, onSave }: Props) {
       metadataJSONSchema: profile.metadataJSONSchema,
       maxAllowedFiles: profile.maxAllowedFiles
     })
-  }
+  }, [profile, form])
   useEffect(() => {
     reset()
-  }, [profile])
+  }, [profile, reset])
 
   return (
     <Form
-      className="common-form"
+      className="common-form overflow-auto"
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 12 }}
       form={form}
@@ -53,6 +54,13 @@ export default function ProfileForm({ profile, onSave }: Props) {
         })
       }}
     >
+      <Form.Item
+        name="requireAuthentication"
+        label={intl.formatMessage({ defaultMessage: '是否需要登录' })}
+        valuePropName="checked"
+      >
+        <Checkbox />
+      </Form.Item>
       <Form.Item
         tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
         label={intl.formatMessage({ defaultMessage: '最大尺寸' })}

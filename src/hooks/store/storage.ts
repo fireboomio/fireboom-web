@@ -15,6 +15,7 @@ export interface StorageConfig {
 }
 
 export interface Profile {
+  requireAuthentication: boolean
   maxAllowedUploadSizeBytes: number
   maxAllowedFiles: number
   allowedMimeTypes: string[]
