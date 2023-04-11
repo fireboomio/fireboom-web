@@ -385,7 +385,7 @@ const StatusBar: React.FC<Props> = ({
           <FormattedMessage defaultMessage="钩子编辑器⇪" />
         </span>
       </div>
-      <VsCode visible={vscodeVisible} />
+      {/* <VsCode visible={vscodeVisible} /> */}
     </div>
   )
 }

@@ -11,10 +11,12 @@ class VirtualFileSystemProvider {
   constructor() {}
 
   async readFile(uri) {
-    console.log('readFile', uri)
-    fetch(`/api/v1/vscode/readFile?uri=${uri.path}`)
+    return fetch(`/api/v1/vscode/readFile?uri=${uri.path.replace(/^\//, '')}`)
       .then(resp => resp.json())
-      .then(console.log)
+      .then(resp => {
+        const str = atob(resp.result)
+        return new TextEncoder().encode(str)
+      })
   }
 
   async writeFile(uri, content, options) {
@@ -73,18 +75,12 @@ class VirtualFileSystemProvider {
   }
 
   async readDirectory(uri) {
-    fetch(`/api/v1/vscode/readDirectory?uri=${uri.path.replace(/^\//, '')}`)
+    const data = fetch(`/api/v1/vscode/readDirectory?uri=${uri.path.replace(/^\//, '')}`)
       .then(resp => resp.json())
-      .then(console.log)
-    console.log('readDirectory', uri)
-    // if (uri.path === rootPath) {
-    //   return [
-    //     ['foo', vscode.FileType.Directory],
-    //     ['bar', vscode.FileType.Directory],
-    //     ['baz.txt', vscode.FileType.File]
-    //   ]
-    // }
-    // 这里实现读取目录的逻辑
+      .then(res => {
+        return res.result.map(file => ([file.Name, file.Type]))
+      })
+      return data
   }
 
   async createDirectory(uri) {
