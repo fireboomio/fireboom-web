@@ -33,5 +33,6 @@ yarn-error.log*
 
 dist/
 !public/vscode/vscode-web/dist/
+!public/vscode/vscode-web/dist/node_modules
 
 lang.zip
