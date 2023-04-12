@@ -32,6 +32,7 @@ type RemoteSDKItem = {
 
 const SDKTemplate = () => {
   const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const [showRemote, setShowRemote] = useState(false)
   const {
     data: remoteSdk,
     isLoading,
@@ -40,11 +41,18 @@ const SDKTemplate = () => {
   } = useSWR<{
     official: RemoteSDKItem[]
     community: RemoteSDKItem[]
-  }>('https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json', proxy)
+  }>(
+    showRemote
+      ? 'https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json'
+      : null,
+    proxy,
+    {
+      revalidateOnMount: true
+    }
+  )
   const existSdkMap = useMemo(() => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])
-  const [showRemote, setShowRemote] = useState(false)
 
   const onUpdate = (index: number, sdk: SDKItem) => {
     mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
