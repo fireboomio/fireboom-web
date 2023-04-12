@@ -9,9 +9,20 @@ const vscode = require('vscode')
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('=======Congratulations, your extension "fb-controller" is now active!')
+  const outChannel = new BroadcastChannel('fb-vscode-out')
+  const inChannel = new BroadcastChannel('fb-vscode-in')
+
+  // outChannel.postMessage('要发送消息啦啦啦啦啦啦啦')
+  // inChannel.onmessage = e => {
+  //   console.log('收到消息啦啦啦啦啦啦啦', e)
+  // }
+  ;(async () => {
+    const db = await openDatabase()
+    // await addMessage(db, 'test')
+
+    const messages = await getMessages(db)
+    console.log('接收到的消息:', messages)
+  })()
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with  registerCommand
@@ -24,6 +35,59 @@ function activate(context) {
   })
 
   context.subscriptions.push(disposable)
+}
+
+async function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('fb-controller', 1)
+
+    request.onerror = event => {
+      reject('Failed to open IndexedDB')
+    }
+
+    request.onsuccess = event => {
+      resolve(event.target.result)
+    }
+
+    request.onupgradeneeded = event => {
+      const db = event.target.result
+      db.createObjectStore('msg', { keyPath: 'id', autoIncrement: true })
+    }
+  })
+}
+
+// 向数据库添加消息
+async function addMessage(db, message) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['msg'], 'readwrite')
+    const objectStore = transaction.objectStore('msg')
+    const request = objectStore.add({ content: message })
+
+    request.onerror = event => {
+      reject('Failed to add message')
+    }
+
+    request.onsuccess = event => {
+      resolve(event.target.result)
+    }
+  })
+}
+
+// 从数据库获取所有消息
+async function getMessages(db) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['msg'], 'readonly')
+    const objectStore = transaction.objectStore('msg')
+    const request = objectStore.getAll()
+
+    request.onerror = event => {
+      reject('Failed to get messages')
+    }
+
+    request.onsuccess = event => {
+      resolve(event.target.result)
+    }
+  })
 }
 
 // This method is called when your extension is deactivated

@@ -26,6 +26,10 @@
     {
       "scheme": "http",
       "path": "/vscode/fb-fs"
+    },
+    {
+      "scheme": "http",
+      "path": "/vscode/fb-controller"
     }
   ]
 }
