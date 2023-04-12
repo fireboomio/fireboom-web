@@ -1,7 +1,6 @@
 const vscode = require('vscode')
 
 const rootPath = vscode.workspace.workspaceFolders
-console.log('=asdasd', rootPath)
 
 function trimPath(str) {
   return str.replace(/^\//, '')
@@ -35,7 +34,6 @@ class VirtualFileSystemProvider {
       method: 'post',
       body: formData
     }).then(resp => {
-      const json = resp.json()
       if (options.create) {
         this._fireSoon({ type: vscode.FileChangeType.Created, uri })
       } else {
@@ -101,7 +99,6 @@ class VirtualFileSystemProvider {
     return fetch(`/api/v1/vscode/state?uri=${trimPath(uri.path)}`)
       .then(resp => resp.json())
       .then(resp => {
-        console.log('stat', resp)
         return resp
       })
       .catch(resp => {
@@ -114,7 +111,6 @@ class VirtualFileSystemProvider {
   }
 
   async createDirectory(uri) {
-    console.log('createDirectory', uri)
     // 这里实现创建目录的逻辑
     return fetch(`/api/v1/vscode/createDirectory`, {
       method: 'post',
@@ -134,7 +130,6 @@ class VirtualFileSystemProvider {
   }
 
   watch(uri, options) {
-    console.log('watch', uri, options)
     // 这里实现监听文件变化的逻辑
     return new vscode.Disposable(() => {})
   }
@@ -186,9 +181,7 @@ class VirtualFileSystemProvider {
     return haystack.substring(0, offset)
   }
 }
-
 function activate(context) {
-  console.log('-=-------')
   const virtualFileSystemProvider = new VirtualFileSystemProvider()
   const scheme = 'fbfs'
   const disposable = vscode.workspace.registerFileSystemProvider(

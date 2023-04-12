@@ -175,6 +175,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <>
             {content.sourceType !== 4 ? (
               <Switch
+                disabled={content.readonly}
                 loading={loading}
                 checked={content?.enabled}
                 checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
