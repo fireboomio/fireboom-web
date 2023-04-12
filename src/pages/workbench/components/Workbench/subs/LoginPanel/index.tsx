@@ -1,12 +1,13 @@
 import { message } from 'antd'
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import ReactJson from 'react-json-view'
 import { useLocation } from 'react-router-dom'
 import useSWRMutation from 'swr/mutation'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
-import requests, { getHeader } from '@/lib/fetchers'
+import { ConfigContext } from '@/lib/context/ConfigContext'
+import { getHeader } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
 import fireBg from './assets/fire.svg'
@@ -14,14 +15,18 @@ import logoutIcon from './assets/logout.svg'
 import styles from './index.module.less'
 
 export default function LoginPanel() {
-  const { data: userInfo, trigger } = useSWRMutation<any>('/oidc/userInfo', (key: string) => {
-    return requests.get(key)
-  })
+  const { system } = useContext(ConfigContext)
+  const { data: userInfo, trigger } = useSWRMutation<any>(
+    `${system.apiPublicAddr}/auth/cookie/user`,
+    (key: string) => {
+      return axios.get(key, { withCredentials: true }).then(res => res.data)
+    }
+  )
   const { search } = useLocation()
   useEffect(() => {
     trigger()
     mutateAuth()
-  }, [search])
+  }, [search, trigger])
   const doLogout = () => {
     axios
       .get('/auth/cookie/user/logout', {
