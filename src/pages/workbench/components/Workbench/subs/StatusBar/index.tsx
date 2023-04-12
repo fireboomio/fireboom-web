@@ -6,7 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
-import VsCode from '@/components/VsCode'
+// import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
