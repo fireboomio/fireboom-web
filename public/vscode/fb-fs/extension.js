@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 
 const rootPath = vscode.workspace.workspaceFolders
+console.log('=asdasd', rootPath)
 
 function trimPath(str) {
   return str.replace(/^\//, '')
@@ -78,6 +79,21 @@ class VirtualFileSystemProvider {
         { type: vscode.FileChangeType.Deleted, uri: oldUri },
         { type: vscode.FileChangeType.Created, uri: newUri }
       )
+    })
+  }
+  async copy(source, destination, options) {
+    return fetch(`/api/v1/vscode/copy`, {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify({
+        source: trimPath(source.path),
+        destination: trimPath(destination.path),
+        overwrite: options.overwrite
+      })
+    }).then(resp => {
+      this._fireSoon({ type: vscode.FileChangeType.Created, destination })
     })
   }
 
