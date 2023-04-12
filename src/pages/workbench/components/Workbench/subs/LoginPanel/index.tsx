@@ -29,7 +29,7 @@ export default function LoginPanel() {
   }, [search, trigger])
   const doLogout = () => {
     axios
-      .get('/auth/cookie/user/logout', {
+      .get(`${system.apiPublicAddr}/auth/cookie/user/logout`, {
         headers: getHeader(),
         params: { logout_openid_connect_provider: 'true' }
       })
