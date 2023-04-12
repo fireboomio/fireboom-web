@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
+import { useEffect, useRef } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
@@ -7,7 +8,15 @@ type HookOption = {
   relativeDir: string
 }
 
-export default function VsCode({ visible }: { visible: boolean }) {
+export default function VsCode({
+  visible,
+  className,
+  style
+}: {
+  visible: boolean
+  className?: string
+  style?: CSSProperties
+}) {
   const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
 
   const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
@@ -36,9 +45,10 @@ export default function VsCode({ visible }: { visible: boolean }) {
   return visible && data?.relativeDir ? (
     <iframe
       ref={vscodeWebIframe}
-      className="border-0 h-100vh top-0 left-0 w-100vw z-1000 fixed"
+      className={`border-0 h-full top-0 left-0 w-full ${className}`}
       src={`/vscode/index.html?baseDir=${data?.relativeDir}`}
       title="vscode"
+      style={style}
     />
   ) : (
     <></>

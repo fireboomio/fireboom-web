@@ -6,7 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
-// import VsCode from '@/components/VsCode'
+import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
@@ -25,6 +25,7 @@ interface Props {
   startTime?: string
   engineStatus?: ServiceStatus
   hookStatus?: HookStatus
+  menuWidth: number
   toggleWindow: (defaultTa: string) => void
 }
 
@@ -34,6 +35,7 @@ const StatusBar: React.FC<Props> = ({
   startTime,
   engineStatus,
   hookStatus,
+  menuWidth,
   toggleWindow,
   commit,
   version
@@ -80,7 +82,7 @@ const StatusBar: React.FC<Props> = ({
     const url = new URL(window.location.href)
     url.port = '9123'
     return url.origin + '/ws'
-  }, [window.location])
+  }, [])
   useEffect(() => {
     if (system.hooksServerURL === webContainerUrl) {
       setHookEnabled(1)
@@ -90,7 +92,7 @@ const StatusBar: React.FC<Props> = ({
       localStorage.setItem('hooksServerURL', system.hooksServerURL)
       setHookEnabled(3)
     }
-  }, [system.hooksServerURL, showHookSetting])
+  }, [system.hooksServerURL, showHookSetting, webContainerUrl])
   useEffect(() => {
     if (showHookSetting) {
       fetchHookOptionStatus(hooksServerURL ?? '')
@@ -385,7 +387,15 @@ const StatusBar: React.FC<Props> = ({
           <FormattedMessage defaultMessage="钩子编辑器⇪" />
         </span>
       </div>
-      {/* <VsCode visible={vscodeVisible} /> */}
+      <VsCode
+        className="top-9 z-1000 fixed"
+        visible={vscodeVisible}
+        style={{
+          left: `${menuWidth}px`,
+          width: `calc(100vw - ${menuWidth}px)`,
+          height: `calc(100vh - 64px)`
+        }}
+      />
     </div>
   )
 }
