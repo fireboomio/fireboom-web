@@ -1,9 +1,8 @@
 import { App, message, Modal, Tooltip } from 'antd'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useAuthList } from '@/hooks/store/auth'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -81,9 +80,6 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isHideSide } = useContext(WorkbenchContext)
-  const authList = useAuthList()
-
-  const [open, setOpen] = useState(false)
 
   const compiling =
     props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
@@ -227,7 +223,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </svg>
         </Tooltip> */}
         <div
-          className="cursor-pointer flex-0 h-5 text-0px w-4 mb-1px"
+          className="cursor-pointer flex-0 h-5 mb-1px text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
         >
           <img src={iconGithub} alt="" />
@@ -239,7 +235,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           <img src={iconQuestion} alt="" />
         </div>
         <Tooltip title={intl.formatMessage({ defaultMessage: '快捷键' })}>
-          <div className="ml-4 h-5 flex items-center cursor-pointer" onClick={showHotkey}>
+          <div className="cursor-pointer flex h-5 ml-4 items-center" onClick={showHotkey}>
             <img src={iconKeyboard} alt="" />
           </div>
         </Tooltip>

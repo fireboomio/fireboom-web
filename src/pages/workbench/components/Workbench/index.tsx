@@ -33,6 +33,8 @@ const ModelingWrapper = React.lazy(
 const Window = React.lazy(() => import('@/pages/workbench/components/Workbench/subs/Window'))
 const { Header: AHeader, Footer: AFooter, Sider: ASider, Content: AContent } = ALayout
 
+const MENU_WIDTH = 230
+
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [info, setInfo] = useState<Info>({
@@ -58,7 +60,7 @@ export default function Index(props: PropsWithChildren) {
     dataSource: false,
     storage: false
   })
-  const { setLogs, logs, questions, setQuestions } = useGlobal(state => ({
+  const { setLogs, logs, setQuestions } = useGlobal(state => ({
     logs: state.logs,
     setLogs: state.setLogs,
     questions: state.questions,
@@ -111,7 +113,6 @@ export default function Index(props: PropsWithChildren) {
 
   useEffect(() => {
     const controller = new AbortController()
-    const signal = controller.signal
     const headers = new Headers()
     headers.set('X-FB-Authentication', getAuthKey() ?? '')
 
@@ -145,7 +146,7 @@ export default function Index(props: PropsWithChildren) {
         onCancel: () => resolve(false)
       })
     })
-  }, [editFlag])
+  }, [editFlag, intl, modal])
 
   const body = (
     <ALayout className={`h-100vh ${styles.workbench}`}>
@@ -159,8 +160,8 @@ export default function Index(props: PropsWithChildren) {
       )}
       <ALayout>
         <ASider
-          width={230}
-          style={{ marginLeft: hideSider || fullScreen ? -230 : 0 }}
+          width={MENU_WIDTH}
+          style={{ marginLeft: hideSider || fullScreen ? -1 * MENU_WIDTH : 0 }}
           theme="light"
           className={styles.sider}
         >
@@ -189,6 +190,7 @@ export default function Index(props: PropsWithChildren) {
             startTime={info?.startTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
+            menuWidth={fullScreen ? 0 : MENU_WIDTH}
             toggleWindow={(defaultTab: string) => {
               setDefaultWindowTab(defaultTab)
               setShowWindow(!showWindow)
@@ -224,6 +226,7 @@ export default function Index(props: PropsWithChildren) {
           navCheck,
           setFullscreen: setFullScreen,
           isFullscreen: fullScreen,
+          menuWidth: fullScreen ? 0 : MENU_WIDTH,
           setHideSide: setHideSider,
           isHideSide: hideSider
           // treeNode: []
@@ -254,13 +257,4 @@ function parseLogs(logs: string[]) {
     }
   })
   return result
-}
-
-function parseLog(log: string) {
-  const [, time, level, msg] = log.match(/([^Z]+?Z) (\w+) (.*)/) || []
-  return {
-    time: dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
-    level,
-    msg
-  }
 }
