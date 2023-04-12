@@ -15,7 +15,7 @@ export default function RapiFrame() {
   const [params] = useSearchParams()
   const { system: config } = useContext(ConfigContext)
   const { search } = useLocation()
-  const customServerUrl = `${location.origin}`
+  const customServerUrl = config.apiPublicAddr
 
   // const customServerUrl =
   //   'http://localhost:3000/api/v1/common/proxy?url=' + encodeURIComponent('http://localhost:9991')

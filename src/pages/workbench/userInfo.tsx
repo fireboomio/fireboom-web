@@ -1,10 +1,11 @@
 import { loader } from '@monaco-editor/react'
 import { Button, message } from 'antd'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 
+import { ConfigContext } from '@/lib/context/ConfigContext'
 import { getHeader } from '@/lib/fetchers'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
@@ -12,12 +13,17 @@ loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 export default function UserInfo() {
   const [info, setInfo] = useState()
   const intl = useIntl()
+  const { system } = useContext(ConfigContext)
 
   useEffect(() => {
-    axios.get('/api/v1/oidc/userInfo').then(info => {
-      setInfo(info.data)
-    })
-  }, [])
+    axios
+      .get(`${system.apiPublicAddr}/auth/cookie/user`, {
+        withCredentials: true
+      })
+      .then(info => {
+        setInfo(info.data)
+      })
+  }, [system.apiPublicAddr])
 
   const handleLogout = () => {
     axios
