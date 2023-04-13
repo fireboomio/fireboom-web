@@ -81,8 +81,8 @@ export default function ProfileForm({ profile, onSave }: Props) {
         </div>
       </Form.Item>
       <Form.Item
-        tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
-        label={intl.formatMessage({ defaultMessage: '文件数量' })}
+        tooltip={intl.formatMessage({ defaultMessage: '仅SDK限制，输入-1禁用限制' })}
+        label={intl.formatMessage({ defaultMessage: '文件数量限制' })}
         name="maxAllowedFiles"
       >
         <InputNumber
