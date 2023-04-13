@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import UrlInput from '@/components/UrlInput'
+import type { GlobalSetting } from '@/interfaces/global'
 import { HttpRequestHeaders } from '@/lib/constant'
 import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
@@ -13,10 +14,13 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const [form] = Form.useForm()
   const allowedOriginsEnabled = Form.useWatch('allowedOriginsEnabled', form)
-  const { data: globalConfig, mutate } = useSWRImmutable('/setting/global', requests.get)
+  const { data: globalConfig, mutate } = useSWRImmutable<GlobalSetting>(
+    '/setting/global',
+    requests.get
+  )
   useEffect(() => {
     form.resetFields()
-  }, [globalConfig])
+  }, [form, globalConfig])
   if (!globalConfig) {
     return
   }
@@ -65,7 +69,7 @@ export default function SettingMainVersion() {
             <Form.Item noStyle name="allowedOriginsEnabled" valuePropName="checked">
               <Switch />
             </Form.Item>
-            <span className="align-middle ml-2">允许全部</span>
+            <span className="ml-2 align-middle">允许全部</span>
           </div>
         </Form.Item>
         <Form.List name="allowedOrigins">
@@ -81,7 +85,7 @@ export default function SettingMainVersion() {
                     <UrlInput />
                   </Form.Item>
                   <MinusCircleOutlined
-                    className="absolute right-0 top-0 mt-2 -mr-6"
+                    className="mt-2 -mr-6 top-0 right-0 absolute"
                     onClick={() => remove(field.name)}
                   />
                 </Form.Item>

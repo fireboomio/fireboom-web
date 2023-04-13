@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import UrlInput from '@/components/UrlInput'
+import type { GlobalSetting } from '@/interfaces/global'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests from '@/lib/fetchers'
 import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
@@ -25,7 +26,7 @@ export default function SettingMainVersion() {
   const [form] = Form.useForm<Security>()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
-  const { data: global, mutate } = useSWRImmutable<any>('/setting/global', requests.get)
+  const { data: global, mutate } = useSWRImmutable<GlobalSetting>('/setting/global', requests.get)
 
   useEffect(() => {
     form.resetFields()
