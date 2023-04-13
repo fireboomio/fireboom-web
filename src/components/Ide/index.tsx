@@ -185,7 +185,7 @@ const IdeContainer: FC<Props> = props => {
     } else if (path.startsWith('auth/')) {
       return getDefaultCode(`auth.${name}`)
     } else if (path.startsWith('customize/')) {
-      return getDefaultCode('custom')
+      return (await getDefaultCode('custom')).replace('$CUSTOMIZE_NAME$', name!)
     } else if (path.startsWith('uploads/')) {
       const profileName = list.pop() as string
       const storageName = list.pop() as string
