@@ -7,6 +7,7 @@ import useSWRMutation from 'swr/mutation'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { getHeader } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
@@ -16,6 +17,7 @@ import styles from './index.module.less'
 
 export default function LoginPanel() {
   const { system } = useContext(ConfigContext)
+  const { logout } = useContext(WorkbenchContext)
   const { data: userInfo, trigger } = useSWRMutation<any>(
     `${system.apiPublicAddr}/auth/cookie/user`,
     (key: string) => {
@@ -28,20 +30,9 @@ export default function LoginPanel() {
     mutateAuth()
   }, [search, trigger])
   const doLogout = () => {
-    axios
-      .get(`${system.apiPublicAddr}/auth/cookie/user/logout`, {
-        headers: getHeader(),
-        params: { logout_openid_connect_provider: 'true' }
-      })
-      .then(async res => {
-        const url = res.data?.redirect
-        message.success(intl.formatMessage({ defaultMessage: '退出成功' }))
-        if (url) {
-          axios.get(url).finally(() => trigger())
-        } else {
-          trigger()
-        }
-      })
+    logout(system.apiPublicAddr).then(async res => {
+      location.reload()
+    })
   }
   const doLogin = (auth: any) => {
     // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整

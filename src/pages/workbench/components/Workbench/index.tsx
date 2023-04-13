@@ -1,7 +1,9 @@
 import { App, Layout as ALayout, message } from 'antd'
+import { ConfigContext } from 'antd/es/config-provider'
+import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -17,7 +19,7 @@ import type {
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
-import { getAuthKey } from '@/lib/fetchers'
+import { getAuthKey, getHeader } from '@/lib/fetchers'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
@@ -51,6 +53,7 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
+  const { system } = useContext(ConfigContext)
 
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
@@ -148,6 +151,33 @@ export default function Index(props: PropsWithChildren) {
     })
   }, [editFlag, intl, modal])
 
+  const logout = useCallback(
+    (apiPublicAddr: string) => {
+      return axios
+        .get(`${apiPublicAddr}/auth/cookie/user/logout`, {
+          headers: getHeader(),
+          params: { logout_openid_connect_provider: 'true' },
+          withCredentials: true
+        })
+        .then(res => {
+          message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
+          const redirect = res.data?.redirect
+          if (redirect) {
+            const iframe = document.createElement('iframe')
+            iframe.src = redirect
+            document.body.appendChild(iframe)
+            setTimeout(() => {
+              document.body.removeChild(iframe)
+            }, 5000)
+          }
+          setTimeout(() => {
+            window.close()
+          }, 3000)
+        })
+    },
+    [intl]
+  )
+
   const body = (
     <ALayout className={`h-100vh ${styles.workbench}`}>
       {!fullScreen && (
@@ -228,7 +258,8 @@ export default function Index(props: PropsWithChildren) {
           isFullscreen: fullScreen,
           menuWidth: fullScreen ? 0 : MENU_WIDTH,
           setHideSide: setHideSider,
-          isHideSide: hideSider
+          isHideSide: hideSider,
+          logout
           // treeNode: []
         }}
       >
