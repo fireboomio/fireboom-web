@@ -59,7 +59,7 @@ export default function VsCode({
   const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
   const language = data?.language
   useEffect(() => {
-    if (!language || !vscode.options.currentPath) {
+    if (!language || !vscode?.options?.currentPath) {
       return
     }
     resolveDefaultCode(
@@ -73,7 +73,7 @@ export default function VsCode({
         }
       })
     })
-  }, [vscode.options, language])
+  }, [vscode?.options, language])
 
   useEffect(() => {
     const outChannel = new BroadcastChannel('fb-vscode-out')
@@ -94,9 +94,10 @@ export default function VsCode({
       // sendCommandToVscodeWeb('openFile', { path: '/file.js' })
     }, 6000)
   }, [])
-  return vscode.options.visible && data?.relativeDir ? (
+  return vscode?.options?.visible && data?.relativeDir ? (
     <iframe
       ref={vscodeWebIframe}
+      data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
       className={`border-0 h-full top-0 left-0 w-full ${className}`}
       src={`/vscode/index.html?baseDir=${data?.relativeDir}`}
       title="vscode"
