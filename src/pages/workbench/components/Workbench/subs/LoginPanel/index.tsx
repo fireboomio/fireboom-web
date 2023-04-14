@@ -59,7 +59,7 @@ export default function LoginPanel() {
         {userInfo ? userInfo.providerId : intl.formatMessage({ defaultMessage: '未登录' })}
       </span>
       <div className={styles.panel}>
-        {userInfo?.userId ? (
+        {userInfo ? (
           <div className={styles.userInfo}>
             <img src={fireBg} alt="" className={styles.fireBg} />
             <div className={styles.head}>
