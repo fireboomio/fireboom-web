@@ -5,7 +5,7 @@ import useSWRImmutable from 'swr/immutable'
 import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import { saveHookScript } from '@/lib/service/hook'
+import { getHook, saveHookScript } from '@/lib/service/hook'
 
 type HookOption = {
   relativeDir: string
@@ -67,7 +67,11 @@ export default function VsCode({
       !!vscode.options.config?.hasParam,
       language
     ).then(code => {
-      saveHookScript(vscode.options.currentPath, code)
+      getHook(vscode.options.currentPath).then(hook => {
+        if (!hook?.script) {
+          saveHookScript(vscode.options.currentPath, code)
+        }
+      })
     })
   }, [vscode.options, language])
 
