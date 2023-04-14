@@ -406,7 +406,7 @@ const StatusBar: React.FC<Props> = ({
         <span
           className="bg-white rounded-sm cursor-pointer ml-auto mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
           onClick={() => {
-            vscode.options.visible ? vscode.hide() : vscode.show()
+            vscode?.options?.visible ? vscode.hide() : vscode.show()
           }}
         >
           <FormattedMessage defaultMessage="钩子编辑器⇪" />

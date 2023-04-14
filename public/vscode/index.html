@@ -13,7 +13,6 @@
   <!-- Disable pinch zooming -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 
-  <meta id="vscode-workbench-auth-session" data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'>
   <!-- Workbench Icon/Manifest/CSS -->
 <!--  <link rel="icon" href="/favicon.ico" type="image/x-icon" />-->
 <!--  <link rel="manifest" href="/manifest.json">-->
@@ -28,6 +27,42 @@
 <script src="./vscode-web/dist/out/vs/loader.js"></script>
 <script src="./vscode-web/dist/out/vs/webPackagePaths.js"></script>
 <script>
+  window.product = {
+    "productConfiguration": {
+      "nameShort": "fb-editor",
+      "nameLong": "fb-editor",
+      "applicationName": "code-web-sample",
+      "dataFolderName": ".vscode-web-sample",
+      "version": "1.75.0",
+      "extensionsGallery": {
+        "serviceUrl": "https://open-vsx.org/vscode/gallery",
+        "itemUrl": "https://open-vsx.org/vscode/item",
+        "resourceUrlTemplate":
+          "https://openvsxorg.blob.core.windows.net/resources/{publisher}/{name}/{version}/{path}"
+      },
+      "extensionEnabledApiProposals": {
+        "vscode.vscode-web-playground": [
+          "fileSearchProvider",
+          "textSearchProvider"
+        ]
+      }
+    },
+    "folderUri": {
+      "scheme": "fbfs",
+      "path": "/custom-ts"
+    },
+    "additionalBuiltinExtensions": [
+      {
+        "scheme": "http",
+        "path": "/vscode/fb-fs"
+      },
+      {
+        "scheme": "http",
+        "path": "/vscode/fb-controller"
+      }
+    ]
+  }
+
   Object.keys(self.webPackagePaths).map(function (key, index) {
     self.webPackagePaths[key] = `${window.location.origin}/vscode/vscode-web/dist/node_modules/${key}/${self.webPackagePaths[key]}`;
   });
