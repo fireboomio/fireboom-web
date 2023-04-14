@@ -1,9 +1,10 @@
 import type { OperationDefinitionNode } from 'graphql/index'
 import { sortBy, values } from 'lodash'
-import React, { useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
@@ -15,6 +16,8 @@ import styles from './index.module.less'
 export default function HookPanel({ id }: { id?: string }) {
   const location = useLocation()
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
+
+  const { vscode } = useContext(WorkbenchContext)
   const { apiDesc, query, operationType } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
     query: state.query,
@@ -95,7 +98,8 @@ export default function HookPanel({ id }: { id?: string }) {
             className={`${styles.line} ${hook.enabled ? styles.active : ''}`}
             key={hook.name}
             onClick={() => {
-              setEditingHook(hook)
+              vscode.show(hook.path, { hasParam: !!(query ?? '').match(/\(\$\w+/) })
+              // setEditingHook(hook)
             }}
           >
             <div className={styles.iconWrapper}>

@@ -61,6 +61,10 @@ export default defineConfig({
         target: backendUrl,
         changeOrigin: true
       },
+      '^/app/main': {
+        target: backendUrl,
+        changeOrigin: true
+      },
       '^/d': {
         target: backendUrl,
         changeOrigin: true

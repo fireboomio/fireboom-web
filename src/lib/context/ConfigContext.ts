@@ -6,6 +6,7 @@ export type SystemConfigType = {
   apiListenHost: string
   apiListenPort: string
   hooksServerURL: string
+  hooksServerLanguage: string
   debugEnabled: boolean
   isDev: boolean
   forcedJumpEnabled: boolean

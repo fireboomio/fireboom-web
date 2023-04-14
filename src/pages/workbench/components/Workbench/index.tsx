@@ -53,6 +53,12 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
+
+  const [vscode, setVscode] = useState<{ visible: boolean; currentPath: string; config: any }>({
+    visible: false,
+    currentPath: '',
+    config: {}
+  })
   const { system } = useContext(ConfigContext)
 
   // context
@@ -241,6 +247,23 @@ export default function Index(props: PropsWithChildren) {
     return (
       <WorkbenchContext.Provider
         value={{
+          vscode: {
+            options: vscode,
+            hide: () => {
+              setVscode({
+                visible: false,
+                currentPath: '',
+                config: {}
+              })
+            },
+            show: (path?: string, config?: any) => {
+              setVscode({
+                visible: true,
+                currentPath: path ?? '',
+                config: config ?? {}
+              })
+            }
+          },
           engineStatus: info?.engineStatus,
           triggerPageEvent: (event: WorkbenchEvent) => {
             listener.current?.(event)

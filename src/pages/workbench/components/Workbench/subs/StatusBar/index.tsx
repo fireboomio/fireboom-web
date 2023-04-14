@@ -1,14 +1,16 @@
 /* eslint-disable react/prop-types */
-import { Radio, Space, Tag, Tooltip } from 'antd'
+import { Dropdown, Radio, Space, Tag, Tooltip } from 'antd'
 import { throttle } from 'lodash'
-import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
+import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
@@ -77,12 +79,13 @@ const StatusBar: React.FC<Props> = ({
   const { system, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
-  const [vscodeVisible, setVscodeVisible] = useState<boolean>(false)
+  const { vscode } = useContext(WorkbenchContext)
   const webContainerUrl = useMemo(() => {
     const url = new URL(window.location.href)
     url.port = '9123'
     return url.origin + '/ws'
   }, [])
+  const { data: hookOptionAll } = useSWRImmutable('hook/optionAll', requests.get)
   useEffect(() => {
     if (system.hooksServerURL === webContainerUrl) {
       setHookEnabled(1)
@@ -137,6 +140,14 @@ const StatusBar: React.FC<Props> = ({
     window.open('https://stackblitz.com/local', '_blank')
   }, [])
 
+  const changeHookLanguage = async (val: string) => {
+    await requests.put('/setting/system', {
+      values: [{ key: 'system.hooksServerLanguage', val }]
+    })
+    mutate('/hook/option')
+    refreshConfig()
+  }
+
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -155,7 +166,6 @@ const StatusBar: React.FC<Props> = ({
               <span className="">{version}</span>
             </Tooltip>
           </span>
-
           <span
             onClick={() => {
               toggleWindow('0')
@@ -360,6 +370,22 @@ const StatusBar: React.FC<Props> = ({
               </>
             )}
           </span>
+          钩子语言:
+          <Dropdown
+            menu={{
+              items: hookOptionAll?.map(item => ({
+                key: item.language,
+                label: item.language,
+                onClick: () => {
+                  changeHookLanguage(item.language)
+                }
+              }))
+            }}
+          >
+            <span className={styles.errLabel + ' mr-2 cursor-pointer'}>
+              <span>{system.hooksServerLanguage}</span>
+            </span>
+          </Dropdown>
           <span
             className={styles.errLabel + ' mr-2 cursor-pointer'}
             onClick={() => navigate('/workbench/sdk-template')}
@@ -373,7 +399,6 @@ const StatusBar: React.FC<Props> = ({
           <span className="ml-4.5">
             <FormattedMessage defaultMessage="编译时间" />:{' '}
           </span>
-
           <span className={styles.errLabel}>
             <span className="ml-1 text-[#649FFF]">{compileTime}</span>
           </span>
@@ -381,7 +406,7 @@ const StatusBar: React.FC<Props> = ({
         <span
           className="bg-white rounded-sm cursor-pointer ml-auto mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
           onClick={() => {
-            setVscodeVisible(!vscodeVisible)
+            vscode.options.visible ? vscode.hide() : vscode.show()
           }}
         >
           <FormattedMessage defaultMessage="钩子编辑器⇪" />
@@ -389,7 +414,6 @@ const StatusBar: React.FC<Props> = ({
       </div>
       <VsCode
         className="top-9 z-1000 fixed"
-        visible={vscodeVisible}
         style={{
           left: `${menuWidth}px`,
           width: `calc(100vw - ${menuWidth}px)`,
