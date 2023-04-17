@@ -455,6 +455,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   src={jwksObj}
                   iconStyle="triangle"
                   name={false}
+                  style={{
+                    wordBreak: 'break-word'
+                  }}
                 />
               </Form.Item>
             ) : (

@@ -8,7 +8,6 @@ import useSWRMutation from 'swr/mutation'
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import { getHeader } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
 import fireBg from './assets/fire.svg'
@@ -74,6 +73,9 @@ export default function LoginPanel() {
                 src={userInfo}
                 iconStyle="triangle"
                 name={false}
+                style={{
+                  wordBreak: 'break-word'
+                }}
               />
             </div>
           </div>

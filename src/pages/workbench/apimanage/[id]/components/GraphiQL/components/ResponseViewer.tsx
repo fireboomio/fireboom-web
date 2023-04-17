@@ -23,7 +23,17 @@ const ResponseViewer = () => {
     return 2
   }, [json])
 
-  return <ReactJson src={json} iconStyle="triangle" collapsed={collapsedDeepth} name={false} />
+  return (
+    <ReactJson
+      src={json}
+      iconStyle="triangle"
+      collapsed={collapsedDeepth}
+      name={false}
+      style={{
+        wordBreak: 'break-word'
+      }}
+    />
+  )
 }
 
 export default ResponseViewer
