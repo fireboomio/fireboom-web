@@ -116,7 +116,8 @@ export default function FileList({
       title: intl.formatMessage({ defaultMessage: '修改时间' }),
       dataIndex: 'modifyTime',
       key: 'modifyTime',
-      width: 180
+      width: 180,
+      render: v => new Date(v).toLocaleString()
     },
     {
       title: intl.formatMessage({ defaultMessage: '权限' }),
@@ -176,7 +177,7 @@ export default function FileList({
           value={path}
           readOnly
         />
-        <Upload {...upProps} className="m-auto h-6 ml-3 w-20 cursor-pointer">
+        <Upload {...upProps} className="cursor-pointer m-auto h-6 ml-3 w-20">
           <div className="flex items-center justify-center">
             <Image
               rootClassName="mr-1"
