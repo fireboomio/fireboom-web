@@ -1,15 +1,31 @@
+import type { MouseEventHandler } from 'react'
+
 import statusOff from './assets/status-off.svg'
 import statusOn from './assets/status-on.svg'
 
 interface StatusDirectiveProps {
+  className?: string
   enabled: boolean
   label: string
+  onToggleEnabled?: (enabled: boolean) => void
   onClick?: () => void
 }
 
-const StatusDirective = ({ enabled, label, onClick }: StatusDirectiveProps) => {
+const StatusDirective = ({
+  className,
+  enabled,
+  label,
+  onToggleEnabled,
+  onClick
+}: StatusDirectiveProps) => {
+  const _onToggleEnabled: MouseEventHandler<HTMLImageElement> = e => {
+    e.stopPropagation()
+    onToggleEnabled?.(!enabled)
+  }
+
   return (
     <div
+      className={className}
       onClick={onClick}
       style={{
         cursor: 'pointer',
@@ -29,13 +45,15 @@ const StatusDirective = ({ enabled, label, onClick }: StatusDirectiveProps) => {
         // lineHeight: '20px',
       }}
     >
-      <img
-        src={enabled ? statusOn : statusOff}
-        width="14"
-        height="14"
-        style={{ marginRight: '2px', verticalAlign: 'sub' }}
-        alt=""
-      />
+      <span className="mr-1" onClick={_onToggleEnabled}>
+        <img
+          src={enabled ? statusOn : statusOff}
+          width="14"
+          height="14"
+          style={{ marginRight: '2px', verticalAlign: 'sub' }}
+          alt=""
+        />
+      </span>
       {label}
     </div>
   )

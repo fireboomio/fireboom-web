@@ -659,6 +659,7 @@ const FlowChart = ({
             enabled={hookState.preResolve.enabled}
             label="preResolve"
             onClick={() => onEditHook?.(hookState.preResolve)}
+            onToggleEnabled={console.log}
           />
         ),
         x: 290,
@@ -673,6 +674,7 @@ const FlowChart = ({
             enabled={hookState.customResolve.enabled}
             label="customResolve"
             onClick={() => onEditHook?.(hookState.customResolve)}
+            onToggleEnabled={console.log}
           />
         ),
         x: 290,
@@ -690,6 +692,7 @@ const FlowChart = ({
             enabled={hookState.mutatingPreResolve.enabled}
             label="mutatingPreResolve"
             onClick={() => onEditHook?.(hookState.mutatingPreResolve)}
+            onToggleEnabled={console.log}
           />
         ),
         x: 280,
@@ -744,6 +747,7 @@ const FlowChart = ({
                 enabled={globalHookState.onRequest.enabled}
                 label="onRequest"
                 onClick={() => onEditHook?.(globalHookState.onRequest)}
+                onToggleEnabled={console.log}
               />
             ),
             x: 290,
@@ -786,6 +790,7 @@ const FlowChart = ({
               enabled={globalHookState.onResponse.enabled}
               label="onResponse"
               onClick={() => onEditHook?.(globalHookState.onResponse)}
+              onToggleEnabled={console.log}
             />
           ),
           x: 290,
@@ -851,6 +856,7 @@ const FlowChart = ({
               enabled={hookState.postResolve.enabled}
               label="postResolve"
               onClick={() => onEditHook?.(hookState.postResolve)}
+              onToggleEnabled={console.log}
             />
           ),
           x: 290,
@@ -865,6 +871,7 @@ const FlowChart = ({
               enabled={hookState.mutatingPostResolve.enabled}
               label="mutatingPostResolve"
               onClick={() => onEditHook?.(hookState.mutatingPostResolve)}
+              onToggleEnabled={console.log}
             />
           ),
           x: 280,

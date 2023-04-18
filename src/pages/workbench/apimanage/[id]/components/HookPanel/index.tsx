@@ -9,9 +9,7 @@ import requests from '@/lib/fetchers'
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 
-import iconOff from './assets/off.svg'
-import iconOn from './assets/on.svg'
-import styles from './index.module.less'
+import StatusDirective from '../APIFlowChart/StatusDirective'
 
 export default function HookPanel({ id }: { id?: string }) {
   const location = useLocation()
@@ -94,19 +92,17 @@ export default function HookPanel({ id }: { id?: string }) {
     <>
       <div className="pt-2.5 w-45">
         {hookList.map((hook: any) => (
-          <div
-            className={`${styles.line} ${hook.enabled ? styles.active : ''}`}
+          <StatusDirective
             key={hook.name}
+            className="!bg-transparent !border-transparent !rounded-none !my-1.5 !px-3"
+            enabled={hook.enabled}
+            label={hook.name}
             onClick={() => {
               vscode.show(hook.path, { hasParam: !!(query ?? '').match(/\(\$\w+/) })
               // setEditingHook(hook)
             }}
-          >
-            <div className={styles.iconWrapper}>
-              <img alt="" src={hook.enabled ? iconOn : iconOff} />
-            </div>
-            {hook.name}
-          </div>
+            onToggleEnabled={console.log}
+          />
         ))}
       </div>
       {editingHook && (

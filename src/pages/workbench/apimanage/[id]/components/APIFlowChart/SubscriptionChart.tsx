@@ -456,6 +456,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(globalHookState.onConnectionInit)
               }}
+              onToggleEnabled={console.log}
             />
           ),
           x: 50,
@@ -488,6 +489,7 @@ const SubscriptionChart = ({
             onClick={() => {
               onEditHook?.(hookState.preResolve)
             }}
+            onToggleEnabled={console.log}
           />
         ),
         x: 4,
@@ -507,6 +509,7 @@ const SubscriptionChart = ({
             onClick={() => {
               onEditHook?.(hookState.mutatingPreResolve)
             }}
+            onToggleEnabled={console.log}
           />
         ),
         x: 4,
@@ -538,6 +541,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(hookState.mutatingPostResolve)
               }}
+              onToggleEnabled={console.log}
             />
           ),
           x: 288,
@@ -554,6 +558,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(hookState.postResolve)
               }}
+              onToggleEnabled={console.log}
             />
           ),
           x: 288,
