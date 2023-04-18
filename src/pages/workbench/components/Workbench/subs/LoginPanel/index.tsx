@@ -33,7 +33,8 @@ export default function LoginPanel() {
       location.reload()
     })
   }
-  const doLogin = (auth: any) => {
+  const toggleLogin = async (auth: any) => {
+    await logout(system.apiPublicAddr, { closeWindow: false })
     // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
     const callbackURL = new URL(location.toString())
     callbackURL.hash = '#/workbench/rapi/loginBack'
@@ -87,7 +88,7 @@ export default function LoginPanel() {
           </div>
         )}
         {filterAuthList.map(auth => (
-          <div className={styles.itemLine} key={auth.name} onClick={() => doLogin(auth)}>
+          <div className={styles.itemLine} key={auth.name} onClick={() => toggleLogin(auth)}>
             <img src="/assets/icon/oidc.svg" className="h-4 mr-2.5 w-4" alt="" />
             {auth.name}
           </div>

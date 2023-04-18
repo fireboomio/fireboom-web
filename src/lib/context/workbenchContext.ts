@@ -47,7 +47,13 @@ export interface WorkbenchContextType {
   menuWidth: number
   setHideSide: (flag: boolean) => void // 设置全屏模式
   isHideSide: boolean // 当前是否全屏模式
-  logout: (apiPublicAddr: string) => Promise<void>
+  logout: (
+    apiPublicAddr: string,
+    opts?: {
+      logoutProvider?: boolean
+      closeWindow?: boolean
+    }
+  ) => Promise<void>
 }
 
 /**

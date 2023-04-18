@@ -158,11 +158,17 @@ export default function Index(props: PropsWithChildren) {
   }, [editFlag, intl, modal])
 
   const logout = useCallback(
-    (apiPublicAddr: string) => {
+    (
+      apiPublicAddr: string,
+      opts?: {
+        logoutProvider?: boolean
+        closeWindow?: boolean
+      }
+    ) => {
       return axios
         .get(`${apiPublicAddr}/auth/cookie/user/logout`, {
           headers: getHeader(),
-          params: { logout_openid_connect_provider: 'true' },
+          params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
           withCredentials: true
         })
         .then(res => {
@@ -176,9 +182,11 @@ export default function Index(props: PropsWithChildren) {
               document.body.removeChild(iframe)
             }, 5000)
           }
-          setTimeout(() => {
-            window.close()
-          }, 3000)
+          if (opts?.closeWindow ?? true) {
+            setTimeout(() => {
+              window.close()
+            }, 3000)
+          }
         })
     },
     [intl]
