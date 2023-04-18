@@ -20,7 +20,8 @@ export default function App() {
       locale={{ 'zh-CN': zhCN, en: enUS }[locale]}
       theme={{
         token: {
-          colorPrimary: '#E92E5E'
+          colorPrimary: '#E92E5E',
+          zIndexPopupBase: 10000
         }
       }}
     >

@@ -22,6 +22,7 @@ export default function VsCode({
   const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
   const { vscode } = useContext(GlobalContext)
   const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
+  const language = data?.language
   const [forceShowPath, setForceShowPath] = useState('')
 
   const dataSourceList = useDataSourceList()
@@ -59,6 +60,7 @@ export default function VsCode({
   }, [])
   return (forceShowPath || vscode?.options?.visible) && data?.relativeDir ? (
     <iframe
+      key={language}
       ref={vscodeWebIframe}
       data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
       className={`border-0 h-full top-0 left-0 w-full ${className}`}

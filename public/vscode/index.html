@@ -27,6 +27,8 @@
 <script src="./vscode-web/dist/out/vs/loader.js"></script>
 <script src="./vscode-web/dist/out/vs/webPackagePaths.js"></script>
 <script>
+  const urlParam = new URLSearchParams(location.search)
+  const baseDir = urlParam.get('baseDir')
   window.product = {
     "productConfiguration": {
       "nameShort": "fb-editor",
@@ -49,7 +51,7 @@
     },
     "folderUri": {
       "scheme": "fbfs",
-      "path": "/custom-ts"
+      "path": "/"+(baseDir||'custom-ts')
     },
     "additionalBuiltinExtensions": [
       {
