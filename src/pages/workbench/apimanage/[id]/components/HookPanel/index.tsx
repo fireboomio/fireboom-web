@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
@@ -15,11 +15,12 @@ export default function HookPanel({ id }: { id?: string }) {
   const location = useLocation()
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
 
-  const { vscode } = useContext(WorkbenchContext)
-  const { apiDesc, query, operationType } = useAPIManager(state => ({
+  const { vscode } = useContext(GlobalContext)
+  const { apiDesc, query, operationType, refreshAPI } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
     query: state.query,
-    operationType: state.computed.operationType
+    operationType: state.computed.operationType,
+    refreshAPI: state.refreshAPI
   }))
   const { schemaAST } = useAPIManager(state => ({
     schemaAST: state.schemaAST
@@ -94,14 +95,17 @@ export default function HookPanel({ id }: { id?: string }) {
         {hookList.map((hook: any) => (
           <StatusDirective
             key={hook.name}
-            className="!bg-transparent !border-transparent !rounded-none !my-1.5 !px-3"
+            className="!my-1.5 !px-3 !mx-5"
             enabled={hook.enabled}
             label={hook.name}
             onClick={() => {
               vscode.show(hook.path, { hasParam: !!(query ?? '').match(/\(\$\w+/) })
               // setEditingHook(hook)
             }}
-            onToggleEnabled={console.log}
+            onToggleEnabled={async flag => {
+              await vscode.toggleHook(flag, hook.path, !!(query ?? '').match(/\(\$\w+/))
+              mutateHookInfo()
+            }}
           />
         ))}
       </div>

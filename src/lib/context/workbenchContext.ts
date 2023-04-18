@@ -23,15 +23,6 @@ export type WorkbenchEvent = TitleChangeEvent | CompileFinishEvent
 export type WorkbenchListener = (event: WorkbenchEvent) => void
 
 export interface WorkbenchContextType {
-  vscode: {
-    options: {
-      visible: boolean
-      currentPath: string
-      config: { hasParam?: boolean }
-    }
-    hide: () => void
-    show: (path?: string, options?: { hasParam?: boolean }) => void
-  }
   engineStatus?: ServiceStatus
   triggerPageEvent: (event: WorkbenchEvent) => void // 触发事件
   registerPageListener: (fun: WorkbenchListener) => void // 内容页注册监听函数

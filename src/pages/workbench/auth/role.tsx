@@ -1,15 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { loader } from '@monaco-editor/react'
-import { Button, Form, Input, Modal, Popconfirm, Table, Tabs } from 'antd'
+import { Button, Form, Input, Modal, Popconfirm, Switch, Table, Tabs } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import IdeContainer from '@/components/Ide'
 import { getDefaultCode } from '@/components/Ide/getDefaultCode'
 import type { HookName, HookResp } from '@/interfaces/auth'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
+import { getHook } from '@/lib/service/hook'
 
 import styles from './components/subs.module.less'
 
@@ -40,7 +42,14 @@ export default function AuthRole() {
   const [refreshFlag, setRefreshFlag] = useState<boolean>()
   // const [defaultCode, setDefaultCode] = useState<string>('')
   const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
-
+  const postAuthentication = useSWRImmutable<any>('auth/postAuthentication', getHook)
+  const revalidate = useSWRImmutable<any>('auth/revalidate', getHook)
+  const postLogout = useSWRImmutable<any>('auth/postLogout', getHook)
+  const mutatingPostAuthentication = useSWRImmutable<any>(
+    'auth/mutatingPostAuthentication',
+    getHook
+  )
+  const hookMap = { postAuthentication, revalidate, postLogout, mutatingPostAuthentication }
   // const tabs = [
   //   { key: 'postAuthentication', title: 'postAuthentication' },
   //   { key: 'revalidate', title: 'revalidate' },
@@ -125,6 +134,7 @@ export default function AuthRole() {
     })
   }, [activeKey])
 
+  const { vscode } = useContext(GlobalContext)
   const [tab, setTab] = useState<string>('role')
   return (
     <div className="bg-[#fbfbfc] h-full p-3">
@@ -152,6 +162,7 @@ export default function AuthRole() {
             return <DefaultTabBar className={styles.pillTab} {...props} />
           }}
           onChange={setTab}
+          defaultActiveKey="auth"
           items={[
             {
               label: intl.formatMessage({ defaultMessage: '角色管理' }),
@@ -253,15 +264,22 @@ export default function AuthRole() {
               key: 'auth',
               children: (
                 <div className={styles.tabContent}>
-                  <div>
-                    {/* @ts-ignore */}
-                    <IdeContainer
-                      key={hookPath[activeKey]}
-                      hookPath={hookPath[activeKey]}
-                      defaultLanguage="typescript"
-                      onChange={console.log}
-                      defaultCode={defaultCodeMap[activeKey]}
-                    />
+                  <div className={styles.table}>
+                    {Object.keys(hookPath).map(name => (
+                      <div key={name} className={styles.row}>
+                        <div className={styles.name}>{name}</div>
+                        <Switch
+                          checked={hookMap?.[name]?.data?.enabled}
+                          onChange={async flag => {
+                            await vscode.toggleHook(flag, hookPath[name])
+                            hookMap?.[name]?.mutate?.()
+                          }}
+                        />
+                        <div className={styles.btn} onClick={() => vscode.show(hookPath[name])}>
+                          编辑
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )

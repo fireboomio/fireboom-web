@@ -1,8 +1,9 @@
 import Editor, { loader } from '@monaco-editor/react'
-import { Button, Checkbox, Form, InputNumber, Select } from 'antd'
+import { Button, Form, InputNumber, Select, Switch } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 
 import type { Profile } from '@/hooks/store/storage'
 import jsonInit from '@/lib/ai/jsonInit'
@@ -11,6 +12,7 @@ import {
   MIME_LIST,
   SCHEMA_FOR_JSON_SCHEMA
 } from '@/lib/constants/fireBoomConstants'
+import { GlobalContext } from '@/lib/context/globalContext'
 import { makeSuggest } from '@/lib/helpers/utils'
 
 import styles from './[profile].module.less'
@@ -18,14 +20,17 @@ import styles from './[profile].module.less'
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface Props {
+  storageName: string
   profile: Profile
   onSave: (values: any) => void
 }
 
-export default function ProfileForm({ profile, onSave }: Props) {
+export default function ProfileForm({ storageName, profile, onSave }: Props) {
   const intl = useIntl()
+  const { id, profile: profileName } = useParams()
   const [form] = useForm<Profile>()
   const maxAllowedUploadSizeBytes = Form.useWatch('maxAllowedUploadSizeBytes', form)
+  const { vscode } = useContext(GlobalContext)
   const reset = useCallback(() => {
     form.setFieldsValue({
       requireAuthentication: profile.requireAuthentication,
@@ -34,7 +39,8 @@ export default function ProfileForm({ profile, onSave }: Props) {
       allowedMimeTypes: profile.allowedMimeTypes ?? [],
       allowedFileExtensions: profile.allowedFileExtensions ?? [],
       metadataJSONSchema: profile.metadataJSONSchema,
-      maxAllowedFiles: profile.maxAllowedFiles
+      maxAllowedFiles: profile.maxAllowedFiles,
+      hooks: profile.hooks
     })
   }, [profile, form])
   useEffect(() => {
@@ -47,7 +53,19 @@ export default function ProfileForm({ profile, onSave }: Props) {
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 12 }}
       form={form}
-      onFinish={values => {
+      onFinish={async values => {
+        if (
+          values?.hooks?.preUpload &&
+          !(await vscode.checkHookExist(`uploads/${storageName}/${profileName}/preUpload`))
+        ) {
+          return
+        }
+        if (
+          values?.hooks?.postUpload &&
+          !(await vscode.checkHookExist(`uploads/${storageName}/${profileName}/postUpload`))
+        ) {
+          return
+        }
         onSave({
           ...values,
           maxAllowedUploadSizeBytes: Math.round(values.maxAllowedUploadSizeBytes * 1024 * 1024)
@@ -59,7 +77,7 @@ export default function ProfileForm({ profile, onSave }: Props) {
         label={intl.formatMessage({ defaultMessage: '是否需要登录' })}
         valuePropName="checked"
       >
-        <Checkbox />
+        <Switch />
       </Form.Item>
       <Form.Item
         tooltip={intl.formatMessage({ defaultMessage: '输入-1禁用限制' })}
@@ -151,6 +169,36 @@ export default function ProfileForm({ profile, onSave }: Props) {
             editor.trigger('', 'editor.action.inlineSuggest.trigger', '')
           }}
         />
+      </Form.Item>
+
+      <Form.Item label={intl.formatMessage({ defaultMessage: '前置钩子' })}>
+        <div className="flex items-center">
+          <Form.Item noStyle valuePropName="checked" name={['hooks', 'preUpload']}>
+            <Switch />
+          </Form.Item>
+          <span
+            className="ml-10 text-[#4C7BFE] cursor-pointer"
+            onClick={() => vscode.show(`uploads/${storageName}/${profileName}/preUpload`)}
+          >
+            编辑
+          </span>
+        </div>
+      </Form.Item>
+      <Form.Item
+        name={['hooks', 'postUpload']}
+        label={intl.formatMessage({ defaultMessage: '后置钩子' })}
+      >
+        <div className="flex items-center">
+          <Form.Item noStyle valuePropName="checked" name={['hooks', 'postUpload']}>
+            <Switch />
+          </Form.Item>
+          <span
+            className="ml-10 text-[#4C7BFE] cursor-pointer"
+            onClick={() => vscode.show(`uploads/${storageName}/${profileName}/postUpload`)}
+          >
+            编辑
+          </span>
+        </div>
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 4, span: 12 }}>
         <Button className={'btn-cancel mr-4'} onClick={reset}>

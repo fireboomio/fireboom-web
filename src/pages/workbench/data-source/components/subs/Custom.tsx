@@ -2,8 +2,6 @@ import { loader } from '@monaco-editor/react'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import IdeContainer from '@/components/Ide'
-import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
@@ -90,13 +88,5 @@ export default function Custom({ content }: Props) {
   //     .then(() => void message.success('保存成功!'))
   // }
 
-  return (
-    <IdeContainer
-      onChangeEnable={() => {
-        void mutateDataSource()
-      }}
-      hookPath={`customize/${content.name}`}
-      defaultLanguage="typescript"
-    />
-  )
+  return ''
 }

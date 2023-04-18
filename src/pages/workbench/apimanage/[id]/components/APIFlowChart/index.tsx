@@ -1,9 +1,10 @@
 import type { OperationDefinitionNode, OperationTypeNode } from 'graphql'
 import { isEqual } from 'lodash'
-import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
 import { useDebounceMemo } from '@/hooks/debounce'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
@@ -43,6 +44,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
     appendToAPIRefresh: state.appendToAPIRefresh,
     dispendToAPIRefresh: state.dispendToAPIRefresh
   }))
+  const { vscode } = useContext(GlobalContext)
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
   const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
@@ -160,10 +162,21 @@ const APIFlowChart = ({ id }: { id: string }) => {
   useEffect(() => {
     setEditingHook(null)
   }, [id])
-
-  const onEditHook = useCallback((hook: { name: string; path: string }) => {
-    setEditingHook(hook)
-  }, [])
+  const hasParam = !!(query ?? '').match(/\(\$\w+/)
+  const onEditHook = useCallback(
+    (hook: { name: string; path: string }) => {
+      vscode.show(hook.path, { hasParam })
+    },
+    [hasParam, vscode]
+  )
+  const onToggleHook = useCallback(
+    async (hook: { name: string; path: string }, flag: boolean) => {
+      console.log(123123)
+      await vscode.toggleHook(flag, hook.path, hasParam)
+      mutateHookInfo()
+    },
+    [mutateHookInfo, query, vscode]
+  )
 
   return (
     <>
@@ -177,12 +190,13 @@ const APIFlowChart = ({ id }: { id: string }) => {
           hookState={hookState}
           operationType={operationType}
           onEditHook={onEditHook}
+          onToggleHook={onToggleHook}
         />
       )}
       {editingHook && (
         <EditPanel
           apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={!!(query ?? '').match(/\(\$\w+/)}
+          hasParams={hasParam}
           hook={editingHook}
           onClose={() => {
             void mutateHookInfo()
@@ -209,8 +223,15 @@ const _ChartWrapper = (
       operationType: Readonly<OperationTypeNode | undefined>
     }
 ) => {
-  const { globalHookState, hookState, directiveState, operationType, apiSetting, onEditHook } =
-    props
+  const {
+    globalHookState,
+    hookState,
+    directiveState,
+    operationType,
+    apiSetting,
+    onEditHook,
+    onToggleHook
+  } = props
   return (
     <>
       {globalHookState && hookState ? (
@@ -224,6 +245,7 @@ const _ChartWrapper = (
               directiveState={directiveState}
               apiSetting={apiSetting}
               onEditHook={onEditHook}
+              onToggleHook={onToggleHook}
             />
           </Suspense>
         ) : (
@@ -234,6 +256,7 @@ const _ChartWrapper = (
               directiveState={directiveState}
               apiSetting={apiSetting}
               onEditHook={onEditHook}
+              onToggleHook={onToggleHook}
             />
           </Suspense>
         )

@@ -11,6 +11,7 @@ import { mutateHookModel } from '@/hooks/store/hook/model'
 import { useStorageList } from '@/hooks/store/storage'
 import { useValidate } from '@/hooks/validate'
 import type { CommonPanelResp } from '@/interfaces/commonPanel'
+import { GlobalContext } from '@/lib/context/globalContext'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
@@ -28,10 +29,9 @@ interface PanelConfig {
     editItem: (row: unknown) => Promise<unknown>
     delItem: (id: number) => Promise<unknown>
   }
-  navMenu?: Array<{
-    icon: string
-    name: string
-    menuPath: (id: number) => string
+  navMenu?: (record: any) => Array<{
+    key: string
+    label: React.ReactNode
   }>
   navAction?: Array<{ icon: string; path: string; tooltip: string }>
   bottom?: React.ReactNode
@@ -40,6 +40,7 @@ interface PanelConfig {
 export default function CommonPanel(props: { type: MenuName; defaultOpen: boolean }) {
   const intl = useIntl()
   const { validateName } = useValidate()
+  const { vscode } = useContext(GlobalContext)
   const { mutate } = useSWRConfig()
   const navigate = useNavigate()
   const storageList = useStorageList()
@@ -83,6 +84,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           id: row.id,
           name: row.name,
           icon,
+          sourceType: row.sourceType,
           tip,
           enabled: row.enabled,
           _row: row,
@@ -133,6 +135,58 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           },
           editItem: async row => await requests.put('/dataSource', row),
           delItem: async id => await requests.delete(`/dataSource/${id}`)
+        },
+        navMenu: (record: any) => {
+          if (record.sourceType === 4) {
+            if (record.enabled) {
+              return [
+                {
+                  key: 'disable',
+                  label: (
+                    <div
+                      onClick={async () => {
+                        await vscode.toggleHook(false, `customize/${record.name}`)
+                        mutateDataSource()
+                      }}
+                    >
+                      <img
+                        alt="zhongmingming"
+                        src="assets/iconfont/shezhi.svg"
+                        style={{ height: '1em', width: '1em' }}
+                      />
+                      <span className="ml-1.5">
+                        <FormattedMessage defaultMessage="停用" />
+                      </span>
+                    </div>
+                  )
+                }
+              ]
+            } else {
+              return [
+                {
+                  key: 'enable',
+                  label: (
+                    <div
+                      onClick={async () => {
+                        await vscode.toggleHook(true, `customize/${record.name}`)
+                        mutateDataSource()
+                      }}
+                    >
+                      <img
+                        alt="zhongmingming"
+                        src="assets/iconfont/shezhi.svg"
+                        style={{ height: '1em', width: '1em' }}
+                      />
+                      <span className="ml-1.5">
+                        <FormattedMessage defaultMessage="启用" />
+                      </span>
+                    </div>
+                  )
+                }
+              ]
+            }
+          }
+          return []
         }
       },
       auth: {
@@ -222,17 +276,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       }
     ]
     if (panelConfig.navMenu) {
-      menuItems.unshift(
-        ...panelConfig.navMenu.map(item => ({
-          key: item.name,
-          label: (
-            <div key={row.id} onClick={() => navigate(item.menuPath(row.id))}>
-              <img alt="" src={item.icon} style={{ height: '1em', width: '1em' }} />
-              <span className="ml-1.5">{item.name}</span>
-            </div>
-          )
-        }))
-      )
+      menuItems.unshift(...(panelConfig.navMenu?.(row) ?? []))
     }
     return (
       <Menu

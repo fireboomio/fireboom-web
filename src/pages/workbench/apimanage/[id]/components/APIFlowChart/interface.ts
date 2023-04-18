@@ -40,4 +40,5 @@ export type CommonChartProps = {
   }
   apiSetting: APIDesc['setting']
   onEditHook?: (hook: BaseHookState) => void
+  onToggleHook?: (hook: BaseHookState, flag: boolean) => void
 }

@@ -1,7 +1,5 @@
-import type { MouseEventHandler } from 'react'
-
-import statusOff from './assets/status-off.svg'
-import statusOn from './assets/status-on.svg'
+import { Switch } from 'antd'
+import type { SwitchChangeEventHandler } from 'antd/es/switch'
 
 interface StatusDirectiveProps {
   className?: string
@@ -18,9 +16,8 @@ const StatusDirective = ({
   onToggleEnabled,
   onClick
 }: StatusDirectiveProps) => {
-  const _onToggleEnabled: MouseEventHandler<HTMLImageElement> = e => {
-    e.stopPropagation()
-    onToggleEnabled?.(!enabled)
+  const _onToggleEnabled: SwitchChangeEventHandler = flag => {
+    onToggleEnabled?.(flag)
   }
 
   return (
@@ -29,31 +26,28 @@ const StatusDirective = ({
       onClick={onClick}
       style={{
         cursor: 'pointer',
-        display: 'block',
+        display: 'flex',
+        alignItems: 'center',
         padding: '0 5px',
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
-        background: '#F3F9FD',
+        background: '#f3f9fd',
         border: '0.3px solid #C7D4DC',
         borderRadius: '10px',
         boxShadow: '0 2px 4px #F8F9FD',
         color: '#333',
         fontSize: '12px',
         height: '20px',
+        boxSizing: 'content-box',
         opacity: enabled ? 'unset' : '0.75'
         // lineHeight: '20px',
       }}
     >
-      <span className="mr-1" onClick={_onToggleEnabled}>
-        <img
-          src={enabled ? statusOn : statusOff}
-          width="14"
-          height="14"
-          style={{ marginRight: '2px', verticalAlign: 'sub' }}
-          alt=""
-        />
-      </span>
+      <div className="flex-shrink-0 h-full flex items-center" onClick={e => e.stopPropagation()}>
+        <Switch size="small" checked={enabled} onChange={_onToggleEnabled} />
+      </div>
+      <div className="h-full bg-[#c7d4dc] w-0.5px mx-1 flex-shrink-0" />
       {label}
     </div>
   )

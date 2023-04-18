@@ -1,50 +1,15 @@
 import type { CSSProperties } from 'react'
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
-import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { useDataSourceList } from '@/hooks/store/dataSource'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-import { getHook, saveHookScript } from '@/lib/service/hook'
 
 type HookOption = {
   relativeDir: string
   language: string
-}
-
-const resolveDefaultCode = async (
-  path: string,
-  hasParam: boolean,
-  language: string
-): Promise<string> => {
-  let getDefaultCode
-  if (language === 'go') {
-    getDefaultCode = getGoTemplate
-  } else {
-    getDefaultCode = getTsTemplate
-  }
-  const list = path.split('/')
-  const name = list.pop()
-  const packageName = list[list.length - 1]
-  let code = ''
-  if (path.startsWith('global/')) {
-    code = await getDefaultCode(`global.${name}`)
-  } else if (path.startsWith('auth/')) {
-    code = await getDefaultCode(`auth.${name}`)
-  } else if (path.startsWith('customize/')) {
-    code = await (await getDefaultCode('custom')).replace('$CUSTOMIZE_NAME$', name!)
-  } else if (path.startsWith('uploads/')) {
-    const profileName = list.pop() as string
-    const storageName = list.pop() as string
-    const code = (await getDefaultCode(`upload.${name}`))
-      .replaceAll('$STORAGE_NAME$', storageName)
-      .replace('$PROFILE_NAME$', profileName)
-  } else {
-    const pathList = list.slice(1)
-    const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
-    code = (await getDefaultCode(tmplPath)).replaceAll('$HOOK_NAME$', pathList.join('__'))
-  }
-  return code.replaceAll('$HOOK_PACKAGE$', packageName!)
 }
 
 export default function VsCode({
@@ -55,25 +20,23 @@ export default function VsCode({
   style?: CSSProperties
 }) {
   const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
-  const { vscode } = useContext(WorkbenchContext)
+  const { vscode } = useContext(GlobalContext)
   const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
-  const language = data?.language
+  const [forceShowPath, setForceShowPath] = useState('')
+
+  const dataSourceList = useDataSourceList()
+  const { pathname } = useLocation()
   useEffect(() => {
-    if (!language || !vscode?.options?.currentPath) {
-      return
+    vscode.hide()
+    setForceShowPath('')
+    const [, dbId] = pathname.match(/\/workbench\/data-source\/(\d+)/) || []
+    if (dbId) {
+      const db = dataSourceList?.find(x => String(x.id) === dbId)
+      if (db && db.sourceType === 4) {
+        setForceShowPath(`custimize/${db.name}`)
+      }
     }
-    resolveDefaultCode(
-      vscode.options.currentPath,
-      !!vscode.options.config?.hasParam,
-      language
-    ).then(code => {
-      getHook(vscode.options.currentPath).then(hook => {
-        if (!hook?.script) {
-          saveHookScript(vscode.options.currentPath, code)
-        }
-      })
-    })
-  }, [vscode?.options, language])
+  }, [pathname])
 
   useEffect(() => {
     const outChannel = new BroadcastChannel('fb-vscode-out')
@@ -94,7 +57,7 @@ export default function VsCode({
       // sendCommandToVscodeWeb('openFile', { path: '/file.js' })
     }, 6000)
   }, [])
-  return vscode?.options?.visible && data?.relativeDir ? (
+  return (forceShowPath || vscode?.options?.visible) && data?.relativeDir ? (
     <iframe
       ref={vscodeWebIframe}
       data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'

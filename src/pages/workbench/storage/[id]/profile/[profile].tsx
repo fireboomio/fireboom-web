@@ -1,4 +1,4 @@
-import { message, Tabs } from 'antd'
+import { message } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -72,23 +72,26 @@ export default function StorageProfile() {
         }}
       />
       <div className={styles.content}>
-        <Tabs
-          animated={false}
-          activeKey={activeTab}
-          onChange={key => setActiveTab(key)}
-          items={[
-            {
-              key: 'base',
-              label: '基本设置'
-            },
-            {
-              key: 'pre',
-              label: '前置钩子'
-            },
-            { key: 'post', label: '后置钩子' }
-          ]}
-        />
-        {activeTab === 'base' && <Form onSave={saveProfile} profile={currentProfile} />}
+        {/*<Tabs*/}
+        {/*  animated={false}*/}
+        {/*  activeKey={activeTab}*/}
+        {/*  onChange={key => setActiveTab(key)}*/}
+        {/*  items={[*/}
+        {/*    {*/}
+        {/*      key: 'base',*/}
+        {/*      label: '基本设置'*/}
+        {/*    },*/}
+        {/*    {*/}
+        {/*      key: 'pre',*/}
+        {/*      label: '前置钩子'*/}
+        {/*    },*/}
+        {/*    { key: 'post', label: '后置钩子' }*/}
+        {/*  ]}*/}
+        {/*/>*/}
+        <div className={styles.title}>{intl.formatMessage({ defaultMessage: '基本设置' })}</div>
+        {activeTab === 'base' && (
+          <Form storageName={currentStorage?.name} onSave={saveProfile} profile={currentProfile} />
+        )}
         {activeTab === 'pre' && (
           <IdeContainer
             key={profile + 'preUpload'}

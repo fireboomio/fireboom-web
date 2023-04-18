@@ -6,11 +6,14 @@ import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
+import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
+import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
 import { useGlobal } from '@/hooks/global'
 import { mutateApi } from '@/hooks/store/api'
 import type { Info } from '@/interfaces/common'
+import { GlobalContext } from '@/lib/context/globalContext'
 import type {
   MenuName,
   RefreshMap,
@@ -19,7 +22,8 @@ import type {
 } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
-import { getAuthKey, getHeader } from '@/lib/fetchers'
+import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
+import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
@@ -245,57 +249,101 @@ export default function Index(props: PropsWithChildren) {
     </ALayout>
   )
   const location = useLocation()
+  const { data } = useSWRImmutable<{ language: string }>('/hook/option', requests)
+  const language = data?.language
+  const checkHookExist = async (path: string, hasParam = false) => {
+    try {
+      const hook = await getHook(path)
+      if (!hook?.script) {
+        const confirm = await new Promise(resolve => {
+          modal.confirm({
+            title: intl.formatMessage({ defaultMessage: '钩子脚本不存在，是否创建？' }),
+            onOk: () => resolve(true),
+            onCancel: () => resolve(false),
+            zIndex: 99999
+          })
+        })
+        if (!confirm || !language) {
+          return false
+        }
+        const code = await resolveDefaultCode(path, hasParam, language)
+        await saveHookScript(path, code)
+        return true
+      } else {
+        return true
+      }
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  }
+  const globalProviderValue = {
+    vscode: {
+      options: vscode,
+      checkHookExist,
+      toggleHook: async (flag: boolean, path: string, hasParam = false) => {
+        // 打开钩子时，需要检查钩子文件
+        if (flag && !(await checkHookExist(path, hasParam))) {
+          return
+        }
+        await updateHookEnabled(path, flag)
+      },
+      hide: () => {
+        setVscode({
+          visible: false,
+          currentPath: '',
+          config: {}
+        })
+      },
+      show: async (path?: string, config?: any) => {
+        if (path && !(await checkHookExist(path ?? ''))) {
+          return
+        }
+        setVscode({
+          visible: true,
+          currentPath: path ?? '',
+          config: config ?? {}
+        })
+      }
+    }
+  }
   if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
     return (
       <Suspense>
-        <ModelingWrapper>{body}</ModelingWrapper>
+        <GlobalContext.Provider value={globalProviderValue}>
+          <ModelingWrapper>{body}</ModelingWrapper>
+        </GlobalContext.Provider>
       </Suspense>
     )
   } else {
     return (
-      <WorkbenchContext.Provider
-        value={{
-          vscode: {
-            options: vscode,
-            hide: () => {
-              setVscode({
-                visible: false,
-                currentPath: '',
-                config: {}
-              })
+      <GlobalContext.Provider value={globalProviderValue}>
+        <WorkbenchContext.Provider
+          value={{
+            engineStatus: info?.engineStatus,
+            triggerPageEvent: (event: WorkbenchEvent) => {
+              listener.current?.(event)
             },
-            show: (path?: string, config?: any) => {
-              setVscode({
-                visible: true,
-                currentPath: path ?? '',
-                config: config ?? {}
-              })
-            }
-          },
-          engineStatus: info?.engineStatus,
-          triggerPageEvent: (event: WorkbenchEvent) => {
-            listener.current?.(event)
-          },
-          registerPageListener: fun => {
-            listener.current = fun
-          },
-          refreshMap,
-          onRefreshMenu: handleRefreshMenu,
-          onRefreshState: () => setRefreshState(!refreshState),
-          editFlag,
-          markEdit,
-          navCheck,
-          setFullscreen: setFullScreen,
-          isFullscreen: fullScreen,
-          menuWidth: fullScreen ? 0 : MENU_WIDTH,
-          setHideSide: setHideSider,
-          isHideSide: hideSider,
-          logout
-          // treeNode: []
-        }}
-      >
-        {body}
-      </WorkbenchContext.Provider>
+            registerPageListener: fun => {
+              listener.current = fun
+            },
+            refreshMap,
+            onRefreshMenu: handleRefreshMenu,
+            onRefreshState: () => setRefreshState(!refreshState),
+            editFlag,
+            markEdit,
+            navCheck,
+            setFullscreen: setFullScreen,
+            isFullscreen: fullScreen,
+            menuWidth: fullScreen ? 0 : MENU_WIDTH,
+            setHideSide: setHideSider,
+            isHideSide: hideSider,
+            logout // treeNode: []
+          }}
+        >
+          {body}
+        </WorkbenchContext.Provider>
+      </GlobalContext.Provider>
     )
   }
 }
@@ -319,4 +367,39 @@ function parseLogs(logs: string[]) {
     }
   })
   return result
+}
+
+async function resolveDefaultCode(
+  path: string,
+  hasParam: boolean,
+  language: string
+): Promise<string> {
+  let getDefaultCode
+  if (language === 'go') {
+    getDefaultCode = getGoTemplate
+  } else {
+    getDefaultCode = getTsTemplate
+  }
+  const list = path.split('/')
+  const name = list.pop()
+  const packageName = list[list.length - 1]
+  let code = ''
+  if (path.startsWith('global/')) {
+    code = await getDefaultCode(`global.${name}`)
+  } else if (path.startsWith('auth/')) {
+    code = await getDefaultCode(`auth.${name}`)
+  } else if (path.startsWith('customize/')) {
+    code = await (await getDefaultCode('custom')).replace('$CUSTOMIZE_NAME$', name!)
+  } else if (path.startsWith('uploads/')) {
+    const profileName = list.pop() as string
+    const storageName = list.pop() as string
+    code = (await getDefaultCode(`upload.${name}`))
+      .replaceAll('$STORAGE_NAME$', storageName)
+      .replace('$PROFILE_NAME$', profileName)
+  } else {
+    const pathList = list.slice(1)
+    const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
+    code = (await getDefaultCode(tmplPath)).replaceAll('$HOOK_NAME$', pathList.join('__'))
+  }
+  return code.replaceAll('$HOOK_PACKAGE$', packageName!)
 }

@@ -10,7 +10,7 @@ import useSWRImmutable from 'swr/immutable'
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
@@ -79,7 +79,7 @@ const StatusBar: React.FC<Props> = ({
   const { system, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
-  const { vscode } = useContext(WorkbenchContext)
+  const { vscode } = useContext(GlobalContext)
   const webContainerUrl = useMemo(() => {
     const url = new URL(window.location.href)
     url.port = '9123'
