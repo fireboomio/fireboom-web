@@ -263,10 +263,13 @@ export default function Index(props: PropsWithChildren) {
             zIndex: 99999
           })
         })
+        console.log(1111)
         if (!confirm || !language) {
           return false
         }
+        console.log(222)
         const code = await resolveDefaultCode(path, hasParam, language)
+        console.log(code)
         await saveHookScript(path, code)
         return true
       } else {

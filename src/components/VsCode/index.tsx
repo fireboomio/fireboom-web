@@ -13,6 +13,8 @@ type HookOption = {
   fileExtension: string
 }
 
+const outChannel = new BroadcastChannel('fb-vscode-out')
+const inChannel = new BroadcastChannel('fb-vscode-in')
 export default function VsCode({
   className,
   style
@@ -29,36 +31,29 @@ export default function VsCode({
   const dataSourceList = useDataSourceList()
   const { pathname } = useLocation()
   useEffect(() => {
-    vscode.hide()
+    console.log('vscode init')
+  }, [])
+  useEffect(() => {
+    // 未获取到language前，检查钩子逻辑无法执行
+    if (!language) {
+      vscode.hide()
+      return
+    }
     setForceShowPath('')
     const [, dbId] = pathname.match(/\/workbench\/data-source\/(\d+)/) || []
     if (dbId) {
+      vscode.show()
       const db = dataSourceList?.find(x => String(x.id) === dbId)
       if (db && db.sourceType === 4) {
-        setForceShowPath(`custimize/${db.name}`)
+        const path = `customize/${db.name}`
+        vscode.checkHookExist(path).then(exist => {
+          setForceShowPath(path)
+        })
       }
+    } else {
+      vscode.hide()
     }
-  }, [pathname])
-
-  useEffect(() => {
-    const outChannel = new BroadcastChannel('fb-vscode-out')
-    const inChannel = new BroadcastChannel('fb-vscode-in')
-    inChannel.onmessage = event => {
-      // 在此处理VSCode Web实例返回的消息
-      console.log('inChannel message:', event.data)
-    }
-    outChannel.onmessage = event => {
-      // 在此处理VSCode Web实例返回的消息
-      console.log('Received message:', event.data)
-    }
-    setTimeout(async () => {
-      // const db = await openDatabase()
-      // await addMessage(db, 'Hello World')
-      // const result = await getMessages(await openDatabase())
-      // console.log(result)
-      // sendCommandToVscodeWeb('openFile', { path: '/file.js' })
-    }, 6000)
-  }, [])
+  }, [dataSourceList, pathname, language])
 
   useEffect(() => {
     let path = forceShowPath
@@ -67,7 +62,9 @@ export default function VsCode({
     }
     if (path) {
       openDatabase().then(db => {
-        addMessage(db, { cmd: 'openFile', data: { path: path + data?.fileExtension } })
+        addMessage(db, { cmd: 'openFile', data: { path: path + data?.fileExtension } }).then(() => {
+          inChannel.postMessage({ cmd: 'openFile', data: { path: path + data?.fileExtension } })
+        })
       })
     }
   }, [forceShowPath, vscode?.options?.visible, vscode?.options?.currentPath, data?.fileExtension])
