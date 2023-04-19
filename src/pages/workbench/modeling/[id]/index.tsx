@@ -18,7 +18,7 @@ const Modeling = () => {
 
   const { id: paramId } = useParams()
   useEffect(() => {
-    if (paramId && dataSources) {
+    if (paramId && dataSources?.length) {
       if (!dataSources.find((x: { id: number }) => x.id === Number(paramId))) {
         if (dataSources.length) {
           navigate(`/workbench/modeling/${dataSources[0].id}`)

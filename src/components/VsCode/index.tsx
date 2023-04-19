@@ -10,6 +10,7 @@ import requests from '@/lib/fetchers'
 type HookOption = {
   relativeDir: string
   language: string
+  fileExtension: string
 }
 
 export default function VsCode({
@@ -58,6 +59,19 @@ export default function VsCode({
       // sendCommandToVscodeWeb('openFile', { path: '/file.js' })
     }, 6000)
   }, [])
+
+  useEffect(() => {
+    let path = forceShowPath
+    if (!forceShowPath && vscode?.options?.visible) {
+      path = vscode?.options?.currentPath
+    }
+    if (path) {
+      openDatabase().then(db => {
+        addMessage(db, { cmd: 'openFile', data: { path: path + data?.fileExtension } })
+      })
+    }
+  }, [forceShowPath, vscode?.options?.visible, vscode?.options?.currentPath, data?.fileExtension])
+
   return (forceShowPath || vscode?.options?.visible) && data?.relativeDir ? (
     <iframe
       key={language}
@@ -75,7 +89,7 @@ export default function VsCode({
 
 async function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('fb-controller', 1)
+    const request = indexedDB.open('fb-controller', 2)
 
     request.onerror = event => {
       reject('Failed to open IndexedDB')
@@ -101,23 +115,6 @@ async function addMessage(db, message) {
 
     request.onerror = event => {
       reject('Failed to add message')
-    }
-
-    request.onsuccess = event => {
-      resolve(event.target.result)
-    }
-  })
-}
-
-// 从数据库获取所有消息
-async function getMessages(db) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['msg'], 'readonly')
-    const objectStore = transaction.objectStore('msg')
-    const request = objectStore.getAll()
-
-    request.onerror = event => {
-      reject('Failed to get messages')
     }
 
     request.onsuccess = event => {

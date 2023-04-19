@@ -1,28 +1,38 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode')
+const rootPath = vscode.workspace.rootPath
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+async function openFile(filePath) {
+  const document = await vscode.workspace.openTextDocument(
+    vscode.Uri.parse(`fbfs:${rootPath}/${filePath}`)
+  )
+  vscode.window.showTextDocument(document)
+}
+
+async function readMsg() {
+  const db = await openDatabase()
+  const messages = await getMessages(db)
+  messages.forEach(({ content }) => {
+    switch (content.cmd) {
+      case 'openFile':
+        openFile(content.data.path)
+        break
+    }
+  })
+}
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  const outChannel = new BroadcastChannel('fb-vscode-out')
+  // const outChannel = new BroadcastChannel('fb-vscode-out')
   const inChannel = new BroadcastChannel('fb-vscode-in')
 
-  // outChannel.postMessage('要发送消息啦啦啦啦啦啦啦')
-  // inChannel.onmessage = e => {
-  //   console.log('收到消息啦啦啦啦啦啦啦', e)
-  // }
-  ;(async () => {
-    const db = await openDatabase()
-    // await addMessage(db, 'test')
-
-    const messages = await getMessages(db)
-    console.log('接收到的消息:', messages)
-  })()
+  inChannel.onmessage = e => {
+    readMsg()
+  }
+  readMsg()
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with  registerCommand
@@ -39,7 +49,7 @@ function activate(context) {
 
 async function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('fb-controller', 1)
+    const request = indexedDB.open('fb-controller')
 
     request.onerror = event => {
       reject('Failed to open IndexedDB')
@@ -76,7 +86,7 @@ async function addMessage(db, message) {
 // 从数据库获取所有消息
 async function getMessages(db) {
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['msg'], 'readonly')
+    const transaction = db.transaction(['msg'], 'readwrite')
     const objectStore = transaction.objectStore('msg')
     const request = objectStore.getAll()
 
@@ -85,6 +95,7 @@ async function getMessages(db) {
     }
 
     request.onsuccess = event => {
+      objectStore.clear()
       resolve(event.target.result)
     }
   })
