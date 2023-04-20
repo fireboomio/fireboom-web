@@ -1,5 +1,17 @@
 import { EditFilled } from '@ant-design/icons'
-import { Button, Card, Col, Descriptions, Dropdown, message, Modal, Row, Spin, Switch } from 'antd'
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Dropdown,
+  message,
+  Modal,
+  Popconfirm,
+  Row,
+  Spin,
+  Switch
+} from 'antd'
 import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
@@ -51,6 +63,36 @@ const SDKTemplate = () => {
       revalidateOnMount: true
     }
   )
+
+  const { server, client } = useMemo(() => {
+    let server: SDKItem[] = []
+    let client: SDKItem[] = []
+    if (data) {
+      data.forEach(x => {
+        if (x.type === 'server') {
+          server.push(x)
+        } else {
+          client.push(x)
+        }
+      })
+    }
+    return { server, client }
+  }, [data])
+  const { remoteServer, remoteClient } = useMemo(() => {
+    let server: SDKItem[] = []
+    let client: SDKItem[] = []
+    if (remoteSdk?.official) {
+      remoteSdk.official.forEach(x => {
+        if (x.type === 'server') {
+          server.push(x)
+        } else {
+          client.push(x)
+        }
+      })
+    }
+    return { remoteServer: server, remoteClient: client }
+  }, [remoteSdk])
+
   const existSdkMap = useMemo(() => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])
@@ -93,7 +135,19 @@ const SDKTemplate = () => {
         </div>
       </div>
       <Row className="" gutter={[32, 32]}>
-        {data?.map((sdk, index) => (
+        {server?.map((sdk, index) => (
+          <Col key={index} xl={8} xxl={6} md={12}>
+            <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
+          </Col>
+        ))}
+      </Row>
+      <div className="flex mb-4 items-center mt-8">
+        <div className="text-xs text-[#666]">
+          <FormattedMessage defaultMessage="客户端" />
+        </div>
+      </div>
+      <Row className="" gutter={[32, 32]}>
+        {client?.map((sdk, index) => (
           <Col key={index} xl={8} xxl={6} md={12}>
             <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
           </Col>
@@ -128,19 +182,41 @@ const SDKTemplate = () => {
         ) : null}
 
         {!isLoading && !error && (
-          <Row className="" gutter={[32, 32]}>
-            {remoteSdk?.official?.map((sdk, index) => (
-              <Col key={index} xl={8} xxl={6} md={12}>
-                <RemoteSDKCard
-                  exist={existSdkMap.has(sdk.name)}
-                  sdk={sdk}
-                  onSelect={() => {
-                    downloadSdk(sdk)
-                  }}
-                />
-              </Col>
-            ))}
-          </Row>
+          <div>
+            <div className="text-xs  mb-4 text-[#666]">
+              <FormattedMessage defaultMessage="服务端" />
+            </div>
+            <Row className="" gutter={[32, 32]}>
+              {remoteServer?.map((sdk, index) => (
+                <Col key={index} xl={8} xxl={6} md={12}>
+                  <RemoteSDKCard
+                    exist={existSdkMap.has(sdk.name)}
+                    sdk={sdk}
+                    onSelect={() => {
+                      downloadSdk(sdk)
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
+
+            <div className="text-xs  mb-4 mt-8 text-[#666]">
+              <FormattedMessage defaultMessage="客户端" />
+            </div>
+            <Row className="" gutter={[32, 32]}>
+              {remoteClient?.map((sdk, index) => (
+                <Col key={index} xl={8} xxl={6} md={12}>
+                  <RemoteSDKCard
+                    exist={existSdkMap.has(sdk.name)}
+                    sdk={sdk}
+                    onSelect={() => {
+                      downloadSdk(sdk)
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </div>
         )}
       </Modal>
     </Card>
@@ -159,6 +235,7 @@ const SDKTemplateItem = ({
   const intl = useIntl()
   const [editing, setEditing] = useState(false)
   const [editingValue, setEditingValue] = useState(sdk.outputPath)
+  const { mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
     e => {
@@ -183,11 +260,7 @@ const SDKTemplateItem = ({
   const onSwitch = useCallback(
     (checked: boolean) => {
       requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
-        console.log('res', res)
-        onChange({
-          ...sdk,
-          enabled: checked
-        })
+        mutate()
       })
     },
     [onChange, sdk]
@@ -196,6 +269,13 @@ const SDKTemplateItem = ({
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">
       <div className="flex items-center">
+        <img
+          alt=""
+          className="w-10 h-10 mr-2.5"
+          src={`data:image/svg+xml;base64,${base64.fromByteArray(
+            new TextEncoder().encode(`${sdk.icon}`)
+          )}`}
+        />
         <div className="flex-1">
           <div className="text-base t-medium">{sdk.name}</div>
           <div className="flex mt-1 items-center">
@@ -210,13 +290,33 @@ const SDKTemplateItem = ({
               {
                 key: 'delete',
                 icon: '',
-                label: intl.formatMessage({ defaultMessage: '删除' }),
-                onClick: () => {}
+                label: (
+                  <Popconfirm
+                    title={intl.formatMessage({ defaultMessage: '确定要删除?' })}
+                    okText={intl.formatMessage({ defaultMessage: '确定' })}
+                    cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                    onConfirm={async () => {
+                      const res = await requests.delete(`/sdk/${sdk.id}`)
+                      if (res) {
+                        message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+                      }
+                      mutate()
+                    }}
+                  >
+                    {intl.formatMessage({ defaultMessage: '删除' })}
+                  </Popconfirm>
+                )
               },
               {
                 key: 'update',
                 label: intl.formatMessage({ defaultMessage: '升级' }),
-                onClick: () => {}
+                onClick: async () => {
+                  const res = await requests.post(`/sdk/update/${sdk.id}`)
+                  if (res) {
+                    message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
+                  }
+                  mutate()
+                }
               }
             ]
           }}
