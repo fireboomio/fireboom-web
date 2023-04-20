@@ -4,6 +4,7 @@ import { Button, Form, Input, Modal, Popconfirm, Switch, Table, Tabs } from 'ant
 import type { ColumnsType } from 'antd/lib/table'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -13,7 +14,7 @@ import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { getHook } from '@/lib/service/hook'
 
-import styles from './components/subs.module.less'
+import styles from '../components/subs.module.less'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -34,6 +35,8 @@ export default function AuthRole() {
   const intl = useIntl()
   const [form] = Form.useForm()
   const formId = Form.useWatch('id', form)
+  const navigate = useNavigate()
+  const { tab: tabKey } = useParams()
   const [modal1Visible, setModal1Visible] = useImmer(false)
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
   const [roleFlag, setRoleFlag] = useState<boolean>()
@@ -162,7 +165,10 @@ export default function AuthRole() {
             return <DefaultTabBar className={styles.pillTab} {...props} />
           }}
           onChange={setTab}
-          defaultActiveKey="auth"
+          activeKey={tabKey}
+          onTabClick={key => {
+            navigate(`/workbench/auth/role/${key}`)
+          }}
           items={[
             {
               label: intl.formatMessage({ defaultMessage: '角色管理' }),

@@ -196,7 +196,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         navAction: [
           {
             icon: '/assets/workbench/panel-role.png',
-            path: '/workbench/auth/role',
+            path: '/workbench/auth/role/role',
             tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
           }
         ],

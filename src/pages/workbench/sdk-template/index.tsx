@@ -78,13 +78,18 @@ const SDKTemplate = () => {
         <div className="text-base t-medium">
           <FormattedMessage defaultMessage="SDK模板" />
         </div>
-        <div className="text-xs ml-4 text-[#787D8B]">
-          <FormattedMessage defaultMessage="系统将实时覆盖开启的SDK" />
-        </div>
         <div className="flex-1" />
         <Button onClick={() => setShowRemote(true)}>
           {intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
         </Button>
+      </div>
+      <div className="flex mb-4 items-center">
+        <div className="text-xs text-[#666]">
+          <FormattedMessage defaultMessage="服务端" />
+        </div>
+        <div className="text-xs ml-3 text-[#787D8B]">
+          <FormattedMessage defaultMessage="（钩子同时只能开启一个，为toggle模式）" />
+        </div>
       </div>
       <Row className="" gutter={[32, 32]}>
         {data?.map((sdk, index) => (

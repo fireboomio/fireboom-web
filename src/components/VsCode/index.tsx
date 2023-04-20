@@ -42,9 +42,9 @@ export default function VsCode({
     setForceShowPath('')
     const [, dbId] = pathname.match(/\/workbench\/data-source\/(\d+)/) || []
     if (dbId) {
-      vscode.show()
       const db = dataSourceList?.find(x => String(x.id) === dbId)
       if (db && db.sourceType === 4) {
+        vscode.show()
         const path = `customize/${db.name}`
         vscode.checkHookExist(path).then(exist => {
           setForceShowPath(path)

@@ -1,4 +1,4 @@
-import { App, Layout as ALayout, message } from 'antd'
+import { App, Layout as ALayout, message, Spin } from 'antd'
 import { ConfigContext } from 'antd/es/config-provider'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -64,6 +64,7 @@ export default function Index(props: PropsWithChildren) {
     config: {}
   })
   const { system } = useContext(ConfigContext)
+  const [loading, setLoading] = useState('')
 
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
@@ -263,21 +264,22 @@ export default function Index(props: PropsWithChildren) {
             zIndex: 99999
           })
         })
-        console.log(1111)
         if (!confirm || !language) {
           return false
         }
-        console.log(222)
+        setLoading('钩子模板创建中，请稍候')
         const code = await resolveDefaultCode(path, hasParam, language)
-        console.log(code)
         await saveHookScript(path, code)
         return true
       } else {
         return true
       }
     } catch (e) {
+      setLoading('')
       console.error(e)
       return false
+    } finally {
+      setLoading('')
     }
   }
   const globalProviderValue = {
@@ -314,38 +316,42 @@ export default function Index(props: PropsWithChildren) {
     return (
       <Suspense>
         <GlobalContext.Provider value={globalProviderValue}>
-          <ModelingWrapper>{body}</ModelingWrapper>
+          <Spin tip={loading} spinning={!!loading}>
+            <ModelingWrapper>{body}</ModelingWrapper>
+          </Spin>
         </GlobalContext.Provider>
       </Suspense>
     )
   } else {
     return (
       <GlobalContext.Provider value={globalProviderValue}>
-        <WorkbenchContext.Provider
-          value={{
-            engineStatus: info?.engineStatus,
-            triggerPageEvent: (event: WorkbenchEvent) => {
-              listener.current?.(event)
-            },
-            registerPageListener: fun => {
-              listener.current = fun
-            },
-            refreshMap,
-            onRefreshMenu: handleRefreshMenu,
-            onRefreshState: () => setRefreshState(!refreshState),
-            editFlag,
-            markEdit,
-            navCheck,
-            setFullscreen: setFullScreen,
-            isFullscreen: fullScreen,
-            menuWidth: fullScreen ? 0 : MENU_WIDTH,
-            setHideSide: setHideSider,
-            isHideSide: hideSider,
-            logout // treeNode: []
-          }}
-        >
-          {body}
-        </WorkbenchContext.Provider>
+        <Spin tip={loading} spinning={!!loading}>
+          <WorkbenchContext.Provider
+            value={{
+              engineStatus: info?.engineStatus,
+              triggerPageEvent: (event: WorkbenchEvent) => {
+                listener.current?.(event)
+              },
+              registerPageListener: fun => {
+                listener.current = fun
+              },
+              refreshMap,
+              onRefreshMenu: handleRefreshMenu,
+              onRefreshState: () => setRefreshState(!refreshState),
+              editFlag,
+              markEdit,
+              navCheck,
+              setFullscreen: setFullScreen,
+              isFullscreen: fullScreen,
+              menuWidth: fullScreen ? 0 : MENU_WIDTH,
+              setHideSide: setHideSider,
+              isHideSide: hideSider,
+              logout // treeNode: []
+            }}
+          >
+            {body}
+          </WorkbenchContext.Provider>
+        </Spin>
       </GlobalContext.Provider>
     )
   }
