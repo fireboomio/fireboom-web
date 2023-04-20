@@ -62,8 +62,14 @@ export default function VsCode({
     }
     if (path) {
       openDatabase().then(db => {
-        addMessage(db, { cmd: 'openFile', data: { path: path + data?.fileExtension } }).then(() => {
-          inChannel.postMessage({ cmd: 'openFile', data: { path: path + data?.fileExtension } })
+        addMessage(db, {
+          cmd: 'openFile',
+          data: { path: '/' + data?.relativeDir + path + data?.fileExtension }
+        }).then(() => {
+          inChannel.postMessage({
+            cmd: 'openFile',
+            data: { path: '/' + data?.relativeDir + path + data?.fileExtension }
+          })
         })
       })
     }

@@ -259,7 +259,9 @@ export default function Index(props: PropsWithChildren) {
     try {
       if (!language || !sdk.find(item => item.type === 'server')) {
         navigate('/workbench/sdk-template')
-        message.warning(intl.formatMessage({ defaultMessage: '请先选择服务端SDK模板和钩子语言' }))
+        message.warning(
+          intl.formatMessage({ defaultMessage: '请在底部状态栏，选择钩子语言，或[前往]安装钩子' })
+        )
         return false
       }
 
