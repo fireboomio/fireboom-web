@@ -5,6 +5,7 @@ import {
   Col,
   Descriptions,
   Dropdown,
+  Empty,
   message,
   Modal,
   Popconfirm,
@@ -140,6 +141,12 @@ const SDKTemplate = () => {
             <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
           </Col>
         ))}
+        {!server?.length && (
+          <Empty
+            className="m-auto"
+            description={intl.formatMessage({ defaultMessage: '暂无 SDK' })}
+          />
+        )}
       </Row>
       <div className="flex mb-4 items-center mt-8">
         <div className="text-xs text-[#666]">
@@ -152,6 +159,12 @@ const SDKTemplate = () => {
             <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
           </Col>
         ))}
+        {!client?.length && (
+          <Empty
+            className="m-auto"
+            description={intl.formatMessage({ defaultMessage: '暂无 SDK' })}
+          />
+        )}
       </Row>
       <Modal
         width="80vw"

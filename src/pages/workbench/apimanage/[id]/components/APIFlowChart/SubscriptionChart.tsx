@@ -31,7 +31,8 @@ const SubscriptionChart = ({
   hookState,
   directiveState,
   apiSetting,
-  onEditHook
+  onEditHook,
+  onToggleHook
 }: SubscriptionChartProps) => {
   const intl = useIntl()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -456,7 +457,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(globalHookState.onConnectionInit)
               }}
-              onToggleEnabled={console.log}
+              onToggleEnabled={flag => onToggleHook?.(globalHookState.onConnectionInit, flag)}
             />
           ),
           x: 50,
@@ -489,7 +490,7 @@ const SubscriptionChart = ({
             onClick={() => {
               onEditHook?.(hookState.preResolve)
             }}
-            onToggleEnabled={console.log}
+            onToggleEnabled={flag => onToggleHook?.(hookState.preResolve, flag)}
           />
         ),
         x: 4,
@@ -509,7 +510,7 @@ const SubscriptionChart = ({
             onClick={() => {
               onEditHook?.(hookState.mutatingPreResolve)
             }}
-            onToggleEnabled={console.log}
+            onToggleEnabled={flag => onToggleHook?.(hookState.mutatingPreResolve, flag)}
           />
         ),
         x: 4,
@@ -541,7 +542,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(hookState.mutatingPostResolve)
               }}
-              onToggleEnabled={console.log}
+              onToggleEnabled={flag => onToggleHook?.(hookState.mutatingPostResolve, flag)}
             />
           ),
           x: 288,
@@ -558,7 +559,7 @@ const SubscriptionChart = ({
               onClick={() => {
                 onEditHook?.(hookState.postResolve)
               }}
-              onToggleEnabled={console.log}
+              onToggleEnabled={flag => onToggleHook?.(hookState.postResolve, flag)}
             />
           ),
           x: 288,

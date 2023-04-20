@@ -5,7 +5,8 @@ import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -250,10 +251,18 @@ export default function Index(props: PropsWithChildren) {
     </ALayout>
   )
   const location = useLocation()
+  const navigate = useNavigate()
   const { data } = useSWRImmutable<{ language: string }>('/hook/option', requests)
+  const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
   const language = data?.language
   const checkHookExist = async (path: string, hasParam = false) => {
     try {
+      if (!language || !sdk.find(item => item.type === 'server')) {
+        navigate('/workbench/sdk-template')
+        message.warning(intl.formatMessage({ defaultMessage: '请先选择服务端SDK模板和钩子语言' }))
+        return false
+      }
+
       const hook = await getHook(path)
       if (!hook?.script) {
         const confirm = await new Promise(resolve => {
