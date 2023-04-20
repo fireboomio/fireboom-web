@@ -14,20 +14,21 @@ import { intl } from '@/providers/IntlProvider'
 import styles from './index.module.less'
 
 type SDKItem = {
+  id: number
   author: string
+  version: string
   description?: string
   dirName: string
+  type: 'client' | 'server'
+  language: string
+  url: string
   name: string
   outputPath: string
+  icon: string
   enabled: boolean
 }
-type RemoteSDKItem = {
+type RemoteSDKItem = Omit<SDKItem, 'outputPath'> & {
   defaultOutputPath: string
-  description: string
-  name: string
-  title: string
-  url: string
-  icon: string
 }
 
 const SDKTemplate = () => {
@@ -109,12 +110,12 @@ const SDKTemplate = () => {
         }
       >
         {isLoading ? (
-          <div className="h-40vh w-full flex items-center justify-center">
+          <div className="flex h-40vh w-full items-center justify-center">
             <Spin tip="Loading" size="large" />
           </div>
         ) : null}
         {!isLoading && error ? (
-          <div className="h-40vh w-full flex flex-col items-center justify-center">
+          <div className="flex flex-col h-40vh w-full items-center justify-center">
             <Error50x />
             <Button
               onClick={() => {
@@ -166,7 +167,7 @@ const SDKTemplateItem = ({
         setEditingValue(sdk.outputPath)
         setEditing(false)
       } else if (e.key === 'Enter') {
-        requests.put('/sdk/rePath', { outputPath: value, dirName: sdk.dirName }).then(res => {
+        requests.put(`/sdk/rePath/${sdk.id}`, { outputPath: value }).then(res => {
           console.log('res', res)
           onChange({
             ...sdk,
@@ -181,7 +182,7 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put('/sdk/switch', { enabled: checked, dirName: sdk.dirName }).then(res => {
+      requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
         console.log('res', res)
         onChange({
           ...sdk,
@@ -223,7 +224,7 @@ const SDKTemplateItem = ({
         >
           <img
             alt=""
-            className="w-3 h-3 ml-2 cursor-pointer"
+            className="cursor-pointer h-3 ml-2 w-3"
             src="assets/workbench/icon-menu.png"
           />
         </Dropdown>
@@ -232,8 +233,8 @@ const SDKTemplateItem = ({
       <div className="text-xs text-[#787D8B] line-clamp-2">
         {intl.formatMessage({ defaultMessage: '功能描述' })}：{sdk.description || '-'}
       </div>
-      <div className="h-8 mt-3 relative flex items-center">
-        <span className="text-xs text-[#787D8B] line-clamp-2 flex-shrink-0">
+      <div className="flex h-8 mt-3 relative items-center">
+        <span className="flex-shrink-0 text-xs text-[#787D8B] line-clamp-2">
           {intl.formatMessage({ defaultMessage: '生成路径' })}：
         </span>
         <input
