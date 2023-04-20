@@ -64,11 +64,11 @@ export default function VsCode({
       openDatabase().then(db => {
         addMessage(db, {
           cmd: 'openFile',
-          data: { path: '/' + data?.relativeDir + path + data?.fileExtension }
+          data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
         }).then(() => {
           inChannel.postMessage({
             cmd: 'openFile',
-            data: { path: '/' + data?.relativeDir + path + data?.fileExtension }
+            data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
           })
         })
       })
