@@ -389,7 +389,7 @@ const StatusBar: React.FC<Props> = ({
             <span>
               <FormattedMessage defaultMessage="客户端模版:" />
               &nbsp;
-              {sdk?.find(item => item.type === 'client')?.length ?? 0}
+              {sdk?.filter(item => item.type === 'client')?.length ?? 0}
             </span>
           </span>
           <span className="ml-4.5">
