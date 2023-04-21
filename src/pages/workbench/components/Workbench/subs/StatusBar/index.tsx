@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
-import { Dropdown, Radio, Space, Tag, Tooltip } from 'antd'
+import { Radio, Space, Tag, Tooltip } from 'antd'
 import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWR, { mutate } from 'swr'
-import useSWRImmutable from 'swr/immutable'
 
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
@@ -78,7 +77,6 @@ const StatusBar: React.FC<Props> = ({
   const [hooksServerURL, setHooksServerURL] = useState<string>()
   const { system, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
-  const { data: sdkList } = useSWRImmutable<any[]>('/sdk', requests.get)
   const { vscode } = useContext(GlobalContext)
   const webContainerUrl = useMemo(() => {
     const url = new URL(window.location.href)
@@ -86,10 +84,10 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [])
 
-  const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
-  const hookOptionAll = useMemo(() => {
-    return sdk?.filter(item => item.type === 'server')
-  }, [sdk])
+  const { data: sdk } = useSWR<{ language: string; type: string; enabled: boolean }[]>(
+    '/sdk',
+    requests.get
+  )
   useEffect(() => {
     if (system.hooksServerURL === webContainerUrl) {
       setHookEnabled(1)
@@ -374,30 +372,24 @@ const StatusBar: React.FC<Props> = ({
               </>
             )}
           </span>
-          钩子语言:
-          <Dropdown
-            menu={{
-              items: hookOptionAll?.map(item => ({
-                key: item.language,
-                label: item.language,
-                onClick: () => {
-                  changeHookLanguage(item.language)
-                }
-              }))
-            }}
-          >
-            <span className={styles.errLabel + ' mr-2 cursor-pointer'}>
-              <span>{system.hooksServerLanguage}</span>
-            </span>
-          </Dropdown>
           <span
             className={styles.errLabel + ' mr-2 cursor-pointer'}
             onClick={() => navigate('/workbench/sdk-template')}
           >
             <span>
-              <FormattedMessage defaultMessage="SDK 模板:" />
+              <FormattedMessage defaultMessage="钩子模版:" />
               &nbsp;
-              {sdkList?.length ?? 0}
+              {sdk?.find(item => item.type === 'server' && item.enabled)?.language ?? '未选择'}
+            </span>
+          </span>
+          <span
+            className={styles.errLabel + ' mr-2 cursor-pointer'}
+            onClick={() => navigate('/workbench/sdk-template')}
+          >
+            <span>
+              <FormattedMessage defaultMessage="客户端模版:" />
+              &nbsp;
+              {sdk?.find(item => item.type === 'client')?.length ?? 0}
             </span>
           </span>
           <span className="ml-4.5">

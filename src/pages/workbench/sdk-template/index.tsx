@@ -120,7 +120,7 @@ const SDKTemplate = () => {
     <Card>
       <div className="flex mb-4 items-center">
         <div className="text-base t-medium">
-          <FormattedMessage defaultMessage="SDK模板" />
+          <FormattedMessage defaultMessage="模版仓库" />
         </div>
         <div className="flex-1" />
         <Button
@@ -129,12 +129,12 @@ const SDKTemplate = () => {
             mutateRemote()
           }}
         >
-          {intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
+          {intl.formatMessage({ defaultMessage: '浏览模版市场' })}
         </Button>
       </div>
       <div className="flex mb-4 items-center">
         <div className="text-xs text-[#666]">
-          <FormattedMessage defaultMessage="服务端" />
+          <FormattedMessage defaultMessage="钩子模版" />
         </div>
         <div className="text-xs ml-3 text-[#787D8B]">
           <FormattedMessage defaultMessage="（钩子同时只能开启一个，为toggle模式）" />
@@ -149,13 +149,13 @@ const SDKTemplate = () => {
         {!server?.length && (
           <Empty
             className="m-auto"
-            description={intl.formatMessage({ defaultMessage: '暂无 SDK' })}
+            description={intl.formatMessage({ defaultMessage: '暂无模板' })}
           />
         )}
       </Row>
       <div className="flex mb-4 items-center mt-8">
         <div className="text-xs text-[#666]">
-          <FormattedMessage defaultMessage="客户端" />
+          <FormattedMessage defaultMessage="客户端模版" />
         </div>
       </div>
       <Row className="" gutter={[32, 32]}>
@@ -167,7 +167,7 @@ const SDKTemplate = () => {
         {!client?.length && (
           <Empty
             className="m-auto"
-            description={intl.formatMessage({ defaultMessage: '暂无 SDK' })}
+            description={intl.formatMessage({ defaultMessage: '暂无 模版' })}
           />
         )}
       </Row>
@@ -178,7 +178,7 @@ const SDKTemplate = () => {
         open={showRemote}
         onCancel={() => setShowRemote(false)}
         title={
-          <div className="text-center">{intl.formatMessage({ defaultMessage: 'SDK模板市场' })}</div>
+          <div className="text-center">{intl.formatMessage({ defaultMessage: '模版市场' })}</div>
         }
       >
         {isLoading ? (
@@ -202,7 +202,7 @@ const SDKTemplate = () => {
         {!isLoading && !error && (
           <div>
             <div className="text-xs  mb-4 text-[#666]">
-              <FormattedMessage defaultMessage="服务端" />
+              <FormattedMessage defaultMessage="钩子模版" />
             </div>
             <Row className="" gutter={[32, 32]}>
               {remoteServer?.map((sdk, index) => (
@@ -219,7 +219,7 @@ const SDKTemplate = () => {
             </Row>
 
             <div className="text-xs  mb-4 mt-8 text-[#666]">
-              <FormattedMessage defaultMessage="客户端" />
+              <FormattedMessage defaultMessage="客户端模版" />
             </div>
             <Row className="" gutter={[32, 32]}>
               {remoteClient?.map((sdk, index) => (
