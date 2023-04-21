@@ -49,6 +49,8 @@ export default function VsCode({
         vscode.checkHookExist(path).then(exist => {
           setForceShowPath(path)
         })
+      } else {
+        vscode.hide()
       }
     } else {
       vscode.hide()

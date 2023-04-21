@@ -123,7 +123,12 @@ const SDKTemplate = () => {
           <FormattedMessage defaultMessage="SDK模板" />
         </div>
         <div className="flex-1" />
-        <Button onClick={() => setShowRemote(true)}>
+        <Button
+          onClick={() => {
+            setShowRemote(true)
+            mutateRemote()
+          }}
+        >
           {intl.formatMessage({ defaultMessage: '浏览SDK市场' })}
         </Button>
       </div>
