@@ -218,9 +218,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         }
       }
     }),
-    [intl]
+    [intl, navigate, vscode.toggleHook]
   )
-  const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [props.type, intl])
+  const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [panelMap, props.type])
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
   const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
