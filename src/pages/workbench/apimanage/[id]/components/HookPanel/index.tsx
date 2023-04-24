@@ -95,7 +95,7 @@ export default function HookPanel({ id }: { id?: string }) {
         {hookList.map((hook: any) => (
           <StatusDirective
             key={hook.name}
-            className="!my-1.5 !px-3 !mx-5"
+            className="!my-1.5 !mx-5"
             enabled={hook.enabled}
             label={hook.name}
             onClick={() => {

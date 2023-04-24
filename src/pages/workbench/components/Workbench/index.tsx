@@ -255,7 +255,7 @@ export default function Index(props: PropsWithChildren) {
   const { data } = useSWRImmutable<{ language: string }>('/hook/option', requests)
   const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
   const language = data?.language
-  const checkHookExist = async (path: string, hasParam = false) => {
+  const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
     try {
       if (!language || !sdk.find(item => item.type === 'server')) {
         navigate('/workbench/sdk-template')
@@ -265,16 +265,18 @@ export default function Index(props: PropsWithChildren) {
 
       const hook = await getHook(path)
       if (!hook?.script) {
-        const confirm = await new Promise(resolve => {
-          modal.confirm({
-            title: intl.formatMessage({ defaultMessage: '钩子脚本不存在，是否创建？' }),
-            onOk: () => resolve(true),
-            onCancel: () => resolve(false),
-            zIndex: 99999
+        if (!skipConfirm) {
+          const confirm = await new Promise(resolve => {
+            modal.confirm({
+              title: intl.formatMessage({ defaultMessage: '钩子脚本不存在，是否创建？' }),
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+              zIndex: 99999
+            })
           })
-        })
-        if (!confirm || !language) {
-          return false
+          if (!confirm || !language) {
+            return false
+          }
         }
         setLoading('钩子模板创建中，请稍候')
         const code = await resolveDefaultCode(path, hasParam, language)

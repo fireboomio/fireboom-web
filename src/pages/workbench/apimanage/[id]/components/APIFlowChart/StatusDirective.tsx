@@ -48,7 +48,9 @@ const StatusDirective = ({
         <Switch size="small" checked={enabled} onChange={_onToggleEnabled} />
       </div>
       <div className="h-full bg-[#c7d4dc] w-0.5px mx-1 flex-shrink-0" />
-      {label}
+      <div className="text-ellipsis" title={label}>
+        {label}
+      </div>
     </div>
   )
 }

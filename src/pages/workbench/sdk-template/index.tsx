@@ -83,6 +83,7 @@ const SDKTemplate = () => {
     let server: SDKItem[] = []
     let client: SDKItem[] = []
     if (remoteSdk?.official) {
+      message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       remoteSdk.official.forEach(x => {
         if (x.type === 'server') {
           server.push(x)
@@ -314,10 +315,8 @@ const SDKTemplateItem = ({
                     okText={intl.formatMessage({ defaultMessage: '确定' })}
                     cancelText={intl.formatMessage({ defaultMessage: '取消' })}
                     onConfirm={async () => {
-                      const res = await requests.delete(`/sdk/${sdk.id}`)
-                      if (res) {
-                        message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
-                      }
+                      await requests.delete(`/sdk/${sdk.id}`)
+                      message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
                       mutate()
                     }}
                   >
@@ -329,11 +328,14 @@ const SDKTemplateItem = ({
                 key: 'update',
                 label: intl.formatMessage({ defaultMessage: '升级' }),
                 onClick: async () => {
-                  const res = await requests.post(`/sdk/update/${sdk.id}`)
-                  if (res) {
+                  const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
+                  try {
+                    await requests.post(`/sdk/update/${sdk.id}`)
                     message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
+                    mutate()
+                  } finally {
+                    hide()
                   }
-                  mutate()
                 }
               }
             ]

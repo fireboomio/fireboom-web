@@ -6,6 +6,7 @@ import { usePrompt } from '@/hooks/prompt'
 import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
 import uploadLocal from '@/utils/uploadLocal'
@@ -29,6 +30,7 @@ import styles from './Designer.module.less'
 export default function Designer() {
   const intl = useIntl()
   const { validateName } = useValidate()
+  const { vscode } = useContext(GlobalContext)
   const initData = useMemo<
     {
       name: string
@@ -119,7 +121,7 @@ export default function Designer() {
       {
         name: intl.formatMessage({ defaultMessage: '自定义' }),
         items: [
-          { name: 'node.js', icon: iconNode, sourceType: 4 },
+          { name: '脚本', icon: iconNode, sourceType: 4 },
           { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
         ]
       }
@@ -270,6 +272,7 @@ export default function Designer() {
       enabled: false
     } as any
     data.id = await requests.post<unknown, number>('/dataSource', data)
+    await vscode.checkHookExist(`customize/${value}`, false, true)
     handleSave(data)
   }
 
