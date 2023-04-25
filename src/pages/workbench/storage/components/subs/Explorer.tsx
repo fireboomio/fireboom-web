@@ -623,7 +623,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Button>
           </Upload>
           <Button size="small" className="!rounded-2px !h-7" onClick={createFold}>
-            <FormattedMessage defaultMessage="文件夹" />
+            <FormattedMessage defaultMessage="新建文件夹" />
           </Button>
         </div>
       </div>
