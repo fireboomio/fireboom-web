@@ -1,5 +1,5 @@
 import { Col } from 'antd'
-import { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
@@ -39,7 +39,9 @@ export default function Setting() {
             <Pannel showType={showType} handleToggleDesigner={handleToggleDesigner} />
           </Col>
           <Col className="bg-white h-full flex-1 min-w-0 overflow-y-auto">
-            <Outlet />
+            <Suspense fallback={<div />}>
+              <Outlet />
+            </Suspense>
           </Col>
         </div>
       )}

@@ -17,7 +17,6 @@ import {
   Menu,
   message,
   Popconfirm,
-  Popover,
   Tooltip,
   Upload
 } from 'antd'
@@ -403,18 +402,12 @@ export default function StorageExplorer({ bucketId }: Props) {
                   )}
                 </span>
 
-                <Popover
-                  content={
-                    <div className="max-w-[50vw] overflow-clip break-all">
-                      {x.name.replace(replacePrefix, '')}
-                    </div>
-                  }
-                  placement="topLeft"
+                <span
+                  title={x.name.replace(replacePrefix, '')}
+                  className={`ml-2.5 ${styles.ellipsis} ${x.isDir ? 'isDir' : 'isLeaf'}`}
                 >
-                  <span className={`ml-2.5 ${styles.ellipsis} ${x.isDir ? 'isDir' : 'isLeaf'}`}>
-                    {x.name.replace(replacePrefix, '')}
-                  </span>
-                </Popover>
+                  {x.name.replace(replacePrefix, '')}
+                </span>
               </div>
             </Dropdown>
           ),

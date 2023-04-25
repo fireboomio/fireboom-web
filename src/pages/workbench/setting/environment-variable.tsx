@@ -208,8 +208,7 @@ export default function SettingMainEnvironmentVariable() {
           transitionName=""
           bodyStyle={{
             width: '549px',
-            height: '150px',
-            margin: '12px auto'
+            margin: '32px auto 48px'
           }}
           open={isVariableVisible}
           onCancel={() => setIsVariableVisible(false)}
@@ -225,6 +224,11 @@ export default function SettingMainEnvironmentVariable() {
                 : intl.formatMessage({ defaultMessage: '保存' })}
             </span>
           }
+          okButtonProps={{
+            style: {
+              background: 'none'
+            }
+          }}
           cancelText={
             <span className="w-10">{intl.formatMessage({ defaultMessage: '取消' })} </span>
           }

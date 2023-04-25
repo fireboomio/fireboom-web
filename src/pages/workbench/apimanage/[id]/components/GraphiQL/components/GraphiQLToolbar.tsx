@@ -337,7 +337,7 @@ const GraphiQLToolbar = () => {
         trigger={['click']}
       >
         <button className="graphiql-toolbar-btn">
-          <FormattedMessage defaultMessage="@内部" description="插入指令处" />
+          <FormattedMessage defaultMessage="@私有" description="插入指令处" />
         </button>
       </Dropdown>
       <div className="graphiql-toolbar-divider" />

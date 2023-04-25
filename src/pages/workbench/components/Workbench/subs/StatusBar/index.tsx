@@ -384,7 +384,7 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span
             className={styles.errLabel + ' mr-2 cursor-pointer'}
-            onClick={() => navigate('/workbench/sdk-template')}
+            onClick={() => navigate(a'/workbench/sdk-template')}
           >
             <span>
               <FormattedMessage defaultMessage="客户端模版:" />

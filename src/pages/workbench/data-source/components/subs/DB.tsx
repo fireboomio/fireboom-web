@@ -300,7 +300,7 @@ export default function DB({ content, type }: Props) {
         <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
       </Form.Item>
 
-      <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })}>
+      <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })} required>
         <Input.Group compact className="!flex">
           {/*<Form.Item name={['userName', 'kind']} noStyle>*/}
           {/*  <Select className="flex-0 w-100px">*/}

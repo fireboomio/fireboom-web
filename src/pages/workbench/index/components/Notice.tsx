@@ -26,7 +26,9 @@ export function Notice({ handleToggleDesigner }: Props) {
   )
   console.log(news, 'news')
   const noticeConfig = useMemo(() => {
-    return (news || []).map((item: any) => ({
+    const list = news || []
+    list.sort((a: { time: number }, b: { time: number }) => b.time - a.time)
+    return list.map((item: any) => ({
       content: item.content,
       title: item.title,
       date: calcTime(item.time),
