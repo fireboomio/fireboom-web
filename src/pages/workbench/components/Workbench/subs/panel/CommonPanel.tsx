@@ -171,7 +171,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                         <FormattedMessage defaultMessage="启用" />
                       </span>
                     </div>
-                  )a
+                  )
                 }
               ]
             }

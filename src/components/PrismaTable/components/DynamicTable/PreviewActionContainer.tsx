@@ -51,10 +51,10 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
 
   return (
     <div className="flex h-7 w-full items-center ">
-      <Button type="link" className="mr-4" onClick={handleEditOne}>
+      <Button type="link" className="p-0" onClick={handleEditOne}>
         <FormattedMessage defaultMessage="编辑" />
       </Button>
-      <Button type="link" className="mr-4" onClick={onclickDelete}>
+      <Button type="link" className="ml-4 p-0" onClick={onclickDelete}>
         <FormattedMessage defaultMessage="删除" />
       </Button>
       <Modal

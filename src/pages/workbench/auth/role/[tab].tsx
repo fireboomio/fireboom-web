@@ -105,7 +105,7 @@ export default function AuthRole() {
       render: (_, row) => (
         <>
           <span
-            className="cursor-pointer mr-1 pl-0 text-red-500"
+            className="cursor-pointer mr-1 pl-0 text-[#1677ff]"
             onClick={() => {
               form.setFieldsValue(row)
               setModal1Visible(true)
@@ -121,7 +121,7 @@ export default function AuthRole() {
               handleDeleteRole(row.id)
             }}
           >
-            <span className="cursor-pointer pl-0 text-red-500">
+            <span className="ml-4 cursor-pointer pl-0 text-[#1677ff]">
               <FormattedMessage defaultMessage="删除" />
             </span>
           </Popconfirm>
@@ -245,9 +245,6 @@ export default function AuthRole() {
                         columns={columns}
                         dataSource={roleData}
                         rowKey={record => record.id}
-                        rowClassName={(record, index) =>
-                          index % 2 === 1 ? styles['role-table'] : ''
-                        }
                         pagination={false}
                       />
                     ) : (
