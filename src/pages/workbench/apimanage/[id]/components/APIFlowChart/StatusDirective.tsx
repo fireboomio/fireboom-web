@@ -1,5 +1,7 @@
-import { Switch } from 'antd'
+import { ConfigProvider, Switch } from 'antd'
 import type { SwitchChangeEventHandler } from 'antd/es/switch'
+
+import { primaryColor } from '@/styles'
 
 interface StatusDirectiveProps {
   className?: string
@@ -22,33 +24,28 @@ const StatusDirective = ({
 
   return (
     <div
-      className={className}
+      className={`cursor-pointer flex p-2px truncate bg-[#f3f9fd] items-center rounded-xl text-[#333] text-xs  ${className}`}
       onClick={onClick}
       style={{
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 5px',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        background: '#f3f9fd',
         border: '0.3px solid #C7D4DC',
-        borderRadius: '10px',
         boxShadow: '0 2px 4px #F8F9FD',
-        color: '#333',
-        fontSize: '12px',
-        height: '20px',
-        boxSizing: 'content-box',
         opacity: enabled ? 'unset' : '0.75'
         // lineHeight: '20px',
       }}
     >
-      <div className="flex-shrink-0 h-full flex items-center" onClick={e => e.stopPropagation()}>
-        <Switch size="small" checked={enabled} onChange={_onToggleEnabled} />
+      <div className="flex flex-shrink-0 items-center" onClick={e => e.stopPropagation()}>
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: primaryColor
+            }
+          }}
+        >
+          <Switch size="small" checked={enabled} onChange={_onToggleEnabled} />
+        </ConfigProvider>
       </div>
-      <div className="h-full bg-[#c7d4dc] w-0.5px mx-1 flex-shrink-0" />
-      <div className="text-ellipsis" title={label}>
+      {/* <div className="h-full bg-[#c7d4dc] flex-shrink-0 mx-1 w-0.5px" /> */}
+      <div className="text-ellipsis ml-1" title={label}>
         {label}
       </div>
     </div>

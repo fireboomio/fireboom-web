@@ -12,6 +12,7 @@ import routes from '~react-pages'
 // import Workbench from './components/workbench'
 import ApiSearch from './components/ApiSearch'
 import { useAppIntl } from './providers/IntlProvider'
+import { primaryColor } from './styles'
 
 export default function App() {
   const { locale } = useAppIntl()
@@ -20,7 +21,7 @@ export default function App() {
       locale={{ 'zh-CN': zhCN, en: enUS }[locale]}
       theme={{
         token: {
-          colorPrimary: '#E92E5E',
+          colorPrimary: primaryColor,
           zIndexPopupBase: 10000
         }
       }}
