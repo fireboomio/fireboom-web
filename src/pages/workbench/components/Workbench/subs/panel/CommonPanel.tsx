@@ -149,11 +149,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                         mutateDataSource()
                       }}
                     >
-                      <img
-                        alt="zhongmingming"
-                        src="assets/iconfont/shezhi.svg"
-                        style={{ height: '1em', width: '1em' }}
-                      />
                       <span className="ml-1.5">
                         <FormattedMessage defaultMessage="停用" />
                       </span>
@@ -172,16 +167,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                         mutateDataSource()
                       }}
                     >
-                      <img
-                        alt="zhongmingming"
-                        src="assets/iconfont/shezhi.svg"
-                        style={{ height: '1em', width: '1em' }}
-                      />
                       <span className="ml-1.5">
                         <FormattedMessage defaultMessage="启用" />
                       </span>
                     </div>
-                  )
+                  )a
                 }
               ]
             }
@@ -235,11 +225,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         disabled: row.readonly,
         label: (
           <div onClick={() => !row.readonly && setEditTarget(row)}>
-            <img
-              alt="zhongmingming"
-              src="assets/iconfont/zhongmingming.svg"
-              style={{ height: '1em', width: '1em' }}
-            />
             <span className="ml-1.5">
               <FormattedMessage defaultMessage="重命名" />
             </span>
@@ -262,11 +247,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             trigger={row.readonly ? '' : 'click'}
           >
             <div>
-              <img
-                alt="a-shanchu2"
-                src="assets/iconfont/shanchu.svg"
-                style={{ height: '1em', width: '1em' }}
-              />
               <span className="ml-1.5">
                 <FormattedMessage defaultMessage="删除" />
               </span>
@@ -367,15 +347,6 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
               key={item.id}
               onClick={() => handleItemNav(item)}
             >
-              <div className={styles.icon}>
-                <Image
-                  width={12}
-                  height={12}
-                  preview={false}
-                  alt={item.name}
-                  src={item.svg ?? `/assets/icon/github-fill.svg`}
-                />
-              </div>
               {editTarget?.id === item.id && editTarget ? (
                 <Input
                   // @ts-ignore
@@ -391,11 +362,22 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   placeholder={intl.formatMessage({ defaultMessage: '请输入外部数据源名' })}
                 />
               ) : (
-                <div className={styles.title}>{item.name}</div>
+                <>
+                  <div className={styles.icon}>
+                    <Image
+                      width={12}
+                      height={12}
+                      preview={false}
+                      alt={item.name}
+                      src={item.svg ?? `/assets/icon/github-fill.svg`}
+                    />
+                  </div>
+                  <div className={styles.title}>{item.name}</div>
+                  <div className={styles.tip} title={item.tip}>
+                    {item.tip}
+                  </div>
+                </>
               )}
-              <div className={styles.tip} title={item.tip}>
-                {item.tip}
-              </div>
               <div onClick={e => e.stopPropagation()}>
                 <Dropdown
                   dropdownRender={() => dropDownMenu(item)}

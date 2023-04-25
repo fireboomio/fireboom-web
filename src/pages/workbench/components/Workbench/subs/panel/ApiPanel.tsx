@@ -1,4 +1,3 @@
-import { CopyOutlined } from '@ant-design/icons'
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -288,7 +287,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                     },
                     label: (
                       <div>
-                        <CopyOutlined />
                         <span className="ml-1.5">
                           <FormattedMessage defaultMessage="复制" />{' '}
                         </span>
@@ -302,11 +300,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                     },
                     label: (
                       <div>
-                        <img
-                          alt="zhongmingming"
-                          src="assets/iconfont/zhongmingming.svg"
-                          style={{ height: '1em', width: '1em' }}
-                        />
                         <span className="ml-1.5">
                           <FormattedMessage defaultMessage="重命名" />{' '}
                         </span>
@@ -336,11 +329,6 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                           placement="right"
                         >
                           <div className={styles.menuItem} data-stoppropagation="1">
-                            <img
-                              alt="shanchu"
-                              src="assets/iconfont/shanchu.svg"
-                              style={{ height: '1em', width: '1em' }}
-                            />
                             <span className="ml-1.5">
                               <FormattedMessage defaultMessage="删除" />
                             </span>

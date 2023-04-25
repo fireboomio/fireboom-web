@@ -197,11 +197,11 @@ const StatusBar: React.FC<Props> = ({
               </span>
             </span>
           </span>
-          <span className="ml-8">
+          <span className="ml-3">
             {' '}
             <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
-          <span className={styles.errLabel}>
+          <span className={styles.errLabel + ' ml-1'}>
             {engineStatus === ServiceStatus.NotStarted ? (
               <>
                 <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
@@ -236,11 +236,11 @@ const StatusBar: React.FC<Props> = ({
               </>
             )}
           </span>
-          <span className="ml-4.5">
+          <span className="ml-3">
             {' '}
             <FormattedMessage defaultMessage="钩子" />:{' '}
           </span>
-          <span className={styles.errLabel + ' cursor-pointer mr-2'}>
+          <span className={styles.errLabel + ' cursor-pointer ml-1'}>
             <div
               className="flex h-full items-center"
               onClick={() => {
@@ -372,32 +372,29 @@ const StatusBar: React.FC<Props> = ({
               </>
             )}
           </span>
-          <span
-            className={styles.errLabel + ' mr-2 cursor-pointer'}
+
+          <div
+            className={styles.entry + ' cursor-pointer'}
             onClick={() => navigate('/workbench/sdk-template')}
           >
-            <span>
-              <FormattedMessage defaultMessage="钩子模版:" />
-              &nbsp;
+            <FormattedMessage defaultMessage="钩子模版" />:
+            <span className={styles.label}>
               {sdk?.find(item => item.type === 'server' && item.enabled)?.language ?? '未选择'}
             </span>
-          </span>
-          <span
-            className={styles.errLabel + ' mr-2 cursor-pointer'}
+          </div>
+          <div
+            className={styles.entry + ' cursor-pointer'}
             onClick={() => navigate('/workbench/sdk-template')}
           >
-            <span>
-              <FormattedMessage defaultMessage="客户端模版:" />
-              &nbsp;
+            <FormattedMessage defaultMessage="客户端模版" />:
+            <span className={styles.label}>
               {sdk?.filter(item => item.type === 'client')?.length ?? 0}
             </span>
-          </span>
-          <span className="ml-4.5">
-            <FormattedMessage defaultMessage="编译时间" />:{' '}
-          </span>
-          <span className={styles.errLabel}>
-            <span className="ml-1 text-[#649FFF]">{compileTime}</span>
-          </span>
+          </div>
+          <div className={styles.entry}>
+            <FormattedMessage defaultMessage="编译时间" />:
+            <span className={styles.label}>{compileTime}</span>
+          </div>
         </span>
         <span
           className="bg-white rounded-sm cursor-pointer ml-auto mr-2 text-xs py-0.5 px-1 text-[#326d9f]"

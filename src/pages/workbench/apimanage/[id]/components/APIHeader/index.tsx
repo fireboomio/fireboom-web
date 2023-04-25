@@ -1,4 +1,4 @@
-import { CheckSquareFilled, EditFilled } from '@ant-design/icons'
+import { EditFilled } from '@ant-design/icons'
 import { Breadcrumb, Input, message, Switch, Tooltip } from 'antd'
 import copy from 'copy-to-clipboard'
 import type { OperationDefinitionNode } from 'graphql'
@@ -238,7 +238,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
           />
         </Tooltip>
       ) : (
-        <CheckSquareFilled className="cursor-pointer text-xs ml-1 !text-gray-500 !hover:text-default" />
+        <EditFilled className="cursor-pointer text-xs ml-1 !text-gray-500 !hover:text-default" />
       )}
       <div className="flex text-[rgba(175,176,180,0.6)] items-center">
         <span className="text-xs ml-1">

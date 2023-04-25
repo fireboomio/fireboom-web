@@ -284,7 +284,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
                   </td>
                   <td>
                     <Switch
-                      className="w-8 h-2"
+                      className="w-8"
                       checked={x.isOpen}
                       onChange={val => handleOpenChange(val, x)}
                     />

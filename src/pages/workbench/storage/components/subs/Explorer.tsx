@@ -12,6 +12,7 @@ import {
   Collapse,
   Divider,
   Dropdown,
+  Empty,
   Image,
   Input,
   Menu,
@@ -573,7 +574,7 @@ export default function StorageExplorer({ bucketId }: Props) {
               autoFocus
               status="error"
               prefix={
-                <div className="cursor-pointer" onClick={changeSerachState}>
+                <div className="cursor-pointer text-[0px]" onClick={changeSerachState}>
                   <img alt="" src="/assets/search.svg" />
                 </div>
               }
@@ -595,7 +596,17 @@ export default function StorageExplorer({ bucketId }: Props) {
           {/*</Dropdown>*/}
           <Dropdown menu={{ items: orderMenu }} placement="bottom">
             <Button icon={<BarsOutlined />} className="mr-2 !border-0 !p-1">
-              <FormattedMessage defaultMessage="排序" />
+              {
+                {
+                  name: intl.formatMessage({ defaultMessage: '按名称' }),
+                  size: intl.formatMessage({ defaultMessage: '按文件大小' }),
+                  createTime: intl.formatMessage({ defaultMessage: '按创建时间' }),
+                  updateTime: intl.formatMessage({ defaultMessage: '按修改时间' })
+                }[sortField]
+              }
+              <span className="ml-1 text-red-500">
+                {sortAsc ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+              </span>
             </Button>
           </Dropdown>
           <Divider type="vertical" className="!h-3 !mr-5" />
@@ -653,6 +664,12 @@ export default function StorageExplorer({ bucketId }: Props) {
         }}
       >
         <div ref={containerEle} className={styles.cascadeContainer} />
+        {options?.length ? null : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Empty />
+          </div>
+        )}
+
         {visible ? (
           <div className={styles.fileDetail}>
             <div className={styles.fileDetailBody}>
