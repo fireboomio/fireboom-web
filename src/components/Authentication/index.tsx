@@ -54,7 +54,7 @@ const Authentication = (props: AuthenticationProps) => {
       setEnvironment(res.environment)
       try {
         // @ts-ignore
-        window.__bl.setConfig({ disabled: !res.usageReport })
+        window.__bl.setConfig({ disabled: !res.system.usageReport })
       } catch (_) {
         // ignore
       }

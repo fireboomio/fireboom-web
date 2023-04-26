@@ -1,5 +1,4 @@
 import { Button, Image, Input, message, Switch } from 'antd'
-import type { NotificationPlacement } from 'antd/lib/notification'
 import React, { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -71,7 +70,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
       break
   }
 
-  const testLink = (placement: NotificationPlacement) => {
+  const testLink = () => {
     void requests.post('/checkDBConn', { ...content }).then((x: any) => {
       if (x?.status) {
         message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
@@ -196,6 +195,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {content.sourceType !== 4 ? (
               <>
+                <Button
+                  className={'btn-save !ml-4'}
+                  onClick={() => testLink()}
+                  disabled={content.readonly}
+                >
+                  <FormattedMessage defaultMessage="测试" />
+                </Button>
                 <Button
                   className={'btn-save !ml-4 mr-11'}
                   onClick={() => handleToggleDesigner('form')}
