@@ -194,7 +194,7 @@ const EnumDesigner = forwardRef(
     return (
       <div className={!showTitle ? 'bg-white px-7 py-4 flex-1' : 'w-full'}>
         {showTitle ? (
-          <div className="flex justify-start items-center -mt-16px">
+          <div className="flex justify-start items-center">
             <div className="flex justify-start items-center h-10 bg-white pl-4 pr-4 mr-auto">
               <span className="text-lg font-medium text-16px">{currentEnumName}</span>
               <span className="mr-auto ml-12px text-[#118AD1] text-lg font-400 text-14px">

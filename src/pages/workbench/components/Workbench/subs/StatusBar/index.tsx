@@ -4,7 +4,7 @@ import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import useSWR, { mutate } from 'swr'
+import useSWR from 'swr'
 
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
@@ -146,7 +146,7 @@ const StatusBar: React.FC<Props> = ({
     await requests.put('/setting/system', {
       values: [{ key: 'system.hooksServerLanguage', val }]
     })
-    mutate('/hook/option')
+
     refreshConfig()
   }
 

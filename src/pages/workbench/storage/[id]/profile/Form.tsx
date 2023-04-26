@@ -167,6 +167,7 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
             // editor.setPosition({ lineNumber: 1, column: 1 })
             editor.focus()
             editor.trigger('', 'editor.action.inlineSuggest.trigger', '')
+            editor.setValue(form.getFieldValue('metadataJSONSchema'))
           }}
         />
       </Form.Item>

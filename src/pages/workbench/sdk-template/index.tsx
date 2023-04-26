@@ -17,7 +17,7 @@ import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import useSWR from 'swr'
+import useSWR, { mutate as _mutate } from 'swr'
 
 import Error50x from '@/components/ErrorPage/50x'
 import requests, { proxy } from '@/lib/fetchers'
@@ -83,7 +83,6 @@ const SDKTemplate = () => {
     let server: SDKItem[] = []
     let client: SDKItem[] = []
     if (remoteSdk?.official) {
-      message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       remoteSdk.official.forEach(x => {
         if (x.type === 'server') {
           server.push(x)
@@ -108,6 +107,7 @@ const SDKTemplate = () => {
       try {
         await requests.post('/sdk/remote/download', sdk)
         await mutate()
+        _mutate('/hook/option')
         message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       } catch (e) {
         message.error(intl.formatMessage({ defaultMessage: '下载失败' }))
@@ -280,6 +280,7 @@ const SDKTemplateItem = ({
     (checked: boolean) => {
       requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
         mutate()
+        _mutate('/hook/option')
       })
     },
     [onChange, sdk]

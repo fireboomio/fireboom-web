@@ -178,7 +178,6 @@ export default function Index(props: PropsWithChildren) {
           withCredentials: true
         })
         .then(res => {
-          message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
           const redirect = res.data?.redirect
           if (redirect) {
             const iframe = document.createElement('iframe')
@@ -189,6 +188,7 @@ export default function Index(props: PropsWithChildren) {
             }, 5000)
           }
           if (opts?.closeWindow ?? true) {
+            message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
             setTimeout(() => {
               window.close()
             }, 3000)
