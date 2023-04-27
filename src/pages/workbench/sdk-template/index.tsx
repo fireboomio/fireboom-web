@@ -13,9 +13,10 @@ import {
   Spin,
   Switch
 } from 'antd'
+import axios from 'axios'
 import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR, { mutate as _mutate } from 'swr'
 
@@ -47,9 +48,10 @@ type RemoteSDKItem = Omit<SDKItem, 'outputPath'> & {
 const SDKTemplate = () => {
   const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
   const [showRemote, setShowRemote] = useState(false)
+  const cancelToken = useRef<any>()
   const {
     data: remoteSdk,
-    isLoading,
+    isValidating,
     error,
     mutate: mutateRemote
   } = useSWR<{
@@ -59,7 +61,14 @@ const SDKTemplate = () => {
     showRemote
       ? 'https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json'
       : null,
-    proxy,
+    key => {
+      return proxy(
+        key,
+        new axios.CancelToken(c => {
+          cancelToken.current = c
+        })
+      )
+    },
     {
       revalidateOnMount: true
     }
@@ -126,6 +135,7 @@ const SDKTemplate = () => {
         <div className="flex-1" />
         <Button
           onClick={() => {
+            cancelToken.current?.()
             setShowRemote(true)
             mutateRemote()
           }}
@@ -182,12 +192,12 @@ const SDKTemplate = () => {
           <div className="text-center">{intl.formatMessage({ defaultMessage: '模版市场' })}</div>
         }
       >
-        {isLoading ? (
+        {isValidating ? (
           <div className="flex h-40vh w-full items-center justify-center">
             <Spin tip="Loading" size="large" />
           </div>
         ) : null}
-        {!isLoading && error ? (
+        {!isValidating && error ? (
           <div className="flex flex-col h-40vh w-full items-center justify-center">
             <Error50x />
             <Button
@@ -200,7 +210,7 @@ const SDKTemplate = () => {
           </div>
         ) : null}
 
-        {!isLoading && !error && (
+        {!isValidating && !error && (
           <div>
             <div className="text-xs  mb-4 text-[#666]">
               <FormattedMessage defaultMessage="钩子模版" />

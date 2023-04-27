@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios'
 import axios from 'axios'
 import { throttle } from 'lodash'
 import { useSyncExternalStore } from 'react'
@@ -105,8 +105,11 @@ export const NPM_RESOLVE_HOSE = 'http://8.142.115.204:9801'
 
 export default requests
 
-export const proxy = (url: string) => {
+export const proxy = (url: string, cancelToken?: CancelToken) => {
   return axios
-    .get(`/api/v1/common/proxy?url=${encodeURIComponent(url)}`, { headers: getHeader() })
+    .get(`/api/v1/common/proxy?url=${encodeURIComponent(url)}`, {
+      headers: getHeader(),
+      cancelToken
+    })
     .then(x => x.data)
 }
