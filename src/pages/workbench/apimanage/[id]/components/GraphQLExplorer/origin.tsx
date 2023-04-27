@@ -2825,7 +2825,11 @@ class Explorer extends React.PureComponent<
         return {
           operationTypeMap,
           visibleFields: Object.keys(fields).reduce<GraphQLFieldMap<any, any>>((obj, key) => {
-            if (fields![key].name.includes(this.props.selectedDataSource!)) {
+            if (
+              fields![key].name
+                .toLowerCase()
+                .includes(this.props.selectedDataSource?.toLowerCase()!)
+            ) {
               obj[key] = fields![key]
             }
             return obj
@@ -3075,6 +3079,7 @@ class ExplorerWrapper extends React.PureComponent<
 
   /// Add
   _onChangeType = (v: string | undefined) => {
+    console.log(123123)
     this.setState({
       selectedType: (v ?? 'query') as FilterType
     })
@@ -3094,6 +3099,10 @@ class ExplorerWrapper extends React.PureComponent<
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any) {
+    // 该逻辑只在query变化时触发，以避免正常操作时selectedType被重置
+    if (this.props.query === nextProps.query) {
+      return
+    }
     const query = (nextProps.query ?? '').trim()
     let type = ''
     if (query.startsWith('query')) {
