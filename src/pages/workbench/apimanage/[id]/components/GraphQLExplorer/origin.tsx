@@ -3079,7 +3079,6 @@ class ExplorerWrapper extends React.PureComponent<
 
   /// Add
   _onChangeType = (v: string | undefined) => {
-    console.log(123123)
     this.setState({
       selectedType: (v ?? 'query') as FilterType
     })
