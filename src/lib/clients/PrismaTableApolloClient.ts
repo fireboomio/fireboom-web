@@ -1,5 +1,5 @@
 import type { DefaultOptions } from '@apollo/client'
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloLink, createHttpLink, from, InMemoryCache } from '@apollo/client'
 
 import { BASE_URL, PRISMA_PREVIEW_GRAPHQL_URL } from '@/lib/constants/fireBoomConstants'
 
@@ -26,9 +26,20 @@ export const buildPrismaTableApolloClientByDataSourceId = (dataSourceId: string)
       signal: abortController.signal
     }
   })
+  const headerMiddleware = new ApolloLink((operation, forward) => {
+    // add the authorization to the headers
+    operation.setContext(({ headers = {} }) => ({
+      headers: {
+        ...headers,
+        ...getHeader()
+      }
+    }))
+
+    return forward(operation)
+  })
+  console.log(getHeader())
   return new ApolloClient({
-    headers: getHeader(),
-    link: httpLink,
+    link: from([headerMiddleware, httpLink]),
     cache: new InMemoryCache({ addTypename: false }),
     defaultOptions
   })
