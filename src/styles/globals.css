@@ -28,3 +28,9 @@ a:hover {
 .ant-tooltip-arrow-content {
   --antd-arrow-background-color: #fff;
 }
+
+.global-float-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+}

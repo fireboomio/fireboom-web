@@ -115,7 +115,7 @@ export default function StorageForm({ content, showErr }: Props) {
   }
 
   return (
-    <div className={`${styles['form-contain']} flex flex-column`}>
+    <div className={`${styles['form-contain']} flex flex-col`}>
       {showErr && (
         <div className="-mt-4 pb-4">
           <Alert

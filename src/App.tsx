@@ -1,6 +1,7 @@
 import '@/lib/socket/index'
 
-import { App as AntApp, ConfigProvider } from 'antd'
+import { MessageOutlined } from '@ant-design/icons'
+import { App as AntApp, ConfigProvider, FloatButton } from 'antd'
 import enUS from 'antd/locale/en_US'
 import zhCN from 'antd/locale/zh_CN'
 import { Suspense } from 'react'
@@ -29,6 +30,12 @@ export default function App() {
       <AntApp>
         <ApiSearch />
         <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
+        <FloatButton.Group className="global-float-btn" icon={<MessageOutlined />} trigger="click">
+          <div className="p-2 bg-white rounded-lg flex flex-col items-center shadow-xl">
+            <img src="/assets/qun_qr.jpg" className="w-45" alt="qun_qrcode" />
+            <p>扫码加入开发者交流群</p>
+          </div>
+        </FloatButton.Group>
       </AntApp>
     </ConfigProvider>
   )
