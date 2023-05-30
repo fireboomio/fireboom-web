@@ -32,7 +32,11 @@ export default function App() {
         <Suspense fallback={<></>}>{useRoutes(routes)}</Suspense>
         <FloatButton.Group className="global-float-btn" icon={<MessageOutlined />} trigger="click">
           <div className="p-2 bg-white rounded-lg flex flex-col items-center shadow-xl">
-            <img src="/assets/qun_qr.jpg" className="w-45" alt="qun_qrcode" />
+            <img
+              src="https://fireboom.oss-cn-hangzhou.aliyuncs.com/img/qun_qr.png"
+              className="w-45"
+              alt="qun_qrcode"
+            />
             <p>扫码加入开发者交流群</p>
           </div>
         </FloatButton.Group>
