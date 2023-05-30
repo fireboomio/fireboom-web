@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
+import type { InputOrFromEnvProps } from '@/components/InputOrFromEnv'
+import InputOrFromEnv, { Mode } from '@/components/InputOrFromEnv'
 import { useValidate } from '@/hooks/validate'
 import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -62,14 +64,7 @@ export default function DB({ content, type }: Props) {
   const passwordKind = Form.useWatch(['password', 'kind'], form)
   const appendType = Form.useWatch('appendType', form)
 
-  // 当参数/URL模式变更时，自动同步数据
-  // useEffect(() => {})
-
   const config = content.config as Config
-  const [rulesObj, setRulesObj] = useImmer({})
-  const [isValue, setIsValue] = useImmer(true)
-  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
-  const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
   // const [uploadPath, setUploadPath] = useImmer(BASEPATH)
@@ -83,40 +78,12 @@ export default function DB({ content, type }: Props) {
     form.validateFields()
   }
 
-  // 表单选择后规则校验改变
-  const onValueChange = (value: string) => {
-    switch (value) {
-      case '0':
-        setIsValue(true)
-        form.setFieldValue(['databaseUrl', 'val'], '')
-        void form.validateFields()
-        return
-      case '1':
-        setIsValue(false)
-        setEnvVal(envOpts.at(0)?.label ?? '')
-        form.setFieldValue(['databaseUrl', 'val'], '')
-        void form.validateFields()
-        return
-      default:
-        setIsValue(false)
-        return
-    }
+  const onUrlChange: InputOrFromEnvProps['onChange'] = data => {
+    form.validateFields()
+    form.setFieldValue('databaseUrl', data)
   }
 
-  const onValue2Change = (value: string) => {
-    setEnvVal(value)
-  }
-
-  useEffect(() => {
-    void getFetcher('/env')
-      // @ts-ignore
-      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      .then(x => setEnvOpts(x))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const dbProtocal = String(content?.config.dbType).toLowerCase()
+  const dbProtocol = String(content?.config.dbType).toLowerCase()
 
   const urlRule = {
     mysql: {
@@ -134,7 +101,7 @@ export default function DB({ content, type }: Props) {
       message: intl.formatMessage({ defaultMessage: '以 mongodb:// 开头，不超过128位' }),
       required: true
     }
-  }[dbProtocal]
+  }[dbProtocol]
 
   const sqlLiteInputValue = useRef('')
   const { modal } = App.useApp()
@@ -225,42 +192,23 @@ export default function DB({ content, type }: Props) {
         </div>
       </Form.Item>
     ) : (
-      <Form.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
-        <Input.Group compact>
-          {/*<Form.Item name={['databaseUrl', 'kind']} noStyle>*/}
-          {/*  <Select className="w-1/5" onChange={onValueChange}>*/}
-          {/*    <Option value="0">{intl.formatMessage({ defaultMessage: '值' })}</Option>*/}
-          {/*    <Option value="1">{intl.formatMessage({ defaultMessage: '环境变量' })}</Option>*/}
-          {/*  </Select>*/}
-          {/*</Form.Item>*/}
-          {isValue ? (
-            <Form.Item
-              key={1}
-              name={['databaseUrl', 'val']}
-              noStyle
-              rules={urlRule ? [urlRule] : []}
-            >
-              <Input
-                style={{ width: '80%' }}
-                placeholder={intl.formatMessage(
-                  { defaultMessage: '示例: {dbProtocal}://user:password@localhost:3306/db-name' },
-                  { dbProtocal }
-                )}
-              />
-            </Form.Item>
-          ) : (
-            <Form.Item key={2} name={['databaseUrl', 'val']} noStyle rules={[]}>
-              <Select
-                className="w-1/5"
-                style={{ width: '80%' }}
-                options={envOpts}
-                value={envVal}
-                onChange={onValue2Change}
-              />
-            </Form.Item>
-          )}
-        </Input.Group>
-      </Form.Item>
+      <InputOrFromEnv
+        formItemProps={{
+          label: intl.formatMessage({ defaultMessage: '连接URL' }),
+          name: 'databaseUrl'
+        }}
+        inputProps={{
+          placeholder: intl.formatMessage(
+            { defaultMessage: '示例: {dbProtocol}://user:password@localhost:3306/db-name' },
+            { dbProtocol: dbProtocol }
+          )
+        }}
+        envProps={{
+          placeholder: intl.formatMessage({ defaultMessage: '请选择一个环境变量或者手动输入' })
+        }}
+        rules={urlRule ? [urlRule] : []}
+        onChange={onUrlChange}
+      />
     )
 
   const paramForm = (
@@ -379,12 +327,6 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userNameKind, passwordKind])
 
-  // 连接URL，值和环境变量切换,对应选择框切换，重新渲染获取数据
-  useEffect(() => {
-    setViewerForm(initForm)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValue])
-
   //表单提交成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
@@ -498,10 +440,6 @@ export default function DB({ content, type }: Props) {
     }
   }
 
-  const handleTest = () => {
-    // TODO 测试接口
-  }
-
   return (
     <>
       <Modal
@@ -607,7 +545,10 @@ export default function DB({ content, type }: Props) {
                   ) : (
                     <>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
-                        {(config.databaseUrl as unknown as { kind: string; val: string })?.val}
+                        {/* {(config.databaseUrl as unknown as { kind: string; val: string })?.val} */}
+                        {config.databaseUrl?.kind === '1'
+                          ? `env("${config.databaseUrl.key}")`
+                          : config.databaseUrl?.val}
                       </Descriptions.Item>
                     </>
                   )}
@@ -642,11 +583,7 @@ export default function DB({ content, type }: Props) {
                 port: config.port,
                 userName: config.userName || { kind: '0' },
                 password: config.password || { kind: '0' },
-                databaseUrl: {
-                  kind:
-                    (config.databaseUrl as unknown as { kind: string; val: string })?.kind || '0',
-                  val: (config.databaseUrl as unknown as { kind: string; val: string })?.val
-                }
+                databaseUrl: config.databaseUrl
               }}
             >
               <Form.Item hidden name={['databaseUrl']}>

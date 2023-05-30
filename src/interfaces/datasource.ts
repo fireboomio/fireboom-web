@@ -74,3 +74,14 @@ export interface ReplaceJSON {
   inputType: string
   isOpen?: boolean
 }
+
+export enum Mode {
+  Input = '0',
+  Env = '1'
+}
+
+export interface VariableType {
+  key: string
+  kind: Mode
+  val: string
+}
