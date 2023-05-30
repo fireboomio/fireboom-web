@@ -21,6 +21,7 @@ import {
   Tooltip,
   Upload
 } from 'antd'
+import copy from 'copy-to-clipboard'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -730,7 +731,8 @@ export default function StorageExplorer({ bucketId }: Props) {
                   )}
                   <Button
                     onClick={() => {
-                      void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                      // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                      copy(`${target?.url ?? ''}`)
                       message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                     }}
                     className="rounded-4px m-1.5 !border-[#efeff0]"
