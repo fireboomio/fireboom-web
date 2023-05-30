@@ -419,6 +419,35 @@ const FlowChart = ({
     arrowNodes.push(start)
     y += 16 + TERMINAL_HEIGHT
 
+    // 全局指令
+    const beforeRequestDirective = new ActionGroup(
+      {
+        shape: 'globalHook',
+        x: HOOK_X,
+        y
+      },
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={globalHookState.beforeRequest.enabled}
+              label="beforeRequest"
+              onClick={() => onEditHook?.(globalHookState.beforeRequest)}
+              onToggleEnabled={flag => onToggleHook?.(globalHookState.beforeRequest, flag)}
+            />
+          ),
+          x: 290,
+          y
+        }
+      ],
+      'arrow'
+    )
+    directiveNodes.push(beforeRequestDirective)
+    y += 16 + HOOK_HEIGHT
+
     // 登录校验
     // fromClaim会隐式要求登录
     if (directiveState.fromClaim || apiSetting.authenticationRequired) {

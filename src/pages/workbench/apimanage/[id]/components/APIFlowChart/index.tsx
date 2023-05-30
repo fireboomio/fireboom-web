@@ -96,6 +96,11 @@ const APIFlowChart = ({ id }: { id: string }) => {
     // @ts-ignore
     const operationHooks = hookInfo.operationHooks
     setGlobalState({
+      beforeRequest: {
+        name: 'beforeRequest',
+        enabled: globalHooks.beforeRequest?.enabled ?? false,
+        path: globalHooks.beforeRequest?.path ?? ''
+      },
       onRequest: {
         name: 'onRequest',
         enabled: globalHooks.onRequest?.enabled ?? false,

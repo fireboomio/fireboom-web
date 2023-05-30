@@ -7,6 +7,7 @@ export type BaseHookState = {
 }
 
 export type NormalGlobalHookState = {
+  beforeRequest: HookState
   onRequest: HookState
   onResponse: HookState
 }
