@@ -354,6 +354,81 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
       model: {
         attributes: [...CommonModelAttributes]
       }
+    },
+    MongoDB: {
+      fieldType: {
+        String: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.ObjectId', hasArgs: false },
+            { name: 'db.String', hasArgs: false }
+          ]
+        },
+        Boolean: {
+          attributes: [...CommonFieldAttributes, { name: 'db.Bool', hasArgs: false }]
+        },
+        Int: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Int', hasArgs: false },
+            { name: 'db.Long', hasArgs: false }
+          ]
+        },
+        BigInt: {
+          attributes: [...CommonFieldAttributes, { name: 'db.Long', hasArgs: false }]
+        },
+        Float: {
+          attributes: [...CommonFieldAttributes, { name: 'db.Double', hasArgs: false }]
+        },
+        DateTime: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Date', hasArgs: true },
+            { name: 'db.Timestamp', hasArgs: true },
+            {
+              name: 'updatedAt',
+              hasArgs: false,
+              comment: intl.formatMessage({ defaultMessage: '更新时间' })
+            }
+          ]
+        },
+        Json: {
+          attributes: [...CommonFieldAttributes, { name: 'db.Json', hasArgs: true }]
+        },
+        Bytes: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.BinData', hasArgs: false },
+            { name: 'db.ObjectId', hasArgs: false }
+          ]
+        },
+        Model: {
+          attributes: [
+            ...CommonFieldAttributes.filter(a => ['map', 'ignore'].includes(a.name)),
+            { name: 'relation', hasArgs: true }
+          ]
+        },
+        Enum: {
+          attributes: [...CommonFieldAttributes]
+        },
+        Unsupported: {
+          attributes: [
+            {
+              name: 'map',
+              hasArgs: true,
+              comment: intl.formatMessage({ defaultMessage: '字段别名' })
+            },
+            {
+              name: 'ignore',
+              hasArgs: false,
+              comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+            }
+          ]
+        }
+      },
+      model: {
+        attributes: [...CommonModelAttributes]
+      }
     }
   }
 }

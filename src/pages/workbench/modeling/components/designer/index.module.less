@@ -90,8 +90,10 @@
   cursor: pointer;
 }
 
-.saveBtn {
+.saveBtn,
+.saveBtn > :global(button) {
   margin-left: 8px;
+  margin-right: 8px;
   width: 64px;
   height: 24px;
   background: linear-gradient(36deg, #ffae72 0%, #ff5e5e 100%);
@@ -104,6 +106,10 @@
   color: white;
   border: none;
   cursor: pointer;
+}
+
+.saveBtn > :global(button) {
+  margin: 0;
 }
 
 .modeRadio {

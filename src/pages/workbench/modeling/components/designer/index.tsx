@@ -1,5 +1,5 @@
 import { getSchema, printSchema } from '@mrleebo/prisma-ast'
-import { Button, Empty, Input, message, Popover, Radio } from 'antd'
+import { Button, Empty, Input, message, Popover, Radio, Tooltip } from 'antd'
 import { cloneDeep, isEqual } from 'lodash'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -51,7 +51,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const { getNextId } = useEntities()
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
     useBlocks()
-  const { id: dbSourceId } = useDBSource()
+  const { id: dbSourceId, config: dbConfig } = useDBSource()
   const { syncEditorFlag, panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
   const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
   const newEntityId = getNextId()
@@ -74,6 +74,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [editTitle, setEditTitle] = useState<boolean>(false)
   const [editorValidate, setEditorValidate] = useState<boolean>(true) // 当前编辑器内容是否合法
   const [titleValue, setTitleValue] = useState<string>('')
+
+  var isMongo = dbConfig.dbType?.toLowerCase() === 'mongodb'
 
   // 编辑模式 变更时存入本地存储中
   useEffect(() => {
@@ -220,9 +222,19 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           <div className={styles.resetBtn} onClick={onCancel}>
             {intl.formatMessage({ defaultMessage: '重置' })}
           </div>
-          <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
-            {intl.formatMessage({ defaultMessage: '迁移' })}
-          </Button>
+          <Tooltip
+            title={
+              isMongo ? intl.formatMessage({ defaultMessage: 'MongoDB 暂不支持迁移' }) : undefined
+            }
+          >
+            <Button
+              disabled={!editorValidate || isMongo}
+              className={styles.saveBtn}
+              onClick={onSave}
+            >
+              {intl.formatMessage({ defaultMessage: '迁移' })}
+            </Button>
+          </Tooltip>
           <Radio.Group
             disabled={!editorValidate}
             className={styles.modeRadio}
@@ -434,9 +446,15 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         <div className={styles.resetBtn} onClick={onCancel}>
           {intl.formatMessage({ defaultMessage: '重置' })}
         </div>
-        <Button disabled={!editorValidate} className={styles.saveBtn} onClick={onSave}>
-          {intl.formatMessage({ defaultMessage: '迁移' })}
-        </Button>
+        <Tooltip
+          title={
+            isMongo ? intl.formatMessage({ defaultMessage: 'MongoDB 暂不支持迁移' }) : undefined
+          }
+        >
+          <Button disabled={!editorValidate || isMongo} className={styles.saveBtn} onClick={onSave}>
+            {intl.formatMessage({ defaultMessage: '迁移' })}
+          </Button>
+        </Tooltip>
         <Radio.Group
           disabled={!editorValidate}
           className={styles.modeRadio}

@@ -71,8 +71,7 @@ export default function Designer() {
             icon: iconMongoDB,
             sourceType: 1,
             dbType: 'MongoDB',
-            dbSchema: 'mongodb',
-            coming: true
+            dbSchema: 'mongodb'
           },
           {
             name: 'CockroachDB',
