@@ -37,7 +37,7 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
                       {
                         kind: Kind.ARGUMENT,
                         name: { kind: Kind.NAME, value: 'name' },
-                        value: { kind: Kind.ENUM, value: 'REPLACE_ME' }
+                        value: { kind: Kind.ENUM, value: 'USERID' }
                       }
                     ]
                   })
@@ -204,7 +204,42 @@ const ArgumentDirectivePopup = ({ initialValue, onInject }: ArgumentDirectivePop
               <DirectiveDescription
                 name="@injectEnvironmentVariable"
                 title={intl.formatMessage({ defaultMessage: '自动注入环境变量的值，用户无需传参' })}
-                code={`query myQuery ($applicationID: String! @injectEnvironmentVariable(name: "AUTH_APP_ID")) {}`}
+                code={`query myQuery ($applicationID: String! @injectEnvironmentVariable(name: "AUTH_APP_ID")) {
+
+}`}
+              />
+            )
+          },
+          {
+            label: (
+              <CustomLabel
+                onMouseEnter={() => setActiveKey('injectFromHeader')}
+                label="@injectFromHeader"
+                onInject={() =>
+                  onInject?.('injectFromHeader', {
+                    kind: Kind.DIRECTIVE,
+                    name: { kind: Kind.NAME, value: 'injectFromHeader' },
+                    arguments: [
+                      {
+                        kind: Kind.ARGUMENT,
+                        name: { kind: Kind.NAME, value: 'name' },
+                        value: { kind: Kind.ENUM, value: '"REPLACE_ME"' }
+                      }
+                    ]
+                  })
+                }
+              />
+            ),
+            key: 'injectFromHeader',
+            children: (
+              <DirectiveDescription
+                name="@injectFromHeader"
+                title={intl.formatMessage({
+                  defaultMessage: '自动注入请求中 Headers 里的值，用户无需传参'
+                })}
+                code={`query myQuery ($variableFromHeader: String! @injectFromHeader(name: "X-FB-Authentication")) {
+
+}`}
               />
             )
           },
