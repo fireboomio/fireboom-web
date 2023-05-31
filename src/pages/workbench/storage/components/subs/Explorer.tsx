@@ -31,6 +31,7 @@ import { useImmer } from 'use-immer'
 import type { FileT } from '@/interfaces/storage'
 import requests, { getHeader } from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
+import { downloadOSSFile } from '@/utils/download'
 
 import iconCompress from '../assets/icon-compress.svg'
 import iconDoc from '../assets/icon-doc.svg'
@@ -551,7 +552,7 @@ export default function StorageExplorer({ bucketId }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      <div
+      <header
         className="bg-white flex flex-0 h-13 pr-4  pl-9 items-center justify-between"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
@@ -565,7 +566,10 @@ export default function StorageExplorer({ bucketId }: Props) {
         <div className="flex flex-0 justify-center items-center">
           {isSerach ? (
             <Tooltip title="serach">
-              <div className="cursor-pointer mr-4" onClick={changeSerachState}>
+              <div
+                className="cursor-pointer mr-4 inline-flex items-center justify-center"
+                onClick={changeSerachState}
+              >
                 <img alt="" src="/assets/search.svg" />
               </div>
             </Tooltip>
@@ -588,8 +592,11 @@ export default function StorageExplorer({ bucketId }: Props) {
             icon={<SyncOutlined />}
             className="mr-2 !border-0 !p-1"
           >
-            <FormattedMessage defaultMessage="刷新" />
+            <span>
+              <FormattedMessage defaultMessage="刷新" />
+            </span>
           </Button>
+          <Divider type="vertical" />
           {/*<Dropdown overlay={listMenu} placement="bottom">*/}
           {/*  <Button icon={<BarsOutlined />} className="mr-2">*/}
           {/*    列表*/}
@@ -638,125 +645,129 @@ export default function StorageExplorer({ bucketId }: Props) {
             <FormattedMessage defaultMessage="新建文件夹" />
           </Button>
         </div>
-      </div>
-
-      {containerEle.current ? (
-        <Cascader
-          getPopupContainer={() => containerEle.current!}
-          open
-          options={options}
-          // @ts-ignore
-          loadData={x => void onLoadData(x)}
-          // @ts-ignore
-          onChange={onChange}
-          changeOnSelect
-          popupClassName={`${styles['casader-select']} flex mb-8`}
-        >
-          <div />
-        </Cascader>
-      ) : null}
-
-      <div
-        className={styles.container}
-        style={{
-          border: '1px solid rgba(95,98,105,0.1)',
-          borderBottom: 'none',
-          borderRadius: '4px 4px 0 0'
-        }}
-      >
-        <div ref={containerEle} className={styles.cascadeContainer} />
-        {options?.length ? null : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Empty />
-          </div>
+      </header>
+      <main className="flex-1 flex min-h-0">
+        {containerEle.current && (
+          <Cascader
+            getPopupContainer={() => containerEle.current!}
+            open
+            options={options}
+            // @ts-ignore
+            loadData={x => void onLoadData(x)}
+            // @ts-ignore
+            onChange={onChange}
+            changeOnSelect
+            popupClassName={`${styles['casader-select']} flex mb-8`}
+          >
+            <div />
+          </Cascader>
         )}
 
-        {visible ? (
-          <div className={styles.fileDetail}>
-            <div className={styles.fileDetailBody}>
-              <div className={styles.header}>
-                {target?.isLeaf ? (
-                  <img
-                    src={FILE_ICON[fileType(target?.name ?? '')]}
-                    alt="图片"
-                    className="h-3.5 mr-2 w-3.5"
-                  />
-                ) : (
-                  <img src={iconFold} alt="文件夹" className="h-3.5 mr-2 w-3.5" />
-                )}
-                {target?.name}
-              </div>
-              <Collapse
-                defaultActiveKey={['1', '2']}
-                bordered={false}
-                expandIconPosition="end"
-                ghost={true}
-                className={styles.collapse}
-              >
-                {!target?.isDir && (
-                  <Panel header={intl.formatMessage({ defaultMessage: '基本信息' })} key="1">
-                    <p>
-                      <FormattedMessage defaultMessage="类型" />:{' '}
-                      {target?.mime ??
-                        intl.formatMessage({
-                          defaultMessage: '未知',
-                          description: '未知的文件类型'
-                        })}
-                    </p>
-                    <p>
-                      <FormattedMessage defaultMessage="大小" />: {formatBytes(target?.size)}
-                    </p>
-                    <p>
-                      <FormattedMessage defaultMessage="创建于" />: {target?.createTime ?? ''}
-                    </p>
-                    <p>
-                      <FormattedMessage defaultMessage="修改于" />: {target?.updateTime ?? ''}
-                    </p>
-                  </Panel>
-                )}
-                <Panel header={intl.formatMessage({ defaultMessage: '预览' })} key="2">
-                  <div
-                    className={`${styles['panel-style']} flex-col justify-center items-center flex`}
-                  >
-                    {renderPreview(target)}
-                  </div>
-                </Panel>
-                <div className="flex flex-col">
+        <div
+          className={styles.container}
+          style={{
+            border: '1px solid rgba(95,98,105,0.1)',
+            borderBottom: 'none',
+            borderRadius: '4px 4px 0 0'
+          }}
+        >
+          <div ref={containerEle} className={styles.cascadeContainer} />
+          {options?.length ? null : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Empty />
+            </div>
+          )}
+
+          {visible && (
+            <aside className={styles.fileDetail}>
+              <div className={styles.fileDetailBody}>
+                <div className={styles.header}>
+                  {target?.isLeaf ? (
+                    <img
+                      src={FILE_ICON[fileType(target?.name ?? '')]}
+                      alt="图片"
+                      className="h-3.5 mr-2 w-3.5"
+                    />
+                  ) : (
+                    <img src={iconFold} alt="文件夹" className="h-3.5 mr-2 w-3.5" />
+                  )}
+                  {target?.name}
+                </div>
+                <Collapse
+                  defaultActiveKey={['1', '2']}
+                  bordered={false}
+                  expandIconPosition="end"
+                  ghost={true}
+                  className={styles.collapse}
+                >
                   {!target?.isDir && (
-                    <a className="flex" href={target?.url} download={target?.value}>
-                      <Button className="rounded-4px flex-1 m-1.5 !border-[#efeff0]">
+                    <Panel header={intl.formatMessage({ defaultMessage: '基本信息' })} key="1">
+                      <p>
+                        <FormattedMessage defaultMessage="类型" />:{' '}
+                        {target?.mime ??
+                          intl.formatMessage({
+                            defaultMessage: '未知',
+                            description: '未知的文件类型'
+                          })}
+                      </p>
+                      <p>
+                        <FormattedMessage defaultMessage="大小" />: {formatBytes(target?.size)}
+                      </p>
+                      <p>
+                        <FormattedMessage defaultMessage="创建于" />: {target?.createTime ?? ''}
+                      </p>
+                      <p>
+                        <FormattedMessage defaultMessage="修改于" />: {target?.updateTime ?? ''}
+                      </p>
+                    </Panel>
+                  )}
+                  <Panel header={intl.formatMessage({ defaultMessage: '预览' })} key="2">
+                    <div
+                      className={`${styles['panel-style']} flex-col justify-center items-center flex`}
+                    >
+                      {renderPreview(target)}
+                    </div>
+                  </Panel>
+                  <div className="flex flex-col">
+                    {!target?.isDir && (
+                      // <a className="flex" href={target?.url} download={target?.value}>
+                      <Button
+                        className="rounded-4px flex-1 m-1.5 !border-[#efeff0]"
+                        onClick={() => downloadOSSFile(target!.url!, target!.value)}
+                      >
                         <FormattedMessage defaultMessage="下载" />
                       </Button>
-                    </a>
-                  )}
-                  <Button
-                    onClick={() => {
-                      // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
-                      copy(`${target?.url ?? ''}`)
-                      message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
-                    }}
-                    className="rounded-4px m-1.5 !border-[#efeff0]"
-                  >
-                    <FormattedMessage defaultMessage="复制URL" />
-                  </Button>
-                  <Popconfirm
-                    title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
-                    onConfirm={() => deleteFile(target)}
-                    okText={intl.formatMessage({ defaultMessage: '删除' })}
-                    cancelText={intl.formatMessage({ defaultMessage: '取消' })}
-                  >
-                    <Button className="rounded-4px m-1.5 !border-[#efeff0]">
-                      <span className="text-[#F21212]">
-                        <FormattedMessage defaultMessage="删除" />
-                      </span>
+                      // </a>
+                    )}
+                    <Button
+                      onClick={() => {
+                        // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                        copy(`${target?.url ?? ''}`)
+                        message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                      }}
+                      className="rounded-4px m-1.5 !border-[#efeff0]"
+                    >
+                      <FormattedMessage defaultMessage="复制URL" />
                     </Button>
-                  </Popconfirm>
-                </div>
-              </Collapse>
-            </div>
-          </div>
-        ) : null}
-      </div>
+                    <Popconfirm
+                      title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
+                      onConfirm={() => deleteFile(target)}
+                      okText={intl.formatMessage({ defaultMessage: '删除' })}
+                      cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                    >
+                      <Button className="rounded-4px m-1.5 !border-[#efeff0]">
+                        <span className="text-[#F21212]">
+                          <FormattedMessage defaultMessage="删除" />
+                        </span>
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                </Collapse>
+              </div>
+            </aside>
+          )}
+        </div>
+      </main>
     </div>
   )
 }
