@@ -1,6 +1,7 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
-import { useContext, useEffect, useRef } from 'react'
+import type { Rule } from 'antd/es/form'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -84,24 +85,6 @@ export default function DB({ content, type }: Props) {
   }
 
   const dbProtocol = String(content?.config.dbType).toLowerCase()
-
-  const urlRule = {
-    mysql: {
-      pattern: /^mysql:\/\/.{1,120}$/g,
-      message: intl.formatMessage({ defaultMessage: '以 mysql:// 开头，不超过128位' }),
-      required: true
-    },
-    postgresql: {
-      pattern: /^postgresql:\/\/.{1,115}$/g,
-      message: intl.formatMessage({ defaultMessage: '以 postgresql:// 开头，不超过128位' }),
-      required: true
-    },
-    mongodb: {
-      pattern: /^mongodb:\/\/.{1,118}$/g,
-      message: intl.formatMessage({ defaultMessage: '以 mongodb:// 开头，不超过128位' }),
-      required: true
-    }
-  }[dbProtocol]
 
   const sqlLiteInputValue = useRef('')
   const { modal } = App.useApp()
@@ -206,7 +189,29 @@ export default function DB({ content, type }: Props) {
         envProps={{
           placeholder: intl.formatMessage({ defaultMessage: '请选择一个环境变量或者手动输入' })
         }}
-        rules={urlRule ? [urlRule] : []}
+        // rules={urlRule ? [urlRule] : []}
+        rules={
+          dbProtocol
+            ? [
+                {
+                  required: true,
+                  validator(rule, value, callback) {
+                    const reg = new RegExp(`^${dbProtocol}://.{1,${125 - dbProtocol.length}}$`)
+                    if (value.val.match(reg)?.length) {
+                      callback()
+                    } else {
+                      callback(
+                        intl.formatMessage(
+                          { defaultMessage: '以 {dbProtocol}:// 开头，不超过128位' },
+                          { dbProtocol }
+                        )
+                      )
+                    }
+                  }
+                }
+              ]
+            : []
+        }
         onChange={onUrlChange}
       />
     )

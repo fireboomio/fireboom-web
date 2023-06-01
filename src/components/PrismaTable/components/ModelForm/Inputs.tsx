@@ -72,7 +72,7 @@ const Datetime = ({ field: { name, required, title }, disabled, initialValues }:
 
   const handleDateChange = (dateString: string) => {
     if (!form) return
-    form.setFieldValue(name, dayjs(dateString))
+    form.setFieldValue(name, dateString ? dayjs(dateString) : null)
   }
   const initialValue = initialValues[name]
   const initialDatetime = initialValue ? dayjs(initialValue as string) : null
