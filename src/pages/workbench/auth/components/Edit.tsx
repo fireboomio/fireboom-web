@@ -239,7 +239,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       <div className={`${styles['db-check-setting']}  mt-2 cursor-pointer`}>
         <span className=" h-5 w-19 float-right">{/* 前往管理 <RightOutlined /> */}</span>
       </div>
-      <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4 flex flex-col`}>
+      <div className={`${styles['edit-form-contain']} py-6 rounded-xl mb-4 flex`}>
         <div className="w-3/5">
           <Form
             form={form}

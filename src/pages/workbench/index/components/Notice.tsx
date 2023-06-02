@@ -2,8 +2,8 @@ import { Image } from 'antd'
 import { useMemo } from 'react'
 import useSWRImmutable from 'swr/immutable'
 
-import { proxy } from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
+import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
 
 import styles from './home.module.less'
 
@@ -20,10 +20,11 @@ interface NoticeConfig {
 
 export function Notice({ handleToggleDesigner }: Props) {
   const calcTime = useCalcTime()
-  const { data: news } = useSWRImmutable(
-    'https://raw.githubusercontent.com/fireboomio/files/main/news.json',
-    proxy
-  )
+  // const { data: news } = useSWRImmutable(
+  //   'https://raw.githubusercontent.com/fireboomio/files/main/news.json',
+  //   proxy
+  // )
+  const { data: news } = useSWRImmutable('news.json', getFireboomFileContent)
   console.log(news, 'news')
   const noticeConfig = useMemo(() => {
     const list = news || []

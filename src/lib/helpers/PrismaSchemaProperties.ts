@@ -141,8 +141,8 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
         Json: {
           attributes: [
             ...CommonFieldAttributes,
-            { name: 'db.Json', hasArgs: true },
-            { name: 'db.JsonB', hasArgs: true }
+            { name: 'db.Json', hasArgs: false },
+            { name: 'db.JsonB', hasArgs: false }
           ]
         },
         Bytes: {
@@ -242,7 +242,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
           ]
         },
         Json: {
-          attributes: [...CommonFieldAttributes, { name: 'db.Json', hasArgs: true }]
+          attributes: [...CommonFieldAttributes, { name: 'db.Json', hasArgs: false }]
         },
         Bytes: {
           attributes: [
@@ -393,7 +393,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
           ]
         },
         Json: {
-          attributes: [...CommonFieldAttributes, { name: 'db.Json', hasArgs: true }]
+          attributes: [...CommonFieldAttributes, { name: 'db.Json', hasArgs: false }]
         },
         Bytes: {
           attributes: [
