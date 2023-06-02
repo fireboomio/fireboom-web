@@ -27,8 +27,11 @@ export const parseParameters = (
   if (!varDefs) return []
 
   return varDefs.map((x: VariableDefinitionNode) => {
-    const { type, isRequired, isList } = parseType(x.type)
-
+    let { type, isRequired, isList } = parseType(x.type)
+    // @internal 的不需要填
+    if (x.directives?.find(dir => dir.name.value === 'internal')) {
+      isRequired = false
+    }
     const directives = parseDirective(x.directives)
 
     return {
