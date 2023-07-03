@@ -37,7 +37,10 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
 
   return (
     <div className={styles.actions}>
-      <span className="mr-auto font-500 text-[#333] text-14px">{title}</span>
+      <span className="font-500 text-[#333] text-14px">{title}</span>
+      <div className="ml-1 mr-auto text-[10px] text-red p-1 rounded bg-[#aaa] text-white transform scale-88">
+        Beta
+      </div>
       <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
         <img src={iconSwitch} alt="switch" />
       </div>
