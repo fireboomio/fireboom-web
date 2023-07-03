@@ -103,6 +103,15 @@ const SingleArgumentInput = ({
         />
       )
     default:
+      if (/Decimal$/.test(type)) {
+        return (
+          <InputNumber
+            className="text-xs w-full"
+            value={value as number}
+            onChange={e => onChange?.(e)}
+          />
+        )
+      }
       return (
         <>
           <Input.TextArea

@@ -1718,7 +1718,9 @@ class FieldView extends React.PureComponent<
       }
     })
     // 不可共存操作数量大于1、或可共存和不可共存操作同时存在则报错
-    if ((exclusiveCount && otherCount) || exclusiveCount > 1) {
+    // if ((exclusiveCount && otherCount) || exclusiveCount > 1) {
+    // 逻辑变更，取消该限制
+    if (exclusiveCount && otherCount) {
       this.props.notifyError?.('当前操作与已选内容不相容')
       return
     }
