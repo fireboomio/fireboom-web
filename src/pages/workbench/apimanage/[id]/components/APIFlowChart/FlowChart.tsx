@@ -651,24 +651,6 @@ const FlowChart = ({
       renderNodes.push(argsInjection)
     }
 
-    // 路由器
-    const routerSwitch = graph.createNode({
-      shape: 'router',
-      x: (CANVAS_WIDTH - 54) / 2,
-      y,
-      attrs: {
-        image: {
-          width: 54,
-          height: 36,
-          'xlink:href': hookState.mockResolve.enabled ? routerLeftImg : routerBottomImg
-        }
-      }
-    })
-    renderNodes.push(routerSwitch)
-    // 记录路由索引
-    const routerIndex = arrowNodes.push(routerSwitch) - 1
-    y += 12 + 30
-
     const loopStartPoint = y - 6
 
     // 执行前钩子
@@ -693,27 +675,12 @@ const FlowChart = ({
           />
         ),
         x: 290,
-        y: y - 32
-      },
-      {
-        shape: 'react-shape',
-        width: 114,
-        height: 20,
-        component: (
-          <StatusDirective
-            enabled={hookState.customResolve.enabled}
-            label="customResolve"
-            onClick={() => onEditHook?.(hookState.customResolve)}
-            onToggleEnabled={flag => onToggleHook?.(hookState.customResolve, flag)}
-          />
-        ),
-        x: 290,
-        y: y + 16
+        y: y - 12
       }
     ]
     // 根据是否支持 mutatingPreResolve 钩子显示
     if (hookState.mutatingPreResolve.can) {
-      preHookRefs.splice(1, 0, {
+      preHookRefs.push({
         shape: 'react-shape',
         width: 114,
         height: 20,
@@ -726,12 +693,60 @@ const FlowChart = ({
           />
         ),
         x: 280,
-        y: y - 8
+        y: y + 12
       })
     }
     const preOperationDirective = new ActionGroup(preHookMetadata, preHookRefs, 'arrow')
     directiveNodes.push(preOperationDirective)
-    y += 24 + HOOK_HEIGHT
+    y += 8 + HOOK_HEIGHT
+
+    // 路由器
+    const routerSwitch = graph.createNode({
+      shape: 'router',
+      x: (CANVAS_WIDTH - 54) / 2,
+      y,
+      attrs: {
+        image: {
+          width: 54,
+          height: 36,
+          'xlink:href': hookState.mockResolve.enabled ? routerLeftImg : routerBottomImg
+        }
+      }
+    })
+    renderNodes.push(routerSwitch)
+    // 记录路由索引
+    const routerIndex = arrowNodes.push(routerSwitch) - 1
+    y += 12 + 30
+
+    // custom
+    const customDirective = new ActionGroup(
+      {
+        shape: 'hook',
+        x: HOOK_X,
+        y
+      },
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={hookState.customResolve.enabled}
+              label="customResolve"
+              onClick={() => onEditHook?.(hookState.customResolve)}
+              onToggleEnabled={flag => onToggleHook?.(hookState.customResolve, flag)}
+            />
+          ),
+          x: 290,
+          y: y
+        }
+      ],
+      'arrow'
+    )
+    directiveNodes.push(customDirective)
+
+    y += 16 + HOOK_HEIGHT
 
     // mockResolve
     const mockResolve = graph.createNode({
