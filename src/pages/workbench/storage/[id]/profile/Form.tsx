@@ -22,7 +22,7 @@ loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 interface Props {
   storageName: string
   profile: Profile
-  onSave: (values: any) => void
+  onSave: (values: Profile) => void
 }
 
 export default function ProfileForm({ storageName, profile, onSave }: Props) {

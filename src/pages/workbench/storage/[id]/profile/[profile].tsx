@@ -6,8 +6,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import IdeContainer from '@/components/Ide'
 import FbTabs from '@/components/Tabs'
+import type { Profile } from '@/hooks/store/storage'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
+import { updateHookEnabled } from '@/lib/service/hook'
 
 import styles from './[profile].module.less'
 import Form from './Form'
@@ -46,7 +48,7 @@ export default function StorageProfile() {
       return storage.config.uploadProfiles?.[profile ?? '']
     }
   }, [storageList, profile, id])
-  const saveProfile = async (values: any) => {
+  const saveProfile = async (values: Profile) => {
     const storage = cloneDeep(storageList?.find(x => String(x.id) === id))!
     storage.config.uploadProfiles![profile!] = {
       ...storage.config.uploadProfiles![profile!],
@@ -55,6 +57,14 @@ export default function StorageProfile() {
     await requests.put('/storageBucket ', storage)
     message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     void mutateStorage()
+    // 如果前置钩子改变了
+    if (currentProfile?.hooks.preUpload != values.hooks.preUpload) {
+      updateHookEnabled(`uploads/${storage!.name}/${profile}/preUpload`, values.hooks.preUpload)
+    }
+    // 如果后置钩子改变了
+    if (currentProfile?.hooks.postUpload != values.hooks.postUpload) {
+      updateHookEnabled(`uploads/${storage!.name}/${profile}/postUpload`, values.hooks.postUpload)
+    }
   }
   if (!currentProfile) {
     return null
