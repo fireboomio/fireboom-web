@@ -401,7 +401,7 @@ async function resolveDefaultCode(
     getDefaultCode = getTsTemplate
   }
   const list = path.split('/')
-  const name = list.pop()
+  const name = list.pop()!
   const packageName = list[list.length - 1]
   let code = ''
   if (path.startsWith('global/')) {
@@ -409,7 +409,9 @@ async function resolveDefaultCode(
   } else if (path.startsWith('auth/')) {
     code = await getDefaultCode(`auth.${name}`)
   } else if (path.startsWith('customize/')) {
-    code = await (await getDefaultCode('custom')).replace('$CUSTOMIZE_NAME$', name!)
+    code = await (await getDefaultCode('custom'))
+      .replace('$CUSTOMIZE_NAME$', name)
+      .replace('$UPPER_FIRST_CUSTOMIZE_NAME$', name[0].toUpperCase() + name.slice(1))
   } else if (path.startsWith('uploads/')) {
     const profileName = list.pop() as string
     const storageName = list.pop() as string
