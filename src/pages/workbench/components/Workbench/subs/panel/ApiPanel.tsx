@@ -12,6 +12,7 @@ import { useValidate } from '@/hooks/validate'
 import type { OperationResp } from '@/interfaces/apimanage'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
+import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import styles from './ApiPanel.module.less'
@@ -31,6 +32,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     addItem: () => {},
     editItem: () => {}
   })
+  const {
+    computed: { saved },
+    autoSave
+  } = useAPIManager()
 
   // 快捷键
   useEffect(() => {
@@ -451,8 +456,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         draggable
         fileText="API"
         ref={fileTree}
-        onSelectFile={nodeData => {
+        onSelectFile={async nodeData => {
           if (!nodeData.isDir) {
+            if (!saved) {
+              message.info(intl.formatMessage({ defaultMessage: '自动保存中...' }))
+              await autoSave()
+            }
             navigate(`/workbench/apimanage/${nodeData.data.id}`)
           }
         }}
