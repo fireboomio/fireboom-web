@@ -461,6 +461,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             if (!saved) {
               message.info(intl.formatMessage({ defaultMessage: '自动保存中...' }))
               await autoSave()
+              message.destroy()
             }
             navigate(`/workbench/apimanage/${nodeData.data.id}`)
           }
