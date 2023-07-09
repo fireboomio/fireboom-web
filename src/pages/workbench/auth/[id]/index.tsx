@@ -1,11 +1,13 @@
 import { Button, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
+import { ConfigContext } from '@/lib/context/ConfigContext'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 
 import AuthCheck from '../components/Check'
@@ -18,6 +20,9 @@ export default function AuthConfigContainer() {
   const navigate = useNavigate()
   const { id } = useParams()
   const authList = useAuthList()
+  const { system } = useContext(ConfigContext)
+  const { logout } = useContext(WorkbenchContext)
+
   useEffect(() => {
     // 如果id为new，则视为新增
     if (id === 'new') {
@@ -57,20 +62,22 @@ export default function AuthConfigContainer() {
   }
 
   const onTest = () => {
-    // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
-    const callbackURL = new URL(location.toString())
-    callbackURL.hash = '#/workbench/userInfo'
-    let target
-    try {
-      target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
-    } catch (e) {
-      message.error(
-        intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
-      )
-      console.error(e)
-      return
-    }
-    window.open(target.toString())
+    logout(system.apiPublicAddr).then(() => {
+      // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
+      const callbackURL = new URL(location.toString())
+      callbackURL.hash = '#/workbench/userInfo'
+      let target
+      try {
+        target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
+      } catch (e) {
+        message.error(
+          intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
+        )
+        console.error(e)
+        return
+      }
+      window.open(target.toString())
+    })
   }
 
   return (
