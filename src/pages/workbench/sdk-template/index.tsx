@@ -350,6 +350,19 @@ const SDKTemplateItem = ({
                     hide()
                   }
                 }
+              },
+              {
+                key: 'download',
+                label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
+                onClick: async () => {
+                  const hide = message.loading(intl.formatMessage({ defaultMessage: '开始下载' }))
+                  try {
+                    await requests.post(`/sdk/download/${sdk.id}`)
+                    message.destroy()
+                  } finally {
+                    hide()
+                  }
+                }
               }
             ]
           }}
