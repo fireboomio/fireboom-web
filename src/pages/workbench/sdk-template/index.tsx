@@ -20,7 +20,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR, { mutate as _mutate } from 'swr'
 
 import Error50x from '@/components/ErrorPage/50x'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { intl } from '@/providers/IntlProvider'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
@@ -355,13 +355,15 @@ const SDKTemplateItem = ({
                 key: 'download',
                 label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
                 onClick: async () => {
-                  const hide = message.loading(intl.formatMessage({ defaultMessage: '开始下载' }))
-                  try {
-                    await requests.post(`/sdk/download/${sdk.id}`)
-                    message.destroy()
-                  } finally {
-                    hide()
-                  }
+                  const iframe = document.createElement('iframe')
+                  const authKey = getAuthKey()
+                  iframe.src = `/api/v1//sdk/download/${sdk.id}${
+                    authKey ? `?auth-key=${authKey}` : ''
+                  }`
+                  document.body.appendChild(iframe)
+                  setTimeout(() => {
+                    document.body.removeChild(iframe)
+                  }, 100)
                 }
               }
             ]
