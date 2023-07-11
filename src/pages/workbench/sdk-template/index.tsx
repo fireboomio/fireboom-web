@@ -357,7 +357,7 @@ const SDKTemplateItem = ({
                 onClick: async () => {
                   const iframe = document.createElement('iframe')
                   const authKey = getAuthKey()
-                  iframe.src = `/api/v1//sdk/download/${sdk.id}${
+                  iframe.src = `/api/v1/sdk/download/${sdk.id}${
                     authKey ? `?auth-key=${authKey}` : ''
                   }`
                   document.body.appendChild(iframe)
