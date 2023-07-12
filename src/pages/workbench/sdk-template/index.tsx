@@ -355,15 +355,10 @@ const SDKTemplateItem = ({
                 key: 'download',
                 label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
                 onClick: async () => {
-                  const iframe = document.createElement('iframe')
                   const authKey = getAuthKey()
-                  iframe.src = `/api/v1/sdk/download/${sdk.id}${
-                    authKey ? `?auth-key=${authKey}` : ''
-                  }`
-                  document.body.appendChild(iframe)
-                  setTimeout(() => {
-                    document.body.removeChild(iframe)
-                  }, 100)
+                  window.open(
+                    `/api/v1/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`
+                  )
                 }
               }
             ]
