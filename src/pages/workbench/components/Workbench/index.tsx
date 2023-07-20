@@ -27,6 +27,7 @@ import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { replaceFileTemplate } from '@/utils/template'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
@@ -409,19 +410,25 @@ async function resolveDefaultCode(
   } else if (path.startsWith('auth/')) {
     code = await getDefaultCode(`auth.${name}`)
   } else if (path.startsWith('customize/')) {
-    code = await (await getDefaultCode('custom'))
-      .replace('$CUSTOMIZE_NAME$', name)
-      .replace('$UPPER_FIRST_CUSTOMIZE_NAME$', name[0].toUpperCase() + name.slice(1))
+    code = replaceFileTemplate(await getDefaultCode('custom'), [
+      { variableName: 'CUSTOMIZE_NAME', value: name }
+    ])
   } else if (path.startsWith('uploads/')) {
     const profileName = list.pop() as string
     const storageName = list.pop() as string
-    code = (await getDefaultCode(`upload.${name}`))
-      .replaceAll('$STORAGE_NAME$', storageName)
-      .replace('$PROFILE_NAME$', profileName)
+    code = replaceFileTemplate(await getDefaultCode(`upload.${name}`), [
+      { variableName: 'STORAGE_NAME', value: storageName },
+      { variableName: 'PROFILE_NAME', value: profileName }
+    ])
   } else {
     const pathList = list.slice(1)
     const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
-    code = (await getDefaultCode(tmplPath)).replaceAll('$HOOK_NAME$', pathList.join('__'))
+    code = replaceFileTemplate(await getDefaultCode(tmplPath), [
+      {
+        variableName: 'HOOK_NAME',
+        value: pathList.join('__')
+      }
+    ])
   }
   return code.replaceAll('$HOOK_PACKAGE$', packageName!)
 }

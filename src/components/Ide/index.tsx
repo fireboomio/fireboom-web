@@ -28,6 +28,7 @@ import {
   saveHookScript,
   updateHookEnabled
 } from '@/lib/service/hook'
+import { replaceFileTemplate } from '@/utils/template'
 
 import IdeCodeContainer from './code/index'
 import IdeDependList from './depend-list/index'
@@ -185,18 +186,25 @@ const IdeContainer: FC<Props> = props => {
     } else if (path.startsWith('auth/')) {
       return getDefaultCode(`auth.${name}`)
     } else if (path.startsWith('customize/')) {
-      return (await getDefaultCode('custom')).replace('$CUSTOMIZE_NAME$', name!)
+      return replaceFileTemplate(await getDefaultCode('custom'), [
+        { variableName: 'CUSTOMIZE_NAME', value: name! }
+      ])
     } else if (path.startsWith('uploads/')) {
       const profileName = list.pop() as string
       const storageName = list.pop() as string
-      const code = await getDefaultCode(`upload.${name}`)
-      return code.replaceAll('$STORAGE_NAME$', storageName).replace('$PROFILE_NAME$', profileName)
+      return replaceFileTemplate(await getDefaultCode(`upload.${name}`), [
+        { variableName: 'STORAGE_NAME', value: storageName },
+        { variableName: 'PROFILE_NAME', value: profileName }
+      ])
     } else {
       const pathList = list.slice(1)
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
-      return getDefaultCode(tmplPath).then((res: string) => {
-        return res.replaceAll('$HOOK_NAME$', pathList.join('__'))
-      })
+      return replaceFileTemplate(await getDefaultCode(tmplPath), [
+        {
+          variableName: 'HOOK_NAME',
+          value: pathList.join('__')
+        }
+      ])
     }
   }
 
