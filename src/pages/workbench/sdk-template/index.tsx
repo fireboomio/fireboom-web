@@ -13,6 +13,7 @@ import {
   Spin,
   Switch
 } from 'antd'
+import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
 import { useCallback, useMemo, useState } from 'react'
@@ -298,6 +299,54 @@ const SDKTemplateItem = ({
     [onChange, sdk]
   )
 
+  const dropdownMenus = useMemo<ItemType[]>(() => {
+    const menus = [
+      {
+        key: 'delete',
+        icon: '',
+        label: (
+          <Popconfirm
+            title={intl.formatMessage({ defaultMessage: '确定要删除?' })}
+            okText={intl.formatMessage({ defaultMessage: '确定' })}
+            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+            onConfirm={async () => {
+              await requests.delete(`/sdk/${sdk.id}`)
+              message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+              mutate()
+            }}
+          >
+            {intl.formatMessage({ defaultMessage: '删除' })}
+          </Popconfirm>
+        )
+      },
+      {
+        key: 'update',
+        label: intl.formatMessage({ defaultMessage: '升级' }),
+        onClick: async () => {
+          const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
+          try {
+            await requests.post(`/sdk/update/${sdk.id}`)
+            message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
+            mutate()
+          } finally {
+            hide()
+          }
+        }
+      }
+    ]
+    if (sdk.enabled === true) {
+      menus.push({
+        key: 'download',
+        label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
+        onClick: async () => {
+          const authKey = getAuthKey()
+          window.open(`/api/v1/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`)
+        }
+      })
+    }
+    return menus
+  }, [intl, mutate, sdk.enabled, sdk.id])
+
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">
       <div className="flex items-center">
@@ -318,50 +367,7 @@ const SDKTemplateItem = ({
         <Switch className="flex-shrink-0" checked={sdk.enabled} onChange={onSwitch} />
         <Dropdown
           menu={{
-            items: [
-              {
-                key: 'delete',
-                icon: '',
-                label: (
-                  <Popconfirm
-                    title={intl.formatMessage({ defaultMessage: '确定要删除?' })}
-                    okText={intl.formatMessage({ defaultMessage: '确定' })}
-                    cancelText={intl.formatMessage({ defaultMessage: '取消' })}
-                    onConfirm={async () => {
-                      await requests.delete(`/sdk/${sdk.id}`)
-                      message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
-                      mutate()
-                    }}
-                  >
-                    {intl.formatMessage({ defaultMessage: '删除' })}
-                  </Popconfirm>
-                )
-              },
-              {
-                key: 'update',
-                label: intl.formatMessage({ defaultMessage: '升级' }),
-                onClick: async () => {
-                  const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
-                  try {
-                    await requests.post(`/sdk/update/${sdk.id}`)
-                    message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
-                    mutate()
-                  } finally {
-                    hide()
-                  }
-                }
-              },
-              {
-                key: 'download',
-                label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
-                onClick: async () => {
-                  const authKey = getAuthKey()
-                  window.open(
-                    `/api/v1/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`
-                  )
-                }
-              }
-            ]
+            items: dropdownMenus
           }}
           trigger={['hover']}
         >
