@@ -10,7 +10,8 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-
+import styles from './detail.module.less'
+import clsx from 'clsx'
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
@@ -43,7 +44,7 @@ export default function AuthMainCheck({ content }: Props) {
   if (!content) return <Error50x />
   return (
     <>
-      <div className="mt-8">
+      <div className={clsx("mt-8", styles.descriptions)}>
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {config.id}
@@ -122,7 +123,7 @@ export default function AuthMainCheck({ content }: Props) {
             </Descriptions.Item>
           ) : (
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
-              <pre>{config.jwksJSON}</pre>
+              <pre className='overflow-x-auto'>{config.jwksJSON}</pre>
             </Descriptions.Item>
           )}
         </Descriptions>

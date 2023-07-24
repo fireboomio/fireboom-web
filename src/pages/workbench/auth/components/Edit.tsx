@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import type { JSONValue } from '@antv/x6'
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
 import copy from 'copy-to-clipboard'
@@ -6,13 +7,14 @@ import { debounce } from 'lodash'
 import type { ReactNode } from 'react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import ReactJson from 'react-json-view'
+// import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
 // import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import { CopyOutlined } from '@/components/icons'
+import JsonEditor from '@/components/JsonEditor'
 import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
 import type { AuthProvResp } from '@/interfaces/auth'
@@ -113,11 +115,13 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
     async (values: FromValues) => {
       if (values.jwks == 1) {
         values.jwksJSON = jwksJSON
+        values.jwksURL = ''
       } else {
         if (!values.jwksURL && !values.userInfoEndpoint) {
           message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
           return
         }
+        values.jwksJSON = ''
       }
       const switchState = []
       if (values.cookieBased) {
@@ -230,8 +234,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         tokenBased: false
       }
 
-  const saveJwksJSON = ({ updated_src }: { updated_src: Object }) => {
-    setJwksJSON(JSON.stringify(updated_src))
+  const saveJwksJSON = (json: JSONValue) => {
+    setJwksJSON(JSON.stringify(json, null, 2))
   }
 
   return (
@@ -448,7 +452,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}
                 className="mb-5"
               >
-                <ReactJson
+                {/* <ReactJson
                   onEdit={saveJwksJSON}
                   onAdd={saveJwksJSON}
                   onDelete={saveJwksJSON}
@@ -458,7 +462,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   style={{
                     wordBreak: 'break-word'
                   }}
-                />
+                /> */}
+                <JsonEditor value={jwksObj as JSONValue} onChange={saveJwksJSON} />
               </Form.Item>
             ) : (
               <Form.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })} name="jwksURL">
