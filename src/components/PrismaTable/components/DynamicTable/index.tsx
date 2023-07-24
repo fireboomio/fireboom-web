@@ -15,11 +15,12 @@ import ModelFormContainer from '@/components/PrismaTable/components/ModelForm'
 import { DEFAULT_PAGE_SIZE } from '@/components/PrismaTable/constants'
 import { getGraphqlMutation, getGraphqlQuery } from '@/components/PrismaTable/libs/GetGraphqlQuery'
 import language from '@/components/PrismaTable/libs/language'
-import type { FilterState, GraphQLResp } from '@/components/PrismaTable/libs/types'
+import type { FilterState, GraphQLResp, SchemaField } from '@/components/PrismaTable/libs/types'
 import { getTableDataFromGraphQLResp } from '@/components/PrismaTable/libs/utils'
 import useTableSchema from '@/lib/hooks/useTableSchema'
 
 import styles from './index.module.less'
+import { ColumnsType } from 'antd/es/table'
 
 interface Props {
   model: string
@@ -39,6 +40,13 @@ interface PageState {
 
 interface OrderByState {
   orderBy: Array<Record<string, 'asc' | 'desc'>>
+}
+
+// 根据表头自动计算列宽
+function getTableColumnsFrom(fields: SchemaField[]) {
+  return fields.reduce((count, field) => {
+    return count + field.name.length * 16 + 40
+  }, 60)
 }
 
 const DynamicTable = ({
@@ -227,7 +235,7 @@ const DynamicTable = ({
       <div className={styles.tableWrapper}>
         <Table
           loading={loading}
-          scroll={{ x: 'max-content', y: 'calc(100vh - 250px)' }}
+          scroll={{ x: getTableColumnsFrom(currentModelFields ?? []) + 'px', y: 'calc(100vh - 250px)' }}
           bordered={false}
           dataSource={tableData}
           columns={columns}
