@@ -492,7 +492,7 @@ export default function StorageExplorer({ bucketId }: Props) {
   const createFold = () => {
     let dir = uploadPath
     inputValue.current = ''
-    modal.info({
+    modal.confirm({
       title: intl.formatMessage({ defaultMessage: '请输入文件夹名称' }),
       content: (
         <Input
@@ -739,7 +739,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                       </Button>
                       // </a>
                     )}
-                    <Button
+                    {!target?.isDir &&<Button
                       onClick={() => {
                         // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
                         copy(`${target?.url ?? ''}`)
@@ -748,7 +748,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                       className="rounded-4px m-1.5 !border-[#efeff0]"
                     >
                       <FormattedMessage defaultMessage="复制URL" />
-                    </Button>
+                    </Button>}
                     <Popconfirm
                       title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
                       onConfirm={() => deleteFile(target)}
