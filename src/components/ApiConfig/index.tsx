@@ -179,7 +179,7 @@ export default function Index(props: Props) {
                   />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="查询是否需要登录" />
+                  <FormattedMessage defaultMessage="匿名查询" />
                 </span>
               </>
             </Form.Item>
@@ -192,7 +192,7 @@ export default function Index(props: Props) {
                   />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="变更是否需要登录" />
+                  <FormattedMessage defaultMessage="匿名变更" />
                 </span>
               </>
             </Form.Item>
@@ -211,7 +211,7 @@ export default function Index(props: Props) {
                   />
                 </Form.Item>
                 <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="订阅是否需要登录" />
+                  <FormattedMessage defaultMessage="匿名订阅" />
                 </span>
               </>
             </Form.Item>
@@ -227,7 +227,7 @@ export default function Index(props: Props) {
                 />
               </Form.Item>
               <span className={styles.tip} style={{ marginLeft: 12 }}>
-                <FormattedMessage defaultMessage="是否需要登录" />
+                <FormattedMessage defaultMessage="匿名访问" />
               </span>
             </>
           </Form.Item>
