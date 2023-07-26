@@ -4,7 +4,7 @@ import useSWRImmutable from 'swr/immutable'
 
 import type { GlobalSetting } from '@/interfaces/global'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 
 if (window && document) {
   const script = document.createElement('script')
@@ -55,7 +55,7 @@ export default function RapiFrame() {
       id={id}
       key={search}
       theme={params.get('theme') || 'light'}
-      spec-url={params.get('url')}
+      spec-url={params.get('url') + (getAuthKey() ? '?auth-key=' + getAuthKey() : '')}
       server-url={customServerUrl}
       default-api-server={customServerUrl}
       show-header="false"

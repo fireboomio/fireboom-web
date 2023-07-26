@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import requests from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
@@ -178,7 +178,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             <div
               className="cursor-pointer h-5 text-0px"
               onClick={() => {
-                window.open('api/v1/file/postToSwag', '_blank')
+                window.open(`api/v1/file/postToSwag?auth-key=${getAuthKey()}`, '_blank')
               }}
             >
               <img src="/assets/download.svg" alt="" />
