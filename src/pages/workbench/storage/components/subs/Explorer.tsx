@@ -437,9 +437,9 @@ export default function StorageExplorer({ bucketId }: Props) {
   const { modal } = App.useApp()
   const doRename = async (name: string) => {
     inputValue.current = ''
-    const originFileName = name.replace(/\/&/, '').split('/').pop()
+    const originFileName = name.replace(/\/$/, '').split('/').pop()
     return new Promise<string>(resolve => {
-      modal.info({
+      modal.confirm({
         title: intl.formatMessage({ defaultMessage: '请输入名称' }),
         content: (
           <Input
