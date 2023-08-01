@@ -178,7 +178,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             <div
               className="cursor-pointer h-5 text-0px"
               onClick={() => {
-                window.open(`api/v1/file/postToSwag?auth-key=${getAuthKey()}`, '_blank')
+                window.open(`/api/engine/swagger?auth-key=${getAuthKey()}`, '_blank')
               }}
             >
               <img src="/assets/download.svg" alt="" />

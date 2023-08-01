@@ -223,13 +223,15 @@ export default function Graphql({ content, type }: Props) {
   function testGql() {
     const values = form.getFieldsValue()
     values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    void requests.post('/checkDBConn', { sourceType: 3, config: values }).then((x: any) => {
-      if (x?.status) {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      }
-    })
+    void requests
+      .post('/datasource/checkConnection', { sourceType: 3, config: values })
+      .then((x: any) => {
+        if (x?.status) {
+          message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+        } else {
+          message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
+        }
+      })
   }
 
   const setUploadPath = (v: string) => {

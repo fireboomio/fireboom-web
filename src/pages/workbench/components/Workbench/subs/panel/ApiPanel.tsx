@@ -9,10 +9,10 @@ import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
-import type { OperationResp } from '@/interfaces/apimanage'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import styles from './ApiPanel.module.less'
@@ -548,7 +548,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
 }
 
-function convertToTree(data: OperationResp[] | null, lv = '0'): FileTreeNode[] {
+function convertToTree(data: ApiDocuments.Operation[] | null, lv = '0'): FileTreeNode[] {
   if (!data) return []
   return data.map((x, idx) => ({
     data: {
@@ -575,7 +575,10 @@ function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | unde
   }
 }
 
-function getApiById(id: number, data: OperationResp[] = []): OperationResp | undefined {
+function getApiById(
+  id: number,
+  data: ApiDocuments.Operation[] = []
+): ApiDocuments.Operation | undefined {
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!

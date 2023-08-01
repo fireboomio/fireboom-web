@@ -14,6 +14,7 @@ import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
@@ -84,10 +85,7 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [])
 
-  const { data: sdk } = useSWR<{ language: string; type: string; enabled: boolean }[]>(
-    '/sdk',
-    requests.get
-  )
+  const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   useEffect(() => {
     const hookUrl = globalSetting.serverOptions.serverUrl.staticVariableContent
     if (hookUrl === webContainerUrl) {

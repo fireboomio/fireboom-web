@@ -15,10 +15,10 @@ import logoutIcon from './assets/logout.svg'
 import styles from './index.module.less'
 
 export default function LoginPanel() {
-  const { system } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
   const { data: userInfo, trigger } = useSWRMutation<any>(
-    `${system.apiPublicAddr}/auth/cookie/user`,
+    `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/user`,
     (key: string) => {
       return axios.get(key, { withCredentials: true }).then(res => res.data)
     }

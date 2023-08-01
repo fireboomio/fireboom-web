@@ -1,10 +1,8 @@
 import { useContext, useEffect, useRef } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
-import useSWRImmutable from 'swr/immutable'
 
-import type { GlobalSetting } from '@/interfaces/global'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests, { getAuthKey } from '@/lib/fetchers'
+import { getAuthKey } from '@/lib/fetchers'
 
 if (window && document) {
   const script = document.createElement('script')
@@ -18,13 +16,12 @@ const id = `rapi-frame`
 export default function RapiFrame() {
   const [params] = useSearchParams()
   const { globalSetting } = useContext(ConfigContext)
-  const { data: global } = useSWRImmutable<GlobalSetting>('/setting/global', requests.get)
   const { search } = useLocation()
   const customServerUrl = globalSetting.nodeOptions.publicNodeUrl.staticVariableContent
   const csrfToken = useRef('')
 
   useEffect(() => {
-    if (global && globalSetting && global.configureWunderGraphApplication.security.enableCSRF) {
+    if (globalSetting?.enableCSRFProtect) {
       /*
           Ensure that the DOM is loaded, then add the event listener.
           here we are listenig to 'before-try' event which fires when the user clicks
@@ -46,7 +43,7 @@ export default function RapiFrame() {
         }
       })
     }
-  }, [global, globalSetting, customServerUrl])
+  }, [globalSetting, customServerUrl])
   if (!globalSetting) return
 
   return (

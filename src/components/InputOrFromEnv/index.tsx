@@ -6,6 +6,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import type { VariableType } from '@/interfaces/datasource'
 import { Mode } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface InputOrFromEnvProps {
   value?: VariableType
@@ -21,7 +23,7 @@ const modeOptions: SelectProps['options'] = [
 
 const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEnvProps) => {
   const { mode, setMode } = useContext(InputOrFromEnvContext)
-  const [envs, setEnvs] = useState<string[]>([])
+  const envs = useEnvOptions()
   const onSwitchMode = useCallback(
     (e: Mode) => {
       setMode(e)
@@ -42,14 +44,6 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
   )
 
   useEffect(() => {
-    if (mode == Mode.Env && !envs.length) {
-      requests.get('/env').then(resp => {
-        setEnvs((resp as any).map((r: any) => r.key) ?? [])
-      })
-    }
-  }, [envs, mode])
-
-  useEffect(() => {
     setMode(value?.kind ?? Mode.Input)
   }, [setMode, value?.kind])
 
@@ -61,7 +55,7 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
           {...envProps}
           value={value?.key}
           className="flex-1"
-          options={envs.map(env => ({ label: env, value: env }))}
+          options={envs}
           onChange={onValueChange}
         />
       ) : (

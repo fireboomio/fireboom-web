@@ -43,8 +43,8 @@ export default function FileList({
   const [keyword, setKeyword] = useState('')
 
   const upProps: UploadProps = {
-    name: 'file',
-    action: '/api/file/uploadFile',
+    name: 'content',
+    action: '/api/vscode/writeFile',
     headers: getHeader(),
     data: { type: upType },
     showUploadList: false,

@@ -26,6 +26,7 @@ import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { replaceFileTemplate } from '@/utils/template'
 
 import styles from './index.module.less'
@@ -252,11 +253,11 @@ export default function Index(props: PropsWithChildren) {
   const location = useLocation()
   const navigate = useNavigate()
   const { data } = useSWRImmutable<{ language: string }>('/sdk/enabledServer', requests)
-  const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
+  const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const language = data?.language
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
     try {
-      if (!language || !sdk.find(item => item.type === 'server')) {
+      if (!language || !sdk?.find(item => item.type === 'server')) {
         navigate('/workbench/sdk-template')
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false

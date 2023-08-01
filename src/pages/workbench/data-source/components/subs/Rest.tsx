@@ -240,17 +240,17 @@ export default function Rest({ content, type }: Props) {
     }
   }
 
-  const test = () => {
-    const values = form.getFieldsValue()
-    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    void requests.post('/checkDBConn', values).then((x: any) => {
-      if (x?.status) {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      }
-    })
-  }
+  // const test = () => {
+  //   const values = form.getFieldsValue()
+  //   values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+  //   void requests.post('/datasource/checkConnection', values).then((x: any) => {
+  //     if (x?.status) {
+  //       message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+  //     } else {
+  //       message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
+  //     }
+  //   })
+  // }
   //表单上传成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {

@@ -122,7 +122,7 @@ export default function DB({ content, type }: Props) {
               const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
               try {
                 try {
-                  await uploadLocal('2', '', dbName + '.db')
+                  await uploadLocal('/upload/sqlite', '', dbName + '.db')
                 } catch (e: any) {
                   const msgMap: any = {
                     10440011: intl.formatMessage({ defaultMessage: '文件名已存在' })
@@ -415,7 +415,7 @@ export default function DB({ content, type }: Props) {
       newValues.databaseUrl.kind = '0'
     }
     void requests
-      .post('/checkDBConn', {
+      .post('/datasource/checkConnection', {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         sourceType: content.sourceType,

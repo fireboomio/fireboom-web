@@ -1,30 +1,15 @@
 import type { IntrospectionEnumValue } from 'graphql'
 
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
 export type DirTreeNode = OperationItem & { key: string; children: DirTreeNode[] | null }
 
-export type OperationItem = OperationResp & {
+export type OperationItem = ApiDocuments.fileloader_DataTree & {
   title: string
   baseDir: string
   currDir: string
   liveQuery: boolean
   children: OperationItem[] | null
-}
-
-export interface OperationResp {
-  id: number
-  path: string
-  content: string
-  remark: string
-  isDir: boolean
-  liveQuery: boolean
-  enabled: boolean
-  illegal: boolean
-  isPublic: boolean
-  method: 'GET' | 'POST'
-  operationType: 'query' | 'mutation' | 'subscription'
-  children: OperationResp[] | null
-  createTime: string
-  updateTime: string
 }
 
 export interface FieldType {

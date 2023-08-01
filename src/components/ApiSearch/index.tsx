@@ -8,10 +8,10 @@ import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { Close, File, Filter, Search } from '@/components/icons'
-import type { OperationResp } from '@/hooks/store/api'
 import { useApiList } from '@/hooks/store/api'
 import { useEventBus } from '@/lib/event/events'
 import { intl } from '@/providers/IntlProvider'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import keyDown from './assets/down.svg'
 import iconEmpty from './assets/empty.svg'
@@ -41,7 +41,7 @@ export default function ApiSearch() {
 
   // 筛选相关变量
   const [filterMap, setFilterMap] = useState<
-    Record<string, { value: any; fun: (api: OperationResp) => boolean }>
+    Record<string, { value: any; fun: (api: ApiDocuments.fileloader_DataTree) => boolean }>
   >({})
   const enabledFilter = useMemo(() => values(filterMap), [filterMap])
   const [filterOpen, setFilterOpen] = useState(false)
@@ -49,7 +49,9 @@ export default function ApiSearch() {
   const buildBaseFilter = (key: string, title: string) => ({
     key,
     title,
-    filterFun: curry((filterValue: boolean, api: OperationResp) => get(api, key) === filterValue),
+    filterFun: curry(
+      (filterValue: boolean, api: ApiDocuments.fileloader_DataTree) => get(api, key) === filterValue
+    ),
     options: [
       {
         label: intl.formatMessage({ defaultMessage: '是' }),
@@ -321,9 +323,9 @@ export default function ApiSearch() {
   )
 }
 
-function flattenApi(list: OperationResp[]) {
+function flattenApi(list: ApiDocuments.fileloader_DataTree[]) {
   const lists = [...list]
-  const result: OperationResp[] = []
+  const result: ApiDocuments.fileloader_DataTree[] = []
   while (lists.length) {
     const item = lists.pop()!
     result.push(item)

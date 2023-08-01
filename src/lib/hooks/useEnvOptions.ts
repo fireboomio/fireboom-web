@@ -1,17 +1,10 @@
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
+// FIXME 经常刷新
 export default function useEnvOptions() {
-  const { data: envOptions } = useSWRImmutable<
-    {
-      label: string
-      value: string
-    }[]
-  >('/env', url =>
-    requests
-      .get<unknown, Array<{ deleteTime: string; key: string }>>(url)
-      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
-  )
-  return envOptions
+  const { data } = useSWRImmutable<ApiDocuments.Env>('/env/single', requests.get)
+  return Object.keys(data ?? {}).map(k => ({ label: k, value: k }))
 }

@@ -25,29 +25,16 @@ import requests, { getAuthKey } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { intl } from '@/providers/IntlProvider'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
-type SDKItem = {
-  id: number
-  author: string
-  version: string
-  description?: string
-  dirName: string
-  type: 'client' | 'server'
-  language: string
-  url: string
-  name: string
-  outputPath: string
-  icon: string
-  enabled: boolean
-}
-type RemoteSDKItem = Omit<SDKItem, 'outputPath'> & {
+type RemoteSDKItem = Omit<ApiDocuments.Sdk, 'outputPath'> & {
   defaultOutputPath: string
 }
 
 const SDKTemplate = () => {
-  const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const { data, mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const [showRemote, setShowRemote] = useState(false)
   // const cancelToken = useRef<any>()
   const {
@@ -78,8 +65,8 @@ const SDKTemplate = () => {
   )
 
   const { server, client } = useMemo(() => {
-    let server: SDKItem[] = []
-    let client: SDKItem[] = []
+    let server: ApiDocuments.Sdk[] = []
+    let client: ApiDocuments.Sdk[] = []
     if (data) {
       data.forEach(x => {
         if (x.type === 'server') {
@@ -92,8 +79,8 @@ const SDKTemplate = () => {
     return { server, client }
   }, [data])
   const { remoteServer, remoteClient } = useMemo(() => {
-    let server: SDKItem[] = []
-    let client: SDKItem[] = []
+    let server: ApiDocuments.Sdk[] = []
+    let client: ApiDocuments.Sdk[] = []
     if (remoteSdk?.official) {
       remoteSdk.official.forEach(x => {
         if (x.type === 'server') {
@@ -110,7 +97,7 @@ const SDKTemplate = () => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])
 
-  const onUpdate = (index: number, sdk: SDKItem) => {
+  const onUpdate = (index: number, sdk: ApiDocuments.Sdk) => {
     mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
   }
   const { loading, fun: downloadSdk } = useLock(
@@ -261,13 +248,13 @@ const SDKTemplateItem = ({
   onChange,
   sdk
 }: {
-  sdk: SDKItem
-  onChange: (newSDK: SDKItem) => void
+  sdk: ApiDocuments.Sdk
+  onChange: (newSDK: ApiDocuments.Sdk) => void
 }) => {
   const intl = useIntl()
   const [editing, setEditing] = useState(false)
   const [editingValue, setEditingValue] = useState(sdk.outputPath)
-  const { mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const { mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
     e => {

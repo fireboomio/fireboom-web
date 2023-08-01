@@ -71,7 +71,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const testLink = () => {
-    void requests.post('/checkDBConn', { ...content }).then((x: any) => {
+    void requests.post('/datasource/checkConnection', { ...content }).then((x: any) => {
       if (x?.status) {
         message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
       } else {

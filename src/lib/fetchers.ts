@@ -21,8 +21,7 @@ requests.interceptors.response.use(
         console.log(123123, resp.config)
         return resp.config.onError?.(resp.data)
       }
-      // return resp.data.result ?? (resp.data as unknown as T)
-      return resp.data.result
+      return resp.data
     } else {
       // eslint-disable-next-line no-console
       const errMag = resp.config.resolveErrorMsg?.(resp)
