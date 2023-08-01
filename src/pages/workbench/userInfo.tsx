@@ -12,21 +12,21 @@ loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 export default function UserInfo() {
   const [info, setInfo] = useState()
-  const { system } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
 
   useEffect(() => {
     axios
-      .get(`${system.apiPublicAddr}/auth/cookie/user`, {
+      .get(`${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/user`, {
         withCredentials: true
       })
       .then(info => {
         setInfo(info.data)
       })
-  }, [system.apiPublicAddr])
+  }, [globalSetting.nodeOptions])
 
   const handleLogout = () => {
-    logout(system.apiPublicAddr).then(() => {
+    logout(globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!).then(() => {
       setTimeout(() => {
         window.close()
       }, 3000)

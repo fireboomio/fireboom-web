@@ -20,7 +20,7 @@ export default function AuthConfigContainer() {
   const navigate = useNavigate()
   const { id } = useParams()
   const authList = useAuthList()
-  const { system } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function AuthConfigContainer() {
   }
 
   const onTest = () => {
-    logout(system.apiPublicAddr).then(() => {
+    logout(globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!).then(() => {
       // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
       const callbackURL = new URL(location.toString())
       callbackURL.hash = '#/workbench/userInfo'

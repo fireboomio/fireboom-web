@@ -302,6 +302,13 @@ export const services = {
       ...extract('PUT', args, ['user', 'watchAction'], [])
     })
   },
+  'datasource@/datasource/checkConnection'(args: ApiDocuments.models_Datasource) {
+    return requestAdapter<any>({
+      url: replacePath('/datasource/checkConnection', args),
+      method: 'POST',
+      ...extract('POST', args, [], [])
+    })
+  },
   'datasource@/datasource/copy'(args: ApiDocuments.fileloader_DataMutation) {
     return requestAdapter<any>({
       url: replacePath('/datasource/copy', args),
@@ -416,6 +423,13 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
+  'engine@/engine/swagger'(args?: any) {
+    return requestAdapter<File>({
+      url: replacePath('/engine/swagger', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
   'env@/env'(
     args: {
       /**
@@ -512,6 +526,13 @@ export const services = {
       ...extract('GET', args, [], [])
     })
   },
+  'home@/home'(args?: any) {
+    return requestAdapter<ApiDocuments.handler_homeStatistics>({
+      url: replacePath('/home', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
   'operation@/operation'(args: {
     /**
      * @description model名称
@@ -604,6 +625,13 @@ export const services = {
       ...extract('PUT', args, ['user', 'watchAction'], [])
     })
   },
+  'operation@/operation/bindRoles'(args: ApiDocuments.handler_paramBindRole) {
+    return requestAdapter<string[]>({
+      url: replacePath('/operation/bindRoles', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
   'operation@/operation/copy'(args: ApiDocuments.fileloader_DataMutation) {
     return requestAdapter<any>({
       url: replacePath('/operation/copy', args),
@@ -652,6 +680,25 @@ export const services = {
       url: replacePath('/operation/import', args),
       method: 'POST',
       ...extract('POST', args, ['file'], [])
+    })
+  },
+  'operation@/operation/listByRole'(args: ApiDocuments.handler_paramQueryRole) {
+    return requestAdapter<ApiDocuments.Operation[]>({
+      url: replacePath('/operation/listByRole', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
+  'operation@/operation/listPublic'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<ApiDocuments.Operation[]>({
+      url: replacePath('/operation/listPublic', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
     })
   },
   'operation@/operation/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -714,6 +761,30 @@ export const services = {
   }) {
     return requestAdapter<ApiDocuments.Operation>({
       url: replacePath('/operation/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'operation@/operationGraphql/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<any>({
+      url: replacePath('/operationGraphql/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'operation@/operationHook/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<ApiDocuments.handler_hooksData>({
+      url: replacePath('/operationHook/{dataName}', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })
@@ -1042,6 +1113,13 @@ export const services = {
       ...extract('DELETE', args, ['user'], ['dataName'])
     })
   },
+  'sdk@/sdk/enabledServer'(args?: any) {
+    return requestAdapter<ApiDocuments.models_Sdk>({
+      url: replacePath('/sdk/enabledServer', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
   'sdk@/sdk/export'(args: {
     /**
      * @description dataNames
@@ -1334,6 +1412,193 @@ export const services = {
       url: replacePath('/storage/{dataName}', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/ping'(args: ApiDocuments.models_Storage) {
+    return requestAdapter<any>({
+      url: replacePath('/storageClient/ping', args),
+      method: 'POST',
+      ...extract('POST', args, [], [])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/detail'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description filename
+       */
+      filename: string
+    }
+  ) {
+    return requestAdapter<ApiDocuments.models_StorageFile>({
+      url: replacePath('/storageClient/{dataName}/detail', args),
+      method: 'GET',
+      ...extract('GET', args, ['filename'], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/download'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description filename
+       */
+      filename: string
+    }
+  ) {
+    return requestAdapter<ApiDocuments.models_StorageFile[]>({
+      url: replacePath('/storageClient/{dataName}/download', args),
+      method: 'GET',
+      ...extract('GET', args, ['filename'], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/list'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description dirname
+       */
+      dirname: string
+    }
+  ) {
+    return requestAdapter<ApiDocuments.models_StorageFile[]>({
+      url: replacePath('/storageClient/{dataName}/list', args),
+      method: 'GET',
+      ...extract('GET', args, ['dirname'], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/mkdir'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description dirname
+       */
+      dirname: string
+    }
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/storageClient/{dataName}/mkdir', args),
+      method: 'POST',
+      ...extract('POST', args, ['dirname'], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/remove'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description filename
+       */
+      filename: string
+    }
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/storageClient/{dataName}/remove', args),
+      method: 'POST',
+      ...extract('POST', args, ['filename'], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/rename'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & ApiDocuments.fileloader_DataMutation
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/storageClient/{dataName}/rename', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'storageClient@/storageClient/{dataName}/upload'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & {
+      /**
+       * @description dirname
+       */
+      dirname: string
+    }
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/storageClient/{dataName}/upload', args),
+      method: 'POST',
+      ...extract('POST', args, ['dirname'], ['dataName'])
+    })
+  },
+  'system@/system/download'(args: {
+    /**
+     * @description filename
+     */
+    filename: string
+  }) {
+    return requestAdapter<File>({
+      url: replacePath('/system/download', args),
+      method: 'GET',
+      ...extract('GET', args, ['filename'], [])
+    })
+  },
+  'system@/system/filelist'(args: {
+    /**
+     * @description dirname
+     */
+    dirname: string
+  }) {
+    return requestAdapter<string[]>({
+      url: replacePath('/system/filelist', args),
+      method: 'GET',
+      ...extract('GET', args, ['dirname'], [])
+    })
+  },
+  'system@/system/log'(args: {
+    /**
+     * @description take
+     */
+    take?: number
+    /**
+     * @description skip
+     */
+    skip?: number
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/system/log', args),
+      method: 'GET',
+      ...extract('GET', args, ['take', 'skip'], [])
+    })
+  },
+  'system@/system/proxy'(args: {
+    /**
+     * @description 请求url
+     */
+    url: string
+  }) {
+    return requestAdapter<{}>({
+      url: replacePath('/system/proxy', args),
+      method: 'GET',
+      ...extract('GET', args, ['url'], [])
     })
   },
   'vscode@/vscode/copy'(args?: any) {

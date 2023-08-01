@@ -30,13 +30,13 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       apiID: state.apiID,
       query: state.query
     }))
-  const workbenchCtx = useContext(WorkbenchContext)
-  const { system: config } = useContext(ConfigContext)
+  // const workbenchCtx = useContext(WorkbenchContext)
+  const { globalSetting } = useContext(ConfigContext)
 
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
   const [name, setName] = useState('')
-  const { data: globalSetting } = useApiGlobalSetting()
+  const { data: globalOperationSetting } = useApiGlobalSetting()
 
   const startEdit = () => {
     setIsEditingName(true)
@@ -81,8 +81,8 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const isLive = useMemo(() => {
     return apiDesc?.setting.enabled
       ? apiDesc?.setting.liveQueryEnabled
-      : globalSetting?.liveQueryEnabled
-  }, [apiDesc?.setting.liveQueryEnabled, apiDesc?.setting.enabled, globalSetting])
+      : globalOperationSetting?.liveQueryEnabled
+  }, [apiDesc?.setting.liveQueryEnabled, apiDesc?.setting.enabled, globalOperationSetting])
 
   const method = useMemo(() => {
     if (schemaAST && schemaAST.definitions[0].kind === Kind.OPERATION_DEFINITION) {
@@ -113,10 +113,12 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         //
       }
     }
-  }, [apiDesc, intl, workbenchCtx])
+  }, [apiDesc, intl])
 
   const copyLink = useCallback(async () => {
-    let link = `${config.apiPublicAddr ?? ''}/operations${apiDesc?.path}`
+    let link = `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}/operations${
+      apiDesc?.path
+    }`
     if (!link) {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
@@ -171,7 +173,14 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
 
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
-  }, [apiDesc?.liveQuery, apiDesc?.path, apiID, config.apiPublicAddr, intl, schemaAST?.definitions])
+  }, [
+    apiDesc?.liveQuery,
+    apiDesc?.path,
+    apiID,
+    globalSetting.nodeOptions,
+    intl,
+    schemaAST?.definitions
+  ])
 
   const save = async () => {
     try {

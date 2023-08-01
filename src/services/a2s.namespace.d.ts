@@ -263,6 +263,7 @@ export declare namespace ApiDocuments {
     uploadProfiles: {}
     useSSL: boolean
   }
+  export interface consts_MiddlewareHook extends BasicDto {}
   export interface fileloader_DataBatchResult extends BasicDto {
     dataName?: string
     succeed?: boolean
@@ -318,6 +319,47 @@ export declare namespace ApiDocuments {
     data?: any
     user?: string
   }
+  export interface handler_authenticationStatistics extends BasicDto {
+    authenticationTotal?: number
+    userTodayAdd?: number
+    userTotal?: number
+  }
+  export interface handler_datasourceStatistics extends BasicDto {
+    customizeTotal?: number
+    databaseTotal?: number
+    graphqlTotal?: number
+    restTotal?: number
+  }
+  export interface handler_homeStatistics extends BasicDto {
+    authentication?: ApiDocuments.handler_authenticationStatistics
+    dataSource?: ApiDocuments.handler_datasourceStatistics
+    operation?: ApiDocuments.handler_operationStatistics
+    storage?: ApiDocuments.handler_storageStatistics
+  }
+  export interface handler_hooksData extends BasicDto {
+    globalHooks?: ApiDocuments.models_OperationHookEnabled[]
+    operationHooks?: ApiDocuments.models_OperationHookEnabled[]
+  }
+  export interface handler_operationStatistics extends BasicDto {
+    liveQueryTotal?: number
+    mutationTotal?: number
+    queryTotal?: number
+    subscriptionTotal?: number
+  }
+  export interface handler_paramBindRole extends BasicDto {
+    operationPaths?: string[]
+    rbacType?: string
+    roleCodes?: string[]
+  }
+  export interface handler_paramQueryRole extends BasicDto {
+    rbacType?: string
+    roleCode?: string
+  }
+  export interface handler_storageStatistics extends BasicDto {
+    memoryTotal?: number
+    memoryUsed?: number
+    storageTotal?: number
+  }
   export interface i18n_CustomError extends BasicDto {
     /**
      * @description 错误根因
@@ -345,6 +387,50 @@ export declare namespace ApiDocuments {
     maxbackups: number
     maxsize: number
   }
+  export interface models_Datasource extends BasicDto {}
+  export interface models_OperationHookEnabled extends BasicDto {
+    enabled?: boolean
+    name?: ApiDocuments.consts_MiddlewareHook
+  }
+  export interface models_Sdk extends BasicDto {
+    author?: string
+    createTime?: string
+    deleteTime?: string
+    description?: string
+    enabled?: boolean
+    extension?: string
+    gitUrl?: string
+    icon?: string
+    language?: string
+    name?: string
+    outputPath?: string
+    title?: string
+    type?: ApiDocuments.models_sdkType
+    updateTime?: string
+    version?: string
+  }
+  export interface models_Storage extends BasicDto {}
+  export interface models_StorageFile extends BasicDto {
+    /**
+     * @description A standard MIME type describing the format of the object data.
+     */
+    contentType?: string
+    extension?: string
+    /**
+     * @description Date and time the object was last modified.
+     */
+    lastModified?: string
+    /**
+     * @description Name of the object
+     */
+    name?: string
+    signedUrl?: string
+    /**
+     * @description Size in bytes of the object.
+     */
+    size?: number
+  }
+  export interface models_sdkType extends BasicDto {}
   export interface operationHooksConfiguration extends BasicDto {
     httpTransportBeforeRequest: boolean
     httpTransportOnRequest: boolean

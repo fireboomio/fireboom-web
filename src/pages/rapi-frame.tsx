@@ -17,14 +17,14 @@ const id = `rapi-frame`
 
 export default function RapiFrame() {
   const [params] = useSearchParams()
-  const { system: config } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const { data: global } = useSWRImmutable<GlobalSetting>('/setting/global', requests.get)
   const { search } = useLocation()
-  const customServerUrl = config.apiPublicAddr
+  const customServerUrl = globalSetting.nodeOptions.publicNodeUrl.staticVariableContent
   const csrfToken = useRef('')
 
   useEffect(() => {
-    if (global && config && global.configureWunderGraphApplication.security.enableCSRF) {
+    if (global && globalSetting && global.configureWunderGraphApplication.security.enableCSRF) {
       /*
           Ensure that the DOM is loaded, then add the event listener.
           here we are listenig to 'before-try' event which fires when the user clicks
@@ -46,8 +46,8 @@ export default function RapiFrame() {
         }
       })
     }
-  }, [global, config, customServerUrl])
-  if (!config) return
+  }, [global, globalSetting, customServerUrl])
+  if (!globalSetting) return
 
   return (
     // @ts-ignore

@@ -9,7 +9,7 @@ module.exports = {
     /** @type {import('@doremijs/a2s/dist/plugins').OpenAPIDataSourceOptions} */
     openapi: {
       // 数据源地址
-      apiUrl: 'http://localhost:9123/swagger/doc.json',
+      apiUrl: 'http://localhost:9123/api/swagger/doc.json',
       // 是否是 swagger 2.0 标准
       isVersion2: true
       // basicAuth: {

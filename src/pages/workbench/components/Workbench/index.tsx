@@ -1,9 +1,8 @@
 import { App, Layout as ALayout, message, Spin } from 'antd'
-import { ConfigContext } from 'antd/es/config-provider'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
@@ -65,7 +64,6 @@ export default function Index(props: PropsWithChildren) {
     currentPath: '',
     config: {}
   })
-  const { system } = useContext(ConfigContext)
   const [loading, setLoading] = useState('')
 
   // context
@@ -253,7 +251,7 @@ export default function Index(props: PropsWithChildren) {
   )
   const location = useLocation()
   const navigate = useNavigate()
-  const { data } = useSWRImmutable<{ language: string }>('/hook/option', requests)
+  const { data } = useSWRImmutable<{ language: string }>('/sdk/enabledServer', requests)
   const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
   const language = data?.language
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {

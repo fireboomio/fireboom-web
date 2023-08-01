@@ -20,7 +20,7 @@ import styles from './header.module.less'
 
 export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
   const intl = useIntl()
-  const { system } = useConfigContext()
+  const { appRuntime } = useConfigContext()
 
   const hotkeys = useMemo(
     () => [
@@ -85,7 +85,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
     props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
 
   const doCompile = () => {
-    if (!system.isDev) {
+    if (!appRuntime.dev) {
       message.error('生产环境禁止重新编译')
       return
     }
@@ -186,7 +186,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            {system.isDev ? (
+            {appRuntime.dev ? (
               <div className={styles.headBtn} onClick={doCompile}>
                 {!compiling ? (
                   <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />

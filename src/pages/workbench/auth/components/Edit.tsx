@@ -78,7 +78,7 @@ const supportList = [
 
 export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const intl = useIntl()
-  const { system: globalConfig } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const { ruleMap } = useValidate()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   // const dispatch = useContext(AuthDispatchContext)
@@ -406,11 +406,14 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             {id && cookieBased && (
               <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
                 <div className="flex items-center">
-                  {globalConfig.apiPublicAddr}/auth/cookie/callback/{id}
+                  {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}
+                  /auth/cookie/callback/{id}
                   <CopyOutlined
                     className="cursor-pointer ml-4"
                     onClick={() => {
-                      copy(`${globalConfig.apiPublicAddr}/auth/cookie/callback/${id}`)
+                      copy(
+                        `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${id}`
+                      )
                       message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                     }}
                   />

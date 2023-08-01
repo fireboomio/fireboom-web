@@ -5,8 +5,8 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import Workbench from '@/pages/workbench/components/Workbench'
 
 export default function WorkbenchPage() {
-  const { system: config } = useContext(ConfigContext)
-  if (!config) {
+  const { globalSetting } = useContext(ConfigContext)
+  if (!globalSetting) {
     return null
   }
   return (

@@ -146,7 +146,7 @@ const IdeContainer: FC<Props> = props => {
     status: null
   })
   const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
-  const { system: globalConfig } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
 
   const [hookPath, setHookPath] = useState(props.hookPath)
   // 将hookPath保存到本地， 用以支持动态更换
@@ -477,7 +477,7 @@ const IdeContainer: FC<Props> = props => {
           hideSwitch={props.hideSwitch ?? false}
           hookPath={hookPath}
           hookInfo={hookInfo}
-          hostUrl={globalConfig.apiPublicAddr}
+          hostUrl={globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}
           tabSize={tabSize}
           onSetContent={value => {
             editor.setValue(value)

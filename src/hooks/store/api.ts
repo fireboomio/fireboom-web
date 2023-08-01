@@ -2,21 +2,10 @@ import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
-interface ApiSetting {
-  enabled: boolean
-  authenticationRequired: boolean
-  authenticationQueriesRequired: boolean
-  authenticationMutationsRequired: boolean
-  authenticationSubscriptionsRequired: boolean
-  cachingEnabled: boolean
-  cachingMaxAge: number
-  cachingStaleWhileRevalidate: number
-  liveQueryEnabled: boolean
-  liveQueryPollingIntervalSeconds: number
-}
 export function useApiGlobalSetting() {
-  return useSWRImmutable<ApiSetting>('/operation/setting', url => requests.get(url))
+  return useSWRImmutable<ApiDocuments.GlobalOperation>('/globalOperation', requests.get)
 }
 
 export interface OperationResp {

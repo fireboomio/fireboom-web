@@ -22,7 +22,7 @@ interface Security {
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { system: globalConfig } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   const [form] = Form.useForm<Security>()
   const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
@@ -92,7 +92,7 @@ export default function SettingMainVersion() {
               className="h-3 mr-1 ml-2 text-[14px]"
             />
             <span className="text-[#ff4d4f] text-[12px]">
-              {globalConfig.apiPublicAddr}/app/main/graphql
+              {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/app/main/graphql
             </span>
           </div>
         </Form.Item>

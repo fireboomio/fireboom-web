@@ -107,7 +107,7 @@ export default requests
 
 export const proxy = (url: string, cancelToken?: CancelToken) => {
   return axios
-    .get(`/api/common/proxy?url=${encodeURIComponent(url)}`, {
+    .get(`/api/system/proxy?url=${encodeURIComponent(url)}`, {
       headers: getHeader(),
       cancelToken
     })

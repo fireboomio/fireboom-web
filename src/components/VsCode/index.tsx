@@ -6,12 +6,7 @@ import useSWRImmutable from 'swr/immutable'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-
-type HookOption = {
-  relativeDir: string
-  language: string
-  fileExtension: string
-}
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 const outChannel = new BroadcastChannel('fb-vscode-out')
 const inChannel = new BroadcastChannel('fb-vscode-in')
@@ -24,7 +19,7 @@ export default function VsCode({
 }) {
   const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
   const { vscode } = useContext(GlobalContext)
-  const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
+  const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   const language = data?.language
   const [forceShowPath, setForceShowPath] = useState('')
 
@@ -66,24 +61,24 @@ export default function VsCode({
       openDatabase().then(db => {
         addMessage(db, {
           cmd: 'openFile',
-          data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
+          data: { path: '/' + data?.outputPath + '/' + path + data?.extension }
         }).then(() => {
           inChannel.postMessage({
             cmd: 'openFile',
-            data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
+            data: { path: '/' + data?.outputPath + '/' + path + data?.extension }
           })
         })
       })
     }
-  }, [forceShowPath, vscode?.options?.visible, vscode?.options?.currentPath, data?.fileExtension])
+  }, [forceShowPath, vscode?.options?.visible, vscode?.options?.currentPath, data?.extension])
 
-  return (forceShowPath || vscode?.options?.visible) && data?.relativeDir ? (
+  return (forceShowPath || vscode?.options?.visible) && data?.outputPath ? (
     <iframe
       key={language}
       ref={vscodeWebIframe}
       data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
       className={`border-0 h-full top-0 left-0 w-full ${className}`}
-      src={`/vscode/index.html?baseDir=${data?.relativeDir}`}
+      src={`/vscode/index.html?baseDir=${data?.outputPath}`}
       title="vscode"
       style={style}
     />

@@ -75,7 +75,7 @@ const StatusBar: React.FC<Props> = ({
   }>()
   const [hookEnabled, setHookEnabled] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
-  const { system, refreshConfig } = useConfigContext()
+  const { globalSetting, appRuntime, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { vscode } = useContext(GlobalContext)
   const webContainerUrl = useMemo(() => {
@@ -89,15 +89,20 @@ const StatusBar: React.FC<Props> = ({
     requests.get
   )
   useEffect(() => {
-    if (system.hooksServerURL === webContainerUrl) {
+    const hookUrl = globalSetting.serverOptions.serverUrl.staticVariableContent
+    if (hookUrl === webContainerUrl) {
       setHookEnabled(1)
       setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
     } else {
-      setHooksServerURL(system.hooksServerURL)
-      localStorage.setItem('hooksServerURL', system.hooksServerURL)
+      setHooksServerURL(hookUrl)
+      localStorage.setItem('hooksServerURL', hookUrl ?? '')
       setHookEnabled(3)
     }
-  }, [system.hooksServerURL, showHookSetting, webContainerUrl])
+  }, [
+    showHookSetting,
+    webContainerUrl,
+    globalSetting.serverOptions.serverUrl.staticVariableContent
+  ])
   useEffect(() => {
     if (showHookSetting) {
       fetchHookOptionStatus(hooksServerURL ?? '')
@@ -158,8 +163,9 @@ const StatusBar: React.FC<Props> = ({
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
             <span>
-              {system?.isDev === true ? intl.formatMessage({ defaultMessage: '开发模式' }) : ''}
-              {system?.isDev === false ? intl.formatMessage({ defaultMessage: '生产模式' }) : ''}
+              {appRuntime.dev
+                ? intl.formatMessage({ defaultMessage: '开发模式' })
+                : intl.formatMessage({ defaultMessage: '生产模式' })}
             </span>
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
@@ -277,7 +283,9 @@ const StatusBar: React.FC<Props> = ({
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
               <div className={styles.hookEntry}>
-                {hookEnabled === 1 ? 'WebContainer' : system.hooksServerURL}
+                {hookEnabled === 1
+                  ? 'WebContainer'
+                  : globalSetting.serverOptions.serverUrl.staticVariableContent}
               </div>
               <div
                 className="mr-5px ml-8px"

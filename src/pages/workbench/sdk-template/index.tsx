@@ -119,7 +119,7 @@ const SDKTemplate = () => {
       try {
         await requests.post('/sdk/remote/download', sdk)
         await mutate()
-        _mutate('/hook/option')
+        _mutate('/sdk/enabledServer')
         message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       } catch (e) {
         message.error(intl.formatMessage({ defaultMessage: '下载失败' }))
@@ -293,7 +293,7 @@ const SDKTemplateItem = ({
     (checked: boolean) => {
       requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
         mutate()
-        _mutate('/hook/option')
+        _mutate('/sdk/enabledServer')
       })
     },
     [onChange, sdk]

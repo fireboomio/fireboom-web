@@ -2,6 +2,7 @@
 
 import { CopyOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions, message, Tag } from 'antd'
+import clsx from 'clsx'
 import copy from 'copy-to-clipboard'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -10,8 +11,8 @@ import { useImmer } from 'use-immer'
 import Error50x from '@/components/ErrorPage/50x'
 import type { AuthProvResp } from '@/interfaces/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+
 import styles from './detail.module.less'
-import clsx from 'clsx'
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
@@ -21,7 +22,7 @@ type Config = Record<string, any>
 
 export default function AuthMainCheck({ content }: Props) {
   const intl = useIntl()
-  const { system: globalConfig } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
   // const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
   const config = content.config as unknown as Config
@@ -44,7 +45,7 @@ export default function AuthMainCheck({ content }: Props) {
   if (!content) return <Error50x />
   return (
     <>
-      <div className={clsx("mt-8", styles.descriptions)}>
+      <div className={clsx('mt-8', styles.descriptions)}>
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {config.id}
@@ -92,11 +93,14 @@ export default function AuthMainCheck({ content }: Props) {
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
             <div className="flex items-center">
-              {globalConfig.apiPublicAddr}/auth/cookie/callback/{config.id}
+              {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/
+              {config.id}
               <CopyOutlined
                 className="cursor-pointer ml-4"
                 onClick={() => {
-                  copy(`${globalConfig.apiPublicAddr}/auth/cookie/callback/${config.id}`)
+                  copy(
+                    `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${config.id}`
+                  )
                   message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                 }}
               />
@@ -123,7 +127,7 @@ export default function AuthMainCheck({ content }: Props) {
             </Descriptions.Item>
           ) : (
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
-              <pre className='overflow-x-auto'>{config.jwksJSON}</pre>
+              <pre className="overflow-x-auto">{config.jwksJSON}</pre>
             </Descriptions.Item>
           )}
         </Descriptions>

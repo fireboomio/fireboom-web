@@ -1,6 +1,7 @@
 import '@/lib/socket'
 
 import { Button, Form, Input } from 'antd'
+import axios from 'axios'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -11,9 +12,9 @@ import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useStorageList } from '@/hooks/store/storage'
 import type { AppRuntime } from '@/interfaces/base'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
+import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
 import { services } from '@/services'
-import { requestAdapter, setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
+import { setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 interface AuthenticationProps {
@@ -43,28 +44,24 @@ const Authentication = (props: AuthenticationProps) => {
   const onSubmit = async ({ key }: { key: string }) => {
     setAuthKey(key)
     setAuthKey1(key)
-    const { error } = await requestAdapter<AppRuntime>({
-      url: '/health',
-      method: 'get'
-    })
-    if (error) {
+    const resp = await requests.get('/')
+    const success = resp.status < 300 && resp.status >= 200
+    if (!success) {
       setAuthKey('')
       setAuthKey1('')
+    } else {
       broadcast('auth', 'setAuthKey', key)
     }
-    setAuthed(!error)
+    setAuthed(success)
   }
   // const [system, setSystem] = useState<SystemConfigType>()
   // const [environment, setEnvironment] = useState()
   // const [version, setVersion] = useState()
   const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting>()
   useEffect(() => {
-    requestAdapter<AppRuntime>({
-      url: '/health',
-      method: 'get'
-    }).then(({ error, data }) => {
-      if (!error) {
-        setAppRuntime(data)
+    axios.get<AppRuntime>('/health', { baseURL: '/' }).then(res => {
+      if (res.status < 300) {
+        setAppRuntime(res.data)
         refreshConfig()
       }
     })
