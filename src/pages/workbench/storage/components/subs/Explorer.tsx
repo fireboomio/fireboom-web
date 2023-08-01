@@ -524,7 +524,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           })
       }
     })
-    // requests.post('/api/v1/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
+    // requests.post('/api/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
   }
 
   const renderPreview = (file?: Option) => {
@@ -620,7 +620,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
             headers={getHeader()}
-            action="/api/v1/s3Upload/upload"
+            action="/api/s3Upload/upload"
             data={{ bucketID: bucketId, path: uploadPath }}
             showUploadList={false}
             onChange={info => {
@@ -739,16 +739,18 @@ export default function StorageExplorer({ bucketId }: Props) {
                       </Button>
                       // </a>
                     )}
-                    {!target?.isDir &&<Button
-                      onClick={() => {
-                        // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
-                        copy(`${target?.url ?? ''}`)
-                        message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
-                      }}
-                      className="rounded-4px m-1.5 !border-[#efeff0]"
-                    >
-                      <FormattedMessage defaultMessage="复制URL" />
-                    </Button>}
+                    {!target?.isDir && (
+                      <Button
+                        onClick={() => {
+                          // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                          copy(`${target?.url ?? ''}`)
+                          message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                        }}
+                        className="rounded-4px m-1.5 !border-[#efeff0]"
+                      >
+                        <FormattedMessage defaultMessage="复制URL" />
+                      </Button>
+                    )}
                     <Popconfirm
                       title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
                       onConfirm={() => deleteFile(target)}

@@ -135,7 +135,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
         const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
-        await requests.post('operateApi/batchDelete', { ids })
+        await requests.post('operation/batchDelete', { ids })
         ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
         message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         // 删除后处理
@@ -146,18 +146,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   })
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (node.isDir) {
-      await requests.delete('/operateApi/dir', { data: { path: node.data.path } })
+      await requests.delete('/operation/dir', { data: { path: node.data.path } })
     } else {
-      await requests.delete(`/operateApi/${node.data.id}`)
+      await requests.delete(`/operation/${node.data.id}`)
     }
     localStorage.removeItem(`_api_args_${node.data.id}`)
   })
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
-      await requests.post('/operateApi/dir', { path })
+      await requests.post('/operation/dir', { path })
       await mutateApi()
     } else {
-      const result = await requests.post<unknown, { id: number }>('/operateApi', { path })
+      const result = await requests.post<unknown, { id: number }>('/operation', { path })
       await mutateApi()
       navigate(`/workbench/apimanage/${result?.id}`)
     }
@@ -166,9 +166,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     const oldPath = node.data.path
     const newPath = oldPath.replace(/[^/]+$/, newName)
     if (node.isDir) {
-      await requests.put('/operateApi/dir', { oldPath, newPath })
+      await requests.put('/operation/dir', { oldPath, newPath })
     } else {
-      await requests.put(`/operateApi/rename/${node.data.id}`, { path: newPath })
+      await requests.put(`/operation/rename/${node.data.id}`, { path: newPath })
       if (node.data.id === pathId) {
         events.emit({
           event: 'titleChange',
@@ -186,7 +186,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       const hasCurrent = !!getNodeById(pathId, [dragNode])
       if (dragNode.isDir) {
         await requests.put(
-          '/operateApi/dir',
+          '/operation/dir',
           { oldPath, newPath, coverRepeat: confirm },
           {
             onError: async ({ code, result }) => {
@@ -198,7 +198,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         )
       } else {
         await requests.put(
-          `/operateApi/rename/${dragNode.data.id}`,
+          `/operation/rename/${dragNode.data.id}`,
           { path: newPath, coverRepeat: confirm },
           {
             onError: async ({ code, result }) => {
@@ -280,7 +280,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                       const destPath = `${nodeData.data.path}Copy${Math.random()
                         .toString(36)
                         .substring(2, 5)}`
-                      await requests.post('/operateApi/copy', {
+                      await requests.post('/operation/copy', {
                         path: destPath,
                         id: nodeData.data.id
                       })

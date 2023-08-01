@@ -1,6 +1,6 @@
 import type { Model } from '@/interfaces/modeling'
 
-export const BASE_URL = '/api/v1'
+export const BASE_URL = '/api'
 export const DATABASE_SOURCE = '/dataSource?datasourceType=1'
 export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_ID = '/prisma/migrate/:id'
 export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/prisma/dmf/:id'

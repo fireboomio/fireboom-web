@@ -344,7 +344,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
 
     const hideCheck = message.loading(intl.formatMessage({ defaultMessage: '校验中' }))
     const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
-      '/operateApi/operationByPaths',
+      '/operation/operationByPaths',
       {
         params: { paths: JSON.stringify(pathList) }
       }
@@ -388,7 +388,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     console.log(apiList)
     try {
       result = await requests.post<unknown, { Code: number; Path: string; ID: string }[]>(
-        `/operateApi/batch`,
+        `/operation/batch`,
         {
           list: apiList
         }

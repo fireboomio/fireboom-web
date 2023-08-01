@@ -183,28 +183,28 @@ export const useAPIManager = create<APIState>((set, get) => ({
     set(state => ({ apiDesc: { ...state.apiDesc, ...newAPI } }))
   },
   updateAPI: (newAPI: Partial<APIDesc>) => {
-    return requests.put(`/operateApi/${get().apiID}`, newAPI).then(resp => {
+    return requests.put(`/operation/${get().apiID}`, newAPI).then(resp => {
       get().pureUpdateAPI(newAPI)
       // 刷新api列表
       void mutateApi()
     })
   },
   changeEnable: (enabled: boolean) => {
-    return requests.put(`/operateApi/switch/${get().apiID}`, { enabled }).then(resp => {
+    return requests.put(`/operation/switch/${get().apiID}`, { enabled }).then(resp => {
       get().pureUpdateAPI({ enabled })
       // 刷新api列表
       void mutateApi()
     })
   },
   updateAPIName: path => {
-    return requests.put(`/operateApi/rename/${get().apiID}`, { path }).then(resp => {
+    return requests.put(`/operation/rename/${get().apiID}`, { path }).then(resp => {
       get().pureUpdateAPI({
         path,
         restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
       })
       // 刷新api列表
       void mutateApi()
-      void mutate(`/operateApi/hooks/${get().apiID}`)
+      void mutate(`/operation/hooks/${get().apiID}`)
     })
   },
   updateContent: (content: string, showMessage = true) => {
@@ -222,7 +222,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       }
       return false
     }
-    return requests.put(`/operateApi/content/${get().apiID}`, { content }).then(async resp => {
+    return requests.put(`/operation/content/${get().apiID}`, { content }).then(async resp => {
       if (resp) {
         const query = content ?? ''
         // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
@@ -233,7 +233,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // 内容变更可能需要刷新api列表
         void mutateApi()
         // await new Promise(resolve => setTimeout(resolve, 5000))
-        requests.get(`/operateApi/${get().apiID}`).then(api => {
+        requests.get(`/operation/${get().apiID}`).then(api => {
           // @ts-ignore
           set({ apiDesc: { ...api, setting: get().apiDesc?.setting } })
         })
@@ -257,8 +257,8 @@ export const useAPIManager = create<APIState>((set, get) => ({
     const id = get().apiID
     try {
       const [api, setting] = await Promise.all([
-        requests.get(`/operateApi/${id}`),
-        requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
+        requests.get(`/operation/${id}`),
+        requests.get(`/operation/setting/${id}`, { params: { settingType: 1 } })
       ])
       // @ts-ignore
       set({ apiDesc: { ...api, setting } })
@@ -278,7 +278,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
   },
   refreshAPISetting: async () => {
     const id = get().apiID
-    const setting = await requests.get(`/operateApi/setting/${id}`, { params: { settingType: 1 } })
+    const setting = await requests.get(`/operation/setting/${id}`, { params: { settingType: 1 } })
     // @ts-ignore
     set({ apiDesc: { ...get().apiDesc, setting } })
   },

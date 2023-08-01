@@ -29,7 +29,7 @@ export default function HookPanel({ id }: { id?: string }) {
     (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
 
   const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
-    id ? `/operateApi/hooks/${id}` : null,
+    id ? `/operation/hooks/${id}` : null,
     requests.get,
     { revalidateOnMount: true }
   )

@@ -135,16 +135,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       if (content.name == '') {
         const req = { ...newContent, config: newValues }
         Reflect.deleteProperty(req, 'id')
-        const result = await requests.post<unknown, number>('/auth', req)
+        const result = await requests.post<unknown, number>('/authentication', req)
         content.id = result
       } else {
-        await requests.put('/auth', {
+        await requests.put('/authentication', {
           ...newContent,
           config: newValues
         })
       }
       void requests
-        .get<unknown, AuthProvResp[]>('/auth')
+        .get<unknown, AuthProvResp[]>('/authentication')
         .then(res => {
           onChange(res.filter(row => row.id === content.id)[0])
         })

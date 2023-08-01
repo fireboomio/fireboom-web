@@ -11,7 +11,7 @@ export default function FileStorage() {
   const [content, setContent] = useState<StorageResp>()
 
   useEffect(() => {
-    void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
+    void requests.get<unknown, StorageResp[]>('/storage').then(data => {
       setContent(data?.filter(item => item.id === Number(id))?.[0])
     })
   }, [id])

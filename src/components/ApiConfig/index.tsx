@@ -38,7 +38,7 @@ export default function Index(props: Props) {
   const { data: globalSetting, mutate: refreshGlobalSetting } = useApiGlobalSetting()
   useEffect(() => {
     if (props.id) {
-      void requests.get<unknown, Setting>(`/operateApi/setting/${props.id}`).then(result => {
+      void requests.get<unknown, Setting>(`/operation/setting/${props.id}`).then(result => {
         setApiSetting(result)
         form.setFieldsValue(result)
       })
@@ -67,7 +67,7 @@ export default function Index(props: Props) {
     }
     // 修改开关的情况下，只修改开关容纳后保存
     if (changedValues.enabled !== undefined) {
-      void requests.put<unknown, any>(`/operateApi/setting/${props.id}`, {
+      void requests.put<unknown, any>(`/operation/setting/${props.id}`, {
         ...apiSetting,
         enabled: changedValues.enabled,
         settingType: props.id ? 1 : 2,
@@ -82,7 +82,7 @@ export default function Index(props: Props) {
     }
     setApiSetting({ ...apiSetting!, ...changedValues })
     void requests
-      .put<unknown, any>(`/operateApi/setting/${props.id}`, {
+      .put<unknown, any>(`/operation/setting/${props.id}`, {
         ...allValues,
         settingType: props.id ? 1 : 2,
         id: props.id || 0
@@ -120,7 +120,7 @@ export default function Index(props: Props) {
 
   const onFinish = (values: Setting) => {
     void requests
-      .put<unknown, any>('/operateApi/setting', {
+      .put<unknown, any>('/operation/setting', {
         ...values,
         settingType: props.id ? 1 : 2,
         id: props.id || 0

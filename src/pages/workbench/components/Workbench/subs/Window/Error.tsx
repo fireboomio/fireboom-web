@@ -87,7 +87,7 @@ export default function Error() {
   }
 
   async function closeAPI(id: number) {
-    await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enabled: false })
+    await requests.put<unknown, any>(`/operation/switch/${id}`, { enabled: false })
     events.emit({
       event: 'apiEnableChange',
       data: { ids: [id], enabled: false }
@@ -95,16 +95,16 @@ export default function Error() {
     void mutateApi()
   }
   async function closeAuth(id: number) {
-    const res = await requests.get<unknown, any>(`/auth/${id}`)
+    const res = await requests.get<unknown, any>(`/authentication/${id}`)
     if (res?.id) {
-      await requests.put(`/auth`, { ...res, enabled: false })
+      await requests.put(`/authentication`, { ...res, enabled: false })
       void mutateAuth()
     }
   }
   async function closeStorage(id: number) {
-    const res = await requests.get<unknown, any>(`/storageBucket/${id}`)
+    const res = await requests.get<unknown, any>(`/storage/${id}`)
     if (res?.id) {
-      await requests.put(`/storageBucket`, { ...res, enabled: false })
+      await requests.put(`/storage`, { ...res, enabled: false })
       void mutateStorage()
     }
   }

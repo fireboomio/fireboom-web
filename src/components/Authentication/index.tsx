@@ -9,9 +9,12 @@ import { broadcast, useBroadcast } from '@/hooks/broadcast'
 import { useAuthList } from '@/hooks/store/auth'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useStorageList } from '@/hooks/store/storage'
-import type { SystemConfigType } from '@/lib/context/ConfigContext'
+import type { AppRuntime } from '@/interfaces/base'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
+import { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
+import { services } from '@/services'
+import { requestAdapter, setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 interface AuthenticationProps {
   children: ReactElement
@@ -21,6 +24,7 @@ const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
   const authState = useAuthState()
+  const [appRuntime, setAppRuntime] = useState<AppRuntime>()
 
   // 注册全局数据源，避免遗漏刷新
   useStorageList()
@@ -36,36 +40,56 @@ const Authentication = (props: AuthenticationProps) => {
       setAuthed(false)
     }
   }, [authState])
-  const onSubmit = ({ key }: { key: string }) => {
-    broadcast('auth', 'setAuthKey', key)
+  const onSubmit = async ({ key }: { key: string }) => {
     setAuthKey(key)
-    setAuthed(true)
+    setAuthKey1(key)
+    const { error } = await requestAdapter<AppRuntime>({
+      url: '/health',
+      method: 'get'
+    })
+    if (error) {
+      setAuthKey('')
+      setAuthKey1('')
+      broadcast('auth', 'setAuthKey', key)
+    }
+    setAuthed(!error)
   }
-  const [system, setSystem] = useState<SystemConfigType>()
-  const [environment, setEnvironment] = useState()
-  const [version, setVersion] = useState()
+  // const [system, setSystem] = useState<SystemConfigType>()
+  // const [environment, setEnvironment] = useState()
+  // const [version, setVersion] = useState()
+  const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting>()
   useEffect(() => {
-    void refreshConfig()
-  }, [])
-  const refreshConfig = async () => {
-    void requests.get<unknown, any>('/setting/system').then(res => {
-      setSystem(res.system)
-      setVersion(res.version)
-      setEnvironment(res.environment)
-      try {
-        // @ts-ignore
-        window.__bl.setConfig({ disabled: !res.system.usageReport })
-      } catch (_) {
-        // ignore
+    requestAdapter<AppRuntime>({
+      url: '/health',
+      method: 'get'
+    }).then(({ error, data }) => {
+      if (!error) {
+        setAppRuntime(data)
+        refreshConfig()
       }
     })
+  }, [])
+  const refreshConfig = async () => {
+    const { error, data } = await services['globalSetting@/globalSetting/single']()
+    if (!error) {
+      setGlobalSetting(data)
+    }
+    // void requests.get<unknown, any>('/setting/system').then(res => {
+    //   setSystem(res.system)
+    //   setVersion(res.version)
+    //   setEnvironment(res.environment)
+    //   try {
+    //     // @ts-ignore
+    //     window.__bl.setConfig({ disabled: !res.system.usageReport })
+    //   } catch (_) {
+    //     // ignore
+    //   }
+    // })
   }
-  if (!system) {
-    return null
-  }
-  return (
-    <ConfigContext.Provider value={{ system, environment, version, refreshConfig }}>
-      {authed || system.isDev ? (
+  return appRuntime && globalSetting ? (
+    <ConfigContext.Provider value={{ appRuntime, globalSetting, refreshConfig }}>
+      {/* {authed || system.isDev ? ( */}
+      {authed || !appRuntime['enable-auth'] ? (
         props.children
       ) : (
         <div className="flex flex-col h-screen bg-warm-gray-200 w-screen items-center justify-center">
@@ -102,6 +126,8 @@ const Authentication = (props: AuthenticationProps) => {
         </div>
       )}
     </ConfigContext.Provider>
+  ) : (
+    <p>Loading</p>
   )
 }
 

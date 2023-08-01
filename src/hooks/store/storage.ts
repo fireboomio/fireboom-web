@@ -33,9 +33,9 @@ export interface Storage {
 }
 
 export function useStorageList() {
-  return useSWRImmutable<Storage[]>('/storageBucket', requests.get).data
+  return useSWRImmutable<Storage[]>('/storage', requests.get).data
 }
 
 export function mutateStorage() {
-  return mutate('/storageBucket')
+  return mutate('/storage')
 }

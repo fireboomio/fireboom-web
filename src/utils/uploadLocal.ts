@@ -9,5 +9,5 @@ export default async function uploadLocal(type: string, content: string, fileNam
   let config = {
     headers: { 'Content-Type': 'multipart/form-data', ...getHeader() } //这里是重点，需要和后台沟通好请求头，Content-Type不一定是这个值
   } //添加请求头
-  return await axios.post('/api/v1/file/uploadFile', param, config)
+  return await axios.post('/api/file/uploadFile', param, config)
 }

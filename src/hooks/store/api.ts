@@ -16,7 +16,7 @@ interface ApiSetting {
   liveQueryPollingIntervalSeconds: number
 }
 export function useApiGlobalSetting() {
-  return useSWRImmutable<ApiSetting>('/operateApi/setting', url => requests.get(url))
+  return useSWRImmutable<ApiSetting>('/operation/setting', url => requests.get(url))
 }
 
 export interface OperationResp {
@@ -37,9 +37,9 @@ export interface OperationResp {
 }
 
 export function useApiList() {
-  return useSWRImmutable<OperationResp[]>('/operateApi', requests.get).data
+  return useSWRImmutable<OperationResp[]>('/operation', requests.get).data
 }
 
 export function mutateApi() {
-  return mutate('/operateApi')
+  return mutate('/operation')
 }

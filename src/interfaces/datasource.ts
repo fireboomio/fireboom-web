@@ -85,3 +85,16 @@ export interface VariableType {
   kind: Mode
   val: string
 }
+
+export enum DataSourceKind {
+  Static = 0,
+  Restful = 1,
+  Graphql = 2,
+  PostgresQL = 3,
+  MySQL = 4,
+  SQLServer = 5,
+  MongoDB = 6,
+  SQLite = 7,
+  Prisma = 8,
+  Unsupported = 99
+}

@@ -340,7 +340,7 @@ const SDKTemplateItem = ({
         label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
         onClick: async () => {
           const authKey = getAuthKey()
-          window.open(`/api/v1/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`)
+          window.open(`/api/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`)
         }
       })
     }

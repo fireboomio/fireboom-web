@@ -203,8 +203,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           getList: () => {
             mutateAuth()
           },
-          editItem: async row => await requests.put('/auth', row),
-          delItem: async id => await requests.delete(`/auth/${id}`)
+          editItem: async row => await requests.put('/authentication', row),
+          delItem: async id => await requests.delete(`/authentication/${id}`)
         }
       }
     }),

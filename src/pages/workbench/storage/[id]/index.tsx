@@ -40,7 +40,7 @@ export default function FileStorage() {
       setShowErr(false)
     }
     if (id !== 'new') {
-      void requests.get<unknown, StorageResp[]>('/storageBucket').then(data => {
+      void requests.get<unknown, StorageResp[]>('/storage').then(data => {
         setContent(data?.filter(item => item.id === Number(id))?.[0])
       })
     }

@@ -38,7 +38,7 @@ export default function AuthConfigContainer() {
       return
     }
 
-    void requests.get<unknown, AuthProvResp[]>('/auth').then(res => {
+    void requests.get<unknown, AuthProvResp[]>('/authentication').then(res => {
       res.forEach(row => {
         if (row.id === Number(id)) {
           setEditFlag(false)

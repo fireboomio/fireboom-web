@@ -44,7 +44,7 @@ export default function FileList({
 
   const upProps: UploadProps = {
     name: 'file',
-    action: '/api/v1/file/uploadFile',
+    action: '/api/file/uploadFile',
     headers: getHeader(),
     data: { type: upType },
     showUploadList: false,
@@ -149,7 +149,7 @@ export default function FileList({
           </Popconfirm>
 
           <a
-            href={`/api/v1/file/downloadFile?type=${upType}&fileName=${
+            href={`/api/file/downloadFile?type=${upType}&fileName=${
               rcd.name
             }&auth-key=${getAuthKey()}`}
           >

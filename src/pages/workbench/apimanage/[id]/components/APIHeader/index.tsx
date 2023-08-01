@@ -101,7 +101,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     if (apiDesc?.path) {
       const destPath = `${apiDesc!.path}Copy${Math.random().toString(36).substring(2, 5)}`
       try {
-        await requests.post('/operateApi/copy', {
+        await requests.post('/operation/copy', {
           path: destPath,
           id: apiDesc!.id
         })

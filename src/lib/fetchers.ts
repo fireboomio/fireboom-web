@@ -7,7 +7,7 @@ import { useSyncExternalStore } from 'react'
 import { intl } from '@/providers/IntlProvider'
 
 const requests = axios.create({
-  baseURL: '/api/v1',
+  baseURL: '/api',
   timeout: -1
 })
 
@@ -107,7 +107,7 @@ export default requests
 
 export const proxy = (url: string, cancelToken?: CancelToken) => {
   return axios
-    .get(`/api/v1/common/proxy?url=${encodeURIComponent(url)}`, {
+    .get(`/api/common/proxy?url=${encodeURIComponent(url)}`, {
       headers: getHeader(),
       cancelToken
     })

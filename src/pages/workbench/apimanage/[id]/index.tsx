@@ -208,7 +208,7 @@ export default function APIEditorContainer() {
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
-    void mutate(`/operateApi/hooks/${params.id}`)
+    void mutate(`/operation/hooks/${params.id}`)
   })
   useEventBus('apiEnableChange', ({ data }) => {
     if (data.ids.includes(Number(params.id))) {

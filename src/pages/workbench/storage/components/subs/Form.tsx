@@ -79,9 +79,9 @@ export default function StorageForm({ content, showErr }: Props) {
 
       let resp: StorageResp
       if (content) {
-        resp = await requests.put('/storageBucket ', { ...payload, id: content.id })
+        resp = await requests.put('/storage', { ...payload, id: content.id })
       } else {
-        resp = await requests.post<unknown, StorageResp>('/storageBucket ', payload)
+        resp = await requests.post<unknown, StorageResp>('/storage', payload)
       }
       navigate(`/workbench/storage/${resp.id}`, { replace: true })
       void mutateStorage()

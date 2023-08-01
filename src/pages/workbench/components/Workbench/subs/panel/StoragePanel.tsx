@@ -99,11 +99,11 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (!node.isDir) {
-      await requests.delete(`/storageBucket/${node.parent!.data.id}`, {
+      await requests.delete(`/storage/${node.parent!.data.id}`, {
         data: { profileNames: [node.name] }
       })
     } else {
-      await requests.delete(`/storageBucket/${node.data.id}`)
+      await requests.delete(`/storage/${node.data.id}`)
     }
   })
   const onValidateName = (name: string, isDir = false) => {
@@ -116,7 +116,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   }
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     if (!node.isDir) {
-      await requests.put(`/storageBucket/rename/${node.parent!.data.id}`, {
+      await requests.put(`/storage/rename/${node.parent!.data.id}`, {
         oldProfileName: node.name,
         newProfileName: newName
       })
@@ -125,7 +125,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
         navigate(`/workbench/storage/${node.parent!.data.id}/profile/${newName}`)
       }
     } else {
-      await requests.put(`/storageBucket/rename/${node.data.id}`, { newStorageName: newName })
+      await requests.put(`/storage/rename/${node.data.id}`, { newStorageName: newName })
       await mutateStorage()
     }
   }, true)
@@ -173,7 +173,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                         maxAllowedUploadSizeBytes: 10 * 2 ** 20,
                         maxAllowedFiles: 1
                       })
-                      await requests.put('/storageBucket ', data)
+                      await requests.put('/storage', data)
                       await mutateStorage()
                       navigate(`/workbench/storage/${nodeData.data.id}/profile/NewProfile${i}`)
                     },

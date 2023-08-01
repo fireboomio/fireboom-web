@@ -54,7 +54,7 @@ export default function StorageProfile() {
       ...storage.config.uploadProfiles![profile!],
       ...values
     }
-    await requests.put('/storageBucket ', storage)
+    await requests.put('/storage', storage)
     message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     void mutateStorage()
     // 如果前置钩子改变了

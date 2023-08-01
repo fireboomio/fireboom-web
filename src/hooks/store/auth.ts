@@ -13,9 +13,9 @@ export interface AuthProvResp {
 }
 
 export function useAuthList() {
-  return useSWRImmutable<AuthProvResp[]>('/auth', requests.get).data
+  return useSWRImmutable<AuthProvResp[]>('/authentication', requests.get).data
 }
 
 export function mutateAuth() {
-  return mutate('/auth')
+  return mutate('/authentication')
 }

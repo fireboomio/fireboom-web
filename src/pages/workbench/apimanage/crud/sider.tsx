@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { DatasourceResp } from '@/hooks/store/dataSource'
+import type { DataSourceResp } from '@/hooks/store/dataSource'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -16,7 +16,7 @@ interface CRUDSiderProps {
   onEmpty: () => void
   onSelectedModelChange: (
     model: DMFModel,
-    datasource: DatasourceResp,
+    datasource: DataSourceResp,
     models: DMFModel[],
     relationMap: RelationMap,
     dmf: string

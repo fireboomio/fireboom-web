@@ -1,30 +1,35 @@
 import { createContext, useContext } from 'react'
 
-export type SystemConfigType = {
-  apiPublicAddr: string
-  apiInternalAddr: string
-  apiListenHost: string
-  apiListenPort: string
-  hooksServerURL: string
-  hooksServerLanguage: string
-  debugEnabled: boolean
-  isDev: boolean
-  forcedJumpEnabled: boolean
-  logLevel: string
-  usageReport: boolean
-}
-export type EnvType = {}
-export type VersionType = {
-  copyright: string
-  prismaEngineVersion: string
-  prismaVersion: string
-  versionNum: string
-}
+import type { AppRuntime } from '@/interfaces/base'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
+// export type SystemConfigType = {
+//   apiPublicAddr: string
+//   apiInternalAddr: string
+//   apiListenHost: string
+//   apiListenPort: string
+//   hooksServerURL: string
+//   hooksServerLanguage: string
+//   debugEnabled: boolean
+//   isDev: boolean
+//   forcedJumpEnabled: boolean
+//   logLevel: string
+//   usageReport: boolean
+// }
+// export type EnvType = {}
+// export type VersionType = {
+//   copyright: string
+//   prismaEngineVersion: string
+//   prismaVersion: string
+//   versionNum: string
+// }
 
 type SystemConfigContext = {
-  system: SystemConfigType
-  environment?: EnvType
-  version?: VersionType
+  // system: SystemConfigType
+  // environment?: EnvType
+  // version?: VersionType
+  appRuntime: AppRuntime
+  globalSetting: ApiDocuments.GlobalSetting
   refreshConfig: () => Promise<void>
 }
 

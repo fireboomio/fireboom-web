@@ -151,7 +151,7 @@ export default function Rest({ content, type }: Props) {
 
   const initBaseUrlOptions = (v: string) => {
     axios
-      .get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`)
+      .get(`/api/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`)
       .then(res => {
         const servers = get(res, 'data.servers') ?? []
         if (!form.getFieldValue('baseURL')) {
@@ -367,7 +367,7 @@ export default function Rest({ content, type }: Props) {
                   className="flex items-center cursor-pointer"
                   onClick={() =>
                     window.open(
-                      `/api/v1/file/downloadFile?type=1&inline=1&fileName=${encodeURIComponent(
+                      `/api/file/downloadFile?type=1&inline=1&fileName=${encodeURIComponent(
                         config.filePath!
                       )}`,
                       '_blank'
