@@ -22,12 +22,12 @@ import SidePanel from './SidePanel'
 
 interface PanelConfig {
   title: string
-  openItem: (id: number) => string
+  openItem: (name: string) => string
   newItem: string
   request: {
     getList: () => void
     editItem: (row: unknown) => Promise<unknown>
-    delItem: (id: number) => Promise<unknown>
+    delItem: (name: string) => Promise<unknown>
   }
   navMenu?: (record: any) => Array<{
     key: string
@@ -81,7 +81,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         }
         return {
           readonly: row.readonly,
-          id: row.id,
+          // id: row.id,
           name: row.name,
           icon,
           sourceType: row.sourceType,
@@ -97,7 +97,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         const icon = 'other'
         const tip = 'OIDC'
         return {
-          id: row.id,
+          // id: row.id,
           name: row.name,
           icon,
           tip,
@@ -112,7 +112,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         const icon = 'other'
         const tip = ''
         return {
-          id: row.id,
+          // id: row.id,
           name: row.name,
           icon,
           tip,
@@ -127,14 +127,14 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     () => ({
       dataSource: {
         title: intl.formatMessage({ defaultMessage: '数据源' }),
-        openItem: id => `/workbench/data-source/${id}`,
+        openItem: name => `/workbench/data-source/${name}`,
         newItem: '/workbench/data-source/new',
         request: {
           getList: () => {
             mutateDataSource()
           },
-          editItem: async row => await requests.put('/dataSource', row),
-          delItem: async id => await requests.delete(`/dataSource/${id}`)
+          editItem: async row => await requests.put('/datasource', row),
+          delItem: async name => await requests.delete(`/datasource/${name}`)
         },
         navMenu: (record: any) => {
           if (record.sourceType === 4) {
@@ -181,7 +181,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       },
       auth: {
         title: intl.formatMessage({ defaultMessage: '身份验证' }),
-        openItem: id => `/workbench/auth/${id}`,
+        openItem: name => `/workbench/auth/${name}`,
         newItem: '/workbench/auth/new',
         navAction: [
           {
@@ -204,7 +204,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             mutateAuth()
           },
           editItem: async row => await requests.put('/authentication', row),
-          delItem: async id => await requests.delete(`/authentication/${id}`)
+          delItem: async name => await requests.delete(`/authentication/${name}`)
         }
       }
     }),
@@ -213,7 +213,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [panelMap, props.type])
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
-  const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
+  const [dropDownName, setDropDownName] = useState<string>() // 当前下拉列表的对象id
   const { refreshMap, navCheck } = useContext(WorkbenchContext)
   const [panelOpened, setPanelOpened] = useState(false)
   if (!datasource) return null
@@ -239,7 +239,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             zIndex={9999}
             placement="right"
             title={intl.formatMessage({ defaultMessage: '确认删除吗？' })}
-            onConfirm={() => void handleItemDelete(dropDownId)}
+            onConfirm={() => void handleItemDelete(dropDownName)}
             okText={intl.formatMessage({ defaultMessage: '删除' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             overlayClassName={styles['delete-label']}
@@ -262,7 +262,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       <Menu
         onClick={e => {
           if (e.key !== 'delete') {
-            setDropDownId(undefined)
+            setDropDownName(undefined)
           }
         }}
         items={menuItems}
@@ -270,17 +270,17 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     )
   }
 
-  const handleItemDelete = async (id?: number) => {
-    if (!id) {
+  const handleItemDelete = async (path?: string) => {
+    if (!path) {
       return
     }
-    await panelConfig.request.delItem(id)
+    await panelConfig.request.delItem(path)
     panelConfig.request.getList()
-    setDropDownId(undefined)
+    setDropDownName(undefined)
     // 当被删除对象是当前打开的页面时，需要跳转离开
-    if (panelConfig.openItem(id) === location.pathname) {
+    if (panelConfig.openItem(path) === location.pathname) {
       // 找到首个不是在新窗口中打开页面的项目
-      const index = datasource.findIndex(item => item.id !== id)
+      const index = datasource.findIndex(item => item.name !== path)
       if (index >= 0) {
         handleItemNav(datasource[index])
       } else {
@@ -310,7 +310,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       window.open(item.openInNewPage)
       return
     }
-    const itemPath = panelConfig.openItem(item.id)
+    const itemPath = panelConfig.openItem(item.name)
     void navCheck().then(flag => {
       if (flag) {
         navigate(itemPath)
@@ -338,16 +338,16 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     >
       <div className={styles.container}>
         {datasource.map(item => {
-          const itemPath = panelConfig.openItem(item.id)
+          const itemPath = panelConfig.openItem(item.name)
           return (
             <div
               className={`${styles.row} ${!item.enabled ? styles.rowDisable : ''} ${
                 itemPath === location.pathname ? styles.active : ''
               }`}
-              key={item.id}
+              key={item.name}
               onClick={() => handleItemNav(item)}
             >
-              {editTarget?.id === item.id && editTarget ? (
+              {editTarget?.name === item.name && editTarget ? (
                 <Input
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -382,9 +382,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 <Dropdown
                   dropdownRender={() => dropDownMenu(item)}
                   trigger={['click']}
-                  open={dropDownId === item.id}
+                  open={dropDownName === item.name}
                   onOpenChange={flag => {
-                    setDropDownId(flag ? item.id : undefined)
+                    setDropDownName(flag ? item.name : undefined)
                   }}
                   placement="bottomRight"
                 >

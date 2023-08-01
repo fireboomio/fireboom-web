@@ -11,6 +11,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { updateHookEnabled } from '@/lib/service/hook'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -19,7 +20,7 @@ import Graphql from './subs/Graphql'
 import Rest from './subs/Rest'
 
 interface Props {
-  content?: DatasourceResp
+  content?: ApiDocuments.Datasource
   showType: ShowType
 }
 
@@ -86,10 +87,10 @@ export default function DatasourceContainer({ content, showType }: Props) {
       return
     }
     const saveData = { ...content, name }
-    await requests.put('/dataSource', saveData)
+    await requests.put('/datasource', saveData)
     void mutateDataSource()
     setIsEditing(false)
-    await mutate(['/dataSource', String(content.id)])
+    await mutate(['/datasource', content.name])
   }
 
   return (
@@ -116,7 +117,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : (
           <>
-            {!content.id ? (
+            {!content.name ? (
               <div
                 className="cursor-pointer flex h-5 mr-1 w-5 items-center justify-center"
                 onClick={() => history.back()}
@@ -186,7 +187,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {content.sourceType === 1 ? (
               <Button
                 className={'btn-test !ml-4'}
-                onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
+                onClick={() => navigate(`/workbench/modeling/${content?.name}`)}
               >
                 <FormattedMessage defaultMessage="设计" />
               </Button>

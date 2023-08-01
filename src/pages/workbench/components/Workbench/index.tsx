@@ -82,11 +82,12 @@ export default function Index(props: PropsWithChildren) {
     setQuestions: state.setQuestions
   }))
 
-  const authKey = getAuthKey()
+  // const authKey = getAuthKey()
   // authkey变化时启动socket
-  useEffect(() => {
-    initWebSocket(authKey ?? '')
-  }, [authKey])
+  // FIXME 这段代码运行会导致vite直接报错退出
+  // useEffect(() => {
+  //   initWebSocket(authKey ?? '')
+  // }, [authKey])
   useWebSocket('engine', 'getStatus', data => {
     setInfo(data)
     if (data.engineStatus === ServiceStatus.Started) {
