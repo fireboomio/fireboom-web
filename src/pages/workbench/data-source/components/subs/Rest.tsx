@@ -32,12 +32,13 @@ import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import FileList from './FileList'
 import styles from './Rest.module.less'
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   type: ShowType
 }
 

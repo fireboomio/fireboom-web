@@ -15,6 +15,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { parseDBUrl } from '@/utils/db'
 import uploadLocal from '@/utils/uploadLocal'
 
@@ -23,17 +24,13 @@ import FileList from './FileList'
 import Setting from './Setting'
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   type: ShowType
 }
 
 type Config = Record<string, any>
 
 type FromValues = Record<string, number | string | boolean>
-
-interface Props {
-  content: DatasourceResp
-}
 
 interface OptionT {
   label: string

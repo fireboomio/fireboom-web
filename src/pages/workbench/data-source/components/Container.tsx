@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
 import { mutateDataSource } from '@/hooks/store/dataSource'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { updateHookEnabled } from '@/lib/service/hook'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -29,7 +31,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const intl = useIntl()
   const { mutate } = useSWRConfig()
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const { onRefreshMenu } = useContext(WorkbenchContext)
+  // const { onRefreshMenu } = useContext(WorkbenchContext)
   const [isEditing, setIsEditing] = React.useState(false)
 
   const navigate = useNavigate()
@@ -40,8 +42,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
       void (await requests.put('/dataSource', newContent))
       handleSave(newContent)
     }
-    // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
-    if (content.sourceType === 4) {
+    // 自定义钩子数据源，需要在开关时同步修改钩子开关
+    if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
       updateHookEnabled(`customize/${content.name}`, !!content.enabled)
     }
   }, [content])
@@ -51,24 +53,24 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   let icon = '/assets/icon/db-other.svg'
-  switch (content?.sourceType) {
-    case 1:
-      icon =
-        {
-          mysql: '/assets/icon/mysql.svg',
-          pgsql: '/assets/icon/pg.svg',
-          graphql: '/assets/icon/graphql.svg',
-          mongodb: '/assets/icon/mongodb.svg',
-          rest: '/assets/icon/rest.svg',
-          sqlite: '/assets/icon/sqlite.svg'
-        }[String(content.config.dbType).toLowerCase()] || icon
-      break
-    case 2:
-      icon = '/assets/icon/rest.svg'
-      break
-    case 3:
+  switch (content?.kind) {
+    case DataSourceKind.Graphql:
       icon = '/assets/icon/graphql.svg'
       break
+    case DataSourceKind.Restful:
+      icon = '/assets/icon/rest.svg'
+      break
+    case DataSourceKind.MongoDB:
+      icon = '/assets/icon/mongodb.svg'
+      break
+    case DataSourceKind.MySQL:
+      icon = '/assets/icon/mysql.svg'
+      break
+    case DataSourceKind.PostgresQL:
+      icon = '/assets/icon/pg.svg'
+      break
+    case DataSourceKind.SQLite:
+      icon = '/assets/icon/sqlite.svg'
   }
 
   const testLink = () => {
@@ -92,6 +94,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
     setIsEditing(false)
     await mutate(['/datasource', content.name])
   }
+
+  const isDatabase = isDatabaseKind(content)
+  const isCustomDatabase = content.kind === DataSourceKind.Graphql && content.customGraphql
 
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
@@ -173,7 +178,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            {content.sourceType !== 4 ? (
+            {isCustomDatabase ? (
               <Switch
                 disabled={content.readonly}
                 loading={loading}
@@ -184,7 +189,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 className="!mr-4"
               />
             ) : null}
-            {content.sourceType === 1 ? (
+            {isDatabase ? (
               <Button
                 className={'btn-test !ml-4'}
                 onClick={() => navigate(`/workbench/modeling/${content?.name}`)}
@@ -194,7 +199,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             ) : (
               <></>
             )}
-            {content.sourceType !== 4 ? (
+            {!isCustomDatabase ? (
               <>
                 <Button
                   className={'btn-save !ml-4'}
@@ -225,14 +230,16 @@ export default function DatasourceContainer({ content, showType }: Props) {
           borderRadius: '4px 4px 0 0'
         }}
       >
-        {content.sourceType === 1 ? (
+        {isDatabase ? (
           <DB content={content} type={showType} />
-        ) : content.sourceType === 2 ? (
+        ) : content.kind === DataSourceKind.Restful ? (
           <Rest content={content} type={showType} />
-        ) : content.sourceType === 3 ? (
-          <Graphql content={content} type={showType} />
-        ) : content.sourceType === 4 ? (
-          <Custom content={content} />
+        ) : content.kink === DataSourceKind.Graphql ? (
+          content.customGraphql ? (
+            <Custom content={content} />
+          ) : (
+            <Graphql content={content} type={showType} />
+          )
         ) : (
           <></>
         )}

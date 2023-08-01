@@ -8,6 +8,7 @@ import {
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -18,7 +19,7 @@ export interface Config {
 }
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
 }
 
 export default function Custom({ content }: Props) {
@@ -88,5 +89,5 @@ export default function Custom({ content }: Props) {
   //     .then(() => void message.success('保存成功!'))
   // }
 
-  return ''
+  return <></>
 }
