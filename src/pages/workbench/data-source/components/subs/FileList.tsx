@@ -209,13 +209,9 @@ export default function FileList({
         onRow={rcd => {
           return {
             onClick: event => {
-              setUploadPath(`${rcd.name}`)
+              setUploadPath(`upload/${dir}/${rcd.name}`)
               setVisible(false)
-            },
-            onDoubleClick: event => {},
-            onContextMenu: event => {},
-            onMouseEnter: event => {},
-            onMouseLeave: event => {}
+            }
           }
         }}
       />

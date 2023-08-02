@@ -15,6 +15,7 @@ import { GlobalContext } from '@/lib/context/globalContext'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
@@ -26,7 +27,7 @@ interface PanelConfig {
   newItem: string
   request: {
     getList: () => void
-    editItem: (row: unknown) => Promise<unknown>
+    editItem: (row: ApiDocuments.fileloader_DataMutation) => Promise<unknown>
     delItem: (name: string) => Promise<unknown>
   }
   navMenu?: (record: any) => Array<{
@@ -133,7 +134,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           getList: () => {
             mutateDataSource()
           },
-          editItem: async row => await requests.put('/datasource', row),
+          editItem: async row => await requests.post('/datasource/rename', row),
           delItem: async name => await requests.delete(`/datasource/${name}`)
         },
         navMenu: (record: any) => {
@@ -203,7 +204,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           getList: () => {
             mutateAuth()
           },
-          editItem: async row => await requests.put('/authentication', row),
+          editItem: async row => await requests.post('/authentication/rename', row),
           delItem: async name => await requests.delete(`/authentication/${name}`)
         }
       }
@@ -298,8 +299,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       message.error(err)
       return
     }
-    row.name = value
-    await panelConfig.request.editItem(row)
+    await panelConfig.request.editItem({
+      src: row.name,
+      dst: value,
+      overload: false
+    })
     panelConfig.request.getList()
     setEditTarget(undefined)
     mutateHookModel()

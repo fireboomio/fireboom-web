@@ -171,7 +171,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
         schemaExtension: schemaExtension
       }
     }
-    requests.put('/dataSource', payload).then(res => {
+    requests.put('/datasource', payload).then(res => {
       onSave(payload)
       if (res) {
         message.success(intl.formatMessage({ defaultMessage: '保存成功！' }))

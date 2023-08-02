@@ -66,12 +66,13 @@ export default function DataSource() {
             showType,
             content,
             handleToggleDesigner,
-            handleSave: content => {
+            handleSave: newContent => {
+              const _content = { ...content, ...newContent }
               void mutateDataSource()
               // @ts-ignore
-              setContent(content)
+              setContent(_content)
               setShowType('detail')
-              navigate(`/workbench/data-source/${content.name}`, { replace: true })
+              navigate(`/workbench/data-source/${_content.name}`, { replace: true })
             },
             handleCreate: content => {
               setShowType('form')

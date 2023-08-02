@@ -37,14 +37,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
     if (content) {
-      const newContent = { ...content, enabled: !content.enabled }
-      void (await requests.put('/dataSource', newContent))
-      handleSave(newContent)
+      void (await requests.put('/datasource', { name: content.name, enabled: !content.enabled }))
+      handleSave({ enabled: !content.enabled })
     }
-    // 自定义钩子数据源，需要在开关时同步修改钩子开关
-    if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
-      updateHookEnabled(`customize/${content.name}`, !!content.enabled)
-    }
+    // 自定义数据源，需要在开关时同步修改钩子开关
+    // if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
+    //   updateHookEnabled(`customize/${content.name}`, !!content.enabled)
+    // }
   }, [content])
 
   if (!content) {
@@ -73,13 +72,14 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const testLink = () => {
-    void requests.post('/datasource/checkConnection', { ...content }).then((x: any) => {
-      if (x?.status) {
+    void requests
+      .post('/datasource/checkConnection', { ...content })
+      .then((x: any) => {
         message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      }
-    })
+      })
+      .catch(e => {
+        message.error(e?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
+      })
   }
 
   const handleEdit = async (name: string) => {
@@ -177,7 +177,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            {isCustomDatabase ? (
+            {!isCustomDatabase ? (
               <Switch
                 disabled={content.readonly}
                 loading={loading}

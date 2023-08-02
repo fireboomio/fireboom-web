@@ -45,5 +45,5 @@ export function useDataSourceList() {
 }
 
 export function mutateDataSource() {
-  return mutate('/dataSource')
+  return mutate('/datasource')
 }

@@ -246,7 +246,7 @@ export default function APIEditorContainer() {
   }, [setWorkbenchContext, workbenchCtx])
 
   useEffect(() => {
-    requests('/dataSource').then(res => {
+    requests('/datasource').then(res => {
       // @ts-ignore
       setDataSourceList(res.filter(item => item.enabled).map(item => item.name))
     })

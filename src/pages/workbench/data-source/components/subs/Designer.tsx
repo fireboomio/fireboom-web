@@ -262,7 +262,7 @@ export default function Designer() {
         schemaString: ''
       }
     }
-    await requests.post('/dataSource', data)
+    await requests.post('/datasource', data)
     await vscode.checkHookExist(`customize/${value}`, false, true)
     handleSave(data)
   }

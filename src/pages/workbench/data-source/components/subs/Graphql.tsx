@@ -128,7 +128,7 @@ export default function Graphql({ content, type }: Props) {
       let newContent: ApiDocuments.Datasource
       if (!content.id) {
         const req = { ...content, config: newValues, name: values.apiNameSpace }
-        const result = await requests.post<unknown, number>('/dataSource', req)
+        const result = await requests.post<unknown, number>('/datasource', req)
         content.id = result
         newContent = content
       } else {
@@ -137,7 +137,7 @@ export default function Graphql({ content, type }: Props) {
           config: newValues,
           name: values.apiNameSpace
         } as ApiDocuments.Datasource
-        await requests.put('/dataSource', newContent)
+        await requests.put('/datasource', newContent)
       }
 
       handleSave(newContent)
