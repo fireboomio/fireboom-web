@@ -10,7 +10,6 @@ import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
-import { updateHookEnabled } from '@/lib/service/hook'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { isDatabaseKind } from '@/utils/datasource'
 
@@ -72,14 +71,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const testLink = () => {
-    void requests
-      .post('/datasource/checkConnection', { ...content })
-      .then((x: any) => {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      })
-      .catch(e => {
-        message.error(e?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      })
+    void requests.post('/datasource/checkConnection', content).then(() => {
+      message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+    })
   }
 
   const handleEdit = async (name: string) => {
@@ -87,11 +81,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
       message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
       return
     }
-    const saveData = { ...content, name }
-    await requests.put('/datasource', saveData)
+    await requests.post('/datasource/rename', {
+      src: content.name,
+      dst: name,
+      overload: false
+    })
     void mutateDataSource()
     setIsEditing(false)
     await mutate(['/datasource', content.name])
+    navigate(`/workbench/data-source/${name}`)
   }
 
   const isDatabase = isDatabaseKind(content)
@@ -233,8 +231,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
           <DB content={content} type={showType} />
         ) : content.kind === DataSourceKind.Restful ? (
           <Rest content={content} type={showType} />
-        ) : content.kink === DataSourceKind.Graphql ? (
-          content.customGraphql ? (
+        ) : content.kind === DataSourceKind.Graphql ? (
+          content.customGraphql.customized ? (
             <Custom content={content} />
           ) : (
             <Graphql content={content} type={showType} />

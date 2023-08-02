@@ -1,9 +1,7 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
-import type { RadioChangeEvent } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import {
   AutoComplete,
   Button,
-  Collapse,
   Descriptions,
   Form,
   Image,
@@ -12,12 +10,9 @@ import {
   Modal,
   Select,
   Space,
-  Switch,
   Tabs,
-  Tag,
   Upload
 } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
 import axios from 'axios'
 import { get } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
@@ -44,8 +39,6 @@ interface Props {
   type: ShowType
 }
 
-type Config = Record<string, string | undefined | number>
-
 type FromValues = Record<string, string | undefined | number | Array<DataType>>
 
 interface DataType {
@@ -54,47 +47,7 @@ interface DataType {
   val: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const columns: ColumnsType<DataType> = [
-  {
-    dataIndex: 'key',
-    width: '30%',
-    render: (_, { key }) => <span className="pl-1">{key}</span>
-  },
-  {
-    dataIndex: 'val',
-    width: '70%',
-    render: (_, { kind, val }) => (
-      <div className="flex items-center">
-        {kind == 0 ? (
-          <img
-            alt="zhi"
-            src="assets/iconfont/zhi.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        ) : kind == 1 ? (
-          <img
-            alt="shifoubixu2"
-            src="assets/iconfont/shifoubixu2.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        ) : (
-          <img
-            alt="biangeng1"
-            src="assets/iconfont/biangeng1.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        )}
-        <span className="ml-2">{val}</span>
-      </div>
-    )
-  }
-]
-
-const renderIcon = (kind: number) => (
+export const renderIcon = (kind: number) => (
   <img
     width={14}
     height={14}
@@ -109,6 +62,14 @@ const renderIcon = (kind: number) => (
     }
   />
 )
+
+export function valueHeadersToRequestHeaders(headers: ApiDocuments.ConfigurationVariable[]) {
+  return headers.reduce<Record<string, any>>((obj, cur) => {
+    const { key, ...rest } = cur
+    obj[key] = { values: [rest] }
+    return obj
+  }, {})
+}
 
 declare global {
   interface Window {
@@ -130,7 +91,7 @@ export default function Rest({ content, type }: Props) {
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
   // const [isEyeShow, setIsEyeShow] = useImmer(false)
-  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
+  // const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
   // const [value, setValue] = useImmer(1)
   const [rulesObj, setRulesObj] = useImmer({})
   // const [isRadioShow, setIsRadioShow] = useImmer(true)
@@ -247,11 +208,9 @@ export default function Rest({ content, type }: Props) {
         ...content,
         ...newContent
       }
-      newContent.customRest.headers = headers.reduce<Record<string, any>>((obj, cur) => {
-        const { key, ...rest } = cur
-        obj[key] = { values: [rest] }
-        return obj
-      }, {})
+      newContent.customRest.headers = valueHeadersToRequestHeaders(
+        headers as ApiDocuments.ConfigurationVariable[]
+      )
       // for (const key in headers) {
       //   if (!values.headers[key]) {
       //     delete values.headers[key]
@@ -543,7 +502,7 @@ export default function Rest({ content, type }: Props) {
             </Panel>
           </Collapse> */}
           {/* 测试功能 */}
-          <Modal
+          {/* <Modal
             centered
             open={testVisible}
             onCancel={() => setTestVisible(false)}
@@ -563,7 +522,7 @@ export default function Rest({ content, type }: Props) {
                 />
               )}
             </div>
-          </Modal>
+          </Modal> */}
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------

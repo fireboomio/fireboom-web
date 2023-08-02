@@ -52,7 +52,11 @@ export default function Designer() {
         name: 'API',
         items: [
           { name: 'REST API', icon: iconRESTAPI, kind: DataSourceKind.Restful, isCustom: true },
-          { name: 'GraphQL API', icon: iconGraphalAPI, kind: DataSourceKind.Graphql }
+          {
+            name: 'GraphQL API',
+            icon: iconGraphalAPI,
+            kind: DataSourceKind.Graphql
+          }
         ]
       },
       {
@@ -287,6 +291,13 @@ export default function Designer() {
           baseUrl: '',
           headers: {},
           oasFilepath: ''
+        }
+      } else if (item.kind === DataSourceKind.Graphql) {
+        data.customGraphql = {
+          customized: false,
+          url: '',
+          headers: {},
+          schemaString: ''
         }
       }
     }
