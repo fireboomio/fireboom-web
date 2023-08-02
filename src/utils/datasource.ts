@@ -10,3 +10,11 @@ export function isDatabaseKind(ds: ApiDocuments.Datasource) {
     DataSourceKind.SQLServer
   ].includes(+ds.kind)
 }
+
+export const databaseKindNameMap = {
+  [DataSourceKind.MongoDB]: 'MongoDB',
+  [DataSourceKind.MySQL]: 'MySQL',
+  [DataSourceKind.PostgreSQL]: 'PostgreSQL',
+  [DataSourceKind.SQLite]: 'SQLite',
+  [DataSourceKind.SQLServer]: 'SQLServer'
+}

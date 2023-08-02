@@ -175,17 +175,15 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            {!isCustomDatabase ? (
-              <Switch
-                disabled={content.readonly}
-                loading={loading}
-                checked={content?.enabled}
-                checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
-                onChange={toggleOpen}
-                className="!mr-4"
-              />
-            ) : null}
+            <Switch
+              disabled={content.readonly}
+              loading={loading}
+              checked={content?.enabled}
+              checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+              unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+              onChange={toggleOpen}
+              className="!mr-4"
+            />
             {isDatabase ? (
               <Button
                 className={'btn-test !ml-4'}

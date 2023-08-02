@@ -10,6 +10,7 @@ import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 import uploadLocal from '@/utils/uploadLocal'
 
 import iconAli from '../assets/ali.svg'
@@ -128,7 +129,7 @@ export default function Designer() {
     })
     return iconMap
   }, [initData])
-  const { handleToggleDesigner, handleCreate, handleSave } = useContext(DatasourceToggleContext)
+  const { handleCreate, handleSave } = useContext(DatasourceToggleContext)
   const [data, setData] = useState(initData)
   const [examples, setExamples] = useState([])
 
@@ -251,6 +252,7 @@ export default function Designer() {
   const prompt = usePrompt()
 
   async function createCustom() {
+    // FIXME 要先判断有没有选择钩子模板
     const { confirm, value } = await prompt({ title: '请输入数据源名称', validator: validateName })
     if (!confirm) {
       return
@@ -298,6 +300,10 @@ export default function Designer() {
           url: '',
           headers: {},
           schemaString: ''
+        }
+      } else if (isDatabaseKind(item)) {
+        data.customDatabase = {
+          kind: 1
         }
       }
     }

@@ -1,7 +1,6 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
-import type { Rule } from 'antd/es/form'
-import { useContext, useEffect, useMemo, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
@@ -10,13 +9,15 @@ import Error50x from '@/components/ErrorPage/50x'
 import type { InputOrFromEnvProps } from '@/components/InputOrFromEnv'
 import InputOrFromEnv from '@/components/InputOrFromEnv'
 import { useValidate } from '@/hooks/validate'
-import type { ReplaceJSON, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { databaseKindNameMap } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
 import uploadLocal from '@/utils/uploadLocal'
 
@@ -29,16 +30,7 @@ interface Props {
   type: ShowType
 }
 
-type Config = Record<string, any>
-
 type FromValues = Record<string, number | string | boolean>
-
-interface OptionT {
-  label: string
-  value: string
-}
-
-const { Option } = Select
 
 const port = /^(([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5]))$/
 const domainReg = /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?$/
@@ -54,33 +46,29 @@ export default function DB({ content, type }: Props) {
   const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
-  const [_disabled, setDisabled] = useImmer(false)
-  const [isSecretShow, setIsSecretShow] = useImmer(false)
+  const [_disabled, setDisabled] = useState(false)
+  const [isSecretShow, setIsSecretShow] = useState(false)
   const [form] = Form.useForm()
   const userNameKind = Form.useWatch(['userName', 'kind'], form)
   const passwordKind = Form.useWatch(['password', 'kind'], form)
   const appendType = Form.useWatch('appendType', form)
 
-  const config = content.config as Config
-
-  const [visible, setVisible] = useImmer(false)
-  // const [uploadPath, setUploadPath] = useImmer(BASEPATH)
+  const [visible, setVisible] = useState(false)
   const envOptions = useEnvOptions()
 
-  const dbType = config.dbType
-
   const setUploadPath = (v: string) => {
-    form.setFieldValue(['databaseUrl', 'val'], v)
-    form.setFieldValue(['databaseUrl', 'kind'], '0')
+    form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
+    form.setFieldValue(['customDatabase', 'databaseUrl', 'staticVariableContent'], v)
     form.validateFields()
   }
 
   const onUrlChange: InputOrFromEnvProps['onChange'] = data => {
     form.validateFields()
-    form.setFieldValue('databaseUrl', data)
+    form.setFieldValue(['customDatabase', 'databaseUrl', 'staticVariableContent'], data?.val ?? '')
   }
 
-  const dbProtocol = String(content?.config.dbType).toLowerCase()
+  const dbProtocol =
+    databaseKindNameMap[content?.kind as keyof typeof databaseKindNameMap]?.toLowerCase()
 
   const sqlLiteInputValue = useRef('')
   const { modal } = App.useApp()
@@ -142,7 +130,7 @@ export default function DB({ content, type }: Props) {
   }
 
   const initForm =
-    dbType === 'SQLite' ? (
+    content.kind === DataSourceKind.SQLite ? (
       <Form.Item
         rules={[{ required: true, message: intl.formatMessage({ defaultMessage: '请上传文件' }) }]}
         label={
@@ -152,11 +140,11 @@ export default function DB({ content, type }: Props) {
           </>
         }
         colon={false}
-        name={['databaseUrl', 'val']}
+        name={['customDatabase', 'databaseUrl', 'staticVariableContent']}
         style={{ marginBottom: '20px' }}
       >
         <div className="flex">
-          <Form.Item name={['databaseUrl', 'val']} noStyle>
+          <Form.Item name={['customDatabase', 'databaseUrl', 'staticVariableContent']} noStyle>
             <Input
               placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
               onClick={() => setVisible(true)}
@@ -174,7 +162,7 @@ export default function DB({ content, type }: Props) {
       <InputOrFromEnv
         formItemProps={{
           label: intl.formatMessage({ defaultMessage: '连接URL' }),
-          name: 'databaseUrl'
+          name: ['customDatabase', 'databaseUrl', 'staticVariableContent']
         }}
         inputProps={{
           placeholder: intl.formatMessage(
@@ -216,7 +204,7 @@ export default function DB({ content, type }: Props) {
     <>
       <Form.Item
         label={intl.formatMessage({ defaultMessage: '主机:' })}
-        name="host"
+        name={['customDatabase', 'databaseAlone', 'host']}
         rules={[
           { required: true, message: intl.formatMessage({ defaultMessage: '主机名不能为空' }) }
         ]}
@@ -225,7 +213,7 @@ export default function DB({ content, type }: Props) {
       </Form.Item>
       <Form.Item
         label={intl.formatMessage({ defaultMessage: '数据库名:' })}
-        name="dbName"
+        name={['customDatabase', 'databaseAlone', 'database']}
         rules={[
           { required: true, message: intl.formatMessage({ defaultMessage: '数据库名不能为空' }) },
           {
@@ -240,7 +228,7 @@ export default function DB({ content, type }: Props) {
       </Form.Item>
       <Form.Item
         label={intl.formatMessage({ defaultMessage: '端口:' })}
-        name="port"
+        name={['customDatabase', 'databaseAlone', 'port']}
         rules={[
           { required: true, message: intl.formatMessage({ defaultMessage: '端口号不能为空' }) },
           { pattern: port, message: intl.formatMessage({ defaultMessage: '端口范围为0-9999' }) }
@@ -262,7 +250,7 @@ export default function DB({ content, type }: Props) {
           {/*  </Select>*/}
           {/*</Form.Item>*/}
           <Form.Item
-            name={['userName', 'val']}
+            name={['customDatabase', 'databaseAlone', 'username']}
             noStyle
             rules={[
               { required: true, message: intl.formatMessage({ defaultMessage: '用户名不能为空' }) },
@@ -298,7 +286,7 @@ export default function DB({ content, type }: Props) {
           {/*    </Select.Option>*/}
           {/*  </Select>*/}
           {/*</Form.Item>*/}
-          <Form.Item name={['password', 'val']} noStyle>
+          <Form.Item name={['customDatabase', 'databaseAlone', 'password']} noStyle>
             {String(passwordKind) !== '1' ? (
               <Input
                 className="flex-1"
@@ -320,7 +308,7 @@ export default function DB({ content, type }: Props) {
     if (type === 'form') {
       form.resetFields()
     }
-    setViewerForm(config.appendType == '1' ? paramForm : initForm)
+    setViewerForm(content.customDatabase.databaseAlone ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
   useEffect(() => {
@@ -331,30 +319,16 @@ export default function DB({ content, type }: Props) {
   //表单提交成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
-      const newValues = { ...config, ...values }
-      if (newValues.databaseUrl === undefined) {
-        newValues.databaseUrl = {}
-      } else if (newValues.databaseUrl.kind === undefined) {
-        newValues.databaseUrl.kind = '0'
-      }
-      let newContent: ApiDocuments.Datasource
-      if (!content.id) {
-        const req = { ...content, config: newValues, name: values.apiNamespace }
-        Reflect.deleteProperty(req, 'id')
-        const result = await requests.post<unknown, number>('/datasource', req)
-        content.id = result
-        newContent = content
+      const { appendType, ...rest } = values
+      const newValues: ApiDocuments.Datasource = { ...content, ...rest }
+      if (!content.name) {
+        await requests.post('/datasource', newValues)
       } else {
-        newContent = {
-          ...content,
-          config: newValues,
-          name: values.apiNamespace
-        } as ApiDocuments.Datasource
-        await requests.put('/datasource', newContent)
+        await requests.put('/datasource', newValues)
       }
-      handleSave(newContent)
+      handleSave(newValues!)
     },
-    [config, content, handleSave]
+    [content, handleSave]
   )
   //查看页面逻辑
   if (!content) return <Error50x />
@@ -364,38 +338,38 @@ export default function DB({ content, type }: Props) {
   }
 
   //表单item值改变回调
-  const onValuesChange = (_allValues: FromValues) => {
-    const values = form.getFieldsValue()
-    if (_allValues.databaseUrl) {
+  const onValuesChange = (values: ApiDocuments.Datasource) => {
+    if (appendType === '0') {
       // url转参数
-      const dbConfig = parseDBUrl(values.databaseUrl.val)
+      const dbConfig = parseDBUrl(values.customDatabase.databaseUrl.staticVariableContent ?? '')
       if (dbConfig) {
         const { username, password, host, port, dbName } = dbConfig
-        form.setFieldValue(['userName', 'val'], username)
-        form.setFieldValue(['password', 'val'], password)
-        form.setFieldValue('host', host)
-        form.setFieldValue('port', port)
-        form.setFieldValue('dbName', dbName)
+        form.setFieldsValue({
+          customDatabase: {
+            databaseAlone: {
+              username,
+              password,
+              host,
+              port,
+              database: dbName
+            }
+          }
+        })
       }
-    } else if (
-      _allValues.userName ||
-      _allValues.password ||
-      _allValues.host ||
-      _allValues.port ||
-      _allValues.dbName
-    ) {
-      const schemaMap: Record<string, string> = { mysql: 'mysql', postgresql: 'postgresql' }
-      const schema: string = schemaMap[dbType.toLowerCase() ?? ''] ?? ''
-      if (!schema) {
-        console.error('未配置当前数据库scheam', dbType)
+    } else {
+      if (!dbProtocol) {
+        console.error('未配置当前数据库scheam')
       }
-      // 参数转url
-      form.setFieldValue(
-        ['databaseUrl', 'val'],
-        `${schema}://${encodeURIComponent(values.userName.val)}${
-          values.password.val ? `:${encodeURIComponent(values.password.val)}` : ''
-        }@${values.host}:${values.port}/${encodeURIComponent(values.dbName)}`
-      )
+      const { host, port, database, username, password } = values.customDatabase.databaseAlone
+      if (host && database && username) {
+        // 参数转url
+        form.setFieldValue(
+          ['customDatabase', 'databaseUrl', 'staticVariableContent'],
+          `${dbProtocol}://${encodeURIComponent(username)}${
+            password ? `:${encodeURIComponent(password)}` : ''
+          }@${host}:${port}/${encodeURIComponent(database)}`
+        )
+      }
     }
 
     const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
@@ -404,26 +378,15 @@ export default function DB({ content, type }: Props) {
 
   //测试连接 成功与失败提示
   const testLink = () => {
-    const newValues = { ...config, ...form.getFieldsValue() }
+    const newValues = { ...content, ...form.getFieldsValue() }
     if (newValues.databaseUrl === undefined) {
       newValues.databaseUrl = {}
     } else if (newValues.databaseUrl.kind === undefined) {
       newValues.databaseUrl.kind = '0'
     }
-    void requests
-      .post('/datasource/checkConnection', {
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        sourceType: content.sourceType,
-        config: newValues
-      })
-      .then(x => {
-        if (x?.status) {
-          message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-        } else {
-          message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-        }
-      })
+    void requests.post('/datasource/checkConnection', newValues).then(() => {
+      message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+    })
   }
 
   //单选框链接URL和链接参数切换回调
@@ -483,48 +446,48 @@ export default function DB({ content, type }: Props) {
           <div>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接名' })}>
-                {config.apiNamespace}
+                {content.name}
               </Descriptions.Item>
               <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据库类型' })}>
-                {config.dbType}
+                {databaseKindNameMap[content.kind as keyof typeof databaseKindNameMap]}
               </Descriptions.Item>
-              {dbType === 'SQLite' ? (
+              {content.kind === DataSourceKind.SQLite ? (
                 <Descriptions.Item label={intl.formatMessage({ defaultMessage: '路径' })}>
-                  {config.databaseUrl?.val ?? ''}
+                  {content.customDatabase.databaseUrl.staticVariableContent}
                 </Descriptions.Item>
               ) : (
                 <>
-                  {dbType === 'MongoDB' ? (
+                  {content.kind === DataSourceKind.MongoDB ? (
                     <></>
                   ) : (
                     <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接类型' })}>
-                      {config.appendType == '0'
+                      {content.customDatabase.databaseUrl
                         ? '连接URL'
-                        : config.appendType == '1'
+                        : content.customDatabase.databaseAlone
                         ? '连接参数'
                         : ''}
                     </Descriptions.Item>
                   )}
 
-                  {config.appendType == '1' ? (
+                  {content.customDatabase.databaseAlone ? (
                     <>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '主机' })}>
-                        {config.host}
+                        {content.customDatabase.databaseAlone.host}
                       </Descriptions.Item>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '端口' })}>
-                        {config.port}
+                        {content.customDatabase.databaseAlone.port}
                       </Descriptions.Item>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据库名' })}>
-                        {config.dbName}
+                        {content.customDatabase.databaseAlone.database}
                       </Descriptions.Item>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户' })}>
-                        {config.userName?.val}
+                        {content.customDatabase.databaseAlone.username}
                       </Descriptions.Item>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '密码' })}>
                         <span className="flex items-center">
                           {isSecretShow ? (
                             <>
-                              <span>{config.password?.val}</span>
+                              <span>{content.customDatabase.databaseAlone.password}</span>
                               <EyeOutlined
                                 className="ml-4"
                                 onClick={() => setIsSecretShow(!isSecretShow)}
@@ -546,9 +509,9 @@ export default function DB({ content, type }: Props) {
                     <>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
                         {/* {(config.databaseUrl as unknown as { kind: string; val: string })?.val} */}
-                        {config.databaseUrl?.kind === '1'
-                          ? `env("${config.databaseUrl.key}")`
-                          : config.databaseUrl?.val}
+                        {content.customDatabase.databaseUrl.kind === 1
+                          ? `env("${content.customDatabase.databaseUrl.environmentVariableName}")`
+                          : content.customDatabase.databaseUrl.staticVariableContent}
                       </Descriptions.Item>
                     </>
                   )}
@@ -575,15 +538,7 @@ export default function DB({ content, type }: Props) {
               autoComplete="new-password"
               labelAlign="right"
               initialValues={{
-                apiNamespace: config.apiNamespace,
-                dbType: config.dbType,
-                appendType: config.appendType || '0',
-                host: config.host,
-                dbName: config.dbName,
-                port: config.port,
-                userName: config.userName || { kind: '0' },
-                password: config.password || { kind: '0' },
-                databaseUrl: config.databaseUrl
+                ...content
               }}
             >
               <Form.Item hidden name={['databaseUrl']}>
@@ -606,7 +561,7 @@ export default function DB({ content, type }: Props) {
               </Form.Item>
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '名称:' })}
-                name="apiNamespace"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -622,7 +577,7 @@ export default function DB({ content, type }: Props) {
                 />
               </Form.Item>
 
-              {dbType === 'SQLite' || dbType === 'MongoDB' ? (
+              {content.kind === DataSourceKind.SQLite || content.kind === DataSourceKind.MongoDB ? (
                 <></>
               ) : (
                 <Form.Item
@@ -676,8 +631,8 @@ export default function DB({ content, type }: Props) {
             })
           }}
           content={content}
-          initSchema={config.schemaExtension as string}
-          replaceJSON={config.replaceJSONTypeFieldConfiguration as ReplaceJSON[]}
+          // initSchema={config.schemaExtension as string}
+          // replaceJSON={config.replaceJSONTypeFieldConfiguration as ReplaceJSON[]}
         />
       )}
     </>
