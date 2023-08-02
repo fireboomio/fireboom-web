@@ -49,8 +49,8 @@ export default function DB({ content, type }: Props) {
   const [_disabled, setDisabled] = useState(false)
   const [isSecretShow, setIsSecretShow] = useState(false)
   const [form] = Form.useForm()
-  const userNameKind = Form.useWatch(['userName', 'kind'], form)
-  const passwordKind = Form.useWatch(['password', 'kind'], form)
+  const userNameKind = Form.useWatch(['customDatabase', 'databaseAlone', 'username'], form)
+  const passwordKind = Form.useWatch(['customDatabase', 'databaseAlone', 'password'], form)
   const appendType = Form.useWatch('appendType', form)
 
   const [visible, setVisible] = useState(false)
@@ -378,12 +378,8 @@ export default function DB({ content, type }: Props) {
 
   //测试连接 成功与失败提示
   const testLink = () => {
-    const newValues = { ...content, ...form.getFieldsValue() }
-    if (newValues.databaseUrl === undefined) {
-      newValues.databaseUrl = {}
-    } else if (newValues.databaseUrl.kind === undefined) {
-      newValues.databaseUrl.kind = '0'
-    }
+    const { appendType, ...values } = form.getFieldsValue()
+    const newValues = { ...content, ...values }
     void requests.post('/datasource/checkConnection', newValues).then(() => {
       message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
     })
@@ -538,6 +534,11 @@ export default function DB({ content, type }: Props) {
               autoComplete="new-password"
               labelAlign="right"
               initialValues={{
+                appendType: content.name
+                  ? content.customDatabase.databaseUrl?.staticVariableContent
+                    ? '0'
+                    : '1'
+                  : '0',
                 ...content
               }}
             >
