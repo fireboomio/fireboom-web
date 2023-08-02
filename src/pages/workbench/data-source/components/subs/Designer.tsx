@@ -4,11 +4,12 @@ import { useIntl } from 'react-intl'
 
 import { usePrompt } from '@/hooks/prompt'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import uploadLocal from '@/utils/uploadLocal'
 
 import iconAli from '../assets/ali.svg'
@@ -27,6 +28,15 @@ import iconSQLite from '../assets/SQLite.svg'
 import iconSQLServer from '../assets/SQLServer.svg'
 import styles from './Designer.module.less'
 
+type DataSourceItem = {
+  name: string
+  logo?: string
+  icon: string
+  kind: DataSourceKind
+  isCustom?: boolean
+  coming?: boolean
+}
+
 export default function Designer() {
   const intl = useIntl()
   const { validateName } = useValidate()
@@ -34,94 +44,71 @@ export default function Designer() {
   const initData = useMemo<
     {
       name: string
-      items: {
-        name: string
-        logo?: string
-        icon: string
-        sourceType?: number
-        dbType?: string
-        dbSchema?: string
-        coming?: boolean
-      }[]
+      items: DataSourceItem[]
     }[]
   >(
     () => [
       {
         name: 'API',
         items: [
-          { name: 'REST API', icon: iconRESTAPI, sourceType: 2 },
-          { name: 'GraphQL API', icon: iconGraphalAPI, sourceType: 3 }
+          { name: 'REST API', icon: iconRESTAPI, kind: DataSourceKind.Restful, isCustom: true },
+          { name: 'GraphQL API', icon: iconGraphalAPI, kind: DataSourceKind.Graphql }
         ]
       },
       {
         name: intl.formatMessage({ defaultMessage: '数据库' }),
         items: [
-          { name: 'MySQL', icon: iconMySQL, sourceType: 1, dbType: 'MySQL', dbSchema: 'mysql' },
-          { name: 'Sqlite', icon: iconSQLite, sourceType: 1, dbType: 'SQLite', dbSchema: 'sqlite' },
+          { name: 'MySQL', icon: iconMySQL, kind: DataSourceKind.MySQL },
+          { name: 'Sqlite', icon: iconSQLite, kind: DataSourceKind.SQLite },
           {
             name: 'PostgreSQL',
             icon: iconPostgreSQL,
-            sourceType: 1,
-            dbType: 'PostgreSQL',
-            dbSchema: 'postgresql'
+            kind: DataSourceKind.PostgreSQL
             // coming: true
           },
           {
             name: 'MongoDB',
             icon: iconMongoDB,
-            sourceType: 1,
-            dbType: 'MongoDB',
-            dbSchema: 'mongodb'
+            kind: DataSourceKind.MongoDB
           },
           {
             name: 'CockroachDB',
             icon: iconCockroachDB,
-            sourceType: 1,
-            dbType: 'CockroachDB',
-            dbSchema: 'cockroachdb',
+            kind: DataSourceKind.Unsupported,
             coming: true
           },
           {
             name: 'SQL Server',
             icon: iconSQLServer,
-            sourceType: 1,
-            dbType: 'SQL Server',
+            kind: DataSourceKind.Unsupported,
             coming: true
           },
           {
             name: 'Plantscale',
             icon: iconPlanetscale,
-            sourceType: 1,
-            dbType: 'Plantscale',
+            kind: DataSourceKind.Unsupported,
             coming: true
           }
-          // {
-          //   name: 'MariaDB',
-          //   icon: iconMariaDB,
-          //   sourceType: 1,
-          //   dbSchema: 'mysql',
-          //   dbType: 'MariaDB',
-          //   coming: true
-          // }
         ]
       },
       {
         name: intl.formatMessage({ defaultMessage: '消息队列' }),
         items: [
-          { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true },
-          { name: 'RocketMQ', icon: iconRocketMQ, coming: true },
+          { name: 'RabbitMQ', icon: iconRabbitMQ, coming: true, kind: DataSourceKind.Unsupported },
+          { name: 'RocketMQ', icon: iconRocketMQ, coming: true, kind: DataSourceKind.Unsupported },
           {
             name: intl.formatMessage({ defaultMessage: '阿里云物联网平台' }),
             icon: iconAli,
-            coming: true
+            coming: true,
+            kind: DataSourceKind.Unsupported
           }
         ]
       },
       {
         name: intl.formatMessage({ defaultMessage: '自定义' }),
         items: [
-          { name: '脚本', icon: iconNode, sourceType: 4 },
-          { name: 'Faas', icon: iconFaas, sourceType: 4, coming: true }
+          { name: '脚本', icon: iconNode, kind: DataSourceKind.Graphql, isCustom: true },
+          { name: 'Faas', icon: iconFaas, kind: DataSourceKind.Graphql, coming: true }
         ]
       }
     ],
@@ -239,23 +226,23 @@ export default function Designer() {
     ]
     setExamples(exampleList as any)
 
-    setData(x =>
-      x.concat({
-        name: intl.formatMessage({ defaultMessage: '示例数据源' }),
-        items: exampleList.map(x => {
-          return {
-            coming: x.coming,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            name: x.name,
-            icon: iconMap[`${x.sourceType}_${x.config.dbType ?? ''}`.toLowerCase()],
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            sourceType: x.sourceType,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            dbType: x.config.dbType
-          }
-        })
-      })
-    )
+    // setData(x =>
+    //   x.concat({
+    //     name: intl.formatMessage({ defaultMessage: '示例数据源' }),
+    //     items: exampleList.map(x => {
+    //       return {
+    //         coming: x.coming,
+    //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    //         name: x.name,
+    //         icon: iconMap[`${x.sourceType}_${x.config.dbType ?? ''}`.toLowerCase()],
+    //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    //         sourceType: x.sourceType,
+    //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    //         dbType: x.config.dbType
+    //       }
+    //     })
+    //   })
+    // )
   }, [iconMap, intl])
   const prompt = usePrompt()
 
@@ -264,37 +251,49 @@ export default function Designer() {
     if (!confirm) {
       return
     }
-    let data = {
+    const data: Partial<ApiDocuments.Datasource> = {
       name: value,
-      config: { apiNamespace: value, serverName: value },
-      sourceType: 4,
-      enabled: false
-    } as any
-    data.id = await requests.post<unknown, number>('/dataSource', data)
+      kind: DataSourceKind.Graphql,
+      enabled: false,
+      customGraphql: {
+        customized: true,
+        url: '',
+        headers: {},
+        schemaString: ''
+      }
+    }
+    await requests.post('/dataSource', data)
     await vscode.checkHookExist(`customize/${value}`, false, true)
     handleSave(data)
   }
 
-  async function handleClick(sourceType: number, dbType: string, dbSchema: string, name: string) {
-    if (sourceType === 4) {
+  async function handleClick(item: DataSourceItem) {
+    if (item.kind === DataSourceKind.Graphql && item.isCustom) {
       return createCustom()
     }
-    let data = {
-      id: 0,
-      name: '',
-      config: { dbType, dbSchema },
-      sourceType: sourceType,
-      enabled: false
-    } as DatasourceResp
+    let data: Partial<ApiDocuments.Datasource>
 
-    if (name.startsWith('example_')) {
+    if (item.name.startsWith('example_')) {
       // @ts-ignore
       data = examples.find(x => x.name === name)
+    } else {
+      data = {
+        name: '',
+        kind: item.kind,
+        enabled: false
+      }
+      if (item.kind === DataSourceKind.Restful) {
+        data.customRest = {
+          baseUrl: '',
+          headers: {},
+          oasFilepath: ''
+        }
+      }
     }
     // @ts-ignore
     await data.onSelect?.()
 
-    handleCreate(omit(data, ['onSelect']) as DatasourceResp)
+    handleCreate(omit(data, ['onSelect']) as ApiDocuments.Datasource)
   }
 
   return (
@@ -312,7 +311,7 @@ export default function Designer() {
                 className="border rounded cursor-pointer flex bg-[#F8F9FD] border-gray-300/20 min-w-53 py-9px pl-4 transition-shadow text-[#333333] w-53 items-center relative hover:shadow-lg"
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onClick={() => !x.coming && handleClick(x.sourceType, x.dbType, x.dbSchema, x.name)}
+                onClick={() => !x.coming && handleClick(x)}
               >
                 {/* <Image
                     height={28}

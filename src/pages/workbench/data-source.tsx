@@ -4,20 +4,21 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext
 } from '@/lib/context/datasource-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import datasourceReducer from '@/lib/reducers/datasource-reducer'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export default function DataSource() {
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
   const [datasource, dispatch] = useReducer(datasourceReducer, [])
 
-  const [content, setContent] = useState<DatasourceResp>()
+  const [content, setContent] = useState<ApiDocuments.Datasource>()
   const { name } = useParams()
   const [showType, setShowType] = useImmer<ShowType>('detail')
 
@@ -67,6 +68,7 @@ export default function DataSource() {
             handleToggleDesigner,
             handleSave: content => {
               void mutateDataSource()
+              // @ts-ignore
               setContent(content)
               setShowType('detail')
               navigate(`/workbench/data-source/${content.name}`, { replace: true })

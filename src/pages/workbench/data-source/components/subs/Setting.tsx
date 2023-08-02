@@ -9,8 +9,9 @@ import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
+import type { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './Setting.module.less'
 
@@ -38,7 +39,7 @@ interface Model {
 interface Props {
   initSchema: string
   replaceJSON: ReplaceJSON[]
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   onSave: (data: any) => void
 }
 

@@ -6,17 +6,12 @@ import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import type { UploadDirectory } from '@/interfaces/fs'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import uploadLocal from '@/utils/uploadLocal'
 
 import styles from './FileList.module.less'
-
-interface TableType {
-  name: string
-  size: string
-  modifyTime: string
-  permission: string
-  owner: string
-}
 
 interface Props {
   beforeUpload?: (
@@ -25,28 +20,37 @@ interface Props {
   ) => void | boolean | string | Blob | File | Promise<void | boolean | string | Blob | File>
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
-  basePath: string
-  upType: number // 1: json yaml yml 2: db
+  // basePath: string
+  dir: UploadDirectory
 }
 
 export default function FileList({
   beforeUpload,
   setUploadPath,
   setVisible,
-  basePath,
-  upType
+  // basePath,
+  dir
 }: Props) {
   const intl = useIntl()
-  const [data, setData] = useState<TableType[]>([])
-  const [path, setPath] = useState('')
+  const [data, setData] = useState<ApiDocuments.vscode_FileStat[]>([])
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false)
   const [keyword, setKeyword] = useState('')
 
   const upProps: UploadProps = {
     name: 'content',
-    action: '/api/vscode/writeFile',
-    headers: getHeader(),
-    data: { type: upType },
+    customRequest(opt) {
+      const file = opt.file as RcFile
+      uploadLocal(`${dir}/${file.name}`, file)
+        .then(res => {
+          opt.onSuccess?.(res)
+        })
+        .catch(e => {
+          opt.onError?.(e)
+        })
+    },
+    // action: '/api/vscode/writeFile',
+    // headers: getHeader(),
+    // data: { uri: `/upload/${dir}` },
     showUploadList: false,
     beforeUpload: beforeUpload,
     onChange(info) {
@@ -65,9 +69,14 @@ export default function FileList({
     }
   }
 
-  const confirm = (rcd: TableType, e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
+  const confirm = (
+    rcd: ApiDocuments.vscode_FileStat,
+    e: React.MouseEvent<HTMLElement, MouseEvent> | undefined
+  ) => {
     e?.stopPropagation()
-    rmFile(rcd.name)
+    requests.delete('/vscode/delete', {
+      data: { uri: `upload/${dir}/${rcd.name}` }
+    })
     setRefreshFlag(!refreshFlag)
   }
 
@@ -76,30 +85,14 @@ export default function FileList({
   }
 
   useEffect(() => {
-    let filter
-    if (upType === 1) {
-      filter = ['.json', '.yaml', '.yml']
-    } else if (upType === 2) {
-      filter = ['.db']
-    } else if (upType === 3) {
-      filter = ['.graphql']
-    }
     void requests
-      .get<unknown, { path: string; files: TableType[] }>(`/file/${upType}`, {
-        params: { names: filter }
+      .get<any, ApiDocuments.vscode_FileStat[]>(`/vscode/readDirectory?uri=upload/${dir}`)
+      .then(res => {
+        setData(res)
       })
-      .then(x => {
-        console.log(x)
-        setPath(x.path)
-        setData(x.files)
-      })
-  }, [refreshFlag, upType])
+  }, [refreshFlag, dir])
 
-  function rmFile(fname: string) {
-    void requests.delete('/file/removeFile', { data: { name: fname, type: `${upType}` } })
-  }
-
-  const columns: ColumnsType<TableType> = [
+  const columns: ColumnsType<ApiDocuments.vscode_FileStat> = [
     {
       title: intl.formatMessage({ defaultMessage: '文件名' }),
       dataIndex: 'name',
@@ -113,18 +106,25 @@ export default function FileList({
       width: 100
     },
     {
-      title: intl.formatMessage({ defaultMessage: '修改时间' }),
-      dataIndex: 'modifyTime',
-      key: 'modifyTime',
+      title: intl.formatMessage({ defaultMessage: '创建时间' }),
+      dataIndex: 'ctime',
+      key: 'ctime',
       width: 180,
-      render: v => new Date(v).toLocaleString()
+      render: v => new Date(v / 1000000).toLocaleString()
     },
     {
-      title: intl.formatMessage({ defaultMessage: '权限' }),
-      dataIndex: 'permission',
-      key: 'permission',
-      width: 80
+      title: intl.formatMessage({ defaultMessage: '修改时间' }),
+      dataIndex: 'mtime',
+      key: 'mtime',
+      width: 180,
+      render: v => new Date(v / 1000000).toLocaleString()
     },
+    // {
+    //   title: intl.formatMessage({ defaultMessage: '权限' }),
+    //   dataIndex: 'permission',
+    //   key: 'permission',
+    //   width: 80
+    // },
     // { title: '所有者', dataIndex: 'owner', key: 'owner', width: 100 },
     {
       title: intl.formatMessage({ defaultMessage: '操作' }),
@@ -149,9 +149,10 @@ export default function FileList({
           </Popconfirm>
 
           <a
-            href={`/api/file/downloadFile?type=${upType}&fileName=${
-              rcd.name
-            }&auth-key=${getAuthKey()}`}
+            className="inline-flex"
+            href={`/api/vscode/readFile?uri=${`upload/${dir}/${rcd.name}`}&auth-key=${getAuthKey()}`}
+            target="_blank"
+            rel="noreferrer"
           >
             <img
               alt="xiazai"
@@ -174,7 +175,7 @@ export default function FileList({
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          value={path}
+          value={`upload/${dir}`}
           readOnly
         />
         <Upload {...upProps} className="cursor-pointer m-auto h-6 ml-3 w-20">
@@ -201,10 +202,10 @@ export default function FileList({
       <Table
         className={styles.table}
         columns={columns}
-        dataSource={data.filter(x => x.name.includes(keyword))}
+        dataSource={data.filter(x => x.name!.includes(keyword))}
         pagination={false}
         scroll={{ x: 738, y: 455 }}
-        rowKey={rcd => rcd.name}
+        rowKey={rcd => rcd.name!}
         onRow={rcd => {
           return {
             onClick: event => {

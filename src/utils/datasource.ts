@@ -5,7 +5,7 @@ export function isDatabaseKind(ds: ApiDocuments.Datasource) {
   return [
     DataSourceKind.MongoDB,
     DataSourceKind.MySQL,
-    DataSourceKind.PostgresQL,
+    DataSourceKind.PostgreSQL,
     DataSourceKind.SQLite,
     DataSourceKind.SQLServer
   ].includes(+ds.kind)

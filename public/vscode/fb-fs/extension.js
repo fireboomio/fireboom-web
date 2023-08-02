@@ -15,7 +15,7 @@ class VirtualFileSystemProvider {
   constructor() {}
 
   async readFile(uri) {
-    return fetch(`/api/v1/vscode/readFile?uri=${trimPath(uri.path)}`).then(async resp => {
+    return fetch(`/api/vscode/readFile?uri=${trimPath(uri.path)}`).then(async resp => {
       return new Uint8Array(await resp.arrayBuffer())
     })
   }
@@ -30,7 +30,7 @@ class VirtualFileSystemProvider {
     formData.append('uri', trimPath(uri.path))
     formData.append('create', options.create)
     formData.append('overwrite', options.overwrite)
-    return fetch(`/api/v1/vscode/writeFile`, {
+    return fetch(`/api/vscode/writeFile`, {
       method: 'post',
       body: formData
     }).then(resp => {
@@ -43,7 +43,7 @@ class VirtualFileSystemProvider {
   }
 
   async delete(uri, options) {
-    return fetch(`/api/v1/vscode/delete`, {
+    return fetch(`/api/vscode/delete`, {
       method: 'delete',
       headers: new Headers({
         'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ class VirtualFileSystemProvider {
   }
 
   async rename(oldUri, newUri, options) {
-    return fetch(`/api/v1/vscode/rename`, {
+    return fetch(`/api/vscode/rename`, {
       method: 'put',
       headers: new Headers({
         'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ class VirtualFileSystemProvider {
     })
   }
   async copy(source, destination, options) {
-    return fetch(`/api/v1/vscode/copy`, {
+    return fetch(`/api/vscode/copy`, {
       method: 'post',
       headers: new Headers({
         'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ class VirtualFileSystemProvider {
   }
 
   async stat(uri) {
-    return fetch(`/api/v1/vscode/state?uri=${trimPath(uri.path)}`)
+    return fetch(`/api/vscode/state?uri=${trimPath(uri.path)}`)
       .then(resp => resp.json())
       .then(resp => {
         return resp
@@ -107,12 +107,12 @@ class VirtualFileSystemProvider {
   }
 
   async readDirectory(uri) {
-    return fetch(`/api/v1/vscode/readDirectory?uri=${trimPath(uri.path)}`).then(resp => resp.json())
+    return fetch(`/api/vscode/readDirectory?uri=${trimPath(uri.path)}`).then(resp => resp.json()).then(res => ([res.name, res.type]))
   }
 
   async createDirectory(uri) {
     // 这里实现创建目录的逻辑
-    return fetch(`/api/v1/vscode/createDirectory`, {
+    return fetch(`/api/vscode/createDirectory`, {
       method: 'post',
       headers: new Headers({
         'Content-Type': 'application/json'

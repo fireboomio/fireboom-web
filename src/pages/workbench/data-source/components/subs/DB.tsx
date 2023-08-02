@@ -8,11 +8,12 @@ import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import type { InputOrFromEnvProps } from '@/components/InputOrFromEnv'
-import InputOrFromEnv, { Mode } from '@/components/InputOrFromEnv'
+import InputOrFromEnv from '@/components/InputOrFromEnv'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp, ReplaceJSON, ShowType } from '@/interfaces/datasource'
+import type { ReplaceJSON, ShowType } from '@/interfaces/datasource'
+import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -47,8 +48,6 @@ const ipReg =
 //   // eslint-disable-next-line no-useless-escape
 //   /^jdbc:mysql:\/\/((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)):(([1-9]([0-9]{0,3}))|([1-6][0-5][0-5][0-3][0-5]))\/([A-Za-z0-9_]+)(\?([\d\w\/=\?%\-&_~`@[\]\':+!]*))?$/
 const passwordReg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,20}$/
-
-const BASEPATH = '/static/upload/sqlite'
 
 export default function DB({ content, type }: Props) {
   const intl = useIntl()
@@ -338,11 +337,11 @@ export default function DB({ content, type }: Props) {
       } else if (newValues.databaseUrl.kind === undefined) {
         newValues.databaseUrl.kind = '0'
       }
-      let newContent: DatasourceResp
+      let newContent: ApiDocuments.Datasource
       if (!content.id) {
         const req = { ...content, config: newValues, name: values.apiNamespace }
         Reflect.deleteProperty(req, 'id')
-        const result = await requests.post<unknown, number>('/dataSource', req)
+        const result = await requests.post<unknown, number>('/datasource', req)
         content.id = result
         newContent = content
       } else {
@@ -350,8 +349,8 @@ export default function DB({ content, type }: Props) {
           ...content,
           config: newValues,
           name: values.apiNamespace
-        } as DatasourceResp
-        await requests.put('/dataSource', newContent)
+        } as ApiDocuments.Datasource
+        await requests.put('/datasource', newContent)
       }
       handleSave(newContent)
     },
@@ -455,10 +454,9 @@ export default function DB({ content, type }: Props) {
         destroyOnClose
       >
         <FileList
-          basePath={BASEPATH}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={2}
+          dir={UploadDirectory.Database}
           beforeUpload={file => {
             const isAllowed = file.name.endsWith('.db')
             if (!isAllowed) {

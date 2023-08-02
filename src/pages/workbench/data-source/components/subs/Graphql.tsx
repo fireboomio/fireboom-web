@@ -27,7 +27,8 @@ import { useImmer } from 'use-immer'
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
+import { UploadDirectory } from '@/interfaces/fs'
 import { HttpRequestHeaders } from '@/lib/constant'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests, { getFetcher } from '@/lib/fetchers'
@@ -124,7 +125,7 @@ export default function Graphql({ content, type }: Props) {
       values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
       const newValues = { ...values }
       //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
-      let newContent: DatasourceResp
+      let newContent: ApiDocuments.Datasource
       if (!content.id) {
         const req = { ...content, config: newValues, name: values.apiNameSpace }
         const result = await requests.post<unknown, number>('/dataSource', req)
@@ -135,7 +136,7 @@ export default function Graphql({ content, type }: Props) {
           ...content,
           config: newValues,
           name: values.apiNameSpace
-        } as DatasourceResp
+        } as ApiDocuments.Datasource
         await requests.put('/dataSource', newContent)
       }
 
@@ -855,13 +856,12 @@ export default function Graphql({ content, type }: Props) {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
-        // closable={false}
+        destroyOnClose
       >
         <FileList
-          basePath={BASEPATH}
+          dir={UploadDirectory.Graphql}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={3}
           beforeUpload={file => {
             console.log(file.name)
             const isAllowed = file.name.endsWith('.graphql')

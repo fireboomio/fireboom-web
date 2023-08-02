@@ -2,7 +2,6 @@ import { loader } from '@monaco-editor/react'
 import { useContext, useEffect } from 'react'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceResp } from '@/interfaces/datasource'
 import {
   DatasourceDispatchContext,
   DatasourceToggleContext

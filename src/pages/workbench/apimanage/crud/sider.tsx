@@ -3,12 +3,12 @@ import clsx from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { DataSourceResp } from '@/hooks/store/dataSource'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
@@ -16,7 +16,7 @@ interface CRUDSiderProps {
   onEmpty: () => void
   onSelectedModelChange: (
     model: DMFModel,
-    datasource: DataSourceResp,
+    datasource: ApiDocuments.Datasource,
     models: DMFModel[],
     relationMap: RelationMap,
     dmf: string

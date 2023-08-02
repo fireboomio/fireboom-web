@@ -28,10 +28,12 @@ import { useImmer } from 'use-immer'
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
+import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import FileList from './FileList'
@@ -129,15 +131,14 @@ export default function Rest({ content, type }: Props) {
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
-  const [isEyeShow, setIsEyeShow] = useImmer(false)
+  // const [isEyeShow, setIsEyeShow] = useImmer(false)
   const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
-  const [value, setValue] = useImmer(1)
+  // const [value, setValue] = useImmer(1)
   const [rulesObj, setRulesObj] = useImmer({})
-  const [isRadioShow, setIsRadioShow] = useImmer(true)
+  // const [isRadioShow, setIsRadioShow] = useImmer(true)
   const [isValue, setIsValue] = useImmer(true)
   const [baseURLOptions, setBaseURLOptions] = useState<OptionT[]>([])
-
-  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const envOpts = useEnvOptions()
   const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
@@ -178,16 +179,6 @@ export default function Rest({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
 
-  useEffect(() => {
-    void getFetcher('/env')
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      .then(x => setEnvOpts(x))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const onValue2Change = (value: string) => {
     setEnvVal(value)
   }
@@ -206,12 +197,12 @@ export default function Rest({ content, type }: Props) {
   //     })
   // }
 
-  const config = content?.config as Config
+  // const config = content?.config as Config
 
   //密码显示与隐藏
-  const changeEyeState = () => {
-    setIsEyeShow(!isEyeShow)
-  }
+  // const changeEyeState = () => {
+  //   setIsEyeShow(!isEyeShow)
+  // }
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -255,11 +246,16 @@ export default function Rest({ content, type }: Props) {
   //表单上传成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
-      values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+      for (const key in values.headers) {
+        if (!values.headers[key]) {
+          delete values.headers[key]
+        }
+      }
+      values.headers = values.headers?.filter(item => item.key != undefined)
       const newValues = { ...values }
 
       //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
-      let newContent: DatasourceResp
+      let newContent: ApiDocuments.Datasource
       if (!content.id) {
         const req = { ...content, config: newValues, name: values.apiNameSpace }
         const result = await requests.post<unknown, number>('/dataSource', req)
@@ -270,7 +266,7 @@ export default function Rest({ content, type }: Props) {
           ...content,
           config: newValues,
           name: values.apiNameSpace
-        } as DatasourceResp
+        } as ApiDocuments.Datasource
         await requests.put('/dataSource', newContent)
       }
       handleSave(newContent)
@@ -286,11 +282,11 @@ export default function Rest({ content, type }: Props) {
   }
 
   //单选框改变，表单变化回调
-  const onChangeRadio = (e: RadioChangeEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    setValue(e.target.value)
-    setIsRadioShow(!isRadioShow)
-  }
+  // const onChangeRadio = (e: RadioChangeEvent) => {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  //   setValue(e.target.value)
+  //   setIsRadioShow(!isRadioShow)
+  // }
 
   const { Option } = Select
   const { Panel } = Collapse
@@ -303,7 +299,7 @@ export default function Rest({ content, type }: Props) {
       })
     }
   }
-  const jwtType = form.getFieldValue('jwtType')
+  // const jwtType = form.getFieldValue('jwtType')
   return (
     <>
       <Modal
@@ -314,13 +310,12 @@ export default function Rest({ content, type }: Props) {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
-        // closable={false}
+        destroyOnClose
       >
         <FileList
-          basePath={BASEPATH}
+          dir={UploadDirectory.OpenAPI}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={1}
           beforeUpload={file => {
             const isAllowed =
               file.name.endsWith('.json') ||
@@ -352,7 +347,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.apiNameSpace}
+                {content.name}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -369,7 +364,7 @@ export default function Rest({ content, type }: Props) {
                   onClick={() =>
                     window.open(
                       `/api/file/downloadFile?type=1&inline=1&fileName=${encodeURIComponent(
-                        config.filePath!
+                        content.customRest.oasFilepath
                       )}`,
                       '_blank'
                     )
@@ -382,7 +377,9 @@ export default function Rest({ content, type }: Props) {
                     alt="文件"
                     preview={false}
                   />
-                  <span className="ml-2 text-11px text-[#909399]">{config.filePath}</span>
+                  <span className="ml-2 text-11px text-[#909399]">
+                    {content.customRest.oasFilepath}
+                  </span>
                 </div>
               </Descriptions.Item>
               <Descriptions.Item
@@ -396,7 +393,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.baseURL}
+                {content.customRest.baseUrl}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -415,8 +412,9 @@ export default function Rest({ content, type }: Props) {
                       size="small"
                       labelStyle={{ width: 190 }}
                     >
-                      {((config?.headers as unknown as DataType[]) ?? []).map(
-                        ({ key = '', kind = '', val = '' }) => (
+                      {Object.keys(content.customRest.headers ?? {}).map(key => {
+                        const item = content.customRest.headers[key]
+                        return (
                           <Descriptions.Item
                             key={key}
                             label={
@@ -431,12 +429,12 @@ export default function Rest({ content, type }: Props) {
                             style={{ wordBreak: 'break-all' }}
                           >
                             <div className="flex items-center">
-                              <div className="text-0px">{renderIcon(kind)}</div>
-                              <div className="flex-1 ml-2 min-w-0">{val}</div>
+                              <div className="text-0px">{renderIcon(item.values.kind)}</div>
+                              <div className="flex-1 ml-2 min-w-0">{item.values.val}</div>
                             </div>
                           </Descriptions.Item>
                         )
-                      )}
+                      })}
                     </Descriptions>
                   )
                 }
@@ -509,7 +507,7 @@ export default function Rest({ content, type }: Props) {
               ]}
             />
           </div>
-          <Collapse
+          {/* <Collapse
             ghost
             bordered={false}
             defaultActiveKey={['0']}
@@ -530,7 +528,7 @@ export default function Rest({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  {config.statusCodeUnions ? (
+                  {content.customRest.statusCodeUnions ? (
                     <Tag color="green">{intl.formatMessage({ defaultMessage: '开启' })}</Tag>
                   ) : (
                     <Tag color="red">{intl.formatMessage({ defaultMessage: '关闭' })}</Tag>
@@ -538,7 +536,7 @@ export default function Rest({ content, type }: Props) {
                 </Descriptions.Item>
               </Descriptions>
             </Panel>
-          </Collapse>
+          </Collapse> */}
           {/* 测试功能 */}
           <Modal
             centered
@@ -550,10 +548,10 @@ export default function Rest({ content, type }: Props) {
             footer={null}
           >
             <div className={styles['redoc-container']}>
-              {testVisible && config.filePath && (
+              {testVisible && content.customRest.oasFilepath && (
                 <iframe
                   title="rapi"
-                  src={`/#/rapi-frame?url=/upload/oas/${config.filePath ?? ''}`}
+                  src={`/#/rapi-frame?url=/upload/oas/${content.customRest.oasFilepath ?? ''}`}
                   width={'100%'}
                   height={'100%'}
                   className="border-none"
@@ -571,21 +569,28 @@ export default function Rest({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={values => onFinish(values as Config)}
+              onFinish={values => onFinish(values)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
               labelAlign="right"
               className="ml-3"
               initialValues={{
-                apiNameSpace: config.apiNameSpace,
-                baseURL: config.baseURL,
-                headers: config.headers || [],
-                statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret || { kind: '0' },
-                filePath: config.filePath || '',
-                tokenPoint: config.tokenPoint,
-                jwtType: config.jwtType
+                apiNameSpace: content.name,
+                baseURL: content.customRest.baseUrl,
+                headers: Object.keys(content.customRest.headers || {}).map(key => {
+                  const item = content.customRest.headers[key]
+                  return {
+                    key,
+                    kind: item.values.kind,
+                    val: item.values.val
+                  }
+                })
+                // statusCodeUnions: content.customRest.statusCodeUnions,
+                // secret: config.secret || { kind: '0' },
+                // filePath: config.filePath || '',
+                // tokenPoint: config.tokenPoint,
+                // jwtType: config.jwtType
               }}
             >
               <Form.Item
@@ -746,6 +751,7 @@ export default function Rest({ content, type }: Props) {
                                     />
                                   )}
                                 </Form.Item>
+                                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
                                 <img
                                   alt="guanbi"
                                   src="assets/iconfont/guanbi.svg"
@@ -905,7 +911,7 @@ export default function Rest({ content, type }: Props) {
                   </TabPane> */}
                 </Tabs>
               </div>
-              <Collapse
+              {/* <Collapse
                 ghost
                 bordered={false}
                 defaultActiveKey={['0']}
@@ -935,7 +941,7 @@ export default function Rest({ content, type }: Props) {
                     <Switch className={styles['switch-edit-btn']} size="small" />
                   </Form.Item>
                 </Panel>
-              </Collapse>
+              </Collapse> */}
 
               <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
                 <div className="flex mt-10 w-160px justify-center items-center">

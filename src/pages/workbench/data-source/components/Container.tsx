@@ -8,7 +8,6 @@ import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { ShowType } from '@/interfaces/datasource'
 import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { updateHookEnabled } from '@/lib/service/hook'
@@ -66,7 +65,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     case DataSourceKind.MySQL:
       icon = '/assets/icon/mysql.svg'
       break
-    case DataSourceKind.PostgresQL:
+    case DataSourceKind.PostgreSQL:
       icon = '/assets/icon/pg.svg'
       break
     case DataSourceKind.SQLite:

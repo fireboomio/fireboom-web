@@ -2,10 +2,14 @@ import axios from 'axios'
 
 import { getHeader } from '@/lib/fetchers'
 
-export default async function uploadLocal(uri: string, content: string, fileName: string) {
+export default async function uploadLocal(uri: string, content: string | File, fileName?: string) {
   let param = new FormData() //创建form对象
-  param.append('content', new File([content], fileName))
-  param.append('uri', uri)
+  if (content instanceof File) {
+    param.append('content', content)
+  } else {
+    param.append('content', new File([content], fileName!))
+  }
+  param.append('uri', `upload/${uri}`)
   param.append('create', 'true')
   param.append('overwrite', 'true')
   let config = {

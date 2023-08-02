@@ -11,7 +11,7 @@ interface DatasourceCurrDBContextT {
 }
 interface DatasourceToggleContext {
   handleToggleDesigner: (type: ShowType, id?: number, sourceType?: number) => void
-  handleSave: (content: ApiDocuments.Datasource) => void
+  handleSave: (content: Partial<ApiDocuments.Datasource>) => void
   handleCreate: (content: ApiDocuments.Datasource) => void
 
   showType: ShowType

@@ -3,6 +3,7 @@ import useSWRImmutable from 'swr/immutable'
 
 import type { DataSourceKind } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface DataSourceResp {
   name: string
@@ -36,7 +37,7 @@ export interface DataSourceResp {
 }
 
 export function useDataSourceList() {
-  const data = useSWRImmutable<DataSourceResp[]>('/datasource', requests.get).data
+  const data = useSWRImmutable<ApiDocuments.Datasource[]>('/datasource', requests.get).data
   data?.forEach(item => {
     item.readonly = item.name === 'system'
   })

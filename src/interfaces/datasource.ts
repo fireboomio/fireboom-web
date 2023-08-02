@@ -90,7 +90,7 @@ export enum DataSourceKind {
   Static = 0,
   Restful = 1,
   Graphql = 2,
-  PostgresQL = 3,
+  PostgreSQL = 3,
   MySQL = 4,
   SQLServer = 5,
   MongoDB = 6,
