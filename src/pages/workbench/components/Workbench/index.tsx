@@ -2,7 +2,7 @@ import { App, Layout as ALayout, message, Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
@@ -256,9 +256,13 @@ export default function Index(props: PropsWithChildren) {
   const { data } = useSWRImmutable<{ language: string }>('/sdk/enabledServer', requests)
   const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const language = data?.language
+  const isHookServerSelected = useMemo(
+    () => language && sdk?.some(item => item.type === 'server'),
+    [language, sdk]
+  )
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
     try {
-      if (!language || !sdk?.find(item => item.type === 'server')) {
+      if (!isHookServerSelected) {
         navigate('/workbench/sdk-template')
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false
@@ -297,6 +301,7 @@ export default function Index(props: PropsWithChildren) {
   const globalProviderValue = {
     vscode: {
       options: vscode,
+      isHookServerSelected,
       checkHookExist,
       toggleHook: async (flag: boolean, path: string, hasParam = false) => {
         // 打开钩子时，需要检查钩子文件

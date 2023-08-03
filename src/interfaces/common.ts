@@ -46,3 +46,8 @@ declare module '@paljs/types' {
     hasDefault: boolean
   }
 }
+
+export enum VariableKind {
+  Static = 0,
+  Env = 1
+}

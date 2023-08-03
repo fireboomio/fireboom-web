@@ -3,54 +3,56 @@ import { AutoComplete, Form, Input, Select, Space } from 'antd'
 import type { ChangeEvent } from 'react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
-import type { VariableType } from '@/interfaces/datasource'
-import { Mode } from '@/interfaces/datasource'
-import requests from '@/lib/fetchers'
+import { VariableKind } from '@/interfaces/common'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface InputOrFromEnvProps {
-  value?: VariableType
+  value?: ApiDocuments.ConfigurationVariable
   inputProps?: Omit<InputProps, 'value' | 'onChange'>
   envProps?: Omit<AutoCompleteProps, 'value' | 'onChange'>
-  onChange?: (data?: VariableType) => void
+  onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
 const modeOptions: SelectProps['options'] = [
-  { value: Mode.Input, label: '输入值' },
-  { value: Mode.Env, label: '环境变量' }
+  { value: VariableKind.Static, label: '输入值' },
+  { value: VariableKind.Env, label: '环境变量' }
 ]
 
 const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEnvProps) => {
-  const { mode, setMode } = useContext(InputOrFromEnvContext)
+  const { kind: kind, setKind: setKind } = useContext(InputOrFromEnvContext)
   const envs = useEnvOptions()
   const onSwitchMode = useCallback(
-    (e: Mode) => {
-      setMode(e)
-      onChange?.({ key: '', kind: e, val: '' })
+    (e: VariableKind) => {
+      setKind(e)
+      onChange?.(
+        e === VariableKind.Env
+          ? { kind: e, environmentVariableName: '' }
+          : { kind: e, staticVariableContent: '' }
+      )
     },
-    [onChange]
+    [onChange, setKind]
   )
   const onValueChange = useCallback(
     (e: ChangeEvent<HTMLInputElement> | string) => {
       var value: string = typeof e === 'string' ? e : e.target.value
-      onChange?.({
-        key: mode == Mode.Env ? value : '',
-        kind: mode,
-        val: mode == Mode.Env ? '' : value
-      })
+      onChange?.(
+        kind === VariableKind.Env
+          ? { kind: kind, environmentVariableName: value }
+          : { kind: kind, staticVariableContent: value }
+      )
     },
-    [mode, onChange]
+    [kind, onChange]
   )
 
   useEffect(() => {
-    setMode(value?.kind ?? Mode.Input)
-  }, [setMode, value?.kind])
+    setKind((value?.kind as VariableKind) ?? VariableKind.Static)
+  }, [setKind, value?.kind])
 
   return (
     <Space.Compact className="!flex">
-      <Select className="!w-30" value={mode} options={modeOptions} onChange={onSwitchMode} />
-      {mode == Mode.Env ? (
+      <Select className="!w-30" value={kind} options={modeOptions} onChange={onSwitchMode} />
+      {kind == VariableKind.Env ? (
         <AutoComplete
           {...envProps}
           value={value?.key}
@@ -70,7 +72,7 @@ export interface InputOrFromEnvWithItemProps
   formItemProps?: Omit<FormItemProps, 'rules'>
   required?: boolean
   rules?: FormItemProps['rules']
-  onChange?: (data?: VariableType) => void
+  onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
 const InputOrFromEnvWithItem = ({
@@ -79,13 +81,13 @@ const InputOrFromEnvWithItem = ({
   required,
   ...rest
 }: InputOrFromEnvWithItemProps) => {
-  const [mode, setMode] = useState<Mode>(Mode.Input)
+  const [kind, setKind] = useState<VariableKind>(VariableKind.Static)
   return (
-    <InputOrFromEnvContext.Provider value={{ mode, setMode }}>
+    <InputOrFromEnvContext.Provider value={{ kind, setKind }}>
       <Form.Item
         {...formItemProps}
         rules={
-          mode == Mode.Env
+          kind == VariableKind.Env
             ? required
               ? [
                   {
@@ -114,8 +116,8 @@ const InputOrFromEnvWithItem = ({
 export default InputOrFromEnvWithItem
 
 interface InputOrFromEnvState {
-  mode: Mode
-  setMode: (mode: Mode) => void
+  kind: VariableKind
+  setKind: (kind: VariableKind) => void
 }
 
 const InputOrFromEnvContext = createContext<InputOrFromEnvState>(

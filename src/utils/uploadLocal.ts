@@ -9,7 +9,7 @@ export default async function uploadLocal(uri: string, content: string | File, f
   } else {
     param.append('content', new File([content], fileName!))
   }
-  param.append('uri', `upload/${uri}`)
+  param.append('uri', `upload-cloud/${uri}`)
   param.append('create', 'true')
   param.append('overwrite', 'true')
   let config = {

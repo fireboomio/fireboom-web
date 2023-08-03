@@ -50,7 +50,7 @@ export default function FileList({
     },
     // action: '/api/vscode/writeFile',
     // headers: getHeader(),
-    // data: { uri: `/upload/${dir}` },
+    // data: { uri: `/upload-cloud/${dir}` },
     showUploadList: false,
     beforeUpload: beforeUpload,
     onChange(info) {
@@ -75,7 +75,7 @@ export default function FileList({
   ) => {
     e?.stopPropagation()
     requests.delete('/vscode/delete', {
-      data: { uri: `upload/${dir}/${rcd.name}` }
+      data: { uri: `upload-cloud/${dir}/${rcd.name}` }
     })
     setRefreshFlag(!refreshFlag)
   }
@@ -86,7 +86,9 @@ export default function FileList({
 
   useEffect(() => {
     void requests
-      .get<any, ApiDocuments.vscode_FileStat[]>(`/vscode/readDirectory?uri=upload/${dir}`)
+      .get<any, ApiDocuments.vscode_FileStat[]>(
+        `/vscode/readDirectory?uri=upload-cloud/${dir}&ignoreNotExist=true`
+      )
       .then(res => {
         setData(res)
       })
@@ -150,7 +152,7 @@ export default function FileList({
 
           <a
             className="inline-flex"
-            href={`/api/vscode/readFile?uri=${`upload/${dir}/${rcd.name}`}&auth-key=${getAuthKey()}`}
+            href={`/api/vscode/readFile?uri=${`upload-cloud/${dir}/${rcd.name}`}&auth-key=${getAuthKey()}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -175,7 +177,7 @@ export default function FileList({
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          value={`upload/${dir}`}
+          value={`upload-cloud/${dir}`}
           readOnly
         />
         <Upload {...upProps} className="cursor-pointer m-auto h-6 ml-3 w-20">
@@ -209,7 +211,7 @@ export default function FileList({
         onRow={rcd => {
           return {
             onClick: event => {
-              setUploadPath(`upload/${dir}/${rcd.name}`)
+              setUploadPath(`${dir}/${rcd.name}`)
               setVisible(false)
             }
           }

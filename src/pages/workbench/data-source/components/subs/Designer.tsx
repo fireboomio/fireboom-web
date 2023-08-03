@@ -1,6 +1,8 @@
+import { Modal } from 'antd'
 import { omit } from 'lodash'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 
 import { usePrompt } from '@/hooks/prompt'
 import { useValidate } from '@/hooks/validate'
@@ -42,6 +44,7 @@ export default function Designer() {
   const intl = useIntl()
   const { validateName } = useValidate()
   const { vscode } = useContext(GlobalContext)
+  const navigate = useNavigate()
   const initData = useMemo<
     {
       name: string
@@ -252,25 +255,37 @@ export default function Designer() {
   const prompt = usePrompt()
 
   async function createCustom() {
-    // FIXME 要先判断有没有选择钩子模板
-    const { confirm, value } = await prompt({ title: '请输入数据源名称', validator: validateName })
-    if (!confirm) {
-      return
-    }
-    const data: Partial<ApiDocuments.Datasource> = {
-      name: value,
-      kind: DataSourceKind.Graphql,
-      enabled: false,
-      customGraphql: {
-        customized: true,
-        url: '',
-        headers: {},
-        schemaString: ''
+    if (!vscode.isHookServerSelected) {
+      await Modal.confirm({
+        title: intl.formatMessage({ defaultMessage: '温馨提示' }),
+        content: intl.formatMessage({ defaultMessage: '当前未选择钩子语言，是否前往创建？' }),
+        onOk() {
+          navigate('/workbench/sdk-template')
+        }
+      })
+    } else {
+      const { confirm, value } = await prompt({
+        title: '请输入数据源名称',
+        validator: validateName
+      })
+      if (!confirm) {
+        return
       }
+      const data: Partial<ApiDocuments.Datasource> = {
+        name: value,
+        kind: DataSourceKind.Graphql,
+        enabled: false,
+        customGraphql: {
+          customized: true,
+          url: '',
+          headers: {},
+          schemaString: ''
+        }
+      }
+      await requests.post('/datasource', data)
+      await vscode.checkHookExist(`customize/${value}`, false, true)
+      handleSave(data)
     }
-    await requests.post('/datasource', data)
-    await vscode.checkHookExist(`customize/${value}`, false, true)
-    handleSave(data)
   }
 
   async function handleClick(item: DataSourceItem) {
@@ -303,7 +318,7 @@ export default function Designer() {
         }
       } else if (isDatabaseKind(item)) {
         data.customDatabase = {
-          kind: 1
+          kind: 0
         }
       }
     }

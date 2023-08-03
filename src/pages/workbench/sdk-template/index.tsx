@@ -104,7 +104,7 @@ const SDKTemplate = () => {
     async sdk => {
       const hide = message.loading(intl.formatMessage({ defaultMessage: '下载' }), -1)
       try {
-        await requests.post('/sdk/remote/download', sdk)
+        await requests.post('/sdk', sdk)
         await mutate()
         _mutate('/sdk/enabledServer')
         message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
@@ -278,12 +278,12 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
+      requests.put(`/sdk`, { name: sdk.name, enabled: checked }).then(res => {
         mutate()
         _mutate('/sdk/enabledServer')
       })
     },
-    [onChange, sdk]
+    [mutate, sdk.name]
   )
 
   const dropdownMenus = useMemo<ItemType[]>(() => {
@@ -297,7 +297,7 @@ const SDKTemplateItem = ({
             okText={intl.formatMessage({ defaultMessage: '确定' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             onConfirm={async () => {
-              await requests.delete(`/sdk/${sdk.id}`)
+              await requests.delete(`/sdk/${sdk.name}`)
               message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
               mutate()
             }}

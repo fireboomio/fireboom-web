@@ -1,14 +1,26 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { App, Button, Descriptions, Form, Input, message, Modal, Radio, Select, Upload } from 'antd'
+import {
+  App,
+  Button,
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Radio,
+  Select,
+  Upload
+} from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
-import type { InputOrFromEnvProps } from '@/components/InputOrFromEnv'
 import InputOrFromEnv from '@/components/InputOrFromEnv'
 import { useValidate } from '@/hooks/validate'
+import { VariableKind } from '@/interfaces/common'
 import type { ShowType } from '@/interfaces/datasource'
 import { DataSourceKind } from '@/interfaces/datasource'
 import { UploadDirectory } from '@/interfaces/fs'
@@ -51,7 +63,7 @@ export default function DB({ content, type }: Props) {
   const [form] = Form.useForm()
   const userNameKind = Form.useWatch(['customDatabase', 'databaseAlone', 'username'], form)
   const passwordKind = Form.useWatch(['customDatabase', 'databaseAlone', 'password'], form)
-  const appendType = Form.useWatch('appendType', form)
+  const dsType = Form.useWatch(['customDatabase', 'kind'], form)
 
   const [visible, setVisible] = useState(false)
   const envOptions = useEnvOptions()
@@ -62,10 +74,16 @@ export default function DB({ content, type }: Props) {
     form.validateFields()
   }
 
-  const onUrlChange: InputOrFromEnvProps['onChange'] = data => {
-    form.validateFields()
-    form.setFieldValue(['customDatabase', 'databaseUrl', 'staticVariableContent'], data?.val ?? '')
-  }
+  // const onUrlChange: InputOrFromEnvProps['onChange'] = data => {
+  //   form.validateFields()
+  //   if (data?.kind === Kind.Env) {
+  //     form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 1)
+  //     form.setFieldValue(['customDatabase', 'databaseUrl', 'environmentVariableName'], data.val)
+  //   } else {
+  //     form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
+  //     form.setFieldValue(['customDatabase', 'databaseUrl', 'staticVariableContent'], data?.val)
+  //   }
+  // }
 
   const dbProtocol =
     databaseKindNameMap[content?.kind as keyof typeof databaseKindNameMap]?.toLowerCase()
@@ -106,7 +124,7 @@ export default function DB({ content, type }: Props) {
               const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
               try {
                 try {
-                  await uploadLocal('/upload/sqlite', '', dbName + '.db')
+                  await uploadLocal(`${UploadDirectory.Database}/${dbName}.db`, '', dbName + '.db')
                 } catch (e: any) {
                   const msgMap: any = {
                     10440011: intl.formatMessage({ defaultMessage: '文件名已存在' })
@@ -115,7 +133,7 @@ export default function DB({ content, type }: Props) {
                   message.error(msg || intl.formatMessage({ defaultMessage: '上传失败' }))
                   return
                 }
-                setUploadPath(dbName + '.db')
+                setUploadPath(`${UploadDirectory.Database}/${dbName}.db`)
                 _modal.destroy()
               } finally {
                 hide()
@@ -162,7 +180,7 @@ export default function DB({ content, type }: Props) {
       <InputOrFromEnv
         formItemProps={{
           label: intl.formatMessage({ defaultMessage: '连接URL' }),
-          name: ['customDatabase', 'databaseUrl', 'staticVariableContent']
+          name: ['customDatabase', 'databaseUrl']
         }}
         inputProps={{
           placeholder: intl.formatMessage(
@@ -180,23 +198,31 @@ export default function DB({ content, type }: Props) {
                 {
                   required: true,
                   validator(rule, value, callback) {
-                    const reg = new RegExp(`^${dbProtocol}://.{1,${125 - dbProtocol.length}}$`)
-                    if (value.val.match(reg)?.length) {
+                    if (value.kind === VariableKind.Env) {
                       callback()
                     } else {
-                      callback(
-                        intl.formatMessage(
-                          { defaultMessage: '以 {dbProtocol}:// 开头，不超过128位' },
-                          { dbProtocol }
+                      const reg = new RegExp(`^${dbProtocol}://.{1,${125 - dbProtocol.length}}$`)
+                      if (
+                        (value as ApiDocuments.ConfigurationVariable).staticVariableContent?.match(
+                          reg
+                        )?.length
+                      ) {
+                        callback()
+                      } else {
+                        callback(
+                          intl.formatMessage(
+                            { defaultMessage: '以 {dbProtocol}:// 开头，不超过128位' },
+                            { dbProtocol }
+                          )
                         )
-                      )
+                      }
                     }
                   }
                 }
               ]
             : []
         }
-        onChange={onUrlChange}
+        // onChange={onUrlChange}
       />
     )
 
@@ -234,7 +260,7 @@ export default function DB({ content, type }: Props) {
           { pattern: port, message: intl.formatMessage({ defaultMessage: '端口范围为0-9999' }) }
         ]}
       >
-        <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+        <InputNumber placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
       </Form.Item>
 
       <Form.Item label={intl.formatMessage({ defaultMessage: '用户:' })} required>
@@ -312,15 +338,14 @@ export default function DB({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
   useEffect(() => {
-    setViewerForm(appendType == '1' ? paramForm : initForm)
+    setViewerForm(dsType === 1 ? paramForm : initForm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userNameKind, passwordKind])
 
   //表单提交成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
-      const { appendType, ...rest } = values
-      const newValues: ApiDocuments.Datasource = { ...content, ...rest }
+      const newValues: ApiDocuments.Datasource = { ...content, ...values }
       if (!content.name) {
         await requests.post('/datasource', newValues)
       } else {
@@ -338,23 +363,27 @@ export default function DB({ content, type }: Props) {
   }
 
   //表单item值改变回调
-  const onValuesChange = (values: ApiDocuments.Datasource) => {
-    if (appendType === '0') {
-      // url转参数
-      const dbConfig = parseDBUrl(values.customDatabase.databaseUrl.staticVariableContent ?? '')
-      if (dbConfig) {
-        const { username, password, host, port, dbName } = dbConfig
-        form.setFieldsValue({
-          customDatabase: {
-            databaseAlone: {
-              username,
-              password,
-              host,
-              port,
-              database: dbName
+  const onValuesChange = () => {
+    const values = form.getFieldsValue()
+    if (dsType === 0) {
+      const content = values.customDatabase.databaseUrl?.staticVariableContent
+      if (content && content.kind !== VariableKind.Env) {
+        // url转参数
+        const dbConfig = parseDBUrl(content ?? '')
+        if (dbConfig) {
+          const { username, password, host, port, dbName } = dbConfig
+          form.setFieldsValue({
+            customDatabase: {
+              databaseAlone: {
+                username,
+                password,
+                host,
+                port,
+                database: dbName
+              }
             }
-          }
-        })
+          })
+        }
       }
     } else {
       if (!dbProtocol) {
@@ -363,6 +392,7 @@ export default function DB({ content, type }: Props) {
       const { host, port, database, username, password } = values.customDatabase.databaseAlone
       if (host && database && username) {
         // 参数转url
+        form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
         form.setFieldValue(
           ['customDatabase', 'databaseUrl', 'staticVariableContent'],
           `${dbProtocol}://${encodeURIComponent(username)}${
@@ -377,21 +407,25 @@ export default function DB({ content, type }: Props) {
   }
 
   //测试连接 成功与失败提示
-  const testLink = () => {
-    const { appendType, ...values } = form.getFieldsValue()
-    const newValues = { ...content, ...values }
-    void requests.post('/datasource/checkConnection', newValues).then(() => {
-      message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-    })
+  const testLink = async () => {
+    if (await form.validateFields()) {
+      const values = form.getFieldsValue()
+      const newValues = { ...content, ...values }
+      void requests.post('/datasource/checkConnection', newValues).then(() => {
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+      })
+    }
   }
 
   //单选框链接URL和链接参数切换回调
-  const typeChange = (value: string) => {
+  const typeChange = (value: number) => {
     switch (value) {
-      case '0':
+      case 0:
+        form.setFieldValue(['customDatabase', 'kind'], 0)
         setViewerForm(initForm)
         break
-      case '1':
+      case 1:
+        form.setFieldValue(['customDatabase', 'kind'], 1)
         setViewerForm(paramForm)
         break
       default:
@@ -432,12 +466,12 @@ export default function DB({ content, type }: Props) {
         //查看页面———————————————————————————————————————————————————————————————————————————————————
         <div>
           <div className="flex py-10px justify-end">
-            <div
+            {/* <div
               className="cursor-pointer flex bg-[#F9F9F9] rounded-2px h-22px text-[#E92E5E] w-21 items-center justify-center"
               onClick={() => handleToggleDesigner('setting', content.id)}
             >
               {intl.formatMessage({ defaultMessage: '更多设置' })}
-            </div>
+            </div> */}
           </div>
           <div>
             <Descriptions bordered column={1} size="small">
@@ -534,15 +568,15 @@ export default function DB({ content, type }: Props) {
               autoComplete="new-password"
               labelAlign="right"
               initialValues={{
-                appendType: content.name
-                  ? content.customDatabase.databaseUrl?.staticVariableContent
-                    ? '0'
-                    : '1'
-                  : '0',
+                // appendType: content.name
+                //   ? content.customDatabase.databaseUrl?.staticVariableContent
+                //     ? '0'
+                //     : '1'
+                //   : '0',
                 ...content
               }}
             >
-              <Form.Item hidden name={['databaseUrl']}>
+              {/* <Form.Item hidden name={['databaseUrl']}>
                 <Input />
               </Form.Item>
               <Form.Item hidden name={['userName']}>
@@ -559,7 +593,7 @@ export default function DB({ content, type }: Props) {
               </Form.Item>
               <Form.Item hidden name="host">
                 <Input />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '名称:' })}
                 name="name"
@@ -572,6 +606,7 @@ export default function DB({ content, type }: Props) {
                 ]}
               >
                 <Input
+                  readOnly={!!content.name}
                   placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                   autoComplete="off"
                   autoFocus={true}
@@ -583,13 +618,13 @@ export default function DB({ content, type }: Props) {
               ) : (
                 <Form.Item
                   label={intl.formatMessage({ defaultMessage: '连接类型:' })}
-                  name="appendType"
+                  name={['customDatabase', 'kind']}
                 >
                   <Radio.Group onChange={e => typeChange(e.target.value as string)}>
-                    <Radio value="0" style={{ marginRight: '50px' }}>
+                    <Radio value={0} style={{ marginRight: '50px' }}>
                       {intl.formatMessage({ defaultMessage: '连接URL' })}
                     </Radio>
-                    <Radio value="1">{intl.formatMessage({ defaultMessage: '连接参数' })}</Radio>
+                    <Radio value={1}>{intl.formatMessage({ defaultMessage: '连接参数' })}</Radio>
                   </Radio.Group>
                 </Form.Item>
               )}
