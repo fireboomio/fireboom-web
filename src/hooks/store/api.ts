@@ -5,7 +5,7 @@ import requests from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export function useApiGlobalSetting() {
-  return useSWRImmutable<ApiDocuments.GlobalOperation>('/globalOperation', requests.get)
+  return useSWRImmutable<ApiDocuments.GlobalOperation>('/globalOperation/single', requests.get)
 }
 
 export function useApiList() {

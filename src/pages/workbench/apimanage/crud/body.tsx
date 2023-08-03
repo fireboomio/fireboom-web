@@ -15,7 +15,7 @@ import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -424,12 +424,12 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
               <div key={row.Path} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
                 <img src={row.Code === 0 ? successIcon : failIcon} alt="" className="flex-0" />
                 <span className="flex-1 text-default ml-1.5">{row.Path}</span>
-                <a
+                <Link
                   className="text-default ml-1.5 text-[#649FFF]"
-                  onClick={() => navigate(`/workbench/apimanage/${row.ID}`)}
+                  to={`/workbench/apimanage/${row.Path}`}
                 >
                   <FormattedMessage defaultMessage="查看" />
-                </a>
+                </Link>
               </div>
             ))}
           </div>

@@ -58,7 +58,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean, forceRoot: boolean) => void
+  addItem: (isDir: boolean, forceRoot?: boolean) => void
   editItem: (key: string) => void
 }
 

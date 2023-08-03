@@ -160,9 +160,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       await requests.post('/operation/dir', { path })
       await mutateApi()
     } else {
-      const result = await requests.post<unknown, { id: number }>('/operation', { path })
+      await requests.post<unknown, { id: number }>('/operation', { path })
       await mutateApi()
-      navigate(`/workbench/apimanage/${result?.id}`)
+      navigate(`/workbench/apimanage/${path}`)
     }
   }, true)
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
@@ -466,13 +466,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               await autoSave()
               message.destroy()
             }
-            navigate(`/workbench/apimanage/${nodeData.data.id}`)
+            navigate(`/workbench/apimanage/${nodeData.data.path}`)
           }
         }}
         onCreateItem={async (parent, isDir, name) => {
           if (name && onValidateName(name, isDir)) {
             try {
-              await handleAddNode(`${parent?.data.path ?? ''}/${name}`, isDir)
+              await handleAddNode(parent?.data.path ? `${parent?.data.path}/${name}` : name, isDir)
               return true
             } catch (e) {
               console.error(e)
