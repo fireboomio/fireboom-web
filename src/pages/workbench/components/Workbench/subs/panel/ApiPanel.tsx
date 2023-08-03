@@ -120,14 +120,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     [intl]
   )
   const handleBatchSwitch = executeWrapper(async (nodes: FileTreeNode[], flag: boolean) => {
-    const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
-    await requests.post('operateApi/batchOnline', {
-      Ids: ids,
-      enabled: flag
-    })
+    const pathList = nodes.filter(x => !x.isDir || !x.data.path).map(x => x.data.path)
+    await requests.post(
+      'operation/batch',
+      pathList.map(item => ({
+        path: item,
+        enabled: flag
+      }))
+    )
     events.emit({
       event: 'apiEnableChange',
-      data: { ids, enabled: flag }
+      data: { pathList, enabled: flag }
     })
   })
   const handleBatchDelete = executeWrapper(async (nodes: FileTreeNode[]) => {

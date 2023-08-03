@@ -211,7 +211,7 @@ export default function APIEditorContainer() {
     void mutate(`/operation/hooks/${params.id}`)
   })
   useEventBus('apiEnableChange', ({ data }) => {
-    if (data.ids.includes(Number(params.id))) {
+    if (data.pathList.includes(params.path!)) {
       pureUpdateAPI({ enabled: data.enabled })
     }
   })

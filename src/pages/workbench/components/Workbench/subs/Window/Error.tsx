@@ -78,35 +78,26 @@ export default function Error() {
   }, [questions])
 
   const navigate = useNavigate()
-  async function closeDatasource(id: number) {
-    const res = await requests.get<unknown, any>(`/dataSource/${id}`)
-    if (res?.id) {
-      await requests.put(`/dataSource`, { ...res, enabled: false })
-      void mutateDataSource()
-    }
+  async function closeDatasource(name: string) {
+    await requests.put(`/datasource`, { name, enabled: false })
+    void mutateDataSource()
   }
 
-  async function closeAPI(id: number) {
-    await requests.put<unknown, any>(`/operation/switch/${id}`, { enabled: false })
+  async function closeAPI(path: string) {
+    await requests.put<unknown, any>(`/operation`, { path, enabled: false })
     events.emit({
       event: 'apiEnableChange',
-      data: { ids: [id], enabled: false }
+      data: { pathList: [path], enabled: false }
     })
     void mutateApi()
   }
-  async function closeAuth(id: number) {
-    const res = await requests.get<unknown, any>(`/authentication/${id}`)
-    if (res?.id) {
-      await requests.put(`/authentication`, { ...res, enabled: false })
-      void mutateAuth()
-    }
+  async function closeAuth(name: string) {
+    await requests.put(`/authentication`, { name, enabled: false })
+    void mutateAuth()
   }
-  async function closeStorage(id: number) {
-    const res = await requests.get<unknown, any>(`/storage/${id}`)
-    if (res?.id) {
-      await requests.put(`/storage`, { ...res, enabled: false })
-      void mutateStorage()
-    }
+  async function closeStorage(name: string) {
+    await requests.put(`/storage`, { name, enabled: false })
+    void mutateStorage()
   }
 
   return (
@@ -132,12 +123,12 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/data-source/${item.id}`)}
+                        onClick={() => navigate(`/workbench/data-source/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="排查, 或" />
-                      <span className={styles.action} onClick={() => closeDatasource(item.id)}>
+                      <span className={styles.action} onClick={() => closeDatasource(item.name)}>
                         <FormattedMessage defaultMessage="关闭" />
                       </span>
                       <FormattedMessage defaultMessage="该数据源" />
@@ -150,7 +141,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/apimanage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/apimanage/${item.path}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -158,7 +149,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeAPI(item.id)}>
+                          <span className={styles.action} onClick={() => closeAPI(item.path)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该API" />
@@ -181,7 +172,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeAuth(item.id)}>
+                          <span className={styles.action} onClick={() => closeAuth(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该验证器" />
@@ -196,7 +187,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/storage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/storage/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -204,7 +195,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeStorage(item.id)}>
+                          <span className={styles.action} onClick={() => closeStorage(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该对象存储" />
@@ -221,7 +212,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/storage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/storage/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -229,7 +220,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeStorage(item.id)}>
+                          <span className={styles.action} onClick={() => closeStorage(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该对象存储" />

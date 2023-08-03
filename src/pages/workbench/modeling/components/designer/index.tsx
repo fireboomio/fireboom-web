@@ -7,6 +7,7 @@ import type { Updater } from 'use-immer'
 import { useImmer } from 'use-immer'
 
 import type { DMFResp } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
 import type { Enum, Model, ModelingShowTypeT } from '@/interfaces/modeling'
 import { ENTITY_NAME_REGEX, UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
@@ -51,9 +52,9 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const { getNextId } = useEntities()
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
     useBlocks()
-  const { id: dbSourceId, config: dbConfig } = useDBSource()
+  const { name, kind } = useDBSource()
   const { syncEditorFlag, panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
-  const newEntityLocalStorageKey = `${showType}__for_db_source_${dbSourceId}`
+  const newEntityLocalStorageKey = `${showType}__for_db_source_${name}`
   const newEntityId = getNextId()
 
   let initMode = localStorage.getItem(ModeKey)
@@ -75,7 +76,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [editorValidate, setEditorValidate] = useState<boolean>(true) // 当前编辑器内容是否合法
   const [titleValue, setTitleValue] = useState<string>('')
 
-  var isMongo = dbConfig.dbType?.toLowerCase() === 'mongodb'
+  var isMongo = kind === DataSourceKind.MongoDB
 
   // 编辑模式 变更时存入本地存储中
   useEffect(() => {
@@ -88,7 +89,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   useEffect(() => {
     // 此处刷新会导致编辑器内容丢失
     setEditorContent(printSchema({ type: 'schema', list: blocks }))
-  }, [dbSourceId])
+  }, [name])
 
   useEffect(() => {
     setTitleValue(currentEntity?.name || '')
@@ -276,7 +277,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       if (mode === 'editor') {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
-          `/prisma/migrate/${dbSourceId ?? ''}`,
+          `/prisma/migrate/${name ?? ''}`,
           {
             schema: currentEditorValue
           },
@@ -287,7 +288,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       } else {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
-          `/prisma/migrate/${dbSourceId ?? ''}`,
+          `/prisma/migrate/${name ?? ''}`,
           {
             schema: transferToEditor()
           },

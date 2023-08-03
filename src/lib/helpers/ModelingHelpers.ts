@@ -2,7 +2,7 @@ import { getSchema } from '@mrleebo/prisma-ast'
 import { message } from 'antd'
 import type { Dispatch } from 'react'
 
-import type { Block, DBSourceResp } from '@/interfaces/modeling'
+import type { Block } from '@/interfaces/modeling'
 import type { AnyAction } from '@/lib/actions/ActionTypes'
 import {
   createApolloClient,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/actions/PrismaSchemaActions'
 import { fetchPrismaDMF } from '@/lib/clients/fireBoomAPIOperator'
 import { MAGIC_DELETE_ENTITY_NAME } from '@/lib/constants/fireBoomConstants'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export const buildBlocks = (schemaContent: string) =>
   (getSchema(schemaContent).list || [])
@@ -23,15 +24,15 @@ export const buildBlocks = (schemaContent: string) =>
 
 // 每次进入页面或者切换数据源的时候执行
 export const initialPrismaSchema = (
-  dataSourceId: string,
+  dataSourceName: string,
   dispatch: Dispatch<AnyAction>,
-  selectedDataSource: DBSourceResp,
-  paramIdRef: React.MutableRefObject<string | undefined>
+  selectedDataSource: ApiDocuments.Datasource,
+  paramNameRef: React.MutableRefObject<string | undefined>
 ) => {
-  const currentId = paramIdRef.current
-  return fetchPrismaDMF(dataSourceId).then(({ enums, models, schemaContent }) => {
-    if (currentId !== paramIdRef.current) {
-      console.info('数据库id已改变，不再执行后续操作')
+  const currentId = paramNameRef.current
+  return fetchPrismaDMF(dataSourceName).then(({ enums, models, schemaContent }) => {
+    if (currentId !== paramNameRef.current) {
+      console.info('数据库name已改变，不再执行后续操作')
       return
     }
     dispatch(
@@ -41,8 +42,8 @@ export const initialPrismaSchema = (
 }
 
 // 每次完成数据迁移之后执行 refetch
-export const refetchPrismaSchema = (dataSourceId: string, dispatch: Dispatch<AnyAction>) =>
-  fetchPrismaDMF(dataSourceId).then(({ enums, models, schemaContent }) => {
+export const refetchPrismaSchema = (dataSourceName: string, dispatch: Dispatch<AnyAction>) =>
+  fetchPrismaDMF(dataSourceName).then(({ enums, models, schemaContent }) => {
     dispatch(refetchPrismaSchemaAction(buildBlocks(schemaContent), { models, enums }))
   })
 // 使用本地schema
@@ -55,26 +56,26 @@ export const applyLocalPrismaBlocks = (blocks: Block[], dispatch: Dispatch<AnyAc
 }
 
 export const fetchAndSaveToPrismaSchemaContext = (
-  dataSourceId: number,
+  dataSourceName: string,
   dispatch: React.Dispatch<AnyAction>,
-  dataSources: DBSourceResp[],
-  paramIdRef: React.MutableRefObject<string | undefined>
+  dataSources: ApiDocuments.Datasource[],
+  paramNameRef: React.MutableRefObject<string | undefined>
 ) => {
-  const currentId = paramIdRef.current
-  const selectedDataSource = dataSources.find(source => source.id === dataSourceId)
+  const currentName = paramNameRef.current
+  const selectedDataSource = dataSources.find(source => source.name === dataSourceName)
   if (!selectedDataSource) {
-    // void message.error(`切换数据源失败！无法找到数据源: id=${dataSourceId}`)
+    // void message.error(`切换数据源失败！无法找到数据源: id=${dataSourceName}`)
     return Promise.resolve()
   }
-  return initialPrismaSchema(String(dataSourceId), dispatch, selectedDataSource, paramIdRef)
+  return initialPrismaSchema(dataSourceName, dispatch, selectedDataSource, paramNameRef)
     .then(() => {
-      if (currentId !== paramIdRef.current) {
+      if (currentName !== paramNameRef.current) {
         console.info('数据库id已改变，不再执行后续操作')
         return
       }
       // 获取到schema之后，默认选中第一个model
       console.log('blocks', selectedDataSource)
-      dispatch(createApolloClient(dataSourceId))
+      dispatch(createApolloClient(dataSourceName))
     })
     .catch((err: Error) => {
       message.error(`Fetch prisma dmf & schema error: ${err.message}`)

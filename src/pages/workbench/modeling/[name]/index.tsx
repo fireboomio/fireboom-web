@@ -16,18 +16,19 @@ const Modeling = () => {
     panel: { showType, setShowType, dataSources }
   } = useContext(PrismaSchemaContext)
 
-  const { id: paramId } = useParams()
+  const { name } = useParams()
   useEffect(() => {
-    if (paramId && dataSources?.length) {
-      if (!dataSources.find((x: { id: number }) => x.id === Number(paramId))) {
+    if (name && dataSources?.length) {
+      if (!dataSources.find((x: { name: string }) => x.name === name)) {
         if (dataSources.length) {
-          navigate(`/workbench/modeling/${dataSources[0].id}`)
+          debugger
+          navigate(`/workbench/modeling/${dataSources[0].name}`)
         } else {
           navigate(`/workbench/modeling`)
         }
       }
     }
-  }, [dataSources, navigate, paramId])
+  }, [dataSources, navigate, name])
 
   if (!dataSources)
     return (

@@ -1,40 +1,40 @@
 import { FormOutlined } from '@ant-design/icons'
 import { Button, Select } from 'antd'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
-import type { DBSourceResp } from '@/interfaces/modeling'
 import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import refreshIcon from '../../assets/refresh.svg'
 import styles from './pannel.module.less'
 
 interface Props {
-  sourceOptions: DBSourceResp[]
-  onChangeSource: (value: number) => void
+  sourceOptions: ApiDocuments.Datasource[]
+  onChangeSource: (value: string) => void
 }
 
 const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
   const intl = useIntl()
   const { mutate } = useSWRConfig()
-  const { id } = useDBSource()
+  const currentDB = useDBSource()
   const navigate = useNavigate()
 
   // const { mutate } = useSWRConfig()
 
-  const { id: paramId } = useParams()
+  const { name } = useParams()
   const handleManageSourceClick = () => {
     navigate(MANAGE_DATASOURCE_URL)
   }
 
   useEffect(() => {
-    if (sourceOptions.length > 0 && !paramId) {
-      navigate(`/workbench/modeling/${sourceOptions[0].id}`)
+    if (sourceOptions.length > 0 && !name) {
+      navigate(`/workbench/modeling/${sourceOptions[0].name}`)
     }
-  }, [sourceOptions, paramId, navigate])
+  }, [sourceOptions, navigate, name])
 
   return (
     <div className={'common-form ' + styles['select-contain']}>
@@ -44,7 +44,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
           navigate(`/workbench/modeling/${v}`)
         }}
         optionLabelProp="label"
-        value={paramId && paramId !== '0' ? Number(paramId) : ''}
+        value={name}
         options={sourceOptions.map(x => {
           let svg = '/assets/icon/db-other.svg'
           switch (x.sourceType) {
@@ -102,7 +102,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
         className={styles.refreshBtn}
         onClick={() => {
           void mutate(DATABASE_SOURCE)
-          onChangeSource(id)
+          onChangeSource(name)
         }}
       >
         <img alt="刷新" src={refreshIcon} className="w-4 h-4" />

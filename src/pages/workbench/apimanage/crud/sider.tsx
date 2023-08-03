@@ -27,14 +27,14 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const intl = useIntl()
   // 刷新列表
   const dataSourceList = useDataSourceList()
-  const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
+  const [currentDataSourceName, setCurrentDataSourceName] = useState<string>()
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>([])
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
 
   const readyRef = useRef(false)
-  const currentId = useRef<number>()
+  const currentName = useRef<string>()
 
   const filterDataSourceList = useMemo(() => {
     return dataSourceList ? dataSourceList.filter(item => item.sourceType === 1) : dataSourceList
@@ -47,31 +47,31 @@ export default function CRUDSider(props: CRUDSiderProps) {
     if (filterDataSourceList.length === 0) {
       props.onEmpty()
     }
-    if (!filterDataSourceList.find(item => item.id === currentDataSourceId)) {
-      setCurrentDataSourceId(filterDataSourceList?.[0]?.id)
+    if (!filterDataSourceList.find(item => item.name === currentDataSourceName)) {
+      setCurrentDataSourceName(filterDataSourceList?.[0]?.id)
     }
-  }, [filterDataSourceList, currentDataSourceId])
+  }, [filterDataSourceList, currentDataSourceName])
   useEffect(() => {
     void loadModelList()
-  }, [currentDataSourceId])
+  }, [currentDataSourceName])
   async function loadModelList() {
-    if (!currentDataSourceId) {
+    if (!currentDataSourceName) {
       return
     }
-    currentId.current = currentDataSourceId
+    currentName.current = currentDataSourceName
     const hide = message.loading(intl.formatMessage({ defaultMessage: '正在加载模型列表' }))
     try {
       const nativeSDL = await requests.get<unknown, string>(
-        `/prisma/nativeSDL/${currentDataSourceId}`,
+        `/prisma/nativeSDL/${currentDataSourceName}`,
         {
           timeout: 15e3
         }
       )
       const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/prisma/dmf/${currentDataSourceId}`,
+        `/prisma/dmf/${currentDataSourceName}`,
         { timeout: 15e3 }
       )
-      if (currentId.current === currentDataSourceId) {
+      if (currentName.current === currentDataSourceName) {
         setDmf(nativeSDL)
         setModelList(res.models || [])
         setCurrentModel(res.models?.[0])
@@ -89,12 +89,12 @@ export default function CRUDSider(props: CRUDSiderProps) {
     }
     props.onSelectedModelChange(
       currentModel,
-      filterDataSourceList.find(item => item.id === currentDataSourceId)!,
+      filterDataSourceList.find(item => item.id === currentDataSourceName)!,
       modelList,
       relationMaps?.[currentModel.name]!,
       dmf
     )
-  }, [currentDataSourceId, currentModel, dmf, filterDataSourceList, modelList, relationMaps])
+  }, [currentDataSourceName, currentModel, dmf, filterDataSourceList, modelList, relationMaps])
 
   if (!filterDataSourceList) {
     return null
@@ -104,10 +104,10 @@ export default function CRUDSider(props: CRUDSiderProps) {
     <div className={'common-form ' + styles.sider}>
       <div className="flex w-full items-center">
         <Select
-          value={currentDataSourceId}
+          value={currentDataSourceName}
           onChange={value => {
             readyRef.current = false
-            setCurrentDataSourceId(value)
+            setCurrentDataSourceName(value)
           }}
           className="flex-1"
           options={filterDataSourceList.map(x => {

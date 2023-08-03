@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
+import type { Entity, ModelingShowTypeT } from '@/interfaces/modeling'
 import {
   updateCurrentEntityIdAction,
   updatePreviewFiltersAction
@@ -19,47 +19,46 @@ import {
 } from '@/lib/context/PrismaSchemaContext'
 import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers'
 import modelingReducer from '@/lib/reducers/ModelingReducers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
   const intl = useIntl()
   // 用来获取实时id参数，以避免数据源请求返回后，id参数已经变化
-  const paramIdRef = useRef<string>()
-  const { id: paramId } = useParams()
+  const paramNameRef = useRef<string>()
+  const { name: paramName } = useParams()
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
   const { newMap, delMap, editMap } = state
   const [showType, setShowType] = useImmer<ModelingShowTypeT>('preview')
   // 是否处于编辑状态，如果在编辑状态，则点击实体后不会切换到预览面板
   const [inEdit, setInEdit] = useImmer<boolean>(false)
-  const [dataSources, setDataSources] = useImmer<DBSourceResp[]>([])
+  const [dataSources, setDataSources] = useImmer<ApiDocuments.Datasource[]>([])
   const { data, error } = useSWRImmutable(DATABASE_SOURCE, fetchDBSources)
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
   const [syncEditorFlag, setSyncEditorFlag] = useImmer<boolean>(false)
   useEffect(() => {
-    setDataSources(data?.filter(ds => ds.sourceType === 1) ?? [])
+    setDataSources(data?.filter(ds => isDatabaseKind(ds)) ?? [])
   }, [data, setDataSources])
 
   const hideRef = useRef<() => void>()
   useEffect(() => {
-    paramIdRef.current = paramId
-    if (dataSources.length > 0 && paramId) {
+    paramNameRef.current = paramName
+    if (dataSources.length > 0 && paramName) {
       hideRef.current?.()
       const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
       hideRef.current = hide
-      fetchAndSaveToPrismaSchemaContext(
-        Number(paramId),
-        dispatch,
-        dataSources,
-        paramIdRef
-      )?.finally(() => {
-        hide()
-        // 更新数据源后强制刷新编辑器
-        setSyncEditorFlag(!syncEditorFlag)
-      })
+      fetchAndSaveToPrismaSchemaContext(paramName, dispatch, dataSources, paramNameRef)?.finally(
+        () => {
+          hide()
+          // 更新数据源后强制刷新编辑器
+          setSyncEditorFlag(!syncEditorFlag)
+        }
+      )
     }
     return () => {
       hideRef.current?.()
     }
-  }, [dataSources, paramId])
+  }, [dataSources, paramName])
   useEffect(() => {
     // 如果当前blocks有内容(表示数据源已经加载完成)，且blocks中没有model或enum，则自动切换到编辑模式
     if (state.blocks.length && !state.blocks.find(b => ['model', 'enum'].includes(b.type))) {
@@ -68,9 +67,9 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     }
   }, [state.blocks])
 
-  const handleChangeSource = (dbSourceId: number) => {
+  const handleChangeSource = (dbSourceName: string) => {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
-    fetchAndSaveToPrismaSchemaContext(dbSourceId, dispatch, dataSources, paramIdRef)?.finally(
+    fetchAndSaveToPrismaSchemaContext(dbSourceName, dispatch, dataSources, paramNameRef)?.finally(
       () => {
         setSyncEditorFlag(!syncEditorFlag)
         hide()

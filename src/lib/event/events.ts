@@ -25,7 +25,7 @@ type TitleChangeEvent = {
 }
 type ApiEnableChangeEvent = {
   event: 'apiEnableChange'
-  data: { ids: number[]; enabled: boolean }
+  data: { pathList: string[]; enabled: boolean }
 }
 type CompileFinishEvent = {
   event: 'compileFinish'

@@ -97,7 +97,7 @@ export default function Sider() {
             addNewModel={() => setShowType('newModel')}
             addNewEnum={() => setShowType('newEnum')}
             sourceOptions={dataSources}
-            onChangeSource={dbSourceId => handleChangeSource(dbSourceId)}
+            onChangeSource={dbSourceName => handleChangeSource(dbSourceName)}
             onClickEntity={handleClickEntity}
             onToggleDesigner={handleToggleDesigner}
           />
