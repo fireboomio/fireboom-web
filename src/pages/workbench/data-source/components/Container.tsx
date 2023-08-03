@@ -64,7 +64,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
       icon = '/assets/icon/mysql.svg'
       break
     case DataSourceKind.PostgreSQL:
-      icon = '/assets/icon/pg.svg'
+      icon = '/assets/icon/pgsql.svg'
       break
     case DataSourceKind.SQLite:
       icon = '/assets/icon/sqlite.svg'

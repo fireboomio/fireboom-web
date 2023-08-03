@@ -26,7 +26,7 @@ interface Props {
   version?: string
   startTime?: string
   engineStatus?: ServiceStatus
-  hookStatus?: HookStatus
+  hookStatus?: boolean
   menuWidth: number
   toggleWindow: (defaultTa: string) => void
 }
@@ -51,22 +51,21 @@ const StatusBar: React.FC<Props> = ({
   const statusMap = useMemo(
     () => ({
       [ServiceStatus.Building]: intl.formatMessage({ defaultMessage: '编译中' }),
+      [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
+      [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
       [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
       [ServiceStatus.Started]: intl.formatMessage({ defaultMessage: '已启动' }),
-      [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' }),
-      [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
-      [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
-      [ServiceStatus.NotStarted]: intl.formatMessage({ defaultMessage: '未启动' })
+      [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' })
     }),
     [intl]
   )
-  const hookStatusMap = useMemo(
-    () => ({
-      [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-      [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
-    }),
-    [intl]
-  )
+  // const hookStatusMap = useMemo(
+  //   () => ({
+  //     [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+  //     [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
+  //   }),
+  //   [intl]
+  // )
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{
@@ -206,39 +205,42 @@ const StatusBar: React.FC<Props> = ({
             <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel + ' ml-1'}>
-            {engineStatus === ServiceStatus.NotStarted ? (
-              <>
-                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-                <Tooltip
-                  open={true}
-                  title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
-                >
-                  <span className="ml-1 text-[#cd3021]">
-                    {statusMap[engineStatus as ServiceStatus] ?? ''}
-                  </span>
-                </Tooltip>
-              </>
-            ) : engineStatus === ServiceStatus.BuildFailed ||
+            {
+              // engineStatus === ServiceStatus.NotStarted ? (
+              //   <>
+              //     <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+              //     <Tooltip
+              //       open={true}
+              //       title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
+              //     >
+              //       <span className="ml-1 text-[#cd3021]">
+              //         {statusMap[engineStatus as ServiceStatus] ?? ''}
+              //       </span>
+              //     </Tooltip>
+              //   </>
+              // ) :
+              engineStatus === ServiceStatus.BuildFailed ||
               engineStatus === ServiceStatus.StartFailed ? (
-              <>
-                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-                <Tooltip
-                  open={true}
-                  title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
-                >
-                  <span className="ml-1 text-[#cd3021]">
+                <>
+                  <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+                  <Tooltip
+                    open={true}
+                    title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
+                  >
+                    <span className="ml-1 text-[#cd3021]">
+                      {statusMap[engineStatus as ServiceStatus] ?? ''}
+                    </span>
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
+                  <span className="ml-1 text-[#50C772]">
                     {statusMap[engineStatus as ServiceStatus] ?? ''}
                   </span>
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
-                <span className="ml-1 text-[#50C772]">
-                  {statusMap[engineStatus as ServiceStatus] ?? ''}
-                </span>
-              </>
-            )}
+                </>
+              )
+            }
           </span>
           <span className="ml-3">
             {' '}
@@ -256,22 +258,18 @@ const StatusBar: React.FC<Props> = ({
             >
               <div
                 className={
-                  'rounded-3px h-3px w-3px' +
-                  (hookStatus === HookStatus.Running ? ' bg-[#50C772]' : ' bg-[#f0b763]')
+                  'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
                 }
               />
-              <span
-                className={
-                  'ml-1 ' +
-                  (hookStatus === HookStatus.Running ? 'text-[#50C772]' : 'text-[#f0b763]')
-                }
-              >
-                {hookStatusMap[hookStatus as HookStatus] ?? ''}
+              <span className={'ml-1 ' + (hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]')}>
+                {hookStatus
+                  ? intl.formatMessage({ defaultMessage: '已启动' })
+                  : intl.formatMessage({ defaultMessage: '未启动' })}
               </span>
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {
-                  sendMessageToSocket({ channel: 'engine', event: 'getHookStatus' })
+                  sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
                   e.stopPropagation()
                 }}
               >
@@ -332,7 +330,7 @@ const StatusBar: React.FC<Props> = ({
                     value={hookEnabled}
                   >
                     <Space direction="vertical">
-                      <Radio value={1}>
+                      {/* <Radio value={1}>
                         WebContainer
                         {hookOptionStatus?.webContainer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
@@ -344,7 +342,7 @@ const StatusBar: React.FC<Props> = ({
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>
                         )}
-                      </Radio>
+                      </Radio> */}
                       <Radio value={3}>
                         <FormattedMessage defaultMessage="手动设置" />
                         {hookOptionStatus?.customer === HookStatus.Running && (

@@ -47,9 +47,10 @@ export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
-    engineStatus: ServiceStatus.NotStarted,
-    hookStatus: HookStatus.Stopped,
-    startTime: '',
+    engineStatus: ServiceStatus.Starting,
+    hookStatus: false,
+    globalStartTime: '',
+    engineStartTime: '',
     fbVersion: '--',
     fbCommit: '--'
   })
@@ -75,7 +76,7 @@ export default function Index(props: PropsWithChildren) {
     dataSource: false,
     storage: false
   })
-  const { setLogs, logs, setQuestions } = useGlobal(state => ({
+  const { setLogs, logs, questions, setQuestions } = useGlobal(state => ({
     logs: state.logs,
     setLogs: state.setLogs,
     questions: state.questions,
@@ -88,43 +89,44 @@ export default function Index(props: PropsWithChildren) {
   useEffect(() => {
     initWebSocket(authKey ?? '')
   }, [authKey])
-  useWebSocket('engine', 'getEngineInfo', data => {
+  useWebSocket('engine', 'pull', (data: Info) => {
     setInfo(data)
+    ;(window as any).globalStartTime = data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'pushEngineStatus', data => {
-    setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
+  useWebSocket('engine', 'push', (data: Info) => {
+    setInfo({ ...info, engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'getHookStatus', data => {
+  useWebSocket('engine', 'hookStatus', data => {
     message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
   useWebSocket('engine', 'pushHookStatus', data => {
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
-  useWebSocket('log', 'getLogs', data => {
+  useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
   })
-  useWebSocket('log', 'appendLog', data => {
+  useWebSocket('log', 'push', data => {
     setLogs(logs.concat(parseLogs(data)))
   })
-  useWebSocket('question', 'getQuestions', data => {
+  useWebSocket('question', 'pull', data => {
     setQuestions(data?.questions || [])
   })
   useWebSocket('question', 'push', data => {
-    setQuestions(data.questions)
+    setQuestions([questions, ...data.questions])
   })
   useEffect(() => {
-    sendMessageToSocket({ channel: 'engine', event: 'getEngineInfo' })
-    sendMessageToSocket({ channel: 'log', event: 'getLogs' })
-    sendMessageToSocket({ channel: 'question', event: 'getQuestions' })
+    sendMessageToSocket({ channel: 'engine', event: 'pull' })
+    sendMessageToSocket({ channel: 'log', event: 'pull' })
+    sendMessageToSocket({ channel: 'question', event: 'pull' })
   }, [])
 
   useEffect(() => {
@@ -238,7 +240,7 @@ export default function Index(props: PropsWithChildren) {
           <StatusBar
             version={info?.fbVersion}
             commit={info?.fbCommit}
-            startTime={info?.startTime}
+            startTime={info?.engineStartTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
             menuWidth={fullScreen ? 0 : MENU_WIDTH}
@@ -257,7 +259,7 @@ export default function Index(props: PropsWithChildren) {
   const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const language = data?.language
   const isHookServerSelected = useMemo(
-    () => language && sdk?.some(item => item.type === 'server'),
+    () => (!!language && sdk?.some(item => item.type === 'server')) ?? false,
     [language, sdk]
   )
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
@@ -284,7 +286,7 @@ export default function Index(props: PropsWithChildren) {
           }
         }
         setLoading('钩子模板创建中，请稍候')
-        const code = await resolveDefaultCode(path, hasParam, language)
+        const code = await resolveDefaultCode(path, hasParam, language!)
         await saveHookScript(path, code)
         return true
       } else {

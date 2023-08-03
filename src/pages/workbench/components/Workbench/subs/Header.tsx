@@ -93,7 +93,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
       return
     }
     void requests
-      .get('/engine/reStart')
+      .get('/engine/restart')
       .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译' })))
   }
 

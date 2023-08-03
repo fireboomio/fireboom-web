@@ -117,7 +117,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
                 svg =
                   {
                     mysql: '/assets/icon/mysql.svg',
-                    pgsql: '/assets/icon/pg.svg',
+                    pgsql: '/assets/icon/pgsql.svg',
                     graphql: '/assets/icon/graphql.svg',
                     mongodb: '/assets/icon/mongodb.svg',
                     rest: '/assets/icon/rest.svg',

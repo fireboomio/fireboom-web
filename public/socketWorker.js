@@ -13,7 +13,7 @@ if (location.protocol === 'https:') {
 } else {
   wsUrl.protocol = 'ws:'
 }
-wsUrl.pathname = '/api/ws'
+wsUrl.pathname = '/ws'
 // if(wsUrl.port === '3000') {
 //   wsUrl.port = '9123'
 // }
