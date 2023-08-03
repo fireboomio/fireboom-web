@@ -60,7 +60,8 @@ export default defineConfig({
       '^/health': backendUrl,
       '^/api': {
         target: backendUrl,
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true,
       },
       '^/d': {
         target: backendUrl,

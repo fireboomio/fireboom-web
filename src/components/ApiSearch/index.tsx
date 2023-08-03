@@ -82,7 +82,7 @@ export default function ApiSearch() {
           return false
         }
         // tab过滤
-        if (!api.operationType.includes(activeTab)) {
+        if (!api.operationType?.includes(activeTab)) {
           return false
         }
         // 模糊搜索匹配

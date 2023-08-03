@@ -82,20 +82,20 @@ export default function Index(props: PropsWithChildren) {
     setQuestions: state.setQuestions
   }))
 
-  // const authKey = getAuthKey()
+  const authKey = getAuthKey()
   // authkey变化时启动socket
   // FIXME 这段代码运行会导致vite直接报错退出
-  // useEffect(() => {
-  //   initWebSocket(authKey ?? '')
-  // }, [authKey])
-  useWebSocket('engine', 'getStatus', data => {
+  useEffect(() => {
+    initWebSocket(authKey ?? '')
+  }, [authKey])
+  useWebSocket('engine', 'getEngineInfo', data => {
     setInfo(data)
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'pushStatus', data => {
+  useWebSocket('engine', 'pushEngineStatus', data => {
     setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
@@ -118,11 +118,11 @@ export default function Index(props: PropsWithChildren) {
   useWebSocket('question', 'getQuestions', data => {
     setQuestions(data?.questions || [])
   })
-  useWebSocket('question', 'setQuestions', data => {
+  useWebSocket('question', 'push', data => {
     setQuestions(data.questions)
   })
   useEffect(() => {
-    sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
+    sendMessageToSocket({ channel: 'engine', event: 'getEngineInfo' })
     sendMessageToSocket({ channel: 'log', event: 'getLogs' })
     sendMessageToSocket({ channel: 'question', event: 'getQuestions' })
   }, [])
