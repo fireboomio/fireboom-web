@@ -13,7 +13,9 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 
-export interface FileTreeNode {
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
+export interface FileTreeNode extends ApiDocuments.fileloader_DataTree {
   parent?: FileTreeNode
   key: string
   name: string
@@ -58,7 +60,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean, forceRoot?: boolean) => void
+  addItem: (isDir: boolean, forceRoot: boolean) => void
   editItem: (key: string) => void
 }
 

@@ -15,41 +15,16 @@ import { mutateApi } from '@/hooks/store/api'
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import { parseSchemaAST } from './components/GraphiQL/utils'
 
 const DEFAULT_QUERY = `# Generate operation by click graphql schema on the left panel`
 
-export interface APIDesc {
-  // content: string
-  enabled: boolean
-  id: number
-  isDir: boolean
-  isPublic: boolean
-  illegal: boolean
-  method: string
-  operationType: string
-  path: string
-  remark: string
-  createTime: string
-  updateTime: string
-  restUrl: string
-  liveQuery: boolean
-  setting: {
-    enabled: boolean
-    authenticationRequired: boolean
-    cachingEnabled: boolean
-    cachingMaxAge: number
-    cachingStaleWhileRevalidate: number
-    liveQueryEnabled: boolean
-    liveQueryPollingIntervalSeconds: number
-  }
-}
-
 export interface APIState {
-  apiID: string
-  setID: (id: string) => Promise<void>
-  apiDesc?: APIDesc
+  apiPath: string
+  setAPIPath: (path: string) => Promise<void>
+  apiDesc?: ApiDocuments.Operation
   originSchema: IntrospectionQuery | undefined
   schema: GraphQLSchema | undefined
   schemaTypeMap: Record<string, IntrospectionType>
@@ -65,15 +40,14 @@ export interface APIState {
     operationType: Readonly<OperationTypeNode | undefined>
     saved: boolean
   }
-  pureUpdateAPI: (newAPI: Partial<APIDesc>) => void
+  pureUpdateAPI: (newAPI: Partial<ApiDocuments.Operation>) => void
 
   changeEnable: (enabled: boolean) => void
   autoSave: () => boolean | Promise<boolean>
-  updateAPI: (newAPI: Partial<APIDesc>) => Promise<void>
+  updateAPI: (newAPI: Partial<ApiDocuments.Operation>) => Promise<void>
   updateAPIName: (path: string) => Promise<void>
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
   refreshAPI: (keepCurrentQuery?: boolean) => void
-  refreshAPISetting: () => void
   refreshSchema: () => void
   appendToAPIRefresh: (fn: () => void) => void
   dispendToAPIRefresh: (fn: () => void) => void
@@ -108,9 +82,9 @@ export const useAPIManager = create<APIState>((set, get) => ({
   query: DEFAULT_QUERY,
   editorQuery: DEFAULT_QUERY,
   lastSavedQuery: undefined,
-  apiID: '',
-  setID: async (id: string) => {
-    set({ apiID: id })
+  apiPath: '',
+  setAPIPath: async (path: string) => {
+    set({ apiPath: path })
     await get().refreshAPI(false)
     refreshFns.forEach(fn => fn())
   },
@@ -178,34 +152,36 @@ export const useAPIManager = create<APIState>((set, get) => ({
   saveSubscriptionController: (controller: AbortController) => {
     set({ subscriptionController: controller })
   },
-  pureUpdateAPI: (newAPI: Partial<APIDesc>) => {
+  pureUpdateAPI: (newAPI: Partial<ApiDocuments.Operation>) => {
     // @ts-ignore
     set(state => ({ apiDesc: { ...state.apiDesc, ...newAPI } }))
   },
-  updateAPI: (newAPI: Partial<APIDesc>) => {
-    return requests.put(`/operation/${get().apiID}`, newAPI).then(resp => {
+  updateAPI: (newAPI: Partial<ApiDocuments.Operation>) => {
+    return requests.put(`/operation/${get().apiPath}`, newAPI).then(resp => {
       get().pureUpdateAPI(newAPI)
       // 刷新api列表
       void mutateApi()
     })
   },
   changeEnable: (enabled: boolean) => {
-    return requests.put(`/operation/switch/${get().apiID}`, { enabled }).then(resp => {
+    return requests.put(`/operation/switch/${get().apiPath}`, { enabled }).then(resp => {
       get().pureUpdateAPI({ enabled })
       // 刷新api列表
       void mutateApi()
     })
   },
   updateAPIName: path => {
-    return requests.put(`/operation/rename/${get().apiID}`, { path }).then(resp => {
-      get().pureUpdateAPI({
-        path,
-        restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
+    return requests
+      .post(`/operation/rename`, { src: get().apiPath, dst: path, overload: false })
+      .then(resp => {
+        get().pureUpdateAPI({
+          path,
+          restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
+        })
+        // 刷新api列表
+        void mutateApi()
+        void mutate(`/operation/${get().apiPath}`)
       })
-      // 刷新api列表
-      void mutateApi()
-      void mutate(`/operation/hooks/${get().apiID}`)
-    })
   },
   updateContent: (content: string, showMessage = true) => {
     const schemaAST = get().schemaAST
@@ -222,7 +198,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       }
       return false
     }
-    return requests.put(`/operation/content/${get().apiID}`, { content }).then(async resp => {
+    return requests.post(`/operationGraphql/${get().apiPath}`, { content }).then(async resp => {
       if (resp) {
         const query = content ?? ''
         // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
@@ -233,7 +209,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // 内容变更可能需要刷新api列表
         void mutateApi()
         // await new Promise(resolve => setTimeout(resolve, 5000))
-        requests.get(`/operation/${get().apiID}`).then(api => {
+        requests.get(`/operation/${get().apiPath}`).then(api => {
           // @ts-ignore
           set({ apiDesc: { ...api, setting: get().apiDesc?.setting } })
         })
@@ -254,14 +230,10 @@ export const useAPIManager = create<APIState>((set, get) => ({
    * @param keepCurrentQuery 是否保持编辑器内容不变，默认为true
    */
   refreshAPI: async (keepCurrentQuery = true) => {
-    const id = get().apiID
+    const path = get().apiPath
     try {
-      const [api, setting] = await Promise.all([
-        requests.get(`/operation/${id}`),
-        requests.get(`/operation/setting/${id}`, { params: { settingType: 1 } })
-      ])
-      // @ts-ignore
-      set({ apiDesc: { ...api, setting } })
+      const apiDesc = await requests.get<any, ApiDocuments.Operation>(`/operation/${path}`)
+      set({ apiDesc })
 
       // 如果不需要保留query，则更新编辑器内容
       if (!keepCurrentQuery) {
@@ -275,12 +247,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // 接口请求错误就刷新api列表
       void mutateApi()
     }
-  },
-  refreshAPISetting: async () => {
-    const id = get().apiID
-    const setting = await requests.get(`/operation/setting/${id}`, { params: { settingType: 1 } })
-    // @ts-ignore
-    set({ apiDesc: { ...get().apiDesc, setting } })
   },
   refreshSchema: async () => {
     await engineStartPromise

@@ -16,26 +16,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'authentication@post@/authentication'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Authentication
-  ) {
+  'authentication@post@/authentication'(args: ApiDocuments.Authentication) {
     return requestAdapter<any>({
       url: replacePath('/authentication', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'authentication@put@/authentication'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -45,7 +34,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/authentication', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'authentication@/authentication/batch'(args: {
@@ -53,37 +42,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/authentication/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'authentication@post@/authentication/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.AuthenticationArray
-  ) {
+  'authentication@post@/authentication/batch'(args: ApiDocuments.AuthenticationArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/authentication/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'authentication@put@/authentication/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -93,7 +67,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/authentication/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'authentication@/authentication/copy'(args: ApiDocuments.fileloader_DataMutation) {
@@ -103,23 +77,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'authentication@/authentication/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'authentication@/authentication/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/authentication/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'authentication@/authentication/export'(args: {
@@ -179,23 +146,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'authentication@/authentication/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'authentication@/authentication/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/authentication/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'authentication@get@/authentication/{dataName}'(args: {
@@ -222,26 +182,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'datasource@post@/datasource'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Datasource
-  ) {
+  'datasource@post@/datasource'(args: ApiDocuments.Datasource) {
     return requestAdapter<any>({
       url: replacePath('/datasource', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'datasource@put@/datasource'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -251,7 +200,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/datasource', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'datasource@/datasource/batch'(args: {
@@ -259,37 +208,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/datasource/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'datasource@post@/datasource/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.DatasourceArray
-  ) {
+  'datasource@post@/datasource/batch'(args: ApiDocuments.DatasourceArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/datasource/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'datasource@put@/datasource/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -299,10 +233,10 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/datasource/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
-  'datasource@/datasource/checkConnection'(args: ApiDocuments.models_Datasource) {
+  'datasource@/datasource/checkConnection'(args: ApiDocuments.Datasource) {
     return requestAdapter<any>({
       url: replacePath('/datasource/checkConnection', args),
       method: 'POST',
@@ -316,23 +250,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'datasource@/datasource/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'datasource@/datasource/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/datasource/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'datasource@/datasource/export'(args: {
@@ -392,23 +319,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'datasource@/datasource/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'datasource@/datasource/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/datasource/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'datasource@get@/datasource/{dataName}'(args: {
@@ -423,6 +343,37 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
+  'datasource@/datasource/{dataName}/dmmf'(args: {
+    /**
+     * @description model名称
+     */
+    dataName: string
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/datasource/{dataName}/dmmf', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'datasource@/datasource/{dataName}/sdl'(args: {
+    /**
+     * @description model名称
+     */
+    dataName: string
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/datasource/{dataName}/sdl', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'engine@/engine/restart'(args?: any) {
+    return requestAdapter<any>({
+      url: replacePath('/engine/restart', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
   'engine@/engine/swagger'(args?: any) {
     return requestAdapter<File>({
       url: replacePath('/engine/swagger', args),
@@ -433,10 +384,6 @@ export const services = {
   'env@/env'(
     args: {
       /**
-       * @description 操作人
-       */
-      user: string
-      /**
        * @description 操作名称[监听子属性使用]
        */
       watchAction?: string
@@ -445,7 +392,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/env', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'env@/env/single'(args?: any) {
@@ -465,10 +412,6 @@ export const services = {
   'globalOperation@/globalOperation'(
     args: {
       /**
-       * @description 操作人
-       */
-      user: string
-      /**
        * @description 操作名称[监听子属性使用]
        */
       watchAction?: string
@@ -477,7 +420,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/globalOperation', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'globalOperation@/globalOperation/single'(args?: any) {
@@ -497,10 +440,6 @@ export const services = {
   'globalSetting@/globalSetting'(
     args: {
       /**
-       * @description 操作人
-       */
-      user: string
-      /**
        * @description 操作名称[监听子属性使用]
        */
       watchAction?: string
@@ -509,7 +448,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/globalSetting', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'globalSetting@/globalSetting/single'(args?: any) {
@@ -545,26 +484,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'operation@post@/operation'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Operation
-  ) {
+  'operation@post@/operation'(args: ApiDocuments.Operation) {
     return requestAdapter<any>({
       url: replacePath('/operation', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'operation@put@/operation'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -574,7 +502,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/operation', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'operation@/operation/batch'(args: {
@@ -582,37 +510,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/operation/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'operation@post@/operation/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.OperationArray
-  ) {
+  'operation@post@/operation/batch'(args: ApiDocuments.OperationArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/operation/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'operation@put@/operation/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -622,7 +535,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/operation/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'operation@/operation/bindRoles'(args: ApiDocuments.handler_paramBindRole) {
@@ -639,23 +552,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'operation@/operation/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'operation@/operation/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/operation/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'operation@/operation/export'(args: {
@@ -734,23 +640,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'operation@/operation/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'operation@/operation/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/operation/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'operation@get@/operation/{dataName}'(args: {
@@ -771,10 +670,24 @@ export const services = {
      */
     dataName: string
   }) {
-    return requestAdapter<any>({
+    return requestAdapter<string>({
       url: replacePath('/operationGraphql/{dataName}', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'operation@post@/operationGraphql/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & string
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/operationGraphql/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
     })
   },
   'operation@/operationHook/{dataName}'(args: {
@@ -801,26 +714,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'role@post@/role'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Role
-  ) {
+  'role@post@/role'(args: ApiDocuments.Role) {
     return requestAdapter<any>({
       url: replacePath('/role', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'role@put@/role'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -830,7 +732,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/role', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'role@/role/batch'(args: {
@@ -838,37 +740,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/role/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'role@post@/role/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.RoleArray
-  ) {
+  'role@post@/role/batch'(args: ApiDocuments.RoleArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/role/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'role@put@/role/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -878,7 +765,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/role/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'role@/role/copy'(args: ApiDocuments.fileloader_DataMutation) {
@@ -888,23 +775,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'role@/role/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'role@/role/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/role/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'role@/role/export'(args: {
@@ -964,23 +844,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'role@/role/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'role@/role/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/role/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'role@get@/role/{dataName}'(args: {
@@ -1007,26 +880,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'sdk@post@/sdk'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Sdk
-  ) {
+  'sdk@post@/sdk'(args: ApiDocuments.Sdk) {
     return requestAdapter<any>({
       url: replacePath('/sdk', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'sdk@put@/sdk'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -1036,7 +898,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/sdk', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'sdk@/sdk/batch'(args: {
@@ -1044,37 +906,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/sdk/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'sdk@post@/sdk/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.SdkArray
-  ) {
+  'sdk@post@/sdk/batch'(args: ApiDocuments.SdkArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/sdk/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'sdk@put@/sdk/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -1084,7 +931,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/sdk/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'sdk@/sdk/copy'(args: ApiDocuments.fileloader_DataMutation) {
@@ -1094,23 +941,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'sdk@/sdk/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'sdk@/sdk/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/sdk/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'sdk@/sdk/enabledServer'(args?: any) {
@@ -1177,23 +1017,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'sdk@/sdk/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'sdk@/sdk/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/sdk/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'sdk@get@/sdk/{dataName}'(args: {
@@ -1220,26 +1053,15 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'storage@post@/storage'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.Storage
-  ) {
+  'storage@post@/storage'(args: ApiDocuments.Storage) {
     return requestAdapter<any>({
       url: replacePath('/storage', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'storage@put@/storage'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -1249,7 +1071,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/storage', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'storage@/storage/batch'(args: {
@@ -1257,37 +1079,22 @@ export const services = {
      * @description 数据名称
      */
     dataNames: string[]
-    /**
-     * @description 操作人
-     */
-    user: string
   }) {
     return requestAdapter<any>({
       url: replacePath('/storage/batch', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['dataNames', 'user'], [])
+      ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'storage@post@/storage/batch'(
-    args: {
-      /**
-       * @description 操作人
-       */
-      user: string
-    } & ApiDocuments.StorageArray
-  ) {
+  'storage@post@/storage/batch'(args: ApiDocuments.StorageArray) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/storage/batch', args),
       method: 'POST',
-      ...extract('POST', args, ['user'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'storage@put@/storage/batch'(
     args: {
-      /**
-       * @description 操作人
-       */
-      user: string
       /**
        * @description 操作名称[监听子属性使用]
        */
@@ -1297,7 +1104,7 @@ export const services = {
     return requestAdapter<any>({
       url: replacePath('/storage/batch', args),
       method: 'PUT',
-      ...extract('PUT', args, ['user', 'watchAction'], [])
+      ...extract('PUT', args, ['watchAction'], [])
     })
   },
   'storage@/storage/copy'(args: ApiDocuments.fileloader_DataMutation) {
@@ -1307,23 +1114,16 @@ export const services = {
       ...extract('POST', args, [], [])
     })
   },
-  'storage@/storage/deleteParent/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'storage@/storage/deleteParent/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/storage/deleteParent/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'storage@/storage/export'(args: {
@@ -1383,23 +1183,16 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'storage@/storage/{dataName}'(
-    args: {
-      /**
-       * @description 数据名称
-       */
-      dataName: string
-    } & {
-      /**
-       * @description 操作人
-       */
-      user: string
-    }
-  ) {
+  'storage@/storage/{dataName}'(args: {
+    /**
+     * @description 数据名称
+     */
+    dataName: string
+  }) {
     return requestAdapter<any>({
       url: replacePath('/storage/{dataName}', args),
       method: 'DELETE',
-      ...extract('DELETE', args, ['user'], ['dataName'])
+      ...extract('DELETE', args, [], ['dataName'])
     })
   },
   'storage@get@/storage/{dataName}'(args: {
@@ -1549,44 +1342,11 @@ export const services = {
       ...extract('POST', args, ['dirname'], ['dataName'])
     })
   },
-  'system@/system/download'(args: {
-    /**
-     * @description filename
-     */
-    filename: string
-  }) {
-    return requestAdapter<File>({
-      url: replacePath('/system/download', args),
+  'system@/system/directories'(args?: any) {
+    return requestAdapter<{}>({
+      url: replacePath('/system/directories', args),
       method: 'GET',
-      ...extract('GET', args, ['filename'], [])
-    })
-  },
-  'system@/system/filelist'(args: {
-    /**
-     * @description dirname
-     */
-    dirname: string
-  }) {
-    return requestAdapter<string[]>({
-      url: replacePath('/system/filelist', args),
-      method: 'GET',
-      ...extract('GET', args, ['dirname'], [])
-    })
-  },
-  'system@/system/log'(args: {
-    /**
-     * @description take
-     */
-    take?: number
-    /**
-     * @description skip
-     */
-    skip?: number
-  }) {
-    return requestAdapter<string>({
-      url: replacePath('/system/log', args),
-      method: 'GET',
-      ...extract('GET', args, ['take', 'skip'], [])
+      ...extract('GET', args, [], [])
     })
   },
   'system@/system/proxy'(args: {
@@ -1622,7 +1382,7 @@ export const services = {
       ...extract('DELETE', args, [], [])
     })
   },
-  'vscode@/vscode/readDirectory'(args: ApiDocuments.postVscodeCreatedirectory) {
+  'vscode@/vscode/readDirectory'(args?: any) {
     return requestAdapter<ApiDocuments.vscode_FileStat[]>({
       url: replacePath('/vscode/readDirectory', args),
       method: 'GET',

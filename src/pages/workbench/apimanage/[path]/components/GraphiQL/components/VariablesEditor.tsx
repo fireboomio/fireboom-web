@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useDebounceEffect } from '@/hooks/debounce'
 import { makeSuggest } from '@/lib/helpers/utils'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
 // import testData from './testdata'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })

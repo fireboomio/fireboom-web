@@ -4,7 +4,7 @@ import { MessageOutlined } from '@ant-design/icons'
 import { App as AntApp, ConfigProvider, FloatButton } from 'antd'
 import enUS from 'antd/locale/en_US'
 import zhCN from 'antd/locale/zh_CN'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useLocation, useRoutes } from 'react-router-dom'
 
 import routes from '~react-pages'
@@ -12,6 +12,7 @@ import routes from '~react-pages'
 // import Layout from './components/layout'
 // import Workbench from './components/workbench'
 import ApiSearch from './components/ApiSearch'
+import { useDict } from './providers/dict'
 import { useAppIntl } from './providers/IntlProvider'
 import { primaryColor } from './styles'
 
@@ -19,6 +20,7 @@ export default function App() {
   const { locale } = useAppIntl()
   const location = useLocation()
   const isRApiPage = location.pathname === '/rapi-frame'
+
   return (
     <ConfigProvider
       locale={{ 'zh-CN': zhCN, en: enUS }[locale]}

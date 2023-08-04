@@ -13,5 +13,5 @@ export function useApiList() {
 }
 
 export function mutateApi() {
-  return mutate('/operation')
+  return mutate('/operation/tree')
 }

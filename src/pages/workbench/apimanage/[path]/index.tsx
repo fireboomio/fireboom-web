@@ -45,7 +45,7 @@ async function fetchSubscription(rec: Record<string, unknown>, controller: Abort
       }
 
       // 处理响应流
-      const reader = response.body.getReader()
+      const reader = response.body!.getReader()
       const decoder = new TextDecoder()
 
       // 递归处理数据
@@ -103,14 +103,12 @@ export default function APIEditorContainer() {
     editorQuery,
     schema,
     setQuery,
-    refreshAPISetting,
     refreshSchema,
-    setID,
+    setAPIPath,
     pureUpdateAPI,
     setWorkbenchContext,
     saved,
     autoSave,
-    operationType,
     saveSubscriptionController
   } = useAPIManager(state => ({
     engineStartCallback: state.engineStartCallback,
@@ -119,14 +117,12 @@ export default function APIEditorContainer() {
     schemaAST: state.schemaAST,
     schema: state.schema,
     setQuery: state.setQuery,
-    refreshAPISetting: state.refreshAPISetting,
     refreshSchema: state.refreshSchema,
-    setID: state.setID,
+    setAPIPath: state.setAPIPath,
     pureUpdateAPI: state.pureUpdateAPI,
     setWorkbenchContext: state.setWorkbenchContext,
     saved: state.computed.saved,
     autoSave: state.autoSave,
-    operationType: state.computed.operationType,
     saveSubscriptionController: state.saveSubscriptionController
   }))
   const editingContent = useRef(query)
@@ -208,7 +204,7 @@ export default function APIEditorContainer() {
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
-    void mutate(`/operation/hooks/${params.id}`)
+    void mutate(`/operation/${params.path}`)
   })
   useEventBus('apiEnableChange', ({ data }) => {
     if (data.pathList.includes(params.path!)) {
@@ -236,10 +232,10 @@ export default function APIEditorContainer() {
   }, [autoSave, saved])
 
   useEffect(() => {
-    setID(params.id!).then(() => {
+    setAPIPath(params.path!).then(() => {
       explorerRef.current?.manualExpand()
     })
-  }, [params.id, setID])
+  }, [params.path, setAPIPath])
 
   useEffect(() => {
     setWorkbenchContext(workbenchCtx)

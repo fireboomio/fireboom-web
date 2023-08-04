@@ -6,7 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
 
 import styles from './index.module.less'
 

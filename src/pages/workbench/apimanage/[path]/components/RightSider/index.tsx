@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
 import { intl } from '@/providers/IntlProvider'
 
 import APIFlowChart from '../APIFlowChart'

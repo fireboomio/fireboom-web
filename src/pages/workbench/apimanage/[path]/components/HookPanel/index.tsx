@@ -6,8 +6,8 @@ import useSWRImmutable from 'swr/immutable'
 
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-import EditPanel from '@/pages/workbench/apimanage/[id]/components/APIFlowChart/EditPanel'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import EditPanel from '@/pages/workbench/apimanage/[path]/components/APIFlowChart/EditPanel'
+import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
 
 import StatusDirective from '../APIFlowChart/StatusDirective'
 

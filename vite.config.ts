@@ -58,6 +58,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '^/health': backendUrl,
+      '^/app': backendUrl,
       '^/api': {
         target: backendUrl,
         changeOrigin: true,

@@ -1,17 +1,18 @@
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
+import type { FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
+import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
@@ -24,7 +25,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
-  const [treeData, setTreeData] = useState<FileTreeNode[]>()
+  const params = useParams()
+  const [treeData, setTreeData] = useState<ApiDocuments.fileloader_DataTree[]>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [selectedKey, setSelectedKey] = useState<string>('')
@@ -36,6 +38,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     computed: { saved },
     autoSave
   } = useAPIManager()
+  const { operation: operationStorePath } = useDict()
 
   // 快捷键
   useEffect(() => {
@@ -51,15 +54,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [navigate])
 
-  const pathId = useMemo(() => {
-    return Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
-  }, [location.pathname])
-
   // 监听location变化，及时清空选中状态
   useEffect(() => {
     // 尝试自动选中当前项
-    if (treeData && pathId) {
-      const currentNode = getNodeById(pathId, treeData)
+    if (treeData && params.path) {
+      const currentNode = getNodeByPath(params.path, treeData)
       if (currentNode) {
         // 自动选中当前节点
         setSelectedKey(currentNode.key)
@@ -68,7 +67,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         navigate(`/workbench/apimanage`)
       }
     }
-  }, [location, navigate, pathId, treeData])
+  }, [location, navigate, params.path, treeData])
   useEffect(() => {
     if (props.defaultOpen) {
       setPanelOpened(true)
@@ -79,25 +78,26 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   useEffect(() => {
     // apiList未加载时，不进行转换，以避免自动跳转到空白页
     if (!apiList) return
-    const tree = convertToTree(apiList ?? [], '0')
-    setTreeData(tree)
+    // const tree = convertToTree(apiList ?? [], '0')
+    setTreeData(apiList)
   }, [apiList])
 
-  function calcMiniStatus(nodeData: FileTreeNode) {
+  function calcMiniStatus(nodeData: ApiDocuments.fileloader_DataTree) {
     if (nodeData.isDir) {
       return ''
     }
-    if (nodeData.data.illegal) {
-      return (
-        <div className={styles.errLabel}>
-          <FormattedMessage defaultMessage="非法" />
-        </div>
-      )
-    } else if (!nodeData.data.isPublic) {
-      return <FormattedMessage defaultMessage="内部" />
-    } else {
-      // return nodeData.method
-    }
+    // if (nodeData.extra.invalid) {
+    //   // FIXME
+    //   return (
+    //     <div className={styles.errLabel}>
+    //       <FormattedMessage defaultMessage="非法" />
+    //     </div>
+    //   )
+    // } else if (!nodeData.data.isPublic) {
+    //   return <FormattedMessage defaultMessage="内部" />
+    // } else {
+    //   // return nodeextra.method
+    // }
   }
 
   /**
@@ -119,27 +119,29 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [intl]
   )
-  const handleBatchSwitch = executeWrapper(async (nodes: FileTreeNode[], flag: boolean) => {
-    const pathList = nodes.filter(x => !x.isDir || !x.data.path).map(x => x.data.path)
-    await requests.post(
-      'operation/batch',
-      pathList.map(item => ({
-        path: item,
-        enabled: flag
-      }))
-    )
-    events.emit({
-      event: 'apiEnableChange',
-      data: { pathList, enabled: flag }
-    })
-  })
-  const handleBatchDelete = executeWrapper(async (nodes: FileTreeNode[]) => {
+  const handleBatchSwitch = executeWrapper(
+    async (nodes: ApiDocuments.fileloader_DataTree[], flag: boolean) => {
+      const pathList = nodes.filter(x => !x.isDir).map(x => x.dataName!)
+      await requests.post(
+        'operation/batch',
+        pathList.map(item => ({
+          path: item,
+          enabled: flag
+        }))
+      )
+      events.emit({
+        event: 'apiEnableChange',
+        data: { pathList, enabled: flag }
+      })
+    }
+  )
+  const handleBatchDelete = executeWrapper(async (nodes: ApiDocuments.fileloader_DataTree[]) => {
     modal.confirm({
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
-        const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
-        await requests.post('operation/batchDelete', { ids })
-        ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
+        const dataNames = nodes.filter(x => !x.isDir).map(x => x.dataName!)
+        await requests.delete('operation/batch', { data: dataNames })
+        dataNames.forEach(path => localStorage.removeItem(`_api_args_${path}`))
         message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         // 删除后处理
       }),
@@ -147,50 +149,60 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       cancelText: intl.formatMessage({ defaultMessage: '取消' })
     })
   })
-  const handleDelete = executeWrapper(async (node: FileTreeNode) => {
+  const handleDelete = executeWrapper(async (node: ApiDocuments.fileloader_DataTree) => {
     if (node.isDir) {
-      await requests.delete('/operation/dir', { data: { path: node.data.path } })
+      await requests.delete(`/operation/deleteParent/${node.dataName}`)
     } else {
-      await requests.delete(`/operation/${node.data.id}`)
+      await requests.delete(`/operation/${node.dataName}`)
     }
-    localStorage.removeItem(`_api_args_${node.data.id}`)
+    localStorage.removeItem(`_api_args_${node.dataName}`)
   })
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
-      await requests.post('/operation/dir', { path })
+      await requests.post(`/vscode/createDirectory`, { uri: `${operationStorePath}/${path}` })
       await mutateApi()
     } else {
-      await requests.post<unknown, { id: number }>('/operation', { path })
+      await requests.post<unknown, { path: string }>('/operation', { path })
       await mutateApi()
       navigate(`/workbench/apimanage/${path}`)
     }
   }, true)
-  const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
-    const oldPath = node.data.path
-    const newPath = oldPath.replace(/[^/]+$/, newName)
-    if (node.isDir) {
-      await requests.put('/operation/dir', { oldPath, newPath })
-    } else {
-      await requests.put(`/operation/rename/${node.data.id}`, { path: newPath })
-      if (node.data.id === pathId) {
-        events.emit({
-          event: 'titleChange',
-          data: { title: newName, path: newPath }
+  const handleRenameNode = executeWrapper(
+    async (node: ApiDocuments.fileloader_DataTree, newName: string) => {
+      const oldPath = node.dataName!
+      const newPath = oldPath.replace(/[^/]+$/, newName)
+      if (node.isDir) {
+        await requests.post('/operation/renameParent', {
+          src: oldPath,
+          dst: newPath,
+          overload: false
         })
+      } else {
+        await requests.post(`/operation/rename`, { src: oldPath, dst: newPath, overload: false })
+        if (node.dataName === params.path) {
+          events.emit({
+            event: 'titleChange',
+            data: { title: newName, path: newPath }
+          })
+        }
       }
     }
-  })
+  )
 
   const handleMove = executeWrapper(
-    async (dragNode: FileTreeNode, dropNode: FileTreeNode | null, confirm = false) => {
-      const oldPath = dragNode.data.path
-      const newPath = `${dropNode?.data?.path ?? ''}/${dragNode.name}`
+    async (
+      dragNode: ApiDocuments.fileloader_DataTree,
+      dropNode: ApiDocuments.fileloader_DataTree | null,
+      confirm = false
+    ) => {
+      const oldPath = dragNode.dataName
+      const newPath = `${dropNode?.dataName ?? ''}/${dragNode.dataName?.split('/').pop()}`
       // 判断移动目标是否包含当前已打开的api， 如果有，则需要更新api信息
-      const hasCurrent = !!getNodeById(pathId, [dragNode])
+      const hasCurrent = !!getNodeByPath(params.path!, [dragNode])
       if (dragNode.isDir) {
-        await requests.put(
-          '/operation/dir',
-          { oldPath, newPath, coverRepeat: confirm },
+        await requests.post(
+          '/operation/renameParent',
+          { src: oldPath, dst: newPath, overload: confirm },
           {
             onError: async ({ code, result }) => {
               if (code === '20000000') {
@@ -200,9 +212,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           }
         )
       } else {
-        await requests.put(
-          `/operation/rename/${dragNode.data.id}`,
-          { path: newPath, coverRepeat: confirm },
+        await requests.post(
+          `/operation/rename`,
+          { src: oldPath, dst: newPath, overload: confirm },
           {
             onError: async ({ code, result }) => {
               if (code === '20000000') {
@@ -216,7 +228,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       const apiList = await mutateApi()
       // 如果移动的是当前打开的api，则需要更新api信息
       if (hasCurrent) {
-        const api = getApiById(pathId, apiList)
+        const api = getApiByPath(params.path!, apiList)
         if (api) {
           events.emit({
             event: 'titleChange',
@@ -241,14 +253,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     [intl, modal]
   )
 
-  const titleRender = (nodeData: FileTreeNode) => {
+  const titleRender = (nodeData: ApiDocuments.fileloader_DataTree) => {
     const miniStatus = calcMiniStatus(nodeData)
     let itemTypeClass
     if (nodeData.isDir) {
       itemTypeClass = styles.treeItemDir
-    } else if (nodeData.data.illegal) {
+    } else if (nodeData.extra.invalid) {
       itemTypeClass = styles.treeItemErr
-    } else if (!nodeData.data.enabled) {
+    } else if (!nodeData.extra.enabled) {
       itemTypeClass = styles.treeItemDisable
     } else {
       itemTypeClass = styles.treeItemFile
@@ -257,16 +269,16 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
         <div className={styles.icon}>
-          {nodeData.data.liveQuery ? <div className={styles.lighting}></div> : null}
+          {nodeData.extra?.liveQueryEnabled ? <div className={styles.lighting}></div> : null}
         </div>
         <>
-          {nodeData.data.method && (
+          {nodeData.extra?.method && (
             <div
               className={`${styles.method} ${
-                styles[`method_${nodeData.data.method?.toLowerCase()}`]
+                styles[`method_${nodeData.extra.method?.toLowerCase()}`]
               }`}
             >
-              {nodeData.data.method?.toUpperCase()}
+              {nodeData.extra.method?.toUpperCase()}
             </div>
           )}
           <div className={styles.title}>{nodeData.name}</div>
@@ -280,12 +292,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                   {
                     key: 'copy',
                     onClick: async () => {
-                      const destPath = `${nodeData.data.path}Copy${Math.random()
+                      const destPath = `${nodeData.dataName}Copy${Math.random()
                         .toString(36)
                         .substring(2, 5)}`
                       await requests.post('/operation/copy', {
                         path: destPath,
-                        id: nodeData.data.id
+                        src: nodeData.dataName!,
+                        overload: false
                       })
                       message.success(
                         intl.formatMessage(
@@ -371,18 +384,21 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   const buildContextMenu = useCallback(
-    (selectList: FileTreeNode[], deepList: FileTreeNode[]) => {
+    (
+      selectList: ApiDocuments.fileloader_DataTree[],
+      deepList: ApiDocuments.fileloader_DataTree[]
+    ) => {
       const menu: ItemType[] = [
         {
           key: 'on',
           onClick: () => void handleBatchSwitch(deepList, true),
-          disabled: !deepList.some(x => !x.isDir && !x.data.enabled && !x.data.illegal),
+          disabled: !deepList.some(x => !x.isDir && !x.extra.enabled && !x.extra.invalid),
           label: <FormattedMessage defaultMessage="上线" />
         },
         {
           key: 'off',
           onClick: () => void handleBatchSwitch(deepList, false),
-          disabled: !deepList.some(x => !x.isDir && x.data.enabled),
+          disabled: !deepList.some(x => !x.isDir && x.extra.enabled),
           label: <FormattedMessage defaultMessage="下线" />
         }
       ]
@@ -466,13 +482,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               await autoSave()
               message.destroy()
             }
-            navigate(`/workbench/apimanage/${nodeData.data.path}`)
+            navigate(`/workbench/apimanage/${nodeData.dataName}`)
           }
         }}
         onCreateItem={async (parent, isDir, name) => {
           if (name && onValidateName(name, isDir)) {
             try {
-              await handleAddNode(parent?.data.path ? `${parent?.data.path}/${name}` : name, isDir)
+              await handleAddNode(parent?.dataName ? `${parent?.dataName}/${name}` : name, isDir)
               return true
             } catch (e) {
               console.error(e)
@@ -551,26 +567,29 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
 }
 
-function convertToTree(data: ApiDocuments.Operation[] | null, lv = '0'): FileTreeNode[] {
-  if (!data) return []
-  return data.map((x, idx) => ({
-    data: {
-      ...x
-    },
-    id: x.id,
-    name: x.path.split('/')[x.path.split('/').length - 1],
-    title: x.path.split('/')[x.path.split('/').length - 1],
-    key: `${x.isDir ? 1 : 0}-${x.path}`,
-    isDir: x.isDir,
-    children: convertToTree(x.children, `${lv}-${idx}`)
-  }))
-}
+// function convertToTree(data: ApiDocuments.Operation[] | null, lv = '0'): ApiDocuments.fileloader_DataTree[] {
+//   if (!data) return []
+//   return data.map((x, idx) => ({
+//     data: {
+//       ...x
+//     },
+//     id: x.id,
+//     name: x.path.split('/')[x.path.split('/').length - 1],
+//     title: x.path.split('/')[x.path.split('/').length - 1],
+//     key: `${x.isDir ? 1 : 0}-${x.path}`,
+//     isDir: x.isDir,
+//     children: convertToTree(x.children, `${lv}-${idx}`)
+//   }))
+// }
 
-function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | undefined {
+function getNodeByPath(
+  path: string,
+  data: ApiDocuments.fileloader_DataTree[] = []
+): ApiDocuments.fileloader_DataTree | undefined {
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!
-    if (item.data.id === id) {
+    if (item.dataName === path) {
       return item
     } else if (item.children) {
       lists.push(...item.children)
@@ -578,14 +597,14 @@ function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | unde
   }
 }
 
-function getApiById(
-  id: number,
+function getApiByPath(
+  path: string,
   data: ApiDocuments.Operation[] = []
 ): ApiDocuments.Operation | undefined {
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!
-    if (item.id === id) {
+    if (item.path === path) {
       return item
     } else if (item.children) {
       lists.push(...item.children)

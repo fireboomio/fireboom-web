@@ -8,7 +8,7 @@ export declare namespace ApiDocuments {
     postAuthentication: boolean
     postLogout: boolean
     revalidateAuthentication: boolean
-    tsPathMap: {}
+    tsPathMap?: {}
   }
   export interface Appearance extends BasicDto {
     language: string
@@ -89,11 +89,19 @@ export declare namespace ApiDocuments {
     updateTime: string
   }
   export interface Env extends BasicDto {}
+  export interface GlobalHooks extends BasicDto {
+    WsTransport: ApiDocuments.GlobalWsTransportHook
+    httpTransport: {}
+  }
+  export interface GlobalHttpTransportHook extends BasicDto {
+    enableForAllOperations: boolean
+    enableForOperations: string[]
+  }
   export interface GlobalOperation extends BasicDto {
     apiAuthenticationHooks: ApiDocuments.ApiAuthenticationHooks
     authenticationConfig: ApiDocuments.OperationAuthenticationConfig
     cacheConfig: ApiDocuments.OperationCacheConfig
-    hooksConfiguration: ApiDocuments.operationHooksConfiguration
+    globalHooks: ApiDocuments.GlobalHooks
     liveQueryConfig: ApiDocuments.OperationLiveQueryConfig
   }
   export interface GlobalSetting extends BasicDto {
@@ -114,6 +122,9 @@ export declare namespace ApiDocuments {
     }
     nodeOptions: ApiDocuments.NodeOptions
     serverOptions: ApiDocuments.ServerOptions
+  }
+  export interface GlobalWsTransportHook extends BasicDto {
+    enableForDataSources: string[]
   }
   export interface HTTPHeader extends BasicDto {
     values: ApiDocuments.ConfigurationVariable[]
@@ -192,7 +203,7 @@ export declare namespace ApiDocuments {
     onConnectionInit: boolean
     postResolve: boolean
     preResolve: boolean
-    tsPathMap: {}
+    tsPathMap?: {}
   }
   export interface OperationLiveQueryConfig extends BasicDto {
     enabled: boolean
@@ -272,12 +283,14 @@ export declare namespace ApiDocuments {
     dst?: string
     overload?: boolean
     src?: string
-    user?: string
   }
   export interface fileloader_DataTree extends BasicDto {
-    dataName?: string
+    dataName?: any
+    extension?: string
+    extra?: any
     isDir?: boolean
     items?: ApiDocuments.fileloader_DataTree[]
+    name?: string
   }
   export interface fileloader_DataWithLockUser_Authentication extends BasicDto {
     data?: ApiDocuments.Authentication
@@ -387,7 +400,6 @@ export declare namespace ApiDocuments {
     maxbackups: number
     maxsize: number
   }
-  export interface models_Datasource extends BasicDto {}
   export interface models_OperationHookEnabled extends BasicDto {
     enabled?: boolean
     name?: ApiDocuments.consts_MiddlewareHook
@@ -431,11 +443,6 @@ export declare namespace ApiDocuments {
     size?: number
   }
   export interface models_sdkType extends BasicDto {}
-  export interface operationHooksConfiguration extends BasicDto {
-    httpTransportBeforeRequest: boolean
-    httpTransportOnRequest: boolean
-    httpTransportOnResponse: boolean
-  }
   export interface vscode_FileStat extends BasicDto {
     ctime?: number
     mtime?: number
