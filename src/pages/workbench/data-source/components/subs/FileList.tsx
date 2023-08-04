@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import type { UploadDirectory } from '@/interfaces/fs'
-import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
+import requests, { getAuthKey } from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import uploadLocal from '@/utils/uploadLocal'
 

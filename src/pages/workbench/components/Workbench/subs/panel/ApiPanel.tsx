@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import type { FileTreeRef } from '@/components/FileTree'
+import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
@@ -78,26 +78,26 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   useEffect(() => {
     // apiList未加载时，不进行转换，以避免自动跳转到空白页
     if (!apiList) return
-    // const tree = convertToTree(apiList ?? [], '0')
-    setTreeData(apiList)
+    const tree = convertToTree(apiList ?? [], '0')
+    setTreeData(tree)
   }, [apiList])
 
   function calcMiniStatus(nodeData: ApiDocuments.fileloader_DataTree) {
     if (nodeData.isDir) {
       return ''
     }
-    // if (nodeData.extra.invalid) {
-    //   // FIXME
-    //   return (
-    //     <div className={styles.errLabel}>
-    //       <FormattedMessage defaultMessage="非法" />
-    //     </div>
-    //   )
-    // } else if (!nodeData.data.isPublic) {
-    //   return <FormattedMessage defaultMessage="内部" />
-    // } else {
-    //   // return nodeextra.method
-    // }
+    if (nodeData.extra.invalid) {
+      // FIXME
+      return (
+        <div className={styles.errLabel}>
+          <FormattedMessage defaultMessage="非法" />
+        </div>
+      )
+    } else if (!nodeData.data.isPublic) {
+      return <FormattedMessage defaultMessage="内部" />
+    } else {
+      // return nodeextra.method
+    }
   }
 
   /**
@@ -281,7 +281,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               {nodeData.extra.method?.toUpperCase()}
             </div>
           )}
-          <div className={styles.title}>{nodeData.name}</div>
+          <div className={styles.title}>{nodeData.path}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
           <div onClick={e => e.stopPropagation()}>
@@ -567,20 +567,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
 }
 
-// function convertToTree(data: ApiDocuments.Operation[] | null, lv = '0'): ApiDocuments.fileloader_DataTree[] {
-//   if (!data) return []
-//   return data.map((x, idx) => ({
-//     data: {
-//       ...x
-//     },
-//     id: x.id,
-//     name: x.path.split('/')[x.path.split('/').length - 1],
-//     title: x.path.split('/')[x.path.split('/').length - 1],
-//     key: `${x.isDir ? 1 : 0}-${x.path}`,
-//     isDir: x.isDir,
-//     children: convertToTree(x.children, `${lv}-${idx}`)
-//   }))
-// }
+function convertToTree(data: ApiDocuments.fileloader_DataTree[] | null, lv = '0'): FileTreeNode[] {
+  if (!data) return []
+  return data.map((x, idx) => ({
+    ...x,
+    key: x.path,
+    items: convertToTree(x.items ?? [], `${lv}-${idx}`)
+  }))
+}
 
 function getNodeByPath(
   path: string,

@@ -25,7 +25,7 @@ import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
-import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { replaceFileTemplate } from '@/utils/template'
 
@@ -105,12 +105,12 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'hookStatus', data => {
-    message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
+    // message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
     setInfo({ ...info, hookStatus: data.hookStatus })
   })
-  useWebSocket('engine', 'pushHookStatus', data => {
-    setInfo({ ...info, hookStatus: data.hookStatus })
-  })
+  // useWebSocket('engine', 'pushHookStatus', data => {
+  //   setInfo({ ...info, hookStatus: data.hookStatus })
+  // })
   useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
   })
@@ -125,6 +125,7 @@ export default function Index(props: PropsWithChildren) {
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'pull' })
+    sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
     sendMessageToSocket({ channel: 'log', event: 'pull' })
     sendMessageToSocket({ channel: 'question', event: 'pull' })
   }, [])

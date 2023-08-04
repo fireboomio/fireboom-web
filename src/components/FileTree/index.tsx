@@ -18,10 +18,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 export interface FileTreeNode extends ApiDocuments.fileloader_DataTree {
   parent?: FileTreeNode
   key: string
-  name: string
-  isDir: boolean
-  children?: any[]
-  data: any
+  items?: FileTreeNode[]
 }
 
 interface InnerNode extends FileTreeNode {
@@ -60,7 +57,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean, forceRoot: boolean) => void
+  addItem: (isDir: boolean, forceRoot?: boolean) => void
   editItem: (key: string) => void
 }
 
@@ -79,7 +76,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const keyMap = useMemo<Record<string, InnerNode>>(() => {
     function markKey(node: InnerNode) {
       map[node.key] = node
-      node.children?.forEach(markKey)
+      node.items?.forEach(markKey)
     }
 
     const map: Record<string, InnerNode> = {}
@@ -109,7 +106,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         parent: parent
       }
       if (parent) {
-        parent.children?.unshift(newItem)
+        parent.items?.unshift(newItem)
       } else {
         newTree.unshift(newItem)
       }
@@ -123,7 +120,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     const newTree = cloneDeep(props.treeData)
 
     function markParent(node: InnerNode) {
-      node.children?.forEach(x => {
+      node.items?.forEach(x => {
         x.parent = node
         markParent(x)
       })
@@ -230,7 +227,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       // 处理新增保存
       const success = await props.onCreateItem?.(
         findItemByKey(treeData, node.parent?.key ?? '') ?? null,
-        node.isDir,
+        node.isDir!,
         str
       )
       if (success || closeOnFail) {
@@ -365,8 +362,8 @@ function findItemByKey(tree: InnerNode[], key: string) {
     const item = lists.pop()!
     if (item.key === key) {
       return item
-    } else if (item.children) {
-      lists.push(...item.children)
+    } else if (item.items) {
+      lists.push(...item.items)
     }
   }
 }
@@ -378,8 +375,8 @@ function flattenTree(tree: InnerNode[]) {
   while (lists.length) {
     const item = lists.pop()!
     result.push(item)
-    if (item.children) {
-      lists.push(...item.children)
+    if (item.items) {
+      lists.push(...item.items)
     }
   }
   result.reverse()
