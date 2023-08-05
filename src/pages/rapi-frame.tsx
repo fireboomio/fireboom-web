@@ -63,8 +63,9 @@ export default function RapiFrame() {
       allow-authentication="true"
       allow-server-selection="false"
       allow-api-list-style-selection="false"
-      render-style="read"
+      // render-style="read"
       fetch-credentials="include"
+      render-style="focused"
     />
   )
 }
