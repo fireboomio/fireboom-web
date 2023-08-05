@@ -89,19 +89,11 @@ export declare namespace ApiDocuments {
     updateTime: string
   }
   export interface Env extends BasicDto {}
-  export interface GlobalHooks extends BasicDto {
-    WsTransport: ApiDocuments.GlobalWsTransportHook
-    httpTransport: {}
-  }
-  export interface GlobalHttpTransportHook extends BasicDto {
-    enableForAllOperations: boolean
-    enableForOperations: string[]
-  }
   export interface GlobalOperation extends BasicDto {
     apiAuthenticationHooks: ApiDocuments.ApiAuthenticationHooks
     authenticationConfig: ApiDocuments.OperationAuthenticationConfig
     cacheConfig: ApiDocuments.OperationCacheConfig
-    globalHooks: ApiDocuments.GlobalHooks
+    globalHttpTransportHooks: {}
     liveQueryConfig: ApiDocuments.OperationLiveQueryConfig
   }
   export interface GlobalSetting extends BasicDto {
@@ -122,9 +114,6 @@ export declare namespace ApiDocuments {
     }
     nodeOptions: ApiDocuments.NodeOptions
     serverOptions: ApiDocuments.ServerOptions
-  }
-  export interface GlobalWsTransportHook extends BasicDto {
-    enableForDataSources: string[]
   }
   export interface HTTPHeader extends BasicDto {
     values: ApiDocuments.ConfigurationVariable[]

@@ -5,13 +5,13 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
+import type { FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
-import { useAPIManager } from '@/pages/workbench/apimanage/[path]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
@@ -26,6 +26,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
+  const currentUrlPath = params['*']!
   const [treeData, setTreeData] = useState<ApiDocuments.fileloader_DataTree[]>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
@@ -57,8 +58,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   // 监听location变化，及时清空选中状态
   useEffect(() => {
     // 尝试自动选中当前项
-    if (treeData && params.path) {
-      const currentNode = getNodeByPath(params.path, treeData)
+    if (treeData && currentUrlPath) {
+      const currentNode = getNodeByPath(currentUrlPath, treeData)
       if (currentNode) {
         // 自动选中当前节点
         setSelectedKey(currentNode.key)
@@ -67,7 +68,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         navigate(`/workbench/apimanage`)
       }
     }
-  }, [location, navigate, params.path, treeData])
+  }, [currentUrlPath, location, navigate, params, treeData])
   useEffect(() => {
     if (props.defaultOpen) {
       setPanelOpened(true)
@@ -93,7 +94,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <FormattedMessage defaultMessage="非法" />
         </div>
       )
-    } else if (!nodeData.data.isPublic) {
+    } else if (!nodeData.extra.internal) {
       return <FormattedMessage defaultMessage="内部" />
     } else {
       // return nodeextra.method
@@ -121,7 +122,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleBatchSwitch = executeWrapper(
     async (nodes: ApiDocuments.fileloader_DataTree[], flag: boolean) => {
-      const pathList = nodes.filter(x => !x.isDir).map(x => x.dataName!)
+      const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
       await requests.post(
         'operation/batch',
         pathList.map(item => ({
@@ -139,9 +140,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     modal.confirm({
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
-        const dataNames = nodes.filter(x => !x.isDir).map(x => x.dataName!)
-        await requests.delete('operation/batch', { data: dataNames })
-        dataNames.forEach(path => localStorage.removeItem(`_api_args_${path}`))
+        const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
+        await requests.delete('operation/batch', { data: pathList })
+        pathList.forEach(path => localStorage.removeItem(`_api_args_${path}`))
         message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         // 删除后处理
       }),
@@ -151,11 +152,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   })
   const handleDelete = executeWrapper(async (node: ApiDocuments.fileloader_DataTree) => {
     if (node.isDir) {
-      await requests.delete(`/operation/deleteParent/${node.dataName}`)
+      await requests.delete(`/operation/deleteParent/${node.path}`)
     } else {
-      await requests.delete(`/operation/${node.dataName}`)
+      await requests.delete(`/operation/${node.path}`)
     }
-    localStorage.removeItem(`_api_args_${node.dataName}`)
+    localStorage.removeItem(`_api_args_${node.path}`)
   })
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
@@ -169,7 +170,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }, true)
   const handleRenameNode = executeWrapper(
     async (node: ApiDocuments.fileloader_DataTree, newName: string) => {
-      const oldPath = node.dataName!
+      const oldPath = node.path!
       const newPath = oldPath.replace(/[^/]+$/, newName)
       if (node.isDir) {
         await requests.post('/operation/renameParent', {
@@ -179,7 +180,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         })
       } else {
         await requests.post(`/operation/rename`, { src: oldPath, dst: newPath, overload: false })
-        if (node.dataName === params.path) {
+        if (node.path === currentUrlPath) {
           events.emit({
             event: 'titleChange',
             data: { title: newName, path: newPath }
@@ -195,10 +196,10 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       dropNode: ApiDocuments.fileloader_DataTree | null,
       confirm = false
     ) => {
-      const oldPath = dragNode.dataName
-      const newPath = `${dropNode?.dataName ?? ''}/${dragNode.dataName?.split('/').pop()}`
+      const oldPath = dragNode.path
+      const newPath = `${dropNode?.path ?? ''}/${dragNode.path?.split('/').pop()}`
       // 判断移动目标是否包含当前已打开的api， 如果有，则需要更新api信息
-      const hasCurrent = !!getNodeByPath(params.path!, [dragNode])
+      const hasCurrent = !!getNodeByPath(currentUrlPath, [dragNode])
       if (dragNode.isDir) {
         await requests.post(
           '/operation/renameParent',
@@ -228,7 +229,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       const apiList = await mutateApi()
       // 如果移动的是当前打开的api，则需要更新api信息
       if (hasCurrent) {
-        const api = getApiByPath(params.path!, apiList)
+        const api = getApiByPath(currentUrlPath, apiList)
         if (api) {
           events.emit({
             event: 'titleChange',
@@ -281,7 +282,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               {nodeData.extra.method?.toUpperCase()}
             </div>
           )}
-          <div className={styles.title}>{nodeData.path}</div>
+          <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
           <div onClick={e => e.stopPropagation()}>
@@ -292,12 +293,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                   {
                     key: 'copy',
                     onClick: async () => {
-                      const destPath = `${nodeData.dataName}Copy${Math.random()
+                      const destPath = `${nodeData.path}Copy${Math.random()
                         .toString(36)
                         .substring(2, 5)}`
                       await requests.post('/operation/copy', {
                         path: destPath,
-                        src: nodeData.dataName!,
+                        src: nodeData.path!,
                         overload: false
                       })
                       message.success(
@@ -482,13 +483,13 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               await autoSave()
               message.destroy()
             }
-            navigate(`/workbench/apimanage/${nodeData.dataName}`)
+            navigate(`/workbench/apimanage/${nodeData.path}`)
           }
         }}
         onCreateItem={async (parent, isDir, name) => {
           if (name && onValidateName(name, isDir)) {
             try {
-              await handleAddNode(parent?.dataName ? `${parent?.dataName}/${name}` : name, isDir)
+              await handleAddNode(parent?.path ? `${parent?.path}/${name}` : name, isDir)
               return true
             } catch (e) {
               console.error(e)
@@ -571,7 +572,7 @@ function convertToTree(data: ApiDocuments.fileloader_DataTree[] | null, lv = '0'
   if (!data) return []
   return data.map((x, idx) => ({
     ...x,
-    key: x.path,
+    key: `${x.isDir ? 0 : 1}-${x.path}`,
     items: convertToTree(x.items ?? [], `${lv}-${idx}`)
   }))
 }
@@ -583,10 +584,10 @@ function getNodeByPath(
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!
-    if (item.dataName === path) {
+    if (item.path === path) {
       return item
-    } else if (item.children) {
-      lists.push(...item.children)
+    } else if (item.items) {
+      lists.push(...item.items)
     }
   }
 }
@@ -600,8 +601,8 @@ function getApiByPath(
     const item = lists.pop()!
     if (item.path === path) {
       return item
-    } else if (item.children) {
-      lists.push(...item.children)
+    } else if (item.items) {
+      lists.push(...item.items)
     }
   }
 }

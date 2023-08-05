@@ -232,10 +232,10 @@ export default function APIEditorContainer() {
   }, [autoSave, saved])
 
   useEffect(() => {
-    setAPIPath(params.path!).then(() => {
+    setAPIPath(params['*']!).then(() => {
       explorerRef.current?.manualExpand()
     })
-  }, [params.path, setAPIPath])
+  }, [params, setAPIPath])
 
   useEffect(() => {
     setWorkbenchContext(workbenchCtx)

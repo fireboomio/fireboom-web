@@ -19,7 +19,7 @@ import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const intl = useIntl()
-  const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiID } =
+  const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiPath } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
       schemaAST: state.schemaAST,
@@ -27,7 +27,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       updateAPIName: state.updateAPIName,
       updateContent: state.updateContent,
       saved: state.computed.saved,
-      apiID: state.apiID,
+      apiPath: state.apiPath,
       query: state.query
     }))
   // const workbenchCtx = useContext(WorkbenchContext)
@@ -135,7 +135,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     let query: string[] = []
     let argValueMap: Record<string, any> = {}
     try {
-      argValueMap = JSON.parse(localStorage.getItem(`_api_args_${apiID}`) || '{}')
+      argValueMap = JSON.parse(localStorage.getItem(`_api_args_${apiPath}`) || '{}')
     } catch (e) {
       // ignore
     }
@@ -180,7 +180,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [
     apiDesc?.liveQuery,
     apiDesc?.path,
-    apiID,
+    apiPath,
     globalSetting.nodeOptions,
     intl,
     schemaAST?.definitions

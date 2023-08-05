@@ -61,10 +61,10 @@ export default function ApiSearch() {
     ]
   })
   const filterFields = [
-    buildBaseFilter('illegal', intl.formatMessage({ defaultMessage: '是否非法' })),
+    buildBaseFilter('invalid', intl.formatMessage({ defaultMessage: '是否非法' })),
     buildBaseFilter('enabled', intl.formatMessage({ defaultMessage: '是否开启' })),
     buildBaseFilter('isPublic', intl.formatMessage({ defaultMessage: '是否公开' })),
-    buildBaseFilter('liveQuery', intl.formatMessage({ defaultMessage: '是否实时' }))
+    buildBaseFilter('liveQueryEnabled', intl.formatMessage({ defaultMessage: '是否实时' }))
   ]
 
   // api相关变量
@@ -230,14 +230,14 @@ export default function ApiSearch() {
                 onClick={() => gotoAPI(item)}
                 className={clsx(styles.item, {
                   [styles.disable]: !item.enabled,
-                  [styles.illegal]: item.illegal,
+                  [styles.invalid]: item.invalid,
                   [styles.active]: selectIndex === index
                 })}
                 key={item.id}
               >
                 <div className={styles.icon}>
                   <File />
-                  {item.liveQuery && <div className={styles.dot} />}
+                  {item.liveQueryEnabled && <div className={styles.dot} />}
                 </div>
                 <span
                   className={`${styles.method} ${
@@ -251,8 +251,8 @@ export default function ApiSearch() {
                 </span>
                 {item.method && <span className="mx-2px">-</span>}
                 <span className={styles.name}>{item.path.substring(1)}</span>
-                {item.illegal && (
-                  <span className={styles.illegalLabel}>
+                {item.invalid && (
+                  <span className={styles.invalidLabel}>
                     {intl.formatMessage({ defaultMessage: '非法' })}
                   </span>
                 )}

@@ -37,6 +37,9 @@ export async function requestAdapter<T>(args: RequestFunctionArgs): Promise<Resp
         data: data as T
       }
     }
+    if (data?.message) {
+      console.error(data?.message)
+    }
     return {
       error: true,
       data: null,

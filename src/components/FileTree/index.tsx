@@ -98,15 +98,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       const parent = findItemByKey(newTree, tempItem?.parentKey)
       const newItem = {
         name: '',
+        path: '',
         key: 'temp' + Date.now(),
         isDir: tempItem.isDir,
-        data: { name: '' },
         isInput: true,
         isNew: true,
         parent: parent
       }
       if (parent) {
-        parent.items?.unshift(newItem)
+        parent.items = parent.items ?? []
+        parent.items.unshift(newItem)
       } else {
         newTree.unshift(newItem)
       }
@@ -295,6 +296,11 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         }}
       >
         <Tree
+          fieldNames={{
+            title: 'name',
+            key: 'key',
+            children: 'items'
+          }}
           onClick={e => e.stopPropagation()}
           rootClassName={props.treeClassName}
           draggable={props.draggable ? { icon: false } : false}

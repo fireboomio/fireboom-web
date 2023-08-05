@@ -12,9 +12,10 @@ import routes from '~react-pages'
 // import Layout from './components/layout'
 // import Workbench from './components/workbench'
 import ApiSearch from './components/ApiSearch'
-import { useDict } from './providers/dict'
 import { useAppIntl } from './providers/IntlProvider'
 import { primaryColor } from './styles'
+
+console.log(routes)
 
 export default function App() {
   const { locale } = useAppIntl()

@@ -39,6 +39,11 @@ requests.interceptors.response.use(
       setAuthKey('')
     }
     const errMag = error?.config?.resolveErrorMsg?.(error.response)
+    // @ts-ignore
+    if (error?.response?.data?.cause) {
+      // @ts-ignore
+      console.warn(error?.response?.data?.cause)
+    }
     errToast(
       errMag ??
         // @ts-ignore
