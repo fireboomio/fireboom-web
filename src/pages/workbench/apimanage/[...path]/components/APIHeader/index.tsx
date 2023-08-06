@@ -106,8 +106,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       const destPath = `${apiDesc!.path}Copy${Math.random().toString(36).substring(2, 5)}`
       try {
         await requests.post('/operation/copy', {
-          path: destPath,
-          id: apiDesc!.id
+          dst: destPath,
+          src: apiDesc!.path,
+          overload: false
         })
         message.success(
           intl.formatMessage({ defaultMessage: '已复制接口 {path}' }, { path: destPath })
@@ -120,7 +121,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [apiDesc, intl])
 
   const copyLink = useCallback(async () => {
-    let link = `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}/operations${
+    let link = `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}/operations/${
       apiDesc?.path
     }`
     if (!link) {

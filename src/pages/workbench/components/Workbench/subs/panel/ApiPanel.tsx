@@ -297,7 +297,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                         .toString(36)
                         .substring(2, 5)}`
                       await requests.post('/operation/copy', {
-                        path: destPath,
+                        dst: destPath,
                         src: nodeData.path!,
                         overload: false
                       })

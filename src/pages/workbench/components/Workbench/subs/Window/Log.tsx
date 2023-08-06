@@ -62,7 +62,7 @@ const Log: React.FC<Props> = ({ actionRef }) => {
                 color:
                   {
                     INFO: 'blue',
-                    WARN: 'yellow',
+                    WARN: '#ffae00',
                     ERROR: 'magenta',
                     DPANIC: 'red',
                     PANIC: 'red',
