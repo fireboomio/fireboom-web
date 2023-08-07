@@ -46,7 +46,7 @@ const ModelPannel = ({
   const { handleClickEntity } = panel
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
-  const { id: paramId } = useParams()
+  const { name } = useParams()
 
   const { blocks, applyLocalSchema, applyLocalBlocks } = useBlocks()
 
@@ -94,7 +94,7 @@ const ModelPannel = ({
       <div className={styles.pannel}>
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
-        {paramId && paramId !== '0' && (
+        {name && name !== '0' && (
           <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
         )}
       </div>

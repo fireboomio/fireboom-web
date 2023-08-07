@@ -67,8 +67,9 @@ export default function CRUDSider(props: CRUDSiderProps) {
           timeout: 15e3
         }
       )
-      const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/prisma/dmf/${currentDataSourceName}`,
+      debugger
+      const res = await requests.post<unknown, { models: DMFModel[]; schemaContent: string }>(
+        `/datasource/${currentDataSourceName}/dmmf`,
         { timeout: 15e3 }
       )
       if (currentName.current === currentDataSourceName) {

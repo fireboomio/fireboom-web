@@ -9,7 +9,7 @@ import { generateDBMLSchema } from '@/lib/prisma-dbml-generator/generator/dbml'
 const ErDiagram = () => {
   const intl = useIntl()
   const frameRef = useRef<HTMLIFrameElement>(null)
-  const { id } = useParams()
+  const { name } = useParams()
   const [dmmf, setDMMF] = useState<DMMF.Document>()
   const loadRef = useRef(false)
 
@@ -35,14 +35,14 @@ const ErDiagram = () => {
   }, [dmmf])
 
   useEffect(() => {
-    if (id) {
-      requests.get(`/prisma/nativeDMF/${id}`).then(resp => {
+    if (name) {
+      requests.get(`/prisma/nativeDMF/${name}`).then(resp => {
         if (resp) {
           setDMMF(resp as any)
         }
       })
     }
-  }, [id])
+  }, [name])
 
   useEffect(() => {
     run()

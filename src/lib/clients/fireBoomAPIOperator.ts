@@ -28,11 +28,13 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceName: string) => {
   )
 }
 
-export const fetchPrismaDMF = (dbSourceName: string) =>
-  getFetcher<PrismaDMF>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), undefined, {
+export const fetchPrismaDMF = (dbSourceName: string) => {
+  requests.post<any, string>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), null, {
     timeout: 15e3
   }).then(res => {
     res.models = res.models ?? []
     res.enums = res.enums ?? []
     return res
   })
+}
+  

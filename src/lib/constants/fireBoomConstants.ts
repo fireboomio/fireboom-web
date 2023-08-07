@@ -3,7 +3,7 @@ import type { Model } from '@/interfaces/modeling'
 export const BASE_URL = '/api'
 export const DATABASE_SOURCE = '/datasource'
 export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME = '/prisma/migrate/:name'
-export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/prisma/dmf/:name'
+export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/datasource/:name/dmmf'
 export const PRISMA_PREVIEW_GRAPHQL_URL = '/model/graphql/'
 
 export const UNTITLED_NEW_ENTITY = 'Untitled'
