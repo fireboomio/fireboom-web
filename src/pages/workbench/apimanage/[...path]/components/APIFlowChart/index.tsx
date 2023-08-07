@@ -85,7 +85,6 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
     [query, schemaAST?.definitions]
   )
 
-
   const loadHook = useCallback(() => {
     if ( !schemaAST) {
       return
