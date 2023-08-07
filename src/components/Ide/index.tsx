@@ -25,8 +25,7 @@ import {
   getHook,
   getTypes,
   saveHookDepend,
-  saveHookScript,
-  updateHookEnabled
+  saveHookScript
 } from '@/lib/service/hook'
 import { replaceFileTemplate } from '@/utils/template'
 
@@ -496,9 +495,9 @@ const IdeContainer: FC<Props> = props => {
               handleSave('active')
             },
             onToggleHook: async value => {
-              hookInfo && setHookInfo({ ...hookInfo, enabled: value })
-              await updateHookEnabled(hookPath, value)
-              props.onChangeEnable?.()
+              // hookInfo && setHookInfo({ ...hookInfo, enabled: value })
+              // await updateHookEnabled(hookPath, value)
+              // props.onChangeEnable?.()
             },
             onFullScreen: () => {
               workbenchCtx.setFullscreen(!fullScreen)

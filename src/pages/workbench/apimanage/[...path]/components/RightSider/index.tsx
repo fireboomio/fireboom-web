@@ -20,9 +20,9 @@ import iconHookActive from './assets/hook-active.svg'
 import styles from './index.module.less'
 
 export default function RightSider() {
-  const params = useParams()
   const [active, setActive] = useState<string>('hook')
-  const { operationType, schemaAST, apiDesc } = useAPIManager(state => ({
+  const { apiPath, operationType, schemaAST, apiDesc } = useAPIManager(state => ({
+    apiPath: state.apiPath,
     operationType: state.computed.operationType,
     schemaAST: state.schemaAST,
     apiDesc: state.apiDesc
@@ -51,7 +51,7 @@ export default function RightSider() {
       iconActive: iconFlowActive,
       content: schemaAST ? (
         <div className="w-102 h-full">
-          <APIFlowChart id={params.id as string} />
+          <APIFlowChart apiPath={apiPath} />
         </div>
       ) : null,
       disableTip: !schemaAST ? intl.formatMessage({ defaultMessage: 'API内容为空' }) : null
@@ -61,7 +61,7 @@ export default function RightSider() {
       icon: iconHook,
       title: intl.formatMessage({ defaultMessage: '钩子' }),
       iconActive: iconHookActive,
-      content: <HookPanel id={params.id} key={apiDesc?.path} />
+      content: <HookPanel apiPath={apiPath} key={apiDesc?.path} />
     },
     {
       key: 'config',
@@ -70,7 +70,7 @@ export default function RightSider() {
       iconActive: iconConfigActive,
       content: (
         <div className="w-80 h-full">
-          <ApiConfig operationType={operationType} type="panel" id={Number(params.id)} />
+          <ApiConfig operationType={operationType} type="panel" operationName={apiPath} />
         </div>
       )
     }

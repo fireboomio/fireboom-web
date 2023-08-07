@@ -1,4 +1,4 @@
-import type { APIDesc } from '../../store'
+import { ApiDocuments } from "@/services/a2s.namespace"
 
 export type BaseHookState = {
   name: string
@@ -39,7 +39,7 @@ export type CommonChartProps = {
     injectEnvironmentVariable: boolean
     transform: boolean
   }
-  apiSetting: APIDesc['setting']
+  apiDesc: ApiDocuments.Operation
   onEditHook?: (hook: BaseHookState) => void
   onToggleHook?: (hook: BaseHookState, flag: boolean) => void
 }

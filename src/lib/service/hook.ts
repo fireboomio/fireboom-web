@@ -6,10 +6,12 @@ import requests from '@/lib/fetchers'
 // }
 
 // 更新开关
-export const updateHookEnabled = (path: string, value: boolean) => {
-  return requests.post('/hook/switch', {
-    path: path,
-    enabled: value
+export const updateOperationHookEnabled = (operationName: string,  hookName: string, value: boolean) => {
+  return requests.put('/operation', {
+    path: operationName,
+    hooksConfiguration: {
+      [hookName]: value
+    }
   })
 }
 

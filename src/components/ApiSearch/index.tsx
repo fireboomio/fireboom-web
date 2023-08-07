@@ -20,6 +20,7 @@ import keyEsc from './assets/esc.svg'
 import keyTab from './assets/tab.svg'
 import keyUp from './assets/up.svg'
 import styles from './index.module.less'
+import { OperationType } from '@/interfaces/operation'
 
 export default function ApiSearch() {
   const navigate = useNavigate()
@@ -34,9 +35,9 @@ export default function ApiSearch() {
   const [activeTab, setActiveTab] = useState('')
   const tabs = [
     { key: '', label: intl.formatMessage({ defaultMessage: '全部' }) },
-    { key: 'queries', label: intl.formatMessage({ defaultMessage: '查询' }) },
-    { key: 'mutations', label: intl.formatMessage({ defaultMessage: '变更' }) },
-    { key: 'subscriptions', label: intl.formatMessage({ defaultMessage: '订阅' }) }
+    { key: OperationType.Query.toString(), label: intl.formatMessage({ defaultMessage: '查询' }) },
+    { key: OperationType.Mutation.toString(), label: intl.formatMessage({ defaultMessage: '变更' }) },
+    { key: OperationType.Subscription.toString(), label: intl.formatMessage({ defaultMessage: '订阅' }) }
   ]
 
   // 筛选相关变量
@@ -50,7 +51,10 @@ export default function ApiSearch() {
     key,
     title,
     filterFun: curry(
-      (filterValue: boolean, api: ApiDocuments.fileloader_DataTree) => get(api, key) === filterValue
+      (filterValue: boolean, api: ApiDocuments.fileloader_DataTree) => {
+        const val = get(api, ['extra', key])
+        return val === filterValue
+      }
     ),
     options: [
       {
@@ -63,7 +67,7 @@ export default function ApiSearch() {
   const filterFields = [
     buildBaseFilter('invalid', intl.formatMessage({ defaultMessage: '是否非法' })),
     buildBaseFilter('enabled', intl.formatMessage({ defaultMessage: '是否开启' })),
-    buildBaseFilter('isPublic', intl.formatMessage({ defaultMessage: '是否公开' })),
+    buildBaseFilter('internal', intl.formatMessage({ defaultMessage: '内部接口' })),
     buildBaseFilter('liveQueryEnabled', intl.formatMessage({ defaultMessage: '是否实时' }))
   ]
 
@@ -82,11 +86,11 @@ export default function ApiSearch() {
           return false
         }
         // tab过滤
-        if (!api.operationType?.includes(activeTab)) {
+        if (!api.extra?.operationType?.toString().includes(activeTab)) {
           return false
         }
         // 模糊搜索匹配
-        return api.path.toLowerCase().includes(searchInput.toLowerCase())
+        return api.path!.toLowerCase().includes(searchInput.toLowerCase())
       }) ?? [],
     [apiList, enabledFilter, searchInput, activeTab]
   )
@@ -250,7 +254,7 @@ export default function ApiSearch() {
                   {item.method}
                 </span>
                 {item.method && <span className="mx-2px">-</span>}
-                <span className={styles.name}>{item.path.substring(1)}</span>
+                <span className={styles.name}>{item.path!}</span>
                 {item.invalid && (
                   <span className={styles.invalidLabel}>
                     {intl.formatMessage({ defaultMessage: '非法' })}

@@ -59,11 +59,11 @@ export default function StorageProfile() {
     void mutateStorage()
     // 如果前置钩子改变了
     if (currentProfile?.hooks.preUpload != values.hooks.preUpload) {
-      updateHookEnabled(`uploads/${storage!.name}/${profile}/preUpload`, values.hooks.preUpload)
+      // updateHookEnabled(`uploads/${storage!.name}/${profile}/preUpload`, values.hooks.preUpload)
     }
     // 如果后置钩子改变了
     if (currentProfile?.hooks.postUpload != values.hooks.postUpload) {
-      updateHookEnabled(`uploads/${storage!.name}/${profile}/postUpload`, values.hooks.postUpload)
+      // updateHookEnabled(`uploads/${storage!.name}/${profile}/postUpload`, values.hooks.postUpload)
     }
   }
   if (!currentProfile) {

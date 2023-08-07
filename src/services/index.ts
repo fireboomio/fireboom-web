@@ -351,8 +351,8 @@ export const services = {
   }) {
     return requestAdapter<string>({
       url: replacePath('/datasource/{dataName}/dmmf', args),
-      method: 'POST',
-      ...extract('POST', args, [], ['dataName'])
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
     })
   },
   'datasource@/datasource/{dataName}/sdl'(args: {
@@ -363,8 +363,8 @@ export const services = {
   }) {
     return requestAdapter<string>({
       url: replacePath('/datasource/{dataName}/sdl', args),
-      method: 'POST',
-      ...extract('POST', args, [], ['dataName'])
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
     })
   },
   'engine@/engine/restart'(args?: any) {

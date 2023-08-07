@@ -30,7 +30,7 @@ const SubscriptionChart = ({
   globalHookState,
   hookState,
   directiveState,
-  apiSetting,
+  apiDesc,
   onEditHook,
   onToggleHook
 }: SubscriptionChartProps) => {
@@ -337,7 +337,7 @@ const SubscriptionChart = ({
     ])
 
     // fromClaim会隐式要求登录
-    if (directiveState.fromClaim || apiSetting.authenticationRequired) {
+    if (directiveState.fromClaim || apiDesc.authenticationConfig.authRequired) {
       graph.addNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
@@ -408,7 +408,7 @@ const SubscriptionChart = ({
     // 结束
     if (
       directiveState.fromClaim ||
-      apiSetting.authenticationRequired ||
+      apiDesc.authenticationConfig.authRequired ||
       directiveState.rbac ||
       directiveState.jsonSchema
     ) {
@@ -664,7 +664,7 @@ const SubscriptionChart = ({
         }
       }
     })
-  }, [apiSetting, directiveState, globalHookState, hookState, onEditHook])
+  }, [apiDesc, directiveState, globalHookState, hookState, onEditHook])
 
   return (
     <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">

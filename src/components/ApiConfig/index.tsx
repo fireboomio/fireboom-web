@@ -9,10 +9,13 @@ import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 
 import styles from './index.module.less'
+import { ApiDocuments } from '@/services/a2s.namespace'
+import { operationName } from '@apollo/client'
+import { OperationType } from '@/interfaces/operation'
 
 interface Props {
   operationType?: OperationTypeNode
-  id?: number
+  operationName?: string
   onClose?: () => void
   type: 'global' | 'panel'
 }
@@ -33,17 +36,17 @@ interface Setting {
 export default function Index(props: Props) {
   const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
-  const [apiSetting, setApiSetting] = useState<Setting>()
+  const [apiSetting, setApiSetting] = useState<ApiDocuments.Operation>()
   const [form] = Form.useForm()
   const { data: globalSetting, mutate: refreshGlobalSetting } = useApiGlobalSetting()
   useEffect(() => {
-    if (props.id) {
-      void requests.get<unknown, Setting>(`/operation/setting/${props.id}`).then(result => {
+    if (props.operationName) {
+      void requests.get<unknown, ApiDocuments.Operation>(`/operation/${props.operationName}`).then(result => {
         setApiSetting(result)
         form.setFieldsValue(result)
       })
     }
-  }, [props.id])
+  }, [props.operationName])
   useEffect(() => {
     let setting
     if (apiSetting?.enabled) {
@@ -60,18 +63,16 @@ export default function Index(props: Props) {
   }, [apiSetting, globalSetting])
 
   const { refreshAPI } = useAPIManager()
-  const onChange = (changedValues: Setting, allValues: Setting) => {
+  const onChange = (changedValues: ApiDocuments.Operation, allValues: ApiDocuments.Operation) => {
     // 全局配置需要手动保存
     if (props.type !== 'panel') {
       return
     }
     // 修改开关的情况下，只修改开关容纳后保存
     if (changedValues.enabled !== undefined) {
-      void requests.put<unknown, any>(`/operation/setting/${props.id}`, {
-        ...apiSetting,
+      void requests.put<unknown, any>(`/operation`, {
         enabled: changedValues.enabled,
-        settingType: props.id ? 1 : 2,
-        id: props.id || 0
+        path: props.operationName,
       })
       setApiSetting({ ...apiSetting!, enabled: changedValues.enabled })
 
@@ -82,20 +83,19 @@ export default function Index(props: Props) {
     }
     setApiSetting({ ...apiSetting!, ...changedValues })
     void requests
-      .put<unknown, any>(`/operation/setting/${props.id}`, {
-        ...allValues,
-        settingType: props.id ? 1 : 2,
-        id: props.id || 0
+      .put<unknown, any>(`/operation`, {
+        ...changedValues,
+        path: props.operationName,
       })
       .then(() => {
         // 如果修改的是实时查询，则需要刷新api面板=
-        if (changedValues.liveQueryEnabled !== undefined) {
+        if (changedValues.liveQueryConfig.enabled !== undefined) {
           void mutateApi()
           refreshAPI()
         }
         // 如果修改的是开启授权，则需要刷新当前api页面
         if (
-          changedValues.authenticationRequired !== undefined ||
+          changedValues.authenticationConfig?.authRequired !== undefined ||
           changedValues.authenticationQueriesRequired !== undefined ||
           changedValues.authenticationMutationsRequired !== undefined ||
           changedValues.authenticationSubscriptionsRequired !== undefined
@@ -118,13 +118,9 @@ export default function Index(props: Props) {
   //   return null
   // }
 
-  const onFinish = (values: Setting) => {
+  const onFinish = (values: ApiDocuments.Operation) => {
     void requests
-      .put<unknown, any>('/operation/setting', {
-        ...values,
-        settingType: props.id ? 1 : 2,
-        id: props.id || 0
-      })
+      .put<unknown, any>('/globalOperation', values)
       .then(() => {
         message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
         void refreshGlobalSetting()
@@ -172,7 +168,7 @@ export default function Index(props: Props) {
               })}
             >
               <>
-                <Form.Item noStyle name="authenticationQueriesRequired" valuePropName="checked">
+                <Form.Item noStyle name={['authenticationConfigs', OperationType.Query.toString(), 'authRequired']} valuePropName="checked">
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -185,7 +181,7 @@ export default function Index(props: Props) {
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '变更授权' })}>
               <>
-                <Form.Item noStyle name="authenticationMutationsRequired" valuePropName="checked">
+                <Form.Item noStyle name={['authenticationConfigs', OperationType.Mutation.toString(), 'authRequired']} valuePropName="checked">
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -200,7 +196,7 @@ export default function Index(props: Props) {
               <>
                 <Form.Item
                   noStyle
-                  name="authenticationSubscriptionsRequired"
+                  name={['authenticationConfigs', OperationType.Subscription.toString(), 'authRequired']} 
                   valuePropName="checked"
                 >
                   <Switch
@@ -219,7 +215,7 @@ export default function Index(props: Props) {
         ) : (
           <Form.Item label={intl.formatMessage({ defaultMessage: '开启授权' })}>
             <>
-              <Form.Item noStyle name="authenticationRequired" valuePropName="checked">
+              <Form.Item noStyle name={['authenticationConfig', 'authRequired']}  valuePropName="checked">
                 <Switch
                   disabled={disabled}
                   checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
@@ -243,7 +239,7 @@ export default function Index(props: Props) {
 
               <Form.Item label={intl.formatMessage({ defaultMessage: '查询缓存' })}>
                 <>
-                  <Form.Item noStyle name="cachingEnabled" valuePropName="checked">
+                  <Form.Item noStyle name={['cacheConfig', 'enabled']} valuePropName="checked">
                     <Switch
                       disabled={disabled}
                       checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
@@ -259,7 +255,7 @@ export default function Index(props: Props) {
               </Form.Item>
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '最大时长' })}
-                name="cachingMaxAge"
+                name={['cacheConfig', 'maxAge']}
               >
                 <InputNumber
                   disabled={disabled}
@@ -268,7 +264,7 @@ export default function Index(props: Props) {
               </Form.Item>
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '重新校验时长' })}
-                name="cachingStaleWhileRevalidate"
+                name={['cacheConfig', 'staleWhileRevalidate']}
               >
                 <InputNumber
                   disabled={disabled}
@@ -287,7 +283,7 @@ export default function Index(props: Props) {
 
               <Form.Item label={intl.formatMessage({ defaultMessage: '实时查询' })}>
                 <>
-                  <Form.Item noStyle name="liveQueryEnabled" valuePropName="checked">
+                  <Form.Item noStyle name={['liveQueryConfig', 'enabled']} valuePropName="checked">
                     <Switch
                       disabled={disabled}
                       checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
@@ -302,7 +298,7 @@ export default function Index(props: Props) {
 
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: '轮询间隔' })}
-                name="liveQueryPollingIntervalSeconds"
+                name={['liveQueryConfig', 'pollingIntervalSeconds']}
               >
                 <InputNumber
                   disabled={disabled}

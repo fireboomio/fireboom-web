@@ -11,7 +11,7 @@ import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 
 import StatusDirective from '../APIFlowChart/StatusDirective'
 
-export default function HookPanel({ id }: { id?: string }) {
+export default function HookPanel({ apiPath }: { apiPath?: string }) {
   const location = useLocation()
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
 
@@ -29,7 +29,7 @@ export default function HookPanel({ id }: { id?: string }) {
     (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
 
   const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
-    id ? `/operation/hooks/${id}` : null,
+    apiPath ? `/operation/hooks/${apiPath}` : null,
     requests.get,
     { revalidateOnMount: true }
   )
@@ -86,7 +86,7 @@ export default function HookPanel({ id }: { id?: string }) {
     setEditingHook(null)
   }, [location])
 
-  if (!id) {
+  if (!apiPath) {
     return null
   }
   return (

@@ -1,11 +1,9 @@
 import type { OperationDefinitionNode, OperationTypeNode } from 'graphql'
 import { isEqual } from 'lodash'
 import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react'
-import useSWRImmutable from 'swr/immutable'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import { GlobalContext } from '@/lib/context/globalContext'
-import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 
 import { useAPIManager } from '../../store'
@@ -18,6 +16,8 @@ import type {
 } from './interface'
 // import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
+import { ApiDocuments } from '@/services/a2s.namespace'
+import { useDict } from '@/providers/dict'
 
 type DirectiveState = FlowChartProps['directiveState']
 type GlobalState = FlowChartProps['globalHookState']
@@ -26,7 +26,7 @@ type HookState = FlowChartProps['hookState']
 const FlowChart = lazy(() => import('./FlowChart'))
 const SubscriptionChart = lazy(() => import('./SubscriptionChart'))
 
-const APIFlowChart = ({ id }: { id: string }) => {
+const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
   const {
     apiDesc,
     schemaAST,
@@ -34,7 +34,8 @@ const APIFlowChart = ({ id }: { id: string }) => {
     query,
     operationType,
     appendToAPIRefresh,
-    dispendToAPIRefresh
+    dispendToAPIRefresh,
+    refreshAPI
   } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
     schemaAST: state.schemaAST,
@@ -42,12 +43,15 @@ const APIFlowChart = ({ id }: { id: string }) => {
     operationType: state.computed.operationType,
     schemaTypeMap: state.schemaTypeMap,
     appendToAPIRefresh: state.appendToAPIRefresh,
-    dispendToAPIRefresh: state.dispendToAPIRefresh
+    dispendToAPIRefresh: state.dispendToAPIRefresh,
+    refreshAPI: state.refreshAPI
   }))
   const { vscode } = useContext(GlobalContext)
+  const dict = useDict()
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
   const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
+
 
   const directiveState = useDebounceMemo(
     () => {
@@ -81,41 +85,32 @@ const APIFlowChart = ({ id }: { id: string }) => {
     [query, schemaAST?.definitions]
   )
 
-  const { data: hookInfo, mutate: mutateHookInfo } = useSWRImmutable<any>(
-    id ? `/operation/hooks/${id}` : null,
-    requests.get,
-    { revalidateOnMount: true }
-  )
 
   const loadHook = useCallback(() => {
-    if (!hookInfo || !schemaAST) {
+    if ( !schemaAST) {
       return
     }
-    // @ts-ignore
-    const globalHooks = hookInfo.globalHooks
-    // @ts-ignore
-    const operationHooks = hookInfo.operationHooks
     setGlobalState({
       beforeRequest: {
         name: 'beforeRequest',
-        enabled: globalHooks.beforeRequest?.enabled ?? false,
-        path: globalHooks.beforeRequest?.path ?? ''
+        enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
+        path: `${dict.beforeOriginRequest}/beforeRequest.`
       },
       onRequest: {
         name: 'onRequest',
-        enabled: globalHooks.onRequest?.enabled ?? false,
-        path: globalHooks.onRequest?.path ?? ''
+        enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
+        path: `${dict.onOriginRequest}/onRequest.`
       },
       onResponse: {
         name: 'onResponse',
-        enabled: globalHooks.onResponse?.enabled ?? false,
-        path: globalHooks.onResponse?.path ?? ''
+        enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
+        path: `${dict.onOriginResponse}/onResponse.`
       },
       // @ts-ignore
       onConnectionInit: {
         name: 'onConnectionInit',
-        enabled: globalHooks.onConnectionInit?.enabled ?? false,
-        path: globalHooks.onConnectionInit?.path ?? ''
+        enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
+        path: `${dict.onOriginResponse}/onConnectionInit.`
       }
     })
     const defs =
@@ -123,37 +118,37 @@ const APIFlowChart = ({ id }: { id: string }) => {
     setHookState({
       customResolve: {
         name: 'customResolve',
-        enabled: operationHooks.customResolve.enabled,
-        path: operationHooks.customResolve.path
+        enabled: apiDesc?.hooksConfiguration?.customResolve ?? false,
+        path: `${dict.customResolve}/customResolve.`
       },
       mutatingPostResolve: {
         name: 'mutatingPostResolve',
-        enabled: operationHooks.mutatingPostResolve.enabled,
-        path: operationHooks.mutatingPostResolve.path
+        enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
+        path: `${dict.mutatingPostResolve}/mutatingPostResolve.`
       },
       mutatingPreResolve: {
         name: 'mutatingPreResolve',
-        enabled: operationHooks.mutatingPreResolve.enabled,
+        enabled: apiDesc?.hooksConfiguration?.mutatingPreResolve ?? false,
         can: defs?.length > 0 ?? false,
-        path: operationHooks.mutatingPreResolve.path
+        path: `${dict.mutatingPreResolve}/mutatingPreResolve.`
       },
       postResolve: {
         name: 'postResolve',
-        enabled: operationHooks.postResolve.enabled,
-        path: operationHooks.postResolve.path
+        enabled: apiDesc?.hooksConfiguration?.postResolve ?? false,
+        path: `${dict.postResolve}/postResolve.`
       },
       preResolve: {
         name: 'preResolve',
-        enabled: operationHooks.preResolve.enabled,
-        path: operationHooks.preResolve.path
+        enabled: apiDesc?.hooksConfiguration?.preResolve ?? false,
+        path: `${dict.preResolve}/preResolve.`
       },
       mockResolve: {
         name: 'mockResolve',
-        enabled: operationHooks.mockResolve.enabled,
-        path: operationHooks.mockResolve.path
+        enabled: apiDesc?.hooksConfiguration?.mockResolve.enabled ?? false,
+        path: `${dict.mockResolve}/mockResolve.`
       }
     })
-  }, [id, schemaAST, hookInfo])
+  }, [apiPath, schemaAST])
 
   useEffect(() => {
     loadHook()
@@ -166,7 +161,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
   // 监听路由变化，当路由变化时自动关闭钩子编辑器
   useEffect(() => {
     setEditingHook(null)
-  }, [id])
+  }, [apiPath])
   const hasParam = !!(query ?? '').match(/\(\$\w+/)
   const onEditHook = useCallback(
     (hook: { name: string; path: string }) => {
@@ -176,18 +171,17 @@ const APIFlowChart = ({ id }: { id: string }) => {
   )
   const onToggleHook = useCallback(
     async (hook: { name: string; path: string }, flag: boolean) => {
-      console.log(123123)
       await vscode.toggleHook(flag, hook.path, hasParam)
-      mutateHookInfo()
+      refreshAPI()
     },
-    [mutateHookInfo, query, vscode]
+    [query, vscode]
   )
 
   return (
     <>
       {apiDesc && schemaAST && (
         <ChartWrapper
-          apiSetting={apiDesc!.setting}
+        apiDesc={apiDesc}
           directiveState={directiveState}
           // @ts-ignore
           globalHookState={globalState}
@@ -204,7 +198,7 @@ const APIFlowChart = ({ id }: { id: string }) => {
           hasParams={hasParam}
           hook={editingHook}
           onClose={() => {
-            void mutateHookInfo()
+            void refreshAPI()
             setEditingHook(null)
           }}
         />
@@ -233,7 +227,7 @@ const _ChartWrapper = (
     hookState,
     directiveState,
     operationType,
-    apiSetting,
+    apiDesc,
     onEditHook,
     onToggleHook
   } = props
@@ -248,7 +242,7 @@ const _ChartWrapper = (
               globalHookState={globalHookState as unknown as SubscriptionGlobalHookState}
               hookState={hookState}
               directiveState={directiveState}
-              apiSetting={apiSetting}
+              apiDesc={apiDesc}
               onEditHook={onEditHook}
               onToggleHook={onToggleHook}
             />
@@ -259,7 +253,7 @@ const _ChartWrapper = (
               globalHookState={globalHookState as NormalGlobalHookState}
               hookState={hookState}
               directiveState={directiveState}
-              apiSetting={apiSetting}
+              apiDesc={apiDesc}
               onEditHook={onEditHook}
               onToggleHook={onToggleHook}
             />

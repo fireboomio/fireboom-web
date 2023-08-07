@@ -23,7 +23,7 @@ import type {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
-import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
+import { getHook, saveHookScript, updateOperationHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -306,12 +306,12 @@ export default function Index(props: PropsWithChildren) {
       options: vscode,
       isHookServerSelected,
       checkHookExist,
-      toggleHook: async (flag: boolean, path: string, hasParam = false) => {
+      toggleHook: async (flag: boolean, path: string, operationName: string, hasParam = false) => {
         // 打开钩子时，需要检查钩子文件
         if (flag && !(await checkHookExist(path, hasParam))) {
           return
         }
-        await updateHookEnabled(path, flag)
+        await updateOperationHookEnabled(operationName, path,  flag)
       },
       hide: () => {
         setVscode({

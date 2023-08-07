@@ -49,7 +49,7 @@ const FlowChart = ({
   globalHookState,
   hookState,
   directiveState,
-  apiSetting,
+  apiDesc,
   onEditHook,
   onToggleHook
 }: FlowChartProps) => {
@@ -450,7 +450,7 @@ const FlowChart = ({
 
     // 登录校验
     // fromClaim会隐式要求登录
-    if (directiveState.fromClaim || apiSetting.authenticationRequired) {
+    if (directiveState.fromClaim || apiDesc.authenticationConfig?.authRequired) {
       const loggedValidation = graph.createNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
@@ -930,7 +930,7 @@ const FlowChart = ({
     const loopEndPoint = y - 6
 
     // 轮询
-    if (apiSetting.liveQueryEnabled) {
+    if (apiDesc.liveQueryConfig?.enabled) {
       const centerY = (loopEndPoint - loopStartPoint) / 2 + loopStartPoint
       const flowHook = hookState.mockResolve.enabled
       // 开始
@@ -1058,7 +1058,7 @@ const FlowChart = ({
           label: {
             fontSize: 11,
             stroke: flowHook ? '#B3BACC' : '#478FFF',
-            text: `${apiSetting.liveQueryPollingIntervalSeconds}s`
+            text: `${apiDesc.liveQueryConfig.pollingIntervalSeconds}s`
           }
         }
       })
@@ -1204,7 +1204,7 @@ const FlowChart = ({
       console.log('dispose FlowChart')
       graph.dispose()
     }
-  }, [directiveState, hookState, globalHookState, apiSetting, onEditHook])
+  }, [directiveState, hookState, globalHookState, apiDesc, onEditHook])
 
   return (
     <div className="flex flex-shrink-0 w-full overflow-x-auto overflow-y-hidden !h-full">

@@ -94,7 +94,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <FormattedMessage defaultMessage="非法" />
         </div>
       )
-    } else if (!nodeData.extra.internal) {
+    } else if (nodeData.extra.internal) {
       return <FormattedMessage defaultMessage="内部" />
     } else {
       // return nodeextra.method

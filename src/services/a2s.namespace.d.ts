@@ -91,7 +91,7 @@ export declare namespace ApiDocuments {
   export interface Env extends BasicDto {}
   export interface GlobalOperation extends BasicDto {
     apiAuthenticationHooks: ApiDocuments.ApiAuthenticationHooks
-    authenticationConfig: ApiDocuments.OperationAuthenticationConfig
+    authenticationConfigs: {}
     cacheConfig: ApiDocuments.OperationCacheConfig
     globalHttpTransportHooks: {}
     liveQueryConfig: ApiDocuments.OperationLiveQueryConfig
@@ -274,12 +274,12 @@ export declare namespace ApiDocuments {
     src?: string
   }
   export interface fileloader_DataTree extends BasicDto {
-    dataName?: any
     extension?: string
     extra?: any
     isDir?: boolean
     items?: ApiDocuments.fileloader_DataTree[]
     name?: string
+    path?: string
   }
   export interface fileloader_DataWithLockUser_Authentication extends BasicDto {
     data?: ApiDocuments.Authentication
