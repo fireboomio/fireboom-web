@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom'
 import { GlobalContext } from '@/lib/context/globalContext'
 import EditPanel from '@/pages/workbench/apimanage/[...path]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
+import { useDict } from '@/providers/dict'
 
 import StatusDirective from '../APIFlowChart/StatusDirective'
 
@@ -13,6 +14,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
   const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
 
   const { vscode } = useContext(GlobalContext)
+  const dict = useDict()
   const { apiDesc, query, schemaAST, operationType, refreshAPI } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
     query: state.query,
@@ -20,106 +22,93 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     refreshAPI: state.refreshAPI,
     schemaAST: state.schemaAST
   }))
-  const defs =
-    (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ?? []
 
   const hookList = useMemo(() => {
-      if ( !schemaAST) {
-        return []
-      }
-      return [{
-          name: 'beforeRequest',
-          enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
-          path: `${dict.beforeOriginRequest}/beforeRequest.`
-        }, {
-          name: 'onRequest',
-          enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
-          path: `${dict.onOriginRequest}/onRequest.`
-        },{
-          name: 'onResponse',
-          enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
-          path: `${dict.onOriginResponse}/onResponse.`
-        },{
-          name: 'onConnectionInit',
-          enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
-          path: `${dict.onOriginResponse}/onConnectionInit.`
-        },{
-          name: 'customResolve',
-          enabled: apiDesc?.hooksConfiguration?.customResolve ?? false,
-          path: `${dict.customResolve}/customResolve.`
-        },{
-          name: 'mutatingPostResolve',
-          enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
-          path: `${dict.mutatingPostResolve}/mutatingPostResolve.`
-        },{
-          name: 'mutatingPreResolve',
-          enabled: apiDesc?.hooksConfiguration?.mutatingPreResolve ?? false,
-          can: defs?.length > 0 ?? false,
-          path: `${dict.mutatingPreResolve}/mutatingPreResolve.`
-        }, {
-          name: 'postResolve',
-          enabled: apiDesc?.hooksConfiguration?.postResolve ?? false,
-          path: `${dict.postResolve}/postResolve.`
-        },{
-          name: 'preResolve',
-          enabled: apiDesc?.hooksConfiguration?.preResolve ?? false,
-          path: `${dict.preResolve}/preResolve.`
-        },{
-          name: 'mockResolve',
-          enabled: apiDesc?.hooksConfiguration?.mockResolve.enabled ?? false,
-          path: `${dict.mockResolve}/mockResolve.`
-        }]
-      
-    }, [apiPath, schemaAST])
+    if (!schemaAST) {
+      return []
+    }
+    const defs =
+      (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
+      []
 
-  // const hookList = useMemo(() => {
-  //   if (!apiDesc) {
-  //     return []
-  //   }
-  //   const list = sortBy(
-  //     [...values(hookInfo.globalHooks), ...values(hookInfo.operationHooks)].map((hook: any) => ({
-  //       name: hook.path.split('/').pop(),
-  //       path: hook.path,
-  //       enabled: hook.enabled
-  //     })),
-  //     x =>
-  //       ({
-  //         onRequest: 1,
-  //         preResolve: 2,
-  //         mutatingPreResolve: 3,
-  //         customResolve: 4,
-  //         postResolve: 5,
-  //         mutatingPostResolve: 6,
-  //         onResponse: 7,
-  //         mockResolve: 8,
-  //         onConnectionInit: 9
-  //       }[x.name as string] ?? 0)
-  //   ).filter(x => {
-  //     // 无参数的请求不显示 mutatingPreResolve
-  //     if (x.name === 'mutatingPreResolve' && !defs?.length) {
-  //       return false
-  //     }
-  //     if (operationType === 'subscription') {
-  //       if (
-  //         ![
-  //           'preResolve',
-  //           'mutatingPostResolve',
-  //           'mutatingPreResolve',
-  //           'postResolve',
-  //           'onConnectionInit'
-  //         ].includes(x.name)
-  //       ) {
-  //         return false
-  //       }
-  //     } else {
-  //       if (x.name === 'onConnectionInit') {
-  //         return false
-  //       }
-  //     }
-  //     return true
-  //   })
-  //   return list
-  // }, [defs])
+    const hooks = [
+      {
+        name: 'beforeRequest',
+        enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
+        path: `${dict.beforeOriginRequest}/beforeRequest.`
+      },
+      {
+        name: 'onRequest',
+        enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
+        path: `${dict.onOriginRequest}/onRequest.`
+      },
+      {
+        name: 'onResponse',
+        enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
+        path: `${dict.onOriginResponse}/onResponse.`
+      },
+      {
+        name: 'onConnectionInit',
+        enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
+        path: `${dict.onOriginResponse}/onConnectionInit.`
+      },
+      {
+        name: 'mockResolve',
+        enabled: apiDesc?.hooksConfiguration?.mockResolve.enabled ?? false,
+        path: `${dict.mockResolve}/mockResolve.`
+      },
+      {
+        name: 'preResolve',
+        enabled: apiDesc?.hooksConfiguration?.preResolve ?? false,
+        path: `${dict.preResolve}/preResolve.`
+      },
+      {
+        name: 'mutatingPreResolve',
+        enabled: apiDesc?.hooksConfiguration?.mutatingPreResolve ?? false,
+        can: defs?.length > 0 ?? false,
+        path: `${dict.mutatingPreResolve}/mutatingPreResolve.`
+      },
+      {
+        name: 'customResolve',
+        enabled: apiDesc?.hooksConfiguration?.customResolve ?? false,
+        path: `${dict.customResolve}/customResolve.`
+      },
+      {
+        name: 'postResolve',
+        enabled: apiDesc?.hooksConfiguration?.postResolve ?? false,
+        path: `${dict.postResolve}/postResolve.`
+      },
+      {
+        name: 'mutatingPostResolve',
+        enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
+        path: `${dict.mutatingPostResolve}/mutatingPostResolve.`
+      }
+    ]
+    return hooks.filter(hook => {
+      // 无参数的请求不显示 mutatingPreResolve
+      if (!defs?.length && hook.name === 'mutatingPreResolve') {
+        return false
+      }
+      if (operationType === 'subscription') {
+        if (
+          ![
+            'preResolve',
+            'mutatingPostResolve',
+            'mutatingPreResolve',
+            'postResolve',
+            'onConnectionInit'
+          ].includes(hook.name)
+        ) {
+          return false
+        }
+      } else {
+        if (hook.name === 'onConnectionInit') {
+          return false
+        }
+      }
+      return true
+    })
+  }, [apiDesc, operationType, schemaAST, dict])
 
   useEffect(() => {
     setEditingHook(null)

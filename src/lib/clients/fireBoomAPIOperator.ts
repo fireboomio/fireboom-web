@@ -1,5 +1,6 @@
 import { printSchema } from '@mrleebo/prisma-ast'
 
+import type { DMMF } from '@/interfaces/dbml'
 import type { Block, PrismaDMF } from '@/interfaces/modeling'
 import {
   DATABASE_SOURCE,
@@ -29,12 +30,13 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceName: string) => {
 }
 
 export const fetchPrismaDMF = (dbSourceName: string) => {
-  requests.post<any, string>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), null, {
-    timeout: 15e3
-  }).then(res => {
-    res.models = res.models ?? []
-    res.enums = res.enums ?? []
-    return res
-  })
+  requests
+    .get<any, DMMF.Datamodel>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), {
+      timeout: 15e3
+    })
+    .then(res => {
+      res.models = res.models ?? []
+      res.enums = res.enums ?? []
+      return res
+    })
 }
-  
