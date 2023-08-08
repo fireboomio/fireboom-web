@@ -25,6 +25,14 @@ export const updateOperationHookEnabled = (
   hookName: string,
   value: boolean
 ) => {
+  if (hookName === 'mockResolve') {
+    return requests.put('/operation', {
+      path: operationName,
+      hooksConfiguration: {
+        [hookName]: { enabled: value }
+      }
+    })
+  }
   return requests.put('/operation', {
     path: operationName,
     hooksConfiguration: {

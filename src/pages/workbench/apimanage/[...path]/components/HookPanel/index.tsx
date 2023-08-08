@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import useImmutableSWR from 'swr/immutable'
 
 import { GlobalContext } from '@/lib/context/globalContext'
+import requests from '@/lib/fetchers'
 import EditPanel from '@/pages/workbench/apimanage/[...path]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import { useDict } from '@/providers/dict'
@@ -32,9 +33,10 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     [schemaAST]
   )
 
-  const { data: globalHooksState } = useImmutableSWR<any, ApiDocuments.models_HookOptions>(
-    '/globalOperation/hookOptions'
-  )
+  const { data: globalHooksState, mutate: mutateGlobalHooks } = useImmutableSWR<
+    any,
+    ApiDocuments.models_HookOptions
+  >('/globalOperation/hookOptions', requests.get)
 
   const hookList = useMemo(() => {
     if (!schemaAST) {
@@ -45,22 +47,22 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
       {
         name: 'beforeRequest',
         enabled: globalHooksState?.beforeOriginRequest?.enabled ?? false,
-        path: globalHooksState?.beforeOriginRequest?.path
+        path: globalHooksState?.beforeOriginRequest?.path?.replace(/\.\w+/, '')
       },
       {
         name: 'onRequest',
         enabled: globalHooksState?.onOriginRequest?.enabled ?? false,
-        path: globalHooksState?.onOriginRequest?.path
+        path: globalHooksState?.onOriginRequest?.path?.replace(/\.\w+/, '')
       },
       {
         name: 'onResponse',
         enabled: globalHooksState?.onOriginResponse?.enabled ?? false,
-        path: globalHooksState?.onOriginResponse?.path
+        path: globalHooksState?.onOriginResponse?.path?.replace(/\.\w+/, '')
       },
       {
         name: 'onConnectionInit',
         enabled: globalHooksState?.onConnectionInit?.enabled ?? false,
-        path: globalHooksState?.onConnectionInit?.path
+        path: globalHooksState?.onConnectionInit?.path?.replace(/\.\w+/, '')
       },
       {
         name: 'mockResolve',
@@ -143,6 +145,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
             onToggleEnabled={async flag => {
               await vscode.toggleOperationHook(flag, hook.path, apiPath, defs.length > 0)
               refreshAPI()
+              mutateGlobalHooks()
             }}
           />
         ))}

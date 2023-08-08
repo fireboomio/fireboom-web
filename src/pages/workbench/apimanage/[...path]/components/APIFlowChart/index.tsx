@@ -1,11 +1,14 @@
 import type { OperationDefinitionNode, OperationTypeNode } from 'graphql'
 import { isEqual } from 'lodash'
 import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react'
+import useImmutableSWR from 'swr/immutable'
 
 import { useDebounceMemo } from '@/hooks/debounce'
 import { GlobalContext } from '@/lib/context/globalContext'
+import requests from '@/lib/fetchers'
 import { parseParameters } from '@/lib/gql-parser'
 import { useDict } from '@/providers/dict'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import { useAPIManager } from '../../store'
 import EditPanel from './EditPanel'
@@ -83,6 +86,11 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
     [query, schemaAST?.definitions]
   )
 
+  const { data: globalHooksState, mutate: mutateGlobalHooks } = useImmutableSWR<
+    any,
+    ApiDocuments.models_HookOptions
+  >('/globalOperation/hookOptions', requests.get)
+
   const loadHook = useCallback(() => {
     if (!schemaAST) {
       return
@@ -90,24 +98,24 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
     setGlobalState({
       beforeRequest: {
         name: 'beforeRequest',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
-        path: `${dict.beforeOriginRequest}/beforeRequest`
+        enabled: globalHooksState?.beforeOriginRequest?.enabled ?? false,
+        path: globalHooksState?.beforeOriginRequest?.path?.replace(/\.\w+/, '')
       },
       onRequest: {
         name: 'onRequest',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
-        path: `${dict.onOriginRequest}/onRequest`
+        enabled: globalHooksState?.onOriginRequest?.enabled ?? false,
+        path: globalHooksState?.onOriginRequest?.path?.replace(/\.\w+/, '')
       },
       onResponse: {
         name: 'onResponse',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
-        path: `${dict.onOriginResponse}/onResponse`
+        enabled: globalHooksState?.onOriginResponse?.enabled ?? false,
+        path: globalHooksState?.onOriginResponse?.path?.replace(/\.\w+/, '')
       },
       // @ts-ignore
       onConnectionInit: {
         name: 'onConnectionInit',
-        enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
-        path: `${dict.onOriginResponse}/onConnectionInit`
+        enabled: globalHooksState?.onConnectionInit?.enabled ?? false,
+        path: globalHooksState?.onConnectionInit?.path?.replace(/\.\w+/, '')
       }
     })
     const defs =
@@ -145,7 +153,7 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
         path: `${dict.mockResolve}/${apiDesc?.path}/mockResolve`
       }
     })
-  }, [schemaAST, dict, apiDesc])
+  }, [schemaAST, dict, apiDesc, globalHooksState])
 
   useEffect(() => {
     loadHook()
@@ -170,8 +178,9 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
     async (hook: { name: string; path: string }, flag: boolean) => {
       await vscode.toggleOperationHook(flag, hook.path, apiPath, hasParam)
       refreshAPI()
+      mutateGlobalHooks()
     },
-    [vscode, apiPath, hasParam, refreshAPI]
+    [vscode, apiPath, hasParam, refreshAPI, mutateGlobalHooks]
   )
 
   return (
