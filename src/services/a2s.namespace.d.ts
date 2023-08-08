@@ -156,6 +156,7 @@ export declare namespace ApiDocuments {
     authenticationConfig: ApiDocuments.OperationAuthenticationConfig
     authorizationConfig: ApiDocuments.OperationAuthorizationConfig
     cacheConfig: ApiDocuments.OperationCacheConfig
+    configCustomized: boolean
     createTime: string
     deleteTime: string
     enabled: boolean
@@ -263,7 +264,6 @@ export declare namespace ApiDocuments {
     uploadProfiles: {}
     useSSL: boolean
   }
-  export interface consts_MiddlewareHook extends BasicDto {}
   export interface fileloader_DataBatchResult extends BasicDto {
     dataName?: string
     succeed?: boolean
@@ -338,10 +338,6 @@ export declare namespace ApiDocuments {
     operation?: ApiDocuments.handler_operationStatistics
     storage?: ApiDocuments.handler_storageStatistics
   }
-  export interface handler_hooksData extends BasicDto {
-    globalHooks?: ApiDocuments.models_OperationHookEnabled[]
-    operationHooks?: ApiDocuments.models_OperationHookEnabled[]
-  }
   export interface handler_operationStatistics extends BasicDto {
     liveQueryTotal?: number
     mutationTotal?: number
@@ -389,10 +385,7 @@ export declare namespace ApiDocuments {
     maxbackups: number
     maxsize: number
   }
-  export interface models_OperationHookEnabled extends BasicDto {
-    enabled?: boolean
-    name?: ApiDocuments.consts_MiddlewareHook
-  }
+  export interface models_HookOptions extends BasicDto {}
   export interface models_Sdk extends BasicDto {
     author?: string
     createTime?: string
@@ -430,6 +423,11 @@ export declare namespace ApiDocuments {
      * @description Size in bytes of the object.
      */
     size?: number
+  }
+  export interface models_hookOption extends BasicDto {
+    enabled?: boolean
+    existed?: boolean
+    path?: string
   }
   export interface models_sdkType extends BasicDto {}
   export interface vscode_FileStat extends BasicDto {

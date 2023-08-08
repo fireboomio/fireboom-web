@@ -127,7 +127,7 @@ export default function Index(props: PropsWithChildren) {
     setQuestions(data || [])
   })
   useWebSocket('question', 'push', data => {
-    setQuestions([questions, ...data])
+    setQuestions([...questions, data])
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'pull' })

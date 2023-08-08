@@ -199,7 +199,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       return false
     }
     return requests
-      .post(`/operationGraphql/${get().apiPath}`, { content })
+      .post(`/operation/graphql/${get().apiPath}`, content)
       .then(async () => {
         const query = content ?? ''
         // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
@@ -210,10 +210,10 @@ export const useAPIManager = create<APIState>((set, get) => ({
         // 内容变更可能需要刷新api列表
         void mutateApi()
         // await new Promise(resolve => setTimeout(resolve, 5000))
-        requests.get<any, { content: string }>(`/operationGraphql/${get().apiPath}`).then(resp => {
+        requests.get<any, string>(`/operation/graphql/${get().apiPath}`).then(resp => {
           if (resp) {
             // @ts-ignore
-            set({ apiDesc: { ...get().apiDesc, ...resp } })
+            set({ apiDesc: { ...get().apiDesc, content: resp } })
           }
         })
         return true
@@ -239,14 +239,12 @@ export const useAPIManager = create<APIState>((set, get) => ({
 
       // 如果不需要保留query，则更新编辑器内容
       if (!keepCurrentQuery) {
-        const resp = await requests.get<any, { content: string }>(
-          `/operationGraphql/${get().apiPath}`
-        )
+        const resp = await requests.get<any, string>(`/operation/graphql/${get().apiPath}`)
         if (resp) {
-          get().setQuery(resp.content)
+          get().setQuery(resp)
         }
         set({ clearHistoryFlag: !get().clearHistoryFlag })
-        set({ lastSavedQuery: resp.content })
+        set({ lastSavedQuery: resp })
       }
     } catch (e) {
       // 接口请求错误就刷新api列表

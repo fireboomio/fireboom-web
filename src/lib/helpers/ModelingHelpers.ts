@@ -10,7 +10,7 @@ import {
   localPrismaSchemaAction,
   refetchPrismaSchemaAction
 } from '@/lib/actions/PrismaSchemaActions'
-import { fetchPrismaDMF } from '@/lib/clients/fireBoomAPIOperator'
+import { fetchPrismaDMF, fetchPrismaSDL } from '@/lib/clients/fireBoomAPIOperator'
 import { MAGIC_DELETE_ENTITY_NAME } from '@/lib/constants/fireBoomConstants'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
@@ -23,25 +23,28 @@ export const buildBlocks = (schemaContent: string) =>
     }))
 
 // 每次进入页面或者切换数据源的时候执行
-export const initialPrismaSchema = (
+export const initialPrismaSchema = async (
   dataSourceName: string,
   dispatch: Dispatch<AnyAction>,
   selectedDataSource: ApiDocuments.Datasource,
   paramNameRef: React.MutableRefObject<string | undefined>
 ) => {
   const currentId = paramNameRef.current
-  return fetchPrismaDMF(dataSourceName).then(data => {
-    if (currentId !== paramNameRef.current) {
-      console.info('数据库name已改变，不再执行后续操作')
-      return
-    }
-    dispatch(
-      initialPrismaSchemaAction(buildBlocks(data.datamodel.schemaContent), selectedDataSource, {
-        models: data.datamodel.models,
-        enums: data.datamodel.enums
-      })
-    )
-  })
+  if (currentId !== paramNameRef.current) {
+    console.info('数据库name已改变，不再执行后续操作')
+    return
+  }
+  const [dmmf, sdl] = await Promise.all([
+    fetchPrismaDMF(dataSourceName),
+    fetchPrismaSDL(dataSourceName)
+  ])
+
+  dispatch(
+    initialPrismaSchemaAction(buildBlocks(sdl), selectedDataSource, {
+      models: dmmf.datamodel.models,
+      enums: dmmf.datamodel.enums
+    })
+  )
 }
 
 // 每次完成数据迁移之后执行 refetch

@@ -40,3 +40,9 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
       return res
     })
 }
+
+export const fetchPrismaSDL = (dbSourceName: string) => {
+  return requests.get<any, string>(`datasource/prisma/${dbSourceName}`, {
+    timeout: 15e3
+  })
+}

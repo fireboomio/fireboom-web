@@ -1,11 +1,13 @@
 import type { OperationDefinitionNode } from 'graphql/index'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
+import useImmutableSWR from 'swr/immutable'
 
 import { GlobalContext } from '@/lib/context/globalContext'
 import EditPanel from '@/pages/workbench/apimanage/[...path]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import { useDict } from '@/providers/dict'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import StatusDirective from '../APIFlowChart/StatusDirective'
 
@@ -15,7 +17,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
 
   const { vscode } = useContext(GlobalContext)
   const dict = useDict()
-  const { apiDesc, query, schemaAST, operationType, refreshAPI } = useAPIManager(state => ({
+  const { apiDesc, schemaAST, operationType, refreshAPI } = useAPIManager(state => ({
     apiDesc: state.apiDesc,
     query: state.query,
     operationType: state.computed.operationType,
@@ -30,6 +32,10 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     [schemaAST]
   )
 
+  const { data: globalHooksState } = useImmutableSWR<any, ApiDocuments.models_HookOptions>(
+    '/globalOperation/hookOptions'
+  )
+
   const hookList = useMemo(() => {
     if (!schemaAST) {
       return []
@@ -38,23 +44,23 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     const hooks = [
       {
         name: 'beforeRequest',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
-        path: `${dict.beforeOriginRequest}/beforeRequest`
+        enabled: globalHooksState?.beforeOriginRequest?.enabled ?? false,
+        path: globalHooksState?.beforeOriginRequest?.path
       },
       {
         name: 'onRequest',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
-        path: `${dict.onOriginRequest}/onRequest`
+        enabled: globalHooksState?.onOriginRequest?.enabled ?? false,
+        path: globalHooksState?.onOriginRequest?.path
       },
       {
         name: 'onResponse',
-        enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
-        path: `${dict.onOriginResponse}/onResponse`
+        enabled: globalHooksState?.onOriginResponse?.enabled ?? false,
+        path: globalHooksState?.onOriginResponse?.path
       },
       {
         name: 'onConnectionInit',
-        enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
-        path: `${dict.onOriginResponse}/onConnectionInit`
+        enabled: globalHooksState?.onConnectionInit?.enabled ?? false,
+        path: globalHooksState?.onConnectionInit?.path
       },
       {
         name: 'mockResolve',
@@ -112,7 +118,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
       }
       return true
     })
-  }, [apiDesc, operationType, schemaAST, defs, dict])
+  }, [apiDesc, operationType, schemaAST, defs, dict, globalHooksState])
 
   useEffect(() => {
     setEditingHook(null)

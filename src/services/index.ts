@@ -349,7 +349,7 @@ export const services = {
      */
     dataName: string
   }) {
-    return requestAdapter<string>({
+    return requestAdapter<{}>({
       url: replacePath('/datasource/{dataName}/dmmf', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
@@ -421,6 +421,13 @@ export const services = {
       url: replacePath('/globalOperation', args),
       method: 'PUT',
       ...extract('PUT', args, ['watchAction'], [])
+    })
+  },
+  'globalOperation@/globalOperation/hookOptions'(args?: any) {
+    return requestAdapter<ApiDocuments.models_HookOptions>({
+      url: replacePath('/globalOperation/hookOptions', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
     })
   },
   'globalOperation@/globalOperation/single'(args?: any) {
@@ -664,19 +671,19 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'operation@/operationGraphql/{dataName}'(args: {
+  'operation@/operation/{dataName}/graphql'(args: {
     /**
      * @description dataName
      */
     dataName: string
   }) {
     return requestAdapter<string>({
-      url: replacePath('/operationGraphql/{dataName}', args),
+      url: replacePath('/operation/{dataName}/graphql', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'operation@post@/operationGraphql/{dataName}'(
+  'operation@post@/operation/{dataName}/graphql'(
     args: {
       /**
        * @description dataName
@@ -685,19 +692,19 @@ export const services = {
     } & string
   ) {
     return requestAdapter<any>({
-      url: replacePath('/operationGraphql/{dataName}', args),
+      url: replacePath('/operation/{dataName}/graphql', args),
       method: 'POST',
       ...extract('POST', args, [], ['dataName'])
     })
   },
-  'operation@/operationHook/{dataName}'(args: {
+  'operation@/operation/{dataName}/hookOptions'(args: {
     /**
      * @description dataName
      */
     dataName: string
   }) {
-    return requestAdapter<ApiDocuments.handler_hooksData>({
-      url: replacePath('/operationHook/{dataName}', args),
+    return requestAdapter<ApiDocuments.models_HookOptions>({
+      url: replacePath('/operation/{dataName}/hookOptions', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })
@@ -1207,14 +1214,26 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'storageClient@/storageClient/ping'(args: ApiDocuments.models_Storage) {
+  'storage@/storage/{dataName}/hookOptions'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<{}>({
+      url: replacePath('/storage/{dataName}/hookOptions', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'storage@/storageClient/ping'(args: ApiDocuments.models_Storage) {
     return requestAdapter<any>({
       url: replacePath('/storageClient/ping', args),
       method: 'POST',
       ...extract('POST', args, [], [])
     })
   },
-  'storageClient@/storageClient/{dataName}/detail'(
+  'storage@/storageClient/{dataName}/detail'(
     args: {
       /**
        * @description dataName
@@ -1233,7 +1252,7 @@ export const services = {
       ...extract('GET', args, ['filename'], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/download'(
+  'storage@/storageClient/{dataName}/download'(
     args: {
       /**
        * @description dataName
@@ -1252,7 +1271,7 @@ export const services = {
       ...extract('GET', args, ['filename'], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/list'(
+  'storage@/storageClient/{dataName}/list'(
     args: {
       /**
        * @description dataName
@@ -1271,7 +1290,7 @@ export const services = {
       ...extract('GET', args, ['dirname'], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/mkdir'(
+  'storage@/storageClient/{dataName}/mkdir'(
     args: {
       /**
        * @description dataName
@@ -1290,7 +1309,7 @@ export const services = {
       ...extract('POST', args, ['dirname'], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/remove'(
+  'storage@/storageClient/{dataName}/remove'(
     args: {
       /**
        * @description dataName
@@ -1309,7 +1328,7 @@ export const services = {
       ...extract('POST', args, ['filename'], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/rename'(
+  'storage@/storageClient/{dataName}/rename'(
     args: {
       /**
        * @description dataName
@@ -1323,7 +1342,7 @@ export const services = {
       ...extract('POST', args, [], ['dataName'])
     })
   },
-  'storageClient@/storageClient/{dataName}/upload'(
+  'storage@/storageClient/{dataName}/upload'(
     args: {
       /**
        * @description dataName
