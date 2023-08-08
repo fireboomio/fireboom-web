@@ -6,6 +6,7 @@ import useSWRImmutable from 'swr/immutable'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
+import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 const outChannel = new BroadcastChannel('fb-vscode-out')
@@ -22,6 +23,7 @@ export default function VsCode({
   const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   const language = data?.language
   const [forceShowPath, setForceShowPath] = useState('')
+  const dict = useDict()
 
   const dataSourceList = useDataSourceList()
   const { pathname } = useLocation()
@@ -40,7 +42,7 @@ export default function VsCode({
       const db = dataSourceList?.find(x => String(x.id) === dbId)
       if (db && db.sourceType === 4) {
         vscode.show()
-        const path = `customize/${db.name}`
+        const path = `${dict.customize}/customize/${db.name}`
         vscode.checkHookExist(path).then(exist => {
           setForceShowPath(path)
         })

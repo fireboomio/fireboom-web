@@ -11,6 +11,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
+import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { isDatabaseKind } from '@/utils/datasource'
 import uploadLocal from '@/utils/uploadLocal'
@@ -43,6 +44,7 @@ type DataSourceItem = {
 export default function Designer() {
   const intl = useIntl()
   const { validateName } = useValidate()
+  const dict = useDict()
   const { vscode } = useContext(GlobalContext)
   const navigate = useNavigate()
   const initData = useMemo<
@@ -283,7 +285,7 @@ export default function Designer() {
         }
       }
       await requests.post('/datasource', data)
-      await vscode.checkHookExist(`customize/${value}`, false, true)
+      await vscode.checkHookExist(`${dict.customize}/customize/${value}`, false, true)
       handleSave(data)
     }
   }

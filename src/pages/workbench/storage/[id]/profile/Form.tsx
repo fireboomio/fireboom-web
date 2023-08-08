@@ -14,6 +14,7 @@ import {
 } from '@/lib/constants/fireBoomConstants'
 import { GlobalContext } from '@/lib/context/globalContext'
 import { makeSuggest } from '@/lib/helpers/utils'
+import { useDict } from '@/providers/dict'
 
 import styles from './[profile].module.less'
 
@@ -27,6 +28,7 @@ interface Props {
 
 export default function ProfileForm({ storageName, profile, onSave }: Props) {
   const intl = useIntl()
+  const dict = useDict()
   const { id, profile: profileName } = useParams()
   const [form] = useForm<Profile>()
   const maxAllowedUploadSizeBytes = Form.useWatch('maxAllowedUploadSizeBytes', form)
@@ -56,13 +58,13 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
       onFinish={async values => {
         if (
           values?.hooks?.preUpload &&
-          !(await vscode.checkHookExist(`uploads/${storageName}/${profileName}/preUpload`))
+          !(await vscode.checkHookExist(`${dict.upload}/${storageName}/${profileName}/preUpload`))
         ) {
           return
         }
         if (
           values?.hooks?.postUpload &&
-          !(await vscode.checkHookExist(`uploads/${storageName}/${profileName}/postUpload`))
+          !(await vscode.checkHookExist(`${dict.upload}/${storageName}/${profileName}/postUpload`))
         ) {
           return
         }

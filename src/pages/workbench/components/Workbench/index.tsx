@@ -28,6 +28,7 @@ import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { replaceFileTemplate } from '@/utils/template'
+import { createFile } from '@/utils/uploadLocal'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
@@ -256,7 +257,7 @@ export default function Index(props: PropsWithChildren) {
   )
   const location = useLocation()
   const navigate = useNavigate()
-  const { data } = useSWRImmutable<{ language: string }>('/sdk/enabledServer', requests)
+  const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const language = data?.language
   const isHookServerSelected = useMemo(
@@ -270,9 +271,16 @@ export default function Index(props: PropsWithChildren) {
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false
       }
-
-      const hook = await getHook(path)
-      if (!hook?.script) {
+      const filePath = `${path}.${data?.extension}`
+      let hookExisted = false
+      try {
+        await requests.get(`/vscode/stat?uri=${filePath}`)
+        hookExisted = true
+      } catch (error) {
+        //
+      }
+      // const hook = await getHook(path)
+      if (!hookExisted) {
         if (!skipConfirm) {
           const confirm = await new Promise(resolve => {
             modal.confirm({
@@ -287,8 +295,9 @@ export default function Index(props: PropsWithChildren) {
           }
         }
         setLoading('钩子模板创建中，请稍候')
-        const code = await resolveDefaultCode(path, hasParam, language!)
-        await saveHookScript(path, code)
+        const code = await resolveDefaultCode(filePath, hasParam, language!)
+        await createFile(filePath, code)
+        // await saveHookScript(path, code)
         return true
       } else {
         return true
@@ -311,7 +320,7 @@ export default function Index(props: PropsWithChildren) {
         if (flag && !(await checkHookExist(path, hasParam))) {
           return
         }
-        await updateOperationHookEnabled(operationName, path,  flag)
+        await updateOperationHookEnabled(operationName, path, flag)
       },
       hide: () => {
         setVscode({
