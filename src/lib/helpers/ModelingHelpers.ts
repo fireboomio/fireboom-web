@@ -30,13 +30,16 @@ export const initialPrismaSchema = (
   paramNameRef: React.MutableRefObject<string | undefined>
 ) => {
   const currentId = paramNameRef.current
-  return fetchPrismaDMF(dataSourceName).then(({ enums, models, schemaContent }) => {
+  return fetchPrismaDMF(dataSourceName).then(data => {
     if (currentId !== paramNameRef.current) {
       console.info('数据库name已改变，不再执行后续操作')
       return
     }
     dispatch(
-      initialPrismaSchemaAction(buildBlocks(schemaContent), selectedDataSource, { models, enums })
+      initialPrismaSchemaAction(buildBlocks(data.datamodel.schemaContent), selectedDataSource, {
+        models: data.datamodel.models,
+        enums: data.datamodel.enums
+      })
     )
   })
 }

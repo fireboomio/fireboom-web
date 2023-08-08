@@ -23,65 +23,69 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     schemaAST: state.schemaAST
   }))
 
+  const defs = useMemo(
+    () =>
+      (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
+      [],
+    [schemaAST]
+  )
+
   const hookList = useMemo(() => {
     if (!schemaAST) {
       return []
     }
-    const defs =
-      (schemaAST?.definitions?.[0] as OperationDefinitionNode | undefined)?.variableDefinitions ??
-      []
 
     const hooks = [
       {
         name: 'beforeRequest',
         enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
-        path: `${dict.beforeOriginRequest}/beforeRequest.`
+        path: `${dict.beforeOriginRequest}/beforeRequest`
       },
       {
         name: 'onRequest',
         enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
-        path: `${dict.onOriginRequest}/onRequest.`
+        path: `${dict.onOriginRequest}/onRequest`
       },
       {
         name: 'onResponse',
         enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
-        path: `${dict.onOriginResponse}/onResponse.`
+        path: `${dict.onOriginResponse}/onResponse`
       },
       {
         name: 'onConnectionInit',
         enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
-        path: `${dict.onOriginResponse}/onConnectionInit.`
+        path: `${dict.onOriginResponse}/onConnectionInit`
       },
       {
         name: 'mockResolve',
-        enabled: apiDesc?.hooksConfiguration?.mockResolve.enabled ?? false,
-        path: `${dict.mockResolve}/mockResolve.`
+        enabled: apiDesc?.hooksConfiguration?.mockResolve?.enabled ?? false,
+        path: `${dict.mockResolve}/${apiDesc?.path}/mockResolve`
       },
       {
         name: 'preResolve',
         enabled: apiDesc?.hooksConfiguration?.preResolve ?? false,
-        path: `${dict.preResolve}/preResolve.`
+        path: `${dict.preResolve}/${apiDesc?.path}/preResolve`
       },
       {
         name: 'mutatingPreResolve',
         enabled: apiDesc?.hooksConfiguration?.mutatingPreResolve ?? false,
         can: defs?.length > 0 ?? false,
-        path: `${dict.mutatingPreResolve}/mutatingPreResolve.`
+        path: `${dict.mutatingPreResolve}/${apiDesc?.path}/mutatingPreResolve`
       },
       {
         name: 'customResolve',
         enabled: apiDesc?.hooksConfiguration?.customResolve ?? false,
-        path: `${dict.customResolve}/customResolve.`
+        path: `${dict.customResolve}/${apiDesc?.path}/customResolve`
       },
       {
         name: 'postResolve',
         enabled: apiDesc?.hooksConfiguration?.postResolve ?? false,
-        path: `${dict.postResolve}/postResolve.`
+        path: `${dict.postResolve}/${apiDesc?.path}/postResolve`
       },
       {
         name: 'mutatingPostResolve',
         enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
-        path: `${dict.mutatingPostResolve}/mutatingPostResolve.`
+        path: `${dict.mutatingPostResolve}/${apiDesc?.path}/mutatingPostResolve`
       }
     ]
     return hooks.filter(hook => {
@@ -108,7 +112,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
       }
       return true
     })
-  }, [apiDesc, operationType, schemaAST, dict])
+  }, [apiDesc, operationType, schemaAST, defs, dict])
 
   useEffect(() => {
     setEditingHook(null)
@@ -127,11 +131,11 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
             enabled={hook.enabled}
             label={hook.name}
             onClick={() => {
-              vscode.show(hook.path, { hasParam: !!(query ?? '').match(/\(\$\w+/) })
+              vscode.show(hook.path, { hasParam: defs.length > 0 })
               // setEditingHook(hook)
             }}
             onToggleEnabled={async flag => {
-              await vscode.toggleHook(flag, hook.path, !!(query ?? '').match(/\(\$\w+/))
+              await vscode.toggleOperationHook(flag, hook.path, apiPath, defs.length > 0)
               refreshAPI()
             }}
           />
@@ -140,7 +144,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
       {editingHook && (
         <EditPanel
           apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={!!(query ?? '').match(/\(\$\w+/)}
+          hasParams={defs.length > 0}
           hook={editingHook}
           onClose={() => {
             void refreshAPI()

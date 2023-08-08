@@ -17,5 +17,5 @@ export async function createFile(uri: string, content: string | File, fileName?:
   let config = {
     headers: { 'Content-Type': 'multipart/form-data' } //这里是重点，需要和后台沟通好请求头，Content-Type不一定是这个值
   } //添加请求头
-  return await requests.post('/api/vscode/writeFile', param, config)
+  return await requests.post('/vscode/writeFile', param, config)
 }

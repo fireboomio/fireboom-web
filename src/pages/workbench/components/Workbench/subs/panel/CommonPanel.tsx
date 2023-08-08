@@ -146,7 +146,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   label: (
                     <div
                       onClick={async () => {
-                        await vscode.toggleHook(false, `customize/${record.name}`)
+                        await requests.put('/datasource', {
+                          name: record.name,
+                          enabled: false
+                        })
                         mutateDataSource()
                       }}
                     >
@@ -164,7 +167,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   label: (
                     <div
                       onClick={async () => {
-                        await vscode.toggleHook(true, `customize/${record.name}`)
+                        await requests.put('/datasource', {
+                          name: record.name,
+                          enabled: true
+                        })
                         mutateDataSource()
                       }}
                     >
@@ -209,7 +215,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         }
       }
     }),
-    [intl, navigate, vscode.toggleHook]
+    [intl, navigate, vscode.toggleOperationHook]
   )
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [panelMap, props.type])
   const location = useLocation()

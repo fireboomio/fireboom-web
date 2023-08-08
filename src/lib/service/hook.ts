@@ -5,8 +5,26 @@ import requests from '@/lib/fetchers'
 //   return requests.post('/hook/script', data)
 // }
 
+// 更新全局钩子开关
+export const updateGlobalOperationHookEnabled = (
+  operationName: string,
+  hookName: string,
+  value: boolean
+) => {
+  return requests.put('/globalOperation', {
+    path: operationName,
+    globalHttpTransportHooks: {
+      [hookName]: value
+    }
+  })
+}
+
 // 更新开关
-export const updateOperationHookEnabled = (operationName: string,  hookName: string, value: boolean) => {
+export const updateOperationHookEnabled = (
+  operationName: string,
+  hookName: string,
+  value: boolean
+) => {
   return requests.put('/operation', {
     path: operationName,
     hooksConfiguration: {

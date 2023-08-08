@@ -107,7 +107,7 @@ class VirtualFileSystemProvider {
   }
 
   async readDirectory(uri) {
-    return fetch(`/api/vscode/readDirectory?uri=${trimPath(uri.path)}`).then(resp => resp.json()).then(res => ([res.name, res.type]))
+    return fetch(`/api/vscode/readDirectory?uri=${trimPath(uri.path)}`).then(resp => resp.json()).then(res => res.map(item => ([item.name, item.type])))
   }
 
   async createDirectory(uri) {

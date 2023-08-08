@@ -14,7 +14,7 @@ const requests = axios.create({
 const errToast = throttle(str => message.error(str), 1000)
 
 requests.interceptors.response.use(
-  <T>(resp: AxiosResponse<any, any>) => {
+  (resp: AxiosResponse<any, any>) => {
     if (resp.status >= 200 && resp.status < 300) {
       // FIXME: 生效代码适配文件存储列表接口
       if (resp?.data?.code !== '10000000' && resp?.data?.code) {
@@ -26,7 +26,10 @@ requests.interceptors.response.use(
       // eslint-disable-next-line no-console
       const errMag = resp.config.resolveErrorMsg?.(resp)
       console.warn(resp.data.message)
-      void message.error(errMag ?? resp.data.message)
+      // @ts-ignore
+      if (!resp.config.ignoreError) {
+        void message.error(errMag ?? resp.data.message)
+      }
     }
   },
   (error: AxiosError) => {
@@ -44,12 +47,15 @@ requests.interceptors.response.use(
       // @ts-ignore
       console.warn(error?.response?.data?.cause)
     }
-    errToast(
-      errMag ??
-        // @ts-ignore
-        error?.response?.data?.message ??
-        intl.formatMessage({ defaultMessage: '网络请求错误！' })
-    )
+    // @ts-ignore
+    if (!error.config.ignoreError) {
+      errToast(
+        errMag ??
+          // @ts-ignore
+          error?.response?.data?.message ??
+          intl.formatMessage({ defaultMessage: '网络请求错误！' })
+      )
+    }
     return Promise.reject(error)
   }
 )

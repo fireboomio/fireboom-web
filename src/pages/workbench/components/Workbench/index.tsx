@@ -23,7 +23,12 @@ import type {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
-import { getHook, saveHookScript, updateOperationHookEnabled } from '@/lib/service/hook'
+import {
+  getHook,
+  saveHookScript,
+  updateGlobalOperationHookEnabled,
+  updateOperationHookEnabled
+} from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -119,10 +124,10 @@ export default function Index(props: PropsWithChildren) {
     setLogs(logs.concat(parseLogs([data])))
   })
   useWebSocket('question', 'pull', data => {
-    setQuestions(data?.questions || [])
+    setQuestions(data || [])
   })
   useWebSocket('question', 'push', data => {
-    setQuestions([questions, ...data.questions])
+    setQuestions([questions, ...data])
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'pull' })
@@ -258,7 +263,10 @@ export default function Index(props: PropsWithChildren) {
   const location = useLocation()
   const navigate = useNavigate()
   const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
-  const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
+  const { data: sdk, mutate: refreshSDK } = useSWRImmutable<ApiDocuments.Sdk[]>(
+    '/sdk',
+    requests.get
+  )
   const language = data?.language
   const isHookServerSelected = useMemo(
     () => (!!language && sdk?.some(item => item.type === 'server')) ?? false,
@@ -271,10 +279,13 @@ export default function Index(props: PropsWithChildren) {
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false
       }
-      const filePath = `${path}.${data?.extension}`
+      const filePath = `${path}.${data?.extension.replace(/^\./, '')}`
       let hookExisted = false
       try {
-        await requests.get(`/vscode/stat?uri=${filePath}`)
+        await requests.get(`/vscode/state?uri=${filePath}`, {
+          // @ts-ignore
+          ignoreError: true
+        })
         hookExisted = true
       } catch (error) {
         //
@@ -315,12 +326,21 @@ export default function Index(props: PropsWithChildren) {
       options: vscode,
       isHookServerSelected,
       checkHookExist,
-      toggleHook: async (flag: boolean, path: string, operationName: string, hasParam = false) => {
+      toggleOperationHook: async (
+        flag: boolean,
+        hookPath: string,
+        operationName: string,
+        hasParam = false
+      ) => {
         // 打开钩子时，需要检查钩子文件
-        if (flag && !(await checkHookExist(path, hasParam))) {
+        if (flag && !(await checkHookExist(hookPath, hasParam))) {
           return
         }
-        await updateOperationHookEnabled(operationName, path, flag)
+        if (hookPath.match(/custom-\w+\/global\//)) {
+          await updateGlobalOperationHookEnabled(operationName, hookPath.split('/').pop()!, flag)
+        } else {
+          await updateOperationHookEnabled(operationName, hookPath.split('/').pop()!, flag)
+        }
       },
       hide: () => {
         setVscode({
@@ -420,18 +440,18 @@ async function resolveDefaultCode(
     getDefaultCode = getTsTemplate
   }
   const list = path.split('/')
-  const name = list.pop()!
+  const name = list.pop()!.split('.')[0]
   const packageName = list[list.length - 1]
   let code = ''
-  if (path.startsWith('global/')) {
+  if (path.match(/custom-\w+\/global\//)) {
     code = await getDefaultCode(`global.${name}`)
-  } else if (path.startsWith('auth/')) {
+  } else if (path.match(/custom-\w+\/auth\//)) {
     code = await getDefaultCode(`auth.${name}`)
-  } else if (path.startsWith('customize/')) {
+  } else if (path.match(/custom-\w+\/customize\//)) {
     code = replaceFileTemplate(await getDefaultCode('custom'), [
       { variableName: 'CUSTOMIZE_NAME', value: name }
     ])
-  } else if (path.startsWith('uploads/')) {
+  } else if (path.match(/custom-\w+\/upload/)) {
     const profileName = list.pop() as string
     const storageName = list.pop() as string
     code = replaceFileTemplate(await getDefaultCode(`upload.${name}`), [

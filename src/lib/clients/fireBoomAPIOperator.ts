@@ -30,13 +30,13 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceName: string) => {
 }
 
 export const fetchPrismaDMF = (dbSourceName: string) => {
-  requests
-    .get<any, DMMF.Datamodel>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), {
+  return requests
+    .get<any, DMMF.Document>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), {
       timeout: 15e3
     })
     .then(res => {
-      res.models = res.models ?? []
-      res.enums = res.enums ?? []
+      res.datamodel.models = res.datamodel.models ?? []
+      res.datamodel.enums = res.datamodel.enums ?? []
       return res
     })
 }

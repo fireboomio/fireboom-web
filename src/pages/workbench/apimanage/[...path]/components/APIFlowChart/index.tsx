@@ -5,6 +5,7 @@ import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } f
 import { useDebounceMemo } from '@/hooks/debounce'
 import { GlobalContext } from '@/lib/context/globalContext'
 import { parseParameters } from '@/lib/gql-parser'
+import { useDict } from '@/providers/dict'
 
 import { useAPIManager } from '../../store'
 import EditPanel from './EditPanel'
@@ -16,8 +17,6 @@ import type {
 } from './interface'
 // import FlowChart from './FlowChart'
 import InternalOperationChart from './InternalOperation'
-import { ApiDocuments } from '@/services/a2s.namespace'
-import { useDict } from '@/providers/dict'
 
 type DirectiveState = FlowChartProps['directiveState']
 type GlobalState = FlowChartProps['globalHookState']
@@ -52,7 +51,6 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
   const [hookState, setHookState] = useState<HookState>()
   const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
 
-
   const directiveState = useDebounceMemo(
     () => {
       const defs =
@@ -86,30 +84,30 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
   )
 
   const loadHook = useCallback(() => {
-    if ( !schemaAST) {
+    if (!schemaAST) {
       return
     }
     setGlobalState({
       beforeRequest: {
         name: 'beforeRequest',
         enabled: apiDesc?.hooksConfiguration?.httpTransportBeforeRequest ?? false,
-        path: `${dict.beforeOriginRequest}/beforeRequest.`
+        path: `${dict.beforeOriginRequest}/beforeRequest`
       },
       onRequest: {
         name: 'onRequest',
         enabled: apiDesc?.hooksConfiguration?.httpTransportOnRequest ?? false,
-        path: `${dict.onOriginRequest}/onRequest.`
+        path: `${dict.onOriginRequest}/onRequest`
       },
       onResponse: {
         name: 'onResponse',
         enabled: apiDesc?.hooksConfiguration?.httpTransportOnResponse ?? false,
-        path: `${dict.onOriginResponse}/onResponse.`
+        path: `${dict.onOriginResponse}/onResponse`
       },
       // @ts-ignore
       onConnectionInit: {
         name: 'onConnectionInit',
         enabled: apiDesc?.hooksConfiguration?.onConnectionInit ?? false,
-        path: `${dict.onOriginResponse}/onConnectionInit.`
+        path: `${dict.onOriginResponse}/onConnectionInit`
       }
     })
     const defs =
@@ -118,36 +116,36 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
       customResolve: {
         name: 'customResolve',
         enabled: apiDesc?.hooksConfiguration?.customResolve ?? false,
-        path: `${dict.customResolve}/customResolve.`
+        path: `${dict.customResolve}/${apiDesc?.path}/customResolve`
       },
       mutatingPostResolve: {
         name: 'mutatingPostResolve',
         enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
-        path: `${dict.mutatingPostResolve}/mutatingPostResolve.`
+        path: `${dict.mutatingPostResolve}/${apiDesc?.path}/mutatingPostResolve`
       },
       mutatingPreResolve: {
         name: 'mutatingPreResolve',
         enabled: apiDesc?.hooksConfiguration?.mutatingPreResolve ?? false,
         can: defs?.length > 0 ?? false,
-        path: `${dict.mutatingPreResolve}/mutatingPreResolve.`
+        path: `${dict.mutatingPreResolve}/${apiDesc?.path}/mutatingPreResolve`
       },
       postResolve: {
         name: 'postResolve',
         enabled: apiDesc?.hooksConfiguration?.postResolve ?? false,
-        path: `${dict.postResolve}/postResolve.`
+        path: `${dict.postResolve}/${apiDesc?.path}/postResolve`
       },
       preResolve: {
         name: 'preResolve',
         enabled: apiDesc?.hooksConfiguration?.preResolve ?? false,
-        path: `${dict.preResolve}/preResolve.`
+        path: `${dict.preResolve}/${apiDesc?.path}/preResolve`
       },
       mockResolve: {
         name: 'mockResolve',
-        enabled: apiDesc?.hooksConfiguration?.mockResolve.enabled ?? false,
-        path: `${dict.mockResolve}/mockResolve.`
+        enabled: apiDesc?.hooksConfiguration?.mockResolve?.enabled ?? false,
+        path: `${dict.mockResolve}/${apiDesc?.path}/mockResolve`
       }
     })
-  }, [apiPath, schemaAST])
+  }, [schemaAST, dict, apiDesc])
 
   useEffect(() => {
     loadHook()
@@ -170,17 +168,17 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
   )
   const onToggleHook = useCallback(
     async (hook: { name: string; path: string }, flag: boolean) => {
-      await vscode.toggleHook(flag, hook.path, hasParam)
+      await vscode.toggleOperationHook(flag, hook.path, apiPath, hasParam)
       refreshAPI()
     },
-    [query, vscode]
+    [vscode, apiPath, hasParam, refreshAPI]
   )
 
   return (
     <>
       {apiDesc && schemaAST && (
         <ChartWrapper
-        apiDesc={apiDesc}
+          apiDesc={apiDesc}
           directiveState={directiveState}
           // @ts-ignore
           globalHookState={globalState}

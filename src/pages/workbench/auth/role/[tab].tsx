@@ -274,7 +274,12 @@ export default function AuthRole() {
                         <Switch
                           checked={hookMap?.[name]?.data?.enabled}
                           onChange={async flag => {
-                            await vscode.toggleHook(flag, hookPath[name])
+                            await requests.put('/globalOperation', {
+                              apiAuthenticationHooks: {
+                                [name]: flag
+                              }
+                            })
+                            // await vscode.toggleOperationHook(flag, hookPath[name])
                             hookMap?.[name]?.mutate?.()
                           }}
                         />
