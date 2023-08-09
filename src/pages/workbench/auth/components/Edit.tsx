@@ -15,6 +15,7 @@ import { CopyOutlined } from '@/components/icons'
 import JsonEditor from '@/components/JsonEditor'
 import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
+import { VariableKind } from '@/interfaces/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { proxy } from '@/lib/fetchers'
@@ -85,6 +86,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const tokenBased = Form.useWatch('jwksProviderEnabled', form)
   const cookieBased = Form.useWatch('oidcConfigEnabled', form)
   const jwksURL = Form.useWatch(['jwksProvider', 'jwksURL', 'staticVariableContent'], form)
+  const jwksKind = Form.useWatch('jwks', form)
   // const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
   // const [disabled, setDisabled] = useImmer(false)
   const navigate = useNavigate()
@@ -108,8 +110,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
 
   const { loading, fun: onFinish } = useLock(
     async (values: Partial<ApiDocuments.Authentication>) => {
-      if (values.jwksProvider!.jwksJson) {
-        values.jwksURL = null
+      if (values.jwks === 1) {
+        // @ts-ignore
+        delete values.jwksProvider!.jwksUrl
+        values.jwksProvider!.jwksJson.kind = VariableKind.Static
       } else {
         if (
           !values.jwksProvider?.jwksUrl &&
@@ -118,8 +122,11 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
           message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
           return
         }
-        values.jwksJSON = null
+        values.jwksProvider!.jwksUrl.kind = VariableKind.Static
+        // @ts-ignore
+        delete values.jwksProvider!.jwksJson
       }
+      delete values.jwks
       const newValues = { ...values }
       // const newContent = { ...content, switchState, name: values.id }
       if (!content.name) {
@@ -210,7 +217,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             onFinish={onFinish}
             autoComplete="new-password"
             validateTrigger="onChange"
-            initialValues={initialValues}
+            initialValues={{
+              ...initialValues,
+              jwks: content.jwksProvider?.jwksJson?.staticVariableContent ? 1 : 0
+            }}
           >
             <Form.Item
               label={intl.formatMessage({ defaultMessage: '供应商名称' })}
@@ -258,7 +268,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             </Form.Item>
             <Form.Item
               label={intl.formatMessage({ defaultMessage: '用户端点' })}
-              name="userInfoEndpoint"
+              name={['jwksProvider', 'userInfoEndpoint', 'staticVariableContent']}
             >
               <Input
                 placeholder={intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
@@ -274,7 +284,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               className="pt-5"
             >
               <div className="flex items-center">
-                <Form.Item noStyle name="cookieBased" valuePropName="checked">
+                <Form.Item noStyle name="oidcConfigEnabled" valuePropName="checked">
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -284,32 +294,46 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               </div>
             </Form.Item>
 
-            <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
+            <Form.Item
+              label={intl.formatMessage({ defaultMessage: 'App ID' })}
+              required={cookieBased}
+            >
               <Input.Group compact className="!flex">
-                <Form.Item name={['clientId', 'kind']} noStyle>
-                  <Select className="flex-0 w-100px">
-                    <Select.Option value="0">
+                <Form.Item name={['oidcConfig', 'clientId', 'kind']} noStyle>
+                  <Select className="flex-0 w-100px" disabled={!cookieBased}>
+                    <Select.Option value={0}>
                       <FormattedMessage defaultMessage="值" />
                     </Select.Option>
-                    <Select.Option value="1">
+                    <Select.Option value={1}>
                       <FormattedMessage defaultMessage="环境变量" />
                     </Select.Option>
                   </Select>
                 </Form.Item>
                 <Form.Item
-                  name={['clientId', 'val']}
-                  noStyle
-                  rules={[
-                    {
-                      required: true,
-                      message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
-                    }
+                  name={[
+                    'oidcConfig',
+                    'clientId',
+                    clientIdKind === VariableKind.Static
+                      ? 'staticVariableContent'
+                      : 'environmentVariableName'
                   ]}
+                  noStyle
+                  rules={
+                    cookieBased
+                      ? [
+                          {
+                            required: true,
+                            message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                          }
+                        ]
+                      : []
+                  }
                 >
-                  {clientIdKind === '0' ? (
+                  {clientIdKind === VariableKind.Static ? (
                     <Input
                       className="flex-1"
                       placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                      disabled={!cookieBased}
                     />
                   ) : (
                     <Select className="flex-1" options={envOptions} />
@@ -322,18 +346,24 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               required={cookieBased}
             >
               <Input.Group compact className="!flex">
-                <Form.Item name={['clientSecret', 'kind']} noStyle>
+                <Form.Item name={['oidcConfig', 'clientSecret', 'kind']} noStyle>
                   <Select className="flex-0 w-100px" disabled={!cookieBased}>
-                    <Select.Option value="0">
+                    <Select.Option value={0}>
                       <FormattedMessage defaultMessage="值" />
                     </Select.Option>
-                    <Select.Option value="1">
+                    <Select.Option value={1}>
                       <FormattedMessage defaultMessage="环境变量" />
                     </Select.Option>
                   </Select>
                 </Form.Item>
                 <Form.Item
-                  name={['clientSecret', 'val']}
+                  name={[
+                    'oidcConfig',
+                    'clientSecret',
+                    clientIdKind === VariableKind.Static
+                      ? 'staticVariableContent'
+                      : 'environmentVariableName'
+                  ]}
                   noStyle
                   rules={
                     cookieBased
@@ -346,7 +376,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                       : []
                   }
                 >
-                  {clientSecretKind === '0' ? (
+                  {clientSecretKind === VariableKind.Static ? (
                     <Input
                       disabled={!cookieBased}
                       className="flex-1"
@@ -384,7 +414,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               className="pt-5"
             >
               <div className="flex items-center">
-                <Form.Item noStyle name="tokenBased" valuePropName="checked">
+                <Form.Item noStyle name="jwksProviderEnabled" valuePropName="checked">
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -399,7 +429,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <Radio value={1}>JSON</Radio>
               </Radio.Group>
             </Form.Item>
-            {isRadioShow ? (
+            {jwksKind === 1 ? (
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}
                 className="mb-5"
@@ -418,7 +448,10 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 <JsonEditor value={jwksObj as JSONValue} onChange={saveJwksJSON} />
               </Form.Item>
             ) : (
-              <Form.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })} name="jwksURL">
+              <Form.Item
+                label={intl.formatMessage({ defaultMessage: 'jwksURL' })}
+                name={['jwksProvider', 'jwksUrl', 'staticVariableContent']}
+              >
                 <Input
                   disabled
                   suffix={
@@ -428,18 +461,18 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                         window.open(jwksURL, '_blank')
                       }}
                     >
-                      <FormattedMessage defaultMessage="浏览" />
+                      <FormattedMessage defaultMessage="访问" />
                     </div>
                   }
                 />
               </Form.Item>
             )}
-            <Form.Item hidden name="tokenEndpoint">
+            {/* <Form.Item hidden name="tokenEndpoint">
               <Input disabled />
             </Form.Item>
             <Form.Item hidden name="authorizationEndpoint">
               <Input disabled />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
               <Button
                 className="btn-cancel"
@@ -449,7 +482,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                     navigate(-1)
                     return
                   }
-                  handleBottomToggleDesigner('data', content.id)
+                  handleBottomToggleDesigner('data', content.name)
                 }}
               >
                 <span>
