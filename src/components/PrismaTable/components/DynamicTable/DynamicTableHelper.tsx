@@ -1,7 +1,7 @@
 import type { SchemaField, SchemaModel } from '@paljs/types'
 import { Button } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import type React from 'react'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
@@ -25,7 +25,20 @@ type Columns = Record<
 >
 
 const TableDataCell: React.FC<PropsWithChildren> = ({ children }) => {
-  return <div className="w-full whitespace-nowrap">{children}</div>
+  let title: string | undefined = undefined
+  if (children && typeof children === 'object') {
+    if ('props' in children) {
+      const { children: titleChildren } = children.props
+      if (typeof titleChildren === 'string') {
+        title = titleChildren
+      }
+    }
+  }
+  return (
+    <div title={title} className="w-full whitespace-nowrap truncate">
+      {children}
+    </div>
+  )
 }
 
 const handleListShowClick =
@@ -162,17 +175,19 @@ export const getTableColumns = (
   models: SchemaModel[],
   onRelationLinkClick: onRelationLinkClickFunc
 ): ColumnsType<Record<string, any>> => {
-  return currentModelFields
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .filter(field => field.read)
-    .map(field => ({
-      title: renderTableColumn(field),
-      dataIndex: field.name,
-      key: field.id,
-      render: renderTableDataCell(field, model, models, onRelationLinkClick),
-      sorter: field.sort && field.kind === 'scalar'
-    }))
+  return (
+    currentModelFields
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      // .filter(field => field.read)
+      .map(field => ({
+        title: renderTableColumn(field),
+        dataIndex: field.name,
+        key: field.id,
+        render: renderTableDataCell(field, model, models, onRelationLinkClick),
+        sorter: field.sort && field.kind === 'scalar'
+      }))
+  )
 }
 
 type onRelationLinkClickFunc = (relationModelName: string, filters: FilterState[]) => void

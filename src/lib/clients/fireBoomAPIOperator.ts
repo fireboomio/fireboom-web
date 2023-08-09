@@ -35,7 +35,49 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
       timeout: 15e3
     })
     .then(res => {
-      res.datamodel.models = res.datamodel.models ?? []
+      res.datamodel.models = (res.datamodel.models ?? []).map(model => {
+        let idField: string = ''
+        const displayFields: string[] = []
+        const modelFields: (DMMF.Field & {
+          id: string
+          title: string
+          required: boolean
+          order: number
+        })[] = []
+        for (const field of model.fields) {
+          if (field.isId) {
+            idField = field.name
+          }
+          if (field.kind === 'scalar') {
+            displayFields.push(field.name)
+          } else if (field.kind === 'object') {
+            if (!field.relationToFields?.length) {
+              continue
+            }
+            const str = JSON.stringify(field.relationToFields)
+              .replace(/^[[\]]/, '')
+              .replace(/[[\]]$/, '')
+              .replace(/"/g, '')
+            for (const name of str.split(',')) {
+              displayFields.push(`${field.name}.${name}`)
+            }
+          }
+          modelFields.push({
+            ...field,
+            id: `${model.name}.${field.name}`,
+            title: field.name,
+            required: field.hasDefaultValue ? false : field.isId ? true : field.isRequired,
+            order: model.fields.indexOf(field) + 1
+          })
+        }
+        return {
+          id: model.name,
+          idField,
+          displayFields,
+          ...model,
+          fields: modelFields
+        }
+      })
       res.datamodel.enums = res.datamodel.enums ?? []
       return res
     })

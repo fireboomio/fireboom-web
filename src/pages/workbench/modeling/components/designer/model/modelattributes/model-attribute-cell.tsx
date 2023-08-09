@@ -3,12 +3,14 @@ import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { message, Select } from 'antd'
 import { useIntl } from 'react-intl'
 
+import type { DataSourceKind } from '@/interfaces/datasource'
 import type { Model } from '@/interfaces/modeling'
 import type { AttributeHandlersProp, AttributeType } from '@/lib/helpers/PrismaSchemaProperties'
 import { usePrismaSchemaProperties } from '@/lib/helpers/PrismaSchemaProperties'
 import useDBSource from '@/lib/hooks/useDBSource'
 import ModelIndexAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelIndexAttributeArg'
 import ModelMapAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelMapAttributeArg'
+import { databaseKindNameMap } from '@/utils/datasource'
 
 const { Option } = Select
 
@@ -49,18 +51,19 @@ const ModelAttributeCell = ({
 }: Props) => {
   const intl = useIntl()
   const PrismaSchemaProperties = usePrismaSchemaProperties()
-  const {
-    config: { dbType }
-  } = useDBSource()
+  const { kind } = useDBSource()
   const { name: currentAttrName, args: currentAttrArgs } = modelAttribute
   const { properties } = currentModel
   const currentModelFields = properties.filter(p => p.type === 'field').map(f => f as Field)
 
   const modelAttributesMap: Record<string, AttributeType> = {}
-  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[dbType]
+  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[kind as number]
   if (!prismaSchemaPropertyForDBType) {
     void message.error(
-      intl.formatMessage({ defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' }, { dbType })
+      intl.formatMessage(
+        { defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' },
+        { dbType: databaseKindNameMap[kind as keyof typeof databaseKindNameMap] }
+      )
     )
     return <>N/A</>
   }

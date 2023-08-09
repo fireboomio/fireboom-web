@@ -26,7 +26,7 @@ const ErDiagram = () => {
       })
 
       const dbml = generateDBMLSchema(dmmf)
-      console.log('dbml', dbml)
+      // console.log('dbml', dbml)
 
       if (loadRef.current) {
         ;(frameRef.current!.contentWindow as any)['setContent'](dbml)
@@ -36,7 +36,7 @@ const ErDiagram = () => {
 
   useEffect(() => {
     if (name) {
-      requests.get(`/prisma/nativeDMF/${name}`).then(resp => {
+      requests.get(`/datasource/dmmf/${name}`).then(resp => {
         if (resp) {
           setDMMF(resp as any)
         }

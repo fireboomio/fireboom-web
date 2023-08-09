@@ -9,7 +9,7 @@ const getFields = (models: SchemaModel[], modelName: string, update = false) => 
   }
   let fieldsString = `${model.idField} `
   model?.fields.forEach(field => {
-    if ((field.read && field.name !== model.idField) || (update && field.update)) {
+    if (field.name !== model.idField || (update && field.update)) {
       if (field.kind !== 'object') {
         fieldsString += `${field.name} `
       } else if (!(field.list && !update)) {

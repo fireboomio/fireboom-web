@@ -18,7 +18,7 @@ const defaultOptions: DefaultOptions = {
 
 export const buildPrismaTableApolloClientByDataSourceName = (dataSourceName: string) => {
   const abortController = new AbortController()
-  const graphqlEndpointForDataSource = `${PRISMA_PREVIEW_GRAPHQL_URL}/${dataSourceName}`
+  const graphqlEndpointForDataSource = PRISMA_PREVIEW_GRAPHQL_URL
   const httpLink = createHttpLink({
     uri: graphqlEndpointForDataSource,
     fetchOptions: {
@@ -37,7 +37,6 @@ export const buildPrismaTableApolloClientByDataSourceName = (dataSourceName: str
 
     return forward(operation)
   })
-  console.log(getHeader())
   return new ApolloClient({
     link: from([headerMiddleware, httpLink]),
     cache: new InMemoryCache({ addTypename: false }),

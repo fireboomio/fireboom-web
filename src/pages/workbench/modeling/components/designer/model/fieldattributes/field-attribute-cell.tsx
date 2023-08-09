@@ -14,6 +14,7 @@ import FieldNormalAttributeArg from '@/pages/workbench/modeling/components/Attri
 import FieldRelationAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/FieldRelationAttributeArg'
 import ModelMapAttributeArg from '@/pages/workbench/modeling/components/AttributeArg/ModelMapAttributeArg'
 import RemoveButton from '@/pages/workbench/modeling/components/RemoveButton'
+import { databaseKindNameMap } from '@/utils/datasource'
 
 interface FieldAttributeHandlers {
   display: (props: AttributeHandlersProp) => JSX.Element
@@ -62,9 +63,7 @@ const FieldAttributeCell = ({
 }: Props) => {
   const intl = useIntl()
   const PrismaSchemaProperties = usePrismaSchemaProperties()
-  const {
-    config: { dbType }
-  } = useDBSource()
+  const { kind } = useDBSource()
   const { entities } = useEntities()
   const referenceEntity = entities.find(e => e.name === field.fieldType)
 
@@ -77,10 +76,13 @@ const FieldAttributeCell = ({
     fieldType = 'Unsupported'
   }
 
-  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[dbType]
+  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[kind as number]
   if (!prismaSchemaPropertyForDBType) {
     void message.error(
-      intl.formatMessage({ defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' }, { dbType })
+      intl.formatMessage(
+        { defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' },
+        { dbType: databaseKindNameMap[kind as keyof typeof databaseKindNameMap] }
+      )
     )
     return <>N/A</>
   }
