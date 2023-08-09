@@ -36,13 +36,13 @@ export const initialPrismaSchema = async (
   }
   const [dmmf, sdl] = await Promise.all([
     fetchPrismaDMF(dataSourceName),
-    fetchPrismaSDL(dataSourceName)
+    fetchPrismaSDL(dataSourceName).catch(() => '')
   ])
 
   dispatch(
     initialPrismaSchemaAction(buildBlocks(sdl), selectedDataSource, {
-      models: dmmf.datamodel.models,
-      enums: dmmf.datamodel.enums
+      models: dmmf?.datamodel?.models ?? [],
+      enums: dmmf?.datamodel?.enums ?? []
     })
   )
 }

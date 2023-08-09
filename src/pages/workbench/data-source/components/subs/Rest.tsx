@@ -29,6 +29,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import FileList from './FileList'
@@ -385,15 +386,7 @@ export default function Rest({ content, type }: Props) {
                             <div className="flex items-center">
                               <div className="text-0px">{renderIcon(item.values[0].kind)}</div>
                               <div className="flex-1 ml-2 min-w-0">
-                                {
-                                  item.values[0][
-                                    item.values[0].kind === 0
-                                      ? 'staticVariableContent'
-                                      : item.values[0].kind === 1
-                                      ? 'environmentVariableName'
-                                      : 'placeholderVariableName'
-                                  ]
-                                }
+                                {getConfigurationVariableRender(item.values[0])}
                               </div>
                             </div>
                           </Descriptions.Item>
@@ -691,14 +684,7 @@ export default function Rest({ content, type }: Props) {
                                   <Form.Item
                                     className="w-135"
                                     wrapperCol={{ span: 24 }}
-                                    name={[
-                                      field.name,
-                                      kind === 0
-                                        ? 'staticVariableContent'
-                                        : kind === 1
-                                        ? 'environmentVariableName'
-                                        : 'placeholderVariableName'
-                                    ]}
+                                    name={[field.name, getConfigurationVariableField(kind)]}
                                     rules={
                                       kind !== 1
                                         ? [

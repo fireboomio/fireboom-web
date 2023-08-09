@@ -220,9 +220,11 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
           className="bg-white flex h-10 pr-4 pl-7 justify-end items-center"
           style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
         >
-          <div className={styles.resetBtn} onClick={onCancel}>
-            {intl.formatMessage({ defaultMessage: '重置' })}
-          </div>
+          {editType === 'edit' && (
+            <div className={styles.resetBtn} onClick={onCancel}>
+              {intl.formatMessage({ defaultMessage: '重置' })}
+            </div>
+          )}
           <Tooltip
             title={
               isMongo ? intl.formatMessage({ defaultMessage: 'MongoDB 暂不支持迁移' }) : undefined
@@ -277,10 +279,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       if (mode === 'editor') {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
-          `/prisma/migrate/${name ?? ''}`,
-          {
-            schema: currentEditorValue
-          },
+          `/datasource/migrate/${name ?? ''}`,
+          currentEditorValue,
           { timeout: 30e3 }
         )
         await refreshBlocks()
@@ -288,10 +288,8 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
       } else {
         const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
         await requests.post<unknown, DMFResp>(
-          `/prisma/migrate/${name ?? ''}`,
-          {
-            schema: transferToEditor()
-          },
+          `/datasource/migrate/${name ?? ''}`,
+          transferToEditor(),
           { timeout: 30e3 }
         )
         await refreshBlocks()
@@ -444,9 +442,11 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
         ) : (
           <div className="flex-1" />
         )}
-        <div className={styles.resetBtn} onClick={onCancel}>
-          {intl.formatMessage({ defaultMessage: '重置' })}
-        </div>
+        {editType === 'edit' && (
+          <div className={styles.resetBtn} onClick={onCancel}>
+            {intl.formatMessage({ defaultMessage: '重置' })}
+          </div>
+        )}
         <Tooltip
           title={
             isMongo ? intl.formatMessage({ defaultMessage: 'MongoDB 暂不支持迁移' }) : undefined

@@ -20,13 +20,7 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceName: string) => {
   }
   const migratePrismaUrl = MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME.replace(':name', dbSourceName)
   const prismaSchema = printSchema({ type: 'schema', list: blocks })
-  return requests.post(
-    migratePrismaUrl,
-    {
-      schema: prismaSchema
-    },
-    { timeout: 30e3 }
-  )
+  return requests.post(migratePrismaUrl, prismaSchema, { timeout: 30e3 })
 }
 
 export const fetchPrismaDMF = (dbSourceName: string) => {

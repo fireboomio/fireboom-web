@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 
+import { DataSourceKind } from '@/interfaces/datasource'
 import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -47,24 +48,18 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
         value={name}
         options={sourceOptions.map(x => {
           let svg = '/assets/icon/db-other.svg'
-          switch (x.sourceType) {
-            case 1:
-              svg =
-                {
-                  mysql: '/assets/icon/mysql.svg',
-                  pgsql: '/assets/icon/pgsql.svg',
-                  graphql: '/assets/icon/graphql.svg',
-                  mongodb: '/assets/icon/mongodb.svg',
-                  rest: '/assets/icon/rest.svg',
-                  sqlite: '/assets/icon/sqlite.svg'
-                }[String(x.config.dbType).toLowerCase()] || svg
+          switch (x.kind) {
+            case DataSourceKind.MySQL:
+              svg = '/assets/icon/mysql.svg'
               break
-            case 2:
-              svg = '/assets/icon/rest.svg'
+            case DataSourceKind.MongoDB:
+              svg = '/assets/icon/mongodb.svg'
               break
-            case 3:
-              svg = '/assets/icon/graphql.svg'
+            case DataSourceKind.PostgreSQL:
+              svg = '/assets/icon/pgsql.svg'
               break
+            case DataSourceKind.SQLite:
+              svg = '/assets/icon/sqlite.svg'
           }
           return {
             label: (
@@ -73,7 +68,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
                 {x.name}
               </div>
             ),
-            value: x.id
+            value: x.name
           }
         })}
         dropdownRender={menu => (
@@ -91,18 +86,12 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
             </div>
           </div>
         )}
-      >
-        {/* {sourceOptions.map(({ id, name }) => (
-          <Select.Option label={name} key={id} value={id}>
-            {name}
-          </Select.Option>
-        ))} */}
-      </Select>
+      />
       <div
         className={styles.refreshBtn}
         onClick={() => {
           void mutate(DATABASE_SOURCE)
-          onChangeSource(name)
+          name && onChangeSource(name)
         }}
       >
         <img alt="刷新" src={refreshIcon} className="w-4 h-4" />

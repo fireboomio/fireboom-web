@@ -9,23 +9,22 @@ import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
-import type { AuthProvResp } from '@/interfaces/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { getConfigurationVariableRender } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './detail.module.less'
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
-  content: AuthProvResp
+  content: ApiDocuments.Authentication
 }
-type Config = Record<string, any>
 
 export default function AuthMainCheck({ content }: Props) {
   const intl = useIntl()
   const { globalSetting } = useContext(ConfigContext)
   // const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-  const config = content.config as unknown as Config
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
@@ -48,19 +47,21 @@ export default function AuthMainCheck({ content }: Props) {
       <div className={clsx('mt-8', styles.descriptions)}>
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
-            {config.id}
+            {content.name}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
-            {config.clientId?.val ?? ''}
+            {getConfigurationVariableRender(content.oidcConfig.clientId)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
-            {config.issuer}
+            {getConfigurationVariableRender(content.oidcConfig.issuer)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-            {`${config.issuer as string}/.well-known/openid-configuration`}
+            {`${getConfigurationVariableRender(
+              content.oidcConfig.issuer
+            )}/.well-known/openid-configuration`}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
-            {config.userInfoEndpoint}
+            {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
           </Descriptions.Item>
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
@@ -78,23 +79,21 @@ export default function AuthMainCheck({ content }: Props) {
             <span className="flex items-center">
               {isShowSecret ? (
                 <>
-                  <span>{config.clientSecret?.val ?? ''}</span>
+                  <span>{getConfigurationVariableRender(content.oidcConfig.clientSecret)}</span>
                   <EyeOutlined className="ml-4" onClick={handleToggleSecret} />
                 </>
-              ) : config.clientSecret?.val ? (
+              ) : (
                 <>
                   <span>***********</span>
                   <EyeInvisibleOutlined className="ml-4" onClick={handleToggleSecret} />
                 </>
-              ) : (
-                ''
               )}
             </span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
             <div className="flex items-center">
               {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/
-              {config.id}
+              {content.name}
               <CopyOutlined
                 className="cursor-pointer ml-4"
                 onClick={() => {
@@ -119,15 +118,17 @@ export default function AuthMainCheck({ content }: Props) {
             <span className="text-[#aaa] ml-1">隐式模式</span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })}>
-            {config.jwks == 0 ? 'URL' : 'JSON'}
+            {content.jwksProvider?.jwksJson ? 'JSON' : 'URL'}
           </Descriptions.Item>
-          {config.jwks === 0 ? (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
-              {config.jwksURL}
+          {content.jwksProvider?.jwksJson ? (
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
+              <pre className="overflow-x-auto">
+                {getConfigurationVariableRender(content.jwksProvider.jwksJson)}
+              </pre>
             </Descriptions.Item>
           ) : (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
-              <pre className="overflow-x-auto">{config.jwksJSON}</pre>
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
+              {getConfigurationVariableRender(content.jwksProvider.jwksUrl)}
             </Descriptions.Item>
           )}
         </Descriptions>

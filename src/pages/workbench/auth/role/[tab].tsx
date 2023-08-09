@@ -41,8 +41,6 @@ export default function AuthRole() {
   const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
   const [roleFlag, setRoleFlag] = useState<boolean>()
   const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
-  const [hooks, setHooks] = useImmer<HookResp[]>([])
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
   // const [defaultCode, setDefaultCode] = useState<string>('')
   const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
   const postAuthentication = useSWRImmutable<any>('auth/postAuthentication', getHook)
@@ -293,7 +291,7 @@ export default function AuthRole() {
               )
             }
           ]}
-        ></Tabs>
+        />
       </div>
     </div>
   )

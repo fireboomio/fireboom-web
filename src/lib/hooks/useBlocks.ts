@@ -59,7 +59,7 @@ const useBlocks = () => {
     applyLocalPrismaBlocks(newBlocks, dispatch)
   }
   const refreshBlocks = () => {
-    return refetchPrismaSchema(String(currentDBSource.id), dispatch)
+    return refetchPrismaSchema(String(currentDBSource.name), dispatch)
   }
 
   return {

@@ -2,7 +2,7 @@ import type { Model } from '@/interfaces/modeling'
 
 export const BASE_URL = '/api'
 export const DATABASE_SOURCE = '/datasource'
-export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME = '/prisma/migrate/:name'
+export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME = '/datasource/migrate/:name'
 export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/datasource/dmmf/:name'
 export const PRISMA_PREVIEW_GRAPHQL_URL = '/app/main/graphql'
 

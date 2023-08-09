@@ -28,6 +28,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { databaseKindNameMap } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
@@ -483,7 +484,7 @@ export default function DB({ content, type }: Props) {
               </Descriptions.Item>
               {content.kind === DataSourceKind.SQLite ? (
                 <Descriptions.Item label={intl.formatMessage({ defaultMessage: '路径' })}>
-                  {content.customDatabase.databaseUrl.staticVariableContent}
+                  {getConfigurationVariableRender(content.customDatabase.databaseUrl)}
                 </Descriptions.Item>
               ) : (
                 <>
@@ -538,10 +539,7 @@ export default function DB({ content, type }: Props) {
                   ) : (
                     <>
                       <Descriptions.Item label={intl.formatMessage({ defaultMessage: '连接URL' })}>
-                        {/* {(config.databaseUrl as unknown as { kind: string; val: string })?.val} */}
-                        {content.customDatabase.databaseUrl.kind === 1
-                          ? `env("${content.customDatabase.databaseUrl.environmentVariableName}")`
-                          : content.customDatabase.databaseUrl.staticVariableContent}
+                        {getConfigurationVariableRender(content.customDatabase.databaseUrl)}
                       </Descriptions.Item>
                     </>
                   )}

@@ -4,61 +4,91 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
-import type { AuthProvResp } from '@/interfaces/auth'
+import { VariableKind } from '@/interfaces/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import AuthCheck from '../components/Check'
 import AuthEdit from '../components/Edit'
 
 export default function AuthConfigContainer() {
   const intl = useIntl()
-  const [content, setContent] = useState<AuthProvResp>()
+  const [content, setContent] = useState<ApiDocuments.Authentication>()
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { name } = useParams()
   const authList = useAuthList()
   const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
 
   useEffect(() => {
     // 如果id为new，则视为新增
-    if (id === 'new') {
+    if (name === 'new') {
       setEditFlag(true)
       setContent({
-        point: '',
-        config: {},
-        id: 0,
+        createTime: '',
+        updateTime: '',
+        deleteTime: '',
+        enabled: false,
+        jwksProvider: {
+          jwksJson: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          },
+          jwksUrl: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          },
+          userInfoCacheTtlSeconds: 0,
+          userInfoEndpoint: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          }
+        },
         name: '',
-        authSupplier: 'openid',
-        switchState: []
+        oidcConfig: {
+          clientId: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          },
+          clientSecret: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          },
+          issuer: {
+            kind: VariableKind.Static,
+            staticVariableContent: ''
+          },
+          queryParameters: []
+        }
       })
       return
     }
 
-    void requests.get<unknown, AuthProvResp[]>('/authentication').then(res => {
+    void requests.get<unknown, ApiDocuments.Authentication[]>('/authentication').then(res => {
       res.forEach(row => {
-        if (row.id === Number(id)) {
+        if (row.name === name) {
           setEditFlag(false)
           setContent(row)
         }
       })
     })
-  }, [id])
+  }, [name])
 
   useEffect(() => {
-    if (id !== 'create' && id !== 'new') {
+    if (name !== 'create' && name !== 'new') {
       setEditFlag(false)
-      setContent(authList?.find(item => item.id === Number(id)))
+      setContent(authList?.find(item => item.name === name))
     }
-  }, [authList, id])
+  }, [authList, name])
 
-  const onEdit = (content: AuthProvResp) => {
+  const onEdit = (content: ApiDocuments.Authentication) => {
     void mutateAuth()
     setContent(content)
-    navigate(`/workbench/auth/${content.id}`)
+    navigate(`/workbench/auth/${content.name}`)
   }
 
   const onTest = () => {

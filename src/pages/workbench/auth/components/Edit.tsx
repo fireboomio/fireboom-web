@@ -17,12 +17,12 @@ import { CopyOutlined } from '@/components/icons'
 import JsonEditor from '@/components/JsonEditor'
 import UrlInput from '@/components/UrlInput'
 import { useValidate } from '@/hooks/validate'
-import type { AuthProvResp } from '@/interfaces/auth'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import imgAuth0 from '../assets/Auth0.png'
 import imgAuthing from '../assets/Authing.png'
@@ -36,8 +36,8 @@ import styles from './subs.module.less'
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
 interface Props {
-  content: AuthProvResp
-  onChange: (content: AuthProvResp) => void
+  content: ApiDocuments.Authentication
+  onChange: (content: ApiDocuments.Authentication) => void
   onTest: () => void
 }
 
@@ -144,7 +144,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         })
       }
       void requests
-        .get<unknown, AuthProvResp[]>('/authentication')
+        .get<unknown, ApiDocuments.Authentication[]>('/authentication')
         .then(res => {
           onChange(res.filter(row => row.id === content.id)[0])
         })

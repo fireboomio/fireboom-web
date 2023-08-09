@@ -1,6 +1,7 @@
-import type { AuthAction, AuthProvResp } from '@/interfaces/auth'
+import type { AuthAction } from '@/interfaces/auth'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
-export default function AuthReducer(authList: AuthProvResp[], action: AuthAction) {
+export default function AuthReducer(authList: ApiDocuments.Authentication[], action: AuthAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data
