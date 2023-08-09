@@ -114,7 +114,7 @@ const ModelFormContainer = ({
         >
           {showFields
             .slice()
-            .sort((a, b) => a.order - b.order)
+            .sort((a, b) => (a.isId ? -1 : b.isId ? 1 : a.order - b.order))
             .map(field => {
               const options = {
                 namespace,

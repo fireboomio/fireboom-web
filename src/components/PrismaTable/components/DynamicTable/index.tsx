@@ -88,7 +88,7 @@ const DynamicTable = ({
   const [filterVisible, setFilterVisible] = useImmer<boolean>(false)
   const [createModalVisible, setCreateModalVisible] = useImmer<boolean>(false)
 
-  const currentModel = models.find(m => m.name === model)
+  const currentModel = models.find(m => m.id === model)
   const currentModelFields = currentModel?.fields
   const currentIdField = currentModelFields?.find(f => f.isId)
 

@@ -63,16 +63,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
         open={deleteModalVisible}
         destroyOnClose
         onCancel={() => setDeleteModalVisible(false)}
-        footer={
-          <ButtonGroup className="gap-2">
-            <Button className="btn-cancel" onClick={() => setDeleteModalVisible(false)}>
-              <FormattedMessage defaultMessage="取消" />
-            </Button>
-            <Button className={`btn-save cursor-default`} onClick={handleDeleteOne}>
-              <FormattedMessage defaultMessage="确认" />
-            </Button>
-          </ButtonGroup>
-        }
+        onOk={handleDeleteOne}
       >
         <div>
           <FormattedMessage defaultMessage="删除操作将会同时删除关联数据！" />

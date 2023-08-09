@@ -35,6 +35,7 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
       timeout: 15e3
     })
     .then(res => {
+      // 原生数据处理
       res.datamodel.models = (res.datamodel.models ?? []).map(model => {
         let idField: string = ''
         const displayFields: string[] = []
@@ -67,7 +68,14 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
             id: `${model.name}.${field.name}`,
             title: field.name,
             required: field.hasDefaultValue ? false : field.isId ? true : field.isRequired,
-            order: model.fields.indexOf(field) + 1
+            order: model.fields.indexOf(field) + 1,
+            read: true,
+            create: field.isId && field.hasDefaultValue ? false : true,
+            update: field.isId ? false : true,
+            sort: true,
+            filter: true,
+            editor: true,
+            upload: true
           })
         }
         return {
@@ -78,7 +86,10 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
           fields: modelFields
         }
       })
-      res.datamodel.enums = res.datamodel.enums ?? []
+      res.datamodel.enums = (res.datamodel.enums ?? []).map(_enum => ({
+        ..._enum,
+        fields: _enum.values.map(val => val.name)
+      }))
       return res
     })
 }

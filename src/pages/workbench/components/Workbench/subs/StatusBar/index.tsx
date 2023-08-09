@@ -4,7 +4,7 @@ import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
@@ -84,7 +84,7 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [])
 
-  const { data: sdk } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
+  const { data: sdk } = useSWRImmutable<ApiDocuments.Sdk[]>('/sdk', requests.get)
   useEffect(() => {
     const hookUrl = globalSetting.serverOptions.serverUrl.staticVariableContent
     if (hookUrl === webContainerUrl) {
