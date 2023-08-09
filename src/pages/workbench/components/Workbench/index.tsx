@@ -440,10 +440,18 @@ async function resolveDefaultCode(
     getDefaultCode = getTsTemplate
   }
   const list = path.split('/')
-  const name = list.pop()!.split('.')[0]
+  let name = list.pop()!.split('.')[0]
   const packageName = list[list.length - 1]
   let code = ''
   if (path.match(/custom-\w+\/global\//)) {
+    // 兼容
+    if (name === 'beforeOriginRequest') {
+      name = 'beforeRequest'
+    } else if (name === 'onOriginRequest') {
+      name = 'onRequest'
+    } else if (name === 'onOriginResponse') {
+      name = 'onResponse'
+    }
     code = await getDefaultCode(`global.${name}`)
   } else if (path.match(/custom-\w+\/auth\//)) {
     code = await getDefaultCode(`auth.${name}`)
