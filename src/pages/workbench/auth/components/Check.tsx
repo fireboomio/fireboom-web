@@ -49,18 +49,13 @@ export default function AuthMainCheck({ content }: Props) {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
             {content.name}
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
-            {getConfigurationVariableRender(content.oidcConfig.clientId)}
-          </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
             {getConfigurationVariableRender(content.issuer)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-            {`${getConfigurationVariableRender(
-              content.oidcConfig.issuer
-            )}/.well-known/openid-configuration`}
+            {`${getConfigurationVariableRender(content.issuer)}/.well-known/openid-configuration`}
           </Descriptions.Item>
-          {content.jwksProvider.userInfoEndpoint && (
+          {content.jwksProvider?.userInfoEndpoint && (
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
               {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
             </Descriptions.Item>
@@ -76,6 +71,9 @@ export default function AuthMainCheck({ content }: Props) {
               </Tag>
             )}
             <span className="text-[#aaa] ml-1">授权码模式</span>
+          </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
+            {getConfigurationVariableRender(content.oidcConfig?.clientId)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
             <span className="flex items-center">

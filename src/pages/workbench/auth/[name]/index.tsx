@@ -4,7 +4,6 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
-import { VariableKind } from '@/interfaces/common'
 import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -85,9 +84,9 @@ export default function AuthConfigContainer() {
         <img src="/assets/icon/oidc.svg" className="h-14px mr-1.5 w-14px" alt="文件" />
         {content?.name || <FormattedMessage defaultMessage="创建身份认证器" />}
         <div className="flex-1"></div>
-        {!editFlag ? (
+        {!editFlag && (
           <>
-            {content?.switchState.includes('cookieBased') && (
+            {content?.oidcConfigEnabled && (
               <Button className={'btn-test  mr-4'} onClick={onTest}>
                 <FormattedMessage defaultMessage="测试" />
               </Button>
@@ -96,7 +95,7 @@ export default function AuthConfigContainer() {
               <FormattedMessage defaultMessage="编辑" />
             </Button>
           </>
-        ) : null}
+        )}
       </div>
       <div
         className="bg-white rounded-4px flex-1 mx-3 mt-3 min-h-0 pl-8 overflow-y-auto"

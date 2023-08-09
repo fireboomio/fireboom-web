@@ -12,7 +12,8 @@ export function getConfigurationVariableField(
     : 'placeholderVariableName'
 }
 
-export function getConfigurationVariableRender(variable: ApiDocuments.ConfigurationVariable) {
+export function getConfigurationVariableRender(variable?: ApiDocuments.ConfigurationVariable) {
+  if (!variable) return ''
   return variable.kind === VariableKind.Static
     ? variable.staticVariableContent
     : variable.kind === VariableKind.Env
