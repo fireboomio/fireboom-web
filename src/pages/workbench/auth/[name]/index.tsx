@@ -13,6 +13,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import AuthCheck from '../components/Check'
 import AuthEdit from '../components/Edit'
+import { defaultAuth } from '../defaults'
 
 export default function AuthConfigContainer() {
   const intl = useIntl()
@@ -28,43 +29,7 @@ export default function AuthConfigContainer() {
     // 如果id为new，则视为新增
     if (name === 'new') {
       setEditFlag(true)
-      setContent({
-        createTime: '',
-        updateTime: '',
-        deleteTime: '',
-        enabled: false,
-        jwksProvider: {
-          jwksJson: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          },
-          jwksUrl: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          },
-          userInfoCacheTtlSeconds: 0,
-          userInfoEndpoint: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          }
-        },
-        name: '',
-        oidcConfig: {
-          clientId: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          },
-          clientSecret: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          },
-          issuer: {
-            kind: VariableKind.Static,
-            staticVariableContent: ''
-          },
-          queryParameters: []
-        }
-      })
+      setContent(defaultAuth)
       return
     }
 

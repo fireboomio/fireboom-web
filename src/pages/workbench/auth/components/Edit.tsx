@@ -3,15 +3,13 @@ import type { JSONValue } from '@antv/x6'
 import { loader } from '@monaco-editor/react'
 import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
 import copy from 'copy-to-clipboard'
-import { debounce } from 'lodash'
-import type { ReactNode } from 'react'
+import { cloneDeep, debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 // import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
-// import useSWRImmutable from 'swr/immutable'
-import { useImmer } from 'use-immer'
 
+// import useSWRImmutable from 'swr/immutable'
 import Error50x from '@/components/ErrorPage/50x'
 import { CopyOutlined } from '@/components/icons'
 import JsonEditor from '@/components/JsonEditor'
@@ -31,6 +29,7 @@ import imgGoogle from '../assets/google.png'
 import imgKeycloak from '../assets/Keycloak.png'
 import imgOkta from '../assets/okta.png'
 import imgOpenID from '../assets/OpenID.png'
+import { defaultAuth } from '../defaults'
 import styles from './subs.module.less'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
@@ -40,10 +39,6 @@ interface Props {
   onChange: (content: ApiDocuments.Authentication) => void
   onTest: () => void
 }
-
-type Config = Record<string, ReactNode>
-
-type FromValues = Record<string, number | string | readonly string[] | undefined>
 
 const supportList = [
   {
@@ -82,18 +77,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const { ruleMap } = useValidate()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
   // const dispatch = useContext(AuthDispatchContext)
-  const [form] = Form.useForm()
-  const id = Form.useWatch('id', form)
-  const issuer = Form.useWatch('issuer', form)
-  const clientIdKind = Form.useWatch(['clientId', 'kind'], form)
-  const clientSecretKind = Form.useWatch(['clientSecret', 'kind'], form)
-  const tokenBased = Form.useWatch('tokenBased', form)
-  const cookieBased = Form.useWatch('cookieBased', form)
-  const jwksURL = Form.useWatch('jwksURL', form)
-  const [value, setValue] = useImmer('')
-  const config = content.config as unknown as Config
-  const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
-  const [disabled, setDisabled] = useImmer(false)
+  const [form] = Form.useForm<ApiDocuments.Authentication>()
+  const name = Form.useWatch('name', form)
+  const issuer = Form.useWatch(['issuer', 'staticVariableContent'], form)
+  const clientIdKind = Form.useWatch(['oidcConfig', 'clientId', 'kind'], form)
+  const clientSecretKind = Form.useWatch(['oidcConfig', 'clientSecret', 'kind'], form)
+  const tokenBased = Form.useWatch('jwksProviderEnabled', form)
+  const cookieBased = Form.useWatch('oidcConfigEnabled', form)
+  const jwksURL = Form.useWatch(['jwksProvider', 'jwksURL', 'staticVariableContent'], form)
+  // const [isRadioShow, setIsRadioShow] = useImmer(config.jwks == 1)
+  // const [disabled, setDisabled] = useImmer(false)
   const navigate = useNavigate()
   const [jwksObj, setjwksObj] = useState<Object>({})
   const [jwksJSON, setJwksJSON] = useState<string>('')
@@ -102,57 +95,45 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const envOptions = useEnvOptions()
 
   useEffect(() => {
-    try {
-      setjwksObj(JSON.parse(String(config.jwksJSON || '{}')))
-    } catch (e) {
-      setjwksObj({})
-      console.error(e)
+    if (content.jwksProvider.jwksJson) {
+      try {
+        setjwksObj(JSON.parse(String(content.jwksProvider.jwksJson.staticVariableContent || '{}')))
+      } catch (e) {
+        setjwksObj({})
+        console.error(e)
+      }
+      setJwksJSON(JSON.stringify(jwksObj))
     }
-    setJwksJSON(JSON.stringify(jwksObj))
-  }, [content])
+  }, [content.jwksProvider])
 
   const { loading, fun: onFinish } = useLock(
-    async (values: FromValues) => {
-      if (values.jwks == 1) {
-        values.jwksJSON = jwksJSON
-        values.jwksURL = ''
+    async (values: Partial<ApiDocuments.Authentication>) => {
+      if (values.jwksProvider!.jwksJson) {
+        values.jwksURL = null
       } else {
-        if (!values.jwksURL && !values.userInfoEndpoint) {
+        if (
+          !values.jwksProvider?.jwksUrl &&
+          !values.jwksProvider?.userInfoEndpoint?.staticVariableContent
+        ) {
           message.warning(intl.formatMessage({ defaultMessage: '未解析到jwksURL和用户端点' }))
           return
         }
-        values.jwksJSON = ''
+        values.jwksJSON = null
       }
-      const switchState = []
-      if (values.cookieBased) {
-        switchState.push('cookieBased')
-      }
-      if (values.tokenBased) {
-        switchState.push('tokenBased')
-      }
-      const newValues = { ...config, ...values }
-      const newContent = { ...content, switchState, name: values.id }
-      if (content.name == '') {
-        const req = { ...newContent, config: newValues }
-        Reflect.deleteProperty(req, 'id')
-        const result = await requests.post<unknown, number>('/authentication', req)
-        content.id = result
+      const newValues = { ...values }
+      // const newContent = { ...content, switchState, name: values.id }
+      if (!content.name) {
+        // const req = { ...newContent, config: newValues }
+        // Reflect.deleteProperty(req, 'id')
+        await requests.post('/authentication', newValues)
       } else {
-        await requests.put('/authentication', {
-          ...newContent,
-          config: newValues
-        })
+        await requests.put('/authentication', newValues)
       }
-      void requests
-        .get<unknown, ApiDocuments.Authentication[]>('/authentication')
-        .then(res => {
-          onChange(res.filter(row => row.id === content.id)[0])
-        })
-        .then(() => {
-          handleBottomToggleDesigner('data', content.id)
-        })
+      // @ts-ignore
+      onChange(newValues)
+      handleBottomToggleDesigner('data', content.name)
     },
-    [config, content, handleBottomToggleDesigner, jwksJSON, onChange]
+    [content, handleBottomToggleDesigner, jwksJSON, onChange]
   )
 
   const inspect = useCallback(
@@ -165,74 +146,50 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
       }
       currentInspecting.current = url
       // 开始请求前，先清空现有数据
-      form.setFieldValue('jwksURL', '')
-      form.setFieldValue('userInfoEndpoint', '')
-      form.setFieldValue('tokenEndpoint', '')
-      form.setFieldValue('authorizationEndpoint', '')
+      form.setFieldsValue({
+        jwksProvider: {
+          jwksUrl: {
+            staticVariableContent: ''
+          },
+          userInfoEndpoint: {
+            staticVariableContent: ''
+          }
+        }
+      })
+      // form.setFieldValue('tokenEndpoint', '')
+      // form.setFieldValue('authorizationEndpoint', '')
       const res = await proxy(url)
       // 如果当前url不是最新的，忽略本次请求
       if (currentInspecting.current !== url) {
         return
       }
-      form.setFieldValue('jwksURL', res.jwks_uri)
-      form.setFieldValue('userInfoEndpoint', res.userinfo_endpoint)
-      form.setFieldValue('tokenEndpoint', res.token_endpoint)
-      form.setFieldValue('authorizationEndpoint', res.authorization_endpoint)
+      form.setFieldsValue({
+        jwksProvider: {
+          jwksUrl: {
+            staticVariableContent: res.jwks_uri
+          },
+          userInfoEndpoint: {
+            staticVariableContent: res.userinfo_endpoint
+          }
+        }
+      })
+      // form.setFieldValue('tokenEndpoint', res.token_endpoint)
+      // form.setFieldValue('authorizationEndpoint', res.authorization_endpoint)
     }, 1000),
     [form]
   )
+
+  useEffect(() => {
+    if (issuer) {
+      inspect(issuer)
+    }
+  }, [inspect, issuer])
 
   if (!content) {
     return <Error50x />
   }
 
-  const typeChange = (value: string) => {
-    setValue(value)
-    setIsRadioShow(value == '1')
-  }
-
-  const onValuesChange = (changedValues: object, allValues: FromValues) => {
-    void inspect(String(allValues.issuer))
-    for (const key in allValues) {
-      if ((allValues[key] as string) == undefined) {
-        setDisabled(true)
-        return
-      }
-    }
-    setDisabled(false)
-  }
-
-  const initialValues = content.name
-    ? {
-        id: config.id,
-
-        clientId: config.clientId || { kind: '0' },
-        clientSecret: config.clientSecret || { kind: '0' },
-        issuer: config.issuer,
-        jwks: config.jwks,
-        jwksJSON: config.jwksJSON,
-        jwksURL: config.jwksURL,
-        userInfoEndpoint: config.userInfoEndpoint,
-        tokenEndpoint: config.tokenEndpoint,
-        authorizationEndpoint: config.authorizationEndpoint,
-        switchState: content.switchState,
-        cookieBased: content.switchState.includes('cookieBased'),
-        tokenBased: content.switchState.includes('tokenBased')
-      }
-    : {
-        id: '',
-        clientId: { kind: '0' },
-        clientSecret: { kind: '0' },
-        issuer: '',
-        jwks: 0,
-        jwksJSON: '',
-        jwksURL: '',
-        userInfoEndpoint: '',
-        tokenEndpoint: '',
-        authorizationEndpoint: '',
-        cookieBased: false,
-        tokenBased: false
-      }
+  const initialValues = content.name ? content : cloneDeep(defaultAuth)
 
   const saveJwksJSON = (json: JSONValue) => {
     setJwksJSON(JSON.stringify(json, null, 2))
@@ -250,21 +207,18 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             name="basic"
             labelCol={{ span: 7 }}
             wrapperCol={{ span: 17 }}
-            onFinish={values => {
-              void onFinish(values)
-            }}
-            onValuesChange={onValuesChange}
+            onFinish={onFinish}
             autoComplete="new-password"
             validateTrigger="onChange"
             initialValues={initialValues}
           >
             <Form.Item
-              label={intl.formatMessage({ defaultMessage: '供应商ID' })}
-              name="id"
+              label={intl.formatMessage({ defaultMessage: '供应商名称' })}
+              name="name"
               rules={[
                 {
                   required: true,
-                  message: intl.formatMessage({ defaultMessage: '供应商ID不能为空' })
+                  message: intl.formatMessage({ defaultMessage: '供应商名称不能为空' })
                 },
                 ...ruleMap.name
               ]}
@@ -275,6 +229,61 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 autoFocus={true}
               />
             </Form.Item>
+            <Form.Item
+              label="Issuer"
+              name={['issuer', 'staticVariableContent']}
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' })
+                },
+                {
+                  // pattern: /^https?:\/\/[:.\w\d/]+$/,
+                  type: 'url',
+                  message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
+                }
+              ]}
+            >
+              <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+            </Form.Item>
+            <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
+              <Input
+                value={
+                  !issuer
+                    ? intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })
+                    : `${issuer}/.well-known/openid-configuration`
+                }
+                disabled
+              />
+            </Form.Item>
+            <Form.Item
+              label={intl.formatMessage({ defaultMessage: '用户端点' })}
+              name="userInfoEndpoint"
+            >
+              <Input
+                placeholder={intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
+                disabled
+              />
+            </Form.Item>
+            <Form.Item
+              label={
+                <div className={styles.switchLabel}>
+                  {intl.formatMessage({ defaultMessage: '基于cookie' })}
+                </div>
+              }
+              className="pt-5"
+            >
+              <div className="flex items-center">
+                <Form.Item noStyle name="cookieBased" valuePropName="checked">
+                  <Switch
+                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  />
+                </Form.Item>
+                <div className="ml-2 text-12px text-[#333]">授权码模式</div>
+              </div>
+            </Form.Item>
+
             <Form.Item label={intl.formatMessage({ defaultMessage: 'App ID' })} required>
               <Input.Group compact className="!flex">
                 <Form.Item name={['clientId', 'kind']} noStyle>
@@ -307,60 +316,6 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   )}
                 </Form.Item>
               </Input.Group>
-            </Form.Item>
-            <Form.Item
-              label="Issuer"
-              name="issuer"
-              rules={[
-                {
-                  required: true,
-                  message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' })
-                },
-                {
-                  // pattern: /^https?:\/\/[:.\w\d/]+$/,
-                  type: 'url',
-                  message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
-                }
-              ]}
-            >
-              <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
-            </Form.Item>
-            <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-              <Input
-                value={
-                  !issuer
-                    ? intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })
-                    : `${issuer as string}/.well-known/openid-configuration`
-                }
-                disabled
-              />
-            </Form.Item>
-            <Form.Item
-              label={intl.formatMessage({ defaultMessage: '用户端点' })}
-              name="userInfoEndpoint"
-            >
-              <Input
-                placeholder={intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item
-              label={
-                <div className={styles.switchLabel}>
-                  {intl.formatMessage({ defaultMessage: '基于cookie' })}
-                </div>
-              }
-              className="pt-5"
-            >
-              <div className="flex items-center">
-                <Form.Item noStyle name="cookieBased" valuePropName="checked">
-                  <Switch
-                    checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
-                  />
-                </Form.Item>
-                <div className="ml-2 text-12px text-[#333]">授权码模式</div>
-              </div>
             </Form.Item>
             <Form.Item
               label={intl.formatMessage({ defaultMessage: 'App Secret' })}
@@ -403,16 +358,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 </Form.Item>
               </Input.Group>
             </Form.Item>
-            {id && cookieBased && (
+            {name && cookieBased && (
               <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
                 <div className="flex items-center">
                   {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}
-                  /auth/cookie/callback/{id}
+                  /auth/cookie/callback/{name}
                   <CopyOutlined
                     className="cursor-pointer ml-4"
                     onClick={() => {
                       copy(
-                        `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${id}`
+                        `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${name}`
                       )
                       message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                     }}
@@ -439,13 +394,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               </div>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })} name="jwks">
-              <Radio.Group
-                disabled={!tokenBased}
-                onChange={e => {
-                  typeChange(e.target.value as string)
-                }}
-                value={value}
-              >
+              <Radio.Group disabled={!tokenBased}>
                 <Radio value={0}>URL</Radio>
                 <Radio value={1}>JSON</Radio>
               </Radio.Group>

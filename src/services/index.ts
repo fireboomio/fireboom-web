@@ -262,6 +262,18 @@ export const services = {
       ...extract('DELETE', args, [], ['dataName'])
     })
   },
+  'datasource@/datasource/dmmf/{dataName}'(args: {
+    /**
+     * @description model名称
+     */
+    dataName: string
+  }) {
+    return requestAdapter<{}>({
+      url: replacePath('/datasource/dmmf/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
   'datasource@/datasource/export'(args: {
     /**
      * @description dataNames
@@ -274,6 +286,18 @@ export const services = {
       ...extract('POST', args, ['dataNames'], [])
     })
   },
+  'datasource@/datasource/graphql/{dataName}'(args: {
+    /**
+     * @description model名称
+     */
+    dataName: string
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/datasource/graphql/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
   'datasource@/datasource/import'(args: {
     /**
      * @description 文件
@@ -284,6 +308,32 @@ export const services = {
       url: replacePath('/datasource/import', args),
       method: 'POST',
       ...extract('POST', args, ['file'], [])
+    })
+  },
+  'datasource@/datasource/migrate/{dataName}'(
+    args: {
+      /**
+       * @description model名称
+       */
+      dataName: string
+    } & string
+  ) {
+    return requestAdapter<string>({
+      url: replacePath('/datasource/migrate/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'datasource@/datasource/prisma/{dataName}'(args: {
+    /**
+     * @description model名称
+     */
+    dataName: string
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/datasource/prisma/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
     })
   },
   'datasource@/datasource/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -339,30 +389,6 @@ export const services = {
   }) {
     return requestAdapter<ApiDocuments.Datasource>({
       url: replacePath('/datasource/{dataName}', args),
-      method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
-    })
-  },
-  'datasource@/datasource/{dataName}/dmmf'(args: {
-    /**
-     * @description model名称
-     */
-    dataName: string
-  }) {
-    return requestAdapter<{}>({
-      url: replacePath('/datasource/{dataName}/dmmf', args),
-      method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
-    })
-  },
-  'datasource@/datasource/{dataName}/sdl'(args: {
-    /**
-     * @description model名称
-     */
-    dataName: string
-  }) {
-    return requestAdapter<string>({
-      url: replacePath('/datasource/{dataName}/sdl', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })
@@ -583,6 +609,44 @@ export const services = {
       ...extract('POST', args, ['dataNames'], [])
     })
   },
+  'operation@/operation/graphql/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<string>({
+      url: replacePath('/operation/graphql/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
+  'operation@post@/operation/graphql/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & string
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/operation/graphql/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'operation@/operation/hookOptions/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<ApiDocuments.models_HookOptions>({
+      url: replacePath('/operation/hookOptions/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
   'operation@/operation/import'(args: {
     /**
      * @description 文件
@@ -667,44 +731,6 @@ export const services = {
   }) {
     return requestAdapter<ApiDocuments.Operation>({
       url: replacePath('/operation/{dataName}', args),
-      method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
-    })
-  },
-  'operation@/operation/{dataName}/graphql'(args: {
-    /**
-     * @description dataName
-     */
-    dataName: string
-  }) {
-    return requestAdapter<string>({
-      url: replacePath('/operation/{dataName}/graphql', args),
-      method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
-    })
-  },
-  'operation@post@/operation/{dataName}/graphql'(
-    args: {
-      /**
-       * @description dataName
-       */
-      dataName: string
-    } & string
-  ) {
-    return requestAdapter<any>({
-      url: replacePath('/operation/{dataName}/graphql', args),
-      method: 'POST',
-      ...extract('POST', args, [], ['dataName'])
-    })
-  },
-  'operation@/operation/{dataName}/hookOptions'(args: {
-    /**
-     * @description dataName
-     */
-    dataName: string
-  }) {
-    return requestAdapter<ApiDocuments.models_HookOptions>({
-      url: replacePath('/operation/{dataName}/hookOptions', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })
@@ -1145,6 +1171,18 @@ export const services = {
       ...extract('POST', args, ['dataNames'], [])
     })
   },
+  'storage@/storage/hookOptions/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<{}>({
+      url: replacePath('/storage/hookOptions/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
   'storage@/storage/import'(args: {
     /**
      * @description 文件
@@ -1210,18 +1248,6 @@ export const services = {
   }) {
     return requestAdapter<ApiDocuments.Storage>({
       url: replacePath('/storage/{dataName}', args),
-      method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
-    })
-  },
-  'storage@/storage/{dataName}/hookOptions'(args: {
-    /**
-     * @description dataName
-     */
-    dataName: string
-  }) {
-    return requestAdapter<{}>({
-      url: replacePath('/storage/{dataName}/hookOptions', args),
       method: 'GET',
       ...extract('GET', args, [], ['dataName'])
     })

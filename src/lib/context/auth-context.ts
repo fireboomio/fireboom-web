@@ -8,12 +8,12 @@ import type { Connector } from '@/interfaces/connector'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 interface AuthCurrContextT {
-  currAuthProvItemId: number | null | undefined
-  setCurrAuthProvItemId: useImmer.Updater<number | null | undefined>
+  currAuthProvItemName: number | null | undefined
+  setCurrAuthProvItemName: useImmer.Updater<number | null | undefined>
 }
 
-interface AuthToggleContext {
-  handleBottomToggleDesigner: (type: 'data' | 'edit', id?: number) => void
+interface AuthToggleContextState {
+  handleBottomToggleDesigner: (type: 'data' | 'edit', name?: string) => void
 }
 interface AuthUserCurrContextT {
   authUserCurr: User
@@ -31,7 +31,7 @@ export interface ConnectorContextType {
 export const AuthContext = createContext<ApiDocuments.Authentication[]>([])
 export const AuthDispatchContext = createContext({} as Dispatch<AuthAction>)
 export const AuthCurrContext = createContext({} as AuthCurrContextT)
-export const AuthToggleContext = createContext({} as AuthToggleContext)
+export const AuthToggleContext = createContext({} as AuthToggleContextState)
 export const ConnectorContext = createContext({} as ConnectorContextType)
 
 export const AuthUserCurrContext = createContext<AuthUserCurrContextT>({} as AuthUserCurrContextT)

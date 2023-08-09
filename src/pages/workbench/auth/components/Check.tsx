@@ -53,20 +53,22 @@ export default function AuthMainCheck({ content }: Props) {
             {getConfigurationVariableRender(content.oidcConfig.clientId)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
-            {getConfigurationVariableRender(content.oidcConfig.issuer)}
+            {getConfigurationVariableRender(content.issuer)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             {`${getConfigurationVariableRender(
               content.oidcConfig.issuer
             )}/.well-known/openid-configuration`}
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
-            {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
-          </Descriptions.Item>
+          {content.jwksProvider.userInfoEndpoint && (
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
+              {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
+            </Descriptions.Item>
+          )}
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于cookie' })}>
-            {content.switchState.includes('cookieBased') ? (
+            {content.oidcConfigEnabled ? (
               <Tag color="success">开启</Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
@@ -79,7 +81,7 @@ export default function AuthMainCheck({ content }: Props) {
             <span className="flex items-center">
               {isShowSecret ? (
                 <>
-                  <span>{getConfigurationVariableRender(content.oidcConfig.clientSecret)}</span>
+                  <span>{getConfigurationVariableRender(content.oidcConfig?.clientSecret)}</span>
                   <EyeOutlined className="ml-4" onClick={handleToggleSecret} />
                 </>
               ) : (
@@ -108,7 +110,7 @@ export default function AuthMainCheck({ content }: Props) {
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于token' })}>
-            {content.switchState.includes('tokenBased') ? (
+            {content.jwksProviderEnabled ? (
               <Tag color="success">开启</Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
@@ -123,12 +125,12 @@ export default function AuthMainCheck({ content }: Props) {
           {content.jwksProvider?.jwksJson ? (
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
               <pre className="overflow-x-auto">
-                {getConfigurationVariableRender(content.jwksProvider.jwksJson)}
+                {getConfigurationVariableRender(content.jwksProvider?.jwksJson)}
               </pre>
             </Descriptions.Item>
           ) : (
             <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
-              {getConfigurationVariableRender(content.jwksProvider.jwksUrl)}
+              {getConfigurationVariableRender(content.jwksProvider?.jwksUrl)}
             </Descriptions.Item>
           )}
         </Descriptions>

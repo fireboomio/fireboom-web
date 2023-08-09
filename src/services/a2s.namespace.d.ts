@@ -17,9 +17,12 @@ export declare namespace ApiDocuments {
     createTime: string
     deleteTime: string
     enabled: boolean
+    issuer: ApiDocuments.ConfigurationVariable
     jwksProvider: ApiDocuments.JwksAuthProvider
+    jwksProviderEnabled: boolean
     name: string
     oidcConfig: ApiDocuments.OpenIDConnectAuthProviderConfig
+    oidcConfigEnabled: boolean
     updateTime: string
   }
   export interface BuildInfo extends BasicDto {
