@@ -55,13 +55,18 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
       {kind == VariableKind.Env ? (
         <AutoComplete
           {...envProps}
-          value={value?.key}
+          value={value?.environmentVariableName}
           className="flex-1"
           options={envs}
           onChange={onValueChange}
         />
       ) : (
-        <Input {...inputProps} className="flex-1" value={value?.val} onChange={onValueChange} />
+        <Input
+          {...inputProps}
+          className="flex-1"
+          value={value?.staticVariableContent}
+          onChange={onValueChange}
+        />
       )}
     </Space.Compact>
   )

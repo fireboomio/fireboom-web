@@ -2,15 +2,15 @@ import { Button } from 'antd'
 import { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import type { StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 // import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import StorageDetail from './subs/Detail'
 import StorageForm from './subs/Form'
 
 interface Props {
-  content?: StorageResp
+  content?: ApiDocuments.Storage
   showType: string
   showErr: boolean
 }

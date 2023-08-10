@@ -29,7 +29,7 @@ interface Props {
 export default function ProfileForm({ storageName, profile, onSave }: Props) {
   const intl = useIntl()
   const dict = useDict()
-  const { id, profile: profileName } = useParams()
+  const { profile: profileName } = useParams()
   const [form] = useForm<Profile>()
   const maxAllowedUploadSizeBytes = Form.useWatch('maxAllowedUploadSizeBytes', form)
   const { vscode } = useContext(GlobalContext)

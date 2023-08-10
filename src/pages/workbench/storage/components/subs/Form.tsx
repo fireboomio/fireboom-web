@@ -1,16 +1,16 @@
-import { Alert, Button, Form, Input, message, Select, Switch } from 'antd'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { Alert, Button, Form, Input, message, Switch } from 'antd'
+import { useContext, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import { useValidate } from '@/hooks/validate'
-import type { StorageConfig, StorageResp } from '@/interfaces/storage'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
-import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import imgAli from '../assets/ali.png'
 import imgGoogle from '../assets/google.png'
@@ -19,7 +19,7 @@ import imgTencent from '../assets/tencent.png'
 import styles from './subs.module.less'
 
 interface Props {
-  content?: StorageResp
+  content?: ApiDocuments.Storage
   showErr?: boolean
 }
 const supportList = [
@@ -49,43 +49,37 @@ export default function StorageForm({ content, showErr }: Props) {
   const navigate = useNavigate()
   const { onRefreshMenu } = useContext(WorkbenchContext)
 
-  const config = useMemo(() => content?.config, [content])
-
-  const [form] = Form.useForm()
-  const accessKeyIDKind = Form.useWatch(['accessKeyID', 'kind'], form)
-  const secretAccessKeyKind = Form.useWatch(['secretAccessKey', 'kind'], form)
+  const [form] = Form.useForm<ApiDocuments.Storage>()
   const [testing, setTesting] = useState(false)
-  const envOptions = useEnvOptions()
   const storageList = useStorageList()
-  useEffect(() => {
-    form.resetFields()
-  }, [content])
+  // useEffect(() => {
+  //   form.resetFields()
+  // }, [content])
 
   const { loading, fun: onFinish } = useLock(
-    async (values: StorageConfig) => {
+    async (values: ApiDocuments.Storage) => {
       if (
         storageList?.find(item => {
-          return item.name === values.name && item.id !== content?.id
+          return item.name === values.name && item.name !== content?.name
         })
       ) {
-        void message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
+        message.error(intl.formatMessage({ defaultMessage: '名称不能重复' }))
         return
       }
-      const payload = {
-        name: values.name,
-        config: { ...values, uploadProfiles: content?.config.uploadProfiles },
-        useSSL: true
-      }
+      // const payload = {
+      //   name: values.name,
+      //   config: { ...values, uploadProfiles: content?.config.uploadProfiles },
+      //   useSSL: true
+      // }
 
-      let resp: StorageResp
       if (content) {
-        resp = await requests.put('/storage', { ...payload, id: content.id })
+        await requests.put('/storage', values)
       } else {
-        resp = await requests.post<unknown, StorageResp>('/storage', payload)
+        await requests.post<unknown, ApiDocuments.Storage>('/storage', values)
       }
-      navigate(`/workbench/storage/${resp.id}`, { replace: true })
+      navigate(`/workbench/storage/${values.name}`, { replace: true })
       void mutateStorage()
-      handleSwitch('detail', resp.id)
+      handleSwitch('detail', values.name)
     },
     [content, handleSwitch, intl, navigate, storageList]
   )
@@ -94,24 +88,16 @@ export default function StorageForm({ content, showErr }: Props) {
     void message.error(intl.formatMessage({ defaultMessage: '保存失败！' }))
   }
 
-  const handleTest = () => {
+  const handleTest = async () => {
     setTesting(true)
     const values = form.getFieldsValue()
-    void requests
-      .post('/s3Upload/checkConn', {
-        config: { ...values },
-        name: values.name
-      })
-      .then((x: any) => {
-        if (x?.status) {
-          message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-        } else {
-          message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-        }
-      })
-      .finally(() => {
-        setTesting(false)
-      })
+    try {
+      await requests.post('/storageClient/ping', values)
+      message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+    } catch (error) {
+      //
+    }
+    setTesting(false)
   }
 
   return (
@@ -132,13 +118,19 @@ export default function StorageForm({ content, showErr }: Props) {
           name="basic"
           labelCol={{ span: 7 }}
           wrapperCol={{ span: 17 }}
-          onFinish={values => void onFinish(values as StorageConfig)}
+          onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           validateTrigger="onBlur"
           className="ml-3"
-          initialValues={{ accessKeyID: { kind: '0' }, secretAccessKey: { kind: '0' }, ...config }}
+          initialValues={{
+            enabled: true,
+            ...content
+          }}
         >
+          <Form.Item name="enabled" hidden valuePropName="checked">
+            <Switch defaultChecked />
+          </Form.Item>
           <Form.Item
             label={intl.formatMessage({ defaultMessage: '名称' })}
             rules={[
@@ -147,11 +139,24 @@ export default function StorageForm({ content, showErr }: Props) {
             ]}
             name="name"
           >
-            <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+            <Input
+              disabled={!!content?.name}
+              placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+            />
           </Form.Item>
-          <Form.Item
+          <InputOrFromEnvWithItem
+            formItemProps={{
+              name: 'endpoint',
+              label: intl.formatMessage({ defaultMessage: '服务地址' })
+            }}
+            required
+            inputProps={{
+              addonBefore: 'http(s)://'
+            }}
+          />
+          {/* <Form.Item
             label={intl.formatMessage({ defaultMessage: '服务地址' })}
-            name="endPoint"
+            name={['endPoint', 'staticVariableContent']}
             rules={[
               { required: true, message: intl.formatMessage({ defaultMessage: '请输入服务地址' }) }
             ]}
@@ -160,8 +165,16 @@ export default function StorageForm({ content, showErr }: Props) {
               addonBefore="http(s)://"
               placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
             />
-          </Form.Item>
-          <Form.Item label="App ID" required>
+          </Form.Item> */}
+
+          <InputOrFromEnvWithItem
+            formItemProps={{
+              name: 'accessKeyID',
+              label: 'App ID'
+            }}
+            required
+          />
+          {/* <Form.Item label="App ID" required>
             <Input.Group compact className="!flex">
               <Form.Item name={['accessKeyID', 'kind']} noStyle>
                 <Select className="flex-0 w-100px">
@@ -193,8 +206,15 @@ export default function StorageForm({ content, showErr }: Props) {
                 )}
               </Form.Item>
             </Input.Group>
-          </Form.Item>
-          <Form.Item label="App Secret" required>
+          </Form.Item> */}
+          <InputOrFromEnvWithItem
+            formItemProps={{
+              name: 'secretAccessKey',
+              label: 'App Secret'
+            }}
+            required
+          />
+          {/* <Form.Item label="App Secret" required>
             <Input.Group compact className="!flex">
               <Form.Item name={['secretAccessKey', 'kind']} noStyle>
                 <Select className="flex-0 w-100px">
@@ -226,19 +246,33 @@ export default function StorageForm({ content, showErr }: Props) {
                 )}
               </Form.Item>
             </Input.Group>
-          </Form.Item>
-          <Form.Item
+          </Form.Item> */}
+          <InputOrFromEnvWithItem
+            formItemProps={{
+              name: 'bucketLocation',
+              label: intl.formatMessage({ defaultMessage: '区域' })
+            }}
+            required
+          />
+          {/* <Form.Item
             label={intl.formatMessage({ defaultMessage: '区域' })}
-            name="bucketLocation"
+            name={['bucketLocation', 'staticVariableContent']}
             rules={[
               { required: true, message: intl.formatMessage({ defaultMessage: '请输入区域' }) }
             ]}
           >
             <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
-          </Form.Item>
-          <Form.Item
+          </Form.Item> */}
+          <InputOrFromEnvWithItem
+            formItemProps={{
+              name: 'bucketName',
+              label: intl.formatMessage({ defaultMessage: '桶名称' })
+            }}
+            required
+          />
+          {/* <Form.Item
             label={intl.formatMessage({ defaultMessage: '桶名称' })}
-            name="bucketName"
+            name={['bucketName', 'staticVariableContent']}
             rules={[
               {
                 required: true,
@@ -247,7 +281,7 @@ export default function StorageForm({ content, showErr }: Props) {
             ]}
           >
             <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label={intl.formatMessage({ defaultMessage: '开启SSL' })}
             style={{ marginTop: '29px' }}

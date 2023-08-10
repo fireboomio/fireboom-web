@@ -9,22 +9,21 @@ import FbTabs from '@/components/Tabs'
 import type { Profile } from '@/hooks/store/storage'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
-import { updateHookEnabled } from '@/lib/service/hook'
 
 import styles from './[profile].module.less'
 import Form from './Form'
 
 export default function StorageProfile() {
   const intl = useIntl()
-  const { id, profile } = useParams()
+  const { name, profile } = useParams()
   const navigate = useNavigate()
-  const currentId = useRef<string>() // 当前storageId，用于在切换storage时清空tabs
+  const currentName = useRef<string>() // 当前storageId，用于在切换storage时清空tabs
   const [tabs, setTabs] = useState<{ key: string; label: string }[]>([])
   const storageList = useStorageList()
   const [activeTab, setActiveTab] = useState('base')
   useEffect(() => {
-    if (currentId.current !== id) {
-      currentId.current = id
+    if (currentName.current !== name) {
+      currentName.current = name
       setTabs([{ key: profile!, label: profile! }])
     } else {
       setTabs(tabs => {
@@ -32,24 +31,24 @@ export default function StorageProfile() {
         if (!tabs.find(x => x.key === profile)) {
           tabs.push({ key: profile!, label: profile! })
         }
-        const storage = storageList?.find(x => String(x.id) === id)
+        const storage = storageList?.find(x => x.name === name)
         tabs = tabs.filter(x => storage?.config.uploadProfiles?.[x.key])
         return tabs
       })
     }
-  }, [id, profile, storageList])
+  }, [name, profile, storageList])
   // 当前选中的配置
   const currentStorage = useMemo(() => {
-    return storageList?.find(x => String(x.id) === id)
-  }, [storageList, id])
+    return storageList?.find(x => x.name === name)
+  }, [storageList, name])
   const currentProfile = useMemo(() => {
-    const storage = storageList?.find(x => String(x.id) === id)
+    const storage = storageList?.find(x => x.name === name)
     if (storage) {
       return storage.config.uploadProfiles?.[profile ?? '']
     }
-  }, [storageList, profile, id])
+  }, [storageList, profile, name])
   const saveProfile = async (values: Profile) => {
-    const storage = cloneDeep(storageList?.find(x => String(x.id) === id))!
+    const storage = cloneDeep(storageList?.find(x => x.name === name))!
     storage.config.uploadProfiles![profile!] = {
       ...storage.config.uploadProfiles![profile!],
       ...values
@@ -74,7 +73,7 @@ export default function StorageProfile() {
       <FbTabs
         activeKey={profile!}
         onClick={item => {
-          navigate(`/workbench/storage/${id}/profile/${item.key}`)
+          navigate(`/workbench/storage/${name}/profile/${item.key}`)
         }}
         items={tabs}
         onClose={item => {
@@ -100,7 +99,7 @@ export default function StorageProfile() {
         {/*/>*/}
         <div className={styles.title}>{intl.formatMessage({ defaultMessage: '基本设置' })}</div>
         {activeTab === 'base' && (
-          <Form storageName={currentStorage?.name} onSave={saveProfile} profile={currentProfile} />
+          <Form storageName={currentStorage!.name} onSave={saveProfile} profile={currentProfile} />
         )}
         {activeTab === 'pre' && (
           <IdeContainer
