@@ -247,6 +247,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
                 autoComplete="off"
                 autoFocus={true}
+                disabled={!!content.name}
               />
             </Form.Item>
             <Form.Item

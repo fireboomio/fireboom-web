@@ -3,13 +3,6 @@ interface BasicDto {
   [key: string]: any
 }
 export declare namespace ApiDocuments {
-  export interface ApiAuthenticationHooks extends BasicDto {
-    mutatingPostAuthentication: boolean
-    postAuthentication: boolean
-    postLogout: boolean
-    revalidateAuthentication: boolean
-    tsPathMap?: {}
-  }
   export interface Appearance extends BasicDto {
     language: string
   }
@@ -93,7 +86,7 @@ export declare namespace ApiDocuments {
   }
   export interface Env extends BasicDto {}
   export interface GlobalOperation extends BasicDto {
-    apiAuthenticationHooks: ApiDocuments.ApiAuthenticationHooks
+    apiAuthenticationHooks: {}
     authenticationConfigs: {}
     cacheConfig: ApiDocuments.OperationCacheConfig
     globalHttpTransportHooks: {}

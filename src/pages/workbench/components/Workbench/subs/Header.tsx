@@ -18,7 +18,7 @@ import iconRefresh from '../assets/refresh.svg'
 import iconSetting from '../assets/setting.svg'
 import styles from './header.module.less'
 
-export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
+export default function Header(props: { onToggleSider: () => void; isCompiling: boolean }) {
   const intl = useIntl()
   const { appRuntime } = useConfigContext()
 
@@ -81,15 +81,12 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const { pathname } = useLocation()
   const { isHideSide } = useContext(WorkbenchContext)
 
-  const compiling =
-    props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
-
   const doCompile = () => {
     if (!appRuntime.dev) {
       message.error('生产环境禁止重新编译')
       return
     }
-    if (compiling) {
+    if (props.isCompiling) {
       return
     }
     void requests
@@ -188,7 +185,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           <>
             {appRuntime.dev ? (
               <div className={styles.headBtn} onClick={doCompile}>
-                {!compiling ? (
+                {!props.isCompiling ? (
                   <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />
                 ) : (
                   <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />

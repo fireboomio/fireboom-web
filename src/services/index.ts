@@ -262,16 +262,23 @@ export const services = {
       ...extract('DELETE', args, [], ['dataName'])
     })
   },
-  'datasource@/datasource/dmmf/{dataName}'(args: {
-    /**
-     * @description model名称
-     */
-    dataName: string
-  }) {
+  'datasource@/datasource/dmmf/{dataName}'(
+    args: {
+      /**
+       * @description model名称
+       */
+      dataName: string
+    } & {
+      /**
+       * @description 重载dmmf
+       */
+      reload?: boolean
+    }
+  ) {
     return requestAdapter<{}>({
       url: replacePath('/datasource/dmmf/{dataName}', args),
       method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
+      ...extract('GET', args, ['reload'], ['dataName'])
     })
   },
   'datasource@/datasource/export'(args: {
@@ -449,9 +456,16 @@ export const services = {
       ...extract('PUT', args, ['watchAction'], [])
     })
   },
-  'globalOperation@/globalOperation/hookOptions'(args?: any) {
+  'globalOperation@/globalOperation/authenticationHookOptions'(args?: any) {
     return requestAdapter<ApiDocuments.models_HookOptions>({
-      url: replacePath('/globalOperation/hookOptions', args),
+      url: replacePath('/globalOperation/authenticationHookOptions', args),
+      method: 'GET',
+      ...extract('GET', args, [], [])
+    })
+  },
+  'globalOperation@/globalOperation/httpTransportHookOptions'(args?: any) {
+    return requestAdapter<ApiDocuments.models_HookOptions>({
+      url: replacePath('/globalOperation/httpTransportHookOptions', args),
       method: 'GET',
       ...extract('GET', args, [], [])
     })

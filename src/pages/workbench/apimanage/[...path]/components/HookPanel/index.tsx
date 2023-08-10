@@ -36,7 +36,7 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
   const { data: globalHooksState, mutate: mutateGlobalHooks } = useImmutableSWR<
     any,
     ApiDocuments.models_HookOptions
-  >('/globalOperation/hookOptions', requests.get)
+  >('/globalOperation/httpTransportHookOptions', requests.get)
 
   const hookList = useMemo(() => {
     if (!schemaAST) {

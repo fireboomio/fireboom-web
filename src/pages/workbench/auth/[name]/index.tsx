@@ -9,20 +9,19 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { useAuthTest } from '@/utils/auth'
 
 import AuthCheck from '../components/Check'
 import AuthEdit from '../components/Edit'
 import { defaultAuth } from '../defaults'
 
 export default function AuthConfigContainer() {
-  const intl = useIntl()
   const [content, setContent] = useState<ApiDocuments.Authentication>()
   const [editFlag, setEditFlag] = useState(false)
   const navigate = useNavigate()
   const { name } = useParams()
   const authList = useAuthList()
-  const { globalSetting } = useContext(ConfigContext)
-  const { logout } = useContext(WorkbenchContext)
+  const { doTest } = useAuthTest('#/workbench/userInfo')
 
   useEffect(() => {
     // 如果id为new，则视为新增
@@ -56,22 +55,7 @@ export default function AuthConfigContainer() {
   }
 
   const onTest = () => {
-    logout(globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!).then(() => {
-      // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
-      const callbackURL = new URL(location.toString())
-      callbackURL.hash = '#/workbench/userInfo'
-      let target
-      try {
-        target = new URL(content?.point + encodeURIComponent(callbackURL.toString()))
-      } catch (e) {
-        message.error(
-          intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
-        )
-        console.error(e)
-        return
-      }
-      window.open(target.toString())
-    })
+    doTest(content!.name)
   }
 
   return (

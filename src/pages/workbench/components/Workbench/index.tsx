@@ -60,6 +60,12 @@ export default function Index(props: PropsWithChildren) {
     fbVersion: '--',
     fbCommit: '--'
   })
+  const isCompiling = useMemo(
+    () =>
+      info.engineStatus === ServiceStatus.Starting || info.engineStatus === ServiceStatus.Building,
+    [info.engineStatus]
+  )
+
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
@@ -146,6 +152,14 @@ export default function Index(props: PropsWithChildren) {
     }
   }, [refreshState])
 
+  useEffect(() => {
+    // 重新编译时触发重置
+    if (isCompiling) {
+      setQuestions([])
+      setLogs([])
+    }
+  }, [isCompiling, setLogs, setQuestions])
+
   const handleRefreshMenu = (listName: MenuName) => {
     setRefreshMap(refreshMap => {
       refreshMap[listName] = !refreshMap[listName]
@@ -174,36 +188,33 @@ export default function Index(props: PropsWithChildren) {
   }, [editFlag, intl, modal])
 
   const logout = useCallback(
-    (
+    async (
       apiPublicAddr: string,
       opts?: {
         logoutProvider?: boolean
         closeWindow?: boolean
       }
     ) => {
-      return axios
-        .get(`${apiPublicAddr}/auth/cookie/user/logout`, {
-          headers: getHeader(),
-          params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
-          withCredentials: true
-        })
-        .then(res => {
-          const redirect = res.data?.redirect
-          if (redirect) {
-            const iframe = document.createElement('iframe')
-            iframe.src = redirect
-            document.body.appendChild(iframe)
-            setTimeout(() => {
-              document.body.removeChild(iframe)
-            }, 5000)
-          }
-          if (opts?.closeWindow ?? true) {
-            message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
-            setTimeout(() => {
-              window.close()
-            }, 3000)
-          }
-        })
+      const res = await axios.get(`${apiPublicAddr}/auth/cookie/user/logout`, {
+        headers: getHeader(),
+        params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
+        withCredentials: true
+      })
+      const redirect = res.data?.redirect
+      if (redirect) {
+        const iframe = document.createElement('iframe')
+        iframe.src = redirect
+        document.body.appendChild(iframe)
+        setTimeout(() => {
+          document.body.removeChild(iframe)
+        }, 5000)
+      }
+      if (opts?.closeWindow ?? true) {
+        message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
+        setTimeout(() => {
+          window.close()
+        }, 3000)
+      }
     },
     [intl]
   )
@@ -212,10 +223,7 @@ export default function Index(props: PropsWithChildren) {
     <ALayout className={`h-100vh ${styles.workbench}`}>
       {!fullScreen && (
         <AHeader className={styles.header}>
-          <Header
-            onToggleSider={() => setHideSider(!hideSider)}
-            engineStatus={info?.engineStatus}
-          />
+          <Header onToggleSider={() => setHideSider(!hideSider)} isCompiling={isCompiling} />
         </AHeader>
       )}
       <ALayout>
@@ -453,7 +461,7 @@ async function resolveDefaultCode(
       name = 'onResponse'
     }
     code = await getDefaultCode(`global.${name}`)
-  } else if (path.match(/custom-\w+\/auth\//)) {
+  } else if (path.match(/custom-\w+\/authentication\//)) {
     code = await getDefaultCode(`auth.${name}`)
   } else if (path.match(/custom-\w+\/customize\//)) {
     code = replaceFileTemplate(await getDefaultCode('custom'), [
