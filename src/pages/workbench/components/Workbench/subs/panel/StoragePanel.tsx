@@ -125,7 +125,11 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
         navigate(`/workbench/storage/${node.parent!.data.name}/profile/${newName}`)
       }
     } else {
-      await requests.put(`/storage/rename/${node.data.name}`, { newStorageName: newName })
+      await requests.put(`/storage/rename/${node.data.name}`, {
+        src: node.data.name,
+        dst: newName,
+        overload: false
+      })
       await mutateStorage()
     }
   }, true)

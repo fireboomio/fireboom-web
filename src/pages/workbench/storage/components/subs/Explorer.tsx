@@ -259,15 +259,17 @@ export default function StorageExplorer({ bucketName }: Props) {
       }))
     )
     let targetOption = selectedOptions[selectedOptions.length - 1]
-    try {
-      const resp = await requests.get(`/storageClient/${bucketName}/detail`, {
-        params: {
-          filename: targetOption.name
-        }
-      })
-      targetOption = { ...targetOption, ...resp }
-    } catch (error) {
-      //
+    if (!targetOption.name?.endsWith('/')) {
+      try {
+        const resp = await requests.get(`/storageClient/${bucketName}/detail`, {
+          params: {
+            filename: targetOption.name
+          }
+        })
+        targetOption = { ...targetOption, ...resp }
+      } catch (error) {
+        //
+      }
     }
     setTarget({ ...targetOption })
     setVisible(true)
@@ -490,7 +492,7 @@ export default function StorageExplorer({ bucketName }: Props) {
   }
   const deleteFile = (file = target) => {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
-    void requests.post(`/storageClient/${bucketName}/remove`, { filename: file?.name }).then(() => {
+    requests.post(`/storageClient/${bucketName}/remove?filename=${file?.name}`).then(() => {
       hide()
       setVisible(false)
       void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
