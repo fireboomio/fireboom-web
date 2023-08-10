@@ -127,6 +127,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
         delete values.jwksProvider!.jwksJson
       }
       delete values.jwks
+      values.enabled = true
       const newValues = { ...values }
       // const newContent = { ...content, switchState, name: values.id }
       if (!content.name) {
@@ -199,7 +200,16 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const initialValues = content.name ? content : cloneDeep(defaultAuth)
 
   const saveJwksJSON = (json: JSONValue) => {
-    setJwksJSON(JSON.stringify(json, null, 2))
+    const str = JSON.stringify(json, null, 2)
+    setJwksJSON(str)
+    form.setFieldsValue({
+      jwksProvider: {
+        jwksJson: {
+          kind: VariableKind.Static,
+          staticVariableContent: str
+        }
+      }
+    })
   }
 
   return (
@@ -433,6 +443,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               <Form.Item
                 label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}
                 className="mb-5"
+                name={['jwksProvider', 'jwksJson', 'staticVariableContent']}
               >
                 {/* <ReactJson
                   onEdit={saveJwksJSON}

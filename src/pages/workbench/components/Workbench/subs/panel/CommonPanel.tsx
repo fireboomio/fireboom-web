@@ -94,7 +94,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       })
     } else if (props.type === 'auth') {
       if (!authList) return []
-      return authList.map((row: any) => {
+      return authList.map((row: ApiDocuments.Authentication) => {
         const icon = 'other'
         const tip = 'OIDC'
         return {
@@ -102,7 +102,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           name: row.name,
           icon,
           tip,
-          enabled: !!row.switchState?.length,
+          enabled: row.oidcConfigEnabled || row.jwksProviderEnabled,
           _row: row,
           svg: '/assets/icon/oidc.svg'
         }
