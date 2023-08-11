@@ -48,12 +48,17 @@ export default function StorageProfile() {
     }
   }, [storageList, profile, name])
   const saveProfile = async (values: ApiDocuments.S3UploadProfile) => {
-    const storage = cloneDeep(storageList?.find(x => x.name === name))!
-    storage.uploadProfiles![profile!] = {
-      ...storage.uploadProfiles![profile!],
-      ...values
-    }
-    await requests.put('/storage', storage)
+    // const storage = cloneDeep(storageList?.find(x => x.name === name))!
+    // storage.uploadProfiles![profile!] = {
+    //   ...storage.uploadProfiles![profile!],
+    //   ...values
+    // }
+    await requests.put('/storage', {
+      name,
+      uploadProfiles: {
+        [profile as string]: values
+      }
+    })
     message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     void mutateStorage()
     // 如果前置钩子改变了

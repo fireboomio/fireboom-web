@@ -568,12 +568,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
 }
 
-function convertToTree(data: ApiDocuments.fileloader_DataTree[] | null, lv = '0'): FileTreeNode[] {
+function convertToTree(data: ApiDocuments.fileloader_DataTree[] | null, lv = '0') {
   if (!data) return []
   return data.map((x, idx) => ({
     ...x,
     key: `${x.isDir ? 0 : 1}-${x.path}`,
-    items: convertToTree(x.items ?? [], `${lv}-${idx}`)
+    children: convertToTree(x.items ?? [], `${lv}-${idx}`)
   }))
 }
 
@@ -586,8 +586,8 @@ function getNodeByPath(
     const item = lists.pop()!
     if (item.path === path) {
       return item
-    } else if (item.items) {
-      lists.push(...item.items)
+    } else if (item.children) {
+      lists.push(...item.children)
     }
   }
 }
@@ -601,8 +601,8 @@ function getApiByPath(
     const item = lists.pop()!
     if (item.path === path) {
       return item
-    } else if (item.items) {
-      lists.push(...item.items)
+    } else if (item.children) {
+      lists.push(...item.children)
     }
   }
 }

@@ -1,5 +1,4 @@
 import { App, Dropdown, message, Popconfirm, Tooltip } from 'antd'
-import { cloneDeep, set } from 'lodash'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -16,7 +15,6 @@ import styles from './StoragePanel.module.less'
 
 export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   const intl = useIntl()
-  const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
@@ -63,18 +61,26 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
 
   const storageList = useStorageList()
   useEffect(() => {
-    const tree = (storageList ?? []).map(item => ({
-      data: item,
-      key: item.name,
-      name: item.name,
-      isDir: true,
-      children: Object.entries(item.uploadProfiles ?? {}).map(([key, subItem]) => ({
-        data: subItem,
-        key: `${item.name}_${key}`,
-        name: key,
-        isDir: false
-      }))
-    }))
+    const tree = (storageList ?? []).map(item => {
+      const parent = {
+        data: item,
+        key: item.name,
+        name: item.name,
+        isDir: true
+      }
+      const children = Object.entries(item.uploadProfiles ?? {}).map(([key, subItem]) => {
+        return {
+          data: subItem,
+          key: `${item.name}_${key}`,
+          name: key,
+          isDir: false,
+          parent
+        }
+      })
+      // @ts-ignore
+      parent.children = children
+      return parent
+    })
     setTreeData(tree)
   }, [storageList])
 
@@ -99,8 +105,11 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (!node.isDir) {
-      await requests.delete(`/storage/${node.parent!.data.name}`, {
-        data: { profileNames: [node.name] }
+      await requests.put(`/storage`, {
+        name: node.parent!.data.name,
+        uploadProfiles: {
+          [node.name]: null
+        }
       })
     } else {
       await requests.delete(`/storage/${node.data.name}`)
@@ -116,9 +125,12 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   }
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     if (!node.isDir) {
-      await requests.put(`/storage/rename/${node.parent!.data.name}`, {
-        oldProfileName: node.name,
-        newProfileName: newName
+      await requests.put(`/storage`, {
+        name: node.parent!.data.name,
+        uploadProfiles: {
+          [node.name]: null,
+          [newName]: node.data
+        }
       })
       await mutateStorage()
       if (params.name === node.parent!.data.name && params.profile === node.name) {
@@ -171,13 +183,16 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                       while (currentProfileSet.has(`NewProfile${i}`)) {
                         i++
                       }
-                      const data = cloneDeep(nodeData.data)
-                      set(data, `uploadProfiles.NewProfile${i}`, {
-                        hooks: {},
-                        maxAllowedUploadSizeBytes: 10 * 2 ** 20,
-                        maxAllowedFiles: 1
+                      await requests.put('/storage', {
+                        name: nodeData.data.name,
+                        uploadProfiles: {
+                          [`NewProfile${i}`]: {
+                            hooks: {},
+                            maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+                            maxAllowedFiles: 1
+                          }
+                        }
                       })
-                      await requests.put('/storage', data)
                       await mutateStorage()
                       navigate(`/workbench/storage/${nodeData.data.name}/profile/NewProfile${i}`)
                     },
