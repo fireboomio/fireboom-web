@@ -1,48 +1,27 @@
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { Button, Form, InputNumber, message, Select, Switch } from 'antd'
-import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import useSWRImmutable from 'swr/immutable'
 
-import UrlInput from '@/components/UrlInput'
-import type { GlobalSetting } from '@/interfaces/global'
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import { HttpRequestHeaders } from '@/lib/constant'
-import requests from '@/lib/fetchers'
-import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 
 export default function SettingMainVersion() {
   const intl = useIntl()
   const [form] = Form.useForm()
-  const allowedOriginsEnabled = Form.useWatch('allowedOriginsEnabled', form)
-  const { data: globalConfig, mutate } = useSWRImmutable<GlobalSetting>(
-    '/setting/global',
-    requests.get
-  )
-  useEffect(() => {
-    form.resetFields()
-  }, [form, globalConfig])
-  if (!globalConfig) {
+
+  const { globalSetting, updateGlobalSetting } = useConfigContext()
+  if (!globalSetting) {
     return
   }
-  const { configureWunderGraphApplication } = globalConfig as any
-  const { cors: data } = configureWunderGraphApplication
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    const saveValues = Object.keys(values)
-      .map(key => {
-        // @ts-ignore
-        if (JSON.stringify(values[key]) !== JSON.stringify(data[key])) {
-          return { key: `configureWunderGraphApplication.cors.${key}`, val: values[key] }
-        }
-      })
-      .filter(x => x)
     try {
-      await requests.put('/setting/global', { values: saveValues })
-      mutate()
+      updateGlobalSetting(values)
       message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     } catch (e) {
-      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+      //
     }
     hide()
   }
@@ -56,50 +35,42 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={data}
+        initialValues={globalSetting}
       >
-        <Form.Item
-          tooltip={{
-            title: <img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />,
-            rootClassName: 'max-w-80vw max-h-80vh'
-          }}
-          label={intl.formatMessage({ defaultMessage: '允许源' })}
-        >
-          <div className="flex items-center">
-            <Form.Item noStyle name="allowedOriginsEnabled" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-            <span className="ml-2 align-middle">允许全部</span>
-          </div>
-        </Form.Item>
-        <Form.List name="allowedOrigins">
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
+        <Form.Item label={intl.formatMessage({ defaultMessage: '允许源' })}>
+          <Form.List name={['corsConfiguration', 'allowedOrigins']}>
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <div style={{ width: '90%' }} className="flex items-center mb-4" key={field.key}>
+                    <InputOrFromEnvWithItem
+                      className="flex-1"
+                      formItemProps={{ ...field, noStyle: true }}
+                      // @ts-ignore
+                      // inputRender={props => <UrlInput {...props} />}
+                    />
+                    <MinusCircleOutlined className="ml-2" onClick={() => remove(field.name)} />
+                  </div>
+                ))}
                 <Form.Item
-                  hidden={allowedOriginsEnabled}
-                  label={intl.formatMessage({ defaultMessage: '允许HOST' }) + (index + 1)}
-                  key={field.key}
+                  style={{
+                    marginTop: fields.length ? '16px' : ''
+                  }}
+                  wrapperCol={{ span: 12 }}
                 >
-                  <Form.Item {...field} noStyle>
-                    <UrlInput />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    className="mt-2 -mr-6 top-0 right-0 absolute"
-                    onClick={() => remove(field.name)}
-                  />
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                    {intl.formatMessage({ defaultMessage: '增加允许源' })}
+                  </Button>
+                  <Form.ErrorList errors={errors} />
                 </Form.Item>
-              ))}
-              <Form.Item wrapperCol={{ offset: 5, span: 12 }} hidden={allowedOriginsEnabled}>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  {intl.formatMessage({ defaultMessage: '增加允许源' })}
-                </Button>
-                <Form.ErrorList errors={errors} />
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '允许方法' })} name="allowedMethods">
+              </>
+            )}
+          </Form.List>
+        </Form.Item>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '允许方法' })}
+          name={['corsConfiguration', 'allowedMethods']}
+        >
           <Select
             className="disable-common-select"
             style={{ width: '90%' }}
@@ -113,7 +84,10 @@ export default function SettingMainVersion() {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '允许头' })} name="allowedHeaders">
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '允许头' })}
+          name={['corsConfiguration', 'allowedHeaders']}
+        >
           <Select
             className="disable-common-select"
             mode="tags"
@@ -122,7 +96,10 @@ export default function SettingMainVersion() {
             options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
           />
         </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '排除头' })} name="exposedHeaders">
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '排除头' })}
+          name={['corsConfiguration', 'exposedHeaders']}
+        >
           <Select
             className="disable-common-select"
             mode="tags"
@@ -131,12 +108,15 @@ export default function SettingMainVersion() {
             options={HttpRequestHeaders.map(x => ({ label: x, value: x }))}
           />
         </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '跨域时间' })} name="maxAge">
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '跨域时间' })}
+          name={['corsConfiguration', 'maxAge']}
+        >
           <InputNumber addonAfter="秒" />
         </Form.Item>
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '允许 Credentials' })}
-          name="allowCredentials"
+          name={['corsConfiguration', 'allowCredentials']}
           valuePropName="checked"
         >
           <Switch />

@@ -1,7 +1,12 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { useCallback } from 'react'
+import useSWRImmutable from 'swr/immutable'
 
 import { VariableKind } from '@/interfaces/common'
+import requests from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+
+import { useEnv } from './env'
 
 export function getConfigurationVariableField(
   variable: number | ApiDocuments.ConfigurationVariable
@@ -49,4 +54,24 @@ export function getConfigurationVariableRender(
       />
     </div>
   )
+}
+
+export function useConfigurationVariable() {
+  const { envs } = useEnv()
+  const getConfigurationValue = useCallback(
+    (variable: ApiDocuments.ConfigurationVariable) => {
+      if (variable.kind === VariableKind.Static) {
+        return variable.staticVariableContent
+      }
+      if (variable.kind === VariableKind.Env) {
+        if (!envs || !variable.environmentVariableName) {
+          return ''
+        }
+        return envs[variable.environmentVariableName]
+      }
+      return variable.placeholderVariableName
+    },
+    [envs]
+  )
+  return { getConfigurationValue }
 }

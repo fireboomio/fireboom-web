@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { useConfigurationVariable } from '@/providers/variable'
 
 export function useAuthTest(
   callbackUrl: string,
@@ -13,7 +14,8 @@ export function useAuthTest(
   const intl = useIntl()
   const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
-  const apiPublicUrl = globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!
+  const { getConfigurationValue } = useConfigurationVariable()
+  const apiPublicUrl = getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl) ?? ''
 
   return {
     async doTest(authName: string) {

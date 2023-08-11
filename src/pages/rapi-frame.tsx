@@ -3,6 +3,7 @@ import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { getAuthKey } from '@/lib/fetchers'
+import { useConfigurationVariable } from '@/providers/variable'
 
 if (window && document) {
   const script = document.createElement('script')
@@ -17,7 +18,9 @@ export default function RapiFrame() {
   const [params] = useSearchParams()
   const { globalSetting } = useContext(ConfigContext)
   const { search } = useLocation()
-  const customServerUrl = globalSetting.nodeOptions.publicNodeUrl.staticVariableContent
+
+  const { getConfigurationValue } = useConfigurationVariable()
+  const customServerUrl = getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)
   const csrfToken = useRef('')
 
   useEffect(() => {

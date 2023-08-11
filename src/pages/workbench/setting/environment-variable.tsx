@@ -2,104 +2,37 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { AutoComplete, Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
-import requests from '@/lib/fetchers'
+import type { EnvData } from '@/providers/env'
+import { useEnv } from '@/providers/env'
 
 import styles from './components/subs/subs.module.less'
-
-interface DataType {
-  createTime: string
-  envType: number
-  id: number
-  deleteTime: string
-  updateTime: string
-  key: string
-  oldKey?: string
-  devEnv?: string
-  proEnv?: string
-}
-
-type FromValues = Record<string, number | string | boolean>
 
 //系统变量传对象数组
 export default function SettingMainEnvironmentVariable() {
   const intl = useIntl()
   const [form] = Form.useForm()
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
-  const [isShowSecret, setIsShowSecret] = useImmer(false)
+  const {
+    computed: { asArray: envs },
+    updateEnv,
+    deleteEnv
+  } = useEnv()
   const [showMap, setShowMap] = useImmer<Record<string, boolean>>({})
-  const [isVariableVisible, setIsVariableVisible] = useImmer(false)
-  const [isProEnvVisible, setIsProEnvVisible] = useImmer(false)
-  const [disabled, setDisabled] = useImmer(true)
-  const [system, setSystem] = useImmer<DataType[]>([])
-  const [id, setID] = useImmer(-1)
-  const [environmentConfig, setEnvironmentConfig] = useImmer<DataType[]>([])
-  const [selectInfo, setSelectInfo] = useState('')
-
-  useEffect(() => {
-    void requests.get<unknown, DataType[]>('/env').then(res => {
-      res.forEach(item => {
-        item.oldKey = item.key
-      })
-      setEnvironmentConfig(res)
-      setSystem(
-        res.filter(item => {
-          item.envType == 1
-        })
-      )
-    })
-  }, [refreshFlag])
-
-  const onFinish = (values: FromValues) => {
-    if (id == -1) {
-      void requests.post('/env', values).then(() => {
-        setRefreshFlag(!refreshFlag)
-        setIsVariableVisible(false)
-      })
-    } else {
-      const newValues = { ...values, id }
-      void requests.put('/env', newValues).then(() => {
-        setRefreshFlag(!refreshFlag)
-        setIsVariableVisible(false)
-      })
-    }
-  }
+  const [editingEnv, setEditingEnv] = useState<EnvData | undefined>()
 
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
 
-  const handleDeleteEnvVariable = (key: string) => {
-    void requests.delete(`/env/${key}`).then(() => {
-      setRefreshFlag(!refreshFlag)
-    })
-  }
-  // 控制下边的变量值显示
-  const handleToggleSecret = () => {
-    setIsShowSecret(!isShowSecret)
-  }
-  // 控制表格里面生成环境显示
-  const isCheckShow = (key: string) => key === selectInfo
-
-  const handleToggleProEnv = (key: string) => {
-    setSelectInfo(key)
-    setIsProEnvVisible(!isProEnvVisible)
-  }
   // 弹窗重置后显示
   const showModal = () => {
     form.resetFields()
-    setIsVariableVisible(true)
+    setEditingEnv({ key: '', value: '' })
   }
-  // 表单item值改变回调
-  const onValuesChange = () => {
-    const hasErrors = form.getFieldsError().some(({ errors }) => errors.length)
-    setDisabled(hasErrors)
-  }
-
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<EnvData> = [
     {
       title: intl.formatMessage({ defaultMessage: '变量名' }),
       dataIndex: 'key',
@@ -108,8 +41,8 @@ export default function SettingMainEnvironmentVariable() {
     },
     {
       title: intl.formatMessage({ defaultMessage: '变量值' }),
-      dataIndex: 'devEnv',
-      key: 'devEnv',
+      dataIndex: 'value',
+      key: 'value',
       render: (text, record) => {
         const toggle = () =>
           setShowMap(showMap => {
@@ -136,16 +69,15 @@ export default function SettingMainEnvironmentVariable() {
       title: intl.formatMessage({ defaultMessage: '操作' }),
       dataIndex: 'action',
       width: 200,
-      render: (_, { id, key, devEnv, proEnv, oldKey }) => (
+      render: (_, row) => (
         <div>
           <img
             alt="zhongmingming"
             src="assets/iconfont/zhongmingming.svg"
             style={{ height: '1em', width: '1em' }}
             onClick={() => {
-              setIsVariableVisible(true)
-              form.setFieldsValue({ key, devEnv, proEnv, oldKey })
-              setID(id)
+              setEditingEnv(row)
+              form.setFieldsValue(row)
             }}
             className="mr-3"
           />
@@ -156,7 +88,7 @@ export default function SettingMainEnvironmentVariable() {
             onConfirm={e => {
               // @ts-ignore
               e.stopPropagation()
-              handleDeleteEnvVariable(key)
+              deleteEnv(row.key)
             }}
             onCancel={e => {
               // @ts-ignore
@@ -185,14 +117,7 @@ export default function SettingMainEnvironmentVariable() {
             </span>
           </div>
           <Button className="mb-2mb-2" type="default" onClick={showModal}>
-            <span
-              className="h-7"
-              onClick={() => {
-                form.setFieldsValue({ key: '', devEnv: '', proEnv: '' })
-                setIsVariableVisible(true)
-                setID(-1)
-              }}
-            >
+            <span className="h-7">
               <FormattedMessage defaultMessage="新建环境变量" />
             </span>
           </Button>
@@ -200,9 +125,9 @@ export default function SettingMainEnvironmentVariable() {
         <Modal
           mask={false}
           title={
-            id === -1
-              ? intl.formatMessage({ defaultMessage: '新建变量' })
-              : intl.formatMessage({ defaultMessage: '修改环境变量' })
+            editingEnv?.key
+              ? intl.formatMessage({ defaultMessage: '修改环境变量' })
+              : intl.formatMessage({ defaultMessage: '新建变量' })
           }
           forceRender={true}
           transitionName=""
@@ -210,8 +135,8 @@ export default function SettingMainEnvironmentVariable() {
             width: '549px',
             margin: '32px auto 48px'
           }}
-          open={isVariableVisible}
-          onCancel={() => setIsVariableVisible(false)}
+          open={!!editingEnv}
+          onCancel={() => setEditingEnv(undefined)}
           okText={
             <span
               className={styles['save-env-btn']}
@@ -219,9 +144,9 @@ export default function SettingMainEnvironmentVariable() {
                 form.submit()
               }}
             >
-              {id === -1
-                ? intl.formatMessage({ defaultMessage: '创建' })
-                : intl.formatMessage({ defaultMessage: '保存' })}
+              {editingEnv?.key
+                ? intl.formatMessage({ defaultMessage: '保存' })
+                : intl.formatMessage({ defaultMessage: '创建' })}
             </span>
           }
           okButtonProps={{
@@ -241,49 +166,54 @@ export default function SettingMainEnvironmentVariable() {
             className="ml-15"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
-            onFinish={values => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              void onFinish(values)
+            onFinish={async values => {
+              await updateEnv(values)
+              setEditingEnv(undefined)
             }}
             autoComplete="off"
-            onValuesChange={onValuesChange}
             onFinishFailed={onFinishFailed}
             labelAlign="left"
           >
             <Form.Item
               label={intl.formatMessage({ defaultMessage: '名称' })}
               name="key"
-              rules={[
-                { required: true, message: intl.formatMessage({ defaultMessage: '名称不能为空' }) },
-                {
-                  pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
-                  message: intl.formatMessage({
-                    defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
-                  })
-                },
-                {
-                  validator: (rule, value) => {
-                    if (value === form.getFieldValue('oldKey')) {
-                      return Promise.resolve()
-                    }
-                    const existItem = environmentConfig.find(item => item.key == value)
-                    if (existItem) {
-                      return Promise.reject(intl.formatMessage({ defaultMessage: '名称重复' }))
-                    } else {
-                      return Promise.resolve()
-                    }
-                  }
-                }
-              ]}
+              rules={
+                editingEnv?.key
+                  ? []
+                  : [
+                      {
+                        required: true,
+                        message: intl.formatMessage({ defaultMessage: '名称不能为空' })
+                      },
+                      {
+                        pattern: new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$', 'g'),
+                        message: intl.formatMessage({
+                          defaultMessage: '以字母或下划线开头，只能由数字、字母、下划线组成'
+                        })
+                      },
+                      {
+                        validator: (rule, value) => {
+                          const existItem = envs.find(item => item.key == value)
+                          if (existItem) {
+                            return Promise.reject(
+                              intl.formatMessage({ defaultMessage: '名称重复' })
+                            )
+                          } else {
+                            return Promise.resolve()
+                          }
+                        }
+                      }
+                    ]
+              }
             >
               <AutoComplete
+                disabled={!!editingEnv?.key}
                 options={[{ value: 'GITHUB_PROXY_URL' }, { value: 'GITHUB_RAW_PROXY_URL' }]}
               />
             </Form.Item>
-            <Form.Item name="oldKey" hidden></Form.Item>
             <Form.Item
               label={intl.formatMessage({ defaultMessage: '值' })}
-              name="devEnv"
+              name="value"
               rules={[
                 {
                   required: true,
@@ -298,7 +228,7 @@ export default function SettingMainEnvironmentVariable() {
         </Modal>
         <Table
           columns={columns}
-          dataSource={environmentConfig}
+          dataSource={envs}
           rowKey={record => record.key}
           pagination={false}
           className={'mb-3 ' + styles.envTable}

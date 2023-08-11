@@ -5,7 +5,6 @@ import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
-import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -23,12 +22,7 @@ import type {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
-import {
-  getHook,
-  saveHookScript,
-  updateGlobalOperationHookEnabled,
-  updateOperationHookEnabled
-} from '@/lib/service/hook'
+import { updateGlobalOperationHookEnabled, updateOperationHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -103,7 +97,7 @@ export default function Index(props: PropsWithChildren) {
   }, [authKey])
   useWebSocket('engine', 'pull', (data: Info) => {
     setInfo(data)
-    ;(window as any).globalStartTime = data.globalStartTime
+    ;(window as any).getGlobalStartTime = () => data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       events.emit({ event: 'compileFinish' })

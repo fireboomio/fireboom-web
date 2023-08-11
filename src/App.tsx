@@ -4,7 +4,7 @@ import { MessageOutlined } from '@ant-design/icons'
 import { App as AntApp, ConfigProvider, FloatButton } from 'antd'
 import enUS from 'antd/locale/en_US'
 import zhCN from 'antd/locale/zh_CN'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense } from 'react'
 import { useLocation, useRoutes } from 'react-router-dom'
 
 import routes from '~react-pages'

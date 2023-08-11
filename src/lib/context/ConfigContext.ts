@@ -30,6 +30,7 @@ type SystemConfigContext = {
   // version?: VersionType
   appRuntime: AppRuntime
   globalSetting: ApiDocuments.GlobalSetting
+  updateGlobalSetting: (globalSetting: Partial<ApiDocuments.GlobalSetting>) => Promise<void>
   refreshConfig: () => Promise<void>
 }
 

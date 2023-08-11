@@ -1,27 +1,42 @@
 import type { AutoCompleteProps, FormItemProps, InputProps, SelectProps } from 'antd'
 import { AutoComplete, Form, Input, Select, Space } from 'antd'
-import type { ChangeEvent } from 'react'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import clsx from 'clsx'
+import type { ChangeEvent, ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { VariableKind } from '@/interfaces/common'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface InputOrFromEnvProps {
+  className?: string
   value?: ApiDocuments.ConfigurationVariable
   inputProps?: Omit<InputProps, 'value' | 'onChange'>
   envProps?: Omit<AutoCompleteProps, 'value' | 'onChange'>
+  inputRender?: (props: InputProps) => ReactNode
   onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
-const modeOptions: SelectProps['options'] = [
-  { value: VariableKind.Static, label: '输入值' },
-  { value: VariableKind.Env, label: '环境变量' }
-]
-
-const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEnvProps) => {
+const InputOrFromEnv = ({
+  className,
+  value,
+  onChange,
+  inputProps,
+  inputRender,
+  envProps
+}: InputOrFromEnvProps) => {
+  const intl = useIntl()
   const { kind: kind, setKind: setKind } = useContext(InputOrFromEnvContext)
   const envs = useEnvOptions()
+  const modeOptions = useMemo<SelectProps['options']>(
+    () => [
+      { value: VariableKind.Static, label: intl.formatMessage({ defaultMessage: '静态值' }) },
+      { value: VariableKind.Env, label: intl.formatMessage({ defaultMessage: '环境变量' }) }
+    ],
+    [intl]
+  )
+
   const onSwitchMode = useCallback(
     (e: VariableKind) => {
       setKind(e)
@@ -50,7 +65,7 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
   }, [setKind, value?.kind])
 
   return (
-    <Space.Compact className="!flex">
+    <Space.Compact className={clsx('!flex', className)}>
       <Select className="!w-30" value={kind} options={modeOptions} onChange={onSwitchMode} />
       {kind == VariableKind.Env ? (
         <AutoComplete
@@ -60,6 +75,13 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
           options={envs}
           onChange={onValueChange}
         />
+      ) : inputRender ? (
+        inputRender({
+          ...inputProps,
+          value: value?.staticVariableContent,
+          onChange: onValueChange,
+          className: 'flex-1'
+        })
       ) : (
         <Input
           {...inputProps}
@@ -73,7 +95,7 @@ const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEn
 }
 
 export interface InputOrFromEnvWithItemProps
-  extends Pick<InputOrFromEnvProps, 'inputProps' | 'envProps'> {
+  extends Pick<InputOrFromEnvProps, 'inputProps' | 'envProps' | 'inputRender' | 'className'> {
   formItemProps?: Omit<FormItemProps, 'rules'>
   required?: boolean
   rules?: FormItemProps['rules']

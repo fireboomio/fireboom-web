@@ -11,9 +11,8 @@ function loadLangs(lang: string) {
   return window.fetch(`/lang/${lang}.json`).then(resp => resp.json())
 }
 
-const LOCALE_STORE_KEY = 'user.locale'
 const browserLanguage = window.navigator.language
-const defaultLocale = localStorage.getItem(LOCALE_STORE_KEY) || browserLanguage || 'en'
+const defaultLocale = browserLanguage || 'en'
 
 console.log('defaultLocale', defaultLocale)
 
@@ -47,10 +46,11 @@ const IntlProvider = ({ children }: IntlProviderProps) => {
   const [locale, _setLocale] = useState(defaultLocale)
   const [messages, setMessages] = useState<Record<string, string>>({})
 
-  const setLocale = useCallback((locale: string) => {
-    _setLocale(locale)
-    _locale = locale
-    localStorage.setItem(LOCALE_STORE_KEY, locale)
+  const setLocale = useCallback((val: string) => {
+    if (_locale !== val) {
+      _setLocale(val)
+      _locale = val
+    }
   }, [])
 
   useEffect(() => {

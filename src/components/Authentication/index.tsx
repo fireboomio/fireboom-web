@@ -2,8 +2,9 @@ import '@/lib/socket'
 
 import { Button, Form, Input } from 'antd'
 import axios from 'axios'
+import { merge } from 'lodash'
 import type { ReactElement } from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { broadcast, useBroadcast } from '@/hooks/broadcast'
@@ -13,6 +14,7 @@ import { useStorageList } from '@/hooks/store/storage'
 import type { AppRuntime } from '@/interfaces/base'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
+import { useAppIntl } from '@/providers/IntlProvider'
 import { services } from '@/services'
 import { setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -23,6 +25,8 @@ interface AuthenticationProps {
 
 const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
+
+  const { setLocale } = useAppIntl()
   const [authed, setAuthed] = useState(hasAuthKey())
   const authState = useAuthState()
   const [appRuntime, setAppRuntime] = useState<AppRuntime>()
@@ -58,18 +62,27 @@ const Authentication = (props: AuthenticationProps) => {
   // const [environment, setEnvironment] = useState()
   // const [version, setVersion] = useState()
   const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting>()
+  const updateGlobalSetting = useCallback(async (settings: Partial<ApiDocuments.GlobalSetting>) => {
+    await requests.put(`/globalSetting`, settings)
+    await refreshConfig()
+  }, [])
   useEffect(() => {
     axios.get<AppRuntime>('/health', { baseURL: '/' }).then(res => {
       if (res.status < 300) {
         setAppRuntime(res.data)
-        refreshConfig()
+        refreshConfig().then(resp => {
+          if (resp?.appearance.language) {
+            setLocale(resp.appearance.language.replace(/_/g, '-'))
+          }
+        })
       }
     })
-  }, [])
+  }, [setLocale])
   const refreshConfig = async () => {
     const { error, data } = await services['globalSetting@/globalSetting/single']()
     if (!error) {
       setGlobalSetting(data)
+      return data
     }
     // void requests.get<unknown, any>('/setting/system').then(res => {
     //   setSystem(res.system)
@@ -84,7 +97,9 @@ const Authentication = (props: AuthenticationProps) => {
     // })
   }
   return appRuntime && globalSetting ? (
-    <ConfigContext.Provider value={{ appRuntime, globalSetting, refreshConfig }}>
+    <ConfigContext.Provider
+      value={{ appRuntime, globalSetting, updateGlobalSetting, refreshConfig }}
+    >
       {/* {authed || system.isDev ? ( */}
       {authed || !appRuntime['enable-auth'] ? (
         props.children

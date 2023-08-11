@@ -10,7 +10,7 @@ import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import { getConfigurationVariableRender } from '@/providers/variable'
+import { getConfigurationVariableRender, useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './detail.module.less'
@@ -23,7 +23,7 @@ interface Props {
 export default function AuthMainCheck({ content }: Props) {
   const intl = useIntl()
   const { globalSetting } = useContext(ConfigContext)
-  // const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
+  const { getConfigurationValue } = useConfigurationVariable()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
 
   const handleToggleSecret = () => {
@@ -92,13 +92,15 @@ export default function AuthMainCheck({ content }: Props) {
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
             <div className="flex items-center">
-              {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/
+              {getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/auth/cookie/callback/
               {content.name}
               <CopyOutlined
                 className="cursor-pointer ml-4"
                 onClick={() => {
                   copy(
-                    `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${config.id}`
+                    `${getConfigurationValue(
+                      globalSetting.nodeOptions.publicNodeUrl
+                    )}/auth/cookie/callback/${content.name}`
                   )
                   message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                 }}

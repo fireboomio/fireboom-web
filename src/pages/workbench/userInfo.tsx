@@ -7,6 +7,7 @@ import ReactJson from 'react-json-view'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { useConfigurationVariable } from '@/providers/variable'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -14,19 +15,20 @@ export default function UserInfo() {
   const [info, setInfo] = useState()
   const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
+  const { getConfigurationValue } = useConfigurationVariable()
 
   useEffect(() => {
     axios
-      .get(`${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/user`, {
+      .get(`${getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/auth/cookie/user`, {
         withCredentials: true
       })
       .then(info => {
         setInfo(info.data)
       })
-  }, [globalSetting.nodeOptions])
+  }, [getConfigurationValue, globalSetting.nodeOptions])
 
   const handleLogout = () => {
-    logout(globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!).then(() => {
+    logout(getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)!).then(() => {
       setTimeout(() => {
         window.close()
       }, 3000)

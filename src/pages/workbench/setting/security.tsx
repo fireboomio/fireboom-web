@@ -1,16 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { MinusCircleOutlined, PaperClipOutlined } from '@ant-design/icons'
 import { Button, Form, message, Switch } from 'antd'
-import { useContext, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import useSWRImmutable from 'swr/immutable'
 
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import UrlInput from '@/components/UrlInput'
-import type { GlobalSetting } from '@/interfaces/global'
-import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests from '@/lib/fetchers'
-import tipGraphql from '@/pages/workbench/setting/components/subs/assets/tip-graphql.png'
+import { useConfigContext } from '@/lib/context/ConfigContext'
+import { useConfigurationVariable } from '@/providers/variable'
 
 interface Security {
   allowedHostsEnabled: boolean
@@ -22,50 +17,21 @@ interface Security {
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { globalSetting } = useContext(ConfigContext)
+  const { getConfigurationValue } = useConfigurationVariable()
+  const { globalSetting, updateGlobalSetting } = useConfigContext()
   const [form] = Form.useForm<Security>()
-  const allowedHostsEnabled = Form.useWatch('allowedHostsEnabled', form)
 
-  const { data: global, mutate } = useSWRImmutable<GlobalSetting>('/setting/global', requests.get)
-
-  useEffect(() => {
-    form.resetFields()
-  }, [global])
-  if (!global) {
+  if (!globalSetting) {
     return null
   }
-  const { authorizedRedirectUris, configureWunderGraphApplication } = global
-  const { security } = configureWunderGraphApplication
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    const saveValues = Object.keys(values)
-      .map(key => {
-        // if (key === 'forceHttpsRedirects') {
-        //   if (JSON.stringify(values[key]) !== forceHttpsRedirects) {
-        //     return { key: `forceHttpsRedirects`, val: values[key] }
-        //   }
-        // } else
-        if (key === 'authorizedRedirectUris') {
-          if (JSON.stringify(values[key]) !== JSON.stringify(authorizedRedirectUris)) {
-            return { key: `authorizedRedirectUris`, val: values[key] }
-          }
-        } else {
-          // @ts-ignore
-          if (JSON.stringify(values[key]) !== JSON.stringify(security?.[key])) {
-            return { key: `configureWunderGraphApplication.security.${key}`, val: values[key] }
-          }
-        }
-      })
-      .filter(x => x)
     try {
-      await requests.put('/setting/global', { values: saveValues })
-      mutate()
+      updateGlobalSetting(values)
       message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     } catch (e) {
-      console.error(e)
-
-      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+      //
     }
     hide()
   }
@@ -79,11 +45,11 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={security && ({ ...security, authorizedRedirectUris } as any)}
+        initialValues={globalSetting}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
-            <Form.Item name="enableGraphQLEndpoint" valuePropName="checked" noStyle>
+            <Form.Item name="enableGraphqlEndpoint" valuePropName="checked" noStyle>
               <Switch />
             </Form.Item>
             <img
@@ -92,7 +58,7 @@ export default function SettingMainVersion() {
               className="h-3 mr-1 ml-2 text-[14px]"
             />
             <span className="text-[#ff4d4f] text-[12px]">
-              {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/app/main/graphql
+              {getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/app/main/graphql
             </span>
           </div>
         </Form.Item>
@@ -102,7 +68,7 @@ export default function SettingMainVersion() {
             defaultMessage: '为POST请求添加 CSRF token 保护'
           })}
         >
-          <Form.Item name="enableCSRF" valuePropName="checked" noStyle>
+          <Form.Item name="enableCSRFProtect" valuePropName="checked" noStyle>
             <Switch />
           </Form.Item>
           <Button
@@ -114,83 +80,66 @@ export default function SettingMainVersion() {
             <FormattedMessage defaultMessage="查看文档" />
           </Button>
         </Form.Item>
-        <Form.Item
-          tooltip={{
-            title: <img src={tipGraphql} className="max-w-60vw max-h-60vh" alt="" />,
-            rootClassName: 'max-w-80vw max-h-80vh'
-          }}
-          label={intl.formatMessage({ defaultMessage: '允许主机' })}
-        >
-          <div className="flex items-center">
-            <Form.Item noStyle name="allowedHostsEnabled" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-            <span className="ml-2 align-middle">允许全部</span>
-          </div>
+        <Form.Item label={intl.formatMessage({ defaultMessage: '允许HOST' })}>
+          <Form.List name={['allowedHostNames']}>
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <div style={{ width: '90%' }} className="flex items-center mb-4" key={field.key}>
+                    <InputOrFromEnvWithItem
+                      className="flex-1"
+                      formItemProps={{ ...field, noStyle: true }}
+                      // @ts-ignore
+                      // inputRender={props => <UrlInput {...props} />}
+                    />
+                    <MinusCircleOutlined className="ml-2" onClick={() => remove(field.name)} />
+                  </div>
+                ))}
+                <Form.Item
+                  style={{
+                    marginTop: fields.length ? '16px' : ''
+                  }}
+                  wrapperCol={{ span: 12 }}
+                >
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                    {intl.formatMessage({ defaultMessage: '增加允许HOST' })}
+                  </Button>
+                  <Form.ErrorList errors={errors} />
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
         </Form.Item>
-        <Form.List name="allowedHosts">
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
+        <Form.Item label={intl.formatMessage({ defaultMessage: '重定向URL' })}>
+          <Form.List name="authorizedRedirectUris">
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <div style={{ width: '90%' }} className="flex items-center mb-4" key={field.key}>
+                    <InputOrFromEnvWithItem
+                      className="flex-1"
+                      formItemProps={{ ...field, noStyle: true }}
+                      // @ts-ignore
+                      inputRender={props => <UrlInput {...props} />}
+                    />
+                    <MinusCircleOutlined className="ml-2" onClick={() => remove(field.name)} />
+                  </div>
+                ))}
                 <Form.Item
-                  hidden={allowedHostsEnabled}
-                  label={intl.formatMessage({ defaultMessage: '允许HOST' }) + (index + 1)}
-                  key={field.key}
+                  style={{
+                    marginTop: fields.length ? '16px' : ''
+                  }}
+                  wrapperCol={{ span: 12 }}
                 >
-                  <Form.Item {...field} noStyle>
-                    <UrlInput />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    className="mt-2 -mr-6 top-0 right-0 absolute"
-                    onClick={() => remove(field.name)}
-                  />
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                    {intl.formatMessage({ defaultMessage: '增加重定向URL' })}
+                  </Button>
+                  <Form.ErrorList errors={errors} />
                 </Form.Item>
-              ))}
-              <Form.Item wrapperCol={{ offset: 5, span: 12 }} hidden={allowedHostsEnabled}>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  {intl.formatMessage({ defaultMessage: '增加允许HOST' })}
-                </Button>
-                <Form.ErrorList errors={errors} />
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-        {/* <Form.Item
-          label={intl.formatMessage({ defaultMessage: '强制 HTTPS 跳转' })}
-          tooltip={intl.formatMessage({
-            defaultMessage: '如果在https场景回调地址不正确，请启用该配置'
-          })}
-          name="forceHttpsRedirects"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item> */}
-        <Form.List name="authorizedRedirectUris">
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
-                <Form.Item
-                  label={intl.formatMessage({ defaultMessage: '重定向URL' }) + (index + 1)}
-                  key={field.key}
-                >
-                  <Form.Item {...field} noStyle>
-                    <UrlInput />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    className="mt-2 -mr-6 top-0 right-0 absolute"
-                    onClick={() => remove(field.name)}
-                  />
-                </Form.Item>
-              ))}
-              <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  {intl.formatMessage({ defaultMessage: '增加重定向URL' })}
-                </Button>
-                <Form.ErrorList errors={errors} />
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+              </>
+            )}
+          </Form.List>
+        </Form.Item>
         <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
           <Button className={'btn-cancel mr-4'} onClick={() => form.resetFields()}>
             <FormattedMessage defaultMessage="重置" />

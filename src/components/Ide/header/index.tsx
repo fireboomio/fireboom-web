@@ -20,7 +20,7 @@ interface Props {
   // 钩子路径
   hookPath: string
   // API域名
-  hostUrl: string
+  // hostUrl: string
   // 隐藏启停开关
   hideSwitch: boolean
   // 保存状态

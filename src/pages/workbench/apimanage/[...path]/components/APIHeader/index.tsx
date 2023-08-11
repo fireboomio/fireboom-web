@@ -9,9 +9,9 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '@/components/icons'
 import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import { useConfigurationVariable } from '@/providers/variable'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../store'
@@ -32,6 +32,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }))
   // const workbenchCtx = useContext(WorkbenchContext)
   const { globalSetting } = useContext(ConfigContext)
+  const { getConfigurationValue } = useConfigurationVariable()
 
   const [isEditingName, setIsEditingName] = useState(false)
   const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
@@ -121,9 +122,9 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [apiDesc, intl])
 
   const copyLink = useCallback(async () => {
-    let link = `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}/operations/${
-      apiDesc?.path
-    }`
+    let link = `${
+      getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl) ?? ''
+    }/operations/${apiDesc?.path}`
     if (!link) {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
@@ -182,7 +183,8 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     apiDesc?.liveQuery,
     apiDesc?.path,
     apiPath,
-    globalSetting.nodeOptions,
+    getConfigurationValue,
+    globalSetting.nodeOptions.publicNodeUrl,
     intl,
     schemaAST?.definitions
   ])

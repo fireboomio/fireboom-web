@@ -21,6 +21,7 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import imgAuth0 from '../assets/Auth0.png'
@@ -77,6 +78,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   const { globalSetting } = useContext(ConfigContext)
   const { ruleMap } = useValidate()
   const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
+  const { getConfigurationValue } = useConfigurationVariable()
   // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm<ApiDocuments.Authentication>()
   const name = Form.useWatch('name', form)
@@ -402,13 +404,15 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
             {name && cookieBased && (
               <Form.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
                 <div className="flex items-center">
-                  {globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}
+                  {getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}
                   /auth/cookie/callback/{name}
                   <CopyOutlined
                     className="cursor-pointer ml-4"
                     onClick={() => {
                       copy(
-                        `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/callback/${name}`
+                        `${getConfigurationValue(
+                          globalSetting.nodeOptions.publicNodeUrl
+                        )}/auth/cookie/callback/${name}`
                       )
                       message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                     }}

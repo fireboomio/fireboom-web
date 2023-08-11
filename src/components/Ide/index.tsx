@@ -21,12 +21,7 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { makeSuggest } from '@/lib/helpers/utils'
-import {
-  getHook,
-  getTypes,
-  saveHookDepend,
-  saveHookScript
-} from '@/lib/service/hook'
+import { getHook, getTypes, saveHookDepend, saveHookScript } from '@/lib/service/hook'
 import { replaceFileTemplate } from '@/utils/template'
 
 import IdeCodeContainer from './code/index'
@@ -476,7 +471,6 @@ const IdeContainer: FC<Props> = props => {
           hideSwitch={props.hideSwitch ?? false}
           hookPath={hookPath}
           hookInfo={hookInfo}
-          hostUrl={globalSetting.nodeOptions.publicNodeUrl.staticVariableContent ?? ''}
           tabSize={tabSize}
           onSetContent={value => {
             editor.setValue(value)

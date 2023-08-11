@@ -9,6 +9,7 @@ import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { intl } from '@/providers/IntlProvider'
+import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { useAuthTest } from '@/utils/auth'
 
@@ -21,8 +22,9 @@ export default function LoginPanel() {
   const { logout } = useContext(WorkbenchContext)
 
   const { doTest } = useAuthTest('#/workbench/rapi/loginBack', { closeWindow: false })
+  const { getConfigurationValue } = useConfigurationVariable()
   const { data: userInfo, trigger } = useSWRMutation<any>(
-    `${globalSetting.nodeOptions.publicNodeUrl.staticVariableContent}/auth/cookie/user`,
+    `${getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/auth/cookie/user`,
     (key: string) => {
       return axios.get(key, { withCredentials: true }).then(res => res.data)
     }
@@ -33,7 +35,7 @@ export default function LoginPanel() {
     mutateAuth()
   }, [search, trigger])
   const doLogout = () => {
-    logout(globalSetting.nodeOptions.publicNodeUrl.staticVariableContent!).then(async res => {
+    logout(getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)!).then(async res => {
       location.reload()
     })
   }
