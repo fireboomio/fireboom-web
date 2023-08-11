@@ -12,7 +12,7 @@ interface DictState {
   customResolve: string
   customize: string
   defaultMiddleware: string
-  env: ".",
+  env: string
   globalOperation: string
   globalSetting: string
   mockResolve: string
@@ -46,7 +46,7 @@ export const useDict = create<DictState>((set, get) => ({
   customResolve: '',
   customize: '',
   defaultMiddleware: '',
-  env: ".",
+  env: '',
   globalOperation: '',
   globalSetting: '',
   mockResolve: '',

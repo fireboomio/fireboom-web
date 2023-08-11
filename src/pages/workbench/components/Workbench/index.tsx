@@ -467,7 +467,7 @@ async function resolveDefaultCode(
     code = replaceFileTemplate(await getDefaultCode('custom'), [
       { variableName: 'CUSTOMIZE_NAME', value: name }
     ])
-  } else if (path.match(/custom-\w+\/upload/)) {
+  } else if (path.match(/custom-\w+\/storage/)) {
     const profileName = list.pop() as string
     const storageName = list.pop() as string
     code = replaceFileTemplate(await getDefaultCode(`upload.${name}`), [

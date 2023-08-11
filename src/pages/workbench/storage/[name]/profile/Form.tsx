@@ -58,13 +58,17 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
       onFinish={async values => {
         if (
           values?.hooks?.preUpload &&
-          !(await vscode.checkHookExist(`${dict.upload}/${storageName}/${profileName}/preUpload`))
+          !(await vscode.checkHookExist(
+            `${dict.preUpload}/${storageName}/${profileName}/preUpload`
+          ))
         ) {
           return
         }
         if (
           values?.hooks?.postUpload &&
-          !(await vscode.checkHookExist(`${dict.upload}/${storageName}/${profileName}/postUpload`))
+          !(await vscode.checkHookExist(
+            `${dict.postUpload}/${storageName}/${profileName}/postUpload`
+          ))
         ) {
           return
         }
@@ -181,7 +185,7 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
           </Form.Item>
           <span
             className="ml-10 text-[#4C7BFE] cursor-pointer"
-            onClick={() => vscode.show(`uploads/${storageName}/${profileName}/preUpload`)}
+            onClick={() => vscode.show(`${dict.preUpload}/${storageName}/${profileName}/preUpload`)}
           >
             编辑
           </span>
@@ -197,7 +201,9 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
           </Form.Item>
           <span
             className="ml-10 text-[#4C7BFE] cursor-pointer"
-            onClick={() => vscode.show(`uploads/${storageName}/${profileName}/postUpload`)}
+            onClick={() =>
+              vscode.show(`${dict.preUpload}/${storageName}/${profileName}/postUpload`)
+            }
           >
             编辑
           </span>
