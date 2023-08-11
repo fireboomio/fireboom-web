@@ -6,9 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import IdeContainer from '@/components/Ide'
 import FbTabs from '@/components/Tabs'
-import type { Profile } from '@/hooks/store/storage'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './[profile].module.less'
 import Form from './Form'
@@ -32,7 +32,7 @@ export default function StorageProfile() {
           tabs.push({ key: profile!, label: profile! })
         }
         const storage = storageList?.find(x => x.name === name)
-        tabs = tabs.filter(x => storage?.config.uploadProfiles?.[x.key])
+        tabs = tabs.filter(x => storage?.uploadProfiles?.[x.key])
         return tabs
       })
     }
@@ -44,13 +44,13 @@ export default function StorageProfile() {
   const currentProfile = useMemo(() => {
     const storage = storageList?.find(x => x.name === name)
     if (storage) {
-      return storage.config.uploadProfiles?.[profile ?? '']
+      return storage.uploadProfiles?.[profile ?? '']
     }
   }, [storageList, profile, name])
-  const saveProfile = async (values: Profile) => {
+  const saveProfile = async (values: ApiDocuments.S3UploadProfile) => {
     const storage = cloneDeep(storageList?.find(x => x.name === name))!
-    storage.config.uploadProfiles![profile!] = {
-      ...storage.config.uploadProfiles![profile!],
+    storage.uploadProfiles![profile!] = {
+      ...storage.uploadProfiles![profile!],
       ...values
     }
     await requests.put('/storage', storage)

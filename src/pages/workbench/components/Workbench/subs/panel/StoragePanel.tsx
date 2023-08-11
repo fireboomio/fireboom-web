@@ -165,14 +165,14 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                     key: 'profile',
                     onClick: async () => {
                       const currentProfileSet = new Set(
-                        Object.keys(nodeData.data.config.uploadProfiles ?? {})
+                        Object.keys(nodeData.data.uploadProfiles ?? {})
                       )
                       let i = 1
                       while (currentProfileSet.has(`NewProfile${i}`)) {
                         i++
                       }
                       const data = cloneDeep(nodeData.data)
-                      set(data, `config.uploadProfiles.NewProfile${i}`, {
+                      set(data, `uploadProfiles.NewProfile${i}`, {
                         hooks: {},
                         maxAllowedUploadSizeBytes: 10 * 2 ** 20,
                         maxAllowedFiles: 1

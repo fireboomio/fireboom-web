@@ -29,7 +29,7 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import type { FileT } from '@/interfaces/storage'
-import requests, { getHeader } from '@/lib/fetchers'
+import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { downloadOSSFile } from '@/utils/download'
@@ -522,9 +522,7 @@ export default function StorageExplorer({ bucketName }: Props) {
         }
         const hide = message.loading(intl.formatMessage({ defaultMessage: '创建中' }))
         requests
-          .post(`/storageClient/${bucketName}/createDir`, {
-            dirname: `${dir}${inputValue.current}/`
-          })
+          .post(`/storageClient/${bucketName}/mkdir?dirname=${dir}${inputValue.current}`)
           .then(() => {
             hide()
             setVisible(false)
@@ -630,8 +628,7 @@ export default function StorageExplorer({ bucketName }: Props) {
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
             headers={getHeader()}
-            action={`/api/storageClient/${bucketName}/upload`}
-            data={{ dirname: uploadPath }}
+            action={`/api/storageClient/${bucketName}/upload?dirname=${uploadPath}`}
             showUploadList={false}
             onChange={info => {
               if (info.file.status === 'success' || info.file.status === 'done') {
@@ -743,7 +740,14 @@ export default function StorageExplorer({ bucketName }: Props) {
                       // <a className="flex" href={target?.url} download={target?.value}>
                       <Button
                         className="rounded-4px flex-1 m-1.5 !border-[#efeff0]"
-                        onClick={() => downloadOSSFile(target!.signedUrl!, target!.value)}
+                        // onClick={() => downloadOSSFile(target!.signedUrl!, target!.value)}
+                        onClick={() =>
+                          window.open(
+                            `/api/storageClient/${bucketName}/download?filename=${
+                              target!.name
+                            }&auth-key=${getAuthKey()}`
+                          )
+                        }
                       >
                         <FormattedMessage defaultMessage="下载" />
                       </Button>
