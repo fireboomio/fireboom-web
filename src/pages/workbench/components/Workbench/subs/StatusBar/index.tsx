@@ -14,6 +14,7 @@ import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
@@ -43,6 +44,7 @@ const StatusBar: React.FC<Props> = ({
   version
 }) => {
   const intl = useIntl()
+  const { getConfigurationValue } = useConfigurationVariable()
   const calcTime = useCalcTime()
   const { questions } = useGlobal(state => ({
     questions: state.questions
@@ -86,7 +88,7 @@ const StatusBar: React.FC<Props> = ({
 
   const { data: sdk } = useSWRImmutable<ApiDocuments.Sdk[]>('/sdk', requests.get)
   useEffect(() => {
-    const hookUrl = globalSetting.serverOptions.serverUrl.staticVariableContent
+    const hookUrl = getConfigurationValue(globalSetting.serverOptions.serverUrl)
     if (hookUrl === webContainerUrl) {
       setHookEnabled(1)
       setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
@@ -98,7 +100,8 @@ const StatusBar: React.FC<Props> = ({
   }, [
     showHookSetting,
     webContainerUrl,
-    globalSetting.serverOptions.serverUrl.staticVariableContent
+    globalSetting.serverOptions.serverUrl,
+    getConfigurationValue
   ])
   useEffect(() => {
     if (showHookSetting) {
@@ -281,7 +284,7 @@ const StatusBar: React.FC<Props> = ({
               <div className={styles.hookEntry}>
                 {hookEnabled === 1
                   ? 'WebContainer'
-                  : globalSetting.serverOptions.serverUrl.staticVariableContent}
+                  : getConfigurationValue(globalSetting.serverOptions.serverUrl)}
               </div>
               <div
                 className="mr-5px ml-8px"

@@ -23,19 +23,17 @@ import useSWR, { mutate as _mutate } from 'swr'
 import Error50x from '@/components/ErrorPage/50x'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import { useDict } from '@/providers/dict'
 import { intl } from '@/providers/IntlProvider'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
-type RemoteSDKItem = Omit<ApiDocuments.Sdk, 'outputPath'> & {
-  defaultOutputPath: string
-}
-
 const SDKTemplate = () => {
   const { data, mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const [showRemote, setShowRemote] = useState(false)
+  const { initialize } = useDict()
   // const cancelToken = useRef<any>()
   const {
     data: remoteSdk,
@@ -43,8 +41,8 @@ const SDKTemplate = () => {
     error,
     mutate: mutateRemote
   } = useSWR<{
-    official: RemoteSDKItem[]
-    community: RemoteSDKItem[]
+    official: ApiDocuments.Sdk[]
+    community: ApiDocuments.Sdk[]
   }>(
     // showRemote
     //   ? 'https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json'
@@ -57,7 +55,7 @@ const SDKTemplate = () => {
     //     })
     //   )
     // },
-    showRemote ? 'sdk.templates.json' : null,
+    showRemote ? 'sdk.cloud.template.json' : null,
     getFireboomFileContent,
     {
       revalidateOnMount: true
@@ -106,6 +104,7 @@ const SDKTemplate = () => {
       try {
         await requests.post('/sdk', sdk)
         await mutate()
+        initialize()
         _mutate('/sdk/enabledServer')
         message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       } catch (e) {
@@ -254,6 +253,7 @@ const SDKTemplateItem = ({
   const intl = useIntl()
   const [editing, setEditing] = useState(false)
   const [editingValue, setEditingValue] = useState(sdk.outputPath)
+  const { initialize } = useDict()
   const { mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
@@ -263,7 +263,7 @@ const SDKTemplateItem = ({
         setEditingValue(sdk.outputPath)
         setEditing(false)
       } else if (e.key === 'Enter') {
-        requests.put(`/sdk/rePath/${sdk.id}`, { outputPath: value }).then(res => {
+        requests.put(`/sdk`, { name: sdk.name, outputPath: value }).then(res => {
           console.log('res', res)
           onChange({
             ...sdk,
@@ -280,10 +280,11 @@ const SDKTemplateItem = ({
     (checked: boolean) => {
       requests.put(`/sdk`, { name: sdk.name, enabled: checked }).then(res => {
         mutate()
+        initialize()
         _mutate('/sdk/enabledServer')
       })
     },
-    [mutate, sdk.name]
+    [initialize, mutate, sdk.name]
   )
 
   const dropdownMenus = useMemo<ItemType[]>(() => {
@@ -393,7 +394,7 @@ const RemoteSDKCard = ({
   sdk,
   exist
 }: {
-  sdk: RemoteSDKItem
+  sdk: ApiDocuments.Sdk
   onSelect: () => void
   exist: boolean
 }) => {
@@ -428,7 +429,7 @@ const RemoteSDKCard = ({
           <div className={styles.descLine}>{sdk.description}</div>
         </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ defaultMessage: '生成路径' })}>
-          {sdk.defaultOutputPath}
+          {sdk.outputPath}
         </Descriptions.Item>
       </Descriptions>
       {exist ? null : (

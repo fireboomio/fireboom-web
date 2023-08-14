@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl'
 
 import { VariableKind } from '@/interfaces/common'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useEnv } from '@/providers/env'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface InputOrFromEnvProps {
@@ -29,6 +30,7 @@ const InputOrFromEnv = ({
   const intl = useIntl()
   const { kind: kind, setKind: setKind } = useContext(InputOrFromEnvContext)
   const envs = useEnvOptions()
+  const { envs: envMap } = useEnv()
   const modeOptions = useMemo<SelectProps['options']>(
     () => [
       { value: VariableKind.Static, label: intl.formatMessage({ defaultMessage: '静态值' }) },
@@ -68,13 +70,20 @@ const InputOrFromEnv = ({
     <Space.Compact className={clsx('!flex', className)}>
       <Select className="!w-30" value={kind} options={modeOptions} onChange={onSwitchMode} />
       {kind == VariableKind.Env ? (
-        <AutoComplete
-          {...envProps}
-          value={value?.environmentVariableName}
-          className="flex-1"
-          options={envs}
-          onChange={onValueChange}
-        />
+        <div className="relative flex-1">
+          <AutoComplete
+            {...envProps}
+            value={value?.environmentVariableName}
+            options={envs}
+            suffixIcon={<span>12</span>}
+            onChange={onValueChange}
+          />
+          {value?.environmentVariableName && (
+            <div className="absolute right-2 top-0 bottom-0 leading-8 text-[#999] z-10">
+              {envMap[value.environmentVariableName]}
+            </div>
+          )}
+        </div>
       ) : inputRender ? (
         inputRender({
           ...inputProps,
