@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Close, File, Filter, Search } from '@/components/icons'
 import { useApiList } from '@/hooks/store/api'
+import { OperationType } from '@/interfaces/operation'
 import { useEventBus } from '@/lib/event/events'
 import { intl } from '@/providers/IntlProvider'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -20,7 +21,6 @@ import keyEsc from './assets/esc.svg'
 import keyTab from './assets/tab.svg'
 import keyUp from './assets/up.svg'
 import styles from './index.module.less'
-import { OperationType } from '@/interfaces/operation'
 
 export default function ApiSearch() {
   const navigate = useNavigate()
@@ -36,8 +36,14 @@ export default function ApiSearch() {
   const tabs = [
     { key: '', label: intl.formatMessage({ defaultMessage: '全部' }) },
     { key: OperationType.Query.toString(), label: intl.formatMessage({ defaultMessage: '查询' }) },
-    { key: OperationType.Mutation.toString(), label: intl.formatMessage({ defaultMessage: '变更' }) },
-    { key: OperationType.Subscription.toString(), label: intl.formatMessage({ defaultMessage: '订阅' }) }
+    {
+      key: OperationType.Mutation.toString(),
+      label: intl.formatMessage({ defaultMessage: '变更' })
+    },
+    {
+      key: OperationType.Subscription.toString(),
+      label: intl.formatMessage({ defaultMessage: '订阅' })
+    }
   ]
 
   // 筛选相关变量
@@ -50,12 +56,10 @@ export default function ApiSearch() {
   const buildBaseFilter = (key: string, title: string) => ({
     key,
     title,
-    filterFun: curry(
-      (filterValue: boolean, api: ApiDocuments.fileloader_DataTree) => {
-        const val = get(api, ['extra', key])
-        return val === filterValue
-      }
-    ),
+    filterFun: curry((filterValue: boolean, api: ApiDocuments.fileloader_DataTree) => {
+      const val = get(api, ['extra', key])
+      return val === filterValue
+    }),
     options: [
       {
         label: intl.formatMessage({ defaultMessage: '是' }),
@@ -86,7 +90,7 @@ export default function ApiSearch() {
           return false
         }
         // tab过滤
-        if (!api.extra?.operationType?.toString().includes(activeTab)) {
+        if (!api.extra?.operationType?.toString().includes(+activeTab)) {
           return false
         }
         // 模糊搜索匹配
@@ -169,7 +173,7 @@ export default function ApiSearch() {
   }, [open])
 
   function gotoAPI(api: any) {
-    navigate(`/workbench/apimanage/${api.id}`)
+    navigate(`/workbench/apimanage/${api.path}`)
     setOpen(false)
   }
 
@@ -233,29 +237,29 @@ export default function ApiSearch() {
               <div
                 onClick={() => gotoAPI(item)}
                 className={clsx(styles.item, {
-                  [styles.disable]: !item.enabled,
-                  [styles.invalid]: item.invalid,
+                  [styles.disable]: !item.extra.enabled,
+                  [styles.invalid]: item.extra.invalid,
                   [styles.active]: selectIndex === index
                 })}
-                key={item.id}
+                key={item.name}
               >
                 <div className={styles.icon}>
                   <File />
-                  {item.liveQueryEnabled && <div className={styles.dot} />}
+                  {item.extra.liveQueryEnabled && <div className={styles.dot} />}
                 </div>
                 <span
                   className={`${styles.method} ${
                     {
                       GET: styles.methodGet,
                       POST: styles.methodPost
-                    }[item.method]
+                    }[item.extra.method]
                   }`}
                 >
-                  {item.method}
+                  {item.extra.method}
                 </span>
-                {item.method && <span className="mx-2px">-</span>}
+                {item.extra.method && <span className="mx-2px">-</span>}
                 <span className={styles.name}>{item.path!}</span>
-                {item.invalid && (
+                {item.extra.invalid && (
                   <span className={styles.invalidLabel}>
                     {intl.formatMessage({ defaultMessage: '非法' })}
                   </span>
@@ -333,8 +337,8 @@ function flattenApi(list: ApiDocuments.fileloader_DataTree[]) {
   while (lists.length) {
     const item = lists.pop()!
     result.push(item)
-    if (item.children) {
-      lists.push(...item.children)
+    if (item.items) {
+      lists.push(...item.items)
     }
   }
   result.reverse()

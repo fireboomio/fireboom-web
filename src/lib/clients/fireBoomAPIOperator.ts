@@ -1,7 +1,7 @@
 import { printSchema } from '@mrleebo/prisma-ast'
 
 import type { DMMF } from '@/interfaces/dbml'
-import type { Block, PrismaDMF } from '@/interfaces/modeling'
+import type { Block } from '@/interfaces/modeling'
 import {
   DATABASE_SOURCE,
   MAGIC_DELETE_ENTITY,

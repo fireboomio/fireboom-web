@@ -11,7 +11,7 @@ import {
   Select,
   Table
 } from 'antd'
-import { cloneDeep, keyBy } from 'lodash'
+import { cloneDeep, keyBy, upperFirst } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -26,6 +26,7 @@ import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import failIcon from './assets/fail-icon.svg'
 import failPic from './assets/fail-pic.svg'
@@ -152,7 +153,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)
   const prefix = Form.useWatch('prefix', form)
-  const { validateName } = useValidate()
+  const { validateAPI } = useValidate()
   // 当前选择的模型
   const [model, setModel] = useImmer<DMFModel | undefined>(void 0)
   // 表单初始化数据
@@ -322,7 +323,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
       auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
       table: tableData,
-      prefix: props?.model?.name,
+      prefix: props?.model?.name ? upperFirst(props.model.name) : '',
       alias: props?.model?.name,
       modelName: props?.model?.name,
       primaryKey: props.model.idField
@@ -343,13 +344,10 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading(intl.formatMessage({ defaultMessage: '校验中' }))
-    const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
-      '/operation/operationByPaths',
-      {
-        params: { paths: JSON.stringify(pathList) }
-      }
-    )
-    const pathMap = keyBy(existPathList, 'Path')
+    const existPathList = await requests.get<unknown, ApiDocuments.Operation[]>('/operation', {
+      params: { dataNames: JSON.stringify(pathList) }
+    })
+    const pathMap = keyBy(existPathList, 'path')
     hideCheck()
     const genType = await new Promise(resolve => {
       confirmResolve.current = resolve
@@ -387,12 +385,9 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     let result
     console.log(apiList)
     try {
-      result = await requests.post<unknown, { Code: number; Path: string; ID: string }[]>(
-        `/operation/batch`,
-        {
-          list: apiList
-        }
-      )
+      result = await requests.post<unknown, void>(`/operation/batch`, {
+        list: apiList
+      })
     } catch (e) {
       console.error(e)
     }
@@ -705,7 +700,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
                 const parts = value.split('/')
                 for (let i = 0; i < parts.length; i++) {
                   const part = parts[i]
-                  const err = validateName(part)
+                  const err = validateAPI(part)
                   if (err) {
                     return Promise.reject(
                       new Error(intl.formatMessage({ defaultMessage: '每一级目录' }) + err)

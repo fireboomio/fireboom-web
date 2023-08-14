@@ -32,7 +32,7 @@ export default function CRUDIndex() {
                 relationMap,
                 model,
                 modelList,
-                dbName: datasource?.config.apiNamespace
+                dbName: datasource?.name
               })
             }}
           />

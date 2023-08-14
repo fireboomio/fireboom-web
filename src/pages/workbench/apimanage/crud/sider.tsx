@@ -5,10 +5,14 @@ import { useIntl } from 'react-intl'
 
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
+import { DMMF } from '@/interfaces/dbml'
+import { fetchPrismaDMF, fetchPrismaSDL } from '@/lib/clients/fireBoomAPIOperator'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 
 import styles from './index.module.less'
 
@@ -37,7 +41,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const currentName = useRef<string>()
 
   const filterDataSourceList = useMemo(() => {
-    return dataSourceList ? dataSourceList.filter(item => item.sourceType === 1) : dataSourceList
+    return dataSourceList ? dataSourceList.filter(item => isDatabaseKind(item)) : dataSourceList
   }, [dataSourceList])
 
   useEffect(() => {
@@ -48,7 +52,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
       props.onEmpty()
     }
     if (!filterDataSourceList.find(item => item.name === currentDataSourceName)) {
-      setCurrentDataSourceName(filterDataSourceList?.[0]?.id)
+      setCurrentDataSourceName(filterDataSourceList?.[0]?.name)
     }
   }, [filterDataSourceList, currentDataSourceName])
   useEffect(() => {
@@ -67,15 +71,16 @@ export default function CRUDSider(props: CRUDSiderProps) {
           timeout: 15e3
         }
       )
-      const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/datasource/dmmf/${currentDataSourceName}`,
-        { timeout: 15e3 }
-      )
+      const [dmmf, sdl] = await Promise.all([
+        fetchPrismaDMF(currentDataSourceName),
+        fetchPrismaSDL(currentDataSourceName).catch(() => '')
+      ])
+
       if (currentName.current === currentDataSourceName) {
         setDmf(nativeSDL)
-        setModelList(res.models || [])
-        setCurrentModel(res.models?.[0])
-        setRelationMaps(findAllRelationInSchema(res.schemaContent))
+        setModelList(dmmf.datamodel.models ?? [])
+        setCurrentModel(dmmf.datamodel.models?.[0])
+        setRelationMaps(findAllRelationInSchema(sdl))
         readyRef.current = true
       }
     } catch (e) {
@@ -89,7 +94,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
     }
     props.onSelectedModelChange(
       currentModel,
-      filterDataSourceList.find(item => item.id === currentDataSourceName)!,
+      filterDataSourceList.find(item => item.name === currentDataSourceName)!,
       modelList,
       relationMaps?.[currentModel.name]!,
       dmf
@@ -112,23 +117,18 @@ export default function CRUDSider(props: CRUDSiderProps) {
           className="flex-1"
           options={filterDataSourceList.map(x => {
             let svg = '/assets/icon/db-other.svg'
-            switch (x.sourceType) {
-              case 1:
-                svg =
-                  {
-                    mysql: '/assets/icon/mysql.svg',
-                    pgsql: '/assets/icon/pgsql.svg',
-                    graphql: '/assets/icon/graphql.svg',
-                    mongodb: '/assets/icon/mongodb.svg',
-                    rest: '/assets/icon/rest.svg',
-                    sqlite: '/assets/icon/sqlite.svg'
-                  }[String(x.config.dbType).toLowerCase()] || svg
+            switch (x.kind) {
+              case DataSourceKind.MySQL:
+                svg = '/assets/icon/mysql.svg'
                 break
-              case 2:
-                svg = '/assets/icon/rest.svg'
+              case DataSourceKind.PostgreSQL:
+                svg = '/assets/icon/pgsql.svg'
                 break
-              case 3:
-                svg = '/assets/icon/graphql.svg'
+              case DataSourceKind.MongoDB:
+                svg = '/assets/icon/mongodb.svg'
+                break
+              case DataSourceKind.SQLite:
+                svg = '/assets/icon/sqlite.svg'
                 break
             }
             return {
@@ -139,7 +139,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
                   {x.name}
                 </div>
               ),
-              value: x.id
+              value: x.name
             }
           })}
         />
