@@ -385,9 +385,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     let result
     console.log(apiList)
     try {
-      result = await requests.post<unknown, void>(`/operation/batch`, {
-        list: apiList
-      })
+      result = await requests.post<unknown, void>(`/operation/batch`, apiList)
     } catch (e) {
       console.error(e)
     }
@@ -406,7 +404,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             <FormattedMessage
               defaultMessage="本次成功生成{count}条API"
               values={{
-                count: result.filter(x => !x.Code).length
+                count: result.filter(x => x.success).length
               }}
             />
           ) : (

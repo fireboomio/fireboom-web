@@ -1,21 +1,21 @@
 import { get, set } from 'lodash'
 
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
 import type { ApiOptions } from './interface'
 import { API, AuthOptions, KeyType } from './interface'
 
-export default function buildApi(
-  options: ApiOptions
-): { path: string; content: string; setting?: string }[] {
-  let setting: string | undefined = undefined
+export default function buildApi(options: ApiOptions): Partial<ApiDocuments.Operation>[] {
+  let setting: Partial<ApiDocuments.Operation> | undefined = undefined
   if (options.auth === AuthOptions.enabled) {
-    setting = `{"enabled":true,"authenticationRequired":true,"settingType":1}`
+    setting = { enabled: true, authenticationConfig: { authRequired: true } }
   } else if (options.auth === AuthOptions.disabled) {
-    setting = `{"enabled":true,"authenticationRequired":false,"settingType":1}`
+    setting = { enabled: true, authenticationConfig: { authRequired: false } }
   }
   return options.apiList.map(api => {
     return {
       ...apiBuilder[api](options),
-      setting: options.authApiList.includes(api) ? setting : undefined
+      ...(options.authApiList.includes(api) ? setting : undefined)
     }
   })
 }
@@ -75,7 +75,7 @@ function mappingType(key: string, options: ApiOptions): string {
   return `${dbName}_${type}FieldUpdateOperationsInput`
 }
 
-const apiBuilder: Record<API, (options: ApiOptions) => { path: string; content: string }> = {
+const apiBuilder: Record<API, (options: ApiOptions) => { path: string; originContent: string }> = {
   create(options: ApiOptions) {
     const createFields = Object.keys(options.table).filter(
       key => options.table[key].create !== KeyType.Hidden
@@ -109,7 +109,7 @@ mutation CreateOne${options.alias}(${paramStr})${buildAuthStr(options, API.Creat
     ${returnStr}
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   delete(options: ApiOptions) {
     const primaryKey = options.primaryKey
@@ -124,7 +124,7 @@ mutation DeleteOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAut
     ${primaryKey}
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   update(options: ApiOptions) {
     const primaryKey = options.primaryKey
@@ -163,7 +163,7 @@ mutation UpdateOne${options.alias}(${paramStr})${buildAuthStr(options, API.Updat
     ${returnStr}
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   detail(options: ApiOptions) {
     const primaryKey = options.primaryKey
@@ -182,7 +182,7 @@ query GetOne${options.alias}($${primaryKey}: ${primaryKeyType}!)${buildAuthStr(
     ${returnStr}
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   list(options: ApiOptions) {
     const primaryKey = options.primaryKey
@@ -217,7 +217,7 @@ query Get${options.alias}List($take: Int = 10, $skip: Int = 0${sortStr}${filterS
     }
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   batchDelete(options: ApiOptions) {
     const primaryKey = options.primaryKey
@@ -236,7 +236,7 @@ mutation DeleteMany${options.alias}($${primaryKey}s: [${primaryKeyType}]!)${buil
     count
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   },
   export(options: ApiOptions) {
     const returnStr = buildReturnStr(options, 'list')
@@ -248,6 +248,6 @@ query GetMany${options.alias}${buildAuthStr(options, API.Export)} {
     ${returnStr}
   }
 }`.trim()
-    return { path, content }
+    return { path, originContent: content }
   }
 }
