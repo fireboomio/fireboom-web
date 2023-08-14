@@ -13,7 +13,6 @@ const ModelingWrapper = () => {
   })
   const name = data?.[0]?.name
   if (name) {
-    debugger
     navigate(`/workbench/modeling/${name}`)
     return null
   } else {

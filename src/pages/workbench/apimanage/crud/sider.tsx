@@ -62,14 +62,13 @@ export default function CRUDSider(props: CRUDSiderProps) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '正在加载模型列表' }))
     try {
       const nativeSDL = await requests.get<unknown, string>(
-        `/prisma/nativeSDL/${currentDataSourceName}`,
+        `/datasource/graphql/${currentDataSourceName}`,
         {
           timeout: 15e3
         }
       )
-      debugger
       const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/datasource/${currentDataSourceName}/dmmf`,
+        `/datasource/dmmf/${currentDataSourceName}`,
         { timeout: 15e3 }
       )
       if (currentName.current === currentDataSourceName) {

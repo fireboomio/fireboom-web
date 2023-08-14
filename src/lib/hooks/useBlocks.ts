@@ -33,8 +33,8 @@ const useBlocks = () => {
         b.properties = []
       }
     })
-    return migratePrismaSchema(newBlocks, currentDBSource.id)
-      .then(() => refetchPrismaSchema(String(currentDBSource.id), dispatch))
+    return migratePrismaSchema(newBlocks, currentDBSource.name)
+      .then(() => refetchPrismaSchema(currentDBSource.name, dispatch))
       .catch((err: Error) => {
         dispatch(updateBlocksAction(PrismaSchemaBlockOperator(blocks).cleanEmptyNameEntity()))
         message.error(
@@ -59,7 +59,7 @@ const useBlocks = () => {
     applyLocalPrismaBlocks(newBlocks, dispatch)
   }
   const refreshBlocks = () => {
-    return refetchPrismaSchema(String(currentDBSource.name), dispatch)
+    return refetchPrismaSchema(currentDBSource.name, dispatch)
   }
 
   return {

@@ -87,9 +87,10 @@ const ModelEntityItem = ({
       const localBlocks = PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id)
       applyLocalBlocks(localBlocks)
       triggerSyncEditor()
-      changeToEntityById(
-        localBlocks.filter(block => block.type === 'model' || block.type === 'enum')[0].id
+      const currentFirst = localBlocks.find(
+        block => block.type === 'model' || block.type === 'enum'
       )
+      changeToEntityById(currentFirst ? currentFirst.id : 0)
     }
   }
 

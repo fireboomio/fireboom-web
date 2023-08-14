@@ -21,7 +21,6 @@ const Modeling = () => {
     if (name && dataSources?.length) {
       if (!dataSources.find((x: { name: string }) => x.name === name)) {
         if (dataSources.length) {
-          debugger
           navigate(`/workbench/modeling/${dataSources[0].name}`)
         } else {
           navigate(`/workbench/modeling`)

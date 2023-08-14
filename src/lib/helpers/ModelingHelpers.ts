@@ -48,10 +48,22 @@ export const initialPrismaSchema = async (
 }
 
 // 每次完成数据迁移之后执行 refetch
-export const refetchPrismaSchema = (dataSourceName: string, dispatch: Dispatch<AnyAction>) =>
-  fetchPrismaDMF(dataSourceName).then(({ enums, models, schemaContent }) => {
-    dispatch(refetchPrismaSchemaAction(buildBlocks(schemaContent), { models, enums }))
+export const refetchPrismaSchema = async (
+  dataSourceName: string,
+  dispatch: Dispatch<AnyAction>
+) => {
+  const [dmmf, sdl] = await Promise.all([
+    fetchPrismaDMF(dataSourceName),
+    fetchPrismaSDL(dataSourceName).catch(() => '')
+  ])
+  refetchPrismaSchemaAction(buildBlocks(sdl), {
+    models: dmmf?.datamodel?.models ?? [],
+    enums: dmmf?.datamodel?.enums ?? []
   })
+}
+//   fetchPrismaDMF(dataSourceName).then(({ enums, models, schemaContent }) => {
+//     dispatch(refetchPrismaSchemaAction(buildBlocks(schemaContent), { models, enums }))
+// })
 // 使用本地schema
 export const applyLocalPrismaSchema = (schemaContent: string, dispatch: Dispatch<AnyAction>) => {
   dispatch(localPrismaSchemaAction(buildBlocks(schemaContent)))

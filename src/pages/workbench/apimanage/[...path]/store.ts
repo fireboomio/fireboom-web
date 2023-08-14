@@ -198,24 +198,20 @@ export const useAPIManager = create<APIState>((set, get) => ({
       }
       return false
     }
+    if (content.trim() === get().lastSavedQuery?.trim()) {
+      return true
+    }
     return requests
       .post(`/operation/graphql/${get().apiPath}`, content)
       .then(async () => {
         const query = content ?? ''
         // 2022-12-16 此时的query可能已经与当前编辑器内容不一致，进行set会覆盖编辑器内容并导致光标重置
-        // get().setQuery(query)
+        get().setQuery(query)
         set({ lastSavedQuery: query })
         // @ts-ignore
-        // set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
+        set(state => ({ apiDesc: { ...state.apiDesc, content: query } }))
         // 内容变更可能需要刷新api列表
         void mutateApi()
-        // await new Promise(resolve => setTimeout(resolve, 5000))
-        requests.get<any, string>(`/operation/graphql/${get().apiPath}`).then(resp => {
-          if (resp) {
-            // @ts-ignore
-            set({ apiDesc: { ...get().apiDesc, content: resp } })
-          }
-        })
         return true
       })
       .catch(() => false)
@@ -240,9 +236,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
       // 如果不需要保留query，则更新编辑器内容
       if (!keepCurrentQuery) {
         const resp = await requests.get<any, string>(`/operation/graphql/${get().apiPath}`)
-        if (resp) {
-          get().setQuery(resp)
-        }
+        get().setQuery(resp ?? '')
         set({ clearHistoryFlag: !get().clearHistoryFlag })
         set({ lastSavedQuery: resp })
       }

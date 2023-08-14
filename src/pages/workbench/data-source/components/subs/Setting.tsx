@@ -96,7 +96,6 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
   }, [schemaExtension])
 
   useEffect(() => {
-    debugger
     void requests
       .get<unknown, DMFResp>(`/datasource/${currDBId ?? ''}/dmmf`, { timeout: 15e3 })
       .then(x => {

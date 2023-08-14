@@ -3,108 +3,106 @@
     "defaultMessage": "Please select primary key"
   },
   "+GBE25": {
-    "defaultMessage": "Query authorization",
-    "description": "查询是否需要授权"
+    "defaultMessage": "Query Authorization",
+    "description": "Check if authorization is required"
   },
   "+Hw5bq": {
     "defaultMessage": "Copyright"
   },
+  "+I5Iiy": {
+    "defaultMessage": "Anonymous Query"
+  },
   "+MrBgm": {
-    "defaultMessage": "Switch the view to design/data in model design page"
+    "defaultMessage": "Switch between design/data view in model design page"
   },
   "+S5lJM": {
-    "defaultMessage": "Appearence"
+    "defaultMessage": "Appearance"
   },
   "+ZZbJ1": {
     "defaultMessage": "Advanced Filter"
   },
   "+jyuQU": {
-    "defaultMessage": "Switch to Json Mode/ Form Mode in API edit page, Switch to Design Mode/ Code Mode in Model design page"
+    "defaultMessage": "Switch between Json/Form view in API edit page, and between design/code view in model design page"
   },
   "+l43TG": {
     "defaultMessage": "User:"
   },
+  "+pOhR+": {
+    "defaultMessage": "File Type"
+  },
   "+scveH": {
-    "defaultMessage": "{field} are required to be strings，use uppercase letters, lowercase letters or underline!"
+    "defaultMessage": "{field} should be string, use lowercase letters or underscores!"
   },
   "+y//Sq": {
-    "defaultMessage": "Data sources in the database type of [{dbType}] are not currently supported"
+    "defaultMessage": "Data source with dbType [{dbType}] is not supported yet!"
   },
   "+zhQOH": {
-    "defaultMessage": "{days}day {hours}hour {minutes}min {seconds}sec"
+    "defaultMessage": "{days}d {hours}h {minutes}m {seconds}s"
   },
   "/0bwX0": {
-    "defaultMessage": "Composite Indexes"
+    "defaultMessage": "Composite Index"
   },
   "/4apRL": {
-    "defaultMessage": "Ignore this field"
+    "defaultMessage": "Ignore This Field"
   },
   "/9NbO2": {
-    "defaultMessage": "Transform",
-    "description": "插入指令处"
+    "defaultMessage": "Response Mapping",
+    "description": "In instruction insertion"
   },
   "/CFd+q": {
     "defaultMessage": "On"
   },
   "/F5ua7": {
-    "defaultMessage": "role management"
+    "defaultMessage": "Role Management"
   },
   "/LdjPR": {
-    "defaultMessage": "The entity name is invalid，pattern: [A-Za-z][A-Za-z0-9_]*"
+    "defaultMessage": "Invalid entity name, pattern: [A-Za-z][A-Za-z0-9_]*"
   },
   "/NBrxg": {
-    "defaultMessage": "Input value"
+    "defaultMessage": "Input Value"
   },
+
   "/NfUUH": {
-    "defaultMessage": "Created at"
+    "defaultMessage": "Created On"
   },
   "/Y87R/": {
-    "defaultMessage": "The field name is invalid，begin with letters，numbers and underscores are allowed"
+    "defaultMessage": "Invalid field name, must start with letter, can contain numbers and underscores"
   },
   "/aSrX0": {
-    "defaultMessage": "Name Duplication"
-  },
-  "/bRVWS": {
-    "defaultMessage": "Namespace"
+    "defaultMessage": "Name Duplicated"
   },
   "/cqdKk": {
     "defaultMessage": "Download"
   },
   "/g7pR0": {
-    "defaultMessage": "or"
+    "defaultMessage": "Or"
   },
   "/mrUV7": {
-    "defaultMessage": "User-defined"
+    "defaultMessage": "Custom"
+  },
+  "/q0fxx": {
+    "defaultMessage": "Must end with letter or number"
   },
   "/yVpDb": {
     "defaultMessage": "Default"
   },
   "00Cy+a": {
-    "defaultMessage": "Please select  {type} table associated data "
-  },
-  "07J5x2": {
-    "defaultMessage": "prisma engine version"
+    "defaultMessage": "Please select associated {type} table data"
   },
   "0BkTtH": {
-    "defaultMessage": "primary key"
-  },
-  "0D60ha": {
-    "defaultMessage": "more"
+    "defaultMessage": "Primary Key"
   },
   "0DLw3A": {
-    "defaultMessage": "can be empty"
+    "defaultMessage": "Can Be Null"
   },
-  "0IjLDk": {
-    "defaultMessage": "SDK Template"
-  },
-  "0aGQa4": {
-    "defaultMessage": "Begin with postgresql:// 开头，no more than 128 digits"
+  "0LhZAq": {
+    "defaultMessage": "Anonymous Access"
   },
   "0bBO2n": {
     "defaultMessage": "Version"
   },
   "0jMIH4": {
-    "defaultMessage": "Cache Configuration"
+    "defaultMessage": "Cache Config"
   },
   "0o/d0Y": {
     "defaultMessage": "Please enter letters, numbers or underscores"
@@ -113,13 +111,13 @@
     "defaultMessage": "Compile"
   },
   "0x6ogM": {
-    "defaultMessage": "No content at present"
+    "defaultMessage": "No Content"
+  },
+  "0zyVbu": {
+    "defaultMessage": "Vendor Name"
   },
   "17LOYz": {
-    "defaultMessage": "Manual Settings"
-  },
-  "18cXOV": {
-    "defaultMessage": "Copy interface URL address"
+    "defaultMessage": "Manual Setup"
   },
   "1GUffX": {
     "defaultMessage": "Please upload OAS file"
@@ -128,584 +126,618 @@
     "defaultMessage": "Add"
   },
   "1Y05V3": {
-    "defaultMessage": "Rest endpoint"
+    "defaultMessage": "Rest Endpoint"
   },
   "1Ze/Gy": {
-    "defaultMessage": "Copy interface"
+    "defaultMessage": "Duplicate API"
   },
   "1ceY2D": {
-    "defaultMessage": "Use independent configuration"
+    "defaultMessage": "Use Independent Config"
   },
   "1j0lPi": {
-    "defaultMessage": "Success！"
-  },
-  "1jRYJf": {
-    "defaultMessage": "Allow all"
+    "defaultMessage": "Operation Succeeded!"
   },
   "1kGGA/": {
     "defaultMessage": "Closed"
   },
   "1pv3Jk": {
-    "defaultMessage": "Maximum length of time"
+    "defaultMessage": "Max Duration"
   },
   "2+X2n8": {
-    "defaultMessage": "Bulk deletion"
+    "defaultMessage": "Batch Delete"
   },
   "23wB4T": {
-    "defaultMessage": "request header"
+    "defaultMessage": "Request Headers"
+  },
+  "27XOM4": {
+    "defaultMessage": "Flow Chart"
   },
   "2DHz6I": {
-    "defaultMessage": "real-time inquiry"
+    "defaultMessage": "Realtime Query"
   },
   "2FVy0L": {
-    "defaultMessage": "Database name can not be null"
-  },
-  "2FgMsD": {
-    "defaultMessage": "Please enter a combination of letters, numbers or underscores，begin with a capital letter "
+    "defaultMessage": "Database name cannot be empty"
   },
   "2GUa4t": {
     "defaultMessage": "Please select the correct parameter node",
-    "description": "插入指令时"
+    "description": "When inserting instruction"
   },
   "2P6VLX": {
-    "defaultMessage": "Only files in json or yaml format can be uploaded"
+    "defaultMessage": "Only json or yaml files are allowed"
   },
   "2PNzKb": {
-    "defaultMessage": "Select fields from <{name}>"
+    "defaultMessage": "Select Fields From <{name}>"
   },
   "2QzYmY": {
     "defaultMessage": "Cancel"
   },
   "2Y1dR4": {
-    "defaultMessage": "The parameter of field {name} is incorrectly entered"
+    "defaultMessage": "Incorrect parameter input for field {name}"
   },
   "2a+U1g": {
-    "defaultMessage": "Server address"
+    "defaultMessage": "Service Address"
   },
   "2pzrDk": {
-    "defaultMessage": "ignore the table"
+    "defaultMessage": "Ignore This Table"
+  },
+  "2rw44l": {
+    "defaultMessage": "Descending"
   },
   "2t41Pv": {
-    "defaultMessage": "saved"
+    "defaultMessage": "Saved"
   },
   "2y+Dze": {
-    "defaultMessage": "{count} pieces of APIs are generated successfully this time"
+    "defaultMessage": "{count} APIs generated successfully"
   },
   "3+qPlN": {
-    "defaultMessage": "troubleshoot, or"
+    "defaultMessage": "Troubleshoot or"
+  },
+  "3+t6nd": {
+    "defaultMessage": "Search APIs"
   },
   "32k+gD": {
-    "defaultMessage": "create file storage"
+    "defaultMessage": "Create File Storage"
   },
   "3OgiQ+": {
-    "defaultMessage": "The enumerator name already exists"
+    "defaultMessage": "Enum name already exists"
   },
   "3SibWe": {
-    "defaultMessage": "allowed method"
+    "defaultMessage": "Allowed Methods"
   },
   "3bdXhI": {
-    "defaultMessage": "Login verify?",
-    "description": "流程图"
+    "defaultMessage": "Login check?",
+    "description": "In flow chart"
   },
   "3cF9qm": {
-    "defaultMessage": "internal dependence"
+    "defaultMessage": "Internal Dependencies"
   },
   "42Fm6z": {
-    "defaultMessage": "open"
+    "defaultMessage": "Public"
   },
   "4549+5": {
-    "defaultMessage": "common view"
+    "defaultMessage": "Normal View"
   },
   "47GdDb": {
-    "defaultMessage": "close"
+    "defaultMessage": "Close"
   },
   "4LegCW": {
-    "defaultMessage": "Network request error！"
+    "defaultMessage": "Network Request Failed!"
+  },
+  "4WvYRq": {
+    "defaultMessage": "Not Logged In"
+  },
+  "4bLnOM": {
+    "defaultMessage": "Download Generated File"
+  },
+  "4godzk": {
+    "defaultMessage": "The following APIs already exist, overwrite?"
   },
   "4rbyCQ": {
-    "defaultMessage": "port:"
+    "defaultMessage": "Port:"
   },
   "4tkspf": {
-    "defaultMessage": "Operation",
-    "description": "流程图"
+    "defaultMessage": "Execute (Operation)",
+    "description": "In flow chart"
   },
   "53xMJk": {
-    "defaultMessage": "Please enter the role code"
-  },
-  "5BzHRY": {
-    "defaultMessage": "New Origin"
+    "defaultMessage": "Please input role code"
   },
   "5FboZ/": {
     "defaultMessage": "Type"
   },
   "5euLB8": {
-    "defaultMessage": "path"
+    "defaultMessage": "Path"
   },
   "5gzWCE": {
-    "defaultMessage": "Leaving the current interface, unsaved content will be lost, confirm exit？"
+    "defaultMessage": "You are leaving the current page with unsaved changes. Confirm leaving?"
   },
   "608d8o": {
-    "defaultMessage": "Log"
+    "defaultMessage": "Logs"
   },
   "66awCH": {
-    "defaultMessage": "refresh"
+    "defaultMessage": "Refresh"
+  },
+  "6AqJp+": {
+    "defaultMessage": "Auth APIs"
   },
   "6B0EzP": {
-    "defaultMessage": "connect URL"
+    "defaultMessage": "Connection URL"
   },
   "6F6gTV": {
-    "defaultMessage": "The script content is not in json format"
+    "defaultMessage": "Script content is not in json format"
   },
   "6IHx+i": {
-    "defaultMessage": "Skip  exsisting API"
+    "defaultMessage": "Skip Existing APIs"
   },
   "6RphVF": {
-    "defaultMessage": "Please upload the file"
+    "defaultMessage": "Please upload file"
   },
   "6UDCIR": {
-    "defaultMessage": "Forwarded from the client"
+    "defaultMessage": "Forwarded From Client"
+  },
+  "6Wvms6": {
+    "defaultMessage": "META"
+  },
+  "6l+xcm": {
+    "defaultMessage": "Input number no larger than 50"
+  },
+  "6tkLn7": {
+    "defaultMessage": "Must start with uppercase letter"
+  },
+  "73X0pe": {
+    "defaultMessage": "Hook script does not exist, create now?"
   },
   "799kEA": {
-    "defaultMessage": "modification time"
+    "defaultMessage": "Modified Time"
   },
-  "7IrS7D": {
-    "defaultMessage": "The hook service at the current address is not started，it can be used only after manual start"
+  "7IVxZJ": {
+    "defaultMessage": "Auto inject header values, no need for user to pass in params"
   },
   "7MUg0d": {
-    "defaultMessage": "Save failed！"
+    "defaultMessage": "Save Failed!"
   },
-  "7aMIeB": {
-    "defaultMessage": "Does it require login?"
+  "7Mbp/s": {
+    "defaultMessage": "No Templates Yet"
   },
   "7cCd7/": {
-    "defaultMessage": "run current Operation"
+    "defaultMessage": "Run Current Operation"
   },
   "7hbJjS": {
-    "defaultMessage": "issue the request"
+    "defaultMessage": "Send Request"
   },
   "7nyFdZ": {
-    "defaultMessage": "Please enter the name"
+    "defaultMessage": "Please input name"
   },
   "7vnRkg": {
-    "defaultMessage": "online debugging user guide"
+    "defaultMessage": "Online Debugging Guide"
   },
   "7xvRgU": {
-    "defaultMessage": "Successfully logged out，the current page is about to close"
+    "defaultMessage": "Logged out successfully, closing current page"
   },
   "7yXi5L": {
-    "defaultMessage": "edited"
+    "defaultMessage": "Edited"
   },
   "87LrSH": {
-    "defaultMessage": "enumerator name"
+    "defaultMessage": "Enum Name"
   },
   "88kUM2": {
-    "defaultMessage": "There is a total of {count} items of data"
+    "defaultMessage": "Total {count} Items"
+  },
+  "8ATxSY": {
+    "defaultMessage": "Log Reporting"
   },
   "8AtCIp": {
-    "defaultMessage": "Please enter the data source name"
+    "defaultMessage": "Please input data source name"
   },
   "8EHsht": {
-    "defaultMessage": "No available entity！"
-  },
-  "8NsucZ": {
-    "defaultMessage": "@internal",
-    "description": "插入指令处"
+    "defaultMessage": "No Available Entities!"
   },
   "8gWGMl": {
-    "defaultMessage": "internal variable, mark a field as an internal variable, so that it can be used in subsequent query statements"
+    "defaultMessage": "Internal variable, mark a field as internal variable for easy use in later query statements"
   },
   "8mYf5w": {
-    "defaultMessage": "whether to enable it"
+    "defaultMessage": "Enable?"
   },
   "8y5Ykn": {
-    "defaultMessage": "modified on"
+    "defaultMessage": "Modified On"
   },
   "96YcwE": {
-    "defaultMessage": "field type mapping"
+    "defaultMessage": "Field Type Mapping"
+  },
+  "97Yljf": {
+    "defaultMessage": "OSS Storage"
+  },
+  "9BGMZp": {
+    "defaultMessage": "Custom Services"
   },
   "9Fxs0Y": {
-    "defaultMessage": "Confirm the deletion?"
+    "defaultMessage": "Confirm Delete?"
   },
   "9HZKLw": {
-    "defaultMessage": "Field alias"
+    "defaultMessage": "Field Alias"
+  },
+  "9K5ZRj": {
+    "defaultMessage": "Input -1 to disable limit"
+  },
+  "9Qz9G/": {
+    "defaultMessage": "Quit Project"
   },
   "9SBdsw": {
-    "defaultMessage": "The user name cannot be empty"
+    "defaultMessage": "Username cannot be empty"
   },
   "9WXJgY": {
-    "defaultMessage": "Resp transform",
-    "description": "流程图"
+    "defaultMessage": "Response Mapping",
+    "description": "In flow chart"
   },
   "9YT9eI": {
-    "defaultMessage": "Loading a list of models"
+    "defaultMessage": "Loading Model List"
   },
   "9huOMe": {
-    "defaultMessage": "Please enter a valid string, use double quotation marks "
+    "defaultMessage": "Please input valid string enclosed in double quotes"
   },
   "9n8LjV": {
-    "defaultMessage": "login user"
+    "defaultMessage": "Login User"
+  },
+  "9sTPgx": {
+    "defaultMessage": "Allowed HOSTS"
   },
   "9stmhe": {
-    "defaultMessage": "Failed！"
+    "defaultMessage": "Operation Failed!"
   },
   "9x/veC": {
-    "defaultMessage": "composite key"
-  },
-  "9yQugt": {
-    "defaultMessage": "connection failed"
-  },
-  "A2YuIk": {
-    "defaultMessage": "signature method"
+    "defaultMessage": "Composite Primary Key"
   },
   "A3wHyU": {
-    "defaultMessage": "The enumeration name is invalid！"
+    "defaultMessage": "Invalid enum name!"
   },
   "A5xsdI": {
-    "defaultMessage": "running time"
+    "defaultMessage": "Running Time"
   },
   "A6Mx9m": {
-    "defaultMessage": "search dependence"
+    "defaultMessage": "Search Dependencies"
   },
   "AIWQdZ": {
-    "defaultMessage": "sample code"
+    "defaultMessage": "Example Code"
   },
   "AO9K4t": {
-    "defaultMessage": "create new preview in batches"
+    "defaultMessage": "Batch Create Preview"
   },
   "AR/s6m": {
-    "defaultMessage": "create an identity authenticator"
+    "defaultMessage": "Create Authenticator"
   },
   "ATIkHk": {
-    "defaultMessage": "open the shortcut prompt"
+    "defaultMessage": "Open Keyboard Shortcuts"
   },
   "AVKP8a": {
-    "defaultMessage": "migrate"
+    "defaultMessage": "Migrate"
   },
   "AVofrL": {
-    "defaultMessage": "source view"
+    "defaultMessage": "Source Code View"
   },
   "AXTXwf": {
-    "defaultMessage": "The entity name was updated successfully"
+    "defaultMessage": "Entity name updated successfully"
   },
-  "AYi+tS": {
-    "defaultMessage": "prisma version"
+  "AatDue": {
+    "defaultMessage": "New Folder"
   },
   "AeO+ID": {
-    "defaultMessage": "new variable"
+    "defaultMessage": "New Variable"
   },
   "Aj9NiL": {
-    "defaultMessage": "polling interval"
+    "defaultMessage": "Polling Interval"
   },
-  "B0rHcT": {
-    "defaultMessage": "dynamic "
+  "Axkg9x": {
+    "defaultMessage": "Configuration"
   },
   "B5JYOd": {
-    "defaultMessage": "unique index"
+    "defaultMessage": "Unique Index"
   },
   "B9XR0F": {
-    "defaultMessage": "Delete this entity？The reference field will also be deleted！"
-  },
-  "BGgRyA": {
-    "defaultMessage": "download React SDK"
+    "defaultMessage": "Confirm deleting this entity? Related fields will be deleted too!"
   },
   "BLQNDV": {
-    "defaultMessage": "Please edit"
+    "defaultMessage": "Please Edit"
   },
   "BLWx5q": {
-    "defaultMessage": "Return response",
-    "description": "流程图"
-  },
-  "BOZ5lK": {
-    "defaultMessage": "The refresh is complete！"
+    "defaultMessage": "Send Response to Client",
+    "description": "In flow chart"
   },
   "BX00L6": {
-    "defaultMessage": "Please enter a non-null value, limit the length to 128 characters"
+    "defaultMessage": "Please input non-empty value no longer than 128 chars"
   },
-  "BbdcOe": {
-    "defaultMessage": "state association or not"
+  "BZ2F1l": {
+    "defaultMessage": "Input number no larger than 1024M"
   },
   "Bjvcv9": {
-    "defaultMessage": "designated OAS"
+    "defaultMessage": "Specify OAS"
   },
   "BtZh7z": {
-    "defaultMessage": "create"
+    "defaultMessage": "Create"
   },
   "BxhyoS": {
-    "defaultMessage": "Cross Domain"
+    "defaultMessage": "CORS"
   },
   "C/vpUV": {
-    "defaultMessage": "Please enter numbers, letters, or underscores, the first digit can not be a number"
+    "defaultMessage": "Please input letters, numbers or underscores, cannot start with number"
   },
   "C4HPJc": {
-    "defaultMessage": "Upload complete"
+    "defaultMessage": "Upload Succeeded"
   },
   "C5D7TM": {
-    "defaultMessage": "Data source"
+    "defaultMessage": "Data Source"
   },
   "C8ZFaR": {
-    "defaultMessage": "filter"
+    "defaultMessage": "Filter"
+  },
+  "CAAXfY": {
+    "defaultMessage": "File Number Limit"
   },
   "CLqPBU": {
-    "defaultMessage": "edit"
+    "defaultMessage": "Edit"
   },
   "CP8WcX": {
-    "defaultMessage": "Only files in graphql format can be uploaded"
+    "defaultMessage": "Only graphql files are allowed"
   },
   "CSKTb8": {
-    "defaultMessage": "automatically injects UUID，users do not need to pass parameters"
+    "defaultMessage": "Auto inject UUID, no need for user input"
   },
   "CVx5RX": {
-    "defaultMessage": "specified Schema"
+    "defaultMessage": "Specify Schema"
+  },
+  "CZeyZ7": {
+    "defaultMessage": "External APIs"
+  },
+  "ChJY+S": {
+    "defaultMessage": "Hook service internal address, usually no need to modify"
+  },
+  "DAKKuk": {
+    "defaultMessage": "Template Market"
   },
   "DLG2Yy": {
-    "defaultMessage": "connection type"
+    "defaultMessage": "Connection Type"
   },
   "DPch2e": {
-    "defaultMessage": "refreshed"
+    "defaultMessage": "Refreshed"
   },
-  "DWjAJJ": {
-    "defaultMessage": "Only letters, numbers and underscores are allowed"
+  "DnyK/f": {
+    "defaultMessage": "Per Folder"
   },
   "DpfSLU": {
-    "defaultMessage": "Parameter"
+    "defaultMessage": "Parameters"
   },
   "DqrJMk": {
-    "defaultMessage": "Please fill in enumeration annotation"
+    "defaultMessage": "Please fill in enum comments"
+  },
+  "DzVs1L": {
+    "defaultMessage": "We Support"
   },
   "E1Ds9+": {
-    "defaultMessage": "by name"
+    "defaultMessage": "By Name"
   },
   "E6yn6S": {
-    "defaultMessage": "File store"
+    "defaultMessage": "File Storage"
+  },
+  "EAf4NI": {
+    "defaultMessage": "Switch Category"
   },
   "EBMdAL": {
-    "defaultMessage": "The creation is successful"
+    "defaultMessage": "Created Successfully"
   },
   "EIebSr": {
-    "defaultMessage": "null"
+    "defaultMessage": "None"
   },
-  "EJ9IE3": {
-    "defaultMessage": "interface role"
-  },
-  "Eaqhfe": {
-    "defaultMessage": "exclude renaming root fields"
+  "ENPgS/": {
+    "defaultMessage": "Submit"
   },
   "EdIsPB": {
-    "defaultMessage": "Please enter a combination of letters,numbers or underscores"
+    "defaultMessage": "Please input letters, numbers or underscores"
   },
   "EpuhM8": {
-    "defaultMessage": "copy the current API request link"
+    "defaultMessage": "Copy Current API Request Link"
   },
   "F3wzck": {
-    "defaultMessage": "table"
+    "defaultMessage": "Table"
   },
   "FEb7U2": {
-    "defaultMessage": "confirm"
+    "defaultMessage": "Confirm"
   },
   "FQQECq": {
     "defaultMessage": "Required"
   },
   "FYqDZK": {
-    "defaultMessage": "APP Secret"
+    "defaultMessage": "App Secret"
   },
   "FbmCny": {
-    "defaultMessage": "push",
-    "description": "流程图"
+    "defaultMessage": "Push",
+    "description": "In flow chart"
   },
   "FpWcg2": {
-    "defaultMessage": "bucket name"
+    "defaultMessage": "Bucket Name"
   },
   "G1Nhzp": {
-    "defaultMessage": "already exist"
+    "defaultMessage": "Already Exists"
   },
   "G5QYm7": {
-    "defaultMessage": "client"
+    "defaultMessage": "Client"
+  },
+  "GEfsgi": {
+    "defaultMessage": "Add Allowed HOST"
   },
   "GHE+9W": {
-    "defaultMessage": "variable name"
+    "defaultMessage": "Variable Name"
   },
   "GbiB/D": {
-    "defaultMessage": "not start"
+    "defaultMessage": "Not Started"
   },
   "GcooW9": {
-    "defaultMessage": "extract parameter from user information as input"
+    "defaultMessage": "Extract user info as input value"
+  },
+  "GdhWnp": {
+    "defaultMessage": "Upgrading"
+  },
+  "GisxFq": {
+    "defaultMessage": "Static Value"
   },
   "GpfOWR": {
-    "defaultMessage": "It is under developement～"
+    "defaultMessage": "Under development..."
   },
   "GuD3c8": {
-    "defaultMessage": "sort"
+    "defaultMessage": "Sort"
   },
   "H4GEbT": {
-    "defaultMessage": "edit role"
+    "defaultMessage": "Edit role"
   },
   "HPWQD3": {
-    "defaultMessage": "log out"
-  },
-  "HSZ1vp": {
-    "defaultMessage": "certificate of permission or not"
+    "defaultMessage": "Logout"
   },
   "HalctF": {
-    "defaultMessage": "start compiling"
+    "defaultMessage": "Start compiling"
   },
   "Hu2hE9": {
-    "defaultMessage": "Already exist，please don't reintroduce "
-  },
-  "Hv6ThW": {
-    "defaultMessage": "corresponding to the Access-Control-Allow-Origin in request response"
+    "defaultMessage": "Already exists, do not import repeatedly"
   },
   "Hxs6Qn": {
-    "defaultMessage": "list"
+    "defaultMessage": "List"
+  },
+  "I0f7tt": {
+    "defaultMessage": "Confirm delete?"
+  },
+  "I2iPb9": {
+    "defaultMessage": "View docs"
   },
   "IAf7JP": {
-    "defaultMessage": "service discovery address"
-  },
-  "IGwGVj": {
-    "defaultMessage": "Please enter namespace"
+    "defaultMessage": "Service discovery address"
   },
   "ILCVXB": {
-    "defaultMessage": "Please enter a non-null value, limit the length to 256"
+    "defaultMessage": "Please enter non-empty value no longer than 256 chars"
+  },
+  "IOCqZm": {
+    "defaultMessage": "Hook editor⇪"
   },
   "IQIvYd": {
-    "defaultMessage": "refresh the list"
+    "defaultMessage": "Refresh list"
+  },
+  "IoROAi": {
+    "defaultMessage": "Note: 3 → 4 repeat",
+    "description": "In flowchart"
   },
   "Ipvx+S": {
     "defaultMessage": "Engine"
   },
-  "Ipx/DS": {
-    "defaultMessage": "API domain name"
-  },
   "IujQJk": {
-    "defaultMessage": "entity alias"
+    "defaultMessage": "Entity alias"
   },
   "IyVzrX": {
-    "defaultMessage": "saving "
+    "defaultMessage": "Saving"
   },
   "J9jPRL": {
-    "defaultMessage": "copy successfully"
+    "defaultMessage": "Copied successfully"
   },
   "JDIfhr": {
-    "defaultMessage": "connect successfully"
+    "defaultMessage": "Connected successfully"
   },
   "JJvpR5": {
-    "defaultMessage": "Confirm the deletion of the selected API？"
+    "defaultMessage": "Confirm delete selected APIs?"
   },
   "JcvFnh": {
-    "defaultMessage": "saved {time}",
-    "description": "保存时间提示"
+    "defaultMessage": "Saved at {time}",
+    "description": "Save time prompt"
   },
   "JeJAmT": {
-    "defaultMessage": "rename"
-  },
-  "Jy/NUB": {
-    "defaultMessage": "Sequence diagram",
-    "description": "插入指令处"
+    "defaultMessage": "Rename"
   },
   "K27Y7X": {
-    "defaultMessage": "exclude head"
+    "defaultMessage": "Exclude headers"
   },
   "K2DWpV": {
-    "defaultMessage": "Invalid input！"
+    "defaultMessage": "Invalid input!"
   },
   "KiiWJR": {
-    "defaultMessage": "variable value"
+    "defaultMessage": "Variable value"
   },
   "Kkatuf": {
-    "defaultMessage": "input parameter check，for input parameter check"
-  },
-  "KqTB9T": {
-    "defaultMessage": "whether the change needs login"
+    "defaultMessage": "Parameter validation, used for parameter validation"
   },
   "Ksj+aW": {
-    "defaultMessage": "the port range is 0-9999"
+    "defaultMessage": "Port range is 0-9999"
   },
   "L/CHdQ": {
-    "defaultMessage": "recalibration time"
+    "defaultMessage": "Recheck duration"
   },
   "LJEftP": {
-    "defaultMessage": "Please select a matching mode first"
+    "defaultMessage": "Please select matching pattern first"
   },
   "LKhNTW": {
-    "defaultMessage": "change authority"
+    "defaultMessage": "Change auth"
   },
-  "LOLrph": {
-    "defaultMessage": "end",
-    "description": "流程图"
+  "LWSLHa": {
+    "defaultMessage": "Tip"
   },
   "LWXiI7": {
-    "defaultMessage": "base on Token"
+    "defaultMessage": "Based on token"
   },
   "LhbdSU": {
-    "defaultMessage": "Please create query statement first"
+    "defaultMessage": "Please create query first"
   },
   "LwwUFT": {
-    "defaultMessage": "There is no issue currently"
+    "defaultMessage": "No issues yet"
   },
   "LzQ0Lw": {
-    "defaultMessage": "Confirm the deletion？"
+    "defaultMessage": "Confirm delete?"
   },
   "M/Ydym": {
-    "defaultMessage": "default sort"
+    "defaultMessage": "Default sort"
   },
   "M363gH": {
-    "defaultMessage": "Don't remind me again"
+    "defaultMessage": "Do not remind next time"
   },
   "M5bmPZ": {
-    "defaultMessage": "The system detected that you may have deleted or renamed the model，the data will be lost after migration，please be careful"
+    "defaultMessage": "System detected model delete/rename, migrate will cause data loss, please be cautious"
   },
   "MFe3Kw": {
-    "defaultMessage": "go offline"
+    "defaultMessage": "Go offline"
   },
   "MOZq7j": {
-    "defaultMessage": "script language"
+    "defaultMessage": "Script language"
+  },
+  "Mafx5X": {
+    "defaultMessage": "E.g. {dbProtocol}://user:password@localhost:3306/db-name"
   },
   "MeoAGh": {
-    "defaultMessage": "The enumeration name is already exist！"
+    "defaultMessage": "Enum name already exists!"
   },
   "Ms9pdw": {
-    "defaultMessage": "copy URL"
+    "defaultMessage": "Copy URL"
   },
   "Mto+Yh": {
-    "defaultMessage": "hooks function parameter，only used in custom hooks "
-  },
-  "N188jr": {
-    "defaultMessage": "download swagger"
+    "defaultMessage": "hooks function parameter, only used in custom hooks"
   },
   "ND/EcE": {
-    "defaultMessage": "The port number can not be empty"
+    "defaultMessage": "Port cannot be empty"
   },
   "NGs9sO": {
-    "defaultMessage": "back"
+    "defaultMessage": "Back"
   },
   "NSax9B": {
     "defaultMessage": "App Secret"
-  },
-  "NYgxWS": {
-    "defaultMessage": "Please enter a cross-domain time in the range of 0 - 86400 seconds"
-  },
-  "NcChip": {
-    "defaultMessage": "Whether the subscription needs login"
   },
   "NyeMXU": {
     "defaultMessage": "App ID"
   },
   "NzT9mX": {
-    "defaultMessage": "submit failed"
+    "defaultMessage": "Submit failed"
   },
   "O1HTOa": {
-    "defaultMessage": "management"
+    "defaultMessage": "Management"
   },
   "O8A9zp": {
-    "defaultMessage": "enable authorization"
+    "defaultMessage": "Enable auth"
   },
   "OF2wA3": {
-    "defaultMessage": "associate {type} table data"
-  },
-  "OPt+As": {
-    "defaultMessage": "only one node can be selected "
+    "defaultMessage": "Associate {type} table data"
   },
   "Oww89Y": {
-    "defaultMessage": "uploading"
+    "defaultMessage": "Uploading"
   },
   "Oxa91E": {
     "defaultMessage": "jwksJSON"
@@ -717,215 +749,225 @@
     "defaultMessage": "JWKS"
   },
   "PCQ1Db": {
-    "defaultMessage": "Cross",
-    "description": "插入指令处"
+    "defaultMessage": "Cross-source association",
+    "description": "In instruction insertion"
   },
   "PI0Ele": {
-    "defaultMessage": "port"
+    "defaultMessage": "Port"
   },
   "PbEf10": {
-    "defaultMessage": "enable SSL"
+    "defaultMessage": "Enable SSL"
+  },
+  "PbJmb7": {
+    "defaultMessage": "Please select hook template"
   },
   "Pcni+q": {
-    "defaultMessage": "No selected role，please add one by clicking the plus sign below"
+    "defaultMessage": "No role selected, please add below"
   },
   "Pdx/YD": {
-    "defaultMessage": "password"
+    "defaultMessage": "Password"
   },
-  "Pge30O": {
-    "defaultMessage": "API prefix"
+  "Ph2Nn+": {
+    "defaultMessage": "Function description"
   },
   "PpQOV5": {
     "defaultMessage": "Started"
   },
   "PvMD53": {
-    "defaultMessage": "API {path} copied"
+    "defaultMessage": "Duplicated API {path}"
   },
   "QT75K3": {
-    "defaultMessage": "by modification time"
-  },
-  "QaFk/Y": {
-    "defaultMessage": "The supplier ID can not be empty"
+    "defaultMessage": "By modified time"
   },
   "QarRBC": {
-    "defaultMessage": "new API"
+    "defaultMessage": "New API"
   },
   "QpRtOT": {
-    "defaultMessage": "executing"
+    "defaultMessage": "Executing"
   },
   "R2D5Dv": {
-    "defaultMessage": "creation time"
+    "defaultMessage": "Created time"
   },
   "R5wYZd": {
-    "defaultMessage": "allow source"
+    "defaultMessage": "Allowed origins"
   },
   "R8Yt/D": {
-    "defaultMessage": "upload failed "
+    "defaultMessage": "Upload failed"
+  },
+  "RKEnyl": {
+    "defaultMessage": "(Only one hook can be enabled at a time, toggle mode)"
   },
   "RP3X0u": {
-    "defaultMessage": "connection parameter"
+    "defaultMessage": "Connection params"
   },
   "RPeIuR": {
-    "defaultMessage": "{minutes} minutes ago"
-  },
-  "RQeDK/": {
-    "defaultMessage": "do not enable"
+    "defaultMessage": "{minutes} mins ago"
   },
   "RagALW": {
-    "defaultMessage": "name:"
+    "defaultMessage": "Name:"
   },
   "Rj34mG": {
-    "defaultMessage": "host:"
+    "defaultMessage": "Host:"
   },
   "Rl/VjA": {
-    "defaultMessage": "array or not"
+    "defaultMessage": "Is array?"
   },
   "RuZ3Ak": {
-    "defaultMessage": "switch API design and model design"
+    "defaultMessage": "Switch API design and model design"
   },
   "Rv5Swi": {
-    "defaultMessage": "select field"
+    "defaultMessage": "Select fields"
+  },
+  "RzYytI": {
+    "defaultMessage": "Max size"
   },
   "S6iTyu": {
-    "defaultMessage": "entity has no primary key"
-  },
-  "S8cTgj": {
-    "defaultMessage": "Please enter data source name"
+    "defaultMessage": "Entity has no primary key set"
   },
   "SHeOyn": {
-    "defaultMessage": "unsaved"
+    "defaultMessage": "Unsaved"
   },
   "SJbKgr": {
-    "defaultMessage": "create in batches "
+    "defaultMessage": "Batch create"
+  },
+  "SKkYA0": {
+    "defaultMessage": "Auto saving..."
   },
   "SU89De": {
-    "defaultMessage": "by creation time"
+    "defaultMessage": "By created time"
+  },
+  "SVbC+g": {
+    "defaultMessage": "Add allowed origin"
   },
   "Sa7tEZ": {
-    "defaultMessage": "entity name"
-  },
-  "SkX7yV": {
-    "defaultMessage": "Token endpoint"
+    "defaultMessage": "Entity name"
   },
   "SyLGX/": {
-    "defaultMessage": "debugging"
+    "defaultMessage": "Debug"
   },
   "T0bxDG": {
-    "defaultMessage": "compiling"
+    "defaultMessage": "Compiling"
   },
   "TACLOV": {
-    "defaultMessage": "connection name"
+    "defaultMessage": "Connection name"
   },
-  "TDqc4L": {
-    "defaultMessage": "authority"
+  "TEs+AV": {
+    "defaultMessage": "Overwrite"
   },
   "TFEmmD": {
-    "defaultMessage": "Begin with letters or underscores，only consist of letters, underscores and number"
+    "defaultMessage": "Start with letter or underscore, can only contain letters, underscores and numbers"
   },
   "THkRPD": {
-    "defaultMessage": "add role"
+    "defaultMessage": "Add role"
+  },
+  "TM6vEk": {
+    "defaultMessage": "Open"
   },
   "TbflcV": {
-    "defaultMessage": "just now"
+    "defaultMessage": "Just now"
   },
-  "Tm3YfU": {
-    "defaultMessage": "Interface name must begin with uppercase letter！"
+  "TxBFu3": {
+    "defaultMessage": "End{br}",
+    "description": "In flowchart"
   },
   "U0ZvW8": {
-    "defaultMessage": "Each entity can only have one primary key！"
+    "defaultMessage": "Each entity can only have one primary key!"
   },
   "U1eYS0": {
-    "defaultMessage": "create API in batches"
+    "defaultMessage": "Batch create APIs"
   },
-  "UEEFxl": {
-    "defaultMessage": "base on Token and Cookie"
+  "UDMolH": {
+    "defaultMessage": "Anonymous subscribe"
   },
   "UEiMSy": {
-    "defaultMessage": "Identity authentication"
+    "defaultMessage": "Authentication"
   },
   "UH1kCc": {
-    "defaultMessage": "add"
+    "defaultMessage": "Add"
   },
   "UOrOkX": {
-    "defaultMessage": "query all"
+    "defaultMessage": "Query all"
   },
   "UPFhlk": {
-    "defaultMessage": "The deletion operation will also delete associated data！"
+    "defaultMessage": "Delete will also delete associated data!"
   },
   "UU3d6B": {
     "defaultMessage": "Hook"
   },
-  "UXFkBB": {
-    "defaultMessage": "Overview"
+  "Ucswcs": {
+    "defaultMessage": "Can only contain letters, numbers and underscores"
   },
   "UifjEZ": {
-    "defaultMessage": "log level"
+    "defaultMessage": "Log level"
   },
   "Ul2EcR": {
-    "defaultMessage": "entity name update failed, error:"
+    "defaultMessage": "Entity name update failed, error:"
   },
   "UmVV8s": {
-    "defaultMessage": "new data source"
+    "defaultMessage": "New data source"
   },
   "Unr58u": {
-    "defaultMessage": "update time"
+    "defaultMessage": "Updated time"
   },
   "Up2nmQ": {
-    "defaultMessage": "The latest version is loaded"
+    "defaultMessage": "Loaded latest version"
   },
   "UtE0dS": {
-    "defaultMessage": "operation"
+    "defaultMessage": "Action"
   },
   "UxBXdV": {
-    "defaultMessage": "custom type"
+    "defaultMessage": "Custom type"
   },
   "Uzsm7t": {
-    "defaultMessage": "API global setting"
+    "defaultMessage": "Global API settings"
   },
-  "V0RiZp": {
-    "defaultMessage": "The operation is successful"
-  },
-  "V8c5V8": {
-    "defaultMessage": "Failed to obtain the file list！"
+  "V5pGxT": {
+    "defaultMessage": "Basic config"
   },
   "V8cvxi": {
-    "defaultMessage": "connection type:"
+    "defaultMessage": "Connection type:"
   },
   "VLmNWR": {
-    "defaultMessage": "page shortcut key"
+    "defaultMessage": "Page shortcuts"
   },
   "VS6lNw": {
-    "defaultMessage": "tab size"
+    "defaultMessage": "Tab width"
   },
   "VSwka6": {
-    "defaultMessage": "Invalid entity name！"
+    "defaultMessage": "Invalid entity name!"
   },
   "ViVQNi": {
-    "defaultMessage": "role"
-  },
-  "VlUpDD": {
-    "defaultMessage": "sample data source"
+    "defaultMessage": "Role"
   },
   "VmsX4o": {
-    "defaultMessage": "Begin with letters or underscores，only consist of numbers, letters and underscores"
+    "defaultMessage": "Start with letter or underscore, can only contain numbers, letters, underscores"
+  },
+  "VtOp3i": {
+    "defaultMessage": "Cookie based"
   },
   "W7e9Ff": {
-    "defaultMessage": "role list"
+    "defaultMessage": "Role list"
   },
   "WHN1dG": {
-    "defaultMessage": "The save is successful！"
+    "defaultMessage": "Saved successfully!"
   },
-  "WNS/6E": {
-    "defaultMessage": "certificate of permission"
+  "WJWR3q": {
+    "defaultMessage": "Downloaded successfully"
   },
   "WWNrrS": {
-    "defaultMessage": "authority management"
+    "defaultMessage": "Privilege management"
+  },
+  "WeEtDm": {
+    "defaultMessage": "New Profile"
+  },
+  "WeuMpp": {
+    "defaultMessage": "Production mode"
   },
   "WfVg3t": {
     "defaultMessage": "APP ID"
   },
   "WiL7+z": {
-    "defaultMessage": "go online"
+    "defaultMessage": "Go online"
   },
   "WpBk1h": {
     "defaultMessage": "Language"
@@ -934,723 +976,846 @@
     "defaultMessage": "{hours} hours ago"
   },
   "WtlUhL": {
-    "defaultMessage": "URL address is copied "
+    "defaultMessage": "URL copied"
+  },
+  "X4MmvD": {
+    "defaultMessage": "Pre-hook"
   },
   "XEPmlP": {
-    "defaultMessage": "second"
+    "defaultMessage": "Seconds"
+  },
+  "XIRdkO": {
+    "defaultMessage": "Please check project config and restart Fireboom"
+  },
+  "XUAQFk": {
+    "defaultMessage": "File suffix"
   },
   "XeiAal": {
-    "defaultMessage": "delete"
+    "defaultMessage": "Delete"
   },
   "Xhn2gT": {
     "defaultMessage": "Please select"
   },
-  "XseOZ1": {
-    "defaultMessage": "Note：repeat 2 → 3 → 4 → 5 ",
-    "description": "流程图"
+  "Xra/7/": {
+    "defaultMessage": "Realtime?"
   },
   "Xx+23S": {
-    "defaultMessage": "upcoming"
+    "defaultMessage": "Soon"
   },
   "Xz2JYA": {
-    "defaultMessage": "failed to start"
+    "defaultMessage": "Failed starting"
   },
   "YCiD/D": {
-    "defaultMessage": "Please save or quit edit first"
+    "defaultMessage": "Please save or cancel edit first"
+  },
+  "YGQB4N": {
+    "defaultMessage": "Vendor name cannot be empty"
   },
   "YIAhsY": {
     "defaultMessage": "System"
   },
   "YJo5EG": {
-    "defaultMessage": "supplier ID"
+    "defaultMessage": "Vendor ID"
+  },
+  "YW5C6D": {
+    "defaultMessage": "MongoDB does not support migrate for now"
   },
   "YrzlYQ": {
-    "defaultMessage": "generate interface"
+    "defaultMessage": "Generate APIs"
   },
   "Ytievw": {
-    "defaultMessage": "this validator"
+    "defaultMessage": "This authenticator"
   },
   "YwSrou": {
-    "defaultMessage": "default value"
+    "defaultMessage": "Default value"
   },
   "Z4d9SJ": {
-    "defaultMessage": "App ID can not be empty"
+    "defaultMessage": "App ID cannot be empty"
   },
   "ZIqHdN": {
     "defaultMessage": "Response"
   },
+  "ZK6VCI": {
+    "defaultMessage": "Allowed Credentials"
+  },
   "ZMK5E4": {
-    "defaultMessage": "real-time query in server"
+    "defaultMessage": "Server side realtime query"
   },
   "ZQxXRq": {
-    "defaultMessage": "automatically injects the current time，users do not need to pass parameters"
+    "defaultMessage": "Auto inject current time, no need for user input"
   },
   "ZRU2jE": {
-    "defaultMessage": "new request header information"
+    "defaultMessage": "Add request header"
   },
   "ZUPzqr": {
-    "defaultMessage": "enable"
+    "defaultMessage": "Turn on"
   },
   "ZUhyFj": {
-    "defaultMessage": "global dependency"
+    "defaultMessage": "Global dependencies"
+  },
+  "Zlo7bL": {
+    "defaultMessage": "Generate path"
   },
   "ZnzCll": {
-    "defaultMessage": "alias"
+    "defaultMessage": "Alias"
+  },
+  "ZrgikE": {
+    "defaultMessage": "Add CSRF token to POST requests"
+  },
+  "Zz7nBV": {
+    "defaultMessage": "Compiled"
   },
   "aE19iu": {
-    "defaultMessage": "cross-domain time"
+    "defaultMessage": "CORS max age"
   },
   "aI3L5g": {
-    "defaultMessage": "global setting"
+    "defaultMessage": "Global config"
+  },
+  "aSYY8Y": {
+    "defaultMessage": "Failed parsing jwksURL and user endpoint"
   },
   "aUGOy3": {
-    "defaultMessage": "Please enter a non-null value"
+    "defaultMessage": "Please input non-empty value"
   },
   "aUe2XA": {
-    "defaultMessage": "advanced settings"
+    "defaultMessage": "Advanced config"
   },
   "aYUJpY": {
-    "defaultMessage": "The host name can not be null"
+    "defaultMessage": "Hostname cannot be empty"
   },
   "aiBGBs": {
-    "defaultMessage": "The deletion is sucessful"
+    "defaultMessage": "Deleted successfully"
   },
   "aj1rA6": {
     "defaultMessage": "API design"
   },
   "apiCrud.empty": {
-    "defaultMessage": "Please add database before using this function"
+    "defaultMessage": "Please add database before using this"
   },
   "aqQg0p": {
-    "defaultMessage": "domain"
+    "defaultMessage": "Region"
   },
   "ayODEw": {
-    "defaultMessage": "data preview"
+    "defaultMessage": "Data preview"
+  },
+  "b0E99S": {
+    "defaultMessage": "Key can be found in Fireboom startup log by keyword"
   },
   "b5kCtF": {
-    "defaultMessage": "awaiting selection"
+    "defaultMessage": "To be selected"
   },
   "b5l2vN": {
-    "defaultMessage": "save"
+    "defaultMessage": "Save"
   },
   "bChoai": {
-    "defaultMessage": "create all"
+    "defaultMessage": "Create all"
   },
   "bUqRuh": {
-    "defaultMessage": "automatically injects the value of environment variable，users do not need to pass parameters"
+    "defaultMessage": "Auto inject env variable value so user does not need to pass in"
   },
   "blp0RF": {
-    "defaultMessage": "cancel",
-    "description": "流程图"
-  },
-  "bpeH07": {
-    "defaultMessage": "Please recompile after changing the settings"
+    "defaultMessage": "Cancel",
+    "description": "In flowchart"
   },
   "bqbDVw": {
     "defaultMessage": "Query"
   },
   "bwYWez": {
-    "defaultMessage": "event source",
-    "description": "流程图"
+    "defaultMessage": "Event source",
+    "description": "In flowchart"
   },
   "bxdSeG": {
-    "defaultMessage": "the corresponding entity [{entityName}] can not be found"
+    "defaultMessage": "Cannot find entity [{entityName}]"
   },
   "c8WRih": {
-    "defaultMessage": "Please enter vaild GraphQL query statement"
+    "defaultMessage": "Please input valid GraphQL query"
   },
   "cDZ00w": {
-    "defaultMessage": "view"
+    "defaultMessage": "View"
   },
   "cJXZNP": {
-    "defaultMessage": "Only files in the format of db can be uploaded"
+    "defaultMessage": "Only db format files allowed"
+  },
+  "cJoF5u": {
+    "defaultMessage": "Copy API URL to test after going online"
+  },
+  "cLNR9b": {
+    "defaultMessage": "No templates yet"
   },
   "cLvrI5": {
-    "defaultMessage": "filter"
-  },
-  "cX1H0F": {
-    "defaultMessage": "development environment"
+    "defaultMessage": "Filter"
   },
   "clv90W": {
-    "defaultMessage": "the directive is already exist"
+    "defaultMessage": "Instruction already exists"
   },
   "dEbvz0": {
-    "defaultMessage": "name should be string，use uppercase letters, lowercase letters or underscores！"
+    "defaultMessage": "name should be string using lowercase letters or underscores!"
+  },
+  "dGBGbt": {
+    "defaultMessage": "All"
   },
   "dKVEuY": {
-    "defaultMessage": "the parameter of field {name} is not given"
-  },
-  "dNYak1": {
-    "defaultMessage": "JWT acquisition"
+    "defaultMessage": "No parameter provided for field {name}"
   },
   "dRWums": {
-    "defaultMessage": "private"
-  },
-  "dUiZuI": {
-    "defaultMessage": "custom Float scalar"
+    "defaultMessage": "Private"
   },
   "dvkDbC": {
-    "defaultMessage": "request result"
+    "defaultMessage": "Request result"
   },
   "dx8TAj": {
-    "defaultMessage": "Jump is not supported here！"
+    "defaultMessage": "Cannot jump here!"
   },
   "e42x18": {
-    "defaultMessage": "client",
-    "description": "流程图"
+    "defaultMessage": "Client",
+    "description": "In flowchart"
   },
   "e8TcE7": {
-    "defaultMessage": "The reference usage is as follows"
+    "defaultMessage": "Reference usage:"
+  },
+  "eJ2viL": {
+    "defaultMessage": "Download failed"
   },
   "eL3Qi6": {
-    "defaultMessage": "user"
-  },
-  "eUa9sz": {
-    "defaultMessage": "Token endpoint"
+    "defaultMessage": "User"
   },
   "eaCopF": {
-    "defaultMessage": "search for and associate records"
-  },
-  "eiRag+": {
-    "defaultMessage": "begin with mysql:// 开头，limit the length to 128 characters"
+    "defaultMessage": "Search and associate records"
   },
   "ekxzlF": {
-    "defaultMessage": "name"
+    "defaultMessage": "Name"
+  },
+  "eqz7K0": {
+    "defaultMessage": "Internal API address"
   },
   "esvors": {
-    "defaultMessage": "design"
+    "defaultMessage": "Design"
   },
   "etnuPx": {
     "defaultMessage": "Security"
   },
-  "ezUs/G": {
-    "defaultMessage": "Please enter the domain name"
-  },
   "f0XHRN": {
-    "defaultMessage": "modify the environment variable"
+    "defaultMessage": "Edit env variable"
   },
   "f5XT1C": {
-    "defaultMessage": "this API"
+    "defaultMessage": "This API"
   },
   "f7n43q": {
-    "defaultMessage": "Reset successfully！"
+    "defaultMessage": "Reset succeeded!"
   },
-  "fJh8DQ": {
-    "defaultMessage": "Please enter bucketName"
+  "fFqCvL": {
+    "defaultMessage": "No hook language selected, go create?"
   },
   "fRk+GN": {
-    "defaultMessage": "Please enter file name"
+    "defaultMessage": "Please input folder name"
   },
   "fblGdv": {
-    "defaultMessage": "deleting"
+    "defaultMessage": "Deleting"
   },
   "fh2gOX": {
-    "defaultMessage": "parameter injection",
-    "description": "流程图"
+    "defaultMessage": "Parameter injection",
+    "description": "In flowchart"
   },
   "fv+irj": {
-    "defaultMessage": "or"
+    "defaultMessage": "Or"
   },
   "g1YGD6": {
-    "defaultMessage": "view"
-  },
-  "gHmYLs": {
-    "defaultMessage": "API port"
+    "defaultMessage": "View"
   },
   "gRnd+f": {
-    "defaultMessage": "new enumeration type"
+    "defaultMessage": "New enum type"
+  },
+  "gRp6eK": {
+    "defaultMessage": "Client template"
+  },
+  "gZoAue": {
+    "defaultMessage": "Name cannot be duplicated"
   },
   "gb9fzG": {
-    "defaultMessage": "subscription authority"
+    "defaultMessage": "Subscribe auth"
   },
   "ghoLaJ": {
-    "defaultMessage": "Directive",
-    "description": "插入指令处"
+    "defaultMessage": "Request param",
+    "description": "In instruction insertion"
   },
   "glR5T7": {
-    "defaultMessage": "Multiple query statements are not supported"
+    "defaultMessage": "Multiple query statements not supported"
   },
   "gohOE0": {
-    "defaultMessage": "Invalid enumeration name，pattern: [A-Za-z][A-Za-z0-9_]*"
+    "defaultMessage": "Invalid enum name, pattern: [A-Za-z][A-Za-z0-9_]*"
   },
   "gpEzjP": {
-    "defaultMessage": "issue"
-  },
-  "gxjC5l": {
-    "defaultMessage": "Please enter letters or numbers"
+    "defaultMessage": "Problem"
   },
   "h+6xKv": {
-    "defaultMessage": "manually saving"
+    "defaultMessage": "Manual saving..."
   },
   "h/5qLW": {
     "defaultMessage": "{days} days ago"
   },
   "h3R9PB": {
-    "defaultMessage": "enabling"
+    "defaultMessage": "Starting up"
   },
   "h7JHIR": {
-    "defaultMessage": "host"
+    "defaultMessage": "Host"
   },
   "hF6ZoL": {
-    "defaultMessage": "the endpoint can not be empty"
+    "defaultMessage": "Endpoint cannot be empty"
+  },
+  "hciqXL": {
+    "defaultMessage": "Unsupported type"
   },
   "hdiR0N": {
-    "defaultMessage": "Subscription"
+    "defaultMessage": "Subscribe"
   },
   "ho6kY0": {
-    "defaultMessage": "identity authentication"
+    "defaultMessage": "Identity authentication"
   },
   "hovbOX": {
-    "defaultMessage": "The associative table entity type can not be found！"
+    "defaultMessage": "Cannot find associated table entity type!"
   },
   "hv0Nju": {
-    "defaultMessage": "Input parameter check?",
-    "description": "流程图"
+    "defaultMessage": "Parameter validation?",
+    "description": "In flowchart"
+  },
+  "hw2IgW": {
+    "defaultMessage": "Template repo"
+  },
+  "i4jvwu": {
+    "defaultMessage": "Chinese"
   },
   "iChtCh": {
-    "defaultMessage": "The field name is exist"
+    "defaultMessage": "Field name already exists"
+  },
+  "iCvPMa": {
+    "defaultMessage": "Upgrade"
   },
   "iW9zfZ": {
-    "defaultMessage": "Address exception，please check the API domain name in system settings"
+    "defaultMessage": "Abnormal address, please check API domain in system config"
   },
-  "ig9iLd": {
-    "defaultMessage": "Please enter the service address"
-  },
-  "in3Y3D": {
-    "defaultMessage": "base on Cookie"
+  "in3eah": {
+    "defaultMessage": "Please input key"
   },
   "io7fqu": {
-    "defaultMessage": "Please enter standard  domain name"
+    "defaultMessage": "Please input valid domain"
+  },
+  "iveGBB": {
+    "defaultMessage": "New folder"
+  },
+  "j/CAT8": {
+    "defaultMessage": "File download failed"
+  },
+  "jD5jDy": {
+    "defaultMessage": "API service listen host"
   },
   "jD7VUp": {
-    "defaultMessage": "@role",
-    "description": "插入指令处"
+    "defaultMessage": "@Role",
+    "description": "In instruction insertion"
   },
-  "jGexDU": {
-    "defaultMessage": "The interface name must begin with uppercase letters"
+  "jNGXCJ": {
+    "defaultMessage": "Downloading file {filename}"
   },
   "jPMqvu": {
-    "defaultMessage": "designated OAS"
+    "defaultMessage": "Specify OAS"
   },
   "jUwANU": {
-    "defaultMessage": "automatically introspect Schema by sending instruction"
+    "defaultMessage": "Auto inspect Schema by sending instruction"
+  },
+  "jbDTHt": {
+    "defaultMessage": "Fireboom console version"
   },
   "jhfb/7": {
-    "defaultMessage": "The save is successful"
+    "defaultMessage": "Saved successfully"
+  },
+  "jiM9+b": {
+    "defaultMessage": "Template ID"
+  },
+  "jryv+i": {
+    "defaultMessage": "Disable"
   },
   "jxZEU/": {
-    "defaultMessage": "Failed to load file list"
+    "defaultMessage": "Failed loading file list"
   },
   "jxcl66": {
     "defaultMessage": "CRUD generator"
   },
   "k+zCG7": {
-    "defaultMessage": "role description"
+    "defaultMessage": "Role description"
+  },
+  "k7lSDV": {
+    "defaultMessage": "Start with {dbProtocol}://, no longer than 128 chars"
   },
   "kXy8jI": {
     "defaultMessage": "jwksURL"
   },
   "kc0dbR": {
-    "defaultMessage": "Mutation"
+    "defaultMessage": "Change"
   },
   "kjpwk7": {
-    "defaultMessage": "Failed to load data！"
-  },
-  "kr+X28": {
-    "defaultMessage": "Confirm the deletion of this entity？"
+    "defaultMessage": "Data load failed!"
   },
   "l/FgDC": {
-    "defaultMessage": "new entity"
+    "defaultMessage": "New entity"
   },
   "l3H/GZ": {
-    "defaultMessage": "deletion confirmation"
+    "defaultMessage": "Delete confirm"
+  },
+  "lEfA98": {
+    "defaultMessage": "API directory"
+  },
+  "lMyO3E": {
+    "defaultMessage": "Add redirect URL"
   },
   "lPNqbT": {
-    "defaultMessage": "Authorization check?",
-    "description": "流程图"
+    "defaultMessage": "Auth check?",
+    "description": "In flowchart"
   },
   "lUmMMK": {
-    "defaultMessage": "autosaving"
-  },
-  "lYtwbc": {
-    "defaultMessage": "authoriaztion"
+    "defaultMessage": "Auto saving"
   },
   "lcCuRt": {
-    "defaultMessage": "user endpoint"
+    "defaultMessage": "User endpoint"
   },
   "ldUt6r": {
-    "defaultMessage": "Please enter entity name"
+    "defaultMessage": "Please input entity name"
   },
   "lliahm": {
-    "defaultMessage": "more settings"
+    "defaultMessage": "More settings"
+  },
+  "lmgLyJ": {
+    "defaultMessage": "Please select date time"
   },
   "lroVvd": {
-    "defaultMessage": "A network problem occurred～",
-    "description": "状态码50x"
+    "defaultMessage": "Network issue~",
+    "description": "Status code 50x"
   },
   "m6bUGD": {
-    "defaultMessage": "subscription",
-    "description": "流程图"
+    "defaultMessage": "Subscribe",
+    "description": "In flowchart"
+  },
+  "m7E2Te": {
+    "defaultMessage": "Access"
   },
   "m9wKUI": {
-    "defaultMessage": "can"
+    "defaultMessage": "Available"
   },
   "mA7n5i": {
-    "defaultMessage": "allow head"
+    "defaultMessage": "Allowed headers"
   },
   "mOO4wE": {
-    "defaultMessage": "login authenticaton"
+    "defaultMessage": "Login auth"
   },
   "mPmxv/": {
-    "defaultMessage": "Please enter a non-null value, limit the length to 2000"
+    "defaultMessage": "Please input non-empty value no longer than 2000 chars"
   },
   "mPsm6o": {
-    "defaultMessage": "test"
+    "defaultMessage": "Test"
   },
   "mVdcTE": {
-    "defaultMessage": "Please select an appropriate insert node",
-    "description": "插入指令时"
+    "defaultMessage": "Please select valid insertion node",
+    "description": "When inserting instruction"
   },
   "mfZMW6": {
-    "defaultMessage": "Name can not be empty"
+    "defaultMessage": "Name cannot be empty"
+  },
+  "mnyTZ7": {
+    "defaultMessage": "CSRF protection"
   },
   "mzPDCn": {
-    "defaultMessage": "new enumeration"
+    "defaultMessage": "New enum"
   },
   "n+d99f": {
-    "defaultMessage": "Please fill in enumeration name"
+    "defaultMessage": "Please input enum name"
   },
   "n1GZIK": {
-    "defaultMessage": "creating"
+    "defaultMessage": "Creating"
   },
   "n4sB7F": {
-    "defaultMessage": "query cache"
+    "defaultMessage": "Query cache"
   },
   "n6o1H/": {
-    "defaultMessage": "invalidation"
+    "defaultMessage": "Invalid"
   },
   "n8v1qP": {
-    "defaultMessage": "this object storage"
+    "defaultMessage": "This object storage"
   },
   "nS8PfW": {
-    "defaultMessage": "Confirm the deletion?"
+    "defaultMessage": "Confirm delete?"
+  },
+  "nTlFd6": {
+    "defaultMessage": "Create empty database"
   },
   "nc6GYZ": {
-    "defaultMessage": "annotation description"
+    "defaultMessage": "Comment"
   },
   "ndOQA+": {
-    "defaultMessage": "The enumeration can not be empty！"
+    "defaultMessage": "Enum name cannot be empty!"
   },
   "niiUfh": {
-    "defaultMessage": "database type"
+    "defaultMessage": "Database type"
   },
   "nooQRz": {
-    "defaultMessage": "Please enter external data source name"
+    "defaultMessage": "Please input external data source name"
+  },
+  "nv3mLY": {
+    "defaultMessage": "Invalid?"
   },
   "nwr0JF": {
-    "defaultMessage": "create copy of the current API"
+    "defaultMessage": "Duplicate this API"
+  },
+  "nzrX2V": {
+    "defaultMessage": "Post hook"
   },
   "o8HwKf": {
-    "defaultMessage": "file name"
+    "defaultMessage": "Filename"
   },
   "o9bMHL": {
-    "defaultMessage": "size"
+    "defaultMessage": "Size"
   },
   "oDLN4x": {
-    "defaultMessage": "cache the query"
+    "defaultMessage": "Cache this query"
+  },
+  "oGXYof": {
+    "defaultMessage": "@Private",
+    "description": "In instruction insertion"
   },
   "oHQdew": {
-    "defaultMessage": "view the update log"
+    "defaultMessage": "View changelog"
   },
   "oOGLP0": {
-    "defaultMessage": "joint unique index"
+    "defaultMessage": "Composite unique index"
+  },
+  "oOThrp": {
+    "defaultMessage": "External API address"
+  },
+  "oaXH28": {
+    "defaultMessage": "Please input Issuer address first"
   },
   "oyIdrj": {
-    "defaultMessage": "Graphql endpoint"
-  },
-  "oyyjIg": {
-    "defaultMessage": "folder"
+    "defaultMessage": "GraphQL endpoint"
   },
   "p/HR+X": {
-    "defaultMessage": "interface exception"
+    "defaultMessage": "API exception"
   },
   "p/NHCA": {
-    "defaultMessage": "checking"
+    "defaultMessage": "Validating"
+  },
+  "p5GCek": {
+    "defaultMessage": "Hook template"
   },
   "p6z/hH": {
-    "defaultMessage": "database"
+    "defaultMessage": "Database"
   },
   "p7ywbO": {
-    "defaultMessage": "The configuration information is incorrect and can not be connected, please modify it and try again"
+    "defaultMessage": "Config error, cannot connect, please modify and try again"
+  },
+  "pR5Kts": {
+    "defaultMessage": "Retry"
   },
   "pV2t/S": {
-    "defaultMessage": "basic information"
+    "defaultMessage": "Basic info"
   },
   "pf77Ih": {
-    "defaultMessage": "optional"
+    "defaultMessage": "Optional"
   },
   "ptadMC": {
-    "defaultMessage": "inside"
+    "defaultMessage": "Internal"
+  },
+  "pywg9X": {
+    "defaultMessage": "Switch project"
   },
   "pzponE": {
-    "defaultMessage": "Issuer can not be empty"
+    "defaultMessage": "Issuer cannot be empty"
   },
-  "qJFIkj": {
-    "defaultMessage": "custom INT scalar"
+  "qGbL3R": {
+    "defaultMessage": "Login callback URL"
   },
   "qMKYtF": {
-    "defaultMessage": "new APi/ new model"
+    "defaultMessage": "New API/New Model"
   },
   "qNBYXi": {
-    "defaultMessage": "Entity name can not be empty！"
+    "defaultMessage": "Entity name cannot be empty!"
   },
   "qNTQ6L": {
-    "defaultMessage": "database name"
+    "defaultMessage": "Database name"
   },
   "qRSHCi": {
-    "defaultMessage": "unknown",
-    "description": "未知的文件类型"
+    "defaultMessage": "Unknown",
+    "description": "Unknown file type"
   },
   "qUKj7E": {
-    "defaultMessage": "copy"
+    "defaultMessage": "Copy"
   },
   "qVDSm2": {
-    "defaultMessage": "browse"
+    "defaultMessage": "Browse"
   },
   "qVqrPb": {
-    "defaultMessage": "Only links are allowed"
+    "defaultMessage": "Only links allowed"
   },
   "qZjJ7M": {
-    "defaultMessage": "redirect URL"
+    "defaultMessage": "Redirect URL"
   },
-  "qb9HEL": {
-    "defaultMessage": "back to the upper level"
+  "qd0uEq": {
+    "defaultMessage": "Select"
+  },
+  "qiov2+": {
+    "defaultMessage": "SDK limit only, input -1 to disable"
+  },
+  "qr+6Ba": {
+    "defaultMessage": "Token based"
+  },
+  "qutiEk": {
+    "defaultMessage": "Internal API cannot be accessed via link"
   },
   "qx0Xj9": {
-    "defaultMessage": "new environment variable"
+    "defaultMessage": "New env variable"
   },
   "r0/TUu": {
-    "defaultMessage": "confirm"
+    "defaultMessage": "Confirm"
   },
   "r1IImU": {
-    "defaultMessage": "Ok"
+    "defaultMessage": "Got it"
   },
   "r2dEd/": {
-    "defaultMessage": "reset"
+    "defaultMessage": "Reset"
   },
   "r8T2Gj": {
-    "defaultMessage": "The corresponding entity primary key can not be found"
+    "defaultMessage": "Cannot find corresponding entity primary key"
   },
   "r9JD8F": {
-    "defaultMessage": "return file"
+    "defaultMessage": "Return file"
   },
-  "rNWfUf": {
-    "defaultMessage": "download OpenAPI"
+  "rCo8W8": {
+    "defaultMessage": "item(s)"
+  },
+  "rOTKi+": {
+    "defaultMessage": "GraphQL endpoint"
   },
   "rbmyiL": {
-    "defaultMessage": "Failed to compile"
+    "defaultMessage": "Compile failed"
   },
   "rhH6N4": {
-    "defaultMessage": "refreshing"
+    "defaultMessage": "Refreshing"
   },
   "rnpMD3": {
-    "defaultMessage": "off"
+    "defaultMessage": "Off"
   },
   "s4hJju": {
-    "defaultMessage": "details"
+    "defaultMessage": "Details"
   },
   "s9VtMY": {
-    "defaultMessage": "authorization settings",
-    "description": "API授权配置"
+    "defaultMessage": "Auth config",
+    "description": "API auth config"
+  },
+  "sD2fit": {
+    "defaultMessage": "Blob type cannot be directly modified for now"
   },
   "sLFK3g": {
-    "defaultMessage": "go"
+    "defaultMessage": "Go to"
   },
-  "sRc1VN": {
-    "defaultMessage": "SDK template"
+  "sP8PlF": {
+    "defaultMessage": "No related file found, please search again"
   },
   "sRgn0V": {
-    "defaultMessage": "Start",
-    "description": "流程图"
+    "defaultMessage": "Start request",
+    "description": "In flowchart"
   },
   "sRkj0b": {
-    "defaultMessage": "shortcut key"
+    "defaultMessage": "Shortcuts"
+  },
+  "sZSyGZ": {
+    "defaultMessage": "Enable"
   },
   "saR+wi": {
-    "defaultMessage": "server"
+    "defaultMessage": "Server side"
   },
   "saeFbf": {
-    "defaultMessage": "file"
+    "defaultMessage": "File"
+  },
+  "sc19NF": {
+    "defaultMessage": "Cannot contain consecutive underscores"
   },
   "slR1VF": {
-    "defaultMessage": "+ new filter condition"
+    "defaultMessage": "+ Add filter condition"
   },
   "szOpH5": {
-    "defaultMessage": "real-time setting"
+    "defaultMessage": "Realtime config"
   },
   "t2iHNJ": {
-    "defaultMessage": "update"
+    "defaultMessage": "Update"
+  },
+  "t9OiGA": {
+    "defaultMessage": "Browse template market"
   },
   "tFmMiG": {
-    "defaultMessage": "message queue"
+    "defaultMessage": "Message queue"
   },
-  "tRrAhi": {
-    "defaultMessage": "The system will overwrite enabled SDK in real time"
+  "tVLauf": {
+    "defaultMessage": "Internal API"
   },
   "tVV3cU": {
-    "defaultMessage": "input variable"
+    "defaultMessage": "Input variable"
   },
   "tVoPUq": {
-    "defaultMessage": "create"
+    "defaultMessage": "New"
   },
   "tXvcEA": {
-    "defaultMessage": "Aliyun IoT Platform"
+    "defaultMessage": "Alibaba IoT Platform"
   },
-  "tdD1O3": {
-    "defaultMessage": "domain name"
+  "tjlVGr": {
+    "defaultMessage": "API service listen port"
   },
   "tmMwuy": {
-    "defaultMessage": "response type"
+    "defaultMessage": "Response type"
   },
   "txDRJz": {
-    "defaultMessage": "Environment Variables"
+    "defaultMessage": "Environment variables"
   },
   "uDcCXN": {
     "defaultMessage": "Issuer"
   },
-  "uOSn0p": {
-    "defaultMessage": "Please input domain"
+  "uG+OVa": {
+    "defaultMessage": "Upgrade succeeded"
+  },
+  "uWEv0M": {
+    "defaultMessage": "Please select env variable or input manually"
+  },
+  "uY5Slp": {
+    "defaultMessage": "Dev mode"
   },
   "ueuJlz": {
-    "defaultMessage": "Modeling"
+    "defaultMessage": "DB Model"
   },
   "uhTa0i": {
-    "defaultMessage": "preview"
+    "defaultMessage": "Preview"
   },
-  "uhcx5v": {
-    "defaultMessage": "new URL"
-  },
-  "unbHGZ": {
-    "defaultMessage": "inside or not"
-  },
-  "us77n8": {
-    "defaultMessage": "static state"
-  },
-  "v9Miyz": {
-    "defaultMessage": "Whether the query needs login"
+  "v+Sakv": {
+    "defaultMessage": "Ascending"
   },
   "vA8Nfy": {
-    "defaultMessage": "paging query"
+    "defaultMessage": "Pagination"
   },
   "vAJa48": {
-    "defaultMessage": "end",
-    "description": "流程图"
+    "defaultMessage": "End",
+    "description": "In flowchart"
   },
   "vChpIH": {
-    "defaultMessage": "ER diagram"
+    "defaultMessage": "ER Diagram"
+  },
+  "vHJsEy": {
+    "defaultMessage": "API has no content"
   },
   "vHOsVf": {
-    "defaultMessage": "input"
+    "defaultMessage": "Input"
+  },
+  "vY7XCa": {
+    "defaultMessage": "Authenticator"
   },
   "vY8yBU": {
-    "defaultMessage": "No contents at present～",
-    "description": "状态码404"
+    "defaultMessage": "No content yet~",
+    "description": "Status code 404"
   },
   "vYadwC": {
-    "defaultMessage": "The current entity is not exist"
+    "defaultMessage": "Current entity does not exist"
   },
   "vcG1mv": {
-    "defaultMessage": "not exist"
+    "defaultMessage": "Does not exist"
   },
   "vr5TVT": {
     "defaultMessage": "Please input"
   },
   "w1CbbR": {
-    "defaultMessage": "database name:"
+    "defaultMessage": "Database name:"
   },
   "wCsUWB": {
-    "defaultMessage": "App Secret can not be empty"
+    "defaultMessage": "App Secret cannot be empty"
   },
   "wLS1Dj": {
-    "defaultMessage": "cover all"
+    "defaultMessage": "Overwrite all"
+  },
+  "wYtVcK": {
+    "defaultMessage": "Must start with letter"
   },
   "wZkLCJ": {
-    "defaultMessage": "Compilation time"
-  },
-  "waEJRs": {
-    "defaultMessage": "secret key"
+    "defaultMessage": "Compile time"
   },
   "waeVf8": {
-    "defaultMessage": "Data migration failed！error: {error}"
+    "defaultMessage": "Data migrate failed! Error: {error}"
   },
-  "x0YFe8": {
-    "defaultMessage": "Begin with mongodb://，no longer than 128 characters"
+  "wyRshi": {
+    "defaultMessage": "Filter options"
+  },
+  "x/f0gm": {
+    "defaultMessage": "Anonymous change"
   },
   "x4mNBF": {
-    "defaultMessage": "{seconds} seconds ago"
+    "defaultMessage": "{seconds} secs ago"
   },
   "xE1H+X": {
     "defaultMessage": "Settings"
   },
   "xI0mPJ": {
-    "defaultMessage": "enabled"
+    "defaultMessage": "Enabled"
   },
   "xKCJNb": {
-    "defaultMessage": "Fireboom console",
-    "description": "标题"
+    "defaultMessage": "Fireboom Console",
+    "description": "Title"
   },
   "xVTk70": {
-    "defaultMessage": "loading"
+    "defaultMessage": "Loading"
   },
   "xaG7IX": {
-    "defaultMessage": "by file size"
+    "defaultMessage": "By file size"
   },
   "xaND3c": {
-    "defaultMessage": "generating"
+    "defaultMessage": "Generating"
   },
   "xc9ERZ": {
-    "defaultMessage": "input type"
+    "defaultMessage": "Input type"
+  },
+  "xg+tVB": {
+    "defaultMessage": "Fireboom version"
+  },
+  "xzl0Bm": {
+    "defaultMessage": "Config login callback"
+  },
+  "y5nbOM": {
+    "defaultMessage": "Filename already exists"
   },
   "yEDkg1": {
-    "defaultMessage": "invalid enumeration name"
+    "defaultMessage": "Invalid enum name"
   },
   "yOMNOj": {
     "defaultMessage": "Yes"
   },
   "yy7EDI": {
-    "defaultMessage": "upload"
+    "defaultMessage": "Upload"
   },
   "z/Ra4N": {
-    "defaultMessage": "Directive"
+    "defaultMessage": "Instruction"
   },
   "z0QaYJ": {
-    "defaultMessage": "field"
+    "defaultMessage": "Field"
   },
   "z1UqSC": {
-    "defaultMessage": "role code"
+    "defaultMessage": "Role code"
   },
   "z487Zy": {
-    "defaultMessage": "this data source"
+    "defaultMessage": "This data source"
   },
   "zM/rdn": {
-    "defaultMessage": "primary key selection"
+    "defaultMessage": "Primary key selection"
   },
   "zQEdCX": {
-    "defaultMessage": "API management"
-  },
-  "zZ6RPo": {
-    "defaultMessage": "forced jump"
+    "defaultMessage": "API Management"
   },
   "zbqD5q": {
-    "defaultMessage": "value"
-  },
-  "zpbmDc": {
-    "defaultMessage": "production enviroment"
+    "defaultMessage": "Value"
   },
   "zq/lNp": {
-    "defaultMessage": "password:"
+    "defaultMessage": "Password:"
   },
   "zvywI9": {
-    "defaultMessage": "edit the script"
+    "defaultMessage": "Edit script"
   }
 }
