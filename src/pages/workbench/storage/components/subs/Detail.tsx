@@ -1,6 +1,4 @@
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Button, Descriptions } from 'antd'
-import { useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 

@@ -3,7 +3,6 @@ import type React from 'react'
 import { useContext, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
@@ -11,11 +10,14 @@ import { mutateHookModel } from '@/hooks/store/hook/model'
 import { useStorageList } from '@/hooks/store/storage'
 import { useValidate } from '@/hooks/validate'
 import type { CommonPanelResp } from '@/interfaces/commonPanel'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { GlobalContext } from '@/lib/context/globalContext'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
@@ -42,11 +44,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const intl = useIntl()
   const { validateName } = useValidate()
   const { vscode } = useContext(GlobalContext)
-  const { mutate } = useSWRConfig()
   const navigate = useNavigate()
   const storageList = useStorageList()
   const dataSourceList = useDataSourceList()
   const authList = useAuthList()
+  const { getConfigurationValue } = useConfigurationVariable()
   const datasource = useMemo(() => {
     if (props.type === 'dataSource') {
       if (!dataSourceList) return []
@@ -54,31 +56,37 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         let icon = 'other'
         let svg = '/assets/icon/db-other.svg'
         let tip = ''
-        switch (row.sourceType) {
-          case 1:
-            tip = String(row.config.dbName || '')
-            if (typeof row.config.databaseUrl === 'object' && row.config.databaseUrl?.val) {
-              const dbName = parseDBUrl(row.config.databaseUrl.val)?.dbName
-              if (dbName) {
-                tip = dbName
-              }
-            }
-            svg =
-              {
-                mysql: '/assets/icon/mysql.svg',
-                postgresql: '/assets/icon/pgsql.svg',
-                graphql: '/assets/icon/graphql.svg',
-                mongodb: '/assets/icon/mongodb.svg',
-                rest: '/assets/icon/rest.svg',
-                sqlite: '/assets/icon/sqlite.svg'
-              }[String(row.config.dbType).toLowerCase()] || svg
+        switch (row.kind) {
+          case DataSourceKind.MongoDB:
+            svg = '/assets/icon/mongodb.svg'
             break
-          case 2:
-            svg = '/assets/icon/rest.svg'
+          case DataSourceKind.MySQL:
+            svg = '/assets/icon/mysql.svg'
             break
-          case 3:
+          case DataSourceKind.PostgreSQL:
+            svg = '/assets/icon/pgsql.svg'
+            break
+          case DataSourceKind.SQLite:
+            svg = '/assets/icon/sqlite.svg'
+            break
+          case DataSourceKind.Graphql:
             svg = '/assets/icon/graphql.svg'
             break
+          case DataSourceKind.Restful:
+            svg = '/assets/icon/rest.svg'
+            break
+          default:
+            break
+        }
+        if (isDatabaseKind(row)) {
+          if (row.customDatabase.kind === 0) {
+            const url = getConfigurationValue(row.customDatabase.databaseUrl)
+            if (url) {
+              tip = parseDBUrl(url)?.dbName ?? ''
+            }
+          } else {
+            tip = row.customDatabase.databaseAlone.database
+          }
         }
         return {
           readonly: row.readonly,

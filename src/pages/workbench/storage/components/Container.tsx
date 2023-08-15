@@ -32,7 +32,7 @@ export default function StorageContainer({ content, showType, showErr }: Props) 
           <>
             <Button
               className={'btn-save  ml-4 mr-11'}
-              onClick={() => handleSwitch('form', content?.id)}
+              onClick={() => handleSwitch('form', content?.name)}
             >
               <FormattedMessage defaultMessage="编辑" />
             </Button>

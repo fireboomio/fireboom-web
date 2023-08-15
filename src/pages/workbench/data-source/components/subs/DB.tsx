@@ -631,8 +631,8 @@ export default function DB({ content, type }: Props) {
                 <Button
                   className="btn-cancel"
                   onClick={() => {
-                    if (content.id) {
-                      handleToggleDesigner('detail', content.id, content.sourceType)
+                    if (content.name) {
+                      handleToggleDesigner('detail', content.name, content.sourceType)
                     } else {
                       navigate('/workbench/data-source/new')
                     }

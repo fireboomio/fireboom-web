@@ -913,8 +913,8 @@ export default function Rest({ content, type }: Props) {
                   <Button
                     className={'btn-cancel  ml-4'}
                     onClick={() => {
-                      if (content.id) {
-                        handleToggleDesigner('detail', content.id, content.sourceType)
+                      if (content.name) {
+                        handleToggleDesigner('detail', content.name, content.sourceType)
                       } else {
                         navigate('/workbench/data-source/new')
                       }

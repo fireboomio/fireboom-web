@@ -77,8 +77,8 @@ export default function StorageForm({ content, showErr }: Props) {
       } else {
         await requests.post<unknown, ApiDocuments.Storage>('/storage', values)
       }
+      await mutateStorage()
       navigate(`/workbench/storage/${values.name}`, { replace: true })
-      void mutateStorage()
       handleSwitch('detail', values.name)
     },
     [content, handleSwitch, intl, navigate, storageList]
@@ -295,11 +295,11 @@ export default function StorageForm({ content, showErr }: Props) {
               className="btn-cancel"
               onClick={() => {
                 // 无id的情况下取消，后退到前一个页面
-                if (!content?.id) {
+                if (!content?.name) {
                   navigate(-1)
                   return
                 }
-                handleSwitch('detail', content?.id)
+                handleSwitch('detail', content?.name)
               }}
             >
               <span>{intl.formatMessage({ defaultMessage: '取消' })}</span>

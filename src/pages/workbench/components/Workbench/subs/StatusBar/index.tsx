@@ -103,22 +103,22 @@ const StatusBar: React.FC<Props> = ({
     globalSetting.serverOptions.serverUrl,
     getConfigurationValue
   ])
-  useEffect(() => {
-    if (showHookSetting) {
-      fetchHookOptionStatus(hooksServerURL ?? '')
-    }
-  }, [hooksServerURL, showHookSetting])
-  const fetchHookOptionStatus = useCallback(
-    throttle(async (url: string) => {
-      try {
-        const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
-        setHookOptionStatus(data)
-      } catch (error) {
-        console.error(error)
-      }
-    }, 2000),
-    []
-  )
+  // useEffect(() => {
+  //   if (showHookSetting) {
+  //     fetchHookOptionStatus(hooksServerURL ?? '')
+  //   }
+  // }, [hooksServerURL, showHookSetting])
+  // const fetchHookOptionStatus = useCallback(
+  //   throttle(async (url: string) => {
+  //     try {
+  //       const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
+  //       setHookOptionStatus(data)
+  //     } catch (error) {
+  //       console.error(error)
+  //     }
+  //   }, 2000),
+  //   []
+  // )
   useEffect(() => {
     if (!startTime) {
       return

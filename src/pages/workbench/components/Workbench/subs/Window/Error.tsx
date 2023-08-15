@@ -112,7 +112,7 @@ export default function Error() {
       {blocks.map((block, index) => (
         <div className={styles.block} key={index}>
           {block.list.map(item => (
-            <div className={styles.line} key={item.id}>
+            <div className={styles.line} key={item.name}>
               <img src={item.icon} className={styles.icon} alt="" />
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
@@ -164,7 +164,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/auth/${item.id}`)}
+                        onClick={() => navigate(`/workbench/auth/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>

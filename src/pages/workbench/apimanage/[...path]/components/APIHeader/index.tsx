@@ -53,7 +53,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
       const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
         try {
-          if (apiDesc?.id) {
+          if (apiDesc?.path) {
             await updateAPIName(targetPath)
           }
           setIsEditingName(false)

@@ -494,7 +494,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 className="btn-cancel"
                 onClick={() => {
                   // 无id的情况下取消，后退到前一个页面
-                  if (!content?.id) {
+                  if (!content?.name) {
                     navigate(-1)
                     return
                   }

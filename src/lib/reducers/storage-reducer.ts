@@ -1,6 +1,7 @@
-import type { StorageAction, StorageResp } from '@/interfaces/storage'
+import type { StorageAction } from '@/interfaces/storage'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
-export default function storageReducer(bucketList: StorageResp[], action: StorageAction) {
+export default function storageReducer(bucketList: ApiDocuments.Storage[], action: StorageAction) {
   switch (action.type) {
     case 'fetched': {
       return action.data ?? []
@@ -13,14 +14,14 @@ export default function storageReducer(bucketList: StorageResp[], action: Storag
     }
     case 'changed':
       return bucketList.map(b => {
-        if (b.id === action.data.id) {
+        if (b.name === action.data.name) {
           return action.data
         } else {
           return b
         }
       })
     case 'deleted': {
-      return bucketList.filter(b => b.id !== action.data.id)
+      return bucketList.filter(b => b.name !== action.data.name)
     }
     default:
       return bucketList
