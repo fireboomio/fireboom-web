@@ -1,6 +1,5 @@
 import { message } from 'antd'
 
-import { proxy } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 
 export async function downloadOSSFile(url: string, filename?: string) {

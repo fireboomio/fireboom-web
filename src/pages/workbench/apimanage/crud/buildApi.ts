@@ -8,13 +8,16 @@ import { API, AuthOptions, KeyType } from './interface'
 export default function buildApi(options: ApiOptions): Partial<ApiDocuments.Operation>[] {
   let setting: Partial<ApiDocuments.Operation> | undefined = undefined
   if (options.auth === AuthOptions.enabled) {
-    setting = { enabled: true, authenticationConfig: { authRequired: true } }
+    setting = { authenticationConfig: { authRequired: true } }
   } else if (options.auth === AuthOptions.disabled) {
-    setting = { enabled: true, authenticationConfig: { authRequired: false } }
+    setting = { authenticationConfig: { authRequired: false } }
   }
   return options.apiList.map(api => {
+    const _api = apiBuilder[api](options)
+    _api.path = _api.path.replace(/^\//, '')
     return {
-      ...apiBuilder[api](options),
+      enabled: true,
+      ..._api,
       ...(options.authApiList.includes(api) ? setting : undefined)
     }
   })

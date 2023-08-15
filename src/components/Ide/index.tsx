@@ -191,7 +191,7 @@ const IdeContainer: FC<Props> = props => {
         { variableName: 'PROFILE_NAME', value: profileName }
       ])
     } else {
-      const pathList = list.slice(1)
+      const pathList = list.slice(2)
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return replaceFileTemplate(await getDefaultCode(tmplPath), [
         {

@@ -345,7 +345,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
 
     const hideCheck = message.loading(intl.formatMessage({ defaultMessage: '校验中' }))
     const existPathList = await requests.get<unknown, ApiDocuments.Operation[]>('/operation', {
-      params: { dataNames: JSON.stringify(pathList) }
+      params: { dataNames: pathList.join(',') }
     })
     const pathMap = keyBy(existPathList, 'path')
     hideCheck()
@@ -385,7 +385,10 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     let result
     console.log(apiList)
     try {
-      result = await requests.post<unknown, void>(`/operation/batch`, apiList)
+      result = await requests.post<unknown, { succeed: boolean; dataName: string }[]>(
+        `/operation/batch`,
+        apiList
+      )
     } catch (e) {
       console.error(e)
     }
@@ -404,7 +407,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             <FormattedMessage
               defaultMessage="本次成功生成{count}条API"
               values={{
-                count: result.filter(x => x.success).length
+                count: result.filter(x => x.succeed).length
               }}
             />
           ) : (
@@ -414,12 +417,12 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
         {result && (
           <div className="bg-[#FAFAFC] mx-auto rounded-2 mt-6 py-4 w-140">
             {result.map(row => (
-              <div key={row.Path} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
-                <img src={row.Code === 0 ? successIcon : failIcon} alt="" className="flex-0" />
-                <span className="flex-1 text-default ml-1.5">{row.Path}</span>
+              <div key={row.dataName} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
+                <img src={row.succeed ? successIcon : failIcon} alt="" className="flex-0" />
+                <span className="flex-1 text-default ml-1.5">{row.dataName}</span>
                 <Link
                   className="text-default ml-1.5 text-[#649FFF]"
-                  to={`/workbench/apimanage/${row.Path}`}
+                  to={`/workbench/apimanage/${row.dataName}`}
                 >
                   <FormattedMessage defaultMessage="查看" />
                 </Link>

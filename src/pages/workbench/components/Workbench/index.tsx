@@ -469,7 +469,7 @@ async function resolveDefaultCode(
       { variableName: 'PROFILE_NAME', value: profileName }
     ])
   } else {
-    const pathList = list.slice(1)
+    const pathList = list.slice(2)
     const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
     code = replaceFileTemplate(await getDefaultCode(tmplPath), [
       {

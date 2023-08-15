@@ -313,7 +313,10 @@ const SDKTemplateItem = ({
         onClick: async () => {
           const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
           try {
-            await requests.post(`/sdk/update/${sdk.id}`)
+            await requests.put(`/sdk`, {
+              name: sdk.name,
+              gitpull: true
+            })
             message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
             mutate()
           } finally {
@@ -328,7 +331,9 @@ const SDKTemplateItem = ({
         label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
         onClick: async () => {
           const authKey = getAuthKey()
-          window.open(`/api/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`)
+          window.open(
+            `/api/sdk/export?dataNames=${sdk.name}${authKey ? `&auth-key=${authKey}` : ''}`
+          )
         }
       })
     }
