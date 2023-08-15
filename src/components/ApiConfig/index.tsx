@@ -4,14 +4,13 @@ import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
+import { OperationType } from '@/interfaces/operation'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
-import { ApiDocuments } from '@/services/a2s.namespace'
-import { operationName } from '@apollo/client'
-import { OperationType } from '@/interfaces/operation'
 
 interface Props {
   operationType?: OperationTypeNode
@@ -21,7 +20,7 @@ interface Props {
 }
 
 interface Setting {
-  enabled: boolean
+  configCustomized: boolean
   authenticationRequired: boolean
   authenticationQueriesRequired: boolean
   authenticationMutationsRequired: boolean
@@ -41,15 +40,17 @@ export default function Index(props: Props) {
   const { data: globalSetting, mutate: refreshGlobalSetting } = useApiGlobalSetting()
   useEffect(() => {
     if (props.operationName) {
-      void requests.get<unknown, ApiDocuments.Operation>(`/operation/${props.operationName}`).then(result => {
-        setApiSetting(result)
-        form.setFieldsValue(result)
-      })
+      void requests
+        .get<unknown, ApiDocuments.Operation>(`/operation/${props.operationName}`)
+        .then(result => {
+          setApiSetting(result)
+          form.setFieldsValue(result)
+        })
     }
   }, [props.operationName])
   useEffect(() => {
     let setting
-    if (apiSetting?.enabled) {
+    if (apiSetting?.configCustomized) {
       setting = apiSetting
     } else if (globalSetting) {
       setting = globalSetting
@@ -69,12 +70,12 @@ export default function Index(props: Props) {
       return
     }
     // 修改开关的情况下，只修改开关容纳后保存
-    if (changedValues.enabled !== undefined) {
+    if (changedValues.configCustomized !== undefined) {
       void requests.put<unknown, any>(`/operation`, {
-        enabled: changedValues.enabled,
-        path: props.operationName,
+        configCustomized: changedValues.configCustomized,
+        path: props.operationName
       })
-      setApiSetting({ ...apiSetting!, enabled: changedValues.enabled })
+      setApiSetting({ ...apiSetting!, configCustomized: changedValues.configCustomized })
 
       // 刷新API菜单
       void mutateApi()
@@ -85,7 +86,7 @@ export default function Index(props: Props) {
     void requests
       .put<unknown, any>(`/operation`, {
         ...changedValues,
-        path: props.operationName,
+        path: props.operationName
       })
       .then(() => {
         // 如果修改的是实时查询，则需要刷新api面板=
@@ -119,16 +120,14 @@ export default function Index(props: Props) {
   // }
 
   const onFinish = (values: ApiDocuments.Operation) => {
-    void requests
-      .put<unknown, any>('/globalOperation', values)
-      .then(() => {
-        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-        void refreshGlobalSetting()
-        props.onClose?.()
-      })
+    void requests.put<unknown, any>('/globalOperation', values).then(() => {
+      message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+      void refreshGlobalSetting()
+      props.onClose?.()
+    })
   }
 
-  const disabled = !apiSetting?.enabled && props.type !== 'global'
+  const disabled = !apiSetting?.configCustomized && props.type !== 'global'
 
   return (
     <div className={styles[props.type]}>
@@ -145,7 +144,7 @@ export default function Index(props: Props) {
           <>
             <Form.Item
               // noStyle
-              name="enabled"
+              name="configCustomized"
               valuePropName="checked"
             >
               <Checkbox>
@@ -168,7 +167,11 @@ export default function Index(props: Props) {
               })}
             >
               <>
-                <Form.Item noStyle name={['authenticationConfigs', OperationType.Query.toString(), 'authRequired']} valuePropName="checked">
+                <Form.Item
+                  noStyle
+                  name={['authenticationConfigs', OperationType.Query.toString(), 'authRequired']}
+                  valuePropName="checked"
+                >
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -181,7 +184,15 @@ export default function Index(props: Props) {
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '变更授权' })}>
               <>
-                <Form.Item noStyle name={['authenticationConfigs', OperationType.Mutation.toString(), 'authRequired']} valuePropName="checked">
+                <Form.Item
+                  noStyle
+                  name={[
+                    'authenticationConfigs',
+                    OperationType.Mutation.toString(),
+                    'authRequired'
+                  ]}
+                  valuePropName="checked"
+                >
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
@@ -196,7 +207,11 @@ export default function Index(props: Props) {
               <>
                 <Form.Item
                   noStyle
-                  name={['authenticationConfigs', OperationType.Subscription.toString(), 'authRequired']} 
+                  name={[
+                    'authenticationConfigs',
+                    OperationType.Subscription.toString(),
+                    'authRequired'
+                  ]}
                   valuePropName="checked"
                 >
                   <Switch
@@ -215,7 +230,11 @@ export default function Index(props: Props) {
         ) : (
           <Form.Item label={intl.formatMessage({ defaultMessage: '开启授权' })}>
             <>
-              <Form.Item noStyle name={['authenticationConfig', 'authRequired']}  valuePropName="checked">
+              <Form.Item
+                noStyle
+                name={['authenticationConfig', 'authRequired']}
+                valuePropName="checked"
+              >
                 <Switch
                   disabled={disabled}
                   checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}

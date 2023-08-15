@@ -142,7 +142,7 @@ const SDKTemplate = () => {
       </div>
       <Row className="" gutter={[32, 32]}>
         {server?.map((sdk, index) => (
-          <Col key={index} xl={8} xxl={6} md={12}>
+          <Col key={sdk.name} xl={8} xxl={6} md={12}>
             <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
           </Col>
         ))}
@@ -338,7 +338,7 @@ const SDKTemplateItem = ({
       })
     }
     return menus
-  }, [intl, mutate, sdk.enabled, sdk.id])
+  }, [intl, mutate, sdk])
 
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">

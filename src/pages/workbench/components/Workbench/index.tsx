@@ -112,7 +112,7 @@ export default function Index(props: PropsWithChildren) {
   })
   useWebSocket('engine', 'hookStatus', data => {
     // message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
-    setInfo({ ...info, hookStatus: data.hookStatus })
+    setInfo({ ...info, hookStatus: data })
   })
   // useWebSocket('engine', 'pushHookStatus', data => {
   //   setInfo({ ...info, hookStatus: data.hookStatus })
@@ -281,7 +281,8 @@ export default function Index(props: PropsWithChildren) {
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false
       }
-      const filePath = `${path}.${data?.extension.replace(/^\./, '')}`
+      // 去除开头 /
+      const filePath = `${path}.${data?.extension.replace(/^\./, '')}`.replace(/^\//, '')
       let hookExisted = false
       try {
         await requests.get(`/vscode/state?uri=${filePath}`, {

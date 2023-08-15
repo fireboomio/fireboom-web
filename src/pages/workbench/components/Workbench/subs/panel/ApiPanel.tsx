@@ -123,7 +123,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const handleBatchSwitch = executeWrapper(
     async (nodes: ApiDocuments.fileloader_DataTree[], flag: boolean) => {
       const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
-      await requests.post(
+      await requests.put(
         'operation/batch',
         pathList.map(item => ({
           path: item,
@@ -141,7 +141,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
         const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
-        await requests.delete('operation/batch', { data: pathList })
+        await requests.delete('operation/batch', {
+          params: {
+            dataNames: pathList.join(',')
+          }
+        })
         pathList.forEach(path => localStorage.removeItem(`_api_args_${path}`))
         message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         // 删除后处理

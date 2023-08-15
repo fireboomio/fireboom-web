@@ -113,14 +113,14 @@ export default function Designer() {
             kind: DataSourceKind.Unsupported
           }
         ]
-      },
-      {
-        name: intl.formatMessage({ defaultMessage: '自定义' }),
-        items: [
-          { name: '脚本', icon: iconNode, kind: DataSourceKind.Graphql, isCustom: true },
-          { name: 'Faas', icon: iconFaas, kind: DataSourceKind.Graphql, coming: true }
-        ]
       }
+      // {
+      //   name: intl.formatMessage({ defaultMessage: '自定义' }),
+      //   items: [
+      //     { name: '脚本', icon: iconNode, kind: DataSourceKind.Graphql, isCustom: true },
+      //     { name: 'Faas', icon: iconFaas, kind: DataSourceKind.Graphql, coming: true }
+      //   ]
+      // }
     ],
     [intl]
   )

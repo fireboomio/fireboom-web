@@ -383,10 +383,9 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
 
     // 处理登录鉴权
     let result
-    console.log(apiList)
     try {
       result = await requests.post<unknown, { succeed: boolean; dataName: string }[]>(
-        `/operation/batch`,
+        `/operation/batch?overwrite=true`,
         apiList
       )
     } catch (e) {
