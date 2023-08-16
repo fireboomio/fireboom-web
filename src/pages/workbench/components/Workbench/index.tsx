@@ -47,7 +47,7 @@ export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
-    engineStatus: ServiceStatus.Starting,
+    engineStatus: ServiceStatus.Started,
     hookStatus: false,
     globalStartTime: '',
     engineStartTime: '',
