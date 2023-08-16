@@ -133,8 +133,8 @@ export default function Index(props: Props) {
     <div className={styles[props.type]}>
       <Form
         form={form}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        labelCol={{ span: 9 }}
+        wrapperCol={{ span: 15 }}
         onFinish={onFinish}
         autoComplete="off"
         labelAlign="left"

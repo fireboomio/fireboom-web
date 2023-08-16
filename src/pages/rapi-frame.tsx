@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -20,7 +20,10 @@ export default function RapiFrame() {
   const { search } = useLocation()
 
   const { getConfigurationValue } = useConfigurationVariable()
-  const customServerUrl = getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)
+  const customServerUrl = useMemo(
+    () => getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl),
+    [getConfigurationValue, globalSetting.nodeOptions.publicNodeUrl]
+  )
   const csrfToken = useRef('')
 
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function RapiFrame() {
       allow-authentication="true"
       allow-server-selection="false"
       allow-api-list-style-selection="false"
-      render-style="read"
+      render-style="focused"
       fetch-credentials="include"
     />
   )

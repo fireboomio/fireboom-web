@@ -46,7 +46,7 @@
     "defaultMessage": "Ignore This Field"
   },
   "/9NbO2": {
-    "defaultMessage": "Response Mapping",
+    "defaultMessage": "Transform",
     "description": "In instruction insertion"
   },
   "/CFd+q": {
@@ -132,7 +132,7 @@
     "defaultMessage": "Duplicate API"
   },
   "1ceY2D": {
-    "defaultMessage": "Use Independent Config"
+    "defaultMessage": "Independent Config"
   },
   "1j0lPi": {
     "defaultMessage": "Operation Succeeded!"
@@ -218,7 +218,7 @@
     "defaultMessage": "Normal View"
   },
   "47GdDb": {
-    "defaultMessage": "Close"
+    "defaultMessage": "Off"
   },
   "4LegCW": {
     "defaultMessage": "Network Request Failed!"
@@ -366,7 +366,7 @@
     "defaultMessage": "Username cannot be empty"
   },
   "9WXJgY": {
-    "defaultMessage": "Response Mapping",
+    "defaultMessage": "Transform",
     "description": "In flow chart"
   },
   "9YT9eI": {
@@ -439,7 +439,7 @@
     "defaultMessage": "Please Edit"
   },
   "BLWx5q": {
-    "defaultMessage": "Send Response to Client",
+    "defaultMessage": "Return Response",
     "description": "In flow chart"
   },
   "BX00L6": {
@@ -749,7 +749,7 @@
     "defaultMessage": "JWKS"
   },
   "PCQ1Db": {
-    "defaultMessage": "Cross-source association",
+    "defaultMessage": "Cross",
     "description": "In instruction insertion"
   },
   "PI0Ele": {
@@ -892,7 +892,7 @@
     "defaultMessage": "Delete will also delete associated data!"
   },
   "UU3d6B": {
-    "defaultMessage": "Hook"
+    "defaultMessage": "Hooks"
   },
   "Ucswcs": {
     "defaultMessage": "Can only contain letters, numbers and underscores"
@@ -982,7 +982,7 @@
     "defaultMessage": "Pre-hook"
   },
   "XEPmlP": {
-    "defaultMessage": "Seconds"
+    "defaultMessage": "sec"
   },
   "XIRdkO": {
     "defaultMessage": "Please check project config and restart Fireboom"
@@ -1039,7 +1039,7 @@
     "defaultMessage": "Allowed Credentials"
   },
   "ZMK5E4": {
-    "defaultMessage": "Server side realtime query"
+    "defaultMessage": "Live-query in server"
   },
   "ZQxXRq": {
     "defaultMessage": "Auto inject current time, no need for user input"
@@ -1048,7 +1048,7 @@
     "defaultMessage": "Add request header"
   },
   "ZUPzqr": {
-    "defaultMessage": "Turn on"
+    "defaultMessage": "On"
   },
   "ZUhyFj": {
     "defaultMessage": "Global dependencies"
@@ -1235,7 +1235,7 @@
     "defaultMessage": "Subscribe auth"
   },
   "ghoLaJ": {
-    "defaultMessage": "Request param",
+    "defaultMessage": "Params",
     "description": "In instruction insertion"
   },
   "glR5T7": {
@@ -1617,7 +1617,7 @@
     "defaultMessage": "No related file found, please search again"
   },
   "sRgn0V": {
-    "defaultMessage": "Start request",
+    "defaultMessage": "Start",
     "description": "In flowchart"
   },
   "sRkj0b": {

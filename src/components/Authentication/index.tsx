@@ -71,7 +71,7 @@ const Authentication = (props: AuthenticationProps) => {
       if (res.status < 300) {
         setAppRuntime(res.data)
         refreshConfig().then(resp => {
-          if (resp?.appearance.language) {
+          if (resp?.appearance?.language) {
             setLocale(resp.appearance.language.replace(/_/g, '-'))
           }
         })

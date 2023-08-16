@@ -31,11 +31,10 @@ type Block = {
 export default function Error() {
   const [blocks, setBlocks] = useState<Block[]>([])
 
-  const { questions, setQuestions } = useGlobal(state => ({
+  const { questions } = useGlobal(state => ({
     questions: state.questions,
     setQuestions: state.setQuestions
   }))
-  const { onRefreshMenu } = useContext(WorkbenchContext)
 
   useEffect(() => {
     const groups: Record<QuestionType, Question[]> = groupBy(questions, 'model') as any
@@ -43,30 +42,30 @@ export default function Error() {
     const list: any = Object.keys(groups).map(key => ({
       key,
       list: groups[key].map((x: any) => {
-        const type = (x.dbType ?? '').toLowerCase()
-        if (key === String(QuestionType.DatasourceQuestion)) {
-          switch (x.sourceType) {
-            case 1:
-              x.icon =
-                {
-                  mysql: '/assets/icon/mysql.svg',
-                  postgresql: '/assets/icon/pgsql.svg',
-                  graphql: '/assets/icon/graphql.svg',
-                  mongodb: '/assets/icon/mongodb.svg',
-                  rest: '/assets/icon/rest.svg',
-                  sqlite: '/assets/icon/sqlite.svg'
-                }[String(x.dbType).toLowerCase()] || '/assets/icon/file.svg'
-              break
-            case 2:
-              x.icon = '/assets/icon/rest.svg'
-              break
-            case 3:
-              x.icon = '/assets/icon/graphql.svg'
-              break
-          }
-        } else if (key == String(QuestionType.AuthQuestion)) {
+        if (key === QuestionType.DatasourceQuestion) {
+          // TODO
+          // switch (x.sourceType) {
+          //   case 1:
+          //     x.icon =
+          //       {
+          //         mysql: '/assets/icon/mysql.svg',
+          //         postgresql: '/assets/icon/pgsql.svg',
+          //         graphql: '/assets/icon/graphql.svg',
+          //         mongodb: '/assets/icon/mongodb.svg',
+          //         rest: '/assets/icon/rest.svg',
+          //         sqlite: '/assets/icon/sqlite.svg'
+          //       }[String(x.dbType).toLowerCase()] || '/assets/icon/file.svg'
+          //     break
+          //   case 2:
+          //     x.icon = '/assets/icon/rest.svg'
+          //     break
+          //   case 3:
+          //     x.icon = '/assets/icon/graphql.svg'
+          //     break
+          // }
+        } else if (key == QuestionType.AuthQuestion) {
           x.icon = '/assets/icon/oidc.svg'
-        } else if (key == String(QuestionType.OssQuestion)) {
+        } else if (key == QuestionType.OssQuestion) {
           x.icon = '/assets/icon/file.svg'
         } else {
           x.icon = '/assets/icon/file.svg'

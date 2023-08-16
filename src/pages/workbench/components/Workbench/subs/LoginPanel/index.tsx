@@ -1,6 +1,6 @@
-import { message } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 import { useLocation } from 'react-router-dom'
 import useSWRMutation from 'swr/mutation'
@@ -8,7 +8,6 @@ import useSWRMutation from 'swr/mutation'
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import { intl } from '@/providers/IntlProvider'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { useAuthTest } from '@/utils/auth'
@@ -18,6 +17,7 @@ import logoutIcon from './assets/logout.svg'
 import styles from './index.module.less'
 
 export default function LoginPanel() {
+  const intl = useIntl()
   const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
 

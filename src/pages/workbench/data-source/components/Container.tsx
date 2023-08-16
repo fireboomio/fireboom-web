@@ -93,7 +93,10 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const isDatabase = isDatabaseKind(content)
-  const isCustomDatabase = content.kind === DataSourceKind.Graphql && content.customGraphql
+  const isCustomDatabase =
+    content.kind === DataSourceKind.Graphql &&
+    content.customGraphql &&
+    content.customGraphql.customized
 
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">

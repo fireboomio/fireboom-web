@@ -158,7 +158,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         query.push('wg_sse=true')
       }
       // 对于实时接口需要添加wg_live
-      if (apiDesc?.liveQuery && operationType === 'query') {
+      if (apiDesc?.liveQueryConfig.enabled && operationType === 'query') {
         query.push('wg_live=true')
       }
       if (query.length) {
@@ -180,7 +180,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
   }, [
-    apiDesc?.liveQuery,
+    apiDesc?.liveQueryConfig,
     apiDesc?.path,
     apiPath,
     getConfigurationValue,

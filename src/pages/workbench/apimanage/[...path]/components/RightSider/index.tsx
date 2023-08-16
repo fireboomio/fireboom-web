@@ -1,6 +1,6 @@
 import { Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useIntl } from 'react-intl'
 
 import ApiConfig from '@/components/ApiConfig'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
@@ -21,6 +21,7 @@ import styles from './index.module.less'
 
 export default function RightSider() {
   const [active, setActive] = useState<string>('hook')
+  const intl = useIntl()
   const { apiPath, operationType, schemaAST, apiDesc } = useAPIManager(state => ({
     apiPath: state.apiPath,
     operationType: state.computed.operationType,
