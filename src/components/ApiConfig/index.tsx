@@ -90,7 +90,7 @@ export default function Index(props: Props) {
       })
       .then(() => {
         // 如果修改的是实时查询，则需要刷新api面板=
-        if (changedValues.liveQueryConfig.enabled !== undefined) {
+        if (changedValues.liveQueryConfig?.enabled !== undefined) {
           void mutateApi()
           refreshAPI()
         }
