@@ -268,12 +268,14 @@ export default function AuthRole() {
                         <Switch
                           checked={hookState?.[name]?.enabled}
                           onChange={async flag => {
-                            await requests.put('/globalOperation', {
-                              apiAuthenticationHooks: {
-                                [name]: flag
-                              }
-                            })
-                            refreshHookState()
+                            if (await vscode.checkHookExist(hookState![name].path)) {
+                              await requests.put('/globalOperation', {
+                                apiAuthenticationHooks: {
+                                  [name]: flag
+                                }
+                              })
+                              refreshHookState()
+                            }
                           }}
                         />
                         <div
