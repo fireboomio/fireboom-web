@@ -68,7 +68,7 @@ export default function Graphql({ content, type }: Props) {
   const urlReg = /^https?:\/\/[-.\w\d:/]+$/i
   // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
-    setIsShowUpSchema(!content.customGraphql.schemaString)
+    setIsShowUpSchema(!content.customGraphql.schemaFilepath)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
 
@@ -191,7 +191,7 @@ export default function Graphql({ content, type }: Props) {
   }
 
   const setUploadPath = (v: string) => {
-    form.setFieldValue('loadSchemaFromString', v)
+    form.setFieldValue(['customGraphql', 'schemaFilepath'], v)
   }
 
   if (!content) {
@@ -230,10 +230,10 @@ export default function Graphql({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {content.customGraphql.url}
+                {content.customGraphql.endpoint}
               </Descriptions.Item>
 
-              {content.customGraphql.schemaString ? (
+              {content.customGraphql.schemaFilepath ? (
                 <Descriptions.Item
                   label={
                     <div>
@@ -250,7 +250,7 @@ export default function Graphql({ content, type }: Props) {
                     src="assets/iconfont/wenjian1.svg"
                     style={{ height: '1em', width: '1em' }}
                   />{' '}
-                  {content.customGraphql.schemaString}
+                  {content.customGraphql.schemaFilepath}
                 </Descriptions.Item>
               ) : (
                 ''
@@ -408,7 +408,7 @@ export default function Graphql({ content, type }: Props) {
               labelAlign="right"
               initialValues={{
                 ...content,
-                agreement: content.customGraphql.schemaString ? false : true,
+                agreement: content.customGraphql.schemaFilepath ? false : true,
                 headers: Object.keys(
                   content.customGraphql.headers || {}
                 ).map<ApiDocuments.ConfigurationVariable>(key => {
@@ -465,7 +465,7 @@ export default function Graphql({ content, type }: Props) {
                   }
                 ]}
                 style={{ marginBottom: '20px' }}
-                name={['customGraphql', 'url']}
+                name={['customGraphql', 'endpoint']}
               >
                 <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
@@ -490,7 +490,7 @@ export default function Graphql({ content, type }: Props) {
                     </div>
                   }
                   colon={false}
-                  name={['customGraphql', 'schemaString']}
+                  name={['customGraphql', 'schemaFilepath']}
                   required
                   // valuePropName="fileList"
                   style={{ marginBottom: '48px' }}

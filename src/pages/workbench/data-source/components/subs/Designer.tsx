@@ -279,9 +279,9 @@ export default function Designer() {
         enabled: false,
         customGraphql: {
           customized: true,
-          url: '',
+          endpoint: '',
           headers: {},
-          schemaString: ''
+          schemaFilepath: ''
         }
       }
       await requests.post('/datasource', data)
@@ -314,9 +314,9 @@ export default function Designer() {
       } else if (item.kind === DataSourceKind.Graphql) {
         data.customGraphql = {
           customized: false,
-          url: '',
+          endpoint: '',
           headers: {},
-          schemaString: ''
+          schemaFilepath: ''
         }
       } else if (isDatabaseKind(item)) {
         data.customDatabase = {

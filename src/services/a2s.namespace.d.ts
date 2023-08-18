@@ -24,11 +24,6 @@ export declare namespace ApiDocuments {
     Date: string
     Version: string
   }
-  export interface ClaimConfig extends BasicDto {
-    claimType: string | number
-    custom: ApiDocuments.CustomClaim
-    variablePathComponents: string[]
-  }
   export interface ConfigurationVariable extends BasicDto {
     environmentVariableDefaultValue?: string
     environmentVariableName?: string
@@ -44,12 +39,6 @@ export declare namespace ApiDocuments {
     exposedHeaders: string[]
     maxAge: number
   }
-  export interface CustomClaim extends BasicDto {
-    jsonPathComponents: string[]
-    name: string
-    required: boolean
-    type: string | number
-  }
   export interface CustomDatabase extends BasicDto {
     databaseAlone: ApiDocuments.CustomDatabaseAlone
     databaseUrl: ApiDocuments.ConfigurationVariable
@@ -64,9 +53,9 @@ export declare namespace ApiDocuments {
   }
   export interface CustomGraphql extends BasicDto {
     customized: boolean
+    endpoint: string
     headers: {}
-    schemaString: string
-    url: string
+    schemaFilepath: string
   }
   export interface CustomRest extends BasicDto {
     baseUrl: string
@@ -94,6 +83,7 @@ export declare namespace ApiDocuments {
   }
   export interface GlobalSetting extends BasicDto {
     allowedHostNames: ApiDocuments.ConfigurationVariable[]
+    allowedReport: boolean
     appearance: ApiDocuments.Appearance
     authenticationKey: string
     authorizedRedirectUris: ApiDocuments.ConfigurationVariable[]
@@ -150,16 +140,14 @@ export declare namespace ApiDocuments {
   }
   export interface Operation extends BasicDto {
     authenticationConfig: ApiDocuments.OperationAuthenticationConfig
-    authorizationConfig: ApiDocuments.OperationAuthorizationConfig
     cacheConfig: ApiDocuments.OperationCacheConfig
     configCustomized: boolean
     createTime: string
     deleteTime: string
     enabled: boolean
+    engine: string | number
     hooksConfiguration: ApiDocuments.OperationHooksConfiguration
-    internal: boolean
     liveQueryConfig: ApiDocuments.OperationLiveQueryConfig
-    operationType: string | number
     path: string
     remark: string
     title: string
@@ -167,10 +155,6 @@ export declare namespace ApiDocuments {
   }
   export interface OperationAuthenticationConfig extends BasicDto {
     authRequired: boolean
-  }
-  export interface OperationAuthorizationConfig extends BasicDto {
-    claims: ApiDocuments.ClaimConfig[]
-    roleConfig: ApiDocuments.OperationRoleConfig
   }
   export interface OperationCacheConfig extends BasicDto {
     enabled: boolean
@@ -194,12 +178,6 @@ export declare namespace ApiDocuments {
   export interface OperationLiveQueryConfig extends BasicDto {
     enabled: boolean
     pollingIntervalSeconds: number
-  }
-  export interface OperationRoleConfig extends BasicDto {
-    denyMatchAll: string[]
-    denyMatchAny: string[]
-    requireMatchAll: string[]
-    requireMatchAny: string[]
   }
   export interface Role extends BasicDto {
     code: string
@@ -228,6 +206,7 @@ export declare namespace ApiDocuments {
     description: string
     enabled: boolean
     extension: string
+    gitBranch: string
     gitUrl: string
     icon: string
     language: string
@@ -389,6 +368,7 @@ export declare namespace ApiDocuments {
     description?: string
     enabled?: boolean
     extension?: string
+    gitBranch?: string
     gitUrl?: string
     icon?: string
     language?: string

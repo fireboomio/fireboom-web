@@ -49,11 +49,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'authentication@post@/authentication/batch'(args: ApiDocuments.AuthenticationArray) {
+  'authentication@post@/authentication/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.AuthenticationArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/authentication/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'authentication@put@/authentication/batch'(
@@ -97,8 +104,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/authentication/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'authentication@/authentication/import'(args: {
@@ -215,11 +222,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'datasource@post@/datasource/batch'(args: ApiDocuments.DatasourceArray) {
+  'datasource@post@/datasource/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.DatasourceArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/datasource/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'datasource@put@/datasource/batch'(
@@ -289,8 +303,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/datasource/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'datasource@/datasource/graphql/{dataName}'(args: {
@@ -564,11 +578,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'operation@post@/operation/batch'(args: ApiDocuments.OperationArray) {
+  'operation@post@/operation/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.OperationArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/operation/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'operation@put@/operation/batch'(
@@ -588,8 +609,8 @@ export const services = {
   'operation@/operation/bindRoles'(args: ApiDocuments.handler_paramBindRole) {
     return requestAdapter<string[]>({
       url: replacePath('/operation/bindRoles', args),
-      method: 'GET',
-      ...extract('GET', args, [], [])
+      method: 'POST',
+      ...extract('POST', args, [], [])
     })
   },
   'operation@/operation/copy'(args: ApiDocuments.fileloader_DataMutation) {
@@ -619,8 +640,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/operation/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'operation@/operation/graphql/{dataName}'(args: {
@@ -676,20 +697,15 @@ export const services = {
   'operation@/operation/listByRole'(args: ApiDocuments.handler_paramQueryRole) {
     return requestAdapter<ApiDocuments.Operation[]>({
       url: replacePath('/operation/listByRole', args),
-      method: 'GET',
-      ...extract('GET', args, [], [])
+      method: 'POST',
+      ...extract('POST', args, [], [])
     })
   },
-  'operation@/operation/listPublic'(args: {
-    /**
-     * @description dataName
-     */
-    dataName: string
-  }) {
+  'operation@/operation/listPublic'(args?: any) {
     return requestAdapter<ApiDocuments.Operation[]>({
       url: replacePath('/operation/listPublic', args),
       method: 'GET',
-      ...extract('GET', args, [], ['dataName'])
+      ...extract('GET', args, [], [])
     })
   },
   'operation@/operation/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -794,11 +810,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'role@post@/role/batch'(args: ApiDocuments.RoleArray) {
+  'role@post@/role/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.RoleArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/role/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'role@put@/role/batch'(
@@ -842,8 +865,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/role/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'role@/role/import'(args: {
@@ -960,11 +983,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'sdk@post@/sdk/batch'(args: ApiDocuments.SdkArray) {
+  'sdk@post@/sdk/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.SdkArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/sdk/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'sdk@put@/sdk/batch'(
@@ -1015,8 +1045,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/sdk/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'sdk@/sdk/import'(args: {
@@ -1133,11 +1163,18 @@ export const services = {
       ...extract('DELETE', args, ['dataNames'], [])
     })
   },
-  'storage@post@/storage/batch'(args: ApiDocuments.StorageArray) {
+  'storage@post@/storage/batch'(
+    args: {
+      /**
+       * @description 是否覆盖已存在
+       */
+      overwrite?: boolean
+    } & ApiDocuments.StorageArray
+  ) {
     return requestAdapter<ApiDocuments.fileloader_DataBatchResult[]>({
       url: replacePath('/storage/batch', args),
       method: 'POST',
-      ...extract('POST', args, [], [])
+      ...extract('POST', args, ['overwrite'], [])
     })
   },
   'storage@put@/storage/batch'(
@@ -1181,8 +1218,8 @@ export const services = {
   }) {
     return requestAdapter<File>({
       url: replacePath('/storage/export', args),
-      method: 'POST',
-      ...extract('POST', args, ['dataNames'], [])
+      method: 'GET',
+      ...extract('GET', args, ['dataNames'], [])
     })
   },
   'storage@/storage/hookOptions/{dataName}'(args: {
@@ -1480,8 +1517,8 @@ export const services = {
 
 export type ServiceKeys = keyof typeof services
 
-export type ServiceArg<T extends ServiceKeys> = Parameters<(typeof services)[T]>[0]
+export type ServiceArg<T extends ServiceKeys> = Parameters<typeof services[T]>[0]
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
 
-export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<(typeof services)[T]>>['data']
+export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<typeof services[T]>>['data']

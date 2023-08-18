@@ -18,10 +18,10 @@ export interface DataSourceResp {
     headers: Record<string, string> | null
   }
   customGraphql?: {
-    url: string
+    endpoint: string
     headers: Record<string, string>
     customized: boolean
-    schemaString: string
+    schemaFilepath: string
   } | null
   customDatabase: {
     kind: number
