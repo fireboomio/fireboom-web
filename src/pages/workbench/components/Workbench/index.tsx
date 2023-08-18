@@ -282,7 +282,10 @@ export default function Index(props: PropsWithChildren) {
         return false
       }
       // 去除开头 /
-      const filePath = `${path}.${data?.extension.replace(/^\./, '')}`.replace(/^\//, '')
+      const filePath =
+        data?.extension && path.includes(data!.extension)
+          ? path
+          : `${path}.${data?.extension.replace(/^\./, '')}`.replace(/^\//, '')
       let hookExisted = false
       try {
         await requests.get(`/vscode/state?uri=${filePath}`, {
