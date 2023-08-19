@@ -12,6 +12,7 @@ import { useAuthList } from '@/hooks/store/auth'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useStorageList } from '@/hooks/store/storage'
 import type { AppRuntime } from '@/interfaces/base'
+import type { FBVersion } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
 import { useAppIntl } from '@/providers/IntlProvider'
@@ -61,7 +62,7 @@ const Authentication = (props: AuthenticationProps) => {
   // const [system, setSystem] = useState<SystemConfigType>()
   // const [environment, setEnvironment] = useState()
   // const [version, setVersion] = useState()
-  const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting>()
+  const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting & FBVersion>()
   const updateGlobalSetting = useCallback(async (settings: Partial<ApiDocuments.GlobalSetting>) => {
     await requests.put(`/globalSetting`, settings)
     await refreshConfig()
@@ -78,27 +79,22 @@ const Authentication = (props: AuthenticationProps) => {
       }
     })
   }, [setLocale])
+
+  const setVersion = (version: FBVersion) => {
+    setGlobalSetting(merge(globalSetting, version))
+  }
+
   const refreshConfig = async () => {
     const { error, data } = await services['globalSetting@/globalSetting/single']()
     if (!error) {
-      setGlobalSetting(data)
+      const { fbVersion, fbCommit } = globalSetting ?? {}
+      setGlobalSetting({ ...data, fbVersion: fbVersion ?? '', fbCommit: fbCommit ?? '' })
       return data
     }
-    // void requests.get<unknown, any>('/setting/system').then(res => {
-    //   setSystem(res.system)
-    //   setVersion(res.version)
-    //   setEnvironment(res.environment)
-    //   try {
-    //     // @ts-ignore
-    //     window.__bl.setConfig({ disabled: !res.system.usageReport })
-    //   } catch (_) {
-    //     // ignore
-    //   }
-    // })
   }
   return appRuntime && globalSetting ? (
     <ConfigContext.Provider
-      value={{ appRuntime, globalSetting, updateGlobalSetting, refreshConfig }}
+      value={{ appRuntime, globalSetting, updateGlobalSetting, setVersion, refreshConfig }}
     >
       {/* {authed || system.isDev ? ( */}
       {authed || !appRuntime['enable-auth'] ? (

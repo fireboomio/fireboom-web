@@ -29,9 +29,15 @@ type SystemConfigContext = {
   // environment?: EnvType
   // version?: VersionType
   appRuntime: AppRuntime
-  globalSetting: ApiDocuments.GlobalSetting
+  globalSetting: ApiDocuments.GlobalSetting & FBVersion
+  setVersion: (ver: FBVersion) => void
   updateGlobalSetting: (globalSetting: Partial<ApiDocuments.GlobalSetting>) => Promise<void>
   refreshConfig: () => Promise<void>
+}
+
+export interface FBVersion {
+  fbVersion: string
+  fbCommit: string
 }
 
 export const ConfigContext = createContext<SystemConfigContext>({} as SystemConfigContext)

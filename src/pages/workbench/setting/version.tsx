@@ -32,7 +32,7 @@ export default function SettingMainVersion() {
         >
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布版本' })}>
             <div className="flex items-center">
-              {globalSetting.buildInfo.Version}
+              {globalSetting.fbVersion}
               <div
                 className={styles['check-info']}
                 onClick={() => {

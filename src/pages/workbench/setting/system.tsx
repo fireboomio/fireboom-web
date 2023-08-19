@@ -70,7 +70,7 @@ export default function SettingMainVersion() {
           formItemProps={{
             label: intl.formatMessage({ defaultMessage: 'API内网地址' }),
             name: ['nodeOptions', 'nodeUrl'],
-            tooltip: intl.formatMessage({ defaultMessage: '钩子服务对内地址，一般不需要修改' })
+            tooltip: intl.formatMessage({ defaultMessage: '服务内网地址，一般不需要修改' })
           }}
           // @ts-ignore
           inputRender={props => <UrlInput {...props} />}

@@ -12,6 +12,7 @@ import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
 import { useGlobal } from '@/hooks/global'
 import { mutateApi } from '@/hooks/store/api'
 import type { Info } from '@/interfaces/common'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import { GlobalContext } from '@/lib/context/globalContext'
 import type {
   MenuName,
@@ -54,6 +55,7 @@ export default function Index(props: PropsWithChildren) {
     fbVersion: '--',
     fbCommit: '--'
   })
+  const { setVersion } = useConfigContext()
   const isCompiling = useMemo(
     () =>
       info.engineStatus === ServiceStatus.Starting || info.engineStatus === ServiceStatus.Building,
@@ -96,6 +98,10 @@ export default function Index(props: PropsWithChildren) {
     initWebSocket(authKey ?? '')
   }, [authKey])
   useWebSocket('engine', 'pull', (data: Info) => {
+    setVersion({
+      fbVersion: data.fbVersion ?? '',
+      fbCommit: data.fbCommit ?? ''
+    })
     setInfo(data)
     ;(window as any).getGlobalStartTime = () => data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
