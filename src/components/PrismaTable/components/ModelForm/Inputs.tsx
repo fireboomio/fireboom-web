@@ -151,12 +151,9 @@ const Enum = ({ field: { name, required, title, type }, disabled, initialValues 
   )
 }
 
-const Object = ({
-  field: { name, required, title, type },
-  namespace,
-  disabled,
-  initialValues
-}: Props) => {
+const Object = ({ field, namespace, disabled, initialValues }: Props) => {
+  const { name, title, type } = field
+  const required = field.list ? false : field.required
   const intl = useIntl()
   const form = Form.useFormInstance()
   const initialObjectValue = initialValues[name] as Record<string, any>

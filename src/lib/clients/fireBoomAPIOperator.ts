@@ -64,6 +64,7 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
             required: field.hasDefaultValue ? false : field.isId ? true : field.isRequired,
             order: model.fields.indexOf(field) + 1,
             read: true,
+            list: field.isList,
             create: field.isId && field.hasDefaultValue ? false : true,
             update: field.isId ? false : true,
             sort: true,
