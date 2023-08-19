@@ -28,6 +28,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useDict } from '@/providers/dict'
 import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
@@ -53,6 +54,7 @@ export default function Graphql({ content, type }: Props) {
   const intl = useIntl()
   const { ruleMap } = useValidate()
   const navigate = useNavigate()
+  const dict = useDict()
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
   const [rulesObj, setRulesObj] = useImmer<Rule>({})
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(true)
@@ -249,8 +251,8 @@ export default function Graphql({ content, type }: Props) {
                     alt="wenjian1"
                     src="assets/iconfont/wenjian1.svg"
                     style={{ height: '1em', width: '1em' }}
-                  />{' '}
-                  {content.customGraphql.schemaFilepath}
+                  />
+                  {dict.upload}/{content.customGraphql.schemaFilepath}
                 </Descriptions.Item>
               ) : (
                 ''

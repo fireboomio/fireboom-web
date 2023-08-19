@@ -28,6 +28,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useDict } from '@/providers/dict'
 import { getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { databaseKindNameMap } from '@/utils/datasource'
@@ -57,6 +58,7 @@ const passwordReg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{
 export default function DB({ content, type }: Props) {
   const intl = useIntl()
   const { ruleMap } = useValidate()
+  const dict = useDict()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [_disabled, setDisabled] = useState(false)
@@ -484,6 +486,7 @@ export default function DB({ content, type }: Props) {
               </Descriptions.Item>
               {content.kind === DataSourceKind.SQLite ? (
                 <Descriptions.Item label={intl.formatMessage({ defaultMessage: '路径' })}>
+                  {dict.datasource}/
                   {getConfigurationVariableRender(content.customDatabase.databaseUrl)}
                 </Descriptions.Item>
               ) : (
