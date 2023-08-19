@@ -179,9 +179,9 @@ export type GraphiQLInterfaceProps = WriteableEditorProps &
 
 export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   const { setTheme } = useTheme()
-  const { schemaAST, apiID, schema, clearHistoryFlag } = useAPIManager(state => ({
+  const { schemaAST, apiPath, schema, clearHistoryFlag } = useAPIManager(state => ({
     schemaAST: state.schemaAST,
-    apiID: state.apiID,
+    apiPath: state.apiPath,
     schema: state.schema,
     clearHistoryFlag: state.clearHistoryFlag
   }))
@@ -190,7 +190,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     direction: 'vertical',
     maxSize: 600
   })
-  const prevApiID = useRef<string>()
+  const prevApiPath = useRef<string>()
   const responseRef = useRef<{
     setActiveKey?: (v: string) => void
   }>()
@@ -262,14 +262,14 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
   }, [clearHistoryFlag])
   // API 变更后需要刷新输入输出
   useEffect(() => {
-    if (prevApiID.current && prevApiID.current !== apiID) {
+    if (prevApiPath.current && prevApiPath.current !== apiPath) {
       editorCtx?.responseEditor?.setValue('')
       editorCtx?.variableEditor?.setValue('')
       editorCtx?.headerEditor?.setValue('')
       responseRef.current?.setActiveKey?.('arguments')
     }
-    prevApiID.current = apiID
-  }, [apiID, editorCtx])
+    prevApiPath.current = apiPath
+  }, [apiPath, editorCtx])
 
   const editor = useMemo(() => {
     return (
@@ -297,7 +297,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
         <div className="graphiql-editor-tool-resize-handler" ref={dragRef}></div>
         <ResponseWrapper>
           <GraphiInputAndResponse
-            apiID={apiID}
+            apiPath={apiPath}
             actionRef={responseRef}
             argumentList={argumentList}
             onTabChange={() => {
@@ -313,7 +313,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 }
 
 interface GraphiInputAndResponseProps {
-  apiID: string
+  apiPath: string
   argumentList: ReadonlyArray<VariableDefinitionNode>
   actionRef?: MutableRefObject<
     | {
@@ -325,7 +325,7 @@ interface GraphiInputAndResponseProps {
 }
 
 const GraphiInputAndResponse = ({
-  apiID,
+  apiPath,
   argumentList,
   actionRef,
   onTabChange
@@ -415,12 +415,12 @@ const GraphiInputAndResponse = ({
               <>
                 {variableMode === 'form' ? (
                   <ArgumentsEditor
-                    apiID={apiID}
+                    apiPath={apiPath}
                     arguments={argumentList}
                     onRemoveDirective={onRemoveDirective}
                   />
                 ) : (
-                  <VariablesEditor apiID={apiID} onRemoveDirective={onRemoveDirective} />
+                  <VariablesEditor apiPath={apiPath} onRemoveDirective={onRemoveDirective} />
                 )}
               </>
             )

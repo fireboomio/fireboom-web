@@ -24,7 +24,7 @@ const NOT_EDITABLE_DIRECTIVES: string[] = [
 ]
 
 interface ArgumentsEditorProps {
-  apiID: string
+  apiPath: string
   arguments: ReadonlyArray<VariableDefinitionNode>
   onRemoveDirective: (argumentIndex: number, directiveIndex: number) => void
 }
@@ -153,7 +153,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
 
   useDebounceEffect(
     () => {
-      const storeKey = `_api_args_${props.apiID}`
+      const storeKey = `_api_args_${props.apiPath}`
       if (Object.keys(values).length && Object.keys(values).some(k => !!values[k])) {
         localStorage.setItem(storeKey, JSON.stringify(values))
       }
@@ -163,8 +163,8 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   )
 
   useEffect(() => {
-    if (props.apiID && props.arguments.length) {
-      const storeKey = `_api_args_${props.apiID}`
+    if (props.apiPath && props.arguments.length) {
+      const storeKey = `_api_args_${props.apiPath}`
       try {
         const savedStr = localStorage.getItem(storeKey)
         if (savedStr) {
@@ -183,7 +183,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
         //
       }
     }
-  }, [props.apiID, props.arguments])
+  }, [props.apiPath, props.arguments])
 
   return (
     <div className="arguments-editor max-h-50vh overflow-y-scroll">

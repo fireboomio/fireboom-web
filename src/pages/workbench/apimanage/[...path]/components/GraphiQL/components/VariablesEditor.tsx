@@ -19,7 +19,7 @@ const NOT_EDITABLE_DIRECTIVES = [
 ]
 
 interface VariablesEditorProps {
-  apiID: string
+  apiPath: string
   onRemoveDirective: (argumentIndex: number, directiveIndex: number) => void
 }
 
@@ -59,7 +59,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
 
   useDebounceEffect(
     () => {
-      const storeKey = `_api_args_${props.apiID}`
+      const storeKey = `_api_args_${props.apiPath}`
       if (values) {
         try {
           JSON.parse(values)
@@ -74,8 +74,8 @@ const VariablesEditor = (props: VariablesEditorProps) => {
   )
 
   useEffect(() => {
-    if (props.apiID) {
-      const storeKey = `_api_args_${props.apiID}`
+    if (props.apiPath) {
+      const storeKey = `_api_args_${props.apiPath}`
       try {
         const savedStr = localStorage.getItem(storeKey)
         if (savedStr) {
@@ -91,7 +91,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
         //
       }
     }
-  }, [props.apiID, schemaAST]) // 增加schemaAST的监听，以解决切换api时被setValue清空的问题
+  }, [props.apiPath, schemaAST]) // 增加schemaAST的监听，以解决切换api时被setValue清空的问题
 
   return (
     <div className="h-full">

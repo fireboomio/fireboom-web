@@ -10,8 +10,8 @@ import RunIcon from '../assets/run.svg'
 type ExecuteButtonProps = ImgHTMLAttributes<HTMLImageElement>
 
 const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
-  const { apiID, subscriptionController, abortSubscription } = useAPIManager(state => ({
-    apiID: state.apiID,
+  const { apiPath, subscriptionController, abortSubscription } = useAPIManager(state => ({
+    apiPath: state.apiPath,
     subscriptionController: state.subscriptionController,
     abortSubscription: state.abortSubscription
   }))
@@ -43,7 +43,7 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
       stop()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiID])
+  }, [apiPath])
 
   // 快捷键
   useEffect(() => {

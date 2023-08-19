@@ -158,7 +158,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         query.push('wg_sse=true')
       }
       // 对于实时接口需要添加wg_live
-      if (apiDesc?.liveQueryConfig.enabled && operationType === 'query') {
+      if (apiDesc?.liveQueryConfig?.enabled && operationType === 'query') {
         query.push('wg_live=true')
       }
       if (query.length) {
