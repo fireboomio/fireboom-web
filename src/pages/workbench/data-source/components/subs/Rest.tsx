@@ -29,6 +29,7 @@ import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useDict } from '@/providers/dict'
 import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
@@ -87,6 +88,7 @@ const { TabPane } = Tabs
 
 export default function Rest({ content, type }: Props) {
   const intl = useIntl()
+  const dict = useDict()
   const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
@@ -320,7 +322,7 @@ export default function Rest({ content, type }: Props) {
                   className="flex items-center cursor-pointer"
                   onClick={() =>
                     window.open(
-                      `/api/vscode/readFile?uri=${content.customRest.oasFilepath}`,
+                      `/api/vscode/readFile?uri=${dict.upload}/${content.customRest.oasFilepath}`,
                       '_blank'
                     )
                   }
@@ -333,7 +335,7 @@ export default function Rest({ content, type }: Props) {
                     preview={false}
                   />
                   <span className="ml-2 text-11px text-[#909399]">
-                    {content.customRest.oasFilepath}
+                    {dict.upload}/{content.customRest.oasFilepath}
                   </span>
                 </div>
               </Descriptions.Item>
@@ -386,7 +388,7 @@ export default function Rest({ content, type }: Props) {
                             <div className="flex items-center">
                               <div className="text-0px">{renderIcon(item.values[0].kind)}</div>
                               <div className="flex-1 ml-2 min-w-0">
-                                {getConfigurationVariableRender(item.values[0])}
+                                1111{getConfigurationVariableRender(item.values[0])}
                               </div>
                             </div>
                           </Descriptions.Item>
