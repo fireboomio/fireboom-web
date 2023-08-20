@@ -78,7 +78,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const apiList = useApiList()
   useEffect(() => {
     // apiList未加载时，不进行转换，以避免自动跳转到空白页
-    if (!apiList) return
+    // if (!apiList) return
     const tree = convertToTree(apiList ?? [], '0')
     setTreeData(tree)
   }, [apiList])

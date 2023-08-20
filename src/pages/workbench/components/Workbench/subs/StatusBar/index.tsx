@@ -32,6 +32,8 @@ interface Props {
   toggleWindow: (defaultTa: string) => void
 }
 
+const devTipKey = 'dev.tip'
+
 // eslint-disable-next-line react/prop-types
 const StatusBar: React.FC<Props> = ({
   className,
@@ -44,6 +46,7 @@ const StatusBar: React.FC<Props> = ({
   version
 }) => {
   const intl = useIntl()
+  const [showDevTip, setShowDevTip] = useState(localStorage.getItem(devTipKey) !== 'false')
   const { getConfigurationValue } = useConfigurationVariable()
   const calcTime = useCalcTime()
   const { questions } = useGlobal(state => ({
@@ -155,6 +158,11 @@ const StatusBar: React.FC<Props> = ({
     refreshConfig()
   }
 
+  const closeDevTip = () => {
+    localStorage.setItem(devTipKey, 'false')
+    setShowDevTip(false)
+  }
+
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -162,11 +170,26 @@ const StatusBar: React.FC<Props> = ({
           {/*<span className={styles.gitIcon} />*/}
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
-            <span>
-              {appRuntime.dev
-                ? intl.formatMessage({ defaultMessage: '开发模式' })
-                : intl.formatMessage({ defaultMessage: '生产模式' })}
-            </span>
+            {appRuntime.dev ? (
+              <Tooltip
+                open={showDevTip}
+                arrow
+                title={
+                  <div className="flex items-center">
+                    <FormattedMessage defaultMessage="请勿将开发模式用于生产" />
+                    <span className="ml-4 cursor-pointer" onClick={closeDevTip}>
+                      <FormattedMessage defaultMessage="知道了" />
+                    </span>
+                  </div>
+                }
+              >
+                <span>
+                  <FormattedMessage defaultMessage="开发模式" />
+                </span>
+              </Tooltip>
+            ) : (
+              <FormattedMessage defaultMessage="生产模式" />
+            )}
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
             <span>FB:</span>

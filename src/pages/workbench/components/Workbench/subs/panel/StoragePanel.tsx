@@ -156,9 +156,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
-        <div className={styles.icon}>
-          {nodeData.data.liveQuery ? <div className={styles.lighting}></div> : null}
-        </div>
+        <div className={styles.icon} />
         <>
           <div
             className={`${styles.method} ${
