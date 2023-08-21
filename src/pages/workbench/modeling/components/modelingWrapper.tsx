@@ -2,7 +2,7 @@ import { message } from 'antd'
 import type { ReactNode } from 'react'
 import { useEffect, useReducer, useRef } from 'react'
 import { useIntl } from 'react-intl'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -27,11 +27,12 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   // 用来获取实时id参数，以避免数据源请求返回后，id参数已经变化
   const paramNameRef = useRef<string>()
   const { name: paramName } = useParams()
+  const [search, setSearch] = useSearchParams()
   const [state, dispatch] = useReducer(modelingReducer, emptyPrismaSchemaContextState.state)
   const { newMap, delMap, editMap } = state
   const [showType, setShowType] = useImmer<ModelingShowTypeT>('preview')
   // 是否处于编辑状态，如果在编辑状态，则点击实体后不会切换到预览面板
-  const [inEdit, setInEdit] = useImmer<boolean>(false)
+  const [inEdit, setInEdit] = useImmer<boolean>(search.get('edit') === 'true')
   const [dataSources, setDataSources] = useImmer<ApiDocuments.Datasource[]>([])
   const { data, error } = useSWRImmutable(DATABASE_SOURCE, fetchDBSources)
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
@@ -119,6 +120,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
         return
       }
     }
+    setSearch({'edit': flag ? 'true' : 'false'})
     setInEdit(flag)
   }
 
