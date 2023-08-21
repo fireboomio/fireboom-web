@@ -181,14 +181,11 @@ export default function APIEditorContainer() {
     return (
       <GraphiQL
         fetcher={dispatchFetcher}
-        schema={schema}
-        query={editorQuery}
-        // ref={x => (ref.current = x)}
         onEditQuery={onEditQuery}
         defaultEditorToolsVisibility={false}
       />
     )
-  }, [schema, editorQuery, onEditQuery])
+  }, [onEditQuery])
 
   const onRefreshSchema = useCallback(async () => {
     setIsRefreshing(true)

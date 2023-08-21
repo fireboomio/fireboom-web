@@ -69,7 +69,7 @@ export type GraphiQLToolbarConfig = {
  *
  * https://graphiql-test.netlify.app/typedoc/modules/graphiql.html#graphiqlprops
  */
-export type GraphiQLProps = Omit<GraphiQLProviderProps, 'children'> & GraphiQLInterfaceProps
+export type GraphiQLProps = Omit<GraphiQLProviderProps, 'children' | 'schema' | 'query'> & GraphiQLInterfaceProps
 
 /**
  * The top-level React component for GraphiQL, intended to encompass the entire
@@ -94,9 +94,9 @@ export function GraphiQL({
   onTogglePluginVisibility,
   operationName,
   plugins,
-  query,
+  // query,
   response,
-  schema,
+  // schema,
   schemaDescription,
   shouldPersistHeaders,
   // storage,
@@ -105,6 +105,10 @@ export function GraphiQL({
   visiblePlugin,
   ...props
 }: GraphiQLProps) {
+  const { schema, query } = useAPIManager(state => ({
+    schema: state.schema,
+    query: state.query
+  }))
   // Ensure props are correct
   if (typeof fetcher !== 'function') {
     throw new TypeError(
