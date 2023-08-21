@@ -687,18 +687,18 @@ export default function Rest({ content, type }: Props) {
                                     className="w-135"
                                     wrapperCol={{ span: 24 }}
                                     name={[field.name, getConfigurationVariableField(kind)]}
-                                    rules={
-                                      kind !== 1
-                                        ? [
-                                            {
-                                              pattern: /^.{1,128}$/g,
-                                              message: intl.formatMessage({
-                                                defaultMessage: '请输入长度不大于128的非空值'
-                                              })
-                                            }
-                                          ]
-                                        : []
-                                    }
+                                    // rules={
+                                    //   kind !== 1
+                                    //     ? [
+                                    //         {
+                                    //           pattern: /^.{1,128}$/g,
+                                    //           message: intl.formatMessage({
+                                    //             defaultMessage: '请输入长度不大于128的非空值'
+                                    //           })
+                                    //         }
+                                    //       ]
+                                    //     : []
+                                    // }
                                   >
                                     {kind !== 1 ? (
                                       <Input
