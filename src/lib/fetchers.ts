@@ -80,7 +80,7 @@ export const hasAuthKey = () => {
 export const getHeader = () => {
   return {
     'X-FB-Authentication': authKey ?? '',
-    'X-FB-Locale': 
+    'X-FB-Locale': ''
   }
 }
 
