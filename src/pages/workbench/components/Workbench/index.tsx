@@ -334,6 +334,8 @@ export default function Index(props: PropsWithChildren) {
     }
   }
   const globalProviderValue = {
+    info: info,
+    isCompiling,
     vscode: {
       options: vscode,
       isHookServerSelected,

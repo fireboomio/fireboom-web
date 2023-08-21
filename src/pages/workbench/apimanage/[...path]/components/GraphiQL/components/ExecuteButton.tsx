@@ -1,7 +1,8 @@
 import { useExecutionContext } from '@graphiql/react'
 import type { ImgHTMLAttributes } from 'react'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 
+import { GlobalContext } from '@/lib/context/globalContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../../store'
@@ -10,6 +11,7 @@ import RunIcon from '../assets/run.svg'
 type ExecuteButtonProps = ImgHTMLAttributes<HTMLImageElement>
 
 const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
+  const { isCompiling } = useContext(GlobalContext)
   const { apiPath, subscriptionController, abortSubscription } = useAPIManager(state => ({
     apiPath: state.apiPath,
     subscriptionController: state.subscriptionController,
@@ -22,6 +24,9 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   })
 
   const toggleExecute = () => {
+    if (isCompiling) {
+      return
+    }
     if (subscriptionController) {
       abortSubscription()
       stop()
@@ -53,7 +58,17 @@ const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
   return (
     <span className={`h-7 w-7 relative select-none ${className || ''}`}>
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-      <img {...props} src={RunIcon} width="28" height="28" alt="run" onClick={toggleExecute} />
+      <img
+        {...props}
+        src={RunIcon}
+        width="28"
+        height="28"
+        alt="run"
+        onClick={toggleExecute}
+        style={{
+          filter: isCompiling ? 'grayscale(1)' : ''
+        }}
+      />
 
       {(isFetching || subscriptionController) && (
         <svg
