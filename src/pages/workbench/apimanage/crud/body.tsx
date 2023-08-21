@@ -49,7 +49,7 @@ function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
     // if (relationMap.key2obj[field.name]) {
     //   return false
     // }
-    if (relationMap.obj2key[field.name]) {
+    if (relationMap?.obj2key[field.name]) {
       field.originField = model.fields.find(field => field.name === relationMap.obj2key[field.name])
     }
     return true
