@@ -28,7 +28,7 @@ import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { replaceFileTemplate } from '@/utils/template'
-import { createFile } from '@/utils/uploadLocal'
+import createFile from '@/utils/uploadLocal'
 
 import styles from './index.module.less'
 import Header from './subs/Header'

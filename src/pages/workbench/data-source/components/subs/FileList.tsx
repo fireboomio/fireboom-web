@@ -6,10 +6,9 @@ import type { RcFile } from 'antd/lib/upload'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { UploadDirectory } from '@/interfaces/fs'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import uploadLocal from '@/utils/uploadLocal'
+import createFile from '@/utils/uploadLocal'
 
 import styles from './FileList.module.less'
 
@@ -21,7 +20,7 @@ interface Props {
   setUploadPath: (value: string) => void
   setVisible: (value: boolean) => void
   // basePath: string
-  dir: UploadDirectory
+  dir: string
 }
 
 export default function FileList({
@@ -40,7 +39,7 @@ export default function FileList({
     name: 'content',
     customRequest(opt) {
       const file = opt.file as RcFile
-      uploadLocal(`${dir}/${file.name}`, file)
+      createFile(`${dir}/${file.name}`, file)
         .then(res => {
           opt.onSuccess?.(res)
         })
@@ -75,9 +74,10 @@ export default function FileList({
   ) => {
     e?.stopPropagation()
     requests.delete('/vscode/delete', {
-      data: { uri: `upload-cloud/${dir}/${rcd.name}` }
+      data: { uri: `${dir}/${rcd.name}` }
+    }).then(() => {
+      setRefreshFlag(!refreshFlag)
     })
-    setRefreshFlag(!refreshFlag)
   }
 
   const cancel = (e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
@@ -87,7 +87,7 @@ export default function FileList({
   useEffect(() => {
     void requests
       .get<any, ApiDocuments.vscode_FileStat[]>(
-        `/vscode/readDirectory?uri=upload-cloud/${dir}&ignoreNotExist=true`
+        `/vscode/readDirectory?uri=${dir}&ignoreNotExist=true`
       )
       .then(res => {
         setData(res)
@@ -152,7 +152,7 @@ export default function FileList({
 
           <a
             className="inline-flex"
-            href={`/api/vscode/readFile?uri=${`upload-cloud/${dir}/${rcd.name}`}&auth-key=${getAuthKey()}`}
+            href={`/api/vscode/readFile?uri=${`${dir}/${rcd.name}`}&auth-key=${getAuthKey()}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -177,7 +177,7 @@ export default function FileList({
           addonBefore={
             <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
           }
-          value={`upload-cloud/${dir}`}
+          value={`${dir}`}
           readOnly
         />
         <Upload {...upProps} className="cursor-pointer m-auto h-6 ml-3 w-20">
@@ -211,7 +211,7 @@ export default function FileList({
         onRow={rcd => {
           return {
             onClick: event => {
-              setUploadPath(`${dir}/${rcd.name}`)
+              setUploadPath(`${rcd.name}`)
               setVisible(false)
             }
           }

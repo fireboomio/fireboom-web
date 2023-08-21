@@ -23,7 +23,6 @@ import { useValidate } from '@/hooks/validate'
 import { VariableKind } from '@/interfaces/common'
 import type { ShowType } from '@/interfaces/datasource'
 import { DataSourceKind } from '@/interfaces/datasource'
-import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
@@ -33,7 +32,7 @@ import { getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { databaseKindNameMap } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
-import uploadLocal from '@/utils/uploadLocal'
+import createFile from '@/utils/uploadLocal'
 
 import styles from './DB.module.less'
 import FileList from './FileList'
@@ -127,7 +126,7 @@ export default function DB({ content, type }: Props) {
               const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
               try {
                 try {
-                  await uploadLocal(`${UploadDirectory.Database}/${dbName}.db`, '', dbName + '.db')
+                  await createFile(`${dict.sqlite}/${dbName}.db`, '', dbName + '.db')
                 } catch (e: any) {
                   const msgMap: any = {
                     10440011: intl.formatMessage({ defaultMessage: '文件名已存在' })
@@ -136,7 +135,7 @@ export default function DB({ content, type }: Props) {
                   message.error(msg || intl.formatMessage({ defaultMessage: '上传失败' }))
                   return
                 }
-                setUploadPath(`${UploadDirectory.Database}/${dbName}.db`)
+                setUploadPath(`${dbName}.db`)
                 _modal.destroy()
               } finally {
                 hide()
@@ -452,7 +451,7 @@ export default function DB({ content, type }: Props) {
         <FileList
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          dir={UploadDirectory.Database}
+          dir={dict.sqlite}
           beforeUpload={file => {
             const isAllowed = file.name.endsWith('.db')
             if (!isAllowed) {
@@ -486,7 +485,6 @@ export default function DB({ content, type }: Props) {
               </Descriptions.Item>
               {content.kind === DataSourceKind.SQLite ? (
                 <Descriptions.Item label={intl.formatMessage({ defaultMessage: '路径' })}>
-                  {dict.datasource}/
                   {getConfigurationVariableRender(content.customDatabase.databaseUrl)}
                 </Descriptions.Item>
               ) : (

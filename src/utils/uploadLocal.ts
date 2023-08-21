@@ -1,10 +1,6 @@
 import requests from '@/lib/fetchers'
 
-export default async function uploadLocal(uri: string, content: string | File, fileName?: string) {
-  return createFile(`upload-cloud/${uri}`, content, fileName)
-}
-
-export async function createFile(uri: string, content: string | File, fileName?: string) {
+export default async function createFile(uri: string, content: string | File, fileName?: string) {
   let param = new FormData() //创建form对象
   if (content instanceof File) {
     param.append('content', content)

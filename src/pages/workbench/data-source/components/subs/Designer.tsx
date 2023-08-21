@@ -14,15 +14,13 @@ import { restExampleJson } from '@/pages/workbench/data-source/components/subs/e
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { isDatabaseKind } from '@/utils/datasource'
-import uploadLocal from '@/utils/uploadLocal'
+import createFile from '@/utils/uploadLocal'
 
 import iconAli from '../assets/ali.svg'
 import iconCockroachDB from '../assets/CockroachDB.svg'
-import iconFaas from '../assets/Faas.svg'
 import iconGraphalAPI from '../assets/GraphalAPI.svg'
 import iconMongoDB from '../assets/MongoDB.svg'
 import iconMySQL from '../assets/MySQL.svg'
-import iconNode from '../assets/node.js.svg'
 import iconPlanetscale from '../assets/Planetscale.svg'
 import iconPostgreSQL from '../assets/PostgreSQL.svg'
 import iconRabbitMQ from '../assets/RabbitMQ.svg'
@@ -197,7 +195,7 @@ export default function Designer() {
         updateTime: '',
         deleteTime: '',
         onSelect: () => {
-          uploadLocal('1', JSON.stringify(restExampleJson), 'example_rest.json')
+          createFile('1', JSON.stringify(restExampleJson), 'example_rest.json')
         }
       },
       {

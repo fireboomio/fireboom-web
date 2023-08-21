@@ -24,7 +24,6 @@ import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
 import type { ShowType } from '@/interfaces/datasource'
-import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
@@ -115,7 +114,7 @@ export default function Rest({ content, type }: Props) {
 
   const initBaseUrlOptions = (v: string) => {
     axios
-      .get(`/api/vscode/readFile?uri=${v}`)
+      .get(`/api/vscode/readFile?uri=${dict.oas}/${v}`)
       .then(res => {
         const servers = get(res, 'data.servers') ?? []
         if (!form.getFieldValue(['customRest', 'baseUrl'])) {
@@ -272,7 +271,7 @@ export default function Rest({ content, type }: Props) {
         destroyOnClose
       >
         <FileList
-          dir={UploadDirectory.OpenAPI}
+          dir={dict.oas}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
           beforeUpload={file => {
@@ -322,7 +321,7 @@ export default function Rest({ content, type }: Props) {
                   className="flex items-center cursor-pointer"
                   onClick={() =>
                     window.open(
-                      `/api/vscode/readFile?uri=${dict.upload}/${content.customRest.oasFilepath}`,
+                      `/api/vscode/readFile?uri=${dict.oas}/${content.customRest.oasFilepath}`,
                       '_blank'
                     )
                   }
@@ -335,7 +334,7 @@ export default function Rest({ content, type }: Props) {
                     preview={false}
                   />
                   <span className="ml-2 text-11px text-[#909399]">
-                    {dict.upload}/{content.customRest.oasFilepath}
+                    {content.customRest.oasFilepath}
                   </span>
                 </div>
               </Descriptions.Item>

@@ -23,7 +23,6 @@ import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
 import type { ShowType } from '@/interfaces/datasource'
-import { UploadDirectory } from '@/interfaces/fs'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
@@ -248,11 +247,12 @@ export default function Graphql({ content, type }: Props) {
                   className="justify-start"
                 >
                   <img
+                    className='mr-1'
                     alt="wenjian1"
                     src="assets/iconfont/wenjian1.svg"
                     style={{ height: '1em', width: '1em' }}
                   />
-                  {dict.upload}/{content.customGraphql.schemaFilepath}
+                  {content.customGraphql.schemaFilepath}
                 </Descriptions.Item>
               ) : (
                 ''
@@ -788,7 +788,7 @@ export default function Graphql({ content, type }: Props) {
         destroyOnClose
       >
         <FileList
-          dir={UploadDirectory.Graphql}
+          dir={dict.graphql}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
           beforeUpload={file => {
