@@ -57,7 +57,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean, forceRoot?: boolean) => void
+  addItem: (isDir: boolean, forceRoot?: boolean, parentKey?: string) => void
   editItem: (key: string) => void
 }
 
@@ -166,11 +166,11 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
    * @param forceRoot 是否强制添加到根目录
    */
   const addItem = useCallback(
-    (isDir: boolean, forceRoot = false) => {
-      const target = forceRoot ? null : keyMap[lastClickKey]
+    (isDir: boolean, forceRoot = false, parentKey?: string) => {
+      const target = forceRoot ? null : keyMap[parentKey ?? lastClickKey]
       const parent = target?.isDir ? target : target?.parent
       setTempItem({ isDir: isDir, parentKey: parent?.key ?? '' })
-      setExpandedKeys([...expandedKeys, lastClickKey])
+      setExpandedKeys([...expandedKeys, parentKey ?? lastClickKey])
     },
     [expandedKeys, keyMap, lastClickKey]
   )

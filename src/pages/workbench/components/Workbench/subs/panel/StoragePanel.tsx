@@ -1,4 +1,4 @@
-import { App, Dropdown, message, Popconfirm, Tooltip } from 'antd'
+import { App, Dropdown, Input, message, Popconfirm, Tooltip } from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -68,7 +68,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
         name: item.name,
         isDir: true
       }
-      const children = Object.entries(item.uploadProfiles ?? {}).map(([key, subItem]) => {
+      const children: FileTreeNode[] = Object.entries(item.uploadProfiles ?? {}).map(([key, subItem]) => {
         return {
           data: subItem,
           key: `${item.name}_${key}`,
@@ -146,6 +146,27 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, true)
 
+  // 保存输入框内容
+  const saveInput = async (parent: FileTreeNode | null, isDir: boolean, name: string): Promise<boolean> => {
+    try {
+      await requests.put('/storage', {
+        name: parent!.name,
+        uploadProfiles: {
+          [name]: {
+            hooks: {},
+            maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+            maxAllowedFiles: 1
+          }
+        }
+      })
+      await mutateStorage()
+      navigate(`/workbench/storage/${parent!.name}/profile/${name}`)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
   const titleRender = (nodeData: FileTreeNode) => {
     let itemTypeClass
     if (nodeData.isDir) {
@@ -174,25 +195,26 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                   {
                     key: 'profile',
                     onClick: async () => {
-                      const currentProfileSet = new Set(
-                        Object.keys(nodeData.data.uploadProfiles ?? {})
-                      )
-                      let i = 1
-                      while (currentProfileSet.has(`NewProfile${i}`)) {
-                        i++
-                      }
-                      await requests.put('/storage', {
-                        name: nodeData.data.name,
-                        uploadProfiles: {
-                          [`NewProfile${i}`]: {
-                            hooks: {},
-                            maxAllowedUploadSizeBytes: 10 * 2 ** 20,
-                            maxAllowedFiles: 1
-                          }
-                        }
-                      })
-                      await mutateStorage()
-                      navigate(`/workbench/storage/${nodeData.data.name}/profile/NewProfile${i}`)
+                      // const currentProfileSet = new Set(
+                      //   Object.keys(nodeData.data.uploadProfiles ?? {})
+                      // )
+                      // let i = 1
+                      // while (currentProfileSet.has(`NewProfile${i}`)) {
+                      //   i++
+                      // }
+                      fileTree.current.addItem(false, false, nodeData.key)
+                      // await requests.put('/storage', {
+                      //   name: nodeData.data.name,
+                      //   uploadProfiles: {
+                      //     [`NewProfile${i}`]: {
+                      //       hooks: {},
+                      //       maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+                      //       maxAllowedFiles: 1
+                      //     }
+                      //   }
+                      // })
+                      // await mutateStorage()
+                      // navigate(`/workbench/storage/${nodeData.data.name}/profile/NewProfile${i}`)
                     },
                     label: <FormattedMessage defaultMessage="新建 Profile" />
                   },
@@ -298,6 +320,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
           }
           return false
         }}
+        onCreateItem={saveInput}
         selectedKey={selectedKey}
         rootClassName="h-full"
         treeClassName={styles.treeContainer}
