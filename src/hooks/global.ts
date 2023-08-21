@@ -8,11 +8,11 @@ type Log = {
 export enum QuestionType {
   DatasourceQuestion = 'datasource',
   OperationQuestion = 'operation',
-  HooksQuestion = 3,
-  AuthQuestion = 4,
+  // HooksQuestion = 3,
+  AuthQuestion = 'authentication',
   OssQuestion = 'storage',
-  OauthQuestion = 6,
-  InternalQuestion = 7,
+  // OauthQuestion = 6,
+  // InternalQuestion = 7,
   SDK = 'sdk'
 }
 export type Question = {
