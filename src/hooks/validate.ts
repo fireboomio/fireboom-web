@@ -37,7 +37,7 @@ export function useValidate() {
   const ruleMap = useMemo(
     () => ({
       api: [
-        caseMap.startWithUpperCase,
+        // caseMap.startWithUpperCase,
         caseMap.baseChar,
         caseMap.endWithAlphabetOrNumber,
         caseMap.notDoubleUnderscore
