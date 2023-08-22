@@ -1,5 +1,6 @@
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
+import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -270,10 +271,20 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     } else {
       itemTypeClass = styles.treeItemFile
     }
+    const isCustom =
+      ['function', 'proxy'].includes(nodeData.name ?? '') || nodeData.extension === '.json'
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
-        <div className={styles.icon}>
+        <div
+          className={clsx(styles.icon, [
+            nodeData.name === 'proxy'
+              ? styles.proxyIcon
+              : nodeData.name === 'function'
+              ? styles.functionIcon
+              : ''
+          ])}
+        >
           {nodeData.extra?.liveQueryEnabled ? <div className={styles.lighting}></div> : null}
         </div>
         <>
@@ -289,90 +300,92 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
-          <div onClick={e => e.stopPropagation()}>
-            <Dropdown
-              destroyPopupOnHide
-              menu={{
-                items: [
-                  {
-                    key: 'copy',
-                    onClick: async () => {
-                      const destPath = `${nodeData.path}Copy${Math.random()
-                        .toString(36)
-                        .substring(2, 5)}`
-                      await requests.post('/operation/copy', {
-                        dst: destPath,
-                        src: nodeData.path!,
-                        overload: false
-                      })
-                      message.success(
-                        intl.formatMessage(
-                          { defaultMessage: '已复制接口 {path}' },
-                          { path: destPath }
+          {!isCustom && (
+            <div onClick={e => e.stopPropagation()}>
+              <Dropdown
+                destroyPopupOnHide
+                menu={{
+                  items: [
+                    {
+                      key: 'copy',
+                      onClick: async () => {
+                        const destPath = `${nodeData.path}Copy${Math.random()
+                          .toString(36)
+                          .substring(2, 5)}`
+                        await requests.post('/operation/copy', {
+                          dst: destPath,
+                          src: nodeData.path!,
+                          overload: false
+                        })
+                        message.success(
+                          intl.formatMessage(
+                            { defaultMessage: '已复制接口 {path}' },
+                            { path: destPath }
+                          )
                         )
+                        void mutateApi()
+                      },
+                      label: (
+                        <div>
+                          <span className="ml-1.5">
+                            <FormattedMessage defaultMessage="复制" />{' '}
+                          </span>
+                        </div>
                       )
-                      void mutateApi()
                     },
-                    label: (
-                      <div>
-                        <span className="ml-1.5">
-                          <FormattedMessage defaultMessage="复制" />{' '}
-                        </span>
-                      </div>
-                    )
-                  },
-                  {
-                    key: 'rename',
-                    onClick: () => {
-                      fileTree.current.editItem(nodeData.key)
+                    {
+                      key: 'rename',
+                      onClick: () => {
+                        fileTree.current.editItem(nodeData.key)
+                      },
+                      label: (
+                        <div>
+                          <span className="ml-1.5">
+                            <FormattedMessage defaultMessage="重命名" />{' '}
+                          </span>
+                        </div>
+                      )
                     },
-                    label: (
-                      <div>
-                        <span className="ml-1.5">
-                          <FormattedMessage defaultMessage="重命名" />{' '}
-                        </span>
-                      </div>
-                    )
-                  },
-                  {
-                    key: 'delete',
-                    label: (
-                      <div
-                        onClick={e => {
-                          console.log(e)
-                          // @ts-ignore
-                          if (e.target?.dataset?.stoppropagation) {
-                            e.stopPropagation()
-                          }
-                        }}
-                      >
-                        <Popconfirm
-                          zIndex={9999}
-                          title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
-                          onConfirm={() => {
-                            handleDelete(nodeData)
+                    {
+                      key: 'delete',
+                      label: (
+                        <div
+                          onClick={e => {
+                            console.log(e)
+                            // @ts-ignore
+                            if (e.target?.dataset?.stoppropagation) {
+                              e.stopPropagation()
+                            }
                           }}
-                          okText={intl.formatMessage({ defaultMessage: '删除' })}
-                          cancelText={intl.formatMessage({ defaultMessage: '取消' })}
-                          placement="right"
                         >
-                          <div className={styles.menuItem} data-stoppropagation="1">
-                            <span className="ml-1.5">
-                              <FormattedMessage defaultMessage="删除" />
-                            </span>
-                          </div>
-                        </Popconfirm>
-                      </div>
-                    )
-                  }
-                ].filter(x => x.key !== 'copy' || !nodeData.isDir)
-              }}
-              trigger={['click']}
-              placement="bottomRight"
-            >
-              <div className={styles.more} onClick={e => e.preventDefault()} />
-            </Dropdown>
-          </div>
+                          <Popconfirm
+                            zIndex={9999}
+                            title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
+                            onConfirm={() => {
+                              handleDelete(nodeData)
+                            }}
+                            okText={intl.formatMessage({ defaultMessage: '删除' })}
+                            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                            placement="right"
+                          >
+                            <div className={styles.menuItem} data-stoppropagation="1">
+                              <span className="ml-1.5">
+                                <FormattedMessage defaultMessage="删除" />
+                              </span>
+                            </div>
+                          </Popconfirm>
+                        </div>
+                      )
+                    }
+                  ].filter(x => x.key !== 'copy' || !nodeData.isDir)
+                }}
+                trigger={['click']}
+                placement="bottomRight"
+              >
+                <div className={styles.more} onClick={e => e.preventDefault()} />
+              </Dropdown>
+            </div>
+          )}
         </>
       </div>
     )
