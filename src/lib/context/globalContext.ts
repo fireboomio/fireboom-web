@@ -12,7 +12,7 @@ export interface GlobalContextType {
       config: { hasParam?: boolean }
     }
     hide: () => void
-    show: (path?: string, options?: { hasParam?: boolean }) => void
+    show: (path?: string, options?: { hasParam?: boolean }) => Promise<boolean>
     toggleOperationHook: (
       flag: boolean,
       hookPath: string,

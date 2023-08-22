@@ -51,10 +51,28 @@
   }
 
   .icon {
+    position: relative;
     flex: 0 0 auto;
     width: 12px;
     height: 12px;
     font-size: 0;
+  }
+  .iconBadge {
+    &::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      width: 8px;
+      height: 8px;
+      // padding: 2px;
+      z-index: 100;
+      border-radius: 50%;
+      background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNyIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNyA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGwtcnVsZT0ibm9uemVybyIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjUiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiM0MjY3RkYiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSIuNTgzIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxIDEpIi8+PHBhdGggZD0iTTQuMzI0IDJIMi4zNmMtLjE5OSAwLS4zNi4xMjMtLjM2LjI3NnYuMTQ1Yy4wMTQuMTQzLjE3LjI1Ni4zNi4yNTZoLjAxOWwtLjAxNC4wMzdhLjc3Mi43NzIgMCAwIDAtLjAxOS40NDVjLjE0Ni41NzIuOTA2LjkzNiAxLjY5My44Mi4wNjQtLjAxLjEyOC0uMDIzLjE5LS4wMzlMNSAzLjc0NmwtLjgyMy0uMWMtLjU4Ny0uMDc1LTEuMDQ3LS4zOTgtMS4xNTQtLjgyMWwtLjAxLS4wNDdBLjc1Ny43NTcgMCAwIDEgMyAyLjY4M2wxLjMyMy0uMDA2Yy4xOTkgMCAuMzYtLjEyNC4zNi0uMjc2di0uMTI1YzAtLjE1My0uMTYxLS4yNzYtLjM2LS4yNzZ6bTAgLjE1Yy4wOSAwIC4xNjQuMDU3LjE2NC4xMjZWMi40YzAgLjA3LS4wNzQuMTI1LS4xNjQuMTI1SDIuODFhLjg2OS44NjkgMCAwIDAgLjAyLjMyOGMuMTI2LjQ5Ni42NjQuODU4IDEuMzE2Ljk0bC4wMjEuMDAzYy0uMDUzLjAxNC0uMTA5LjAyNS0uMTY2LjAzMy0uNjgzLjEwMi0xLjMzOC0uMjExLTEuNDYyLS43YS42OTUuNjk1IDAgMCAxIC4xNC0uNjA0SDIuMzZjLS4wOSAwLS4xNjQtLjA1Ni0uMTY0LS4xMjV2LS4xMjVjMC0uMDcuMDc0LS4xMjYuMTY0LS4xMjZoMS45NjR6IiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==");
+      background-size: 8px 8px;
+      background-color: #fff;
+      background-repeat: no-repeat;
+    }
   }
 
   .title {

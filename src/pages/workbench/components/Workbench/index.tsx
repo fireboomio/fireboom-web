@@ -11,6 +11,7 @@ import { useImmer } from 'use-immer'
 import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
 import { useGlobal } from '@/hooks/global'
 import { mutateApi } from '@/hooks/store/api'
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { Info } from '@/interfaces/common'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { GlobalContext } from '@/lib/context/globalContext'
@@ -106,6 +107,7 @@ export default function Index(props: PropsWithChildren) {
     ;(window as any).getGlobalStartTime = () => data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
+      mutateDataSource()
       events.emit({ event: 'compileFinish' })
     }
   })
@@ -113,6 +115,7 @@ export default function Index(props: PropsWithChildren) {
     setInfo({ ...info, engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
+      mutateDataSource()
       events.emit({ event: 'compileFinish' })
     }
   })
@@ -276,10 +279,7 @@ export default function Index(props: PropsWithChildren) {
     requests.get
   )
   const language = data?.language
-  const isHookServerSelected = useMemo(
-    () => (!!language && sdk?.some(item => item.type === 'server')) ?? false,
-    [language, sdk]
-  )
+  const isHookServerSelected = (!!language && sdk?.some(item => item.type === 'server')) ?? false
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
     try {
       if (!isHookServerSelected) {
@@ -365,13 +365,14 @@ export default function Index(props: PropsWithChildren) {
       },
       show: async (path?: string, config?: any) => {
         if (path && !(await checkHookExist(path ?? ''))) {
-          return
+          return false
         }
         setVscode({
           visible: true,
           currentPath: path ?? '',
           config: config ?? {}
         })
+        return true
       }
     }
   }
@@ -470,8 +471,16 @@ async function resolveDefaultCode(
   } else if (path.match(/custom-\w+\/authentication\//)) {
     code = await getDefaultCode(`auth.${name}`)
   } else if (path.match(/custom-\w+\/customize\//)) {
-    code = replaceFileTemplate(await getDefaultCode('custom'), [
+    code = replaceFileTemplate(await getDefaultCode('custom.customize'), [
       { variableName: 'CUSTOMIZE_NAME', value: name }
+    ])
+  } else if (path.match(/custom-\w+\/function\//)) {
+    code = replaceFileTemplate(await getDefaultCode('custom.function'), [
+      { variableName: 'FUNCTION_NAME', value: name }
+    ])
+  } else if (path.match(/custom-\w+\/proxy\//)) {
+    code = replaceFileTemplate(await getDefaultCode('custom.proxy'), [
+      { variableName: 'PROXY_NAME', value: name }
     ])
   } else if (path.match(/custom-\w+\/storage/)) {
     const profileName = list.pop() as string

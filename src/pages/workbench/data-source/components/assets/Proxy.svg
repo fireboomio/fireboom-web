@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Proxy圆</title>
+    <defs>
+        <circle id="path-1" cx="14" cy="14" r="14"></circle>
+        <filter x="-25.0%" y="-17.9%" width="150.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.37254902   0 0 0 0 0.384313725   0 0 0 0 0.411764706  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Proxy圆" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="椭圆形备份-3">
+            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+        </g>
+        <g id="代理商" transform="translate(7.000000, 6.000000)" fill="#51A2FB" fill-rule="nonzero">
+            <path d="M7,1.45454545 C8.40581573,1.45454545 9.54545455,2.59418427 9.54545455,4 C9.54545455,5.40581573 8.40581573,6.54545455 7,6.54545455 C5.59418427,6.54545455 4.45454545,5.40581573 4.45454545,4 C4.45454545,2.59418427 5.59418427,1.45454545 7,1.45454545 M7,0 C4.790861,0 3,1.790861 3,4 C3,6.209139 4.790861,8 7,8 C9.209139,8 11,6.209139 11,4 C11,2.93913404 10.5785726,1.92171839 9.82842712,1.17157288 C9.07828161,0.421427361 8.06086596,0 7,0" id="形状"></path>
+            <path d="M2.25,14 L0.75,14 C0.335786438,14 0,13.6642136 0,13.25 L0,11.75 C0,11.3357864 0.335786438,11 0.75,11 L2.25,11 C2.66421356,11 3,11.3357864 3,11.75 L3,13.25 C3,13.6642136 2.66421356,14 2.25,14" id="路径"></path>
+            <path d="M14.25,14 L12.75,14 C12.3357864,14 12,13.6642136 12,13.25 L12,11.75 C12,11.3357864 12.3357864,11 12.75,11 L14.25,11 C14.6642136,11 15,11.3357864 15,11.75 L15,13.25 C15,13.6642136 14.6642136,14 14.25,14" id="路径"></path>
+            <path d="M8.25,13 L6.75,13 C6.33578644,13 6,12.6642136 6,12.25 L6,10.75 C6,10.3357864 6.33578644,10 6.75,10 L8.25,10 C8.66421356,10 9,10.3357864 9,10.75 L9,12.25 C9,12.6642136 8.66421356,13 8.25,13" id="路径"></path>
+            <path d="M7.5,8.39854429 C10.1665454,8.40215903 12.3779003,10.4098943 12.5681242,13 L14,13 C13.8150519,9.63563742 10.959778,7 7.5,7 C4.04022198,7 1.18494811,9.63563742 1,13 L2.43187576,13 C2.62209969,10.4098943 4.83345461,8.40215903 7.5,8.39854429" id="路径"></path>
+            <polygon id="路径" points="7 7 8 7 8 11 7 11"></polygon>
+        </g>
+    </g>
+</svg>

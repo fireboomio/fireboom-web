@@ -3,13 +3,16 @@ import React, { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { ShowType } from '@/interfaces/datasource'
 import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { isDatabaseKind } from '@/utils/datasource'
 
@@ -27,8 +30,11 @@ interface Props {
 export default function DatasourceContainer({ content, showType }: Props) {
   const { handleSave } = useContext(DatasourceToggleContext)
   const intl = useIntl()
+  const dict = useDict()
   const { mutate } = useSWRConfig()
+  const { vscode } = useContext(GlobalContext)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
+  const enabledServer = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   // const { onRefreshMenu } = useContext(WorkbenchContext)
   const [isEditing, setIsEditing] = React.useState(false)
 
@@ -178,15 +184,17 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            <Switch
-              disabled={content.readonly}
-              loading={loading}
-              checked={content?.enabled}
-              checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-              unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
-              onChange={toggleOpen}
-              className="!mr-4"
-            />
+            {!content.customGraphql?.customized && (
+              <Switch
+                disabled={content.readonly}
+                loading={loading}
+                checked={content?.enabled}
+                checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+                unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                onChange={toggleOpen}
+                className="!mr-4"
+              />
+            )}
             {isDatabase ? (
               <Button
                 className={'btn-test !ml-4'}
@@ -209,6 +217,24 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 <Button
                   className={'btn-save !ml-4 mr-11'}
                   onClick={() => handleToggleDesigner('form')}
+                  disabled={content.readonly}
+                >
+                  <FormattedMessage defaultMessage="编辑" />
+                </Button>
+              </>
+            ) : content.customGraphql.customized ? (
+              <>
+                <Button
+                  className={'btn-save !ml-4'}
+                  onClick={() => window.open(content.customGraphql.endpoint)}
+                >
+                  <FormattedMessage defaultMessage="测试" />
+                </Button>
+                <Button
+                  className={'btn-save !ml-4 mr-11'}
+                  onClick={() =>
+                    vscode.show(`${dict.customize}/${content.name}${enabledServer.data?.extension}`)
+                  }
                   disabled={content.readonly}
                 >
                   <FormattedMessage defaultMessage="编辑" />

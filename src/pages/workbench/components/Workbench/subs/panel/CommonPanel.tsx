@@ -1,4 +1,5 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
+import clsx from 'clsx'
 import type React from 'react'
 import { useContext, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -56,6 +57,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         let icon = 'other'
         let svg = '/assets/icon/db-other.svg'
         let tip = ''
+        let readOnly = false
+        let showBadge = false
         switch (row.kind) {
           case DataSourceKind.MongoDB:
             svg = '/assets/icon/mongodb.svg'
@@ -71,6 +74,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             break
           case DataSourceKind.Graphql:
             svg = '/assets/icon/graphql.svg'
+            if (row.customGraphql.customized) {
+              showBadge = true
+              readOnly = true
+            }
             break
           case DataSourceKind.Restful:
             svg = '/assets/icon/rest.svg'
@@ -89,8 +96,8 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           }
         }
         return {
-          readonly: row.readonly,
-          // id: row.id,
+          readonly: readOnly || row.readonly,
+          showBadge,
           name: row.name,
           icon,
           sourceType: row.sourceType,
@@ -381,7 +388,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 />
               ) : (
                 <>
-                  <div className={styles.icon}>
+                  <div className={clsx(styles.icon, item.showBadge ? styles.iconBadge : '')}>
                     <Image
                       width={12}
                       height={12}
