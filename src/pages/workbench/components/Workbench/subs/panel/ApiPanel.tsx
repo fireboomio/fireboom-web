@@ -277,8 +277,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       itemTypeClass = styles.treeItemFile
     }
     const isCustom =
-      ['function', 'proxy'].includes(nodeData.name ?? '') ||
-      nodeData.extra?.engine !== OperationEngine.GraphQL
+      (nodeData.isDir && ['function', 'proxy'].includes(nodeData.name ?? '')) ||
+      (!nodeData.isDir && nodeData.extra?.engine !== OperationEngine.GraphQL)
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
