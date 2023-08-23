@@ -8,7 +8,7 @@ import { useConfigurationVariable } from '@/providers/variable'
 if (window && document) {
   const script = document.createElement('script')
   const body = document.getElementsByTagName('body')[0]
-  script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
+  script.src = '/rapidoc-min.js'
   body.appendChild(script)
 }
 

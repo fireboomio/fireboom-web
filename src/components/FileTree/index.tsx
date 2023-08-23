@@ -1,6 +1,6 @@
 import { Dropdown, Input, Tree } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import { cloneDeep, get, set } from 'lodash'
+import { cloneDeep, debounce, get, set } from 'lodash'
 import type React from 'react'
 import {
   forwardRef,
@@ -223,7 +223,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   )
 
   // 保存输入框内容
-  const saveInput = async (node: InnerNode, str: string, closeOnFail: boolean) => {
+  const saveInput = debounce(async (node: InnerNode, str: string, closeOnFail: boolean) => {
     if (node.isNew) {
       // 处理新增保存
       const success = await props.onCreateItem?.(
@@ -245,7 +245,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setEditingKey('')
       }
     }
-  }
+  }, 100)
 
   const buildContextMenu = (node: InnerNode) => {
     // 如果当前节点不在选中列表中，就选中当前节点，否则使用所有选择项作为目标

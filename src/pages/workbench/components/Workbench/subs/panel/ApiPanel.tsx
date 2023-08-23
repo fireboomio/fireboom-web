@@ -1,7 +1,7 @@
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import clsx from 'clsx'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
@@ -11,6 +11,7 @@ import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
 import { OperationEngine } from '@/interfaces/operation'
+import { GlobalContext } from '@/lib/context/globalContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
@@ -28,11 +29,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
+  const dict = useDict()
   const currentUrlPath = params['*']!
+
   const [treeData, setTreeData] = useState<ApiDocuments.fileloader_DataTree[]>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [selectedKey, setSelectedKey] = useState<string>('')
+  const { vscode } = useContext(GlobalContext)
   const fileTree = useRef<FileTreeRef>({
     addItem: () => {},
     editItem: () => {}
@@ -408,6 +412,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       selectList: ApiDocuments.fileloader_DataTree[],
       deepList: ApiDocuments.fileloader_DataTree[]
     ) => {
+      if (
+        selectList.some(
+          x =>
+            (x.isDir && x.path?.match(/^(proxy|function)/)) ||
+            x.extra?.engine !== OperationEngine.GraphQL
+        )
+      ) {
+        return []
+      }
       const menu: ItemType[] = [
         {
           key: 'on',
@@ -511,12 +524,32 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         }}
         onCreateItem={async (parent, isDir, name) => {
           if (name && onValidateName(name, isDir)) {
-            try {
-              await handleAddNode(parent?.path ? `${parent?.path}/${name}` : name, isDir)
+            let _parent = parent
+            while (_parent?.parent) {
+              _parent = _parent?.parent
+            }
+            if (_parent?.name === 'function' || _parent?.name === 'proxy') {
+              const resp = await requests.get<null, ApiDocuments.Sdk>('/sdk/enabledServer')
+              if (resp?.extension) {
+                if (
+                  await vscode.show(`${resp.outputPath}/${parent?.path}/${name}${resp.extension}`)
+                ) {
+                  message.info(
+                    intl.formatMessage({
+                      defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务'
+                    })
+                  )
+                }
+              }
               return true
-            } catch (e) {
-              console.error(e)
-              return false
+            } else {
+              try {
+                await handleAddNode(parent?.path ? `${parent?.path}/${name}` : name, isDir)
+                return true
+              } catch (e) {
+                console.error(e)
+                return false
+              }
             }
           }
           return false
