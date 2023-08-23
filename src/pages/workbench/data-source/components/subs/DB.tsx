@@ -391,16 +391,18 @@ export default function DB({ content, type }: Props) {
       if (!dbProtocol) {
         console.error('未配置当前数据库scheam')
       }
-      const { host, port, database, username, password } = values.customDatabase.databaseAlone
-      if (host && database && username) {
-        // 参数转url
-        form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
-        form.setFieldValue(
-          ['customDatabase', 'databaseUrl', 'staticVariableContent'],
-          `${dbProtocol}://${encodeURIComponent(username)}${
-            password ? `:${encodeURIComponent(password)}` : ''
-          }@${host}:${port}/${encodeURIComponent(database)}`
-        )
+      if (values.customDatabase.databaseAlone) {
+        const { host, port, database, username, password } = values.customDatabase.databaseAlone
+        if (host && database && username) {
+          // 参数转url
+          form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
+          form.setFieldValue(
+            ['customDatabase', 'databaseUrl', 'staticVariableContent'],
+            `${dbProtocol}://${encodeURIComponent(username)}${
+              password ? `:${encodeURIComponent(password)}` : ''
+            }@${host}:${port}/${encodeURIComponent(database)}`
+          )
+        }
       }
     }
 
