@@ -104,7 +104,6 @@ export default function Index(props: PropsWithChildren) {
       fbCommit: data.fbCommit ?? ''
     })
     setInfo(data)
-    ;(window as any).getGlobalStartTime = () => data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       mutateDataSource()

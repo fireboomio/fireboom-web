@@ -1,10 +1,12 @@
 import { Button, Form, message, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
+import { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import UrlInput from '@/components/UrlInput'
 import { useConfigContext } from '@/lib/context/ConfigContext'
+import { GlobalContext } from '@/lib/context/globalContext'
 import styles from '@/pages/workbench/setting/components/subs/subs.module.less'
 
 interface Runtime {
@@ -18,6 +20,8 @@ export default function SettingMainVersion() {
   const intl = useIntl()
   const { globalSetting, updateGlobalSetting } = useConfigContext()
   const [form] = Form.useForm()
+
+  const { info } = useContext(GlobalContext)
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
@@ -56,7 +60,9 @@ export default function SettingMainVersion() {
         initialValues={globalSetting}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
-          {calTime(dayjs((window as any).getGlobalStartTime()).format('YYYY-MM-DD HH:mm:ss'))}
+          {info.globalStartTime
+            ? calTime(dayjs(info.globalStartTime).format('YYYY-MM-DD HH:mm:ss'))
+            : '-'}
         </Form.Item>
         <InputOrFromEnvWithItem
           formItemProps={{
