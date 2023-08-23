@@ -10,9 +10,7 @@ export async function downloadOSSFile(url: string, filename?: string) {
     content: intl.formatMessage({ defaultMessage: '文件 {filename} 下载中' }, { filename })
   })
   try {
-    const resp = await fetch(url, {
-      mode: 'no-cors'
-    })
+    const resp = await fetch(`/api/system/proxy?url=${encodeURIComponent(url)}`)
     const blob = await resp.blob()
     const file = new File([blob], filename!)
     const a = document.createElement('a')

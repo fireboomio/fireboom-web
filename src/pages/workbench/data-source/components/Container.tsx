@@ -3,14 +3,18 @@ import React, { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import { mutateDataSource } from '@/hooks/store/dataSource'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
-import { updateHookEnabled } from '@/lib/service/hook'
+import { useDict } from '@/providers/dict'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
@@ -19,30 +23,32 @@ import Graphql from './subs/Graphql'
 import Rest from './subs/Rest'
 
 interface Props {
-  content?: DatasourceResp
+  content?: ApiDocuments.Datasource
   showType: ShowType
 }
 
 export default function DatasourceContainer({ content, showType }: Props) {
   const { handleSave } = useContext(DatasourceToggleContext)
   const intl = useIntl()
+  const dict = useDict()
   const { mutate } = useSWRConfig()
+  const { vscode } = useContext(GlobalContext)
   const { handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const { onRefreshMenu } = useContext(WorkbenchContext)
+  const enabledServer = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
+  // const { onRefreshMenu } = useContext(WorkbenchContext)
   const [isEditing, setIsEditing] = React.useState(false)
 
   const navigate = useNavigate()
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
     if (content) {
-      const newContent = { ...content, enabled: !content.enabled }
-      void (await requests.put('/dataSource', newContent))
-      handleSave(newContent)
+      void (await requests.put('/datasource', { name: content.name, enabled: !content.enabled }))
+      handleSave({ enabled: !content.enabled })
     }
-    // 目前逻辑为sourceType=4视为自定义钩子数据源，需要在开关时同步修改钩子开关
-    if (content.sourceType === 4) {
-      updateHookEnabled(`customize/${content.name}`, !!content.enabled)
-    }
+    // 自定义数据源，需要在开关时同步修改钩子开关
+    // if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
+    //   updateHookEnabled(`customize/${content.name}`, !!content.enabled)
+    // }
   }, [content])
 
   if (!content) {
@@ -50,33 +56,29 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   let icon = '/assets/icon/db-other.svg'
-  switch (content?.sourceType) {
-    case 1:
-      icon =
-        {
-          mysql: '/assets/icon/mysql.svg',
-          pgsql: '/assets/icon/pg.svg',
-          graphql: '/assets/icon/graphql.svg',
-          mongodb: '/assets/icon/mongodb.svg',
-          rest: '/assets/icon/rest.svg',
-          sqlite: '/assets/icon/sqlite.svg'
-        }[String(content.config.dbType).toLowerCase()] || icon
-      break
-    case 2:
-      icon = '/assets/icon/rest.svg'
-      break
-    case 3:
+  switch (content?.kind) {
+    case DataSourceKind.Graphql:
       icon = '/assets/icon/graphql.svg'
       break
+    case DataSourceKind.Restful:
+      icon = '/assets/icon/rest.svg'
+      break
+    case DataSourceKind.MongoDB:
+      icon = '/assets/icon/mongodb.svg'
+      break
+    case DataSourceKind.MySQL:
+      icon = '/assets/icon/mysql.svg'
+      break
+    case DataSourceKind.PostgreSQL:
+      icon = '/assets/icon/pgsql.svg'
+      break
+    case DataSourceKind.SQLite:
+      icon = '/assets/icon/sqlite.svg'
   }
 
   const testLink = () => {
-    void requests.post('/checkDBConn', { ...content }).then((x: any) => {
-      if (x?.status) {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      }
+    void requests.post('/datasource/checkConnection', content).then(() => {
+      message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
     })
   }
 
@@ -85,12 +87,22 @@ export default function DatasourceContainer({ content, showType }: Props) {
       message.error(intl.formatMessage({ defaultMessage: '请输入字母、数字或下划线' }))
       return
     }
-    const saveData = { ...content, name }
-    await requests.put('/dataSource', saveData)
+    await requests.post('/datasource/rename', {
+      src: content.name,
+      dst: name,
+      overload: false
+    })
     void mutateDataSource()
     setIsEditing(false)
-    await mutate(['/dataSource', String(content.id)])
+    await mutate(['/datasource', content.name])
+    navigate(`/workbench/data-source/${name}`)
   }
+
+  const isDatabase = isDatabaseKind(content)
+  const isCustomDatabase =
+    content.kind === DataSourceKind.Graphql &&
+    content.customGraphql &&
+    content.customGraphql.customized
 
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
@@ -116,7 +128,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
           </>
         ) : (
           <>
-            {!content.id ? (
+            {!content.name ? (
               <div
                 className="cursor-pointer flex h-5 mr-1 w-5 items-center justify-center"
                 onClick={() => history.back()}
@@ -152,7 +164,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   <span className="text-ellipsis max-w-200px overflow-hidden" title={content?.name}>
                     {content?.name}
                   </span>
-                  {!content.readonly && (
+                  {!content.readonly && !content.customGraphql?.customized && (
                     <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
                       <img
                         alt="bianji"
@@ -172,7 +184,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
         <div className="flex-1"></div>
         {showType === 'detail' ? (
           <>
-            {content.sourceType !== 4 ? (
+            {!content.customGraphql?.customized && (
               <Switch
                 disabled={content.readonly}
                 loading={loading}
@@ -182,18 +194,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 onChange={toggleOpen}
                 className="!mr-4"
               />
-            ) : null}
-            {content.sourceType === 1 ? (
+            )}
+            {isDatabase ? (
               <Button
                 className={'btn-test !ml-4'}
-                onClick={() => navigate(`/workbench/modeling/${content?.id}`)}
+                onClick={() => navigate(`/workbench/modeling/${content?.name}`)}
               >
                 <FormattedMessage defaultMessage="设计" />
               </Button>
             ) : (
               <></>
             )}
-            {content.sourceType !== 4 ? (
+            {!isCustomDatabase ? (
               <>
                 <Button
                   className={'btn-save !ml-4'}
@@ -205,6 +217,24 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 <Button
                   className={'btn-save !ml-4 mr-11'}
                   onClick={() => handleToggleDesigner('form')}
+                  disabled={content.readonly}
+                >
+                  <FormattedMessage defaultMessage="编辑" />
+                </Button>
+              </>
+            ) : content.customGraphql.customized ? (
+              <>
+                <Button
+                  className={'btn-save !ml-4'}
+                  onClick={() => window.open(content.customGraphql.endpoint)}
+                >
+                  <FormattedMessage defaultMessage="测试" />
+                </Button>
+                <Button
+                  className={'btn-save !ml-4 mr-11'}
+                  onClick={() =>
+                    vscode.show(`${dict.customize}/${content.name}${enabledServer.data?.extension}`)
+                  }
                   disabled={content.readonly}
                 >
                   <FormattedMessage defaultMessage="编辑" />
@@ -224,14 +254,16 @@ export default function DatasourceContainer({ content, showType }: Props) {
           borderRadius: '4px 4px 0 0'
         }}
       >
-        {content.sourceType === 1 ? (
+        {isDatabase ? (
           <DB content={content} type={showType} />
-        ) : content.sourceType === 2 ? (
+        ) : content.kind === DataSourceKind.Restful ? (
           <Rest content={content} type={showType} />
-        ) : content.sourceType === 3 ? (
-          <Graphql content={content} type={showType} />
-        ) : content.sourceType === 4 ? (
-          <Custom content={content} />
+        ) : content.kind === DataSourceKind.Graphql ? (
+          content.customGraphql.customized ? (
+            <Custom content={content} />
+          ) : (
+            <Graphql content={content} type={showType} />
+          )
         ) : (
           <></>
         )}

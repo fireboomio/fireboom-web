@@ -4,7 +4,7 @@ import { throttle } from 'lodash'
 import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
@@ -14,6 +14,8 @@ import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
 import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { useConfigurationVariable } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
@@ -25,10 +27,12 @@ interface Props {
   version?: string
   startTime?: string
   engineStatus?: ServiceStatus
-  hookStatus?: HookStatus
+  hookStatus?: boolean
   menuWidth: number
   toggleWindow: (defaultTa: string) => void
 }
+
+const devTipKey = 'dev.tip'
 
 // eslint-disable-next-line react/prop-types
 const StatusBar: React.FC<Props> = ({
@@ -42,6 +46,8 @@ const StatusBar: React.FC<Props> = ({
   version
 }) => {
   const intl = useIntl()
+  const [showDevTip, setShowDevTip] = useState(localStorage.getItem(devTipKey) !== 'false')
+  const { getConfigurationValue } = useConfigurationVariable()
   const calcTime = useCalcTime()
   const { questions } = useGlobal(state => ({
     questions: state.questions
@@ -50,22 +56,21 @@ const StatusBar: React.FC<Props> = ({
   const statusMap = useMemo(
     () => ({
       [ServiceStatus.Building]: intl.formatMessage({ defaultMessage: '编译中' }),
+      [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
+      [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
       [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
       [ServiceStatus.Started]: intl.formatMessage({ defaultMessage: '已启动' }),
-      [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' }),
-      [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
-      [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
-      [ServiceStatus.NotStarted]: intl.formatMessage({ defaultMessage: '未启动' })
+      [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' })
     }),
     [intl]
   )
-  const hookStatusMap = useMemo(
-    () => ({
-      [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-      [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
-    }),
-    [intl]
-  )
+  // const hookStatusMap = useMemo(
+  //   () => ({
+  //     [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
+  //     [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
+  //   }),
+  //   [intl]
+  // )
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
   const [hookOptionStatus, setHookOptionStatus] = useState<{
@@ -75,7 +80,7 @@ const StatusBar: React.FC<Props> = ({
   }>()
   const [hookEnabled, setHookEnabled] = useState<number>()
   const [hooksServerURL, setHooksServerURL] = useState<string>()
-  const { system, refreshConfig } = useConfigContext()
+  const { globalSetting, appRuntime, refreshConfig } = useConfigContext()
   const navigate = useNavigate()
   const { vscode } = useContext(GlobalContext)
   const webContainerUrl = useMemo(() => {
@@ -84,36 +89,39 @@ const StatusBar: React.FC<Props> = ({
     return url.origin + '/ws'
   }, [])
 
-  const { data: sdk } = useSWR<{ language: string; type: string; enabled: boolean }[]>(
-    '/sdk',
-    requests.get
-  )
+  const { data: sdk } = useSWRImmutable<ApiDocuments.Sdk[]>('/sdk', requests.get)
   useEffect(() => {
-    if (system.hooksServerURL === webContainerUrl) {
+    const hookUrl = getConfigurationValue(globalSetting.serverOptions.serverUrl)
+    if (hookUrl === webContainerUrl) {
       setHookEnabled(1)
       setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
     } else {
-      setHooksServerURL(system.hooksServerURL)
-      localStorage.setItem('hooksServerURL', system.hooksServerURL)
+      setHooksServerURL(hookUrl)
+      localStorage.setItem('hooksServerURL', hookUrl ?? '')
       setHookEnabled(3)
     }
-  }, [system.hooksServerURL, showHookSetting, webContainerUrl])
-  useEffect(() => {
-    if (showHookSetting) {
-      fetchHookOptionStatus(hooksServerURL ?? '')
-    }
-  }, [hooksServerURL, showHookSetting])
-  const fetchHookOptionStatus = useCallback(
-    throttle(async (url: string) => {
-      try {
-        const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
-        setHookOptionStatus(data)
-      } catch (error) {
-        console.error(error)
-      }
-    }, 2000),
-    []
-  )
+  }, [
+    showHookSetting,
+    webContainerUrl,
+    globalSetting.serverOptions.serverUrl,
+    getConfigurationValue
+  ])
+  // useEffect(() => {
+  //   if (showHookSetting) {
+  //     fetchHookOptionStatus(hooksServerURL ?? '')
+  //   }
+  // }, [hooksServerURL, showHookSetting])
+  // const fetchHookOptionStatus = useCallback(
+  //   throttle(async (url: string) => {
+  //     try {
+  //       const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
+  //       setHookOptionStatus(data)
+  //     } catch (error) {
+  //       console.error(error)
+  //     }
+  //   }, 2000),
+  //   []
+  // )
   useEffect(() => {
     if (!startTime) {
       return
@@ -150,6 +158,11 @@ const StatusBar: React.FC<Props> = ({
     refreshConfig()
   }
 
+  const closeDevTip = () => {
+    localStorage.setItem(devTipKey, 'false')
+    setShowDevTip(false)
+  }
+
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -157,10 +170,26 @@ const StatusBar: React.FC<Props> = ({
           {/*<span className={styles.gitIcon} />*/}
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
           <span className={styles['info-env'] + ' mr-2'}>
-            <span>
-              {system?.isDev === true ? intl.formatMessage({ defaultMessage: '开发模式' }) : ''}
-              {system?.isDev === false ? intl.formatMessage({ defaultMessage: '生产模式' }) : ''}
-            </span>
+            {appRuntime.dev ? (
+              <Tooltip
+                open={showDevTip}
+                arrow
+                title={
+                  <div className="flex items-center">
+                    <FormattedMessage defaultMessage="请勿将开发模式用于生产" />
+                    <span className="ml-4 cursor-pointer" onClick={closeDevTip}>
+                      <FormattedMessage defaultMessage="知道了" />
+                    </span>
+                  </div>
+                }
+              >
+                <span>
+                  <FormattedMessage defaultMessage="开发模式" />
+                </span>
+              </Tooltip>
+            ) : (
+              <FormattedMessage defaultMessage="生产模式" />
+            )}
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
             <span>FB:</span>
@@ -202,39 +231,42 @@ const StatusBar: React.FC<Props> = ({
             <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel + ' ml-1'}>
-            {engineStatus === ServiceStatus.NotStarted ? (
-              <>
-                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-                <Tooltip
-                  open={true}
-                  title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
-                >
-                  <span className="ml-1 text-[#cd3021]">
-                    {statusMap[engineStatus as ServiceStatus] ?? ''}
-                  </span>
-                </Tooltip>
-              </>
-            ) : engineStatus === ServiceStatus.BuildFailed ||
+            {
+              // engineStatus === ServiceStatus.NotStarted ? (
+              //   <>
+              //     <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+              //     <Tooltip
+              //       open={true}
+              //       title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
+              //     >
+              //       <span className="ml-1 text-[#cd3021]">
+              //         {statusMap[engineStatus as ServiceStatus] ?? ''}
+              //       </span>
+              //     </Tooltip>
+              //   </>
+              // ) :
+              engineStatus === ServiceStatus.BuildFailed ||
               engineStatus === ServiceStatus.StartFailed ? (
-              <>
-                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-                <Tooltip
-                  open={true}
-                  title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
-                >
-                  <span className="ml-1 text-[#cd3021]">
+                <>
+                  <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+                  <Tooltip
+                    open={true}
+                    title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
+                  >
+                    <span className="ml-1 text-[#cd3021]">
+                      {statusMap[engineStatus as ServiceStatus] ?? ''}
+                    </span>
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
+                  <span className="ml-1 text-[#50C772]">
                     {statusMap[engineStatus as ServiceStatus] ?? ''}
                   </span>
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
-                <span className="ml-1 text-[#50C772]">
-                  {statusMap[engineStatus as ServiceStatus] ?? ''}
-                </span>
-              </>
-            )}
+                </>
+              )
+            }
           </span>
           <span className="ml-3">
             {' '}
@@ -252,22 +284,18 @@ const StatusBar: React.FC<Props> = ({
             >
               <div
                 className={
-                  'rounded-3px h-3px w-3px' +
-                  (hookStatus === HookStatus.Running ? ' bg-[#50C772]' : ' bg-[#f0b763]')
+                  'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
                 }
               />
-              <span
-                className={
-                  'ml-1 ' +
-                  (hookStatus === HookStatus.Running ? 'text-[#50C772]' : 'text-[#f0b763]')
-                }
-              >
-                {hookStatusMap[hookStatus as HookStatus] ?? ''}
+              <span className={'ml-1 ' + (hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]')}>
+                {hookStatus
+                  ? intl.formatMessage({ defaultMessage: '已启动' })
+                  : intl.formatMessage({ defaultMessage: '未启动' })}
               </span>
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {
-                  sendMessageToSocket({ channel: 'engine', event: 'getHookStatus' })
+                  sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
                   e.stopPropagation()
                 }}
               >
@@ -277,7 +305,9 @@ const StatusBar: React.FC<Props> = ({
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
               <div className={styles.hookEntry}>
-                {hookEnabled === 1 ? 'WebContainer' : system.hooksServerURL}
+                {hookEnabled === 1
+                  ? 'WebContainer'
+                  : getConfigurationValue(globalSetting.serverOptions.serverUrl)}
               </div>
               <div
                 className="mr-5px ml-8px"
@@ -326,7 +356,7 @@ const StatusBar: React.FC<Props> = ({
                     value={hookEnabled}
                   >
                     <Space direction="vertical">
-                      <Radio value={1}>
+                      {/* <Radio value={1}>
                         WebContainer
                         {hookOptionStatus?.webContainer === HookStatus.Running && (
                           <Tag className="!ml-2" color="success">
@@ -338,7 +368,7 @@ const StatusBar: React.FC<Props> = ({
                             <FormattedMessage defaultMessage="未启动" />
                           </Tag>
                         )}
-                      </Radio>
+                      </Radio> */}
                       <Radio value={3}>
                         <FormattedMessage defaultMessage="手动设置" />
                         {hookOptionStatus?.customer === HookStatus.Running && (

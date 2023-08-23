@@ -23,32 +23,17 @@ import useSWR, { mutate as _mutate } from 'swr'
 import Error50x from '@/components/ErrorPage/50x'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import { useDict } from '@/providers/dict'
 import { intl } from '@/providers/IntlProvider'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
-type SDKItem = {
-  id: number
-  author: string
-  version: string
-  description?: string
-  dirName: string
-  type: 'client' | 'server'
-  language: string
-  url: string
-  name: string
-  outputPath: string
-  icon: string
-  enabled: boolean
-}
-type RemoteSDKItem = Omit<SDKItem, 'outputPath'> & {
-  defaultOutputPath: string
-}
-
 const SDKTemplate = () => {
-  const { data, mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const { data, mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const [showRemote, setShowRemote] = useState(false)
+  const { initialize } = useDict()
   // const cancelToken = useRef<any>()
   const {
     data: remoteSdk,
@@ -56,8 +41,8 @@ const SDKTemplate = () => {
     error,
     mutate: mutateRemote
   } = useSWR<{
-    official: RemoteSDKItem[]
-    community: RemoteSDKItem[]
+    official: ApiDocuments.Sdk[]
+    community: ApiDocuments.Sdk[]
   }>(
     // showRemote
     //   ? 'https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json'
@@ -70,7 +55,7 @@ const SDKTemplate = () => {
     //     })
     //   )
     // },
-    showRemote ? 'sdk.templates.json' : null,
+    showRemote ? 'sdk.cloud.template.json' : null,
     getFireboomFileContent,
     {
       revalidateOnMount: true
@@ -78,8 +63,8 @@ const SDKTemplate = () => {
   )
 
   const { server, client } = useMemo(() => {
-    let server: SDKItem[] = []
-    let client: SDKItem[] = []
+    let server: ApiDocuments.Sdk[] = []
+    let client: ApiDocuments.Sdk[] = []
     if (data) {
       data.forEach(x => {
         if (x.type === 'server') {
@@ -92,8 +77,8 @@ const SDKTemplate = () => {
     return { server, client }
   }, [data])
   const { remoteServer, remoteClient } = useMemo(() => {
-    let server: SDKItem[] = []
-    let client: SDKItem[] = []
+    let server: ApiDocuments.Sdk[] = []
+    let client: ApiDocuments.Sdk[] = []
     if (remoteSdk?.official) {
       remoteSdk.official.forEach(x => {
         if (x.type === 'server') {
@@ -110,16 +95,17 @@ const SDKTemplate = () => {
     return new Set(data?.map(x => x.dirName) ?? [])
   }, [data])
 
-  const onUpdate = (index: number, sdk: SDKItem) => {
+  const onUpdate = (index: number, sdk: ApiDocuments.Sdk) => {
     mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
   }
   const { loading, fun: downloadSdk } = useLock(
     async sdk => {
       const hide = message.loading(intl.formatMessage({ defaultMessage: '下载' }), -1)
       try {
-        await requests.post('/sdk/remote/download', sdk)
+        await requests.post('/sdk', sdk)
         await mutate()
-        _mutate('/hook/option')
+        initialize()
+        _mutate('/sdk/enabledServer')
         message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
       } catch (e) {
         message.error(intl.formatMessage({ defaultMessage: '下载失败' }))
@@ -156,7 +142,7 @@ const SDKTemplate = () => {
       </div>
       <Row className="" gutter={[32, 32]}>
         {server?.map((sdk, index) => (
-          <Col key={index} xl={8} xxl={6} md={12}>
+          <Col key={sdk.name} xl={8} xxl={6} md={12}>
             <SDKTemplateItem sdk={sdk} onChange={sdk => onUpdate(index, sdk)} />
           </Col>
         ))}
@@ -261,13 +247,14 @@ const SDKTemplateItem = ({
   onChange,
   sdk
 }: {
-  sdk: SDKItem
-  onChange: (newSDK: SDKItem) => void
+  sdk: ApiDocuments.Sdk
+  onChange: (newSDK: ApiDocuments.Sdk) => void
 }) => {
   const intl = useIntl()
   const [editing, setEditing] = useState(false)
   const [editingValue, setEditingValue] = useState(sdk.outputPath)
-  const { mutate } = useSWR<SDKItem[]>('/sdk', requests.get)
+  const { initialize } = useDict()
+  const { mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
     e => {
@@ -276,7 +263,7 @@ const SDKTemplateItem = ({
         setEditingValue(sdk.outputPath)
         setEditing(false)
       } else if (e.key === 'Enter') {
-        requests.put(`/sdk/rePath/${sdk.id}`, { outputPath: value }).then(res => {
+        requests.put(`/sdk`, { name: sdk.name, outputPath: value }).then(res => {
           console.log('res', res)
           onChange({
             ...sdk,
@@ -291,12 +278,13 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put(`/sdk/switch/${sdk.id}`, { enabled: checked }).then(res => {
+      requests.put(`/sdk`, { name: sdk.name, enabled: checked }).then(res => {
         mutate()
-        _mutate('/hook/option')
+        initialize()
+        _mutate('/sdk/enabledServer')
       })
     },
-    [onChange, sdk]
+    [initialize, mutate, sdk.name]
   )
 
   const dropdownMenus = useMemo<ItemType[]>(() => {
@@ -310,7 +298,7 @@ const SDKTemplateItem = ({
             okText={intl.formatMessage({ defaultMessage: '确定' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             onConfirm={async () => {
-              await requests.delete(`/sdk/${sdk.id}`)
+              await requests.delete(`/sdk/${sdk.name}`)
               message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
               mutate()
             }}
@@ -325,7 +313,10 @@ const SDKTemplateItem = ({
         onClick: async () => {
           const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
           try {
-            await requests.post(`/sdk/update/${sdk.id}`)
+            await requests.put(`/sdk`, {
+              name: sdk.name,
+              gitpull: true
+            })
             message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
             mutate()
           } finally {
@@ -340,12 +331,14 @@ const SDKTemplateItem = ({
         label: intl.formatMessage({ defaultMessage: '下载生成文件' }),
         onClick: async () => {
           const authKey = getAuthKey()
-          window.open(`/api/v1/sdk/download/${sdk.id}${authKey ? `?auth-key=${authKey}` : ''}`)
+          window.open(
+            `/api/sdk/export?dataNames=${sdk.name}${authKey ? `&auth-key=${authKey}` : ''}`
+          )
         }
       })
     }
     return menus
-  }, [intl, mutate, sdk.enabled, sdk.id])
+  }, [intl, mutate, sdk])
 
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">
@@ -406,7 +399,7 @@ const RemoteSDKCard = ({
   sdk,
   exist
 }: {
-  sdk: RemoteSDKItem
+  sdk: ApiDocuments.Sdk
   onSelect: () => void
   exist: boolean
 }) => {
@@ -441,7 +434,7 @@ const RemoteSDKCard = ({
           <div className={styles.descLine}>{sdk.description}</div>
         </Descriptions.Item>
         <Descriptions.Item label={intl.formatMessage({ defaultMessage: '生成路径' })}>
-          {sdk.defaultOutputPath}
+          {sdk.outputPath}
         </Descriptions.Item>
       </Descriptions>
       {exist ? null : (

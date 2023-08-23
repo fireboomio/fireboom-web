@@ -3,7 +3,7 @@ type DBConnectionConfig = {
   username: string
   password?: string
   host: string
-  port?: string
+  port?: number
   dbName: string
   args?: string
 }
@@ -18,7 +18,7 @@ export function parseDBUrl(url: string): DBConnectionConfig | undefined {
     username: decodeURIComponent(ret[2]),
     password: decodeURIComponent(ret[4]),
     host: ret[5],
-    port: ret[7],
+    port: +ret[7],
     dbName: decodeURIComponent(ret[8]),
     args: decodeURIComponent(ret[10])
   }

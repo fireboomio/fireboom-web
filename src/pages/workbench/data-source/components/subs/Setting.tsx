@@ -9,8 +9,9 @@ import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import type { DatasourceResp, DMFResp, ReplaceJSON } from '@/interfaces/datasource'
+import type { DMFResp, ReplaceJSON } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './Setting.module.less'
 
@@ -38,7 +39,7 @@ interface Model {
 interface Props {
   initSchema: string
   replaceJSON: ReplaceJSON[]
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   onSave: (data: any) => void
 }
 
@@ -96,7 +97,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
 
   useEffect(() => {
     void requests
-      .get<unknown, DMFResp>(`/prisma/dmf/${currDBId ?? ''}`, { timeout: 15e3 })
+      .get<unknown, DMFResp>(`/datasource/${currDBId ?? ''}/dmmf`, { timeout: 15e3 })
       .then(x => {
         const model = (x.models || []).map(m => ({
           name: m.name,
@@ -170,7 +171,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
         schemaExtension: schemaExtension
       }
     }
-    requests.put('/dataSource', payload).then(res => {
+    requests.put('/datasource', payload).then(res => {
       onSave(payload)
       if (res) {
         message.success(intl.formatMessage({ defaultMessage: '保存成功！' }))

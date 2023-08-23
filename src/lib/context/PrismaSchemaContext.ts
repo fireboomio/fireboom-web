@@ -3,8 +3,9 @@ import type { Schema } from '@paljs/types'
 import { createContext } from 'react'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
-import type { Block, DBSourceResp } from '@/interfaces/modeling'
+import type { Block } from '@/interfaces/modeling'
 import type { BasicContextContainer } from '@/lib/context/baseContextContainer'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export type PrismaSchemaContextState = {
   blocks: Block[]
@@ -13,7 +14,7 @@ export type PrismaSchemaContextState = {
   editMap: Record<string, boolean>
   newMap: Record<string, boolean>
   currentEntityId: number
-  currentDBSource: DBSourceResp
+  currentDBSource: ApiDocuments.Datasource
   previewFilters: FilterState[]
   schema: Schema
   apolloClient?: ApolloClient<NormalizedCacheObject> // 保存client对象在context中，减少切换model重新创建
@@ -30,15 +31,8 @@ export const emptyPrismaSchemaContextState: PrismaSchemaContextContainer = {
     delMap: {},
     editMap: {},
     newMap: {},
-    currentDBSource: {
-      id: 0,
-      name: '',
-      sourceType: 1,
-      config: {
-        dbType: 'MySQL',
-        apiNamespace: ''
-      }
-    },
+    // @ts-ignore
+    currentDBSource: {},
     previewFilters: [],
     schema: {
       models: [],

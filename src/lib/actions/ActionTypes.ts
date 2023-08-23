@@ -1,7 +1,8 @@
 import type { Schema } from '@paljs/types'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
-import type { Block, DBSourceResp, Enum, Model } from '@/interfaces/modeling'
+import type { Block, Enum, Model } from '@/interfaces/modeling'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface Action<T> {
   type: string
@@ -14,7 +15,7 @@ export interface PrismaSchemaPayload {
   delMap: Record<string, boolean>
   editMap: Record<string, boolean>
   newMap: Record<string, boolean>
-  dbSource: DBSourceResp
+  dbSource: ApiDocuments.Datasource
   schema: Schema
 }
 
@@ -58,7 +59,7 @@ export interface UpdateDraftModelAction extends Action<Model> {}
 
 export interface SaveGQLSchemaAction extends Action<Schema> {}
 
-export interface CreateApolloClientAction extends Action<number> {}
+export interface CreateApolloClientAction extends Action<string> {}
 
 export type AnyAction =
   | UpdateDraftEnumAction

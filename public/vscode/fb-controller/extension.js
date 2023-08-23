@@ -4,6 +4,7 @@ const vscode = require('vscode')
 const rootPath = vscode.workspace.rootPath
 
 async function openFile(filePath) {
+  console.debug(`open file: ${filePath}`)
   const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(`fbfs:${filePath}`))
   vscode.window.showTextDocument(document)
 }

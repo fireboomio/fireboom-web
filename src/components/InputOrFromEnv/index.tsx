@@ -1,82 +1,114 @@
 import type { AutoCompleteProps, FormItemProps, InputProps, SelectProps } from 'antd'
 import { AutoComplete, Form, Input, Select, Space } from 'antd'
-import type { ChangeEvent } from 'react'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import clsx from 'clsx'
+import type { ChangeEvent, ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
-import type { VariableType } from '@/interfaces/datasource'
-import { Mode } from '@/interfaces/datasource'
-import requests from '@/lib/fetchers'
+import { VariableKind } from '@/interfaces/common'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useEnv } from '@/providers/env'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export interface InputOrFromEnvProps {
-  value?: VariableType
+  className?: string
+  value?: ApiDocuments.ConfigurationVariable
   inputProps?: Omit<InputProps, 'value' | 'onChange'>
   envProps?: Omit<AutoCompleteProps, 'value' | 'onChange'>
-  onChange?: (data?: VariableType) => void
+  inputRender?: (props: InputProps) => ReactNode
+  onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
-const modeOptions: SelectProps['options'] = [
-  { value: Mode.Input, label: '输入值' },
-  { value: Mode.Env, label: '环境变量' }
-]
+const InputOrFromEnv = ({
+  className,
+  value,
+  onChange,
+  inputProps,
+  inputRender,
+  envProps
+}: InputOrFromEnvProps) => {
+  const intl = useIntl()
+  const { kind: kind, setKind: setKind } = useContext(InputOrFromEnvContext)
+  const envs = useEnvOptions()
+  const { envs: envMap } = useEnv()
+  const modeOptions = useMemo<SelectProps['options']>(
+    () => [
+      { value: VariableKind.Static, label: intl.formatMessage({ defaultMessage: '静态值' }) },
+      { value: VariableKind.Env, label: intl.formatMessage({ defaultMessage: '环境变量' }) }
+    ],
+    [intl]
+  )
 
-const InputOrFromEnv = ({ value, onChange, inputProps, envProps }: InputOrFromEnvProps) => {
-  const { mode, setMode } = useContext(InputOrFromEnvContext)
-  const [envs, setEnvs] = useState<string[]>([])
   const onSwitchMode = useCallback(
-    (e: Mode) => {
-      setMode(e)
-      onChange?.({ key: '', kind: e, val: '' })
+    (e: VariableKind) => {
+      setKind(e)
+      onChange?.(
+        e === VariableKind.Env
+          ? { kind: e, environmentVariableName: '' }
+          : { kind: e, staticVariableContent: '' }
+      )
     },
-    [onChange]
+    [onChange, setKind]
   )
   const onValueChange = useCallback(
     (e: ChangeEvent<HTMLInputElement> | string) => {
       var value: string = typeof e === 'string' ? e : e.target.value
-      onChange?.({
-        key: mode == Mode.Env ? value : '',
-        kind: mode,
-        val: mode == Mode.Env ? '' : value
-      })
+      onChange?.(
+        kind === VariableKind.Env
+          ? { kind: kind, environmentVariableName: value }
+          : { kind: kind, staticVariableContent: value }
+      )
     },
-    [mode, onChange]
+    [kind, onChange]
   )
 
   useEffect(() => {
-    if (mode == Mode.Env && !envs.length) {
-      requests.get('/env').then(resp => {
-        setEnvs((resp as any).map((r: any) => r.key) ?? [])
-      })
-    }
-  }, [envs, mode])
-
-  useEffect(() => {
-    setMode(value?.kind ?? Mode.Input)
-  }, [setMode, value?.kind])
+    setKind((value?.kind as VariableKind) ?? VariableKind.Static)
+  }, [setKind, value?.kind])
 
   return (
-    <Space.Compact className="!flex">
-      <Select className="!w-30" value={mode} options={modeOptions} onChange={onSwitchMode} />
-      {mode == Mode.Env ? (
-        <AutoComplete
-          {...envProps}
-          value={value?.key}
+    <Space.Compact className={clsx('!flex', className)}>
+      <Select className="!w-30" value={kind} options={modeOptions} onChange={onSwitchMode} />
+      {kind == VariableKind.Env ? (
+        <div className="relative flex-1">
+          <AutoComplete
+            {...envProps}
+            value={value?.environmentVariableName}
+            options={envs}
+            suffixIcon={<span>12</span>}
+            onChange={onValueChange}
+          />
+          {value?.environmentVariableName && (
+            <div className="absolute right-2 top-0 bottom-0 leading-8 text-[#999] z-10">
+              {envMap[value.environmentVariableName]}
+            </div>
+          )}
+        </div>
+      ) : inputRender ? (
+        inputRender({
+          ...inputProps,
+          value: value?.staticVariableContent,
+          onChange: onValueChange,
+          className: 'flex-1'
+        })
+      ) : (
+        <Input
+          {...inputProps}
           className="flex-1"
-          options={envs.map(env => ({ label: env, value: env }))}
+          value={value?.staticVariableContent}
           onChange={onValueChange}
         />
-      ) : (
-        <Input {...inputProps} className="flex-1" value={value?.val} onChange={onValueChange} />
       )}
     </Space.Compact>
   )
 }
 
 export interface InputOrFromEnvWithItemProps
-  extends Pick<InputOrFromEnvProps, 'inputProps' | 'envProps'> {
+  extends Pick<InputOrFromEnvProps, 'inputProps' | 'envProps' | 'inputRender' | 'className'> {
   formItemProps?: Omit<FormItemProps, 'rules'>
   required?: boolean
   rules?: FormItemProps['rules']
-  onChange?: (data?: VariableType) => void
+  onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
 const InputOrFromEnvWithItem = ({
@@ -85,13 +117,13 @@ const InputOrFromEnvWithItem = ({
   required,
   ...rest
 }: InputOrFromEnvWithItemProps) => {
-  const [mode, setMode] = useState<Mode>(Mode.Input)
+  const [kind, setKind] = useState<VariableKind>(VariableKind.Static)
   return (
-    <InputOrFromEnvContext.Provider value={{ mode, setMode }}>
+    <InputOrFromEnvContext.Provider value={{ kind, setKind }}>
       <Form.Item
         {...formItemProps}
         rules={
-          mode == Mode.Env
+          kind == VariableKind.Env
             ? required
               ? [
                   {
@@ -120,8 +152,8 @@ const InputOrFromEnvWithItem = ({
 export default InputOrFromEnvWithItem
 
 interface InputOrFromEnvState {
-  mode: Mode
-  setMode: (mode: Mode) => void
+  kind: VariableKind
+  setKind: (kind: VariableKind) => void
 }
 
 const InputOrFromEnvContext = createContext<InputOrFromEnvState>(

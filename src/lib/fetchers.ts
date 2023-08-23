@@ -7,27 +7,29 @@ import { useSyncExternalStore } from 'react'
 import { intl } from '@/providers/IntlProvider'
 
 const requests = axios.create({
-  baseURL: '/api/v1',
+  baseURL: '/api',
   timeout: -1
 })
 
 const errToast = throttle(str => message.error(str), 1000)
 
 requests.interceptors.response.use(
-  <T>(resp: AxiosResponse<any, any>) => {
+  (resp: AxiosResponse<any, any>) => {
     if (resp.status >= 200 && resp.status < 300) {
       // FIXME: 生效代码适配文件存储列表接口
       if (resp?.data?.code !== '10000000' && resp?.data?.code) {
         console.log(123123, resp.config)
         return resp.config.onError?.(resp.data)
       }
-      // return resp.data.result ?? (resp.data as unknown as T)
-      return resp.data.result
+      return resp.data
     } else {
       // eslint-disable-next-line no-console
       const errMag = resp.config.resolveErrorMsg?.(resp)
       console.warn(resp.data.message)
-      void message.error(errMag ?? resp.data.message)
+      // @ts-ignore
+      if (!resp.config.ignoreError) {
+        void message.error(errMag ?? resp.data.message)
+      }
     }
   },
   (error: AxiosError) => {
@@ -40,12 +42,20 @@ requests.interceptors.response.use(
       setAuthKey('')
     }
     const errMag = error?.config?.resolveErrorMsg?.(error.response)
-    errToast(
-      errMag ??
-        // @ts-ignore
-        error?.response?.data?.message ??
-        intl.formatMessage({ defaultMessage: '网络请求错误！' })
-    )
+    // @ts-ignore
+    if (error?.response?.data?.cause) {
+      // @ts-ignore
+      console.warn(error?.response?.data?.cause)
+    }
+    // @ts-ignore
+    if (!error.config.ignoreError) {
+      errToast(
+        errMag ??
+          // @ts-ignore
+          error?.response?.data?.message ??
+          intl.formatMessage({ defaultMessage: '网络请求错误！' })
+      )
+    }
     return Promise.reject(error)
   }
 )
@@ -69,7 +79,8 @@ export const hasAuthKey = () => {
 
 export const getHeader = () => {
   return {
-    'X-FB-Authentication': authKey ?? ''
+    'X-FB-Authentication': authKey ?? '',
+    'X-FB-Locale': ''
   }
 }
 
@@ -107,7 +118,7 @@ export default requests
 
 export const proxy = (url: string, cancelToken?: CancelToken) => {
   return axios
-    .get(`/api/v1/common/proxy?url=${encodeURIComponent(url)}`, {
+    .get(`/api/system/proxy?url=${encodeURIComponent(url)}`, {
       headers: getHeader(),
       cancelToken
     })

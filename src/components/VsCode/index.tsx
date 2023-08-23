@@ -6,15 +6,14 @@ import useSWRImmutable from 'swr/immutable'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-
-type HookOption = {
-  relativeDir: string
-  language: string
-  fileExtension: string
-}
+import { useDict } from '@/providers/dict'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 const outChannel = new BroadcastChannel('fb-vscode-out')
 const inChannel = new BroadcastChannel('fb-vscode-in')
+
+let _appended = false
+
 export default function VsCode({
   className,
   style
@@ -22,11 +21,13 @@ export default function VsCode({
   className?: string
   style?: CSSProperties
 }) {
+  const [appended, setAppended] = useState(_appended)
   const vscodeWebIframe = useRef<HTMLIFrameElement>(null)
   const { vscode } = useContext(GlobalContext)
-  const { data } = useSWRImmutable<HookOption>('/hook/option', requests)
+  const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   const language = data?.language
   const [forceShowPath, setForceShowPath] = useState('')
+  const dict = useDict()
 
   const dataSourceList = useDataSourceList()
   const { pathname } = useLocation()
@@ -42,10 +43,10 @@ export default function VsCode({
     setForceShowPath('')
     const [, dbId] = pathname.match(/\/workbench\/data-source\/(\d+)/) || []
     if (dbId) {
-      const db = dataSourceList?.find(x => String(x.id) === dbId)
+      const db = dataSourceList?.find(x => x.name === dbId)
       if (db && db.sourceType === 4) {
         vscode.show()
-        const path = `customize/${db.name}`
+        const path = `${dict.customize}/customize/${db.name}`
         vscode.checkHookExist(path).then(exist => {
           setForceShowPath(path)
         })
@@ -62,31 +63,47 @@ export default function VsCode({
     if (!forceShowPath && vscode?.options?.visible) {
       path = vscode?.options?.currentPath
     }
+    path = path.replace(/^(\.\/)?custom-\w+\//, './')
     if (path) {
       openDatabase().then(db => {
         addMessage(db, {
           cmd: 'openFile',
-          data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
+          data: { path }
         }).then(() => {
           inChannel.postMessage({
             cmd: 'openFile',
-            data: { path: '/' + data?.relativeDir + '/' + path + data?.fileExtension }
+            data: { path }
           })
         })
       })
     }
-  }, [forceShowPath, vscode?.options?.visible, vscode?.options?.currentPath, data?.fileExtension])
+  }, [forceShowPath, vscode?.options])
 
-  return (forceShowPath || vscode?.options?.visible) && data?.relativeDir ? (
-    <iframe
-      key={language}
-      ref={vscodeWebIframe}
-      data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
-      className={`border-0 h-full top-0 left-0 w-full ${className}`}
-      src={`/vscode/index.html?baseDir=${data?.relativeDir}`}
-      title="vscode"
-      style={style}
-    />
+  useEffect(() => {
+    if (vscode?.options.visible) {
+      if (!appended) {
+        _appended = true
+        setAppended(true)
+      }
+    }
+  }, [appended, vscode?.options.visible])
+
+  return appended && data?.outputPath ? (
+    <div
+      style={{
+        transform: vscode?.options?.visible ? 'none' : 'translate(-100vw, 0)'
+      }}
+    >
+      <iframe
+        key={language}
+        ref={vscodeWebIframe}
+        data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
+        className={`border-0 h-full top-0 left-0 w-full ${className}`}
+        src={`/vscode/index.html?baseDir=${data?.outputPath}`}
+        title="vscode"
+        style={style}
+      />
+    </div>
   ) : (
     <></>
   )

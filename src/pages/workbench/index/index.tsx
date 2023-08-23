@@ -1,118 +1,49 @@
 import { Image } from 'antd'
-import React, { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import requests from '@/lib/fetchers'
 import { Notice } from '@/pages/workbench/index/components/Notice'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
 
 const Guide = lazy(() => import('@/pages/workbench/index/components/Guide'))
 
-interface HomeApi {
-  liveQueryTotal: number
-  mutationsTotal: number
-  queryTotal: number
-  subscriptionsTotal: number
-}
-
-interface HomeDataSource {
-  CustomerTotal: number
-  GraphqlTotal: number
-  RestTotal: number
-  dbTotal: number
-}
-
-interface HomeOss {
-  ossTotal: number
-  totalMemory: string
-  useMemory: string
-}
-
-interface HomeAuth {
-  authTotal: number
-  todayInsertUser: number
-  totalUser: number
-}
-
-interface HomeConfig {
-  homeApi: HomeApi
-  homeAuth: HomeAuth
-  homeDataSource: HomeDataSource
-  homeOss: HomeOss
-}
-
-const initialValues = {
-  homeApi: {
-    liveQueryTotal: 0,
-    mutationsTotal: 0,
-    queryTotal: 0,
-    subscriptionsTotal: 0
-  },
-  homeAuth: {
-    authTotal: 0,
-    todayInsertUser: 0,
-    totalUser: 0
-  },
-  homeDataSource: {
-    CustomerTotal: 0,
-    GraphqlTotal: 0,
-    RestTotal: 0,
-    dbTotal: 0,
-    dbTotal2: 0
-  },
-  homeOss: {
-    ossTotal: 0,
-    totalMemory: '',
-    useMemory: ''
-  }
-}
-
 export default function Home() {
   const intl = useIntl()
   const [showType, setShowType] = useImmer('notice')
-  const [homeConfig, setHomeConfig] = useImmer<HomeConfig>(initialValues)
+  const [homeConfig, setHomeConfig] = useState<ApiDocuments.handler_homeStatistics | undefined>()
   const handleToggleDesigner = (rightType: string) => {
     setShowType(rightType)
   }
   useEffect(() => {
-    void requests.get<unknown, HomeConfig>('/home').then(res => {
+    void requests.get<unknown, ApiDocuments.handler_homeStatistics>('/home').then(res => {
       setHomeConfig(res)
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { homeApi, homeAuth, homeDataSource, homeOss } = homeConfig
-  const { CustomerTotal, GraphqlTotal, RestTotal, dbTotal } = homeDataSource
-  const { liveQueryTotal, mutationsTotal, queryTotal, subscriptionsTotal } = homeApi
-  const { authTotal, todayInsertUser, totalUser } = homeAuth
-  const { ossTotal, totalMemory, useMemory } = homeOss
-
-  const renderFeItem = (image: string, name: string, _doc: string, _code: string) => {
-    return (
-      <div className={styles.item}>
-        <div className={styles.nameLine}>
-          <div className={[styles.image, image].join(' ')} />
-          <div className={styles.name}>{name}</div>
-        </div>
-        <div className={styles.btnLine}>
-          <div className={styles.btn}>
-            <div className={[styles.image, styles.imageDoc].join(' ')} />
-            <div className={styles.text}>{intl.formatMessage({ defaultMessage: '文档' })}</div>
-          </div>
-          <div className={styles.btn}>
-            <div className={[styles.image, styles.imageCode].join(' ')} />
-            <div className={styles.text}>{intl.formatMessage({ defaultMessage: '代码' })}</div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  function handleAvatarClick() {
-    console.log('Avatar Clicked')
-  }
+  // const renderFeItem = (image: string, name: string, _doc: string, _code: string) => {
+  //   return (
+  //     <div className={styles.item}>
+  //       <div className={styles.nameLine}>
+  //         <div className={[styles.image, image].join(' ')} />
+  //         <div className={styles.name}>{name}</div>
+  //       </div>
+  //       <div className={styles.btnLine}>
+  //         <div className={styles.btn}>
+  //           <div className={[styles.image, styles.imageDoc].join(' ')} />
+  //           <div className={styles.text}>{intl.formatMessage({ defaultMessage: '文档' })}</div>
+  //         </div>
+  //         <div className={styles.btn}>
+  //           <div className={[styles.image, styles.imageCode].join(' ')} />
+  //           <div className={styles.text}>{intl.formatMessage({ defaultMessage: '代码' })}</div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   return (
     <>
@@ -132,7 +63,9 @@ export default function Home() {
                           <div className={styles.name}>
                             {intl.formatMessage({ defaultMessage: '数据库' })}
                           </div>
-                          <div className={styles.number}>{dbTotal}</div>
+                          <div className={styles.number}>
+                            {homeConfig?.dataSource?.databaseTotal ?? 0}
+                          </div>
                         </div>
                         <Image
                           width={54}
@@ -147,7 +80,9 @@ export default function Home() {
                       <div className={styles.dataCardBody}>
                         <div className={styles.info}>
                           <div className={styles.name}>REST API</div>
-                          <div className={styles.number}>{RestTotal}</div>
+                          <div className={styles.number}>
+                            {homeConfig?.dataSource?.restTotal ?? 0}
+                          </div>
                         </div>
                         <Image
                           width={54}
@@ -162,7 +97,9 @@ export default function Home() {
                       <div className={styles.dataCardBody}>
                         <div className={styles.info}>
                           <div className={styles.name}>GRAPHQL API</div>
-                          <div className={styles.number}>{GraphqlTotal}</div>
+                          <div className={styles.number}>
+                            {homeConfig?.dataSource?.graphqlTotal ?? 0}
+                          </div>
                         </div>
                         <Image
                           width={54}
@@ -179,7 +116,9 @@ export default function Home() {
                           <div className={styles.name}>
                             {intl.formatMessage({ defaultMessage: '自定义服务' })}
                           </div>
-                          <div className={styles.number}>{CustomerTotal}</div>
+                          <div className={styles.number}>
+                            {homeConfig?.dataSource?.customizeTotal ?? 0}
+                          </div>
                         </div>
                         <Image
                           width={54}
@@ -205,7 +144,9 @@ export default function Home() {
                         <div className={styles.name}>
                           {intl.formatMessage({ defaultMessage: '查询' })}
                         </div>
-                        <div className={styles.number}>{queryTotal}</div>
+                        <div className={styles.number}>
+                          {homeConfig?.operation?.queryTotal ?? 0}
+                        </div>
                       </div>
                       <Image
                         width={54}
@@ -220,7 +161,9 @@ export default function Home() {
                         <div className={styles.name}>
                           {intl.formatMessage({ defaultMessage: '实时查询' })}
                         </div>
-                        <div className={styles.number}>{liveQueryTotal}</div>
+                        <div className={styles.number}>
+                          {homeConfig?.operation?.liveQueryTotal ?? 0}
+                        </div>
                       </div>
                       <Image
                         width={54}
@@ -235,7 +178,9 @@ export default function Home() {
                         <div className={styles.name}>
                           {intl.formatMessage({ defaultMessage: '变更' })}
                         </div>
-                        <div className={styles.number}>{mutationsTotal}</div>
+                        <div className={styles.number}>
+                          {homeConfig?.operation?.mutationTotal ?? 0}
+                        </div>
                       </div>
                       <Image
                         width={54}
@@ -250,7 +195,9 @@ export default function Home() {
                         <div className={styles.name}>
                           {intl.formatMessage({ defaultMessage: '订阅' })}
                         </div>
-                        <div className={styles.number}>{subscriptionsTotal}</div>
+                        <div className={styles.number}>
+                          {homeConfig?.operation?.subscriptionTotal ?? 0}
+                        </div>
                       </div>
                       <Image
                         width={54}
@@ -270,7 +217,7 @@ export default function Home() {
                     <div className={styles.text}>
                       {intl.formatMessage({ defaultMessage: 'OSS存储' })}
                     </div>
-                    <div className={styles.number}>{ossTotal}</div>
+                    <div className={styles.number}>{homeConfig?.storage?.storageTotal ?? 0}</div>
                     <div className={styles.numberText}>
                       {intl.formatMessage({ defaultMessage: '个' })}
                     </div>
@@ -294,7 +241,9 @@ export default function Home() {
                     <div className={styles.text}>
                       {intl.formatMessage({ defaultMessage: '身份验证商' })}
                     </div>
-                    <div className={styles.number}>{authTotal}</div>
+                    <div className={styles.number}>
+                      {homeConfig?.authentication?.authenticationTotal ?? 0}
+                    </div>
                     <div className={styles.numberText}>个</div>
                   </div>
                   {/*<div className={styles.authLine}>*/}

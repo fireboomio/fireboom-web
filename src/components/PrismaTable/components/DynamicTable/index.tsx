@@ -20,7 +20,6 @@ import { getTableDataFromGraphQLResp } from '@/components/PrismaTable/libs/utils
 import useTableSchema from '@/lib/hooks/useTableSchema'
 
 import styles from './index.module.less'
-import { ColumnsType } from 'antd/es/table'
 
 interface Props {
   model: string
@@ -66,7 +65,7 @@ const DynamicTable = ({
   useEffect(() => {
     setPageState({ skip: 0, take: DEFAULT_PAGE_SIZE })
     setOrderByState({ orderBy: [] })
-  }, [model, namespace, usage])
+  }, [model, namespace, setOrderByState, setPageState, usage])
 
   const {
     schema: { models, enums }
@@ -235,7 +234,10 @@ const DynamicTable = ({
       <div className={styles.tableWrapper}>
         <Table
           loading={loading}
-          scroll={{ x: getTableColumnsFrom(currentModelFields ?? []) + 'px', y: 'calc(100vh - 250px)' }}
+          scroll={{
+            x: getTableColumnsFrom(currentModelFields ?? []) + 'px',
+            y: 'calc(100vh - 250px)'
+          }}
           bordered={false}
           dataSource={tableData}
           columns={columns}

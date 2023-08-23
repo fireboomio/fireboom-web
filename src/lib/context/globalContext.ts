@@ -1,6 +1,10 @@
 import { createContext } from 'react'
 
+import type { Info } from '@/interfaces/common'
+
 export interface GlobalContextType {
+  info: Info
+  isCompiling: boolean
   vscode: {
     options: {
       visible: boolean
@@ -8,8 +12,14 @@ export interface GlobalContextType {
       config: { hasParam?: boolean }
     }
     hide: () => void
-    show: (path?: string, options?: { hasParam?: boolean }) => void
-    toggleHook: (flag: boolean, path: string, hasParam?: boolean) => Promise<void>
+    show: (path?: string, options?: { hasParam?: boolean }) => Promise<boolean>
+    toggleOperationHook: (
+      flag: boolean,
+      hookPath: string,
+      operationName: string,
+      hasParam?: boolean
+    ) => Promise<void>
+    isHookServerSelected: boolean
     checkHookExist: (path: string, hasParam?: boolean, skipConfirm?: boolean) => Promise<boolean>
   }
 }

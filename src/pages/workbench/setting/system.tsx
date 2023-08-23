@@ -1,14 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-import { Button, Form, Input, message, Radio, Switch } from 'antd'
+import { Button, Form, message, Radio, Switch } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useImmer } from 'use-immer'
 
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import UrlInput from '@/components/UrlInput'
 import { useConfigContext } from '@/lib/context/ConfigContext'
-import requests from '@/lib/fetchers'
 import styles from '@/pages/workbench/setting/components/subs/subs.module.less'
 
 interface Runtime {
@@ -17,38 +13,19 @@ interface Runtime {
   minutes: number
   seconds: number
 }
+
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { system, refreshConfig } = useConfigContext()
-  const [count, setCount] = useImmer(0)
-  useEffect(() => {
-    void requests.get<unknown, string>('/setting/getTime').then(res => {
-      const count = Date.parse(res)
-      setCount(count)
-    })
-    const timer = setInterval(() => setCount(count => count + 1), 1000)
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
-
+  const { globalSetting, updateGlobalSetting } = useConfigContext()
   const [form] = Form.useForm()
 
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
-    const saveValues = Object.keys(values)
-      .map(key => {
-        if (values[key] !== (system as any)[key]) {
-          return { key: `system.${key}`, val: values[key] }
-        }
-      })
-      .filter(x => x)
     try {
-      await requests.put('/setting/system', { values: saveValues })
-      refreshConfig()
+      await updateGlobalSetting(values)
       message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
-    } catch (e) {
-      message.error(intl.formatMessage({ defaultMessage: '保存失败' }))
+    } catch (error) {
+      //
     }
     hide()
   }
@@ -76,44 +53,55 @@ export default function SettingMainVersion() {
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
         labelAlign="right"
-        initialValues={system}
+        initialValues={globalSetting}
       >
         <Form.Item label={intl.formatMessage({ defaultMessage: '运行时长' })}>
-          {calTime(dayjs(count).format('YYYY-MM-DD HH:mm:ss'))}
+          {calTime(dayjs((window as any).getGlobalStartTime()).format('YYYY-MM-DD HH:mm:ss'))}
         </Form.Item>
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: 'API外网地址' })}
-          name="apiPublicAddr"
-        >
-          <UrlInput />
-        </Form.Item>
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: 'API内网地址' })}
-          name="apiInternalAddr"
-          tooltip={intl.formatMessage({ defaultMessage: '钩子服务对内地址，一般不需要修改' })}
-        >
-          <UrlInput />
-        </Form.Item>
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: 'API服务监听Host' })}
-          name="apiListenHost"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={intl.formatMessage({ defaultMessage: 'API服务监听端口' })}
-          name="apiListenPort"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '日志水平' })} name="logLevel">
-          <Radio.Group>
-            <Radio value={-1}>Debug</Radio>
-            <Radio value={0}>Info</Radio>
-            <Radio value={1}>Warn</Radio>
-            <Radio value={2}>Error</Radio>
-          </Radio.Group>
-        </Form.Item>
+        <InputOrFromEnvWithItem
+          formItemProps={{
+            label: intl.formatMessage({ defaultMessage: 'API外网地址' }),
+            name: ['nodeOptions', 'publicNodeUrl']
+          }}
+          // @ts-ignore
+          inputRender={props => <UrlInput {...props} />}
+        />
+        <InputOrFromEnvWithItem
+          formItemProps={{
+            label: intl.formatMessage({ defaultMessage: 'API内网地址' }),
+            name: ['nodeOptions', 'nodeUrl'],
+            tooltip: intl.formatMessage({ defaultMessage: '服务内网地址，一般不需要修改' })
+          }}
+          // @ts-ignore
+          inputRender={props => <UrlInput {...props} />}
+        />
+        <InputOrFromEnvWithItem
+          formItemProps={{
+            label: intl.formatMessage({ defaultMessage: 'API服务监听Host' }),
+            name: ['nodeOptions', 'listen', 'host']
+          }}
+        />
+        <InputOrFromEnvWithItem
+          formItemProps={{
+            label: intl.formatMessage({ defaultMessage: 'API服务监听端口' }),
+            name: ['nodeOptions', 'listen', 'port']
+          }}
+        />
+        <InputOrFromEnvWithItem
+          formItemProps={{
+            label: intl.formatMessage({ defaultMessage: '日志水平' }),
+            name: ['nodeOptions', 'logger', 'level']
+          }}
+          inputRender={props => (
+            // @ts-ignore
+            <Radio.Group {...props} className="ml-4 flex items-center">
+              <Radio value="DEBUG">Debug</Radio>
+              <Radio value="INFO">Info</Radio>
+              <Radio value="WARN">Warn</Radio>
+              <Radio value="ERROR">Error</Radio>
+            </Radio.Group>
+          )}
+        />
         {/* <Form.Item
           label={intl.formatMessage({ defaultMessage: '调试' })}
           name="debugEnabled"

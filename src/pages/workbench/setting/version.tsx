@@ -9,13 +9,13 @@ import styles from './components/subs/subs.module.less'
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { version } = useConfigContext()
+  const { globalSetting } = useConfigContext()
 
   const copyUpdateLink = () => {
     copy('curl -fsSL https://www.fireboom.io/update.sh | bash')
     message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
   }
-  if (!version) {
+  if (!globalSetting) {
     return null
   }
 
@@ -32,11 +32,7 @@ export default function SettingMainVersion() {
         >
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布版本' })}>
             <div className="flex items-center">
-              {version.versionNum ? (
-                <div>{version.versionNum}</div>
-              ) : (
-                <div className="h-22px w-50px"> </div>
-              )}
+              {globalSetting.fbVersion}
               <div
                 className={styles['check-info']}
                 onClick={() => {
@@ -85,14 +81,8 @@ export default function SettingMainVersion() {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布控制台版本' })}>
             {import.meta.env.VITE_FB_VERSION}
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'prisma版本' })}>
-            {version.prismaVersion}
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'prisma引擎版本' })}>
-            {version.prismaEngineVersion}
-          </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '版权' })}>
-            {version.copyright}
+            {globalSetting.buildInfo.BuiltBy}
           </Descriptions.Item>
         </Descriptions>
       </div>

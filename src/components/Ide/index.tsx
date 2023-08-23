@@ -21,13 +21,7 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { makeSuggest } from '@/lib/helpers/utils'
-import {
-  getHook,
-  getTypes,
-  saveHookDepend,
-  saveHookScript,
-  updateHookEnabled
-} from '@/lib/service/hook'
+import { getHook, getTypes, saveHookDepend, saveHookScript } from '@/lib/service/hook'
 import { replaceFileTemplate } from '@/utils/template'
 
 import IdeCodeContainer from './code/index'
@@ -146,7 +140,7 @@ const IdeContainer: FC<Props> = props => {
     status: null
   })
   const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
-  const { system: globalConfig } = useContext(ConfigContext)
+  const { globalSetting } = useContext(ConfigContext)
 
   const [hookPath, setHookPath] = useState(props.hookPath)
   // 将hookPath保存到本地， 用以支持动态更换
@@ -197,7 +191,7 @@ const IdeContainer: FC<Props> = props => {
         { variableName: 'PROFILE_NAME', value: profileName }
       ])
     } else {
-      const pathList = list.slice(1)
+      const pathList = list.slice(2)
       const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
       return replaceFileTemplate(await getDefaultCode(tmplPath), [
         {
@@ -477,7 +471,6 @@ const IdeContainer: FC<Props> = props => {
           hideSwitch={props.hideSwitch ?? false}
           hookPath={hookPath}
           hookInfo={hookInfo}
-          hostUrl={globalConfig.apiPublicAddr}
           tabSize={tabSize}
           onSetContent={value => {
             editor.setValue(value)
@@ -496,9 +489,9 @@ const IdeContainer: FC<Props> = props => {
               handleSave('active')
             },
             onToggleHook: async value => {
-              hookInfo && setHookInfo({ ...hookInfo, enabled: value })
-              await updateHookEnabled(hookPath, value)
-              props.onChangeEnable?.()
+              // hookInfo && setHookInfo({ ...hookInfo, enabled: value })
+              // await updateHookEnabled(hookPath, value)
+              // props.onChangeEnable?.()
             },
             onFullScreen: () => {
               workbenchCtx.setFullscreen(!fullScreen)

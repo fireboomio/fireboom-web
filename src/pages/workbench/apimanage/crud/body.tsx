@@ -11,11 +11,11 @@ import {
   Select,
   Table
 } from 'antd'
-import { cloneDeep, keyBy } from 'lodash'
+import { cloneDeep, keyBy, upperFirst } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
@@ -26,6 +26,7 @@ import type { DMFModel } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import buildApi from '@/pages/workbench/apimanage/crud/buildApi'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import failIcon from './assets/fail-icon.svg'
 import failPic from './assets/fail-pic.svg'
@@ -48,7 +49,7 @@ function omitForeignKey(model: _DMFModel, relationMap: RelationMap) {
     // if (relationMap.key2obj[field.name]) {
     //   return false
     // }
-    if (relationMap.obj2key[field.name]) {
+    if (relationMap?.obj2key[field.name]) {
       field.originField = model.fields.find(field => field.name === relationMap.obj2key[field.name])
     }
     return true
@@ -152,7 +153,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
   const [form] = Form.useForm()
   const table = Form.useWatch('table', form)
   const prefix = Form.useWatch('prefix', form)
-  const { validateName } = useValidate()
+  const { validateAPI } = useValidate()
   // 当前选择的模型
   const [model, setModel] = useImmer<DMFModel | undefined>(void 0)
   // 表单初始化数据
@@ -322,7 +323,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
       auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
       table: tableData,
-      prefix: props?.model?.name,
+      prefix: props?.model?.name ? upperFirst(props.model.name) : '',
       alias: props?.model?.name,
       modelName: props?.model?.name,
       primaryKey: props.model.idField
@@ -343,13 +344,10 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     const pathList = apiList.map(item => item.path)
 
     const hideCheck = message.loading(intl.formatMessage({ defaultMessage: '校验中' }))
-    const existPathList = await requests.get<unknown, { ID: string; Path: string }[]>(
-      '/operateApi/operationByPaths',
-      {
-        params: { paths: JSON.stringify(pathList) }
-      }
-    )
-    const pathMap = keyBy(existPathList, 'Path')
+    const existPathList = await requests.get<unknown, ApiDocuments.Operation[]>('/operation', {
+      params: { dataNames: pathList.join(',') }
+    })
+    const pathMap = keyBy(existPathList, 'path')
     hideCheck()
     const genType = await new Promise(resolve => {
       confirmResolve.current = resolve
@@ -385,13 +383,10 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
 
     // 处理登录鉴权
     let result
-    console.log(apiList)
     try {
-      result = await requests.post<unknown, { Code: number; Path: string; ID: string }[]>(
-        `/operateApi/batch`,
-        {
-          list: apiList
-        }
+      result = await requests.post<unknown, { succeed: boolean; dataName: string }[]>(
+        `/operation/batch?overwrite=true`,
+        apiList
       )
     } catch (e) {
       console.error(e)
@@ -411,7 +406,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             <FormattedMessage
               defaultMessage="本次成功生成{count}条API"
               values={{
-                count: result.filter(x => !x.Code).length
+                count: result.filter(x => x.succeed).length
               }}
             />
           ) : (
@@ -421,15 +416,15 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
         {result && (
           <div className="bg-[#FAFAFC] mx-auto rounded-2 mt-6 py-4 w-140">
             {result.map(row => (
-              <div key={row.Path} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
-                <img src={row.Code === 0 ? successIcon : failIcon} alt="" className="flex-0" />
-                <span className="flex-1 text-default ml-1.5">{row.Path}</span>
-                <a
+              <div key={row.dataName} className="flex my-2.5 pr-27 pl-21 leading-5 items-center">
+                <img src={row.succeed ? successIcon : failIcon} alt="" className="flex-0" />
+                <span className="flex-1 text-default ml-1.5">{row.dataName}</span>
+                <Link
                   className="text-default ml-1.5 text-[#649FFF]"
-                  onClick={() => navigate(`/workbench/apimanage/${row.ID}`)}
+                  to={`/workbench/apimanage/${row.dataName}`}
                 >
                   <FormattedMessage defaultMessage="查看" />
-                </a>
+                </Link>
               </div>
             ))}
           </div>
@@ -705,7 +700,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
                 const parts = value.split('/')
                 for (let i = 0; i < parts.length; i++) {
                   const part = parts[i]
-                  const err = validateName(part)
+                  const err = validateAPI(part)
                   if (err) {
                     return Promise.reject(
                       new Error(intl.formatMessage({ defaultMessage: '每一级目录' }) + err)

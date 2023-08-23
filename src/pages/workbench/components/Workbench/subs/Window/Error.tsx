@@ -15,6 +15,7 @@ import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 
 import styles from './error.module.less'
+import { DataSourceKind } from '@/interfaces/datasource'
 
 type Block = {
   key: QuestionType
@@ -31,11 +32,10 @@ type Block = {
 export default function Error() {
   const [blocks, setBlocks] = useState<Block[]>([])
 
-  const { questions, setQuestions } = useGlobal(state => ({
+  const { questions } = useGlobal(state => ({
     questions: state.questions,
     setQuestions: state.setQuestions
   }))
-  const { onRefreshMenu } = useContext(WorkbenchContext)
 
   useEffect(() => {
     const groups: Record<QuestionType, Question[]> = groupBy(questions, 'model') as any
@@ -43,30 +43,29 @@ export default function Error() {
     const list: any = Object.keys(groups).map(key => ({
       key,
       list: groups[key].map((x: any) => {
-        const type = (x.dbType ?? '').toLowerCase()
-        if (key === String(QuestionType.DatasourceQuestion)) {
-          switch (x.sourceType) {
-            case 1:
-              x.icon =
-                {
-                  mysql: '/assets/icon/mysql.svg',
-                  postgresql: '/assets/icon/pgsql.svg',
-                  graphql: '/assets/icon/graphql.svg',
-                  mongodb: '/assets/icon/mongodb.svg',
-                  rest: '/assets/icon/rest.svg',
-                  sqlite: '/assets/icon/sqlite.svg'
-                }[String(x.dbType).toLowerCase()] || '/assets/icon/file.svg'
+        if (key === QuestionType.DatasourceQuestion) {
+          switch (x.extra) {
+            case DataSourceKind.MongoDB:
+              x.icon = '/assets/icon/mongodb.svg'
               break
-            case 2:
-              x.icon = '/assets/icon/rest.svg'
+            case DataSourceKind.MySQL:
+              x.icon = '/assets/icon/mysql.svg'
               break
-            case 3:
+            case DataSourceKind.Restful:
+                x.icon = '/assets/icon/rest.svg'
+                break
+            case DataSourceKind.SQLite:
+                  x.icon = '/assets/icon/sqlite.svg'
+                  break
+            case DataSourceKind.Graphql:
               x.icon = '/assets/icon/graphql.svg'
               break
+            default:
+              x.icon =  '/assets/icon/file.svg'
           }
-        } else if (key == String(QuestionType.AuthQuestion)) {
+        } else if (key === QuestionType.AuthQuestion) {
           x.icon = '/assets/icon/oidc.svg'
-        } else if (key == String(QuestionType.OssQuestion)) {
+        } else if (key === QuestionType.OssQuestion) {
           x.icon = '/assets/icon/file.svg'
         } else {
           x.icon = '/assets/icon/file.svg'
@@ -78,35 +77,26 @@ export default function Error() {
   }, [questions])
 
   const navigate = useNavigate()
-  async function closeDatasource(id: number) {
-    const res = await requests.get<unknown, any>(`/dataSource/${id}`)
-    if (res?.id) {
-      await requests.put(`/dataSource`, { ...res, enabled: false })
-      void mutateDataSource()
-    }
+  async function closeDatasource(name: string) {
+    await requests.put(`/datasource`, { name, enabled: false })
+    void mutateDataSource()
   }
 
-  async function closeAPI(id: number) {
-    await requests.put<unknown, any>(`/operateApi/switch/${id}`, { enabled: false })
+  async function closeAPI(path: string) {
+    await requests.put<unknown, any>(`/operation`, { path, enabled: false })
     events.emit({
       event: 'apiEnableChange',
-      data: { ids: [id], enabled: false }
+      data: { pathList: [path], enabled: false }
     })
     void mutateApi()
   }
-  async function closeAuth(id: number) {
-    const res = await requests.get<unknown, any>(`/auth/${id}`)
-    if (res?.id) {
-      await requests.put(`/auth`, { ...res, enabled: false })
-      void mutateAuth()
-    }
+  async function closeAuth(name: string) {
+    await requests.put(`/authentication`, { name, enabled: false })
+    void mutateAuth()
   }
-  async function closeStorage(id: number) {
-    const res = await requests.get<unknown, any>(`/storageBucket/${id}`)
-    if (res?.id) {
-      await requests.put(`/storageBucket`, { ...res, enabled: false })
-      void mutateStorage()
-    }
+  async function closeStorage(name: string) {
+    await requests.put(`/storage`, { name, enabled: false })
+    void mutateStorage()
   }
 
   return (
@@ -121,7 +111,7 @@ export default function Error() {
       {blocks.map((block, index) => (
         <div className={styles.block} key={index}>
           {block.list.map(item => (
-            <div className={styles.line} key={item.id}>
+            <div className={styles.line} key={item.name}>
               <img src={item.icon} className={styles.icon} alt="" />
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
@@ -132,12 +122,12 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/data-source/${item.id}`)}
+                        onClick={() => navigate(`/workbench/data-source/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
                       <FormattedMessage defaultMessage="排查, 或" />
-                      <span className={styles.action} onClick={() => closeDatasource(item.id)}>
+                      <span className={styles.action} onClick={() => closeDatasource(item.name)}>
                         <FormattedMessage defaultMessage="关闭" />
                       </span>
                       <FormattedMessage defaultMessage="该数据源" />
@@ -150,7 +140,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/apimanage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/apimanage/${item.path}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -158,7 +148,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeAPI(item.id)}>
+                          <span className={styles.action} onClick={() => closeAPI(item.path)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该API" />
@@ -173,7 +163,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/auth/${item.id}`)}
+                        onClick={() => navigate(`/workbench/auth/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -181,7 +171,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeAuth(item.id)}>
+                          <span className={styles.action} onClick={() => closeAuth(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该验证器" />
@@ -196,7 +186,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/storage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/storage/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -204,7 +194,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeStorage(item.id)}>
+                          <span className={styles.action} onClick={() => closeStorage(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该对象存储" />
@@ -213,15 +203,13 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {[QuestionType.InternalQuestion, QuestionType.HooksQuestion].includes(
-                  block.key
-                ) && (
+                {block.key === QuestionType.OssQuestion && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/storage/${item.id}`)}
+                        onClick={() => navigate(`/workbench/storage/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -229,7 +217,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeStorage(item.id)}>
+                          <span className={styles.action} onClick={() => closeStorage(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该对象存储" />

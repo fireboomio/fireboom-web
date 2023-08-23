@@ -9,50 +9,46 @@ import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import { getDefaultCode } from '@/components/Ide/getDefaultCode'
-import type { HookName, HookResp } from '@/interfaces/auth'
+import type { HookName } from '@/interfaces/auth'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-import { getHook } from '@/lib/service/hook'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from '../components/subs.module.less'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
-interface RoleProvResp {
-  id: number
-  code: string
-  remark: string
-  create_time: string | number
-}
-
-export const hookPath: Record<string, string> = {
-  postAuthentication: 'auth/postAuthentication',
-  revalidate: 'auth/revalidate',
-  postLogout: 'auth/postLogout',
-  mutatingPostAuthentication: 'auth/mutatingPostAuthentication'
-}
+// export const hookPath: Record<string, string> = {
+//   postAuthentication: 'auth/postAuthentication',
+//   revalidate: 'auth/revalidate',
+//   postLogout: 'auth/postLogout',
+//   mutatingPostAuthentication: 'auth/mutatingPostAuthentication'
+// }
 export default function AuthRole() {
   const intl = useIntl()
   const [form] = Form.useForm()
-  const formId = Form.useWatch('id', form)
   const navigate = useNavigate()
   const { tab: tabKey } = useParams()
-  const [modal1Visible, setModal1Visible] = useImmer(false)
-  const [roleData, setRoleData] = useImmer([] as Array<RoleProvResp>)
+  const [editingRole, setEditingRole] = useState<ApiDocuments.Role | undefined>()
+  const [roleData, setRoleData] = useImmer([] as Array<ApiDocuments.Role>)
   const [roleFlag, setRoleFlag] = useState<boolean>()
   const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
-  const [hooks, setHooks] = useImmer<HookResp[]>([])
-  const [refreshFlag, setRefreshFlag] = useState<boolean>()
   // const [defaultCode, setDefaultCode] = useState<string>('')
   const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
-  const postAuthentication = useSWRImmutable<any>('auth/postAuthentication', getHook)
-  const revalidate = useSWRImmutable<any>('auth/revalidate', getHook)
-  const postLogout = useSWRImmutable<any>('auth/postLogout', getHook)
-  const mutatingPostAuthentication = useSWRImmutable<any>(
-    'auth/mutatingPostAuthentication',
-    getHook
-  )
-  const hookMap = { postAuthentication, revalidate, postLogout, mutatingPostAuthentication }
+
+  const { data: hookState, mutate: refreshHookState } =
+    useSWRImmutable<ApiDocuments.models_HookOptions>(
+      '/globalOperation/authenticationHookOptions',
+      requests.get
+    )
+  // const postAuthentication = useSWRImmutable<any>('auth/postAuthentication', getHook)
+  // const revalidate = useSWRImmutable<any>('auth/revalidate', getHook)
+  // const postLogout = useSWRImmutable<any>('auth/postLogout', getHook)
+  // const mutatingPostAuthentication = useSWRImmutable<any>(
+  //   'auth/mutatingPostAuthentication',
+  //   getHook
+  // )
+  // const hookMap = { postAuthentication, revalidate, postLogout, mutatingPostAuthentication }
   // const tabs = [
   //   { key: 'postAuthentication', title: 'postAuthentication' },
   //   { key: 'revalidate', title: 'revalidate' },
@@ -62,28 +58,28 @@ export default function AuthRole() {
 
   // 角色管理的相关函数
   // const getData = useCallback(async () => {
-  //   const authentication = await requests.get<unknown, Array<RoleProvResp>>('/role')
+  //   const authentication = await requests.get<unknown, Array<ApiDocuments.Role>>('/role')
   //   setRoleData(authentication)
   //   console.log(authentication, 'authentication')
   // }, [])
 
   useEffect(() => {
-    requests.get<unknown, Array<RoleProvResp>>('/role').then(res => {
+    requests.get<unknown, Array<ApiDocuments.Role>>('/role').then(res => {
       setRoleData(res)
     })
   }, [roleFlag])
 
-  const onFinish = async (values: RoleProvResp) => {
-    await requests[values.id ? 'put' : 'post']('/role', { ...values })
-    setModal1Visible(false)
+  const onFinish = async (values: ApiDocuments.Role) => {
+    await requests[editingRole?.isCreate ? 'post' : 'put']('/role', { ...values })
+    setEditingRole(undefined)
     setRoleFlag(!roleFlag)
   }
 
-  const handleDeleteRole = async (id: number) => {
-    await requests.delete(`/role/${id}`)
+  const handleDeleteRole = async (code: string) => {
+    await requests.delete(`/role/${code}`)
     setRoleFlag(!roleFlag)
   }
-  const columns: ColumnsType<RoleProvResp> = [
+  const columns: ColumnsType<ApiDocuments.Role> = [
     {
       title: intl.formatMessage({ defaultMessage: '角色' }),
       dataIndex: 'code',
@@ -108,7 +104,7 @@ export default function AuthRole() {
             className="cursor-pointer mr-1 pl-0 text-[#1677ff]"
             onClick={() => {
               form.setFieldsValue(row)
-              setModal1Visible(true)
+              setEditingRole(row)
             }}
           >
             <FormattedMessage defaultMessage="编辑" />
@@ -118,7 +114,7 @@ export default function AuthRole() {
             okText={intl.formatMessage({ defaultMessage: '确定' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             onConfirm={() => {
-              handleDeleteRole(row.id)
+              handleDeleteRole(row.code)
             }}
           >
             <span className="ml-4 cursor-pointer pl-0 text-[#1677ff]">
@@ -147,8 +143,9 @@ export default function AuthRole() {
             <Button
               className="h-7.5 py-0 px-4"
               onClick={() => {
-                form.setFieldsValue({ id: undefined, code: '', remark: '' })
-                setModal1Visible(true)
+                form.setFieldsValue({ code: '', remark: '' })
+                // @ts-ignore
+                setEditingRole({ isCreate: true })
               }}
             >
               <span className="text-sm text-gray">
@@ -175,22 +172,20 @@ export default function AuthRole() {
               key: 'role',
               children: (
                 <div className={styles.tabContent}>
-                  {modal1Visible && (
+                  {editingRole && (
                     <Modal
                       open
                       mask={false}
                       title={
-                        formId
+                        editingRole
                           ? intl.formatMessage({ defaultMessage: '编辑角色' })
                           : intl.formatMessage({ defaultMessage: '添加角色' })
                       }
                       style={{ top: '200px' }}
                       width={549}
                       transitionName=""
-                      onOk={() => {
-                        form.submit()
-                      }}
-                      onCancel={() => setModal1Visible(false)}
+                      onOk={() => form.submit()}
+                      onCancel={() => setEditingRole(undefined)}
                       okText={intl.formatMessage({ defaultMessage: '保存' })}
                       okButtonProps={{ className: styles['save-btn'] }}
                       okType="text"
@@ -226,7 +221,7 @@ export default function AuthRole() {
                             }
                           ]}
                         >
-                          <Input />
+                          <Input disabled={!editingRole?.isCreate} />
                         </Form.Item>
                         <Form.Item
                           label={intl.formatMessage({ defaultMessage: '角色描述' })}
@@ -234,7 +229,6 @@ export default function AuthRole() {
                         >
                           <Input />
                         </Form.Item>
-                        <Form.Item name="id"></Form.Item>
                         <Form.Item name="createTime"></Form.Item>
                       </Form>
                     </Modal>
@@ -244,14 +238,14 @@ export default function AuthRole() {
                       <Table
                         columns={columns}
                         dataSource={roleData}
-                        rowKey={record => record.id}
+                        rowKey="code"
                         pagination={false}
                       />
                     ) : (
                       <Table
                         columns={columns}
                         dataSource={[]}
-                        rowKey={record => record.id}
+                        rowKey="code"
                         rowClassName={(record, index) =>
                           index % 2 === 1 ? styles['role-table'] : ''
                         }
@@ -268,17 +262,26 @@ export default function AuthRole() {
               children: (
                 <div className={styles.tabContent}>
                   <div className={styles.table}>
-                    {Object.keys(hookPath).map(name => (
+                    {Object.keys(hookState ?? {}).map(name => (
                       <div key={name} className={styles.row}>
                         <div className={styles.name}>{name}</div>
                         <Switch
-                          checked={hookMap?.[name]?.data?.enabled}
+                          checked={hookState?.[name]?.enabled}
                           onChange={async flag => {
-                            await vscode.toggleHook(flag, hookPath[name])
-                            hookMap?.[name]?.mutate?.()
+                            if (await vscode.checkHookExist(hookState![name].path)) {
+                              await requests.put('/globalOperation', {
+                                apiAuthenticationHooks: {
+                                  [name]: flag
+                                }
+                              })
+                              refreshHookState()
+                            }
                           }}
                         />
-                        <div className={styles.btn} onClick={() => vscode.show(hookPath[name])}>
+                        <div
+                          className={styles.btn}
+                          onClick={() => vscode.show(hookState![name].path)}
+                        >
                           编辑
                         </div>
                       </div>
@@ -288,7 +291,7 @@ export default function AuthRole() {
               )
             }
           ]}
-        ></Tabs>
+        />
       </div>
     </div>
   )

@@ -1,18 +1,22 @@
 import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import clsx from 'clsx'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import ApiConfig from '@/components/ApiConfig'
-import type { FileTreeNode, FileTreeRef } from '@/components/FileTree'
+import type { FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
-import type { OperationResp } from '@/interfaces/apimanage'
+import { OperationEngine } from '@/interfaces/operation'
+import { GlobalContext } from '@/lib/context/globalContext'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
-import { useAPIManager } from '@/pages/workbench/apimanage/[id]/store'
+import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
+import { useDict } from '@/providers/dict'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import styles from './ApiPanel.module.less'
@@ -24,10 +28,15 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
-  const [treeData, setTreeData] = useState<FileTreeNode[]>()
+  const params = useParams()
+  const dict = useDict()
+  const currentUrlPath = params['*']!
+
+  const [treeData, setTreeData] = useState<ApiDocuments.fileloader_DataTree[]>()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [selectedKey, setSelectedKey] = useState<string>('')
+  const { vscode } = useContext(GlobalContext)
   const fileTree = useRef<FileTreeRef>({
     addItem: () => {},
     editItem: () => {}
@@ -36,6 +45,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     computed: { saved },
     autoSave
   } = useAPIManager()
+  const { operation: operationStorePath } = useDict()
 
   // 快捷键
   useEffect(() => {
@@ -51,15 +61,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     }
   }, [navigate])
 
-  const pathId = useMemo(() => {
-    return Number((location.pathname.match(/\/apimanage\/(\d+)/) ?? [])[1] ?? 0)
-  }, [location.pathname])
-
   // 监听location变化，及时清空选中状态
   useEffect(() => {
     // 尝试自动选中当前项
-    if (treeData && pathId) {
-      const currentNode = getNodeById(pathId, treeData)
+    if (treeData && currentUrlPath) {
+      const currentNode = getNodeByPath(currentUrlPath, treeData)
       if (currentNode) {
         // 自动选中当前节点
         setSelectedKey(currentNode.key)
@@ -68,7 +74,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         navigate(`/workbench/apimanage`)
       }
     }
-  }, [location, navigate, pathId, treeData])
+  }, [currentUrlPath, location, navigate, params, treeData])
   useEffect(() => {
     if (props.defaultOpen) {
       setPanelOpened(true)
@@ -78,25 +84,26 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const apiList = useApiList()
   useEffect(() => {
     // apiList未加载时，不进行转换，以避免自动跳转到空白页
-    if (!apiList) return
+    // if (!apiList) return
     const tree = convertToTree(apiList ?? [], '0')
     setTreeData(tree)
   }, [apiList])
 
-  function calcMiniStatus(nodeData: FileTreeNode) {
+  function calcMiniStatus(nodeData: ApiDocuments.fileloader_DataTree) {
     if (nodeData.isDir) {
       return ''
     }
-    if (nodeData.data.illegal) {
+    if (nodeData.extra.invalid) {
+      // FIXME
       return (
         <div className={styles.errLabel}>
           <FormattedMessage defaultMessage="非法" />
         </div>
       )
-    } else if (!nodeData.data.isPublic) {
+    } else if (nodeData.extra.internal) {
       return <FormattedMessage defaultMessage="内部" />
     } else {
-      // return nodeData.method
+      // return nodeextra.method
     }
   }
 
@@ -119,24 +126,33 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     },
     [intl]
   )
-  const handleBatchSwitch = executeWrapper(async (nodes: FileTreeNode[], flag: boolean) => {
-    const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
-    await requests.post('operateApi/batchOnline', {
-      Ids: ids,
-      enabled: flag
-    })
-    events.emit({
-      event: 'apiEnableChange',
-      data: { ids, enabled: flag }
-    })
-  })
-  const handleBatchDelete = executeWrapper(async (nodes: FileTreeNode[]) => {
+  const handleBatchSwitch = executeWrapper(
+    async (nodes: ApiDocuments.fileloader_DataTree[], flag: boolean) => {
+      const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
+      await requests.put(
+        'operation/batch',
+        pathList.map(item => ({
+          path: item,
+          enabled: flag
+        }))
+      )
+      events.emit({
+        event: 'apiEnableChange',
+        data: { pathList, enabled: flag }
+      })
+    }
+  )
+  const handleBatchDelete = executeWrapper(async (nodes: ApiDocuments.fileloader_DataTree[]) => {
     modal.confirm({
       title: intl.formatMessage({ defaultMessage: '是否确认删除选中的API？' }),
       onOk: executeWrapper(async () => {
-        const ids = nodes.filter(x => !x.isDir || !x.data.id).map(x => x.data.id)
-        await requests.post('operateApi/batchDelete', { ids })
-        ids.forEach(id => localStorage.removeItem(`_api_args_${id}`))
+        const pathList = nodes.filter(x => !x.isDir).map(x => x.path!)
+        await requests.delete('operation/batch', {
+          params: {
+            dataNames: pathList.join(',')
+          }
+        })
+        pathList.forEach(path => localStorage.removeItem(`_api_args_${path}`))
         message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
         // 删除后处理
       }),
@@ -144,50 +160,60 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       cancelText: intl.formatMessage({ defaultMessage: '取消' })
     })
   })
-  const handleDelete = executeWrapper(async (node: FileTreeNode) => {
+  const handleDelete = executeWrapper(async (node: ApiDocuments.fileloader_DataTree) => {
     if (node.isDir) {
-      await requests.delete('/operateApi/dir', { data: { path: node.data.path } })
+      await requests.delete(`/operation/deleteParent/${node.path}`)
     } else {
-      await requests.delete(`/operateApi/${node.data.id}`)
+      await requests.delete(`/operation/${node.path}`)
     }
-    localStorage.removeItem(`_api_args_${node.data.id}`)
+    localStorage.removeItem(`_api_args_${node.path}`)
   })
   const handleAddNode = executeWrapper(async (path: string, isDir: boolean) => {
     if (isDir) {
-      await requests.post('/operateApi/dir', { path })
+      await requests.post(`/vscode/createDirectory`, { uri: `${operationStorePath}/${path}` })
       await mutateApi()
     } else {
-      const result = await requests.post<unknown, { id: number }>('/operateApi', { path })
+      await requests.post<unknown, { path: string }>('/operation', { path })
       await mutateApi()
-      navigate(`/workbench/apimanage/${result?.id}`)
+      navigate(`/workbench/apimanage/${path}`)
     }
   }, true)
-  const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
-    const oldPath = node.data.path
-    const newPath = oldPath.replace(/[^/]+$/, newName)
-    if (node.isDir) {
-      await requests.put('/operateApi/dir', { oldPath, newPath })
-    } else {
-      await requests.put(`/operateApi/rename/${node.data.id}`, { path: newPath })
-      if (node.data.id === pathId) {
-        events.emit({
-          event: 'titleChange',
-          data: { title: newName, path: newPath }
+  const handleRenameNode = executeWrapper(
+    async (node: ApiDocuments.fileloader_DataTree, newName: string) => {
+      const oldPath = node.path!
+      const newPath = oldPath.replace(/[^/]+$/, newName)
+      if (node.isDir) {
+        await requests.post('/operation/renameParent', {
+          src: oldPath,
+          dst: newPath,
+          overload: false
         })
+      } else {
+        await requests.post(`/operation/rename`, { src: oldPath, dst: newPath, overload: false })
+        if (node.path === currentUrlPath) {
+          events.emit({
+            event: 'titleChange',
+            data: { title: newName, path: newPath }
+          })
+        }
       }
     }
-  })
+  )
 
   const handleMove = executeWrapper(
-    async (dragNode: FileTreeNode, dropNode: FileTreeNode | null, confirm = false) => {
-      const oldPath = dragNode.data.path
-      const newPath = `${dropNode?.data?.path ?? ''}/${dragNode.name}`
+    async (
+      dragNode: ApiDocuments.fileloader_DataTree,
+      dropNode: ApiDocuments.fileloader_DataTree | null,
+      confirm = false
+    ) => {
+      const oldPath = dragNode.path
+      const newPath = `${dropNode?.path ?? ''}/${dragNode.path?.split('/').pop()}`
       // 判断移动目标是否包含当前已打开的api， 如果有，则需要更新api信息
-      const hasCurrent = !!getNodeById(pathId, [dragNode])
+      const hasCurrent = !!getNodeByPath(currentUrlPath, [dragNode])
       if (dragNode.isDir) {
-        await requests.put(
-          '/operateApi/dir',
-          { oldPath, newPath, coverRepeat: confirm },
+        await requests.post(
+          '/operation/renameParent',
+          { src: oldPath, dst: newPath, overload: confirm },
           {
             onError: async ({ code, result }) => {
               if (code === '20000000') {
@@ -197,9 +223,9 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           }
         )
       } else {
-        await requests.put(
-          `/operateApi/rename/${dragNode.data.id}`,
-          { path: newPath, coverRepeat: confirm },
+        await requests.post(
+          `/operation/rename`,
+          { src: oldPath, dst: newPath, overload: confirm },
           {
             onError: async ({ code, result }) => {
               if (code === '20000000') {
@@ -213,7 +239,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       const apiList = await mutateApi()
       // 如果移动的是当前打开的api，则需要更新api信息
       if (hasCurrent) {
-        const api = getApiById(pathId, apiList)
+        const api = getApiByPath(currentUrlPath, apiList)
         if (api) {
           events.emit({
             event: 'titleChange',
@@ -238,120 +264,134 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     [intl, modal]
   )
 
-  const titleRender = (nodeData: FileTreeNode) => {
+  const titleRender = (nodeData: ApiDocuments.fileloader_DataTree) => {
     const miniStatus = calcMiniStatus(nodeData)
     let itemTypeClass
     if (nodeData.isDir) {
       itemTypeClass = styles.treeItemDir
-    } else if (nodeData.data.illegal) {
+    } else if (nodeData.extra.invalid) {
       itemTypeClass = styles.treeItemErr
-    } else if (!nodeData.data.enabled) {
+    } else if (!nodeData.extra.enabled) {
       itemTypeClass = styles.treeItemDisable
     } else {
       itemTypeClass = styles.treeItemFile
     }
+    const isCustom =
+      (nodeData.isDir && ['function', 'proxy'].includes(nodeData.name ?? '')) ||
+      (!nodeData.isDir && nodeData.extra?.engine !== OperationEngine.GraphQL)
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
-        <div className={styles.icon}>
-          {nodeData.data.liveQuery ? <div className={styles.lighting}></div> : null}
+        <div
+          className={clsx(styles.icon, [
+            nodeData.name === 'proxy'
+              ? styles.proxyIcon
+              : nodeData.name === 'function'
+              ? styles.functionIcon
+              : ''
+          ])}
+        >
+          {nodeData.extra?.liveQueryEnabled ? <div className={styles.lighting}></div> : null}
         </div>
         <>
-          {nodeData.data.method && (
+          {nodeData.extra?.method && (
             <div
               className={`${styles.method} ${
-                styles[`method_${nodeData.data.method?.toLowerCase()}`]
+                styles[`method_${nodeData.extra.method?.toLowerCase()}`]
               }`}
             >
-              {nodeData.data.method?.toUpperCase()}
+              {nodeData.extra.method?.toUpperCase()}
             </div>
           )}
           <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
-          <div onClick={e => e.stopPropagation()}>
-            <Dropdown
-              destroyPopupOnHide
-              menu={{
-                items: [
-                  {
-                    key: 'copy',
-                    onClick: async () => {
-                      const destPath = `${nodeData.data.path}Copy${Math.random()
-                        .toString(36)
-                        .substring(2, 5)}`
-                      await requests.post('/operateApi/copy', {
-                        path: destPath,
-                        id: nodeData.data.id
-                      })
-                      message.success(
-                        intl.formatMessage(
-                          { defaultMessage: '已复制接口 {path}' },
-                          { path: destPath }
+          {!isCustom && (
+            <div onClick={e => e.stopPropagation()}>
+              <Dropdown
+                destroyPopupOnHide
+                menu={{
+                  items: [
+                    {
+                      key: 'copy',
+                      onClick: async () => {
+                        const destPath = `${nodeData.path}Copy${Math.random()
+                          .toString(36)
+                          .substring(2, 5)}`
+                        await requests.post('/operation/copy', {
+                          dst: destPath,
+                          src: nodeData.path!,
+                          overload: false
+                        })
+                        message.success(
+                          intl.formatMessage(
+                            { defaultMessage: '已复制接口 {path}' },
+                            { path: destPath }
+                          )
                         )
+                        void mutateApi()
+                      },
+                      label: (
+                        <div>
+                          <span className="ml-1.5">
+                            <FormattedMessage defaultMessage="复制" />{' '}
+                          </span>
+                        </div>
                       )
-                      void mutateApi()
                     },
-                    label: (
-                      <div>
-                        <span className="ml-1.5">
-                          <FormattedMessage defaultMessage="复制" />{' '}
-                        </span>
-                      </div>
-                    )
-                  },
-                  {
-                    key: 'rename',
-                    onClick: () => {
-                      fileTree.current.editItem(nodeData.key)
+                    {
+                      key: 'rename',
+                      onClick: () => {
+                        fileTree.current.editItem(nodeData.key)
+                      },
+                      label: (
+                        <div>
+                          <span className="ml-1.5">
+                            <FormattedMessage defaultMessage="重命名" />{' '}
+                          </span>
+                        </div>
+                      )
                     },
-                    label: (
-                      <div>
-                        <span className="ml-1.5">
-                          <FormattedMessage defaultMessage="重命名" />{' '}
-                        </span>
-                      </div>
-                    )
-                  },
-                  {
-                    key: 'delete',
-                    label: (
-                      <div
-                        onClick={e => {
-                          console.log(e)
-                          // @ts-ignore
-                          if (e.target?.dataset?.stoppropagation) {
-                            e.stopPropagation()
-                          }
-                        }}
-                      >
-                        <Popconfirm
-                          zIndex={9999}
-                          title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
-                          onConfirm={() => {
-                            handleDelete(nodeData)
+                    {
+                      key: 'delete',
+                      label: (
+                        <div
+                          onClick={e => {
+                            console.log(e)
+                            // @ts-ignore
+                            if (e.target?.dataset?.stoppropagation) {
+                              e.stopPropagation()
+                            }
                           }}
-                          okText={intl.formatMessage({ defaultMessage: '删除' })}
-                          cancelText={intl.formatMessage({ defaultMessage: '取消' })}
-                          placement="right"
                         >
-                          <div className={styles.menuItem} data-stoppropagation="1">
-                            <span className="ml-1.5">
-                              <FormattedMessage defaultMessage="删除" />
-                            </span>
-                          </div>
-                        </Popconfirm>
-                      </div>
-                    )
-                  }
-                ].filter(x => x.key !== 'copy' || !nodeData.isDir)
-              }}
-              trigger={['click']}
-              placement="bottomRight"
-            >
-              <div className={styles.more} onClick={e => e.preventDefault()} />
-            </Dropdown>
-          </div>
+                          <Popconfirm
+                            zIndex={9999}
+                            title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
+                            onConfirm={() => {
+                              handleDelete(nodeData)
+                            }}
+                            okText={intl.formatMessage({ defaultMessage: '删除' })}
+                            cancelText={intl.formatMessage({ defaultMessage: '取消' })}
+                            placement="right"
+                          >
+                            <div className={styles.menuItem} data-stoppropagation="1">
+                              <span className="ml-1.5">
+                                <FormattedMessage defaultMessage="删除" />
+                              </span>
+                            </div>
+                          </Popconfirm>
+                        </div>
+                      )
+                    }
+                  ].filter(x => x.key !== 'copy' || !nodeData.isDir)
+                }}
+                trigger={['click']}
+                placement="bottomRight"
+              >
+                <div className={styles.more} onClick={e => e.preventDefault()} />
+              </Dropdown>
+            </div>
+          )}
         </>
       </div>
     )
@@ -368,18 +408,30 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   }
 
   const buildContextMenu = useCallback(
-    (selectList: FileTreeNode[], deepList: FileTreeNode[]) => {
+    (
+      selectList: ApiDocuments.fileloader_DataTree[],
+      deepList: ApiDocuments.fileloader_DataTree[]
+    ) => {
+      if (
+        selectList.some(
+          x =>
+            (x.isDir && x.path?.match(/^(proxy|function)/)) ||
+            x.extra?.engine !== OperationEngine.GraphQL
+        )
+      ) {
+        return []
+      }
       const menu: ItemType[] = [
         {
           key: 'on',
           onClick: () => void handleBatchSwitch(deepList, true),
-          disabled: !deepList.some(x => !x.isDir && !x.data.enabled && !x.data.illegal),
+          disabled: !deepList.some(x => !x.isDir && !x.extra.enabled && !x.extra.invalid),
           label: <FormattedMessage defaultMessage="上线" />
         },
         {
           key: 'off',
           onClick: () => void handleBatchSwitch(deepList, false),
-          disabled: !deepList.some(x => !x.isDir && x.data.enabled),
+          disabled: !deepList.some(x => !x.isDir && x.extra.enabled),
           label: <FormattedMessage defaultMessage="下线" />
         }
       ]
@@ -463,17 +515,41 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               await autoSave()
               message.destroy()
             }
-            navigate(`/workbench/apimanage/${nodeData.data.id}`)
+            if (nodeData.extra?.engine === OperationEngine.GraphQL) {
+              navigate(`/workbench/apimanage/${nodeData.path}`)
+            } else {
+              navigate(`/workbench/apimanage/custom/${nodeData.path}`)
+            }
           }
         }}
         onCreateItem={async (parent, isDir, name) => {
           if (name && onValidateName(name, isDir)) {
-            try {
-              await handleAddNode(`${parent?.data.path ?? ''}/${name}`, isDir)
+            let _parent = parent
+            while (_parent?.parent) {
+              _parent = _parent?.parent
+            }
+            if (_parent?.name === 'function' || _parent?.name === 'proxy') {
+              const resp = await requests.get<null, ApiDocuments.Sdk>('/sdk/enabledServer')
+              if (resp?.extension) {
+                if (
+                  await vscode.show(`${resp.outputPath}/${parent?.path}/${name}${resp.extension}`)
+                ) {
+                  message.info(
+                    intl.formatMessage({
+                      defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务'
+                    })
+                  )
+                }
+              }
               return true
-            } catch (e) {
-              console.error(e)
-              return false
+            } else {
+              try {
+                await handleAddNode(parent?.path ? `${parent?.path}/${name}` : name, isDir)
+                return true
+              } catch (e) {
+                console.error(e)
+                return false
+              }
             }
           }
           return false
@@ -548,26 +624,23 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   )
 }
 
-function convertToTree(data: OperationResp[] | null, lv = '0'): FileTreeNode[] {
+function convertToTree(data: ApiDocuments.fileloader_DataTree[] | null, lv = '0') {
   if (!data) return []
   return data.map((x, idx) => ({
-    data: {
-      ...x
-    },
-    id: x.id,
-    name: x.path.split('/')[x.path.split('/').length - 1],
-    title: x.path.split('/')[x.path.split('/').length - 1],
-    key: `${x.isDir ? 1 : 0}-${x.path}`,
-    isDir: x.isDir,
-    children: convertToTree(x.children, `${lv}-${idx}`)
+    ...x,
+    key: `${x.isDir ? 0 : 1}-${x.path}`,
+    children: convertToTree(x.items ?? [], `${lv}-${idx}`)
   }))
 }
 
-function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | undefined {
+function getNodeByPath(
+  path: string,
+  data: ApiDocuments.fileloader_DataTree[] = []
+): ApiDocuments.fileloader_DataTree | undefined {
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!
-    if (item.data.id === id) {
+    if (item.path === path) {
       return item
     } else if (item.children) {
       lists.push(...item.children)
@@ -575,11 +648,14 @@ function getNodeById(id: number, data: FileTreeNode[] = []): FileTreeNode | unde
   }
 }
 
-function getApiById(id: number, data: OperationResp[] = []): OperationResp | undefined {
+function getApiByPath(
+  path: string,
+  data: ApiDocuments.Operation[] = []
+): ApiDocuments.Operation | undefined {
   const lists = [...data!]
   while (lists.length) {
     const item = lists.pop()!
-    if (item.id === id) {
+    if (item.path === path) {
       return item
     } else if (item.children) {
       lists.push(...item.children)

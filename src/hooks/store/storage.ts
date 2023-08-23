@@ -2,40 +2,12 @@ import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
-
-export interface StorageConfig {
-  name: string
-  accessKeyID: { kind: string; val: string }
-  secretAccessKey: { kind: string; val: string }
-  bucketLocation: string
-  bucketName: string
-  endpoint: string
-  useSSL: boolean
-  uploadProfiles: Record<string, Profile>
-}
-
-export interface Profile {
-  requireAuthentication: boolean
-  maxAllowedUploadSizeBytes: number
-  maxAllowedFiles: number
-  allowedMimeTypes: string[]
-  allowedFileExtensions: string[]
-  metadataJSONSchema: string
-  hooks: { preUpload: boolean; postUpload: boolean }
-}
-
-export interface Storage {
-  id?: number
-  name: string
-  config: StorageConfig
-  enabled: number
-  deteleTime?: String
-}
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export function useStorageList() {
-  return useSWRImmutable<Storage[]>('/storageBucket', requests.get).data
+  return useSWRImmutable<ApiDocuments.Storage[]>('/storage', requests.get).data
 }
 
 export function mutateStorage() {
-  return mutate('/storageBucket')
+  return mutate('/storage')
 }

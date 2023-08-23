@@ -3,12 +3,16 @@ import clsx from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { DatasourceResp } from '@/hooks/store/dataSource'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
+import { DataSourceKind } from '@/interfaces/datasource'
+import { DMMF } from '@/interfaces/dbml'
+import { fetchPrismaDMF, fetchPrismaSDL } from '@/lib/clients/fireBoomAPIOperator'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 
 import styles from './index.module.less'
 
@@ -16,7 +20,7 @@ interface CRUDSiderProps {
   onEmpty: () => void
   onSelectedModelChange: (
     model: DMFModel,
-    datasource: DatasourceResp,
+    datasource: ApiDocuments.Datasource,
     models: DMFModel[],
     relationMap: RelationMap,
     dmf: string
@@ -27,17 +31,17 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const intl = useIntl()
   // 刷新列表
   const dataSourceList = useDataSourceList()
-  const [currentDataSourceId, setCurrentDataSourceId] = useState<number>()
+  const [currentDataSourceName, setCurrentDataSourceName] = useState<string>()
   const [currentModel, setCurrentModel] = useState<DMFModel>()
   const [modelList, setModelList] = useState<DMFModel[]>([])
   const [dmf, setDmf] = useState<string>('')
   const [relationMaps, setRelationMaps] = useState<Record<string, RelationMap>>()
 
   const readyRef = useRef(false)
-  const currentId = useRef<number>()
+  const currentName = useRef<string>()
 
   const filterDataSourceList = useMemo(() => {
-    return dataSourceList ? dataSourceList.filter(item => item.sourceType === 1) : dataSourceList
+    return dataSourceList ? dataSourceList.filter(item => isDatabaseKind(item)) : dataSourceList
   }, [dataSourceList])
 
   useEffect(() => {
@@ -47,35 +51,36 @@ export default function CRUDSider(props: CRUDSiderProps) {
     if (filterDataSourceList.length === 0) {
       props.onEmpty()
     }
-    if (!filterDataSourceList.find(item => item.id === currentDataSourceId)) {
-      setCurrentDataSourceId(filterDataSourceList?.[0]?.id)
+    if (!filterDataSourceList.find(item => item.name === currentDataSourceName)) {
+      setCurrentDataSourceName(filterDataSourceList?.[0]?.name)
     }
-  }, [filterDataSourceList, currentDataSourceId])
+  }, [filterDataSourceList, currentDataSourceName])
   useEffect(() => {
     void loadModelList()
-  }, [currentDataSourceId])
+  }, [currentDataSourceName])
   async function loadModelList() {
-    if (!currentDataSourceId) {
+    if (!currentDataSourceName) {
       return
     }
-    currentId.current = currentDataSourceId
+    currentName.current = currentDataSourceName
     const hide = message.loading(intl.formatMessage({ defaultMessage: '正在加载模型列表' }))
     try {
       const nativeSDL = await requests.get<unknown, string>(
-        `/prisma/nativeSDL/${currentDataSourceId}`,
+        `/datasource/graphql/${currentDataSourceName}`,
         {
           timeout: 15e3
         }
       )
-      const res = await requests.get<unknown, { models: DMFModel[]; schemaContent: string }>(
-        `/prisma/dmf/${currentDataSourceId}`,
-        { timeout: 15e3 }
-      )
-      if (currentId.current === currentDataSourceId) {
+      const [dmmf, sdl] = await Promise.all([
+        fetchPrismaDMF(currentDataSourceName),
+        fetchPrismaSDL(currentDataSourceName).catch(() => '')
+      ])
+
+      if (currentName.current === currentDataSourceName) {
         setDmf(nativeSDL)
-        setModelList(res.models || [])
-        setCurrentModel(res.models?.[0])
-        setRelationMaps(findAllRelationInSchema(res.schemaContent))
+        setModelList(dmmf.datamodel.models ?? [])
+        setCurrentModel(dmmf.datamodel.models?.[0])
+        setRelationMaps(findAllRelationInSchema(sdl))
         readyRef.current = true
       }
     } catch (e) {
@@ -89,12 +94,12 @@ export default function CRUDSider(props: CRUDSiderProps) {
     }
     props.onSelectedModelChange(
       currentModel,
-      filterDataSourceList.find(item => item.id === currentDataSourceId)!,
+      filterDataSourceList.find(item => item.name === currentDataSourceName)!,
       modelList,
       relationMaps?.[currentModel.name]!,
       dmf
     )
-  }, [currentDataSourceId, currentModel, dmf, filterDataSourceList, modelList, relationMaps])
+  }, [currentDataSourceName, currentModel, dmf, filterDataSourceList, modelList, relationMaps])
 
   if (!filterDataSourceList) {
     return null
@@ -104,31 +109,26 @@ export default function CRUDSider(props: CRUDSiderProps) {
     <div className={'common-form ' + styles.sider}>
       <div className="flex w-full items-center">
         <Select
-          value={currentDataSourceId}
+          value={currentDataSourceName}
           onChange={value => {
             readyRef.current = false
-            setCurrentDataSourceId(value)
+            setCurrentDataSourceName(value)
           }}
           className="flex-1"
           options={filterDataSourceList.map(x => {
             let svg = '/assets/icon/db-other.svg'
-            switch (x.sourceType) {
-              case 1:
-                svg =
-                  {
-                    mysql: '/assets/icon/mysql.svg',
-                    pgsql: '/assets/icon/pg.svg',
-                    graphql: '/assets/icon/graphql.svg',
-                    mongodb: '/assets/icon/mongodb.svg',
-                    rest: '/assets/icon/rest.svg',
-                    sqlite: '/assets/icon/sqlite.svg'
-                  }[String(x.config.dbType).toLowerCase()] || svg
+            switch (x.kind) {
+              case DataSourceKind.MySQL:
+                svg = '/assets/icon/mysql.svg'
                 break
-              case 2:
-                svg = '/assets/icon/rest.svg'
+              case DataSourceKind.PostgreSQL:
+                svg = '/assets/icon/pgsql.svg'
                 break
-              case 3:
-                svg = '/assets/icon/graphql.svg'
+              case DataSourceKind.MongoDB:
+                svg = '/assets/icon/mongodb.svg'
+                break
+              case DataSourceKind.SQLite:
+                svg = '/assets/icon/sqlite.svg'
                 break
             }
             return {
@@ -139,7 +139,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
                   {x.name}
                 </div>
               ),
-              value: x.id
+              value: x.name
             }
           })}
         />

@@ -27,7 +27,7 @@ let tsPromise: Promise<any>
 
 export async function getTsTemplate(name: string): Promise<string> {
   if (!tsPromise) {
-    tsPromise = getFireboomFileContent('hook.templates.ts.json')
+    tsPromise = getFireboomFileContent('hook.cloud.templates.ts.json')
     // tsPromise = proxy(
     //   'https://raw.githubusercontent.com/fireboomio/files/main/hook.templates.ts.json'
     // )
@@ -40,7 +40,7 @@ let goPromise: Promise<any>
 
 export async function getGoTemplate(name: string): Promise<string> {
   if (!goPromise) {
-    goPromise = getFireboomFileContent('hook.templates.go.json')
+    goPromise = getFireboomFileContent('hook.cloud.templates.go.json')
     // goPromise = proxy(
     //   'https://raw.githubusercontent.com/fireboomio/files/main/hook.templates.go.json'
     // )

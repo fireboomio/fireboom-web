@@ -1,6 +1,6 @@
-import { message } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import ReactJson from 'react-json-view'
 import { useLocation } from 'react-router-dom'
 import useSWRMutation from 'swr/mutation'
@@ -8,17 +8,23 @@ import useSWRMutation from 'swr/mutation'
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import { intl } from '@/providers/IntlProvider'
+import { useConfigurationVariable } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { useAuthTest } from '@/utils/auth'
 
 import fireBg from './assets/fire.svg'
 import logoutIcon from './assets/logout.svg'
 import styles from './index.module.less'
 
 export default function LoginPanel() {
-  const { system } = useContext(ConfigContext)
+  const intl = useIntl()
+  const { globalSetting } = useContext(ConfigContext)
   const { logout } = useContext(WorkbenchContext)
+
+  const { doTest } = useAuthTest('#/workbench/rapi/loginBack', { closeWindow: false })
+  const { getConfigurationValue } = useConfigurationVariable()
   const { data: userInfo, trigger } = useSWRMutation<any>(
-    `${system.apiPublicAddr}/auth/cookie/user`,
+    `${getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/auth/cookie/user`,
     (key: string) => {
       return axios.get(key, { withCredentials: true }).then(res => res.data)
     }
@@ -29,26 +35,12 @@ export default function LoginPanel() {
     mutateAuth()
   }, [search, trigger])
   const doLogout = () => {
-    logout(system.apiPublicAddr).then(async res => {
+    logout(getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)!).then(async res => {
       location.reload()
     })
   }
-  const toggleLogin = async (auth: any) => {
-    await logout(system.apiPublicAddr, { closeWindow: false })
-    // 生成回调地址，此处假设使用hash路由，如果更改路由方式需要调整
-    const callbackURL = new URL(location.toString())
-    callbackURL.hash = '#/workbench/rapi/loginBack'
-    let target
-    try {
-      target = new URL(auth?.point + encodeURIComponent(callbackURL.toString()))
-    } catch (e) {
-      message.error(
-        intl.formatMessage({ defaultMessage: '地址异常，请检查系统设置中的API域名是否正确' })
-      )
-      console.error(e)
-      return
-    }
-    window.open(target.toString())
+  const toggleLogin = async (auth: ApiDocuments.Authentication) => {
+    await doTest(auth.name)
   }
   const authList = useAuthList() ?? []
   const filterAuthList = authList?.filter(x => x.name !== userInfo?.providerId)

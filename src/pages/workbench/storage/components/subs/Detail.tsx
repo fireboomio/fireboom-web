@@ -1,22 +1,19 @@
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Button, Descriptions } from 'antd'
-import { useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
-import type { StorageResp } from '@/interfaces/storage'
+import { getConfigurationVariableRender } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './subs.module.less'
 
 interface Props {
-  content?: StorageResp
+  content?: ApiDocuments.Storage
 }
 
 export default function StorageDetail({ content }: Props) {
   const intl = useIntl()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-
-  const config = useMemo(() => content?.config, [content?.config])
 
   return (
     <>
@@ -26,40 +23,28 @@ export default function StorageDetail({ content }: Props) {
             {content?.name}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务地址' })}>
-            http(s)://{config?.endPoint}
+            {getConfigurationVariableRender(content?.endpoint)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'APP ID' })}>
-            {config?.accessKeyID?.val}{' '}
+            {getConfigurationVariableRender(content?.accessKeyID)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'APP Secret' })}>
-            <span>
-              {isShowSecret ? (
-                <div>
-                  {config?.secretAccessKey?.val ?? ''}
-                  <EyeOutlined
-                    className="cursor-pointer ml-6"
-                    onClick={() => setIsShowSecret(!isShowSecret)}
-                  />
-                </div>
-              ) : (
-                <div>
-                  {(config?.secretAccessKey?.val ?? '').replaceAll(/./g, '*')}
-                  <EyeInvisibleOutlined
-                    className="cursor-pointer ml-6"
-                    onClick={() => setIsShowSecret(!isShowSecret)}
-                  />
-                </div>
-              )}
-            </span>
+            {getConfigurationVariableRender(content?.secretAccessKey, {
+              enableVisible: true,
+              visible: isShowSecret,
+              onVisibleChange: v => {
+                setIsShowSecret(v)
+              }
+            })}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '区域' })}>
-            {config?.bucketLocation}
+            {getConfigurationVariableRender(content?.bucketLocation)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '桶名称' })}>
-            {config?.bucketName}
+            {getConfigurationVariableRender(content?.bucketName)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '开启SSL' })}>
-            {config?.useSSL ? (
+            {content?.useSSL ? (
               <Button className={styles['ssl-open-btn']}>
                 <FormattedMessage defaultMessage="开启" />
               </Button>

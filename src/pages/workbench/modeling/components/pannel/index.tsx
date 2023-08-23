@@ -4,13 +4,14 @@ import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import type { Updater } from 'use-immer'
 
-import type { DBSourceResp, Entity, ModelingShowTypeT } from '@/interfaces/modeling'
+import type { Entity, ModelingShowTypeT } from '@/interfaces/modeling'
 import { UNTITLED_NEW_ENTITY } from '@/lib/constants/fireBoomConstants'
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import { buildBlocks } from '@/lib/helpers/ModelingHelpers'
 import useBlocks from '@/lib/hooks/useBlocks'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import DBSourceSelect from './db-source-select'
@@ -19,7 +20,7 @@ import OperationButtons from './operation-buttons'
 import styles from './pannel.module.less'
 
 interface Props {
-  sourceOptions: DBSourceResp[]
+  sourceOptions: ApiDocuments.Datasource[]
   onChangeSource: (value: number) => void
   onClickEntity: (entity: Entity) => void
   onToggleDesigner: (entity: Entity) => void
@@ -45,7 +46,7 @@ const ModelPannel = ({
   const { handleClickEntity } = panel
   // const ctx = useContext(PrismaSchemaContext)
   const { handleSetInEdit, inEdit } = panel || {}
-  const { id: paramId } = useParams()
+  const { name } = useParams()
 
   const { blocks, applyLocalSchema, applyLocalBlocks } = useBlocks()
 
@@ -93,7 +94,7 @@ const ModelPannel = ({
       <div className={styles.pannel}>
         <DBSourceSelect sourceOptions={sourceOptions} onChangeSource={onChangeSource} />
 
-        {paramId && paramId !== '0' && (
+        {name && name !== '0' && (
           <OperationButtons addNewModel={addNewModelHandler} changeToER={changeToER} />
         )}
       </div>

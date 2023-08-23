@@ -1,19 +1,19 @@
 import { App, Layout as ALayout, message, Spin } from 'antd'
-import { ConfigContext } from 'antd/es/config-provider'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
-import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
 import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
 import { useGlobal } from '@/hooks/global'
 import { mutateApi } from '@/hooks/store/api'
+import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { Info } from '@/interfaces/common'
+import { useConfigContext } from '@/lib/context/ConfigContext'
 import { GlobalContext } from '@/lib/context/globalContext'
 import type {
   MenuName,
@@ -24,10 +24,12 @@ import type {
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import events, { useWebSocket } from '@/lib/event/events'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
-import { getHook, saveHookScript, updateHookEnabled } from '@/lib/service/hook'
+import { updateGlobalOperationHookEnabled, updateOperationHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
-import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { replaceFileTemplate } from '@/utils/template'
+import createFile from '@/utils/uploadLocal'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
@@ -47,12 +49,20 @@ export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
-    engineStatus: ServiceStatus.NotStarted,
-    hookStatus: HookStatus.Stopped,
-    startTime: '',
+    engineStatus: ServiceStatus.Started,
+    hookStatus: false,
+    globalStartTime: '',
+    engineStartTime: '',
     fbVersion: '--',
     fbCommit: '--'
   })
+  const { setVersion } = useConfigContext()
+  const isCompiling = useMemo(
+    () =>
+      info.engineStatus === ServiceStatus.Starting || info.engineStatus === ServiceStatus.Building,
+    [info.engineStatus]
+  )
+
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
@@ -65,7 +75,6 @@ export default function Index(props: PropsWithChildren) {
     currentPath: '',
     config: {}
   })
-  const { system } = useContext(ConfigContext)
   const [loading, setLoading] = useState('')
 
   // context
@@ -76,7 +85,7 @@ export default function Index(props: PropsWithChildren) {
     dataSource: false,
     storage: false
   })
-  const { setLogs, logs, setQuestions } = useGlobal(state => ({
+  const { setLogs, logs, questions, setQuestions } = useGlobal(state => ({
     logs: state.logs,
     setLogs: state.setLogs,
     questions: state.questions,
@@ -85,46 +94,55 @@ export default function Index(props: PropsWithChildren) {
 
   const authKey = getAuthKey()
   // authkey变化时启动socket
+  // FIXME 这段代码运行会导致vite直接报错退出
   useEffect(() => {
     initWebSocket(authKey ?? '')
   }, [authKey])
-  useWebSocket('engine', 'getStatus', data => {
+  useWebSocket('engine', 'pull', (data: Info) => {
+    setVersion({
+      fbVersion: data.fbVersion ?? '',
+      fbCommit: data.fbCommit ?? ''
+    })
     setInfo(data)
+    ;(window as any).getGlobalStartTime = () => data.globalStartTime
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
+      mutateDataSource()
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'pushStatus', data => {
-    setInfo({ ...info, engineStatus: data.engineStatus, startTime: data.startTime })
+  useWebSocket('engine', 'push', (data: Info) => {
+    setInfo({ ...info, engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
+      mutateDataSource()
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'getHookStatus', data => {
-    message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
-    setInfo({ ...info, hookStatus: data.hookStatus })
+  useWebSocket('engine', 'hookStatus', data => {
+    // message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
+    setInfo({ ...info, hookStatus: data })
   })
-  useWebSocket('engine', 'pushHookStatus', data => {
-    setInfo({ ...info, hookStatus: data.hookStatus })
-  })
-  useWebSocket('log', 'getLogs', data => {
+  // useWebSocket('engine', 'pushHookStatus', data => {
+  //   setInfo({ ...info, hookStatus: data.hookStatus })
+  // })
+  useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
   })
-  useWebSocket('log', 'appendLog', data => {
-    setLogs(logs.concat(parseLogs(data)))
+  useWebSocket('log', 'push', data => {
+    setLogs(logs.concat(parseLogs([data])))
   })
-  useWebSocket('question', 'getQuestions', data => {
-    setQuestions(data?.questions || [])
+  useWebSocket('question', 'pull', data => {
+    setQuestions(data || [])
   })
-  useWebSocket('question', 'setQuestions', data => {
-    setQuestions(data.questions)
+  useWebSocket('question', 'push', data => {
+    setQuestions([...questions, data])
   })
   useEffect(() => {
-    sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
-    sendMessageToSocket({ channel: 'log', event: 'getLogs' })
-    sendMessageToSocket({ channel: 'question', event: 'getQuestions' })
+    sendMessageToSocket({ channel: 'engine', event: 'pull' })
+    sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
+    sendMessageToSocket({ channel: 'log', event: 'pull' })
+    sendMessageToSocket({ channel: 'question', event: 'pull' })
   }, [])
 
   useEffect(() => {
@@ -136,6 +154,14 @@ export default function Index(props: PropsWithChildren) {
       controller.abort()
     }
   }, [refreshState])
+
+  useEffect(() => {
+    // 重新编译时触发重置
+    if (isCompiling) {
+      setQuestions([])
+      setLogs([])
+    }
+  }, [isCompiling, setLogs, setQuestions])
 
   const handleRefreshMenu = (listName: MenuName) => {
     setRefreshMap(refreshMap => {
@@ -165,36 +191,33 @@ export default function Index(props: PropsWithChildren) {
   }, [editFlag, intl, modal])
 
   const logout = useCallback(
-    (
+    async (
       apiPublicAddr: string,
       opts?: {
         logoutProvider?: boolean
         closeWindow?: boolean
       }
     ) => {
-      return axios
-        .get(`${apiPublicAddr}/auth/cookie/user/logout`, {
-          headers: getHeader(),
-          params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
-          withCredentials: true
-        })
-        .then(res => {
-          const redirect = res.data?.redirect
-          if (redirect) {
-            const iframe = document.createElement('iframe')
-            iframe.src = redirect
-            document.body.appendChild(iframe)
-            setTimeout(() => {
-              document.body.removeChild(iframe)
-            }, 5000)
-          }
-          if (opts?.closeWindow ?? true) {
-            message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
-            setTimeout(() => {
-              window.close()
-            }, 3000)
-          }
-        })
+      const res = await axios.get(`${apiPublicAddr}/auth/cookie/user/logout`, {
+        headers: getHeader(),
+        params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
+        withCredentials: true
+      })
+      const redirect = res.data?.redirect
+      if (redirect) {
+        const iframe = document.createElement('iframe')
+        iframe.src = redirect
+        document.body.appendChild(iframe)
+        setTimeout(() => {
+          document.body.removeChild(iframe)
+        }, 5000)
+      }
+      if (opts?.closeWindow ?? true) {
+        message.info(intl.formatMessage({ defaultMessage: '登出成功，即将关闭当前页面' }))
+        setTimeout(() => {
+          window.close()
+        }, 3000)
+      }
     },
     [intl]
   )
@@ -203,10 +226,7 @@ export default function Index(props: PropsWithChildren) {
     <ALayout className={`h-100vh ${styles.workbench}`}>
       {!fullScreen && (
         <AHeader className={styles.header}>
-          <Header
-            onToggleSider={() => setHideSider(!hideSider)}
-            engineStatus={info?.engineStatus}
-          />
+          <Header onToggleSider={() => setHideSider(!hideSider)} isCompiling={isCompiling} />
         </AHeader>
       )}
       <ALayout>
@@ -238,7 +258,7 @@ export default function Index(props: PropsWithChildren) {
           <StatusBar
             version={info?.fbVersion}
             commit={info?.fbCommit}
-            startTime={info?.startTime}
+            startTime={info?.engineStartTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
             menuWidth={fullScreen ? 0 : MENU_WIDTH}
@@ -253,19 +273,37 @@ export default function Index(props: PropsWithChildren) {
   )
   const location = useLocation()
   const navigate = useNavigate()
-  const { data } = useSWRImmutable<{ language: string }>('/hook/option', requests)
-  const { data: sdk } = useSWR<{ language: string }[]>('/sdk', requests.get)
+  const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
+  const { data: sdk, mutate: refreshSDK } = useSWRImmutable<ApiDocuments.Sdk[]>(
+    '/sdk',
+    requests.get
+  )
   const language = data?.language
+  const isHookServerSelected = (!!language && sdk?.some(item => item.type === 'server')) ?? false
   const checkHookExist = async (path: string, hasParam = false, skipConfirm = false) => {
     try {
-      if (!language || !sdk.find(item => item.type === 'server')) {
+      if (!isHookServerSelected) {
         navigate('/workbench/sdk-template')
         message.warning(intl.formatMessage({ defaultMessage: '请选择钩子模版' }))
         return false
       }
-
-      const hook = await getHook(path)
-      if (!hook?.script) {
+      // 去除开头 /
+      const filePath =
+        data?.extension && path.includes(data!.extension)
+          ? path
+          : `${path}.${data?.extension.replace(/^\./, '')}`.replace(/^\//, '')
+      let hookExisted = false
+      try {
+        await requests.get(`/vscode/state?uri=${filePath}`, {
+          // @ts-ignore
+          ignoreError: true
+        })
+        hookExisted = true
+      } catch (error) {
+        //
+      }
+      // const hook = await getHook(path)
+      if (!hookExisted) {
         if (!skipConfirm) {
           const confirm = await new Promise(resolve => {
             modal.confirm({
@@ -280,8 +318,9 @@ export default function Index(props: PropsWithChildren) {
           }
         }
         setLoading('钩子模板创建中，请稍候')
-        const code = await resolveDefaultCode(path, hasParam, language)
-        await saveHookScript(path, code)
+        const code = await resolveDefaultCode(filePath, hasParam, language!)
+        await createFile(filePath, code)
+        // await saveHookScript(path, code)
         return true
       } else {
         return true
@@ -295,15 +334,27 @@ export default function Index(props: PropsWithChildren) {
     }
   }
   const globalProviderValue = {
+    info: info,
+    isCompiling,
     vscode: {
       options: vscode,
+      isHookServerSelected,
       checkHookExist,
-      toggleHook: async (flag: boolean, path: string, hasParam = false) => {
+      toggleOperationHook: async (
+        flag: boolean,
+        hookPath: string,
+        operationName: string,
+        hasParam = false
+      ) => {
         // 打开钩子时，需要检查钩子文件
-        if (flag && !(await checkHookExist(path, hasParam))) {
+        if (flag && !(await checkHookExist(hookPath, hasParam))) {
           return
         }
-        await updateHookEnabled(path, flag)
+        if (hookPath.match(/custom-\w+\/global\//)) {
+          await updateGlobalOperationHookEnabled(operationName, hookPath.split('/').pop()!, flag)
+        } else {
+          await updateOperationHookEnabled(operationName, hookPath.split('/').pop()!, flag)
+        }
       },
       hide: () => {
         setVscode({
@@ -314,13 +365,14 @@ export default function Index(props: PropsWithChildren) {
       },
       show: async (path?: string, config?: any) => {
         if (path && !(await checkHookExist(path ?? ''))) {
-          return
+          return false
         }
         setVscode({
           visible: true,
           currentPath: path ?? '',
           config: config ?? {}
         })
+        return true
       }
     }
   }
@@ -373,7 +425,8 @@ function parseLogs(logs: string[]) {
   const result: { time: string; level: string; msg: string }[] = []
   let lastLog: any
   logs.forEach(log => {
-    const [, time, level, msg] = log.match(/([^Z]+?Z) (\w+) (.*)/) || []
+    // "2023-08-04T14:48:25.059688+08:00 INFO server/middleware.go:70 request log {"hostname": "erguotou.local", "pid": 58817, "detail": {"StartTime":"2023-08-04T14:48:25.058494+08:00","Latency":1139875,"Protocol":"","RemoteIP":"127.0.0.1","Host":"","Method":"GET","URI":"/api/sdk/enabledServer","URIPath":"/api/sdk/enabledServer","RoutePath":"","RequestID":"","Referer":"","UserAgent":"","Status":200,"Error":null,"ContentLength":"","ResponseSize":0,"Headers":null,"QueryParams":null,"FormValues":null}}
+    const [, time, level, msg] = log.match(/([\d\w-:.+]+) (\w+) (.*)/) || []
     if (time) {
       lastLog = {
         time: dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
@@ -402,18 +455,34 @@ async function resolveDefaultCode(
     getDefaultCode = getTsTemplate
   }
   const list = path.split('/')
-  const name = list.pop()!
+  let name = list.pop()!.split('.')[0]
   const packageName = list[list.length - 1]
   let code = ''
-  if (path.startsWith('global/')) {
+  if (path.match(/custom-\w+\/global\//)) {
+    // 兼容
+    if (name === 'beforeOriginRequest') {
+      name = 'beforeRequest'
+    } else if (name === 'onOriginRequest') {
+      name = 'onRequest'
+    } else if (name === 'onOriginResponse') {
+      name = 'onResponse'
+    }
     code = await getDefaultCode(`global.${name}`)
-  } else if (path.startsWith('auth/')) {
+  } else if (path.match(/custom-\w+\/authentication\//)) {
     code = await getDefaultCode(`auth.${name}`)
-  } else if (path.startsWith('customize/')) {
-    code = replaceFileTemplate(await getDefaultCode('custom'), [
+  } else if (path.match(/custom-\w+\/customize\//)) {
+    code = replaceFileTemplate(await getDefaultCode('custom.customize'), [
       { variableName: 'CUSTOMIZE_NAME', value: name }
     ])
-  } else if (path.startsWith('uploads/')) {
+  } else if (path.match(/custom-\w+\/function\//)) {
+    code = replaceFileTemplate(await getDefaultCode('custom.function'), [
+      { variableName: 'FUNCTION_NAME', value: name }
+    ])
+  } else if (path.match(/custom-\w+\/proxy\//)) {
+    code = replaceFileTemplate(await getDefaultCode('custom.proxy'), [
+      { variableName: 'PROXY_NAME', value: name }
+    ])
+  } else if (path.match(/custom-\w+\/storage/)) {
     const profileName = list.pop() as string
     const storageName = list.pop() as string
     code = replaceFileTemplate(await getDefaultCode(`upload.${name}`), [
@@ -421,7 +490,7 @@ async function resolveDefaultCode(
       { variableName: 'PROFILE_NAME', value: profileName }
     ])
   } else {
-    const pathList = list.slice(1)
+    const pathList = list.slice(2)
     const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
     code = replaceFileTemplate(await getDefaultCode(tmplPath), [
       {

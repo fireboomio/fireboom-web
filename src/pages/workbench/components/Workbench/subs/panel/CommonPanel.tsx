@@ -1,9 +1,9 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
+import clsx from 'clsx'
 import type React from 'react'
 import { useContext, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
 
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { mutateDataSource, useDataSourceList } from '@/hooks/store/dataSource'
@@ -11,10 +11,14 @@ import { mutateHookModel } from '@/hooks/store/hook/model'
 import { useStorageList } from '@/hooks/store/storage'
 import { useValidate } from '@/hooks/validate'
 import type { CommonPanelResp } from '@/interfaces/commonPanel'
+import { DataSourceKind } from '@/interfaces/datasource'
 import { GlobalContext } from '@/lib/context/globalContext'
 import type { MenuName } from '@/lib/context/workbenchContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
+import { useConfigurationVariable } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { isDatabaseKind } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
@@ -22,12 +26,12 @@ import SidePanel from './SidePanel'
 
 interface PanelConfig {
   title: string
-  openItem: (id: number) => string
+  openItem: (name: string) => string
   newItem: string
   request: {
     getList: () => void
-    editItem: (row: unknown) => Promise<unknown>
-    delItem: (id: number) => Promise<unknown>
+    editItem: (row: ApiDocuments.fileloader_DataMutation) => Promise<unknown>
+    delItem: (name: string) => Promise<unknown>
   }
   navMenu?: (record: any) => Array<{
     key: string
@@ -41,11 +45,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
   const intl = useIntl()
   const { validateName } = useValidate()
   const { vscode } = useContext(GlobalContext)
-  const { mutate } = useSWRConfig()
   const navigate = useNavigate()
   const storageList = useStorageList()
   const dataSourceList = useDataSourceList()
   const authList = useAuthList()
+  const { getConfigurationValue } = useConfigurationVariable()
   const datasource = useMemo(() => {
     if (props.type === 'dataSource') {
       if (!dataSourceList) return []
@@ -53,35 +57,47 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         let icon = 'other'
         let svg = '/assets/icon/db-other.svg'
         let tip = ''
-        switch (row.sourceType) {
-          case 1:
-            tip = String(row.config.dbName || '')
-            if (typeof row.config.databaseUrl === 'object' && row.config.databaseUrl?.val) {
-              const dbName = parseDBUrl(row.config.databaseUrl.val)?.dbName
-              if (dbName) {
-                tip = dbName
-              }
-            }
-            svg =
-              {
-                mysql: '/assets/icon/mysql.svg',
-                postgresql: '/assets/icon/pgsql.svg',
-                graphql: '/assets/icon/graphql.svg',
-                mongodb: '/assets/icon/mongodb.svg',
-                rest: '/assets/icon/rest.svg',
-                sqlite: '/assets/icon/sqlite.svg'
-              }[String(row.config.dbType).toLowerCase()] || svg
+        let readOnly = false
+        let showBadge = false
+        switch (row.kind) {
+          case DataSourceKind.MongoDB:
+            svg = '/assets/icon/mongodb.svg'
             break
-          case 2:
+          case DataSourceKind.MySQL:
+            svg = '/assets/icon/mysql.svg'
+            break
+          case DataSourceKind.PostgreSQL:
+            svg = '/assets/icon/pgsql.svg'
+            break
+          case DataSourceKind.SQLite:
+            svg = '/assets/icon/sqlite.svg'
+            break
+          case DataSourceKind.Graphql:
+            svg = '/assets/icon/graphql.svg'
+            if (row.customGraphql.customized) {
+              showBadge = true
+              readOnly = true
+            }
+            break
+          case DataSourceKind.Restful:
             svg = '/assets/icon/rest.svg'
             break
-          case 3:
-            svg = '/assets/icon/graphql.svg'
+          default:
             break
         }
+        if (isDatabaseKind(row)) {
+          if (row.customDatabase.kind === 0) {
+            const url = getConfigurationValue(row.customDatabase.databaseUrl)
+            if (url) {
+              tip = parseDBUrl(url)?.dbName ?? ''
+            }
+          } else {
+            tip = row.customDatabase.databaseAlone.database
+          }
+        }
         return {
-          readonly: row.readonly,
-          id: row.id,
+          readonly: readOnly || row.readonly,
+          showBadge,
           name: row.name,
           icon,
           sourceType: row.sourceType,
@@ -93,15 +109,15 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       })
     } else if (props.type === 'auth') {
       if (!authList) return []
-      return authList.map((row: any) => {
+      return authList.map((row: ApiDocuments.Authentication) => {
         const icon = 'other'
         const tip = 'OIDC'
         return {
-          id: row.id,
+          // id: row.id,
           name: row.name,
           icon,
           tip,
-          enabled: !!row.switchState?.length,
+          enabled: row.oidcConfigEnabled || row.jwksProviderEnabled,
           _row: row,
           svg: '/assets/icon/oidc.svg'
         }
@@ -112,7 +128,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         const icon = 'other'
         const tip = ''
         return {
-          id: row.id,
+          // id: row.id,
           name: row.name,
           icon,
           tip,
@@ -127,14 +143,14 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     () => ({
       dataSource: {
         title: intl.formatMessage({ defaultMessage: '数据源' }),
-        openItem: id => `/workbench/data-source/${id}`,
+        openItem: name => `/workbench/data-source/${name}`,
         newItem: '/workbench/data-source/new',
         request: {
           getList: () => {
             mutateDataSource()
           },
-          editItem: async row => await requests.put('/dataSource', row),
-          delItem: async id => await requests.delete(`/dataSource/${id}`)
+          editItem: async row => await requests.post('/datasource/rename', row),
+          delItem: async name => await requests.delete(`/datasource/${name}`)
         },
         navMenu: (record: any) => {
           if (record.sourceType === 4) {
@@ -145,7 +161,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   label: (
                     <div
                       onClick={async () => {
-                        await vscode.toggleHook(false, `customize/${record.name}`)
+                        await requests.put('/datasource', {
+                          name: record.name,
+                          enabled: false
+                        })
                         mutateDataSource()
                       }}
                     >
@@ -163,7 +182,10 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                   label: (
                     <div
                       onClick={async () => {
-                        await vscode.toggleHook(true, `customize/${record.name}`)
+                        await requests.put('/datasource', {
+                          name: record.name,
+                          enabled: true
+                        })
                         mutateDataSource()
                       }}
                     >
@@ -181,7 +203,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       },
       auth: {
         title: intl.formatMessage({ defaultMessage: '身份验证' }),
-        openItem: id => `/workbench/auth/${id}`,
+        openItem: name => `/workbench/auth/${name}`,
         newItem: '/workbench/auth/new',
         navAction: [
           {
@@ -203,17 +225,17 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           getList: () => {
             mutateAuth()
           },
-          editItem: async row => await requests.put('/auth', row),
-          delItem: async id => await requests.delete(`/auth/${id}`)
+          editItem: async row => await requests.post('/authentication/rename', row),
+          delItem: async name => await requests.delete(`/authentication/${name}`)
         }
       }
     }),
-    [intl, navigate, vscode.toggleHook]
+    [intl, navigate, vscode.toggleOperationHook]
   )
   const panelConfig = useMemo<PanelConfig>(() => panelMap[props.type], [panelMap, props.type])
   const location = useLocation()
   const [editTarget, setEditTarget] = useState<CommonPanelResp>() // 当前正在重命名的对象
-  const [dropDownId, setDropDownId] = useState<number>() // 当前下拉列表的对象id
+  const [dropDownName, setDropDownName] = useState<string>() // 当前下拉列表的对象id
   const { refreshMap, navCheck } = useContext(WorkbenchContext)
   const [panelOpened, setPanelOpened] = useState(false)
   if (!datasource) return null
@@ -239,7 +261,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
             zIndex={9999}
             placement="right"
             title={intl.formatMessage({ defaultMessage: '确认删除吗？' })}
-            onConfirm={() => void handleItemDelete(dropDownId)}
+            onConfirm={() => void handleItemDelete(dropDownName)}
             okText={intl.formatMessage({ defaultMessage: '删除' })}
             cancelText={intl.formatMessage({ defaultMessage: '取消' })}
             overlayClassName={styles['delete-label']}
@@ -262,7 +284,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       <Menu
         onClick={e => {
           if (e.key !== 'delete') {
-            setDropDownId(undefined)
+            setDropDownName(undefined)
           }
         }}
         items={menuItems}
@@ -270,17 +292,17 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     )
   }
 
-  const handleItemDelete = async (id?: number) => {
-    if (!id) {
+  const handleItemDelete = async (path?: string) => {
+    if (!path) {
       return
     }
-    await panelConfig.request.delItem(id)
+    await panelConfig.request.delItem(path)
     panelConfig.request.getList()
-    setDropDownId(undefined)
+    setDropDownName(undefined)
     // 当被删除对象是当前打开的页面时，需要跳转离开
-    if (panelConfig.openItem(id) === location.pathname) {
+    if (panelConfig.openItem(path) === location.pathname) {
       // 找到首个不是在新窗口中打开页面的项目
-      const index = datasource.findIndex(item => item.id !== id)
+      const index = datasource.findIndex(item => item.name !== path)
       if (index >= 0) {
         handleItemNav(datasource[index])
       } else {
@@ -298,8 +320,11 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       message.error(err)
       return
     }
-    row.name = value
-    await panelConfig.request.editItem(row)
+    await panelConfig.request.editItem({
+      src: row.name,
+      dst: value,
+      overload: false
+    })
     panelConfig.request.getList()
     setEditTarget(undefined)
     mutateHookModel()
@@ -310,7 +335,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       window.open(item.openInNewPage)
       return
     }
-    const itemPath = panelConfig.openItem(item.id)
+    const itemPath = panelConfig.openItem(item.name)
     void navCheck().then(flag => {
       if (flag) {
         navigate(itemPath)
@@ -338,16 +363,16 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
     >
       <div className={styles.container}>
         {datasource.map(item => {
-          const itemPath = panelConfig.openItem(item.id)
+          const itemPath = panelConfig.openItem(item.name)
           return (
             <div
               className={`${styles.row} ${!item.enabled ? styles.rowDisable : ''} ${
                 itemPath === location.pathname ? styles.active : ''
               }`}
-              key={item.id}
+              key={item.name}
               onClick={() => handleItemNav(item)}
             >
-              {editTarget?.id === item.id && editTarget ? (
+              {editTarget?.name === item.name && editTarget ? (
                 <Input
                   // @ts-ignore
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -363,7 +388,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 />
               ) : (
                 <>
-                  <div className={styles.icon}>
+                  <div className={clsx(styles.icon, item.showBadge ? styles.iconBadge : '')}>
                     <Image
                       width={12}
                       height={12}
@@ -382,9 +407,9 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 <Dropdown
                   dropdownRender={() => dropDownMenu(item)}
                   trigger={['click']}
-                  open={dropDownId === item.id}
+                  open={dropDownName === item.name}
                   onOpenChange={flag => {
-                    setDropDownId(flag ? item.id : undefined)
+                    setDropDownName(flag ? item.name : undefined)
                   }}
                   placement="bottomRight"
                 >

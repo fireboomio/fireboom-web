@@ -2,29 +2,29 @@
 
 import { CopyOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { Descriptions, message, Tag } from 'antd'
+import clsx from 'clsx'
 import copy from 'copy-to-clipboard'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
-import type { AuthProvResp } from '@/interfaces/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { getConfigurationVariableRender, useConfigurationVariable } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
 import styles from './detail.module.less'
-import clsx from 'clsx'
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
 interface Props {
-  content: AuthProvResp
+  content: ApiDocuments.Authentication
 }
-type Config = Record<string, any>
 
 export default function AuthMainCheck({ content }: Props) {
   const intl = useIntl()
-  const { system: globalConfig } = useContext(ConfigContext)
-  // const { handleBottomToggleDesigner } = useContext(AuthToggleContext)
+  const { globalSetting } = useContext(ConfigContext)
+  const { getConfigurationValue } = useConfigurationVariable()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
-  const config = content.config as unknown as Config
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
@@ -44,27 +44,26 @@ export default function AuthMainCheck({ content }: Props) {
   if (!content) return <Error50x />
   return (
     <>
-      <div className={clsx("mt-8", styles.descriptions)}>
+      <div className={clsx('mt-8', styles.descriptions)}>
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '供应商ID' })}>
-            {config.id}
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
-            {config.clientId?.val ?? ''}
+            {content.name}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
-            {config.issuer}
+            {getConfigurationVariableRender(content.issuer)}
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
-            {`${config.issuer as string}/.well-known/openid-configuration`}
+            {`${getConfigurationVariableRender(content.issuer)}/.well-known/openid-configuration`}
           </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
-            {config.userInfoEndpoint}
-          </Descriptions.Item>
+          {content.jwksProvider?.userInfoEndpoint && (
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
+              {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
+            </Descriptions.Item>
+          )}
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于cookie' })}>
-            {content.switchState.includes('cookieBased') ? (
+            {content.oidcConfigEnabled ? (
               <Tag color="success">开启</Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
@@ -73,30 +72,36 @@ export default function AuthMainCheck({ content }: Props) {
             )}
             <span className="text-[#aaa] ml-1">授权码模式</span>
           </Descriptions.Item>
+          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
+            {getConfigurationVariableRender(content.oidcConfig?.clientId)}
+          </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App Secret' })}>
             <span className="flex items-center">
               {isShowSecret ? (
                 <>
-                  <span>{config.clientSecret?.val ?? ''}</span>
+                  <span>{getConfigurationVariableRender(content.oidcConfig?.clientSecret)}</span>
                   <EyeOutlined className="ml-4" onClick={handleToggleSecret} />
                 </>
-              ) : config.clientSecret?.val ? (
+              ) : (
                 <>
                   <span>***********</span>
                   <EyeInvisibleOutlined className="ml-4" onClick={handleToggleSecret} />
                 </>
-              ) : (
-                ''
               )}
             </span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '登录回调地址' })}>
             <div className="flex items-center">
-              {globalConfig.apiPublicAddr}/auth/cookie/callback/{config.id}
+              {getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/auth/cookie/callback/
+              {content.name}
               <CopyOutlined
                 className="cursor-pointer ml-4"
                 onClick={() => {
-                  copy(`${globalConfig.apiPublicAddr}/auth/cookie/callback/${config.id}`)
+                  copy(
+                    `${getConfigurationValue(
+                      globalSetting.nodeOptions.publicNodeUrl
+                    )}/auth/cookie/callback/${content.name}`
+                  )
                   message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                 }}
               />
@@ -105,7 +110,7 @@ export default function AuthMainCheck({ content }: Props) {
         </Descriptions>
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于token' })}>
-            {content.switchState.includes('tokenBased') ? (
+            {content.jwksProviderEnabled ? (
               <Tag color="success">开启</Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
@@ -115,15 +120,17 @@ export default function AuthMainCheck({ content }: Props) {
             <span className="text-[#aaa] ml-1">隐式模式</span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })}>
-            {config.jwks == 0 ? 'URL' : 'JSON'}
+            {content.jwksProvider?.jwksJson ? 'JSON' : 'URL'}
           </Descriptions.Item>
-          {config.jwks === 0 ? (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
-              {config.jwksURL}
+          {content.jwksProvider?.jwksJson ? (
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
+              <pre className="overflow-x-auto">
+                {getConfigurationVariableRender(content.jwksProvider?.jwksJson)}
+              </pre>
             </Descriptions.Item>
           ) : (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksJSON' })}>
-              <pre className='overflow-x-auto'>{config.jwksJSON}</pre>
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
+              {getConfigurationVariableRender(content.jwksProvider?.jwksUrl)}
             </Descriptions.Item>
           )}
         </Descriptions>

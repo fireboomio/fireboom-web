@@ -21,12 +21,13 @@ export interface ErrorInfo {
 }
 
 export interface Info {
-  errorInfo: ErrorInfo
+  errorInfo: { errTotal: number; warnTotal: number }
+  engineStartTime: string
   engineStatus: ServiceStatus
-  hookStatus: HookStatus
-  startTime: string
-  fbVersion: string
-  fbCommit: string
+  globalStartTime: string
+  hookStatus: boolean
+  fbVersion?: string
+  fbCommit?: string
 }
 
 export interface WithClassNames {
@@ -45,4 +46,9 @@ declare module '@paljs/types' {
   export interface Field {
     hasDefault: boolean
   }
+}
+
+export enum VariableKind {
+  Static = 0,
+  Env = 1
 }

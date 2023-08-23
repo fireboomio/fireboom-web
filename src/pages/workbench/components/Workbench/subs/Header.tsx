@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getAuthKey } from '@/lib/fetchers'
-import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
@@ -18,9 +17,9 @@ import iconRefresh from '../assets/refresh.svg'
 import iconSetting from '../assets/setting.svg'
 import styles from './header.module.less'
 
-export default function Header(props: { onToggleSider: () => void; engineStatus?: ServiceStatus }) {
+export default function Header(props: { onToggleSider: () => void; isCompiling: boolean }) {
   const intl = useIntl()
-  const { system } = useConfigContext()
+  const { appRuntime } = useConfigContext()
 
   const hotkeys = useMemo(
     () => [
@@ -81,19 +80,16 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
   const { pathname } = useLocation()
   const { isHideSide } = useContext(WorkbenchContext)
 
-  const compiling =
-    props.engineStatus === ServiceStatus.Starting || props.engineStatus === ServiceStatus.Building
-
   const doCompile = () => {
-    if (!system.isDev) {
+    if (!appRuntime.dev) {
       message.error('生产环境禁止重新编译')
       return
     }
-    if (compiling) {
+    if (props.isCompiling) {
       return
     }
     void requests
-      .get('/engine/reStart')
+      .get('/engine/restart')
       .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译' })))
   }
 
@@ -178,7 +174,7 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
             <div
               className="cursor-pointer h-5 text-0px"
               onClick={() => {
-                window.open(`api/v1/file/postToSwag?auth-key=${getAuthKey()}`, '_blank')
+                window.open(`/api/engine/swagger?auth-key=${getAuthKey()}`, '_blank')
               }}
             >
               <img src="/assets/download.svg" alt="" />
@@ -186,9 +182,9 @@ export default function Header(props: { onToggleSider: () => void; engineStatus?
           </>
         ) : (
           <>
-            {system.isDev ? (
+            {appRuntime.dev ? (
               <div className={styles.headBtn} onClick={doCompile}>
-                {!compiling ? (
+                {!props.isCompiling ? (
                   <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />
                 ) : (
                   <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />

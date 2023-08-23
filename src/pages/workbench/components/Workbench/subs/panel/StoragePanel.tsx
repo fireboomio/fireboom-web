@@ -1,6 +1,5 @@
-import { App, Dropdown, message, Popconfirm, Tooltip } from 'antd'
-import { cloneDeep, set } from 'lodash'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { App, Dropdown, Input, message, Popconfirm, Tooltip } from 'antd'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
@@ -16,7 +15,6 @@ import styles from './StoragePanel.module.less'
 
 export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   const intl = useIntl()
-  const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
@@ -34,26 +32,26 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
     // 如果当前url不是/storage/xxx的形式，清空选中状态
     if (
       !treeData ||
-      !params.id ||
-      params.id === 'new' ||
+      !params.name ||
+      params.name === 'new' ||
       !location.pathname.startsWith('/workbench/storage')
     ) {
       setSelectedKey('')
       return
     }
     // 如果当前url对应的项目不存在，跳转到/storage
-    const node = treeData.find(x => String(x.data.id) === params.id)
+    const node = treeData.find(x => x.data.name === params.name)
     if (!node) {
       navigate('/workbench/storage', { replace: true })
       return
     }
     // 如果当前url对应的项目存在，但是profile不存在，跳转到/storage/xxx
-    if (params.profile && !node.children?.find(x => x.key === `${params.id}_${params.profile}`)) {
-      navigate(`/workbench/storage/${params.id}`, { replace: true })
+    if (params.profile && !node.children?.find(x => x.key === `${params.name}_${params.profile}`)) {
+      navigate(`/workbench/storage/${params.name}`, { replace: true })
       return
     }
     // 如果当前url对应的项目存在，且profile存在，选中对应的节点
-    setSelectedKey((params.profile ? `${params.id}_${params.profile}` : params.id) ?? '')
+    setSelectedKey((params.profile ? `${params.name}_${params.profile}` : params.name) ?? '')
   }, [location, navigate, params, treeData])
   useEffect(() => {
     if (props.defaultOpen) {
@@ -63,18 +61,26 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
 
   const storageList = useStorageList()
   useEffect(() => {
-    const tree = (storageList ?? []).map(item => ({
-      data: item,
-      key: String(item.id),
-      name: item.name,
-      isDir: true,
-      children: Object.entries(item.config.uploadProfiles ?? {}).map(([key, subItem]) => ({
-        data: subItem,
-        key: `${item.id}_${key}`,
-        name: key,
-        isDir: false
-      }))
-    }))
+    const tree = (storageList ?? []).map(item => {
+      const parent = {
+        data: item,
+        key: item.name,
+        name: item.name,
+        isDir: true
+      }
+      const children: FileTreeNode[] = Object.entries(item.uploadProfiles ?? {}).map(([key, subItem]) => {
+        return {
+          data: subItem,
+          key: `${item.name}_${key}`,
+          name: key,
+          isDir: false,
+          parent
+        }
+      })
+      // @ts-ignore
+      parent.children = children
+      return parent
+    })
     setTreeData(tree)
   }, [storageList])
 
@@ -99,11 +105,14 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (!node.isDir) {
-      await requests.delete(`/storageBucket/${node.parent!.data.id}`, {
-        data: { profileNames: [node.name] }
+      await requests.put(`/storage`, {
+        name: node.parent!.data.name,
+        uploadProfiles: {
+          [node.name]: null
+        }
       })
     } else {
-      await requests.delete(`/storageBucket/${node.data.id}`)
+      await requests.delete(`/storage/${node.data.name}`)
     }
   })
   const onValidateName = (name: string, isDir = false) => {
@@ -116,19 +125,47 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   }
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     if (!node.isDir) {
-      await requests.put(`/storageBucket/rename/${node.parent!.data.id}`, {
-        oldProfileName: node.name,
-        newProfileName: newName
+      await requests.put(`/storage`, {
+        name: node.parent!.data.name,
+        uploadProfiles: {
+          [node.name]: null,
+          [newName]: node.data
+        }
       })
       await mutateStorage()
-      if (params.id === String(node.parent!.data.id) && params.profile === node.name) {
-        navigate(`/workbench/storage/${node.parent!.data.id}/profile/${newName}`)
+      if (params.name === node.parent!.data.name && params.profile === node.name) {
+        navigate(`/workbench/storage/${node.parent!.data.name}/profile/${newName}`)
       }
     } else {
-      await requests.put(`/storageBucket/rename/${node.data.id}`, { newStorageName: newName })
+      await requests.post(`/storage/rename`, {
+        src: node.data.name,
+        dst: newName,
+        overload: false
+      })
       await mutateStorage()
     }
   }, true)
+
+  // 保存输入框内容
+  const saveInput = async (parent: FileTreeNode | null, isDir: boolean, name: string): Promise<boolean> => {
+    try {
+      await requests.put('/storage', {
+        name: parent!.name,
+        uploadProfiles: {
+          [name]: {
+            hooks: {},
+            maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+            maxAllowedFiles: 1
+          }
+        }
+      })
+      await mutateStorage()
+      navigate(`/workbench/storage/${parent!.name}/profile/${name}`)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 
   const titleRender = (nodeData: FileTreeNode) => {
     let itemTypeClass
@@ -140,9 +177,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
-        <div className={styles.icon}>
-          {nodeData.data.liveQuery ? <div className={styles.lighting}></div> : null}
-        </div>
+        <div className={styles.icon} />
         <>
           <div
             className={`${styles.method} ${
@@ -160,29 +195,33 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
                   {
                     key: 'profile',
                     onClick: async () => {
-                      const currentProfileSet = new Set(
-                        Object.keys(nodeData.data.config.uploadProfiles ?? {})
-                      )
-                      let i = 1
-                      while (currentProfileSet.has(`NewProfile${i}`)) {
-                        i++
-                      }
-                      const data = cloneDeep(nodeData.data)
-                      set(data, `config.uploadProfiles.NewProfile${i}`, {
-                        hooks: {},
-                        maxAllowedUploadSizeBytes: 10 * 2 ** 20,
-                        maxAllowedFiles: 1
-                      })
-                      await requests.put('/storageBucket ', data)
-                      await mutateStorage()
-                      navigate(`/workbench/storage/${nodeData.data.id}/profile/NewProfile${i}`)
+                      // const currentProfileSet = new Set(
+                      //   Object.keys(nodeData.data.uploadProfiles ?? {})
+                      // )
+                      // let i = 1
+                      // while (currentProfileSet.has(`NewProfile${i}`)) {
+                      //   i++
+                      // }
+                      fileTree.current.addItem(false, false, nodeData.key)
+                      // await requests.put('/storage', {
+                      //   name: nodeData.data.name,
+                      //   uploadProfiles: {
+                      //     [`NewProfile${i}`]: {
+                      //       hooks: {},
+                      //       maxAllowedUploadSizeBytes: 10 * 2 ** 20,
+                      //       maxAllowedFiles: 1
+                      //     }
+                      //   }
+                      // })
+                      // await mutateStorage()
+                      // navigate(`/workbench/storage/${nodeData.data.name}/profile/NewProfile${i}`)
                     },
                     label: <FormattedMessage defaultMessage="新建 Profile" />
                   },
                   {
                     key: 'detail',
                     onClick: () => {
-                      navigate(`/workbench/storage/${nodeData.data.id}`)
+                      navigate(`/workbench/storage/${nodeData.data.name}`)
                     },
                     label: <FormattedMessage defaultMessage="查看" />
                   },
@@ -264,9 +303,9 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
         ref={fileTree}
         onSelectFile={nodeData => {
           if (nodeData.isDir) {
-            navigate(`/workbench/storage/${nodeData.data.id}/manage`)
+            navigate(`/workbench/storage/${nodeData.data.name}/manage`)
           } else {
-            navigate(`/workbench/storage/${nodeData.parent.data.id}/profile/${nodeData.name}`)
+            navigate(`/workbench/storage/${nodeData.parent.data.name}/profile/${nodeData.name}`)
           }
         }}
         onRename={async (nodeData, newName) => {
@@ -281,6 +320,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
           }
           return false
         }}
+        onCreateItem={saveInput}
         selectedKey={selectedKey}
         rootClassName="h-full"
         treeClassName={styles.treeContainer}

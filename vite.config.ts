@@ -57,13 +57,12 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '^/api/v1': {
+      '^/health': backendUrl,
+      '^/app': backendUrl,
+      '^/api': {
         target: backendUrl,
-        changeOrigin: true
-      },
-      '^/app/main': {
-        target: backendUrl,
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true,
       },
       '^/d': {
         target: backendUrl,

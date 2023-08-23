@@ -1,9 +1,7 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
-import type { RadioChangeEvent } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import {
   AutoComplete,
   Button,
-  Collapse,
   Descriptions,
   Form,
   Image,
@@ -12,12 +10,9 @@ import {
   Modal,
   Select,
   Space,
-  Switch,
   Tabs,
-  Tag,
   Upload
 } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
 import axios from 'axios'
 import { get } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
@@ -28,75 +23,37 @@ import { useImmer } from 'use-immer'
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useDict } from '@/providers/dict'
+import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import FileList from './FileList'
 import styles from './Rest.module.less'
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   type: ShowType
 }
-
-type Config = Record<string, string | undefined | number>
 
 type FromValues = Record<string, string | undefined | number | Array<DataType>>
 
 interface DataType {
   key: string
-  kind: string
+  kind: number
   val: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const columns: ColumnsType<DataType> = [
-  {
-    dataIndex: 'key',
-    width: '30%',
-    render: (_, { key }) => <span className="pl-1">{key}</span>
-  },
-  {
-    dataIndex: 'val',
-    width: '70%',
-    render: (_, { kind, val }) => (
-      <div className="flex items-center">
-        {kind == '0' ? (
-          <img
-            alt="zhi"
-            src="assets/iconfont/zhi.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        ) : kind == '1' ? (
-          <img
-            alt="shifoubixu2"
-            src="assets/iconfont/shifoubixu2.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        ) : (
-          <img
-            alt="biangeng1"
-            src="assets/iconfont/biangeng1.svg"
-            style={{ height: '1em', width: '1em' }}
-            className="text-[24px]"
-          />
-        )}
-        <span className="ml-2">{val}</span>
-      </div>
-    )
-  }
-]
-
-const renderIcon = (kind: string) => (
-  <Image
+export const renderIcon = (kind: number) => (
+  <img
     width={14}
     height={14}
-    preview={false}
     alt="请求头类型"
+    className="mr-2"
     src={
       {
         0: '/assets/header-value.png',
@@ -106,6 +63,14 @@ const renderIcon = (kind: string) => (
     }
   />
 )
+
+export function valueHeadersToRequestHeaders(headers: ApiDocuments.ConfigurationVariable[]) {
+  return headers.reduce<Record<string, any>>((obj, cur) => {
+    const { key, ...rest } = cur
+    obj[key] = { values: [rest] }
+    return obj
+  }, {})
+}
 
 declare global {
   interface Window {
@@ -118,25 +83,23 @@ interface OptionT {
   value: string
 }
 
-const BASEPATH = '/static/upload/oas'
-
 const { TabPane } = Tabs
 
 export default function Rest({ content, type }: Props) {
   const intl = useIntl()
+  const dict = useDict()
   const { ruleMap } = useValidate()
   const navigate = useNavigate()
   const { handleToggleDesigner, handleSave } = useContext(DatasourceToggleContext)
   const [form] = Form.useForm()
-  const [isEyeShow, setIsEyeShow] = useImmer(false)
-  const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
-  const [value, setValue] = useImmer(1)
+  // const [isEyeShow, setIsEyeShow] = useImmer(false)
+  // const [testVisible, setTestVisible] = useImmer(false) //测试按钮蒙版
+  // const [value, setValue] = useImmer(1)
   const [rulesObj, setRulesObj] = useImmer({})
-  const [isRadioShow, setIsRadioShow] = useImmer(true)
+  // const [isRadioShow, setIsRadioShow] = useImmer(true)
   const [isValue, setIsValue] = useImmer(true)
   const [baseURLOptions, setBaseURLOptions] = useState<OptionT[]>([])
-
-  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const envOpts = useEnvOptions()
   const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
@@ -144,20 +107,18 @@ export default function Rest({ content, type }: Props) {
   // const [uploadPath, setUploadPath] = useState(BASEPATH)
 
   const setUploadPath = (v: string) => {
-    form.setFieldValue('filePath', v)
-    form.validateFields(['filePath'])
+    form.setFieldValue(['customRest', 'oasFilepath'], v)
+    form.validateFields(['customRest', 'oasFilepath'])
     initBaseUrlOptions(v)
   }
 
   const initBaseUrlOptions = (v: string) => {
     axios
-      .get(`/api/v1/file/downloadFile?type=${1}&fileName=${encodeURIComponent(v)}`)
+      .get(`/api/vscode/readFile?uri=${dict.oas}/${v}`)
       .then(res => {
         const servers = get(res, 'data.servers') ?? []
-        if (!form.getFieldValue('baseURL')) {
-          form.setFieldsValue({
-            baseURL: servers[0]?.url ?? ''
-          })
+        if (!form.getFieldValue(['customRest', 'baseUrl'])) {
+          form.setFieldValue(['customRest', 'baseUrl'], servers[0]?.url ?? '')
         }
         setBaseURLOptions(
           servers.map((item: any) => ({ label: item?.url ?? '', value: item?.url ?? '' }))
@@ -171,21 +132,11 @@ export default function Rest({ content, type }: Props) {
 
   useEffect(() => {
     form.resetFields()
-    if (type === 'form' && content?.config?.filePath) {
-      initBaseUrlOptions(content?.config?.filePath as string)
+    if (type === 'form' && content?.customRest.oasFilepath) {
+      initBaseUrlOptions(content.customRest.oasFilepath)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
-
-  useEffect(() => {
-    void getFetcher('/env')
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      .then(x => setEnvOpts(x))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const onValue2Change = (value: string) => {
     setEnvVal(value)
@@ -193,7 +144,7 @@ export default function Rest({ content, type }: Props) {
 
   // const connectSwitchOnChange = (isChecked: boolean) => {
   //   void requests
-  //     .put('/dataSource', {
+  //     .put('/datasource', {
   //       ...content,
   //       switch: isChecked == true ? 0 : 1
   //     })
@@ -205,12 +156,12 @@ export default function Rest({ content, type }: Props) {
   //     })
   // }
 
-  const config = content?.config as Config
+  // const config = content?.config as Config
 
   //密码显示与隐藏
-  const changeEyeState = () => {
-    setIsEyeShow(!isEyeShow)
-  }
+  // const changeEyeState = () => {
+  //   setIsEyeShow(!isEyeShow)
+  // }
 
   // 表单选择后规则校验改变
   const onValueChange = (value: string) => {
@@ -240,39 +191,43 @@ export default function Rest({ content, type }: Props) {
     }
   }
 
-  const test = () => {
-    const values = form.getFieldsValue()
-    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    void requests.post('/checkDBConn', values).then((x: any) => {
-      if (x?.status) {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
-      }
-    })
-  }
+  // const test = () => {
+  //   const values = form.getFieldsValue()
+  //   values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
+  //   void requests.post('/datasource/checkConnection', values).then((x: any) => {
+  //     if (x?.status) {
+  //       message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+  //     } else {
+  //       message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
+  //     }
+  //   })
+  // }
   //表单上传成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
-      values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-      const newValues = { ...values }
+      let { headers, ...newContent } = values
+      newContent = {
+        ...content,
+        ...newContent
+      }
+      newContent.customRest.headers = valueHeadersToRequestHeaders(
+        headers as ApiDocuments.ConfigurationVariable[]
+      )
+      // for (const key in headers) {
+      //   if (!values.headers[key]) {
+      //     delete values.headers[key]
+      //   }
+      // }
+      // values.headers = values.headers?.filter(item => item.key != undefined)
+      // const newValues = { ...values }
 
       //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
-      let newContent: DatasourceResp
-      if (!content.id) {
-        const req = { ...content, config: newValues, name: values.apiNameSpace }
-        const result = await requests.post<unknown, number>('/dataSource', req)
-        content.id = result
-        newContent = content
+      if (!content.name) {
+        await requests.post('/datasource', newContent)
       } else {
-        newContent = {
-          ...content,
-          config: newValues,
-          name: values.apiNameSpace
-        } as DatasourceResp
-        await requests.put('/dataSource', newContent)
+        await requests.put('/datasource', newContent)
       }
-      handleSave(newContent)
+      handleSave(newContent!)
     },
     [content, handleSave]
   )
@@ -285,14 +240,14 @@ export default function Rest({ content, type }: Props) {
   }
 
   //单选框改变，表单变化回调
-  const onChangeRadio = (e: RadioChangeEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    setValue(e.target.value)
-    setIsRadioShow(!isRadioShow)
-  }
+  // const onChangeRadio = (e: RadioChangeEvent) => {
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  //   setValue(e.target.value)
+  //   setIsRadioShow(!isRadioShow)
+  // }
 
   const { Option } = Select
-  const { Panel } = Collapse
+  // const { Panel } = Collapse
   const onTabChange = (key: string) => {
     if (key === '1') {
       setIsValue(true)
@@ -302,7 +257,7 @@ export default function Rest({ content, type }: Props) {
       })
     }
   }
-  const jwtType = form.getFieldValue('jwtType')
+  // const jwtType = form.getFieldValue('jwtType')
   return (
     <>
       <Modal
@@ -313,13 +268,12 @@ export default function Rest({ content, type }: Props) {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
-        // closable={false}
+        destroyOnClose
       >
         <FileList
-          basePath={BASEPATH}
+          dir={dict.oas}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={1}
           beforeUpload={file => {
             const isAllowed =
               file.name.endsWith('.json') ||
@@ -351,7 +305,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.apiNameSpace}
+                {content.name}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
@@ -367,9 +321,7 @@ export default function Rest({ content, type }: Props) {
                   className="flex items-center cursor-pointer"
                   onClick={() =>
                     window.open(
-                      `/api/v1/file/downloadFile?type=1&inline=1&fileName=${encodeURIComponent(
-                        config.filePath!
-                      )}`,
+                      `/api/vscode/readFile?uri=${dict.oas}/${content.customRest.oasFilepath}`,
                       '_blank'
                     )
                   }
@@ -381,7 +333,9 @@ export default function Rest({ content, type }: Props) {
                     alt="文件"
                     preview={false}
                   />
-                  <span className="ml-2 text-11px text-[#909399]">{config.filePath}</span>
+                  <span className="ml-2 text-11px text-[#909399]">
+                    {content.customRest.oasFilepath}
+                  </span>
                 </div>
               </Descriptions.Item>
               <Descriptions.Item
@@ -395,7 +349,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.baseURL}
+                {content.customRest.baseUrl}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -414,8 +368,9 @@ export default function Rest({ content, type }: Props) {
                       size="small"
                       labelStyle={{ width: 190 }}
                     >
-                      {((config?.headers as unknown as DataType[]) ?? []).map(
-                        ({ key = '', kind = '', val = '' }) => (
+                      {Object.keys(content.customRest.headers ?? {}).map(key => {
+                        const item = content.customRest.headers[key]
+                        return (
                           <Descriptions.Item
                             key={key}
                             label={
@@ -430,12 +385,14 @@ export default function Rest({ content, type }: Props) {
                             style={{ wordBreak: 'break-all' }}
                           >
                             <div className="flex items-center">
-                              <div className="text-0px">{renderIcon(kind)}</div>
-                              <div className="flex-1 ml-2 min-w-0">{val}</div>
+                              <div className="text-0px">{renderIcon(item.values[0].kind)}</div>
+                              <div className="flex-1 ml-2 min-w-0">
+                                1111{getConfigurationVariableRender(item.values[0])}
+                              </div>
                             </div>
                           </Descriptions.Item>
                         )
-                      )}
+                      })}
                     </Descriptions>
                   )
                 }
@@ -508,7 +465,7 @@ export default function Rest({ content, type }: Props) {
               ]}
             />
           </div>
-          <Collapse
+          {/* <Collapse
             ghost
             bordered={false}
             defaultActiveKey={['0']}
@@ -529,7 +486,7 @@ export default function Rest({ content, type }: Props) {
                   }
                   className="justify-start"
                 >
-                  {config.statusCodeUnions ? (
+                  {content.customRest.statusCodeUnions ? (
                     <Tag color="green">{intl.formatMessage({ defaultMessage: '开启' })}</Tag>
                   ) : (
                     <Tag color="red">{intl.formatMessage({ defaultMessage: '关闭' })}</Tag>
@@ -537,9 +494,9 @@ export default function Rest({ content, type }: Props) {
                 </Descriptions.Item>
               </Descriptions>
             </Panel>
-          </Collapse>
+          </Collapse> */}
           {/* 测试功能 */}
-          <Modal
+          {/* <Modal
             centered
             open={testVisible}
             onCancel={() => setTestVisible(false)}
@@ -549,17 +506,17 @@ export default function Rest({ content, type }: Props) {
             footer={null}
           >
             <div className={styles['redoc-container']}>
-              {testVisible && config.filePath && (
+              {testVisible && content.customRest.oasFilepath && (
                 <iframe
                   title="rapi"
-                  src={`/#/rapi-frame?url=/upload/oas/${config.filePath ?? ''}`}
+                  src={`/#/rapi-frame?url=${content.customRest.oasFilepath ?? ''}`}
                   width={'100%'}
                   height={'100%'}
                   className="border-none"
                 />
               )}
             </div>
-          </Modal>
+          </Modal> */}
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
@@ -570,21 +527,28 @@ export default function Rest({ content, type }: Props) {
               name="basic"
               labelCol={{ span: 3 }}
               wrapperCol={{ span: 11 }}
-              onFinish={values => onFinish(values as Config)}
+              onFinish={values => onFinish(values)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
               labelAlign="right"
               className="ml-3"
               initialValues={{
-                apiNameSpace: config.apiNameSpace,
-                baseURL: config.baseURL,
-                headers: config.headers || [],
-                statusCodeUnions: config.statusCodeUnions,
-                secret: config.secret || { kind: '0' },
-                filePath: config.filePath || '',
-                tokenPoint: config.tokenPoint,
-                jwtType: config.jwtType
+                ...content,
+                headers: Object.keys(
+                  content.customRest.headers || {}
+                ).map<ApiDocuments.ConfigurationVariable>(key => {
+                  const item = content.customRest.headers[key]
+                  return {
+                    key,
+                    ...item.values[0]
+                  }
+                })
+                // statusCodeUnions: content.customRest.statusCodeUnions,
+                // secret: config.secret || { kind: '0' },
+                // filePath: config.filePath || '',
+                // tokenPoint: config.tokenPoint,
+                // jwtType: config.jwtType
               }}
             >
               <Form.Item
@@ -601,11 +565,14 @@ export default function Rest({ content, type }: Props) {
                   },
                   ...ruleMap.name
                 ]}
-                name="apiNameSpace"
+                name="name"
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
-                <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+                <Input
+                  readOnly={!!content.name}
+                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                />
               </Form.Item>
               <Form.Item
                 rules={[
@@ -621,7 +588,7 @@ export default function Rest({ content, type }: Props) {
                   </>
                 }
                 colon={false}
-                name="filePath"
+                name={['customRest', 'oasFilepath']}
                 // valuePropName="filePath"
                 style={{ marginBottom: '20px' }}
                 // getValueFromEvent={normFile}
@@ -653,7 +620,7 @@ export default function Rest({ content, type }: Props) {
                     message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
                   }
                 ]}
-                name="baseURL"
+                name={['customRest', 'baseUrl']}
                 colon={false}
                 style={{ marginBottom: '20px' }}
               >
@@ -675,91 +642,97 @@ export default function Rest({ content, type }: Props) {
                         sm: { span: 24 }
                       }}
                     >
-                      <Form.List name="headers">
+                      <Form.List name={['headers']}>
                         {(fields, { add, remove }, { errors }) => (
                           <>
-                            {fields.map((field, index) => (
-                              <Space key={field.key} align="baseline">
-                                <Form.Item
-                                  className="w-52.5"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'key']}
-                                >
-                                  <Input />
-                                </Form.Item>
-                                <Form.Item
-                                  className="w-40"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'kind']}
-                                >
-                                  <Select onChange={onValueChange}>
-                                    <Option value="0">
-                                      <Space>
-                                        <span>{renderIcon('0')}</span>
-                                        {intl.formatMessage({ defaultMessage: '值' })}
-                                      </Space>
-                                    </Option>
-                                    <Option value="1">
-                                      <Space>
-                                        <span>{renderIcon('1')}</span>
-                                        {intl.formatMessage({ defaultMessage: '环境变量' })}
-                                      </Space>
-                                    </Option>
-                                    <Option value="2">
-                                      <Space>
-                                        <span>{renderIcon('2')}</span>
-                                        {intl.formatMessage({ defaultMessage: '转发自客户端' })}
-                                      </Space>
-                                    </Option>
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  className="w-135"
-                                  wrapperCol={{ span: 24 }}
-                                  name={[field.name, 'val']}
-                                  rules={
-                                    form.getFieldValue(['headers', field.name, 'kind']) !== '1'
-                                      ? [
-                                          {
-                                            pattern: /^.{1,128}$/g,
-                                            message: intl.formatMessage({
-                                              defaultMessage: '请输入长度不大于128的非空值'
-                                            })
-                                          }
-                                        ]
-                                      : []
-                                  }
-                                >
-                                  {form.getFieldValue(['headers', field.name, 'kind']) !== '1' ? (
-                                    <Input
-                                      style={{ width: '80%' }}
-                                      placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                                    />
-                                  ) : (
-                                    <Select
-                                      className="w-1/5"
-                                      style={{ width: '80%' }}
-                                      options={envOpts}
-                                      value={envVal}
-                                      onChange={onValue2Change}
-                                    />
-                                  )}
-                                </Form.Item>
-                                <img
-                                  alt="guanbi"
-                                  src="assets/iconfont/guanbi.svg"
-                                  style={{ height: '1em', width: '1em' }}
-                                  onClick={() => remove(index)}
-                                />
-                              </Space>
-                            ))}
+                            {fields.map((field, index) => {
+                              const kind = form.getFieldValue(['headers', field.name, 'kind'])
+                              return (
+                                <Space key={field.key} align="baseline" className="w-full">
+                                  <Form.Item
+                                    className="w-52.5"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, 'key']}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
+                                    className="w-40"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, 'kind']}
+                                  >
+                                    <Select onChange={onValueChange}>
+                                      <Option value={0}>
+                                        <div className="flex items-center">
+                                          {renderIcon(0)}
+                                          {intl.formatMessage({ defaultMessage: '值' })}
+                                        </div>
+                                      </Option>
+                                      <Option value={1}>
+                                        <div className="flex items-center">
+                                          {renderIcon(1)}
+                                          {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                        </div>
+                                      </Option>
+                                      <Option value={2}>
+                                        <div className="flex items-center">
+                                          {renderIcon(2)}
+                                          {intl.formatMessage({ defaultMessage: '转发自客户端' })}
+                                        </div>
+                                      </Option>
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item
+                                    className="w-135"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, getConfigurationVariableField(kind)]}
+                                    // rules={
+                                    //   kind !== 1
+                                    //     ? [
+                                    //         {
+                                    //           pattern: /^.{1,128}$/g,
+                                    //           message: intl.formatMessage({
+                                    //             defaultMessage: '请输入长度不大于128的非空值'
+                                    //           })
+                                    //         }
+                                    //       ]
+                                    //     : []
+                                    // }
+                                  >
+                                    {kind !== 1 ? (
+                                      <Input
+                                        style={{ width: '80%' }}
+                                        placeholder={intl.formatMessage({
+                                          defaultMessage: '请输入'
+                                        })}
+                                      />
+                                    ) : (
+                                      <Select
+                                        className="w-1/5"
+                                        style={{ width: '80%' }}
+                                        options={envOpts}
+                                        value={envVal}
+                                        onChange={onValue2Change}
+                                      />
+                                    )}
+                                  </Form.Item>
+                                  {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+                                  <img
+                                    alt="guanbi"
+                                    src="assets/iconfont/guanbi.svg"
+                                    style={{ height: '1em', width: '1em' }}
+                                    onClick={() => remove(index)}
+                                  />
+                                </Space>
+                              )
+                            })}
 
                             <Form.Item wrapperCol={{ span: 16 }}>
                               <Button
                                 type="dashed"
                                 onClick={() => {
                                   setIsValue(true)
-                                  add({ kind: '0' })
+                                  add({ kind: 0 })
                                 }}
                                 icon={<PlusOutlined />}
                                 className="text-gray-500/60 w-1/1"
@@ -904,7 +877,7 @@ export default function Rest({ content, type }: Props) {
                   </TabPane> */}
                 </Tabs>
               </div>
-              <Collapse
+              {/* <Collapse
                 ghost
                 bordered={false}
                 defaultActiveKey={['0']}
@@ -934,15 +907,15 @@ export default function Rest({ content, type }: Props) {
                     <Switch className={styles['switch-edit-btn']} size="small" />
                   </Form.Item>
                 </Panel>
-              </Collapse>
+              </Collapse> */}
 
               <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
                 <div className="flex mt-10 w-160px justify-center items-center">
                   <Button
                     className={'btn-cancel  ml-4'}
                     onClick={() => {
-                      if (content.id) {
-                        handleToggleDesigner('detail', content.id, content.sourceType)
+                      if (content.name) {
+                        handleToggleDesigner('detail', content.name, content.sourceType)
                       } else {
                         navigate('/workbench/data-source/new')
                       }

@@ -2,7 +2,8 @@ import type { Dispatch } from 'react'
 import { createContext } from 'react'
 import type * as useImmer from 'use-immer'
 
-import type { DatasourceAction, DatasourceResp, ShowType } from '@/interfaces/datasource'
+import type { DatasourceAction, ShowType } from '@/interfaces/datasource'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 interface DatasourceCurrDBContextT {
   currDBId: number | null | undefined
@@ -10,13 +11,13 @@ interface DatasourceCurrDBContextT {
 }
 interface DatasourceToggleContext {
   handleToggleDesigner: (type: ShowType, id?: number, sourceType?: number) => void
-  handleSave: (content: DatasourceResp) => void
-  handleCreate: (content: DatasourceResp) => void
+  handleSave: (content: Partial<ApiDocuments.Datasource>) => void
+  handleCreate: (content: ApiDocuments.Datasource) => void
 
   showType: ShowType
-  content: DatasourceResp | undefined
+  content: ApiDocuments.Datasource | undefined
 }
-export const DatasourceContext = createContext([] as DatasourceResp[])
+export const DatasourceContext = createContext([] as ApiDocuments.Datasource[])
 export const DatasourceDispatchContext = createContext({} as Dispatch<DatasourceAction>)
 export const DatasourceCurrDBContext = createContext({} as DatasourceCurrDBContextT)
 export const DatasourceToggleContext = createContext({} as DatasourceToggleContext)

@@ -84,9 +84,11 @@ const useActions = (
     getGraphqlMutation(models, model.id, 'create', namespace),
     {
       onError: err => {
-        throw new Error(
-          (err.graphQLErrors[0] as unknown as CustomGraphqlError).user_facing_error.message
-        )
+        throw err instanceof Error
+          ? err
+          : new Error(
+              (err.graphQLErrors[0] as unknown as CustomGraphqlError).user_facing_error.message
+            )
       }
     }
   )

@@ -29,8 +29,9 @@ import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
 import type { FileT } from '@/interfaces/storage'
-import requests, { getHeader } from '@/lib/fetchers'
+import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 import { downloadOSSFile } from '@/utils/download'
 
 import iconCompress from '../assets/icon-compress.svg'
@@ -43,10 +44,10 @@ import styles from './Explorer.module.less'
 import FileTypeMap from './fileType'
 
 interface Props {
-  bucketId?: number
+  bucketName?: number
 }
 
-type Option = Partial<FileT> & {
+type Option = Partial<ApiDocuments.models_StorageFile> & {
   value: string
   label: React.ReactNode
   children?: Option[]
@@ -58,7 +59,7 @@ type Option = Partial<FileT> & {
 const { Panel } = Collapse
 
 function sortFile(a: FileT, b: FileT) {
-  return (a.isDir ? 1 : 2) - (b.isDir ? 1 : 2)
+  return (a.name.endsWith('/') ? 1 : 2) - (b.name.endsWith('/') ? 1 : 2)
 }
 
 type FileType = keyof typeof FileTypeMap
@@ -81,7 +82,7 @@ const FILE_ICON = {
   other: iconOther
 }
 
-export default function StorageExplorer({ bucketId }: Props) {
+export default function StorageExplorer({ bucketName }: Props) {
   const intl = useIntl()
   const navigate = useNavigate()
   const [isSerach, setIsSerach] = useImmer(true)
@@ -110,15 +111,15 @@ export default function StorageExplorer({ bucketId }: Props) {
     loadMenu(searchBase, {
       forceRoot: true,
       onError: () => {
-        if (bucketId) {
-          sessionStorage.setItem('storageError', String(bucketId))
-          navigate(`/workbench/storage/${bucketId}`)
+        if (bucketName) {
+          sessionStorage.setItem('storageError', String(bucketName))
+          navigate(`/workbench/storage/${bucketName}`)
         }
       }
     }).then(() => {
       inited.current = true
     })
-  }, [bucketId, searchBase])
+  }, [bucketName, searchBase])
   useEffect(() => {
     if (!inited.current) {
       return
@@ -250,15 +251,26 @@ export default function StorageExplorer({ bucketId }: Props) {
     }
   ]
 
-  const onChange = (value: string[], selectedOptions: Option[]) => {
+  const onChange = async (value: string[], selectedOptions: Option[]) => {
     setBreads(
       selectedOptions.map(item => ({
         value: item.isLeaf ? item.value : (item.name ?? '').replace(/\/$/, ''),
         isLeaf: !!item.isLeaf
       }))
     )
-
-    const targetOption = selectedOptions[selectedOptions.length - 1]
+    let targetOption = selectedOptions[selectedOptions.length - 1]
+    if (!targetOption.name?.endsWith('/')) {
+      try {
+        const resp = await requests.get(`/storageClient/${bucketName}/detail`, {
+          params: {
+            filename: targetOption.name
+          }
+        })
+        targetOption = { ...targetOption, ...resp }
+      } catch (error) {
+        //
+      }
+    }
     setTarget({ ...targetOption })
     setVisible(true)
     // setVisible(false)
@@ -305,7 +317,7 @@ export default function StorageExplorer({ bucketId }: Props) {
    */
   const loadMenu = async (path: string, { forceRoot = false, onError = null } = {}) => {
     console.log('loadMenu', path)
-    if (!bucketId) return
+    if (!bucketName) return
     const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
     try {
       // 找到需要刷新的节点
@@ -334,9 +346,9 @@ export default function StorageExplorer({ bucketId }: Props) {
       const loadPath = loadTarget?.name ?? ''
 
       // 请求并构造节点
-      let files = await requests.get<unknown, FileT[]>('/s3Upload/list', {
+      let files = await requests.get<unknown, FileT[]>(`/storageClient/${bucketName}/list`, {
         timeout: 15e3,
-        params: { bucketID: bucketId, filePrefix: loadPath ? `${loadPath}` : undefined },
+        params: { dirname: loadPath ? `${loadPath}` : undefined },
         resolveErrorMsg: response => {
           return intl.formatMessage({ defaultMessage: '文件列表加载失败' })
         }
@@ -398,7 +410,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             >
               <div className="flex">
                 <span>
-                  {x.isDir ? (
+                  {x.name.endsWith('/') ? (
                     <img src={iconFold} alt="文件夹" className="h-3.5 w-3.5" />
                   ) : (
                     <img src={FILE_ICON[fileType(x.name)]} alt="图片" className="h-3.5 w-3.5" />
@@ -407,7 +419,9 @@ export default function StorageExplorer({ bucketId }: Props) {
 
                 <span
                   title={x.name.replace(replacePrefix, '')}
-                  className={`ml-2.5 ${styles.ellipsis} ${x.isDir ? 'isDir' : 'isLeaf'}`}
+                  className={`ml-2.5 ${styles.ellipsis} ${
+                    x.name.endsWith('/') ? 'isDir' : 'isLeaf'
+                  }`}
                 >
                   {x.name.replace(replacePrefix, '')}
                 </span>
@@ -415,7 +429,7 @@ export default function StorageExplorer({ bucketId }: Props) {
             </Dropdown>
           ),
           value: x.name.replace(replacePrefix, ''),
-          isLeaf: !x.isDir,
+          isLeaf: !x.name.endsWith('/'),
           ...x
         }))
 
@@ -460,10 +474,10 @@ export default function StorageExplorer({ bucketId }: Props) {
           }
           const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
           requests
-            .post('/s3Upload/rename', {
-              bucketID: bucketId,
-              oldName: name,
-              newName: name.replace(/[^/]*(?=$|\/$)/, newName)
+            .post(`/storageClient/${bucketName}/rename`, {
+              src: name,
+              dst: name.replace(/[^/]*(?=$|\/$)/, newName),
+              overload: false
             })
             .then(() => {
               hide()
@@ -478,14 +492,12 @@ export default function StorageExplorer({ bucketId }: Props) {
   }
   const deleteFile = (file = target) => {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '删除中' }))
-    void requests
-      .post('/s3Upload/remove', { bucketID: bucketId, fileName: file?.name })
-      .then(() => {
-        hide()
-        setVisible(false)
-        void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
-        setRefreshFlag(!refreshFlag)
-      })
+    requests.post(`/storageClient/${bucketName}/remove?filename=${file?.name}`).then(() => {
+      hide()
+      setVisible(false)
+      void message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+      setRefreshFlag(!refreshFlag)
+    })
   }
 
   const inputValue = useRef<string>()
@@ -510,10 +522,7 @@ export default function StorageExplorer({ bucketId }: Props) {
         }
         const hide = message.loading(intl.formatMessage({ defaultMessage: '创建中' }))
         requests
-          .post('/s3Upload/createDir', {
-            bucketID: bucketId,
-            path: `${dir}${inputValue.current}/`
-          })
+          .post(`/storageClient/${bucketName}/mkdir?dirname=${dir}${inputValue.current}`)
           .then(() => {
             hide()
             setVisible(false)
@@ -524,7 +533,6 @@ export default function StorageExplorer({ bucketId }: Props) {
           })
       }
     })
-    // requests.post('/api/v1/s3Upload/upload', { bucketID: bucketId, path: uploadPath })
   }
 
   const renderPreview = (file?: Option) => {
@@ -532,12 +540,12 @@ export default function StorageExplorer({ bucketId }: Props) {
       return null
     }
     const type = fileType(file?.name ?? '')
-    if (file.isDir) {
+    if (file.name!.endsWith('/')) {
       return <img width={100} height={100} src={iconFold} alt="文件夹" />
     } else if (type === 'pic') {
-      return <Image width={100} height={100} src={target?.url ?? ''} alt={target?.value} />
+      return <Image width={100} height={100} src={target?.signedUrl ?? ''} alt={target?.value} />
     } else if (type === 'video') {
-      return <video controls width={100} height={100} src={target?.url ?? ''} />
+      return <video controls width={100} height={100} src={target?.signedUrl ?? ''} />
     } else {
       return (
         <img
@@ -620,8 +628,7 @@ export default function StorageExplorer({ bucketId }: Props) {
           <Divider type="vertical" className="!h-3 !mr-5" />
           <Upload
             headers={getHeader()}
-            action="/api/v1/s3Upload/upload"
-            data={{ bucketID: bucketId, path: uploadPath }}
+            action={`/api/storageClient/${bucketName}/upload?dirname=${uploadPath}`}
             showUploadList={false}
             onChange={info => {
               if (info.file.status === 'success' || info.file.status === 'done') {
@@ -700,7 +707,7 @@ export default function StorageExplorer({ bucketId }: Props) {
                   ghost={true}
                   className={styles.collapse}
                 >
-                  {!target?.isDir && (
+                  {!target?.name?.endsWith('/') && (
                     <Panel header={intl.formatMessage({ defaultMessage: '基本信息' })} key="1">
                       <p>
                         <FormattedMessage defaultMessage="类型" />:{' '}
@@ -714,10 +721,10 @@ export default function StorageExplorer({ bucketId }: Props) {
                         <FormattedMessage defaultMessage="大小" />: {formatBytes(target?.size)}
                       </p>
                       <p>
-                        <FormattedMessage defaultMessage="创建于" />: {target?.createTime ?? ''}
+                        <FormattedMessage defaultMessage="创建于" />: {target?.lastModified ?? ''}
                       </p>
                       <p>
-                        <FormattedMessage defaultMessage="修改于" />: {target?.updateTime ?? ''}
+                        <FormattedMessage defaultMessage="修改于" />: {target?.lastModified ?? ''}
                       </p>
                     </Panel>
                   )}
@@ -729,26 +736,35 @@ export default function StorageExplorer({ bucketId }: Props) {
                     </div>
                   </Panel>
                   <div className="flex flex-col">
-                    {!target?.isDir && (
+                    {!target?.name?.endsWith('/') && (
                       // <a className="flex" href={target?.url} download={target?.value}>
                       <Button
                         className="rounded-4px flex-1 m-1.5 !border-[#efeff0]"
-                        onClick={() => downloadOSSFile(target!.url!, target!.value)}
+                        // onClick={() => downloadOSSFile(target!.signedUrl!, target!.value)}
+                        onClick={() =>
+                          window.open(
+                            `/api/storageClient/${bucketName}/download?filename=${
+                              target!.name
+                            }&auth-key=${getAuthKey()}`
+                          )
+                        }
                       >
                         <FormattedMessage defaultMessage="下载" />
                       </Button>
                       // </a>
                     )}
-                    {!target?.isDir &&<Button
-                      onClick={() => {
-                        // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
-                        copy(`${target?.url ?? ''}`)
-                        message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
-                      }}
-                      className="rounded-4px m-1.5 !border-[#efeff0]"
-                    >
-                      <FormattedMessage defaultMessage="复制URL" />
-                    </Button>}
+                    {!target?.name?.endsWith('/') && (
+                      <Button
+                        onClick={() => {
+                          // void navigator.clipboard.writeText(`${target?.url ?? ''}`)
+                          copy(`${target?.signedUrl ?? ''}`)
+                          message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+                        }}
+                        className="rounded-4px m-1.5 !border-[#efeff0]"
+                      >
+                        <FormattedMessage defaultMessage="复制URL" />
+                      </Button>
+                    )}
                     <Popconfirm
                       title={intl.formatMessage({ defaultMessage: '确定删除吗?' })}
                       onConfirm={() => deleteFile(target)}

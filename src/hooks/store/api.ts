@@ -2,44 +2,16 @@ import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
-interface ApiSetting {
-  enabled: boolean
-  authenticationRequired: boolean
-  authenticationQueriesRequired: boolean
-  authenticationMutationsRequired: boolean
-  authenticationSubscriptionsRequired: boolean
-  cachingEnabled: boolean
-  cachingMaxAge: number
-  cachingStaleWhileRevalidate: number
-  liveQueryEnabled: boolean
-  liveQueryPollingIntervalSeconds: number
-}
 export function useApiGlobalSetting() {
-  return useSWRImmutable<ApiSetting>('/operateApi/setting', url => requests.get(url))
-}
-
-export interface OperationResp {
-  id: number
-  path: string
-  content: string
-  remark: string
-  isDir: boolean
-  liveQuery: boolean
-  enabled: boolean
-  illegal: boolean
-  isPublic: boolean
-  method: 'GET' | 'POST'
-  operationType: 'query' | 'mutation' | 'subscription'
-  children: OperationResp[] | null
-  createTime: string
-  updateTime: string
+  return useSWRImmutable<ApiDocuments.GlobalOperation>('/globalOperation/single', requests.get)
 }
 
 export function useApiList() {
-  return useSWRImmutable<OperationResp[]>('/operateApi', requests.get).data
+  return useSWRImmutable<ApiDocuments.fileloader_DataTree[]>('/operation/tree', requests.get).data
 }
 
 export function mutateApi() {
-  return mutate('/operateApi')
+  return mutate('/operation/tree')
 }

@@ -1,6 +1,7 @@
 import { ApolloProvider } from '@apollo/client'
 import { Empty, message } from 'antd'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
 
 import PrismaTable from '@/components/PrismaTable'
 import type { FilterState } from '@/components/PrismaTable/libs/types'
@@ -12,6 +13,7 @@ import usePreviewFilters from '@/lib/hooks/usePreviewFilters'
 
 const PreviewContainer = () => {
   const intl = useIntl()
+  const { name } = useParams()
   const { entities } = useEntities()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const { previewFilters: initialFilters, updatePreviewFilters } = usePreviewFilters()
@@ -44,7 +46,7 @@ const PreviewContainer = () => {
       <ApolloProvider client={graphqlClient}>
         <PrismaTable
           model={currentModel.name}
-          namespace={''}
+          namespace={name!}
           redirectToEntityWithFilters={redirectToEntityWithFilters}
           updateInitialFilters={updatePreviewFilters}
           initialFilters={initialFilters}

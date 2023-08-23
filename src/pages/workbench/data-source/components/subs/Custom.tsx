@@ -1,13 +1,14 @@
 import { loader } from '@monaco-editor/react'
-import { useContext, useEffect } from 'react'
-import { useImmer } from 'use-immer'
+import { Descriptions } from 'antd'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import useSWRImmutable from 'swr/immutable'
 
-import type { DatasourceResp } from '@/interfaces/datasource'
-import {
-  DatasourceDispatchContext,
-  DatasourceToggleContext
-} from '@/lib/context/datasource-context'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import Error50x from '@/components/ErrorPage/50x'
+import { ConfigContext } from '@/lib/context/ConfigContext'
+import requests from '@/lib/fetchers'
+import { useConfigurationVariable } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
 
@@ -18,75 +19,73 @@ export interface Config {
 }
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
 }
 
 export default function Custom({ content }: Props) {
-  const { handleSave } = useContext(DatasourceToggleContext)
-  const dispatch = useContext(DatasourceDispatchContext)
-  const [isEditing, setIsEditing] = useImmer(content.name == '')
-  const [code, setCode] = useImmer('')
-  const { onRefreshMenu } = useContext(WorkbenchContext)
-  const config = content.config as unknown as Config
+  const intl = useIntl()
+  const { globalSetting } = useContext(ConfigContext)
 
-  useEffect(() => {
-    setIsEditing(content.name == '')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content])
+  const { getConfigurationValue } = useConfigurationVariable()
+  const enabledServer = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
 
-  useEffect(() => {
-    setCode(config.schema)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content.config.schema])
+  if (!content) {
+    return <Error50x />
+  }
 
-  // const connectSwitchOnChange = (isChecked: boolean) => {
-  //   void requests
-  //     .put('/dataSource', {
-  //       ...content,
-  //       switch: isChecked == true ? 0 : 1
-  //     })
-  //     .then(() => {
-  //       void requests.get<unknown, DatasourceResp[]>('/dataSource').then(res => {
-  //         dispatch({ type: 'fetched', data: res })
-  //       })
-  //     })
-  // }
+  const endpoint = `${getConfigurationValue(globalSetting.serverOptions.serverUrl)}/gqls/${
+    content.name
+  }/graphql`
 
-  // const handleEdit = (value: string) => {
-  //   if (value == '') {
-  //     return
-  //   }
+  return (
+    <div className="flex mb-8 justify-center">
+      <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
+        <Descriptions.Item
+          label={
+            <div>
+              <span>{intl.formatMessage({ defaultMessage: '名称' })}</span>
+            </div>
+          }
+          className="justify-start"
+        >
+          {content.name}
+        </Descriptions.Item>
 
-  //   if (content.name == '' || content.name.startsWith('example_')) {
-  //     const req = {
-  //       ...content,
-  //       config: { apiNamespace: value, serverName: value, schema: '' },
-  //       name: value
-  //     }
-  //     Reflect.deleteProperty(req, 'id')
-  //     void requests.post<unknown, number>('/dataSource', req).then(res => {
-  //       content.id = res
-  //       handleSave(content)
-  //     })
-  //   } else {
-  //     const newContent = {
-  //       ...content,
-  //       config: { ...config, apiNamespace: value, serverName: value },
-  //       name: value
-  //     }
-  //     void requests.put(`/dataSource/${content.id}`, newContent).then(() => {
-  //       handleSave(newContent)
-  //     })
-  //   }
-
-  //   setIsEditing(false)
-  // }
-
-  // const save = () => {
-  //   void requests
-  //     .put(`/dataSource/content/${content.id}`, { content: code })
-  //     .then(() => void message.success('保存成功!'))
-  // }
-
-  return ''
+        <Descriptions.Item
+          label={
+            <div>
+              <span>{intl.formatMessage({ defaultMessage: 'GraphQL 端点' })}</span>
+            </div>
+          }
+          className="justify-start"
+        >
+          <a href={endpoint} target="_blank" rel="noreferrer">
+            {endpoint}
+          </a>
+        </Descriptions.Item>
+        <Descriptions.Item
+          label={
+            <div>
+              <span>{intl.formatMessage({ defaultMessage: 'Schema 文件' })}</span>
+            </div>
+          }
+          className="justify-start"
+        >
+          <a
+            href={`/api/vscode/readFile?uri=${enabledServer.data?.outputPath}/customize/${content.name}.json`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              className="mr-1"
+              alt="wenjian1"
+              src="assets/iconfont/wenjian1.svg"
+              style={{ height: '1em', width: '1em' }}
+            />
+            customize/{content.name}.json
+          </a>
+        </Descriptions.Item>
+      </Descriptions>
+    </div>
+  )
 }

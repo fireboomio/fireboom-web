@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import type { StorageResp } from '@/interfaces/storage'
 import requests from '@/lib/fetchers'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './home.module.less'
 
@@ -19,10 +19,10 @@ export default function Guide({ handleToggleDesigner }: Props) {
       : {}
   )
   const navigate = useNavigate()
-  const [storageId, setStorageId] = useState<number>()
+  const [storageName, setStorageName] = useState<number>()
   useEffect(() => {
-    requests.get<unknown, StorageResp[]>('/storageBucket').then(res => {
-      setStorageId(res[0].id)
+    requests.get<unknown, ApiDocuments.Storage[]>('/storage').then(res => {
+      setStorageName(res[0].name)
     })
   }, [])
   const handleClose = () => {
@@ -88,7 +88,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
           state: 0,
           lineUp: '',
           lineDown: '',
-          link: storageId ? `/workbench/storage/${storageId}/manage` : '/workbench/storage/new'
+          link: storageName ? `/workbench/storage/${storageName}/manage` : '/workbench/storage/new'
         }
       ]
     },

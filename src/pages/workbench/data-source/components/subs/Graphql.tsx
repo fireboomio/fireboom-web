@@ -1,24 +1,19 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import {
-  AutoComplete,
   Button,
   Checkbox,
-  Collapse,
   Descriptions,
   Form,
-  Image,
   Input,
   message,
   Modal,
   Select,
   Space,
-  Switch,
-  Tag,
+  Tabs,
   Upload
 } from 'antd'
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
+import TabPane from 'antd/es/tabs/TabPane'
 import type { Rule } from 'antd/lib/form'
-import type React from 'react'
 import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -27,21 +22,24 @@ import { useImmer } from 'use-immer'
 import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
 import { useValidate } from '@/hooks/validate'
-import type { DatasourceResp, ShowType } from '@/interfaces/datasource'
-import { HttpRequestHeaders } from '@/lib/constant'
+import type { ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
-import requests, { getFetcher } from '@/lib/fetchers'
+import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
+import useEnvOptions from '@/lib/hooks/useEnvOptions'
+import { useDict } from '@/providers/dict'
+import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import FileList from './FileList'
 // import GraphiQLApp from '../../../pages/graphiql'
 import styles from './Graphql.module.less'
+import { renderIcon, valueHeadersToRequestHeaders } from './Rest'
 
 interface Props {
-  content: DatasourceResp
+  content: ApiDocuments.Datasource
   type: ShowType
 }
-type Config = Record<string, string | undefined | number>
 
 interface DataType {
   key: string
@@ -49,57 +47,29 @@ interface DataType {
   val: string
 }
 
-interface OptionT {
-  label: string
-  value: string
-}
-
 type FromValues = Record<string, string | undefined | number | Array<DataType>>
-
-const renderIcon = (kind: string) => (
-  <Image
-    width={14}
-    height={14}
-    preview={false}
-    alt="请求头类型"
-    src={
-      {
-        0: '/assets/header-value.png',
-        1: '/assets/header-env.png',
-        2: '/assets/header-relay.png'
-      }[kind]
-    }
-  />
-)
-
-const BASEPATH = '/static/upload/oas'
-
-const HEADER_LIST = HttpRequestHeaders.map(x => ({ label: x, value: x }))
 
 export default function Graphql({ content, type }: Props) {
   const intl = useIntl()
   const { ruleMap } = useValidate()
   const navigate = useNavigate()
-  const config = content.config as Config
+  const dict = useDict()
   const { handleSave, handleToggleDesigner } = useContext(DatasourceToggleContext)
-  const [file, setFile] = useImmer<UploadFile>({} as UploadFile)
   const [rulesObj, setRulesObj] = useImmer<Rule>({})
-  const [deleteFlag, setDeleteFlag] = useImmer(false)
   const [isShowUpSchema, setIsShowUpSchema] = useImmer(true)
   const [isModalVisible, setIsModalVisible] = useImmer(false)
   const [isValue, setIsValue] = useImmer(true)
 
-  const [envOpts, setEnvOpts] = useImmer<OptionT[]>([])
+  const envOpts = useEnvOptions()
   const [envVal, setEnvVal] = useImmer('')
   const [visible, setVisible] = useImmer(false)
 
   const [form] = Form.useForm()
   const { Option } = Select
-  const { Panel } = Collapse
   const urlReg = /^https?:\/\/[-.\w\d:/]+$/i
   // /^(?:(http|https|ftp):\/\/)?((?:[\w-]+\.)+[a-z0-9]+)((?:\/[^/?#]*)+)?(\?[^#]+)?(#.+)?$/i
   useEffect(() => {
-    setIsShowUpSchema(!config.loadSchemaFromString)
+    setIsShowUpSchema(!content.customGraphql.schemaFilepath)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
 
@@ -108,37 +78,32 @@ export default function Graphql({ content, type }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, type])
 
-  useEffect(() => {
-    void getFetcher('/env')
-      // @ts-ignore
-      .then(envs => envs.filter(x => !x.deleteTime).map(x => ({ label: x.key, value: x.key })))
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      .then(x => setEnvOpts(x))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   //表单提交成功回调
   const { loading, fun: onFinish } = useLock(
     async (values: FromValues) => {
-      values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-      const newValues = { ...values }
-      //创建新的item情况post请求,并将前端用于页面切换的id删除;编辑Put请求
-      let newContent: DatasourceResp
-      if (!content.id) {
-        const req = { ...content, config: newValues, name: values.apiNameSpace }
-        const result = await requests.post<unknown, number>('/dataSource', req)
-        content.id = result
-        newContent = content
-      } else {
-        newContent = {
-          ...content,
-          config: newValues,
-          name: values.apiNameSpace
-        } as DatasourceResp
-        await requests.put('/dataSource', newContent)
+      let { headers, agreement, ...newContent } = values
+      newContent = {
+        ...content,
+        ...newContent
       }
+      newContent.customGraphql.headers = valueHeadersToRequestHeaders(
+        headers as ApiDocuments.ConfigurationVariable[]
+      )
+      // for (const key in headers) {
+      //   if (!values.headers[key]) {
+      //     delete values.headers[key]
+      //   }
+      // }
+      // values.headers = values.headers?.filter(item => item.key != undefined)
+      // const newValues = { ...values }
 
-      handleSave(newContent)
+      //创建新的item情况post请求，并将前端用于页面切换的id删除;编辑Put请求
+      if (!content.name) {
+        await requests.post('/datasource', newContent)
+      } else {
+        await requests.put('/datasource', newContent)
+      }
+      handleSave(newContent!)
     },
     [content, handleSave]
   )
@@ -160,6 +125,7 @@ export default function Graphql({ content, type }: Props) {
         return
       case '1':
         setIsValue(false)
+        setEnvVal(envOpts.at(0)?.label ?? '')
         return
       case '2':
         setIsValue(true)
@@ -173,31 +139,25 @@ export default function Graphql({ content, type }: Props) {
     }
   }
 
-  const children: React.ReactNode[] = []
-
-  const handleChange = (_value: string | string[]) => {
-    setRulesObj({
-      type: 'array',
-      validator(_, value) {
-        if (!value) return
-        return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
-          ? Promise.resolve()
-          : Promise.reject(
-              intl.formatMessage({
-                defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
-              })
-            )
-      }
-    })
+  const onValue2Change = (value: string) => {
+    setEnvVal(value)
   }
 
-  //文件上传过程钩子
-  const normFile = (e: UploadProps) => {
-    if (Array.isArray(e)) {
-      return e
-    }
-    return e?.fileList
-  }
+  // const handleChange = (_value: string | string[]) => {
+  //   setRulesObj({
+  //     type: 'array',
+  //     validator(_, value) {
+  //       if (!value) return
+  //       return value.every((v: string) => v.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/g))
+  //         ? Promise.resolve()
+  //         : Promise.reject(
+  //             intl.formatMessage({
+  //               defaultMessage: '以字母或下划线开头，只能由字母、下划线和数字组成'
+  //             })
+  //           )
+  //     }
+  //   })
+  // }
 
   //开关切换回调 (查看页面的是否开启数据源开关)
   // const connectSwitchOnChange = (isChecked: boolean) => {
@@ -214,26 +174,25 @@ export default function Graphql({ content, type }: Props) {
   //     })
   // }
 
-  //移除文件回调
-  const onRemoveFile = () => {
-    setDeleteFlag(true)
-    setFile({} as unknown as UploadFile)
-  }
+  async function testGql() {
+    if (await form.validateFields()) {
+      const { agreement, headers, ...values } = form.getFieldsValue()
 
-  function testGql() {
-    const values = form.getFieldsValue()
-    values.headers = (values.headers as Array<DataType>)?.filter(item => item.key != undefined)
-    void requests.post('/checkDBConn', { sourceType: 3, config: values }).then((x: any) => {
-      if (x?.status) {
-        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
-      } else {
-        message.error(x?.msg || intl.formatMessage({ defaultMessage: '连接失败' }))
+      const newContent = {
+        ...content,
+        ...values
       }
-    })
+      newContent.customGraphql.headers = valueHeadersToRequestHeaders(
+        headers as ApiDocuments.ConfigurationVariable[]
+      )
+      requests.post('/datasource/checkConnection', newContent).then(() => {
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+      })
+    }
   }
 
   const setUploadPath = (v: string) => {
-    form.setFieldValue('loadSchemaFromString', v)
+    form.setFieldValue(['customGraphql', 'schemaFilepath'], v)
   }
 
   if (!content) {
@@ -245,35 +204,6 @@ export default function Graphql({ content, type }: Props) {
       {type === 'detail' ? (
         //查看页面--------------------------------------------------------------------------
         <>
-          {/* <div className="border-gray border-b flex mb-8 pb-9px items-center justify-between">
-            <div>
-              <img alt="shujuyuantubiao1" src="assets/iconfont/shujuyuantubiao1.svg" style={{height:'1em', width: '1em'}} />
-              <span className="ml-2">
-                {content.name} <span className="text-xs text-gray-500/80">GET</span>
-              </span>
-            </div>
-            <div className="flex justify-center items-center">
-              <Switch
-                checked={content.switch == 0 ? true : false}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
-                onChange={connectSwitchOnChange}
-                className={styles['switch-check-btn']}
-              />
-              <div>
-                <Button className={'btn-light-bordered w-16 ml-4'} onClick={() => testGql()}>
-                  <span>测试</span>
-                </Button>
-                <Button
-                  className={'btn-light-full ml-4'}
-                  onClick={() => handleToggleDesigner('form', content.id)}
-                >
-                  <span>编辑</span>
-                </Button>
-              </div>
-            </div>
-          </div> */}
-
           <div className="flex mb-8 justify-center">
             <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
               <Descriptions.Item
@@ -287,7 +217,7 @@ export default function Graphql({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.apiNameSpace}
+                {content.name}
               </Descriptions.Item>
 
               <Descriptions.Item
@@ -301,10 +231,10 @@ export default function Graphql({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {config.url}
+                {content.customGraphql.endpoint}
               </Descriptions.Item>
 
-              {config?.loadSchemaFromString ? (
+              {content.customGraphql.schemaFilepath ? (
                 <Descriptions.Item
                   label={
                     <div>
@@ -317,51 +247,65 @@ export default function Graphql({ content, type }: Props) {
                   className="justify-start"
                 >
                   <img
+                    className='mr-1'
                     alt="wenjian1"
                     src="assets/iconfont/wenjian1.svg"
                     style={{ height: '1em', width: '1em' }}
-                  />{' '}
-                  {config.loadSchemaFromString}
+                  />
+                  {content.customGraphql.schemaFilepath}
                 </Descriptions.Item>
               ) : (
                 ''
               )}
             </Descriptions>
           </div>
-          {config?.headers?.length > 0 && (
-            <>
-              <div className="font-medium text-base mb-3 ml-3">
-                {intl.formatMessage({ defaultMessage: '请求头' })}
-              </div>
-              <div className={`${styles['table-contain']} mb-8`}>
-                <Descriptions bordered column={1} size="small" labelStyle={{ width: 190 }}>
-                  {((config?.headers as unknown as DataType[]) ?? []).map(
-                    ({ key = '', kind = '', val = '' }) => (
-                      <Descriptions.Item
-                        key={key}
-                        label={
-                          <div>
-                            <span className={styles['label-style']}>
-                              {key}
-                              <FormToolTip title={key} />
-                            </span>
-                          </div>
-                        }
-                        className="justify-start"
-                        style={{ wordBreak: 'break-all' }}
-                      >
-                        <div className="flex items-center">
-                          <div className="text-0px">{renderIcon(kind)}</div>
-                          <div className="flex-1 ml-2 min-w-0">{val}</div>
-                        </div>
-                      </Descriptions.Item>
-                    )
-                  )}
-                </Descriptions>
-              </div>
-            </>
-          )}
-          <Collapse
+          <div className="tabs-form">
+            <Tabs
+              defaultActiveKey="1"
+              items={[
+                {
+                  key: '1',
+                  label: intl.formatMessage({ defaultMessage: '请求头' }),
+                  children: (
+                    <Descriptions
+                      className="mb-8"
+                      bordered
+                      column={1}
+                      size="small"
+                      labelStyle={{ width: 190 }}
+                    >
+                      {Object.keys(content.customGraphql.headers ?? {}).map(key => {
+                        const item = content.customGraphql.headers[key]
+                        return (
+                          <Descriptions.Item
+                            key={key}
+                            label={
+                              <div>
+                                <span className={styles['label-style']}>
+                                  {key}
+                                  <FormToolTip title={key} />
+                                </span>
+                              </div>
+                            }
+                            className="justify-start"
+                            style={{ wordBreak: 'break-all' }}
+                          >
+                            <div className="flex items-center">
+                              <div className="text-0px">{renderIcon(item.values[0].kind)}</div>
+                              <div className="flex-1 ml-2 min-w-0">
+                                {getConfigurationVariableRender(item.values[0])}
+                              </div>
+                            </div>
+                          </Descriptions.Item>
+                        )
+                      })}
+                    </Descriptions>
+                  )
+                }
+              ]}
+            />
+          </div>
+          {/* <Collapse
             ghost
             bordered={false}
             defaultActiveKey={['1']}
@@ -447,7 +391,7 @@ export default function Graphql({ content, type }: Props) {
                 </Descriptions>
               </div>
             </Panel>
-          </Collapse>
+          </Collapse> */}
         </>
       ) : (
         //编辑页面--------------------------------------------------------------------------
@@ -456,24 +400,26 @@ export default function Graphql({ content, type }: Props) {
             <Form
               form={form}
               name="basic"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 10 }}
-              onFinish={values => void onFinish(values as Config)}
+              labelCol={{ span: 3 }}
+              wrapperCol={{ span: 11 }}
+              onFinish={values => void onFinish(values)}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
               validateTrigger={['onBlur', 'onChange']}
               className="ml-3"
               labelAlign="right"
               initialValues={{
-                apiNameSpace: config.apiNameSpace,
-                url: config.url,
-                loadSchemaFromString: config.loadSchemaFromString,
-                internal: config.internal,
-                customFloatScalars: config.customFloatScalars,
-                customIntScalars: config.customIntScalars,
-                skipRenameRootFields: config.skipRenameRootFields,
-                headers: config.headers || [],
-                agreement: true
+                ...content,
+                agreement: content.customGraphql.schemaFilepath ? false : true,
+                headers: Object.keys(
+                  content.customGraphql.headers || {}
+                ).map<ApiDocuments.ConfigurationVariable>(key => {
+                  const item = content.customGraphql.headers[key]
+                  return {
+                    key,
+                    ...item.values[0]
+                  }
+                })
               }}
             >
               <Form.Item
@@ -487,7 +433,7 @@ export default function Graphql({ content, type }: Props) {
                 }
                 colon={false}
                 style={{ marginBottom: '20px' }}
-                name="apiNameSpace"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -521,7 +467,7 @@ export default function Graphql({ content, type }: Props) {
                   }
                 ]}
                 style={{ marginBottom: '20px' }}
-                name="url"
+                name={['customGraphql', 'endpoint']}
               >
                 <Input placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
               </Form.Item>
@@ -546,7 +492,7 @@ export default function Graphql({ content, type }: Props) {
                     </div>
                   }
                   colon={false}
-                  name="loadSchemaFromString"
+                  name={['customGraphql', 'schemaFilepath']}
                   required
                   // valuePropName="fileList"
                   style={{ marginBottom: '48px' }}
@@ -564,141 +510,128 @@ export default function Graphql({ content, type }: Props) {
                     readOnly
                     // value={uploadPath}
                   />
-                  {/* <Uploader
-                    defaultFileList={
-                      (config.loadSchemaFromString as string)
-                        ? [
-                            {
-                              name: config.loadSchemaFromString as unknown as string,
-                              uid: config.loadSchemaFromString as unknown as string
-                            }
-                          ]
-                        : []
-                    }
-                    onRemove={onRemoveFile}
-                    maxCount={1}
-                    beforeUpload={(file: UploadFile) => {
-                      const req = new RegExp('.json|.yaml', 'g')
-                      if (req.test(file.name)) {
-                        setFile(file)
-                      } else {
-                        file.status = 'error'
-                      }
-                      return false
-                    }}
-                  >
-                    <Button icon={<PlusOutlined />} className="w-159.5">
-                      添加文件
-                    </Button>
-                  </Uploader> */}
                 </Form.Item>
               ) : (
                 ''
               )}
 
-              <div className="text-lg mb-3 ml-3">
-                {intl.formatMessage({ defaultMessage: '请求头' })}:
+              <div className="tabs-form">
+                <Tabs defaultActiveKey="1" className="ml-3">
+                  <TabPane tab={intl.formatMessage({ defaultMessage: '请求头' })} key="1">
+                    <Form.Item
+                      wrapperCol={{
+                        xs: { span: 24 },
+                        sm: { span: 24 }
+                      }}
+                    >
+                      <Form.List name={['headers']}>
+                        {(fields, { add, remove }, { errors }) => (
+                          <>
+                            {fields.map((field, index) => {
+                              const kind = form.getFieldValue(['headers', field.name, 'kind'])
+                              return (
+                                <Space key={field.key} align="baseline" className="w-full">
+                                  <Form.Item
+                                    className="w-52.5"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, 'key']}
+                                  >
+                                    <Input />
+                                  </Form.Item>
+                                  <Form.Item
+                                    className="w-40"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, 'kind']}
+                                  >
+                                    <Select onChange={onValueChange}>
+                                      <Option value={0}>
+                                        <div className="flex items-center">
+                                          {renderIcon(0)}
+                                          {intl.formatMessage({ defaultMessage: '值' })}
+                                        </div>
+                                      </Option>
+                                      <Option value={1}>
+                                        <div className="flex items-center">
+                                          {renderIcon(1)}
+                                          {intl.formatMessage({ defaultMessage: '环境变量' })}
+                                        </div>
+                                      </Option>
+                                      <Option value={2}>
+                                        <div className="flex items-center">
+                                          {renderIcon(2)}
+                                          {intl.formatMessage({ defaultMessage: '转发自客户端' })}
+                                        </div>
+                                      </Option>
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item
+                                    className="w-135"
+                                    wrapperCol={{ span: 24 }}
+                                    name={[field.name, getConfigurationVariableField(kind)]}
+                                    // rules={
+                                    //   kind !== 1
+                                    //     ? [
+                                    //         {
+                                    //           pattern: /^.{1,128}$/g,
+                                    //           message: intl.formatMessage({
+                                    //             defaultMessage: '请输入长度不大于128的非空值'
+                                    //           })
+                                    //         }
+                                    //       ]
+                                    //     : []
+                                    // }
+                                  >
+                                    {kind !== 1 ? (
+                                      <Input
+                                        style={{ width: '80%' }}
+                                        placeholder={intl.formatMessage({
+                                          defaultMessage: '请输入'
+                                        })}
+                                      />
+                                    ) : (
+                                      <Select
+                                        className="w-1/5"
+                                        style={{ width: '80%' }}
+                                        options={envOpts}
+                                        value={envVal}
+                                        onChange={onValue2Change}
+                                      />
+                                    )}
+                                  </Form.Item>
+                                  {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+                                  <img
+                                    alt="guanbi"
+                                    src="assets/iconfont/guanbi.svg"
+                                    style={{ height: '1em', width: '1em' }}
+                                    onClick={() => remove(index)}
+                                  />
+                                </Space>
+                              )
+                            })}
+
+                            <Form.Item wrapperCol={{ span: 16 }}>
+                              <Button
+                                type="dashed"
+                                onClick={() => {
+                                  setIsValue(true)
+                                  add({ kind: 0 })
+                                }}
+                                icon={<PlusOutlined />}
+                                className="text-gray-500/60 w-1/1"
+                              >
+                                {intl.formatMessage({ defaultMessage: '新增请求头信息' })}
+                              </Button>
+                              <Form.ErrorList errors={errors} />
+                            </Form.Item>
+                          </>
+                        )}
+                      </Form.List>
+                    </Form.Item>
+                  </TabPane>
+                </Tabs>
               </div>
 
-              <Form.Item wrapperCol={{ span: 24 }}>
-                <Form.List name="headers">
-                  {(fields, { add, remove }, { errors }) => (
-                    <>
-                      {fields.map((field, idx) => (
-                        <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
-                          <Form.Item className="w-52.5" name={[field.name, 'key']}>
-                            <AutoComplete
-                              options={HEADER_LIST}
-                              filterOption={(inputValue, option) => {
-                                return (option?.label ?? '').includes(inputValue)
-                              }}
-                              placeholder={intl.formatMessage({ defaultMessage: '请求头' })}
-                            />
-                          </Form.Item>
-                          <Form.Item className="w-40" name={[field.name, 'kind']}>
-                            <Select onChange={onValueChange}>
-                              <Option value="0">
-                                <span className="h-full mr-1 inline-flex align-top items-center">
-                                  {renderIcon('0')}
-                                </span>
-                                {intl.formatMessage({ defaultMessage: '值' })}
-                              </Option>
-                              <Option value="1">
-                                <span className="h-full mr-1 inline-flex align-top items-center">
-                                  {renderIcon('1')}
-                                </span>
-                                {intl.formatMessage({ defaultMessage: '环境变量' })}
-                              </Option>
-                              <Option value="2">
-                                <span className="h-full mr-1 inline-flex align-top items-center">
-                                  {renderIcon('2')}
-                                </span>
-                                {intl.formatMessage({ defaultMessage: '转发自客户端' })}
-                              </Option>
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            className="flex-0 w-135"
-                            name={[field.name, 'val']}
-                            rules={
-                              form.getFieldValue(['headers', field.name, 'kind']) !== '1'
-                                ? [
-                                    {
-                                      pattern: /^.{1,2000}$/g,
-                                      message: intl.formatMessage({
-                                        defaultMessage: '请输入长度不大于2000的非空值'
-                                      })
-                                    }
-                                  ]
-                                : []
-                            }
-                          >
-                            {form.getFieldValue(['headers', field.name, 'kind']) !== '1' ? (
-                              <Input
-                                placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                              />
-                            ) : (
-                              <Select
-                                className="w-1/5"
-                                style={{ width: '80%' }}
-                                options={envOpts}
-                                value={envVal}
-                                onChange={value => setEnvVal(value)}
-                              />
-                            )}
-                          </Form.Item>
-                          <Image
-                            alt="清除"
-                            width={14}
-                            height={14}
-                            preview={false}
-                            src="/assets/clear.png"
-                            className="cursor-pointer"
-                            onClick={() => remove(idx)}
-                          />
-                        </Space>
-                      ))}
-
-                      <Form.Item wrapperCol={{ span: 16 }}>
-                        <Button
-                          type="dashed"
-                          onClick={() => {
-                            setIsValue(true)
-                            add({ kind: '0' })
-                          }}
-                          icon={<PlusOutlined />}
-                          className="text-gray-500/60 w-1/1"
-                        >
-                          {intl.formatMessage({ defaultMessage: '新增请求头信息' })}
-                        </Button>
-                        <Form.ErrorList errors={errors} />
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-              </Form.Item>
-
-              <Collapse
+              {/* <Collapse
                 ghost
                 bordered={false}
                 defaultActiveKey={['0']}
@@ -803,15 +736,15 @@ export default function Graphql({ content, type }: Props) {
                     </Select>
                   </Form.Item>
                 </Panel>
-              </Collapse>
+              </Collapse> */}
             </Form>
             <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
               <div className="flex mt-5 w-40 justify-center items-center">
                 <Button
                   className={'btn-cancel ml-4'}
                   onClick={() => {
-                    if (content.id) {
-                      handleToggleDesigner('detail', content.id, content.sourceType)
+                    if (content.name) {
+                      handleToggleDesigner('detail', content.name, content.sourceType)
                     } else {
                       navigate('/workbench/data-source/new')
                     }
@@ -852,13 +785,12 @@ export default function Graphql({ content, type }: Props) {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={920}
-        // closable={false}
+        destroyOnClose
       >
         <FileList
-          basePath={BASEPATH}
+          dir={dict.graphql}
           setUploadPath={setUploadPath}
           setVisible={setVisible}
-          upType={3}
           beforeUpload={file => {
             console.log(file.name)
             const isAllowed = file.name.endsWith('.graphql')

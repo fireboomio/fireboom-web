@@ -2,6 +2,7 @@ import type { Field } from '@mrleebo/prisma-ast'
 import type { AttributeArgument } from '@mrleebo/prisma-ast/src/getSchema'
 import { useIntl } from 'react-intl'
 
+import { DataSourceKind } from '@/interfaces/datasource'
 import type { Entity } from '@/interfaces/modeling'
 
 export interface AttributeHandlersProp {
@@ -20,7 +21,7 @@ export interface AttributeType {
 }
 
 type PrismaSchemaAttributePropertiesType = Record<
-  string,
+  number,
   {
     fieldType: Record<string, { attributes: AttributeType[] }>
     model: { attributes: AttributeType[] }
@@ -81,7 +82,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
     }
   ]
   return {
-    PostgreSQL: {
+    [DataSourceKind.PostgreSQL]: {
       fieldType: {
         String: {
           attributes: [
@@ -176,7 +177,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
         attributes: [...CommonModelAttributes]
       }
     },
-    MySQL: {
+    [DataSourceKind.MySQL]: {
       fieldType: {
         String: {
           attributes: [
@@ -284,7 +285,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
         attributes: [...CommonModelAttributes]
       }
     },
-    SQLite: {
+    [DataSourceKind.SQLite]: {
       fieldType: {
         String: {
           attributes: [
@@ -355,7 +356,7 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
         attributes: [...CommonModelAttributes]
       }
     },
-    MongoDB: {
+    [DataSourceKind.MongoDB]: {
       fieldType: {
         String: {
           attributes: [

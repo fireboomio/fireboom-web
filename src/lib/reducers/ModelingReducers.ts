@@ -18,7 +18,7 @@ import {
   UPDATE_CURRENT_ENTITY_ID_ACTION,
   UPDATE_PREVIEW_FILTERS_ACTION
 } from '@/lib/actions/PrismaSchemaActions'
-import { buildPrismaTableApolloClientByDataSourceId } from '@/lib/clients/PrismaTableApolloClient'
+import { buildPrismaTableApolloClientByDataSourceName } from '@/lib/clients/PrismaTableApolloClient'
 import type { PrismaSchemaContextState } from '@/lib/context/PrismaSchemaContext'
 
 const getFirstEntityId = (blocks: Block[]) => {
@@ -122,10 +122,10 @@ const saveGqlSchema = (state: PrismaSchemaContextState, payload: Schema) => ({
 
 const createApolloClientForDataSource = (
   state: PrismaSchemaContextState,
-  dataSourceId: number
+  dataSourceName: string
 ) => ({
   ...state,
-  apolloClient: buildPrismaTableApolloClientByDataSourceId(String(dataSourceId))
+  apolloClient: buildPrismaTableApolloClientByDataSourceName(dataSourceName)
 })
 
 const modelingReducer = (
@@ -148,7 +148,7 @@ const modelingReducer = (
     case SAVE_GQL_SCHEMA_ACTION:
       return saveGqlSchema(state, action.payload as Schema)
     case CREATE_APOLLO_CLIENT_ACTION:
-      return createApolloClientForDataSource(state, action.payload as number)
+      return createApolloClientForDataSource(state, action.payload as string)
     default:
       return state
   }

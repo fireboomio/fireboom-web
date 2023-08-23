@@ -18,7 +18,7 @@ export default function Rapi() {
     <iframe
       key={search}
       title="rapi"
-      src='/#/rapi-frame?url=/api/v1/file/postToSwag'
+      src="/#/rapi-frame?url=/api/engine/swagger"
       width={'100%'}
       height={'100%'}
       className="border-none"

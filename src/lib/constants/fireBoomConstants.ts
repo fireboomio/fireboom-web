@@ -1,10 +1,10 @@
 import type { Model } from '@/interfaces/modeling'
 
-export const BASE_URL = '/api/v1'
-export const DATABASE_SOURCE = '/dataSource?datasourceType=1'
-export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_ID = '/prisma/migrate/:id'
-export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/prisma/dmf/:id'
-export const PRISMA_PREVIEW_GRAPHQL_URL = '/model/graphql/'
+export const BASE_URL = '/api'
+export const DATABASE_SOURCE = '/datasource'
+export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME = '/datasource/migrate/:name'
+export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/datasource/dmmf/:name'
+export const PRISMA_PREVIEW_GRAPHQL_URL = '/app/main/graphql'
 
 export const UNTITLED_NEW_ENTITY = 'Untitled'
 export const ENTITY_NAME_REGEX = '^[A-Za-z][A-Za-z0-9_]*$'

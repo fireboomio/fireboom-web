@@ -1,6 +1,6 @@
 import { Dropdown, Input, Tree } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
-import { cloneDeep, get, set } from 'lodash'
+import { cloneDeep, debounce, get, set } from 'lodash'
 import type React from 'react'
 import {
   forwardRef,
@@ -13,13 +13,12 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 
-export interface FileTreeNode {
+import type { ApiDocuments } from '@/services/a2s.namespace'
+
+export interface FileTreeNode extends ApiDocuments.fileloader_DataTree {
   parent?: FileTreeNode
   key: string
-  name: string
-  isDir: boolean
-  children?: any[]
-  data: any
+  children?: FileTreeNode[]
 }
 
 interface InnerNode extends FileTreeNode {
@@ -42,7 +41,7 @@ export interface FileTreeProps {
   // 选中的节点
   selectedKey?: string
   // 选中文件时的回调 nodeData: 当前选中的节点
-  onSelectFile?: (nodeData: any) => void
+  onSelectFile?: (nodeData: FileTreeNode) => void
   // 创建新项目时的回调 parent: 父节点 isDir: 是否是文件夹 name: 新项目名称
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
   // 重命名时的回调 nodeData: 当前节点 newName: 新名称
@@ -58,7 +57,7 @@ export interface FileTreeProps {
 }
 
 export interface FileTreeRef {
-  addItem: (isDir: boolean, forceRoot: boolean) => void
+  addItem: (isDir: boolean, forceRoot?: boolean, parentKey?: string) => void
   editItem: (key: string) => void
 }
 
@@ -99,15 +98,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       const parent = findItemByKey(newTree, tempItem?.parentKey)
       const newItem = {
         name: '',
+        path: '',
         key: 'temp' + Date.now(),
         isDir: tempItem.isDir,
-        data: { name: '' },
         isInput: true,
         isNew: true,
         parent: parent
       }
       if (parent) {
-        parent.children?.unshift(newItem)
+        parent.children = parent.children ?? []
+        parent.children.unshift(newItem)
       } else {
         newTree.unshift(newItem)
       }
@@ -166,11 +166,11 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
    * @param forceRoot 是否强制添加到根目录
    */
   const addItem = useCallback(
-    (isDir: boolean, forceRoot = false) => {
-      const target = forceRoot ? null : keyMap[lastClickKey]
+    (isDir: boolean, forceRoot = false, parentKey?: string) => {
+      const target = forceRoot ? null : keyMap[parentKey ?? lastClickKey]
       const parent = target?.isDir ? target : target?.parent
       setTempItem({ isDir: isDir, parentKey: parent?.key ?? '' })
-      setExpandedKeys([...expandedKeys, lastClickKey])
+      setExpandedKeys([...expandedKeys, parentKey ?? lastClickKey])
     },
     [expandedKeys, keyMap, lastClickKey]
   )
@@ -223,12 +223,12 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   )
 
   // 保存输入框内容
-  const saveInput = async (node: InnerNode, str: string, closeOnFail: boolean) => {
+  const saveInput = debounce(async (node: InnerNode, str: string, closeOnFail: boolean) => {
     if (node.isNew) {
       // 处理新增保存
       const success = await props.onCreateItem?.(
         findItemByKey(treeData, node.parent?.key ?? '') ?? null,
-        node.isDir,
+        node.isDir!,
         str
       )
       if (success || closeOnFail) {
@@ -245,7 +245,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setEditingKey('')
       }
     }
-  }
+  }, 100)
 
   const buildContextMenu = (node: InnerNode) => {
     // 如果当前节点不在选中列表中，就选中当前节点，否则使用所有选择项作为目标

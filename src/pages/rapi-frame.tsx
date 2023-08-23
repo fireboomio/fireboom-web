@@ -1,15 +1,14 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
-import useSWRImmutable from 'swr/immutable'
 
-import type { GlobalSetting } from '@/interfaces/global'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests, { getAuthKey } from '@/lib/fetchers'
+import { getAuthKey } from '@/lib/fetchers'
+import { useConfigurationVariable } from '@/providers/variable'
 
 if (window && document) {
   const script = document.createElement('script')
   const body = document.getElementsByTagName('body')[0]
-  script.src = '//unpkg.com/rapidoc/dist/rapidoc-min.js'
+  script.src = '/rapidoc-min.js'
   body.appendChild(script)
 }
 
@@ -17,14 +16,18 @@ const id = `rapi-frame`
 
 export default function RapiFrame() {
   const [params] = useSearchParams()
-  const { system: config } = useContext(ConfigContext)
-  const { data: global } = useSWRImmutable<GlobalSetting>('/setting/global', requests.get)
+  const { globalSetting } = useContext(ConfigContext)
   const { search } = useLocation()
-  const customServerUrl = config.apiPublicAddr
+
+  const { getConfigurationValue } = useConfigurationVariable()
+  const customServerUrl = useMemo(
+    () => getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl),
+    [getConfigurationValue, globalSetting.nodeOptions.publicNodeUrl]
+  )
   const csrfToken = useRef('')
 
   useEffect(() => {
-    if (global && config && global.configureWunderGraphApplication.security.enableCSRF) {
+    if (globalSetting?.enableCSRFProtect) {
       /*
           Ensure that the DOM is loaded, then add the event listener.
           here we are listenig to 'before-try' event which fires when the user clicks
@@ -46,8 +49,8 @@ export default function RapiFrame() {
         }
       })
     }
-  }, [global, config, customServerUrl])
-  if (!config) return
+  }, [globalSetting, customServerUrl])
+  if (!globalSetting) return
 
   return (
     // @ts-ignore
@@ -63,9 +66,8 @@ export default function RapiFrame() {
       allow-authentication="true"
       allow-server-selection="false"
       allow-api-list-style-selection="false"
-      // render-style="read"
-      fetch-credentials="include"
       render-style="focused"
+      fetch-credentials="include"
     />
   )
 }

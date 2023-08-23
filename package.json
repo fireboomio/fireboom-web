@@ -8,6 +8,7 @@
     "buildPrismaWorker": "npm run build --workspace src/lib/prisma",
     "buildSocketWorker": "npm run build --workspace src/lib/socket",
     "serve": "vite preview",
+    "gen:api": "a2s generate -y",
     "lint": "pnpm lint:ts && pnpm lint:css",
     "lint:ts": "eslint ./src --fix",
     "lint:css": "stylelint ./src --fix --color",
@@ -79,6 +80,7 @@
   },
   "devDependencies": {
     "@apollo/client": "^3.7.0",
+    "@doremijs/a2s": "^0.0.21",
     "@doremijs/stylelint-config": "^0.1.5",
     "@formatjs/cli": "^5.1.12",
     "@paljs/types": "^4.0.18",
@@ -107,7 +109,6 @@
     "rollup-plugin-visualizer": "^5.8.3",
     "typescript": "^4.8.3",
     "vite": "^3.1.7",
-    "vite-plugin-imp": "^2.3.0",
     "vite-plugin-pages": "^0.26.0",
     "vite-plugin-windicss": "^1.8.8",
     "windicss": "^3.5.6"

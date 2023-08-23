@@ -1,6 +1,10 @@
-import type { DatasourceAction, DatasourceResp } from '@/interfaces/datasource'
+import type { DatasourceAction } from '@/interfaces/datasource'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
-export default function datasourceReducer(datasource: DatasourceResp[], action: DatasourceAction) {
+export default function datasourceReducer(
+  datasource: ApiDocuments.Datasource[],
+  action: DatasourceAction
+) {
   switch (action.type) {
     case 'fetched': {
       return action.data
@@ -13,14 +17,14 @@ export default function datasourceReducer(datasource: DatasourceResp[], action: 
     }
     case 'changed':
       return datasource.map(b => {
-        if (b.id === action.data.id) {
+        if (b.name === action.data.name) {
           return action.data
         } else {
           return b
         }
       })
     case 'deleted': {
-      return datasource.filter(b => b.id !== action.data.id)
+      return datasource.filter(b => b.name !== action.data.name)
     }
     default:
       return datasource

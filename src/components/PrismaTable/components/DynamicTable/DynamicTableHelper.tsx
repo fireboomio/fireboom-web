@@ -25,7 +25,20 @@ type Columns = Record<
 >
 
 const TableDataCell: React.FC<PropsWithChildren> = ({ children }) => {
-  return <div className="w-full whitespace-nowrap">{children}</div>
+  let title: string | undefined = undefined
+  if (children && typeof children === 'object') {
+    if ('props' in children) {
+      const { children: titleChildren } = children.props
+      if (typeof titleChildren === 'string') {
+        title = titleChildren
+      }
+    }
+  }
+  return (
+    <div title={title} className="w-full whitespace-nowrap truncate">
+      {children}
+    </div>
+  )
 }
 
 const handleListShowClick =
@@ -164,7 +177,7 @@ export const getTableColumns = (
 ): ColumnsType<Record<string, any>> => {
   return currentModelFields
     .slice()
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => (a.isId ? -1 : b.isId ? 1 : a.order - b.order))
     .filter(field => field.read)
     .map(field => ({
       title: renderTableColumn(field),

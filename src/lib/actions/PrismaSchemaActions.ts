@@ -1,7 +1,8 @@
 import type { Schema } from '@paljs/types'
 
 import type { FilterState } from '@/components/PrismaTable/libs/types'
-import type { Block, DBSourceResp } from '@/interfaces/modeling'
+import type { Block } from '@/interfaces/modeling'
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import type {
   CreateApolloClientAction,
@@ -25,7 +26,7 @@ export const CREATE_APOLLO_CLIENT_ACTION = 'create_apollo_client'
 
 export const initialPrismaSchemaAction = (
   draft: Block[],
-  dbSource: DBSourceResp,
+  dbSource: ApiDocuments.Datasource,
   schema: Schema
 ): InitialPrismaSchemaAction => ({
   type: INITIAL_PRISMA_SCHEMA_ACTION,
@@ -75,7 +76,7 @@ export const saveGqlSchemaAction = (payload: Schema): SaveGQLSchemaAction => ({
   payload
 })
 
-export const createApolloClient = (payload: number): CreateApolloClientAction => ({
+export const createApolloClient = (payload: string): CreateApolloClientAction => ({
   type: CREATE_APOLLO_CLIENT_ACTION,
   payload
 })

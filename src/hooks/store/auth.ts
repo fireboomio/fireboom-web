@@ -2,20 +2,12 @@ import { mutate } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import requests from '@/lib/fetchers'
-
-export interface AuthProvResp {
-  point: string
-  id: number
-  name: string
-  authSupplier: string
-  switchState: string[]
-  config: Record<string, string | number | boolean>
-}
+import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export function useAuthList() {
-  return useSWRImmutable<AuthProvResp[]>('/auth', requests.get).data
+  return useSWRImmutable<ApiDocuments.Authentication[]>('/authentication', requests.get).data
 }
 
 export function mutateAuth() {
-  return mutate('/auth')
+  return mutate('/authentication')
 }
