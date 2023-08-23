@@ -73,6 +73,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const [lastClickKey, setLastClickKey] = useState<string>('')
   const [editingKey, setEditingKey] = useState<string>('')
+  const isSaving = useRef(false)
   const keyMap = useMemo<Record<string, InnerNode>>(() => {
     function markKey(node: InnerNode) {
       map[node.key] = node
@@ -224,6 +225,10 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
 
   // 保存输入框内容
   const saveInput = debounce(async (node: InnerNode, str: string, closeOnFail: boolean) => {
+    if (isSaving.current) {
+      return
+    }
+    isSaving.current = true
     if (node.isNew) {
       // 处理新增保存
       const success = await props.onCreateItem?.(
@@ -237,6 +242,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     } else {
       if (node.name === str) {
         setEditingKey('')
+        isSaving.current = false
         return
       }
       // 处理重命名
@@ -245,6 +251,8 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         setEditingKey('')
       }
     }
+
+    isSaving.current = false
   }, 100)
 
   const buildContextMenu = (node: InnerNode) => {

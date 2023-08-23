@@ -476,11 +476,13 @@ async function resolveDefaultCode(
     ])
   } else if (path.match(/custom-\w+\/function\//)) {
     code = replaceFileTemplate(await getDefaultCode('custom.function'), [
-      { variableName: 'FUNCTION_NAME', value: name }
+      { variableName: 'FUNCTION_NAME', value: name },
+      { variableName: 'PACKAGE_NAME', value: packageName }
     ])
   } else if (path.match(/custom-\w+\/proxy\//)) {
     code = replaceFileTemplate(await getDefaultCode('custom.proxy'), [
-      { variableName: 'PROXY_NAME', value: name }
+      { variableName: 'PROXY_NAME', value: name },
+      { variableName: 'PACKAGE_NAME', value: packageName }
     ])
   } else if (path.match(/custom-\w+\/storage/)) {
     const profileName = list.pop() as string
