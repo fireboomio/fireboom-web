@@ -1,6 +1,6 @@
 import { Empty } from 'antd'
 import { groupBy } from 'lodash'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,12 +10,11 @@ import { mutateApi } from '@/hooks/store/api'
 import { mutateAuth } from '@/hooks/store/auth'
 import { mutateDataSource } from '@/hooks/store/dataSource'
 import { mutateStorage } from '@/hooks/store/storage'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+import { DataSourceKind } from '@/interfaces/datasource'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 
 import styles from './error.module.less'
-import { DataSourceKind } from '@/interfaces/datasource'
 
 type Block = {
   key: QuestionType
@@ -44,7 +43,7 @@ export default function Error() {
       key,
       list: groups[key].map((x: any) => {
         if (key === QuestionType.DatasourceQuestion) {
-          switch (x.extra) {
+          switch (x.extra.kind) {
             case DataSourceKind.MongoDB:
               x.icon = '/assets/icon/mongodb.svg'
               break
@@ -52,16 +51,16 @@ export default function Error() {
               x.icon = '/assets/icon/mysql.svg'
               break
             case DataSourceKind.Restful:
-                x.icon = '/assets/icon/rest.svg'
-                break
+              x.icon = '/assets/icon/rest.svg'
+              break
             case DataSourceKind.SQLite:
-                  x.icon = '/assets/icon/sqlite.svg'
-                  break
+              x.icon = '/assets/icon/sqlite.svg'
+              break
             case DataSourceKind.Graphql:
               x.icon = '/assets/icon/graphql.svg'
               break
             default:
-              x.icon =  '/assets/icon/file.svg'
+              x.icon = '/assets/icon/file.svg'
           }
         } else if (key === QuestionType.AuthQuestion) {
           x.icon = '/assets/icon/oidc.svg'
@@ -140,7 +139,7 @@ export default function Error() {
                       , <FormattedMessage defaultMessage="可" />
                       <span
                         className={styles.action}
-                        onClick={() => navigate(`/workbench/apimanage/${item.path}`)}
+                        onClick={() => navigate(`/workbench/apimanage/${item.name}`)}
                       >
                         <FormattedMessage defaultMessage="前往" />
                       </span>
@@ -148,7 +147,7 @@ export default function Error() {
                       {item.enabled && (
                         <>
                           , <FormattedMessage defaultMessage="或" />
-                          <span className={styles.action} onClick={() => closeAPI(item.path)}>
+                          <span className={styles.action} onClick={() => closeAPI(item.name)}>
                             <FormattedMessage defaultMessage="关闭" />
                           </span>
                           <FormattedMessage defaultMessage="该API" />
