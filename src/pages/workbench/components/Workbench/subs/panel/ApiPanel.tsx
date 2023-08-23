@@ -10,6 +10,7 @@ import type { FileTreeRef } from '@/components/FileTree'
 import FileTree from '@/components/FileTree'
 import { mutateApi, useApiList } from '@/hooks/store/api'
 import { useValidate } from '@/hooks/validate'
+import { OperationEngine } from '@/interfaces/operation'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
@@ -272,7 +273,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       itemTypeClass = styles.treeItemFile
     }
     const isCustom =
-      ['function', 'proxy'].includes(nodeData.name ?? '') || nodeData.extension === '.json'
+      ['function', 'proxy'].includes(nodeData.name ?? '') ||
+      nodeData.extra?.engine !== OperationEngine.GraphQL
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
@@ -500,7 +502,11 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               await autoSave()
               message.destroy()
             }
-            navigate(`/workbench/apimanage/${nodeData.path}`)
+            if (nodeData.extra?.engine === OperationEngine.GraphQL) {
+              navigate(`/workbench/apimanage/${nodeData.path}`)
+            } else {
+              navigate(`/workbench/apimanage/custom/${nodeData.path}`)
+            }
           }
         }}
         onCreateItem={async (parent, isDir, name) => {

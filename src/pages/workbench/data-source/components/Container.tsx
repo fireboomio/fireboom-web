@@ -164,7 +164,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   <span className="text-ellipsis max-w-200px overflow-hidden" title={content?.name}>
                     {content?.name}
                   </span>
-                  {!content.readonly && (
+                  {!content.readonly && !content.customGraphql?.customized && (
                     <span onClick={() => setIsEditing(true)} className="cursor-pointer ml-3">
                       <img
                         alt="bianji"

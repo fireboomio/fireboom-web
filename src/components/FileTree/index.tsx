@@ -41,7 +41,7 @@ export interface FileTreeProps {
   // 选中的节点
   selectedKey?: string
   // 选中文件时的回调 nodeData: 当前选中的节点
-  onSelectFile?: (nodeData: any) => void
+  onSelectFile?: (nodeData: FileTreeNode) => void
   // 创建新项目时的回调 parent: 父节点 isDir: 是否是文件夹 name: 新项目名称
   onCreateItem?: (parent: FileTreeNode | null, isDir: boolean, name: string) => Promise<boolean>
   // 重命名时的回调 nodeData: 当前节点 newName: 新名称
