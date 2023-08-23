@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import UrlInput from '@/components/UrlInput'
 import { useConfigContext } from '@/lib/context/ConfigContext'
-import { useConfigurationVariable } from '@/providers/variable'
+// import { useConfigurationVariable } from '@/providers/variable'
 
 interface Security {
   allowedHostsEnabled: boolean
@@ -17,7 +17,7 @@ interface Security {
 
 export default function SettingMainVersion() {
   const intl = useIntl()
-  const { getConfigurationValue } = useConfigurationVariable()
+  // const { getConfigurationValue } = useConfigurationVariable()
   const { globalSetting, updateGlobalSetting } = useConfigContext()
   const [form] = Form.useForm<Security>()
 
@@ -47,7 +47,7 @@ export default function SettingMainVersion() {
         labelAlign="right"
         initialValues={globalSetting}
       >
-        <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
+        {/* <Form.Item label={intl.formatMessage({ defaultMessage: 'GraphQL端点' })}>
           <div className="flex items-center">
             <Form.Item name="enableGraphqlEndpoint" valuePropName="checked" noStyle>
               <Switch />
@@ -61,7 +61,7 @@ export default function SettingMainVersion() {
               {getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl)}/app/main/graphql
             </span>
           </div>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label={intl.formatMessage({ defaultMessage: 'CSRF 保护' })}
           tooltip={intl.formatMessage({
