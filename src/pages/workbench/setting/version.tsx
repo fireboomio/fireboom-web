@@ -59,7 +59,7 @@ export default function SettingMainVersion() {
                           <div className="font-14px leading-20px mt-5px flex items-center select-none">
                             <span className="text-[#a484e8]">curl&nbsp;</span>
                             <span className="text-[#294c7c]">-fsSL&nbsp;</span>
-                            <span>https://www.fireboom.io/update.sh&nbsp;|&nbsp;</span>
+                            <span>https://www.fireboom.io/update&nbsp;|&nbsp;</span>
                             <span className="text-[#a484e8]">bash</span>
                             <Copy className="ml-2 cursor-pointer" onClick={copyUpdateLink} />
                           </div>
