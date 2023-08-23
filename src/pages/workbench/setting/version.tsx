@@ -12,7 +12,7 @@ export default function SettingMainVersion() {
   const { globalSetting } = useConfigContext()
 
   const copyUpdateLink = () => {
-    copy('curl -fsSL https://www.fireboom.io/update.sh | bash')
+    copy('curl -fsSL https://www.fireboom.io/update | bash')
     message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
   }
   if (!globalSetting) {
