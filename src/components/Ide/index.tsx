@@ -14,7 +14,6 @@ import { useImmer } from 'use-immer'
 
 import type { LocalLib } from '@/components/Ide/dependLoader'
 import { DependManager } from '@/components/Ide/dependLoader'
-import { getDefaultCode } from '@/components/Ide/getDefaultCode'
 import { setUp } from '@/lib/ai'
 import { registerCodeLens } from '@/lib/ai/codelens'
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -22,7 +21,8 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { makeSuggest } from '@/lib/helpers/utils'
 import { getHook, getTypes, saveHookDepend, saveHookScript } from '@/lib/service/hook'
-import { replaceFileTemplate } from '@/utils/template'
+import type { ApiDocuments } from '@/services/a2s.namespace'
+import { resolveDefaultCode } from '@/utils/template'
 
 import IdeCodeContainer from './code/index'
 import IdeDependList from './depend-list/index'
@@ -142,6 +142,9 @@ const IdeContainer: FC<Props> = props => {
   const [localDepends, setLocalDepends] = useState<LocalLib[]>([])
   const { globalSetting } = useContext(ConfigContext)
 
+  const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
+  const language = data?.language
+
   const [hookPath, setHookPath] = useState(props.hookPath)
   // 将hookPath保存到本地， 用以支持动态更换
   useEffect(() => {
@@ -158,7 +161,7 @@ const IdeContainer: FC<Props> = props => {
         })
       } else {
         // 如果data中的script为空, 就用defaultCode
-        const defaultCode = await resolveDefaultCode(hookPath)
+        const defaultCode = await resolveDefaultCode(hookPath, props.hasParams ?? false, language!)
         if (defaultCode) {
           setPayload({
             type: 'passive',
@@ -171,36 +174,6 @@ const IdeContainer: FC<Props> = props => {
       setHookInfo(data)
     })
   }, [hookPath])
-
-  const resolveDefaultCode = async (path: string): Promise<string> => {
-    const list = path.split('/')
-    const name = list.pop()
-    if (path.startsWith('global/')) {
-      return getDefaultCode(`global.${name}`)
-    } else if (path.startsWith('auth/')) {
-      return getDefaultCode(`auth.${name}`)
-    } else if (path.startsWith('customize/')) {
-      return replaceFileTemplate(await getDefaultCode('custom'), [
-        { variableName: 'CUSTOMIZE_NAME', value: name! }
-      ])
-    } else if (path.startsWith('uploads/')) {
-      const profileName = list.pop() as string
-      const storageName = list.pop() as string
-      return replaceFileTemplate(await getDefaultCode(`upload.${name}`), [
-        { variableName: 'STORAGE_NAME', value: storageName },
-        { variableName: 'PROFILE_NAME', value: profileName }
-      ])
-    } else {
-      const pathList = list.slice(2)
-      const tmplPath = `hook.${props.hasParams ? 'WithInput' : 'WithoutInput'}.${name}`
-      return replaceFileTemplate(await getDefaultCode(tmplPath), [
-        {
-          variableName: 'HOOK_NAME',
-          value: pathList.join('__')
-        }
-      ])
-    }
-  }
 
   const { data: cTree } = useSWRImmutable('hook/ctree', () =>
     requests.get<unknown, { path: string; content: string }[]>('hook/ctree', { timeout: 60000 })

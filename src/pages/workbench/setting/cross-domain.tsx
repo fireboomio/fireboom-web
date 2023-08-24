@@ -37,7 +37,13 @@ export default function SettingMainVersion() {
         labelAlign="right"
         initialValues={globalSetting}
       >
-        <Form.Item label={intl.formatMessage({ defaultMessage: '允许源' })}>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '允许源' })}
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定允许访问的源（域名、协议、端口），使用通配符 * 表示允许所有源进行访问，也可以指定具体的源'
+          })}
+        >
           <Form.List name={['corsConfiguration', 'allowedOrigins']}>
             {(fields, { add, remove }, { errors }) => (
               <>
@@ -70,6 +76,10 @@ export default function SettingMainVersion() {
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '允许方法' })}
           name={['corsConfiguration', 'allowedMethods']}
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定允许的HTTP请求方法，多个方法使用逗号分隔。常见的方法包括GET、POST、PUT、DELETE等'
+          })}
         >
           <Select
             className="disable-common-select"
@@ -87,6 +97,10 @@ export default function SettingMainVersion() {
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '允许头' })}
           name={['corsConfiguration', 'allowedHeaders']}
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定允许的自定义请求头，多个头部字段使用逗号分隔。默认为 * ，表示不限制'
+          })}
         >
           <Select
             className="disable-common-select"
@@ -97,8 +111,9 @@ export default function SettingMainVersion() {
           />
         </Form.Item>
         <Form.Item
-          label={intl.formatMessage({ defaultMessage: '排除头' })}
+          label={intl.formatMessage({ defaultMessage: '暴露头' })}
           name={['corsConfiguration', 'exposedHeaders']}
+          tooltip={intl.formatMessage({ defaultMessage: '指定响应中允许客户端访问的响应头' })}
         >
           <Select
             className="disable-common-select"
@@ -111,6 +126,10 @@ export default function SettingMainVersion() {
         <Form.Item
           label={intl.formatMessage({ defaultMessage: '跨域时间' })}
           name={['corsConfiguration', 'maxAge']}
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定预检请求（OPTIONS请求）的有效期，单位为秒，默认 120 秒 。在有效期内，浏览器无需再发送预检请求'
+          })}
         >
           <InputNumber addonAfter="秒" />
         </Form.Item>
@@ -118,6 +137,10 @@ export default function SettingMainVersion() {
           label={intl.formatMessage({ defaultMessage: '允许 Credentials' })}
           name={['corsConfiguration', 'allowCredentials']}
           valuePropName="checked"
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定是否允许发送Cookie等凭证信息。如果设置为true，则表示允许发送凭证信息；如果设置为false，则不允许发送凭证信息'
+          })}
         >
           <Switch />
         </Form.Item>
