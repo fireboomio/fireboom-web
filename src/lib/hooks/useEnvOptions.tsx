@@ -10,9 +10,9 @@ export default function useEnvOptions() {
   const { data } = useSWRImmutable<ApiDocuments.Env>('/env/single', requests.get)
   return Object.keys(data ?? {}).map(k => ({
     label: (
-      <div className="flex items-center justify-between  w-full">
+      <div className="flex items-center justify-between w-full">
         <span>{k}</span>
-        <span className="text-[#999]">{envs[k]}</span>
+        <span className="text-[#999] pl-1">{envs[k]}</span>
       </div>
     ),
     value: k

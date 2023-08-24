@@ -19,7 +19,7 @@ export interface InputOrFromEnvProps {
   onChange?: (data?: ApiDocuments.ConfigurationVariable) => void
 }
 
-const InputOrFromEnv = ({
+const _InputOrFromEnv = ({
   className,
   value,
   onChange,
@@ -73,9 +73,9 @@ const InputOrFromEnv = ({
         <div className="relative flex-1">
           <AutoComplete
             {...envProps}
+            className="w-full"
             value={value?.environmentVariableName}
             options={envs}
-            suffixIcon={<span>12</span>}
             onChange={onValueChange}
           />
           {value?.environmentVariableName && (
@@ -100,6 +100,15 @@ const InputOrFromEnv = ({
         />
       )}
     </Space.Compact>
+  )
+}
+
+export const InputOrFromEnv = (props: InputOrFromEnvProps) => {
+  const [kind, setKind] = useState<VariableKind>(VariableKind.Static)
+  return (
+    <InputOrFromEnvContext.Provider value={{ kind, setKind }}>
+      <_InputOrFromEnv {...props} />
+    </InputOrFromEnvContext.Provider>
   )
 }
 
@@ -143,7 +152,7 @@ const InputOrFromEnvWithItem = ({
             : rules
         }
       >
-        <InputOrFromEnv {...rest} />
+        <_InputOrFromEnv {...rest} />
       </Form.Item>
     </InputOrFromEnvContext.Provider>
   )

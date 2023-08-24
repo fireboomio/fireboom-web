@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Radio, Space, Tag, Tooltip } from 'antd'
-import { throttle } from 'lodash'
-import React, { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { Button, Form, Space, Tooltip } from 'antd'
+import type React from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
+import InputOrFromEnvWithItem, { InputOrFromEnv } from '@/components/InputOrFromEnv'
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -13,13 +14,11 @@ import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
-import { HookStatus, ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
-
-const UrlInput = React.lazy(() => import('@/components/UrlInput'))
 
 interface Props {
   className?: string
@@ -64,64 +63,13 @@ const StatusBar: React.FC<Props> = ({
     }),
     [intl]
   )
-  // const hookStatusMap = useMemo(
-  //   () => ({
-  //     [HookStatus.Running]: intl.formatMessage({ defaultMessage: '已启动' }),
-  //     [HookStatus.Stopped]: intl.formatMessage({ defaultMessage: '未启动' })
-  //   }),
-  //   [intl]
-  // )
   const [compileTime, setCompileTime] = useState<string>()
   const [showHookSetting, setShowHookSetting] = useState<boolean>()
-  const [hookOptionStatus, setHookOptionStatus] = useState<{
-    webContainer: HookStatus
-    customer: HookStatus
-    default: HookStatus
-  }>()
-  const [hookEnabled, setHookEnabled] = useState<number>()
-  const [hooksServerURL, setHooksServerURL] = useState<string>()
-  const { globalSetting, appRuntime, refreshConfig } = useConfigContext()
+  const { globalSetting, appRuntime, updateGlobalSetting } = useConfigContext()
   const navigate = useNavigate()
   const { vscode } = useContext(GlobalContext)
-  const webContainerUrl = useMemo(() => {
-    const url = new URL(window.location.href)
-    url.port = '9123'
-    return url.origin + '/ws'
-  }, [])
 
   const { data: sdk } = useSWRImmutable<ApiDocuments.Sdk[]>('/sdk', requests.get)
-  useEffect(() => {
-    const hookUrl = getConfigurationValue(globalSetting.serverOptions.serverUrl)
-    if (hookUrl === webContainerUrl) {
-      setHookEnabled(1)
-      setHooksServerURL(localStorage.getItem('hooksServerURL') || '')
-    } else {
-      setHooksServerURL(hookUrl)
-      localStorage.setItem('hooksServerURL', hookUrl ?? '')
-      setHookEnabled(3)
-    }
-  }, [
-    showHookSetting,
-    webContainerUrl,
-    globalSetting.serverOptions.serverUrl,
-    getConfigurationValue
-  ])
-  // useEffect(() => {
-  //   if (showHookSetting) {
-  //     fetchHookOptionStatus(hooksServerURL ?? '')
-  //   }
-  // }, [hooksServerURL, showHookSetting])
-  // const fetchHookOptionStatus = useCallback(
-  //   throttle(async (url: string) => {
-  //     try {
-  //       const data: any = await requests.get(`/hook/status?url=${encodeURIComponent(url)}`)
-  //       setHookOptionStatus(data)
-  //     } catch (error) {
-  //       console.error(error)
-  //     }
-  //   }, 2000),
-  //   []
-  // )
   useEffect(() => {
     if (!startTime) {
       return
@@ -134,29 +82,6 @@ const StatusBar: React.FC<Props> = ({
       clearInterval(timer)
     }
   }, [startTime, calcTime])
-
-  async function saveHookServerURL(str: string) {
-    void requests
-      .put('/setting/system', { values: [{ key: 'system.hooksServerURL', val: str }] })
-      .then(() => {
-        refreshConfig()
-        sendMessageToSocket({ channel: 'engine', event: 'getStatus' })
-      })
-  }
-
-  // 在线stackbliz调试
-  const onlineDebug = useCallback(() => {
-    // openHookServer()
-    window.open('https://stackblitz.com/local', '_blank')
-  }, [])
-
-  const changeHookLanguage = async (val: string) => {
-    await requests.put('/setting/system', {
-      values: [{ key: 'system.hooksServerLanguage', val }]
-    })
-
-    refreshConfig()
-  }
 
   const closeDevTip = () => {
     localStorage.setItem(devTipKey, 'false')
@@ -231,57 +156,34 @@ const StatusBar: React.FC<Props> = ({
             <FormattedMessage defaultMessage="引擎" />:{' '}
           </span>
           <span className={styles.errLabel + ' ml-1'}>
-            {
-              // engineStatus === ServiceStatus.NotStarted ? (
-              //   <>
-              //     <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-              //     <Tooltip
-              //       open={true}
-              //       title={intl.formatMessage({ defaultMessage: '请配置或开启数据源' })}
-              //     >
-              //       <span className="ml-1 text-[#cd3021]">
-              //         {statusMap[engineStatus as ServiceStatus] ?? ''}
-              //       </span>
-              //     </Tooltip>
-              //   </>
-              // ) :
-              engineStatus === ServiceStatus.BuildFailed ||
-              engineStatus === ServiceStatus.StartFailed ? (
-                <>
-                  <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
-                  <Tooltip
-                    open={true}
-                    title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
-                  >
-                    <span className="ml-1 text-[#cd3021]">
-                      {statusMap[engineStatus as ServiceStatus] ?? ''}
-                    </span>
-                  </Tooltip>
-                </>
-              ) : (
-                <>
-                  <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
-                  <span className="ml-1 text-[#50C772]">
+            {engineStatus === ServiceStatus.BuildFailed ||
+            engineStatus === ServiceStatus.StartFailed ? (
+              <>
+                <div className="bg-[#cd3021] rounded-3px h-3px w-3px" />
+                <Tooltip
+                  open={true}
+                  title={intl.formatMessage({ defaultMessage: '请检查项目配置并重启fireboom' })}
+                >
+                  <span className="ml-1 text-[#cd3021]">
                     {statusMap[engineStatus as ServiceStatus] ?? ''}
                   </span>
-                </>
-              )
-            }
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <div className="bg-[#50C772] rounded-3px h-3px w-3px" />
+                <span className="ml-1 text-[#50C772]">
+                  {statusMap[engineStatus as ServiceStatus] ?? ''}
+                </span>
+              </>
+            )}
           </span>
           <span className="ml-3">
             {' '}
             <FormattedMessage defaultMessage="钩子" />:{' '}
           </span>
           <span className={styles.errLabel + ' cursor-pointer ml-1'}>
-            <div
-              className="flex h-full items-center"
-              onClick={() => {
-                if (hookEnabled === 1) {
-                  onlineDebug()
-                }
-                // setShowHookSetting(true)
-              }}
-            >
+            <div className="flex h-full items-center">
               <div
                 className={
                   'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
@@ -305,9 +207,7 @@ const StatusBar: React.FC<Props> = ({
             <div className={styles.split} />
             <div className="flex h-full items-center" onClick={() => setShowHookSetting(true)}>
               <div className={styles.hookEntry}>
-                {hookEnabled === 1
-                  ? 'WebContainer'
-                  : getConfigurationValue(globalSetting.serverOptions.serverUrl)}
+                {getConfigurationValue(globalSetting.serverOptions.serverUrl)}
               </div>
               <div
                 className="mr-5px ml-8px"
@@ -331,73 +231,36 @@ const StatusBar: React.FC<Props> = ({
                     e.stopPropagation()
                   }}
                 >
-                  <Radio.Group
-                    onChange={e => {
-                      setHookEnabled(e.target.value)
-                      const map: Record<string, string | undefined> = {
-                        '1': webContainerUrl,
-                        '3': hooksServerURL
-                      }
-                      const url: string = map[e.target.value] ?? ''
-                      saveHookServerURL(url)
-                      // if (e.target.value) {
-                      //   if (hookOptionStatus?.Customer !== HookStatus.Running) {
-                      //     message.info(
-                      //       intl.formatMessage({
-                      //         defaultMessage: '当前地址的钩子服务未启动，手动启动钩子后，方可使用。'
-                      //       })
-                      //     )
-                      //   }
-                      //   saveHookServerURL(hooksServerURL ?? '')
-                      // } else {
-                      //   saveHookServerURL('')
-                      // }
-                    }}
-                    value={hookEnabled}
-                  >
-                    <Space direction="vertical">
-                      {/* <Radio value={1}>
-                        WebContainer
-                        {hookOptionStatus?.webContainer === HookStatus.Running && (
-                          <Tag className="!ml-2" color="success">
-                            <FormattedMessage defaultMessage="已启动" />
-                          </Tag>
-                        )}
-                        {hookOptionStatus?.webContainer === HookStatus.Stopped && (
-                          <Tag className="!ml-2" color="warning">
-                            <FormattedMessage defaultMessage="未启动" />
-                          </Tag>
-                        )}
-                      </Radio> */}
-                      <Radio value={3}>
-                        <FormattedMessage defaultMessage="手动设置" />
-                        {hookOptionStatus?.customer === HookStatus.Running && (
-                          <Tag className="!ml-2" color="success">
-                            <FormattedMessage defaultMessage="已启动" />
-                          </Tag>
-                        )}
-                        {hookOptionStatus?.customer === HookStatus.Stopped && (
-                          <Tag className="!ml-2" color="warning">
-                            <FormattedMessage defaultMessage="未启动" />
-                          </Tag>
-                        )}
-                      </Radio>
-                    </Space>
-                  </Radio.Group>
-                  <Suspense>
-                    <UrlInput
-                      className="mt-2"
-                      selectClassName="!z-13000"
-                      value={hooksServerURL}
-                      onChange={val => {
-                        if (hookEnabled === 3) {
-                          saveHookServerURL(val)
+                  <Form
+                    initialValues={globalSetting.serverOptions}
+                    onFinish={v => {
+                      updateGlobalSetting({
+                        serverOptions: {
+                          ...globalSetting.serverOptions,
+                          ...v
                         }
-                        setHooksServerURL(val)
-                        localStorage.setItem('hooksServerURL', val)
-                      }}
-                    />
-                  </Suspense>
+                      })
+                    }}
+                  >
+                    <div className="pt-2 text-[#999] text-sm">
+                      <FormattedMessage defaultMessage="钩子服务地址" />
+                    </div>
+                    <div className="mt-2 flex items-center flex-1">
+                      <InputOrFromEnvWithItem
+                        formItemProps={{
+                          name: 'serverUrl',
+                          className: 'flex-1'
+                        }}
+                        inputProps={{
+                          placeholder: 'http://localhost:9992'
+                        }}
+                        required
+                      />
+                      <Button htmlType="submit" className="ml-2 mb-5" type="primary">
+                        保存
+                      </Button>
+                    </div>
+                  </Form>
                 </div>
               </>
             )}
