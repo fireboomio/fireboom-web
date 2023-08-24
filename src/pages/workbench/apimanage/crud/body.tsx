@@ -11,7 +11,7 @@ import {
   Select,
   Table
 } from 'antd'
-import { cloneDeep, keyBy, upperFirst } from 'lodash'
+import { cloneDeep, keyBy } from 'lodash'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -213,6 +213,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
     expandForeignField(model, props.modelList || [], 3)
     const typeMap = genTypeMap(props.dmf ?? '', `${props.dbName}_`)
     const createTypeMap = typeMap[`${model.name}CreateInput`]
+    // createTypeMap 可能为空
     const updateTypeMap = {
       ...typeMap[`${model.name}UpdateInput`]
       // ...typeMap[`${model.name}WhereUniqueInput`]
@@ -232,8 +233,8 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             kind: field.kind,
             name: field.name,
             type: field.type,
-            createType: createTypeMap[field.name],
-            updateType: updateTypeMap[field.name],
+            createType: createTypeMap?.[field.name],
+            updateType: updateTypeMap?.[field.name],
             detail: false,
             filter: false,
             list: false,
@@ -251,8 +252,8 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
             kind: field.kind,
             name: field.name,
             type: field.type,
-            createType: createTypeMap[field.name],
-            updateType: updateTypeMap[field.name],
+            createType: createTypeMap?.[field.name],
+            updateType: updateTypeMap?.[field.name],
             sort: true,
             detail: true,
             list: true,
@@ -323,7 +324,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
       auth: AuthOptions.default,
       authType: AuthType.RequireMatchAll,
       table: tableData,
-      prefix: props?.model?.name ? upperFirst(props.model.name) : '',
+      prefix: props?.model?.name ?? '',
       alias: props?.model?.name,
       modelName: props?.model?.name,
       primaryKey: props.model.idField
