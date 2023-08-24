@@ -1,5 +1,6 @@
+import { Tooltip } from 'antd'
 import { useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { PrismaSchemaContext } from '@/lib/context/PrismaSchemaContext'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
@@ -42,13 +43,17 @@ const OperationButtons = ({ changeToER, addNewModel }: Props) => {
         Beta
       </div>
       <div onClick={() => handleSetInEdit(!inEdit)} className={styles.switchBtn}>
-        <img src={iconSwitch} alt="switch" />
+        <Tooltip title={<FormattedMessage defaultMessage="切换数据预览和数据建模" />}>
+          <img src={iconSwitch} alt="switch" />
+        </Tooltip>
       </div>
       <div onClick={changeToER} className={styles.erBtn}>
-        <img src={iconER} alt="ER" />
+        <Tooltip title={<FormattedMessage defaultMessage="ER图" />}>
+          <img src={iconER} alt="ER" />
+        </Tooltip>
       </div>
       <div onClick={addNewModel} className={styles.addEntityBtn}>
-        +
+        <Tooltip title={<FormattedMessage defaultMessage="新建模型" />}>+</Tooltip>
       </div>
     </div>
   )

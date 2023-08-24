@@ -1,9 +1,9 @@
-import { App, Layout as ALayout, message, Spin } from 'antd'
+import { App, Button, Layout as ALayout, message, Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
@@ -47,6 +47,7 @@ const MENU_WIDTH = 230
 
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
+  const [messageApi] = message.useMessage()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
     engineStatus: ServiceStatus.Started,
@@ -63,7 +64,6 @@ export default function Index(props: PropsWithChildren) {
       info.engineStatus === ServiceStatus.Starting || info.engineStatus === ServiceStatus.Building,
     [info.engineStatus]
   )
-
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
@@ -75,14 +75,12 @@ export default function Index(props: PropsWithChildren) {
     operation: intl.formatMessage({ defaultMessage: 'API' }),
     teamwork: intl.formatMessage({ defaultMessage: '团队' })
   } as const
-
   const [vscode, setVscode] = useState<{ visible: boolean; currentPath: string; config: any }>({
     visible: false,
     currentPath: '',
     config: {}
   })
   const [loading, setLoading] = useState('')
-
   // context
   const [editFlag, setEditFlag] = useState<boolean>(false)
   const [refreshMap, setRefreshMap] = useImmer<RefreshMap>({
@@ -147,18 +145,39 @@ export default function Index(props: PropsWithChildren) {
     setLicense(data)
   })
   useWebSocket('license', 'push', data => {
-    intl.formatMessage(
-      {
-        defaultMessage: '{msg}\n当前{mode}超出{limit}的限制，请访问{url}获取商业授权'
-      },
-      {
-        msg: data.msg,
-        mode: modelName[data.data.function as keyof typeof modelName],
-        limit: data.data.limits,
-        url: data.data.contractAddress
-      }
+    messageApi.error(
+      <div className="inline-flex flex-col items-start">
+        <div>{data.msg}</div>
+        <div>
+          <FormattedMessage
+            defaultMessage="当前{model}超出{limit}的限制"
+            values={{
+              model: modelName[data.data.function as keyof typeof modelName],
+              limit: data.data.limits
+            }}
+          />
+        </div>
+        <div>
+          <FormattedMessage defaultMessage="请访问" />
+          <a className="mx-1" href={data.data.contractAddress} target="_blank" rel="noreferrer">
+            {data.data.contractAddress}
+          </a>
+          <FormattedMessage defaultMessage="获取商业授权" />
+        </div>
+        <div className="mt-2 flex w-full">
+          {/* eslint-disable-next-line @typescript-eslint/no-use-before-define */}
+          <Button
+            size="small"
+            type="primary"
+            className="ml-auto"
+            onClick={() => messageApi.destroy()}
+          >
+            {intl.formatMessage({ defaultMessage: '知道了' })}
+          </Button>
+        </div>
+      </div>,
+      0
     )
-    message.error(`${data.msg}`)
     sendMessageToSocket({ channel: 'license', event: 'pull' })
   })
   useEffect(() => {

@@ -27,7 +27,14 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
     <Popover
       placement="topRight"
       content={
-        <Descriptions column={1} size="small" labelStyle={{ width: '100px' }} className="w-120">
+        <Descriptions
+          column={1}
+          size="small"
+          labelStyle={{ width: '100px' }}
+          style={{
+            width: '480px'
+          }}
+        >
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据源限制' })}>
             {userLimits?.datasource ?? defaultLimits.datasource}
           </Descriptions.Item>
