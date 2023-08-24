@@ -42,8 +42,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
     if (content) {
-      void (await requests.put('/datasource', { name: content.name, enabled: !content.enabled }))
-      handleSave({ enabled: !content.enabled })
+      let tested = true
+      if (!content.enabled) {
+        try {
+          await requests.post('/datasource/checkConnection', content)
+        } catch (error) {
+          tested = false
+        }
+      }
+      if (tested) {
+        await requests.put('/datasource', { name: content.name, enabled: !content.enabled })
+        handleSave({ enabled: !content.enabled })
+      }
     }
     // 自定义数据源，需要在开关时同步修改钩子开关
     // if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
