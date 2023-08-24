@@ -80,7 +80,7 @@ export default function ProfileForm({ storageName, profile, onSave }: Props) {
     >
       <Form.Item
         name="requireAuthentication"
-        label={intl.formatMessage({ defaultMessage: '匿名访问' })}
+        label={intl.formatMessage({ defaultMessage: '需要认证' })}
         valuePropName="checked"
       >
         <Switch />

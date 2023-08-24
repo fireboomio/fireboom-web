@@ -326,7 +326,12 @@ export default function StorageExplorer({ bucketName }: Props) {
           return
         }
         const fond = node.children.find(x => {
-          return x.name && path.startsWith(x.name)
+          if (x.name) {
+            if (x.name.endsWith('/')) {
+              return path.startsWith(x.name)
+            }
+            return path === x.name
+          }
         })
         if (fond) {
           if (path === fond.name) {
