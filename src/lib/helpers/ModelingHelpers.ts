@@ -38,10 +38,12 @@ export const initialPrismaSchema = async (
     fetchPrismaDMF(dataSourceName),
     fetchPrismaSDL(dataSourceName).catch(() => '')
   ])
-
+  const models = (dmmf?.datamodel?.models ?? []).filter(
+    model => model.name !== MAGIC_DELETE_ENTITY_NAME
+  )
   dispatch(
     initialPrismaSchemaAction(buildBlocks(sdl), selectedDataSource, {
-      models: dmmf?.datamodel?.models ?? [],
+      models: models,
       enums: dmmf?.datamodel?.enums ?? []
     })
   )
@@ -57,7 +59,9 @@ export const refetchPrismaSchema = async (
     fetchPrismaSDL(dataSourceName).catch(() => '')
   ])
   refetchPrismaSchemaAction(buildBlocks(sdl), {
-    models: dmmf?.datamodel?.models ?? [],
+    models: (dmmf?.datamodel?.models ?? []).filter(
+      model => model.name !== MAGIC_DELETE_ENTITY_NAME
+    ),
     enums: dmmf?.datamodel?.enums ?? []
   })
 }

@@ -6,8 +6,8 @@ import { useIntl } from 'react-intl'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import type { DMFModel } from '@/interfaces/datasource'
 import { DataSourceKind } from '@/interfaces/datasource'
-import { DMMF } from '@/interfaces/dbml'
 import { fetchPrismaDMF, fetchPrismaSDL } from '@/lib/clients/fireBoomAPIOperator'
+import { MAGIC_DELETE_ENTITY_NAME } from '@/lib/constants/fireBoomConstants'
 import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
@@ -78,8 +78,11 @@ export default function CRUDSider(props: CRUDSiderProps) {
 
       if (currentName.current === currentDataSourceName) {
         setDmf(nativeSDL)
-        setModelList(dmmf.datamodel.models ?? [])
-        setCurrentModel(dmmf.datamodel.models?.[0])
+        const models = (dmmf.datamodel.models ?? []).filter(
+          model => model.name !== MAGIC_DELETE_ENTITY_NAME
+        )
+        setModelList(models)
+        setCurrentModel(models[0])
         setRelationMaps(findAllRelationInSchema(sdl))
         readyRef.current = true
       }
