@@ -276,9 +276,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
     } else {
       itemTypeClass = styles.treeItemFile
     }
-    const isCustom =
-      (nodeData.isDir && ['function', 'proxy'].includes(nodeData.name ?? '')) ||
-      (!nodeData.isDir && nodeData.extra?.engine !== OperationEngine.GraphQL)
+    let _parent = nodeData.parent
+    while (_parent) {
+      if (_parent.parent) {
+        _parent = _parent.parent
+      } else {
+        break
+      }
+    }
+    const isCustomAPI = !nodeData.isDir && nodeData.extra?.engine !== OperationEngine.GraphQL
+    const isCustomDir =
+      nodeData.isDir && ['function', 'proxy'].includes(_parent?.name ?? nodeData.name)
 
     return (
       <div className={`${styles.treeItem} ${itemTypeClass}`}>
@@ -306,7 +314,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           <div className={styles.title}>{nodeData.name}</div>
           <div className={styles.suffix}>{miniStatus}</div>
 
-          {!isCustom && (
+          {!isCustomDir && (
             <div onClick={e => e.stopPropagation()}>
               <Dropdown
                 destroyPopupOnHide
@@ -383,7 +391,12 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                         </div>
                       )
                     }
-                  ].filter(x => x.key !== 'copy' || !nodeData.isDir)
+                  ].filter(x => {
+                    if (isCustomAPI) {
+                      return x.key === 'delete'
+                    }
+                    return x.key !== 'copy' || !nodeData.isDir
+                  })
                 }}
                 trigger={['click']}
                 placement="bottomRight"

@@ -141,6 +141,7 @@ export default function Index(props: PropsWithChildren) {
     sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
     sendMessageToSocket({ channel: 'log', event: 'pull' })
     sendMessageToSocket({ channel: 'question', event: 'pull' })
+    sendMessageToSocket({ channel: 'license', event: 'pull' })
   }, [])
 
   useEffect(() => {
