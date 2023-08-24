@@ -32,6 +32,7 @@ import createFile from '@/utils/uploadLocal'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
+import type { LicenseProps } from './subs/License'
 import Sider from './subs/Sider'
 import StatusBar from './subs/StatusBar'
 
@@ -55,6 +56,7 @@ export default function Index(props: PropsWithChildren) {
     fbVersion: '--',
     fbCommit: '--'
   })
+  const [license, setLicense] = useState<LicenseProps | null>(null)
   const { setVersion } = useConfigContext()
   const isCompiling = useMemo(
     () =>
@@ -135,6 +137,13 @@ export default function Index(props: PropsWithChildren) {
   })
   useWebSocket('question', 'push', data => {
     setQuestions([...questions, data])
+  })
+  useWebSocket('license', 'pull', data => {
+    setLicense(data)
+  })
+  useWebSocket('license', 'push', data => {
+    message.error(data.msg)
+    sendMessageToSocket({ channel: 'license', event: 'pull' })
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'pull' })
@@ -260,6 +269,7 @@ export default function Index(props: PropsWithChildren) {
             startTime={info?.engineStartTime}
             engineStatus={info?.engineStatus}
             hookStatus={info?.hookStatus}
+            license={license}
             menuWidth={fullScreen ? 0 : MENU_WIDTH}
             toggleWindow={(defaultTab: string) => {
               setDefaultWindowTab(defaultTab)

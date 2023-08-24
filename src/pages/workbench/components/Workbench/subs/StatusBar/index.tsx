@@ -18,6 +18,8 @@ import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import type { LicenseProps } from '../License'
+import License from '../License'
 import styles from './index.module.less'
 
 interface Props {
@@ -28,6 +30,7 @@ interface Props {
   engineStatus?: ServiceStatus
   hookStatus?: boolean
   menuWidth: number
+  license: LicenseProps | null
   toggleWindow: (defaultTa: string) => void
 }
 
@@ -42,7 +45,8 @@ const StatusBar: React.FC<Props> = ({
   menuWidth,
   toggleWindow,
   commit,
-  version
+  version,
+  license
 }) => {
   const intl = useIntl()
   const [showDevTip, setShowDevTip] = useState(localStorage.getItem(devTipKey) !== 'false')
@@ -289,8 +293,9 @@ const StatusBar: React.FC<Props> = ({
             <span className={styles.label}>{compileTime}</span>
           </div>
         </span>
+        <span className="ml-auto">{license && <License {...license} />}</span>
         <span
-          className="bg-white rounded-sm cursor-pointer ml-auto mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
+          className="bg-white rounded-sm cursor-pointer ml-4 mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
           onClick={() => {
             vscode?.options?.visible ? vscode.hide() : vscode.show()
           }}
