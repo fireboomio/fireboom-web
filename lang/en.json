@@ -77,9 +77,6 @@
   "/g7pR0": {
     "defaultMessage": "Or"
   },
-  "/mrUV7": {
-    "defaultMessage": "Custom"
-  },
   "/q0fxx": {
     "defaultMessage": "Must end with letter or number"
   },
@@ -91,6 +88,9 @@
   },
   "0BkTtH": {
     "defaultMessage": "Primary Key"
+  },
+  "0D60ha": {
+    "defaultMessage": "More"
   },
   "0DLw3A": {
     "defaultMessage": "Can Be Null"
@@ -134,6 +134,9 @@
   "1ceY2D": {
     "defaultMessage": "Independent Config"
   },
+  "1hWTAI": {
+    "defaultMessage": "Strategy"
+  },
   "1j0lPi": {
     "defaultMessage": "Operation Succeeded!"
   },
@@ -168,6 +171,9 @@
   "2PNzKb": {
     "defaultMessage": "Select Fields From <{name}>"
   },
+  "2QhCqB": {
+    "defaultMessage": "Notifications"
+  },
   "2QzYmY": {
     "defaultMessage": "Cancel"
   },
@@ -197,6 +203,9 @@
   },
   "32k+gD": {
     "defaultMessage": "Create File Storage"
+  },
+  "3J9k4c": {
+    "defaultMessage": "Expose headers"
   },
   "3OgiQ+": {
     "defaultMessage": "Enum name already exists"
@@ -339,7 +348,10 @@
     "defaultMessage": "Enable?"
   },
   "8y5Ykn": {
-    "defaultMessage": "Modified On"
+    "defaultMessage": "Modified at"
+  },
+  "93NHRk": {
+    "defaultMessage": "Specify the validity period, in seconds, for the preflight request (OPTIONS request). The default value is 120 seconds. Within this period, the browser does not need to send another preflight request."
   },
   "96YcwE": {
     "defaultMessage": "Field Type Mapping"
@@ -377,6 +389,9 @@
   },
   "9n8LjV": {
     "defaultMessage": "Login User"
+  },
+  "9nhj16": {
+    "defaultMessage": "Guide"
   },
   "9sTPgx": {
     "defaultMessage": "Allowed HOSTS"
@@ -435,6 +450,9 @@
   "B9XR0F": {
     "defaultMessage": "Confirm deleting this entity? Related fields will be deleted too!"
   },
+  "BFO9oi": {
+    "defaultMessage": "Cookie based"
+  },
   "BLQNDV": {
     "defaultMessage": "Please Edit"
   },
@@ -486,9 +504,6 @@
   },
   "CZeyZ7": {
     "defaultMessage": "External APIs"
-  },
-  "ChJY+S": {
-    "defaultMessage": "Hook service internal address, usually no need to modify"
   },
   "DAKKuk": {
     "defaultMessage": "Template Market"
@@ -587,6 +602,12 @@
   "H4GEbT": {
     "defaultMessage": "Edit role"
   },
+  "HE0NF8": {
+    "defaultMessage": "Schema file"
+  },
+  "HKRFyb": {
+    "defaultMessage": "Role setting"
+  },
   "HPWQD3": {
     "defaultMessage": "Logout"
   },
@@ -624,6 +645,9 @@
   "Ipvx+S": {
     "defaultMessage": "Engine"
   },
+  "IsobDW": {
+    "defaultMessage": "Specify whether to allow the sending of credentials such as cookies. If set to true, it indicates that sending credentials is allowed. If set to false, sending credentials is not allowed"
+  },
   "IujQJk": {
     "defaultMessage": "Entity alias"
   },
@@ -652,6 +676,9 @@
   "K2DWpV": {
     "defaultMessage": "Invalid input!"
   },
+  "Kc1PjJ": {
+    "defaultMessage": "Specify the allowed origins (domain, protocol, port) for access. Use the wildcard * to allow access from all origins, or specify specific origins."
+  },
   "KiiWJR": {
     "defaultMessage": "Variable value"
   },
@@ -663,6 +690,12 @@
   },
   "L/CHdQ": {
     "defaultMessage": "Recheck duration"
+  },
+  "L4WUiq": {
+    "defaultMessage": "GraphQL endpoint"
+  },
+  "LF5hEb": {
+    "defaultMessage": "Specify the allowed HTTP request methods, separated by commas for multiple methods. Common methods include GET, POST, PUT, DELETE, etc."
   },
   "LJEftP": {
     "defaultMessage": "Please select matching pattern first"
@@ -709,6 +742,9 @@
   "Ms9pdw": {
     "defaultMessage": "Copy URL"
   },
+  "MtdXBS": {
+    "defaultMessage": "Copy url"
+  },
   "Mto+Yh": {
     "defaultMessage": "hooks function parameter, only used in custom hooks"
   },
@@ -742,8 +778,14 @@
   "Oxa91E": {
     "defaultMessage": "jwksJSON"
   },
+  "OzNfBQ": {
+    "defaultMessage": "Hook's url"
+  },
   "P/eul9": {
     "defaultMessage": "No"
+  },
+  "P3/nym": {
+    "defaultMessage": "Token based"
   },
   "P9Qnez": {
     "defaultMessage": "JWKS"
@@ -797,6 +839,9 @@
   "RKEnyl": {
     "defaultMessage": "(Only one hook can be enabled at a time, toggle mode)"
   },
+  "RLuwfd": {
+    "defaultMessage": "Start with a letter or underscore, and can only consist of numbers, letters, underscores, and dots."
+  },
   "RP3X0u": {
     "defaultMessage": "Connection params"
   },
@@ -832,6 +877,9 @@
   },
   "SKkYA0": {
     "defaultMessage": "Auto saving..."
+  },
+  "SOBHgO": {
+    "defaultMessage": "Edit"
   },
   "SU89De": {
     "defaultMessage": "By created time"
@@ -899,6 +947,9 @@
   },
   "UifjEZ": {
     "defaultMessage": "Log level"
+  },
+  "UiwlCI": {
+    "defaultMessage": "Specify the allowed custom request headers, multiple header fields are separated by commas. The default is \"*\", which means no restrictions."
   },
   "Ul2EcR": {
     "defaultMessage": "Entity name update failed, error:"
@@ -1053,6 +1104,9 @@
   "ZUhyFj": {
     "defaultMessage": "Global dependencies"
   },
+  "ZhU+bx": {
+    "defaultMessage": "Must not use dev mode in production"
+  },
   "Zlo7bL": {
     "defaultMessage": "Generate path"
   },
@@ -1132,6 +1186,9 @@
   },
   "cDZ00w": {
     "defaultMessage": "View"
+  },
+  "cGUVW2": {
+    "defaultMessage": "Internal server url, generally no modification is required"
   },
   "cJXZNP": {
     "defaultMessage": "Only db format files allowed"
@@ -1261,6 +1318,9 @@
   },
   "hF6ZoL": {
     "defaultMessage": "Endpoint cannot be empty"
+  },
+  "hH1NyL": {
+    "defaultMessage": "Please input {name} data-source's name"
   },
   "hciqXL": {
     "defaultMessage": "Unsupported type"
@@ -1500,6 +1560,9 @@
   "p/NHCA": {
     "defaultMessage": "Validating"
   },
+  "p4kuIw": {
+    "defaultMessage": "Response"
+  },
   "p5GCek": {
     "defaultMessage": "Hook template"
   },
@@ -1555,6 +1618,9 @@
   "qZjJ7M": {
     "defaultMessage": "Redirect URL"
   },
+  "qd+Bp3": {
+    "defaultMessage": "DataSource created, please restart the hook server after saving"
+  },
   "qd0uEq": {
     "defaultMessage": "Select"
   },
@@ -1587,9 +1653,6 @@
   },
   "rCo8W8": {
     "defaultMessage": "item(s)"
-  },
-  "rOTKi+": {
-    "defaultMessage": "GraphQL endpoint"
   },
   "rbmyiL": {
     "defaultMessage": "Compile failed"
@@ -1634,6 +1697,9 @@
   },
   "sc19NF": {
     "defaultMessage": "Cannot contain consecutive underscores"
+  },
+  "slEoee": {
+    "defaultMessage": "Require authentication"
   },
   "slR1VF": {
     "defaultMessage": "+ Add filter condition"
@@ -1724,6 +1790,9 @@
   "vr5TVT": {
     "defaultMessage": "Please input"
   },
+  "vrfpyb": {
+    "defaultMessage": "Request arguments"
+  },
   "w1CbbR": {
     "defaultMessage": "Database name:"
   },
@@ -1750,6 +1819,9 @@
   },
   "x4mNBF": {
     "defaultMessage": "{seconds} secs ago"
+  },
+  "x7Gsiw": {
+    "defaultMessage": "Specify the response headers that are allowed to be accessed by the client."
   },
   "xE1H+X": {
     "defaultMessage": "Settings"

@@ -303,7 +303,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                   />
                 </Form.Item>
-                <div className="ml-2 text-12px text-[#333]">授权码模式</div>
+                <div className="ml-2 text-12px text-[#333]">
+                  <FormattedMessage defaultMessage="授权码模式" />
+                </div>
               </div>
             </Form.Item>
 
@@ -435,7 +437,9 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                     unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
                   />
                 </Form.Item>
-                <div className="ml-2 text-12px text-[#333]">隐式模式</div>
+                <div className="ml-2 text-12px text-[#333]">
+                  <FormattedMessage defaultMessage="隐式模式" />
+                </div>
               </div>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })} name="jwks">

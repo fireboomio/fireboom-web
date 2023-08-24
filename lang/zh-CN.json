@@ -76,9 +76,6 @@
   "/g7pR0": {
     "defaultMessage": "或者"
   },
-  "/mrUV7": {
-    "defaultMessage": "自定义"
-  },
   "/q0fxx": {
     "defaultMessage": "必须以字母或数字结尾"
   },
@@ -90,6 +87,9 @@
   },
   "0BkTtH": {
     "defaultMessage": "主键"
+  },
+  "0D60ha": {
+    "defaultMessage": "更多"
   },
   "0DLw3A": {
     "defaultMessage": "可以为空"
@@ -115,8 +115,8 @@
   "0zyVbu": {
     "defaultMessage": "供应商名称"
   },
-  "17LOYz": {
-    "defaultMessage": "手动设置"
+  "1+Uose": {
+    "defaultMessage": "权限设置"
   },
   "1GUffX": {
     "defaultMessage": "请上传 OAS 文件"
@@ -132,6 +132,9 @@
   },
   "1ceY2D": {
     "defaultMessage": "使用独立配置"
+  },
+  "1hWTAI": {
+    "defaultMessage": "策略"
   },
   "1j0lPi": {
     "defaultMessage": "操作成功！"
@@ -167,6 +170,9 @@
   "2PNzKb": {
     "defaultMessage": "从<{name}>选择字段"
   },
+  "2QhCqB": {
+    "defaultMessage": "通知"
+  },
   "2QzYmY": {
     "defaultMessage": "取消"
   },
@@ -196,6 +202,9 @@
   },
   "32k+gD": {
     "defaultMessage": "创建文件存储"
+  },
+  "3J9k4c": {
+    "defaultMessage": "暴露头"
   },
   "3OgiQ+": {
     "defaultMessage": "枚举名已存在"
@@ -340,6 +349,9 @@
   "8y5Ykn": {
     "defaultMessage": "修改于"
   },
+  "93NHRk": {
+    "defaultMessage": "指定预检请求（OPTIONS请求）的有效期，单位为秒，默认 120 秒 。在有效期内，浏览器无需再发送预检请求"
+  },
   "96YcwE": {
     "defaultMessage": "字段类型映射"
   },
@@ -376,6 +388,9 @@
   },
   "9n8LjV": {
     "defaultMessage": "登录用户"
+  },
+  "9nhj16": {
+    "defaultMessage": "新手指引"
   },
   "9sTPgx": {
     "defaultMessage": "允许HOST"
@@ -434,6 +449,9 @@
   "B9XR0F": {
     "defaultMessage": "确认删除该实体吗？将会同时删除引用字段！"
   },
+  "BFO9oi": {
+    "defaultMessage": "授权码模式"
+  },
   "BLQNDV": {
     "defaultMessage": "请编辑"
   },
@@ -485,9 +503,6 @@
   },
   "CZeyZ7": {
     "defaultMessage": "对外API"
-  },
-  "ChJY+S": {
-    "defaultMessage": "钩子服务对内地址，一般不需要修改"
   },
   "DAKKuk": {
     "defaultMessage": "模版市场"
@@ -586,6 +601,12 @@
   "H4GEbT": {
     "defaultMessage": "编辑角色"
   },
+  "HE0NF8": {
+    "defaultMessage": "Schema 文件"
+  },
+  "HKRFyb": {
+    "defaultMessage": "角色设置"
+  },
   "HPWQD3": {
     "defaultMessage": "登出"
   },
@@ -623,6 +644,9 @@
   "Ipvx+S": {
     "defaultMessage": "引擎"
   },
+  "IsobDW": {
+    "defaultMessage": "指定是否允许发送Cookie等凭证信息。如果设置为true，则表示允许发送凭证信息；如果设置为false，则不允许发送凭证信息"
+  },
   "IujQJk": {
     "defaultMessage": "实体别名"
   },
@@ -645,11 +669,14 @@
   "JeJAmT": {
     "defaultMessage": "重命名"
   },
-  "K27Y7X": {
-    "defaultMessage": "排除头"
+  "K0wvJU": {
+    "defaultMessage": "脚本"
   },
   "K2DWpV": {
     "defaultMessage": "输入不合法！"
+  },
+  "Kc1PjJ": {
+    "defaultMessage": "指定允许访问的源（域名、协议、端口），使用通配符 * 表示允许所有源进行访问，也可以指定具体的源"
   },
   "KiiWJR": {
     "defaultMessage": "变量值"
@@ -662,6 +689,12 @@
   },
   "L/CHdQ": {
     "defaultMessage": "重新校验时长"
+  },
+  "L4WUiq": {
+    "defaultMessage": "GraphQL 端点"
+  },
+  "LF5hEb": {
+    "defaultMessage": "指定允许的HTTP请求方法，多个方法使用逗号分隔。常见的方法包括GET、POST、PUT、DELETE等"
   },
   "LJEftP": {
     "defaultMessage": "请先选择匹配模式"
@@ -708,6 +741,9 @@
   "Ms9pdw": {
     "defaultMessage": "复制URL"
   },
+  "MtdXBS": {
+    "defaultMessage": "复制接口URL地址"
+  },
   "Mto+Yh": {
     "defaultMessage": "hooks 函数参数，仅用于自定义 hooks 中"
   },
@@ -741,8 +777,14 @@
   "Oxa91E": {
     "defaultMessage": "jwksJSON"
   },
+  "OzNfBQ": {
+    "defaultMessage": "钩子服务地址"
+  },
   "P/eul9": {
     "defaultMessage": "否"
+  },
+  "P3/nym": {
+    "defaultMessage": "隐式模式"
   },
   "P9Qnez": {
     "defaultMessage": "JWKS"
@@ -796,6 +838,9 @@
   "RKEnyl": {
     "defaultMessage": "（钩子同时只能开启一个，为toggle模式）"
   },
+  "RLuwfd": {
+    "defaultMessage": "以字母或下划线开头，只能由数字、字母、下划线、点组成"
+  },
   "RP3X0u": {
     "defaultMessage": "连接参数"
   },
@@ -831,6 +876,9 @@
   },
   "SKkYA0": {
     "defaultMessage": "自动保存中..."
+  },
+  "SOBHgO": {
+    "defaultMessage": "编辑代码"
   },
   "SU89De": {
     "defaultMessage": "按创建时间"
@@ -898,6 +946,9 @@
   },
   "UifjEZ": {
     "defaultMessage": "日志水平"
+  },
+  "UiwlCI": {
+    "defaultMessage": "指定允许的自定义请求头，多个头部字段使用逗号分隔。默认为 * ，表示不限制"
   },
   "Ul2EcR": {
     "defaultMessage": "实体名更新失败, error:"
@@ -1052,6 +1103,9 @@
   "ZUhyFj": {
     "defaultMessage": "全局依赖"
   },
+  "ZhU+bx": {
+    "defaultMessage": "请勿将开发模式用于生产"
+  },
   "Zlo7bL": {
     "defaultMessage": "生成路径"
   },
@@ -1131,6 +1185,9 @@
   },
   "cDZ00w": {
     "defaultMessage": "查看"
+  },
+  "cGUVW2": {
+    "defaultMessage": "服务内网地址，一般不需要修改"
   },
   "cJXZNP": {
     "defaultMessage": "只允许上传 db 格式文件"
@@ -1260,6 +1317,9 @@
   },
   "hF6ZoL": {
     "defaultMessage": "端点不能为空"
+  },
+  "hH1NyL": {
+    "defaultMessage": "请输入 {name} 数据源名称"
   },
   "hciqXL": {
     "defaultMessage": "暂不支持的类型"
@@ -1499,6 +1559,9 @@
   "p/NHCA": {
     "defaultMessage": "校验中"
   },
+  "p4kuIw": {
+    "defaultMessage": "响应定义"
+  },
   "p5GCek": {
     "defaultMessage": "钩子模版"
   },
@@ -1554,6 +1617,9 @@
   "qZjJ7M": {
     "defaultMessage": "重定向URL"
   },
+  "qd+Bp3": {
+    "defaultMessage": "数据源创建成功，请在编辑完成后重启钩子服务"
+  },
   "qd0uEq": {
     "defaultMessage": "选择"
   },
@@ -1586,9 +1652,6 @@
   },
   "rCo8W8": {
     "defaultMessage": "个"
-  },
-  "rOTKi+": {
-    "defaultMessage": "GraphQL端点"
   },
   "rbmyiL": {
     "defaultMessage": "编译失败"
@@ -1633,6 +1696,9 @@
   },
   "sc19NF": {
     "defaultMessage": "不能包含连续的两个下划线"
+  },
+  "slEoee": {
+    "defaultMessage": "是否需要认证"
   },
   "slR1VF": {
     "defaultMessage": "+ 新增筛选条件"
@@ -1723,6 +1789,9 @@
   "vr5TVT": {
     "defaultMessage": "请输入"
   },
+  "vrfpyb": {
+    "defaultMessage": "入参定义"
+  },
   "w1CbbR": {
     "defaultMessage": "数据库名:"
   },
@@ -1749,6 +1818,9 @@
   },
   "x4mNBF": {
     "defaultMessage": "{seconds}秒前"
+  },
+  "x7Gsiw": {
+    "defaultMessage": "指定响应中允许客户端访问的响应头"
   },
   "xE1H+X": {
     "defaultMessage": "设置"

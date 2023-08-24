@@ -5,7 +5,7 @@ import { Descriptions, message, Tag } from 'antd'
 import clsx from 'clsx'
 import copy from 'copy-to-clipboard'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
 import Error50x from '@/components/ErrorPage/50x'
@@ -64,13 +64,17 @@ export default function AuthMainCheck({ content }: Props) {
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于cookie' })}>
             {content.oidcConfigEnabled ? (
-              <Tag color="success">开启</Tag>
+              <Tag color="success">
+                <FormattedMessage defaultMessage="开启" />
+              </Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
-                关闭
+                <FormattedMessage defaultMessage="关闭" />
               </Tag>
             )}
-            <span className="text-[#aaa] ml-1">授权码模式</span>
+            <span className="text-[#aaa] ml-1">
+              <FormattedMessage defaultMessage="授权码模式" />
+            </span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'App ID' })}>
             {getConfigurationVariableRender(content.oidcConfig?.clientId)}
@@ -111,13 +115,17 @@ export default function AuthMainCheck({ content }: Props) {
         <Descriptions bordered column={1} size="small" className="mt-3">
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '基于token' })}>
             {content.jwksProviderEnabled ? (
-              <Tag color="success">开启</Tag>
+              <Tag color="success">
+                <FormattedMessage defaultMessage="开启" />
+              </Tag>
             ) : (
               <Tag color="default" className="text-[#999]">
-                关闭
+                <FormattedMessage defaultMessage="关闭" />
               </Tag>
             )}
-            <span className="text-[#aaa] ml-1">隐式模式</span>
+            <span className="text-[#aaa] ml-1">
+              <FormattedMessage defaultMessage="隐式模式" />
+            </span>
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'JWKS' })}>
             {content.jwksProvider?.jwksJson ? 'JSON' : 'URL'}

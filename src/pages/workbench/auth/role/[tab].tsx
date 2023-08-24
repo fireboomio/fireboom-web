@@ -282,7 +282,7 @@ export default function AuthRole() {
                           className={styles.btn}
                           onClick={() => vscode.show(hookState![name].path)}
                         >
-                          编辑
+                          <FormattedMessage defaultMessage="编辑" />
                         </div>
                       </div>
                     ))}

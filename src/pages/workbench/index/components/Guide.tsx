@@ -1,5 +1,6 @@
 import { Image } from 'antd'
 import { useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -167,13 +168,15 @@ export default function Guide({ handleToggleDesigner }: Props) {
   return (
     <div className={styles.guideContainer}>
       <div className="flex flex-0 h-62px pr-8px pl-23px justify-between items-center">
-        <span className="font-bold text-17px text-[#222]">新手指引</span>
+        <span className="font-bold text-17px text-[#222]">
+          <FormattedMessage defaultMessage="新手指引" />
+        </span>
         <div className="cursor-pointer p-3 text-0px">
           <Image
             width={15}
             height={15}
             preview={false}
-            alt="关闭"
+            alt="close"
             src="/assets/guide/icon-close.png"
             onClick={handleClose}
           />
