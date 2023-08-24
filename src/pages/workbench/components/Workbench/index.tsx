@@ -70,6 +70,11 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
+  const modelName = {
+    datasource: intl.formatMessage({ defaultMessage: '数据源' }),
+    operation: intl.formatMessage({ defaultMessage: 'API' }),
+    teamwork: intl.formatMessage({ defaultMessage: '团队' })
+  } as const
 
   const [vscode, setVscode] = useState<{ visible: boolean; currentPath: string; config: any }>({
     visible: false,
@@ -142,7 +147,18 @@ export default function Index(props: PropsWithChildren) {
     setLicense(data)
   })
   useWebSocket('license', 'push', data => {
-    message.error(data.msg)
+    intl.formatMessage(
+      {
+        defaultMessage: '{msg}\n当前{mode}超出{limit}的限制，请访问{url}获取商业授权'
+      },
+      {
+        msg: data.msg,
+        mode: modelName[data.data.function as keyof typeof modelName],
+        limit: data.data.limits,
+        url: data.data.contractAddress
+      }
+    )
+    message.error(`${data.msg}`)
     sendMessageToSocket({ channel: 'license', event: 'pull' })
   })
   useEffect(() => {
