@@ -420,10 +420,10 @@ export default function Index(props: PropsWithChildren) {
   }
 }
 
-function parseLogs(logs: string[]) {
+function parseLogs(logs: string[] | null) {
   const result: { time: string; level: string; msg: string }[] = []
   let lastLog: any
-  logs.forEach(log => {
+  logs?.forEach(log => {
     // "2023-08-04T14:48:25.059688+08:00 INFO server/middleware.go:70 request log {"hostname": "erguotou.local", "pid": 58817, "detail": {"StartTime":"2023-08-04T14:48:25.058494+08:00","Latency":1139875,"Protocol":"","RemoteIP":"127.0.0.1","Host":"","Method":"GET","URI":"/api/sdk/enabledServer","URIPath":"/api/sdk/enabledServer","RoutePath":"","RequestID":"","Referer":"","UserAgent":"","Status":200,"Error":null,"ContentLength":"","ResponseSize":0,"Headers":null,"QueryParams":null,"FormValues":null}}
     const [, time, level, msg] = log.match(/([\d\w-:.+]+) (\w+) (.*)/) || []
     if (time) {

@@ -14,7 +14,7 @@ import { useStorageList } from '@/hooks/store/storage'
 import type { AppRuntime } from '@/interfaces/base'
 import type { FBVersion } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
-import requests, { hasAuthKey, setAuthKey, useAuthState } from '@/lib/fetchers'
+import requests, { setAuthKey, useAuthState } from '@/lib/fetchers'
 import { useAppIntl } from '@/providers/IntlProvider'
 import { services } from '@/services'
 import { setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
@@ -28,7 +28,7 @@ const Authentication = (props: AuthenticationProps) => {
   const intl = useIntl()
 
   const { setLocale } = useAppIntl()
-  const [authed, setAuthed] = useState(hasAuthKey())
+  const [authed, setAuthed] = useState(false)
   const authState = useAuthState()
   const [appRuntime, setAppRuntime] = useState<AppRuntime>()
 
@@ -49,15 +49,14 @@ const Authentication = (props: AuthenticationProps) => {
   const onSubmit = async ({ key }: { key: string }) => {
     setAuthKey(key)
     setAuthKey1(key)
-    const resp = await axios.get('/health')
-    const success = resp.status < 300 && resp.status >= 200
-    if (!success) {
+    if (await refreshConfig()) {
+      broadcast('auth', 'setAuthKey', key)
+      setAuthed(true)
+    } else {
       setAuthKey('')
       setAuthKey1('')
-    } else {
-      broadcast('auth', 'setAuthKey', key)
+      setAuthed(false)
     }
-    setAuthed(success)
   }
   // const [system, setSystem] = useState<SystemConfigType>()
   // const [environment, setEnvironment] = useState()
@@ -72,6 +71,9 @@ const Authentication = (props: AuthenticationProps) => {
       if (res.status < 300) {
         setAppRuntime(res.data)
         refreshConfig().then(resp => {
+          if (resp) {
+            setAuthed(true)
+          }
           if (resp?.appearance?.language) {
             setLocale(resp.appearance.language.replace(/_/g, '-'))
           }
@@ -85,13 +87,16 @@ const Authentication = (props: AuthenticationProps) => {
   }
 
   const refreshConfig = async () => {
-    const { error, data } = await services['globalSetting@/globalSetting/single']()
-    if (!error) {
-      const { fbVersion, fbCommit } = globalSetting ?? {}
-      setGlobalSetting({ ...data, fbVersion: fbVersion ?? '', fbCommit: fbCommit ?? '' })
-      return data
+    try {
+      const resp = await requests.get<any, ApiDocuments.GlobalSetting>('/globalSetting/single')
+      const { fbVersion, fbCommit } = resp
+      setGlobalSetting({ ...resp, fbVersion: fbVersion ?? '', fbCommit: fbCommit ?? '' })
+      return resp
+    } catch (e) {
+      //
     }
   }
+
   if (appRuntime && appRuntime['enable-auth'] === true && !authed) {
     return (
       <div className="flex flex-col h-screen bg-warm-gray-200 w-screen items-center justify-center">
