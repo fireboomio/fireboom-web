@@ -9,7 +9,7 @@ function trimPath(str) {
 function getHeaders() {
   return {
     'Content-Type': 'application/json',
-    'X-FB-Authentication': localStorage.getItem('__fb_authKey')
+    // 'X-FB-Authentication': localStorage.getItem('__fb_authKey')
   }
 }
 
@@ -188,6 +188,8 @@ class VirtualFileSystemProvider {
   }
 }
 function activate(context) {
+  vscode.extensions.getExtensionContext().extensionUri
+  debugger
   const virtualFileSystemProvider = new VirtualFileSystemProvider()
   const scheme = 'fbfs'
   const disposable = vscode.workspace.registerFileSystemProvider(
