@@ -47,7 +47,7 @@ const MENU_WIDTH = 230
 
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
-  const [messageApi] = message.useMessage()
+  const [messageApi, contextHolder] = message.useMessage()
   const [info, setInfo] = useState<Info>({
     errorInfo: { errTotal: 0, warnTotal: 0 },
     engineStatus: ServiceStatus.Started,
@@ -423,6 +423,7 @@ export default function Index(props: PropsWithChildren) {
   if (location.pathname.match(/^\/workbench\/modeling($|\/)/)) {
     return (
       <Suspense>
+        {contextHolder}
         <GlobalContext.Provider value={globalProviderValue}>
           <Spin tip={loading} spinning={!!loading}>
             <ModelingWrapper>{body}</ModelingWrapper>
@@ -433,6 +434,7 @@ export default function Index(props: PropsWithChildren) {
   } else {
     return (
       <GlobalContext.Provider value={globalProviderValue}>
+        {contextHolder}
         <Spin tip={loading} spinning={!!loading}>
           <WorkbenchContext.Provider
             value={{
