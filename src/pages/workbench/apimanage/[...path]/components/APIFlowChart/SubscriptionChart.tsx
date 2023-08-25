@@ -3,7 +3,7 @@ import '@antv/x6-react-shape/dist/x6-react-shape.js'
 
 import type { Node } from '@antv/x6'
 import { Graph } from '@antv/x6'
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { ActionGroup } from './ActionGroup'
@@ -337,7 +337,7 @@ const SubscriptionChart = ({
     ])
 
     // fromClaim会隐式要求登录
-    if (directiveState.fromClaim || apiDesc.authenticationConfig.authRequired) {
+    if (directiveState.fromClaim || apiDesc.authenticationConfig?.authRequired) {
       graph.addNode({
         shape: 'decision',
         label: intl.formatMessage({ description: '流程图', defaultMessage: '登录校验?' }),
@@ -408,7 +408,7 @@ const SubscriptionChart = ({
     // 结束
     if (
       directiveState.fromClaim ||
-      apiDesc.authenticationConfig.authRequired ||
+      apiDesc.authenticationConfig?.authRequired ||
       directiveState.rbac ||
       directiveState.jsonSchema
     ) {
