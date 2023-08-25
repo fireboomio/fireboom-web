@@ -1,8 +1,13 @@
-import { Descriptions, Popover } from 'antd'
+import { CopyOutlined } from '@ant-design/icons'
+import { Button, Descriptions, message, Popover } from 'antd'
+import copy from 'copy-to-clipboard'
 import dayjs from 'dayjs'
+import type { CSSProperties } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import useSWRImmutable from 'swr/immutable'
 
 import { formatDate } from '@/lib/helpers/utils'
+import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
 
 export interface LicenseProps {
   existed: boolean
@@ -21,40 +26,95 @@ export interface LicenseProps {
   expireTime: string
 }
 
+const dotStyle: CSSProperties = {
+  width: '6px',
+  height: '6px',
+  borderRadius: '4px',
+  backgroundColor: '#9FA1A5',
+  marginRight: '6px'
+}
+
+type LicenseConfig = {
+  isLimittedTime: boolean
+  limitEndTime: string | null
+  buyLicenseUrl: string
+  freeGiftUrl: string
+}
+
 const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: LicenseProps) => {
   const intl = useIntl()
+  const { data: licenseConfig } = useSWRImmutable<LicenseConfig>(
+    'license.json',
+    getFireboomFileContent
+  )
   return (
     <Popover
       placement="topRight"
+      arrow={false}
       content={
-        <Descriptions
-          column={1}
-          size="small"
-          labelStyle={{ width: '100px' }}
-          style={{
-            width: '480px'
-          }}
-        >
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '数据源限制' })}>
-            {userLimits?.datasource ?? defaultLimits.datasource}
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'API 限制' })}>
-            {userLimits?.operation ?? defaultLimits.operation}
-          </Descriptions.Item>
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '机器码' })}>
-            {userCode}
-          </Descriptions.Item>
-          {expireTime && existed && userLimits && (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '过期时间' })}>
-              {formatDate(expireTime)}
-            </Descriptions.Item>
-          )}
-          <Descriptions.Item label={intl.formatMessage({ defaultMessage: '商业版升级' })}>
-            <a href="https://fireboom.io/" target="_blank" rel="noreferrer">
-              https://fireboom.io/
-            </a>
-          </Descriptions.Item>
-        </Descriptions>
+        <div className="w-160 px-3 pt-4.5 pb-5">
+          <div className="text-[#333]">
+            <div className="flex items-center">
+              <FormattedMessage defaultMessage="机器码" />
+              <span className="ml-8 text-[#326d9f]">{userCode}</span>
+              <CopyOutlined
+                className="ml-3 cursor"
+                onClick={() => {
+                  copy(userCode)
+                  message.success('Copied')
+                }}
+              />
+            </div>
+            <div className="mt-6 mb-4 text-[rgba(95,98,105,0.6)] text-xs">
+              <FormattedMessage defaultMessage="权益" />
+            </div>
+            <div className="flex flex items-center">
+              <div className="flex-1 flex items-center">
+                <div style={dotStyle} />
+                <FormattedMessage defaultMessage="API数量" />
+                <span className="ml-5">{userLimits?.operation ?? defaultLimits.operation}</span>
+              </div>
+              <div className="flex-1 flex items-center">
+                <div style={dotStyle} />
+                <FormattedMessage defaultMessage="数据源数量" />
+                <span className="ml-5">{userLimits?.datasource ?? defaultLimits.datasource}</span>
+              </div>
+              <div className="flex-1 flex items-center">
+                <div style={dotStyle} />
+                <FormattedMessage defaultMessage="客服支持" />
+              </div>
+            </div>
+          </div>
+          <div
+            className="mt-6 mb-5 h-1px"
+            style={{ border: 'none', borderTop: '1px dashed #979797' }}
+          ></div>
+          <div className="flex items-center">
+            {expireTime && existed && userLimits && (
+              <>
+                <FormattedMessage defaultMessage="过期时间" />
+                <div className="ml-2 flex items-center h-8 bg-[#F8F9FD] px-3 w-69">
+                  {formatDate(expireTime)}
+                </div>
+              </>
+            )}
+            <Button
+              className="ml-auto"
+              onClick={() => window.open(licenseConfig?.buyLicenseUrl, '_blank')}
+            >
+              <FormattedMessage defaultMessage="购买授权" />
+            </Button>
+            {licenseConfig?.isLimittedTime && licenseConfig.freeGiftUrl && (
+              <Button
+                type="primary"
+                className="ml-4"
+                onClick={() => window.open(licenseConfig?.freeGiftUrl, '_blank')}
+              >
+                <FormattedMessage defaultMessage="免费获取" />
+              </Button>
+            )}
+          </div>
+        </div>
       }
       trigger="click"
     >
