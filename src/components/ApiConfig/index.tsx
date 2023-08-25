@@ -19,19 +19,6 @@ interface Props {
   type: 'global' | 'panel'
 }
 
-interface Setting {
-  configCustomized: boolean
-  authenticationRequired: boolean
-  authenticationQueriesRequired: boolean
-  authenticationMutationsRequired: boolean
-  authenticationSubscriptionsRequired: boolean
-  cachingEnabled: boolean
-  cachingMaxAge: number
-  cachingStaleWhileRevalidate: number
-  liveQueryEnabled: boolean
-  liveQueryPollingIntervalSeconds: number
-}
-
 export default function Index(props: Props) {
   const intl = useIntl()
   const { onRefreshMenu } = useContext(WorkbenchContext)
@@ -49,9 +36,26 @@ export default function Index(props: Props) {
     }
   }, [props.operationName])
   useEffect(() => {
-    let setting
+    let setting: Partial<ApiDocuments.Operation>
     if (apiSetting?.configCustomized) {
-      setting = apiSetting
+      setting = {
+        ...apiSetting,
+        cacheConfig: {
+          ...apiSetting.cacheConfig,
+          staleWhileRevalidate:
+            (apiSetting.cacheConfig?.staleWhileRevalidate ||
+              globalSetting?.cacheConfig.staleWhileRevalidate) ??
+            30,
+          maxAge: (apiSetting.cacheConfig?.maxAge || globalSetting?.cacheConfig.maxAge) ?? 120
+        },
+        liveQueryConfig: {
+          ...apiSetting.liveQueryConfig,
+          pollingIntervalSeconds:
+            (apiSetting.liveQueryConfig?.pollingIntervalSeconds ||
+              globalSetting?.liveQueryConfig?.pollingIntervalSeconds) ??
+            10
+        }
+      }
     } else if (globalSetting) {
       setting = globalSetting
       setting.authenticationRequired = !!{
