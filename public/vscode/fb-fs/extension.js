@@ -6,6 +6,13 @@ function trimPath(str) {
   return str.replace(/^\//, '')
 }
 
+function getHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'X-FB-Authentication': localStorage.getItem('__fb_authKey')
+  }
+}
+
 class VirtualFileSystemProvider {
   _emitter = new vscode.EventEmitter()
   _bufferedEvents = []
@@ -15,7 +22,9 @@ class VirtualFileSystemProvider {
   constructor() {}
 
   async readFile(uri) {
-    return fetch(`/api/vscode/readFile?uri=${trimPath(uri.path)}`).then(async resp => {
+    return fetch(`/api/vscode/readFile?uri=${trimPath(uri.path)}`, {
+      headers: getHeaders()
+    }).then(async resp => {
       return new Uint8Array(await resp.arrayBuffer())
     })
   }
@@ -32,7 +41,8 @@ class VirtualFileSystemProvider {
     formData.append('overwrite', options.overwrite)
     return fetch(`/api/vscode/writeFile`, {
       method: 'post',
-      body: formData
+      body: formData,
+      headers: getHeaders()
     }).then(resp => {
       if (options.create) {
         this._fireSoon({ type: vscode.FileChangeType.Created, uri })
@@ -45,9 +55,7 @@ class VirtualFileSystemProvider {
   async delete(uri, options) {
     return fetch(`/api/vscode/delete`, {
       method: 'delete',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({
         uri: trimPath(uri.path),
         recursive: options.recursive
@@ -64,9 +72,7 @@ class VirtualFileSystemProvider {
   async rename(oldUri, newUri, options) {
     return fetch(`/api/vscode/rename`, {
       method: 'put',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({
         oldUri: trimPath(oldUri.path),
         newUri: trimPath(newUri.path),
@@ -82,9 +88,7 @@ class VirtualFileSystemProvider {
   async copy(source, destination, options) {
     return fetch(`/api/vscode/copy`, {
       method: 'post',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({
         source: trimPath(source.path),
         destination: trimPath(destination.path),
@@ -96,7 +100,9 @@ class VirtualFileSystemProvider {
   }
 
   async stat(uri) {
-    return fetch(`/api/vscode/state?uri=${trimPath(uri.path)}`)
+    return fetch(`/api/vscode/state?uri=${trimPath(uri.path)}`, {
+      headers: getHeaders()
+    })
       .then(resp => resp.json())
       .then(resp => {
         return resp
@@ -107,16 +113,16 @@ class VirtualFileSystemProvider {
   }
 
   async readDirectory(uri) {
-    return fetch(`/api/vscode/readDirectory?uri=${trimPath(uri.path)}`).then(resp => resp.json()).then(res => res.map(item => ([item.name, item.type])))
+    return fetch(`/api/vscode/readDirectory?uri=${trimPath(uri.path)}`, {
+      headers: getHeaders()
+    }).then(resp => resp.json()).then(res => res.map(item => ([item.name, item.type])))
   }
 
   async createDirectory(uri) {
     // 这里实现创建目录的逻辑
     return fetch(`/api/vscode/createDirectory`, {
       method: 'post',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({
         uri: trimPath(uri.path)
       })

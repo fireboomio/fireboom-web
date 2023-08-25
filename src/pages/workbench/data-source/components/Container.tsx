@@ -217,11 +217,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             )}
             {!isCustomDatabase ? (
               <>
-                <Button
-                  className={'btn-save !ml-4'}
-                  onClick={() => testLink()}
-                  disabled={content.readonly}
-                >
+                <Button className={'btn-save !ml-4'} onClick={testLink} disabled={content.readonly}>
                   <FormattedMessage defaultMessage="测试" />
                 </Button>
                 <Button
@@ -234,10 +230,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               </>
             ) : content.customGraphql.customized ? (
               <>
-                <Button
-                  className={'btn-save !ml-4'}
-                  onClick={() => window.open(content.customGraphql.endpoint)}
-                >
+                <Button className={'btn-save !ml-4'} onClick={testLink}>
                   <FormattedMessage defaultMessage="测试" />
                 </Button>
                 <Button

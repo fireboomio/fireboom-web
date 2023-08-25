@@ -89,12 +89,12 @@ export enum API {
 }
 
 export enum ServiceStatus {
-  Building = 1,
-  Built = 2,
-  BuildFailed = 3,
-  Starting = 4,
-  Started = 5,
-  StartFailed = 6
+  Building = 'building',
+  Built = 'buildSucceed',
+  BuildFailed = 'buildFailed',
+  Starting = 'starting',
+  Started = 'startSucceed',
+  StartFailed = 'startFailed'
 }
 
 export enum HookStatus {
