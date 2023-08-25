@@ -85,13 +85,11 @@ export declare namespace ApiDocuments {
     allowedHostNames: ApiDocuments.ConfigurationVariable[]
     allowedReport: boolean
     appearance: ApiDocuments.Appearance
-    authenticationKey: string
     authorizedRedirectUris: ApiDocuments.ConfigurationVariable[]
     buildInfo: ApiDocuments.BuildInfo
     consoleLogger: ApiDocuments.lumberjackLogger
     corsConfiguration: ApiDocuments.CorsConfiguration
     enableCSRFProtect: boolean
-    enableGraphqlEndpoint: boolean
     forceHttpsRedirects: boolean
     globalRateLimit?: {
       enabled: boolean
@@ -206,7 +204,9 @@ export declare namespace ApiDocuments {
     description: string
     enabled: boolean
     extension: string
+    generateTime: string
     gitBranch: string
+    gitCommitHash: string
     gitUrl: string
     icon: string
     language: string
@@ -335,10 +335,6 @@ export declare namespace ApiDocuments {
   }
   export interface i18n_CustomError extends BasicDto {
     /**
-     * @description 错误根因
-     */
-    cause?: string
-    /**
      * @description 错误码
      */
     code?: ApiDocuments.i18n_Errcode
@@ -369,6 +365,7 @@ export declare namespace ApiDocuments {
     enabled?: boolean
     extension?: string
     gitBranch?: string
+    gitCommitHash?: string
     gitUrl?: string
     icon?: string
     language?: string

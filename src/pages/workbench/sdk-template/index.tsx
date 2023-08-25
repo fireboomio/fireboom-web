@@ -16,12 +16,12 @@ import {
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import base64 from 'base64-js'
 import type { KeyboardEventHandler } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR, { mutate as _mutate } from 'swr'
 
 import Error50x from '@/components/ErrorPage/50x'
-import requests, { getAuthKey } from '@/lib/fetchers'
+import requests, { getAuthKey, proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { useDict } from '@/providers/dict'
 import { intl } from '@/providers/IntlProvider'
@@ -243,6 +243,32 @@ const SDKTemplate = () => {
 
 export default SDKTemplate
 
+async function checkUpdatable(
+  sdk: ApiDocuments.Sdk
+): Promise<false | { repo: string; localSha: string; remoteSha: string }> {
+  const matched = sdk.gitUrl.match(/^https?:\/\/(.+)\/(.+\/.+)\.git/)
+  if (matched) {
+    try {
+      const ret = await proxy(
+        `https://api.github.com/repos/${matched[2]}/git/refs/heads/${sdk.gitBranch}`
+      )
+      if (ret) {
+        if (ret.object.sha !== sdk.gitCommitHash) {
+          return {
+            repo: matched[2],
+            localSha: sdk.gitCommitHash,
+            remoteSha: ret.object.sha
+          }
+        }
+      }
+      return false
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  return false
+}
+
 const SDKTemplateItem = ({
   onChange,
   sdk
@@ -251,6 +277,9 @@ const SDKTemplateItem = ({
   onChange: (newSDK: ApiDocuments.Sdk) => void
 }) => {
   const intl = useIntl()
+  const [updatable, setUpdatable] = useState<
+    false | { repo: string; localSha: string; remoteSha: string }
+  >(false)
   const [editing, setEditing] = useState(false)
   const [editingValue, setEditingValue] = useState(sdk.outputPath)
   const { initialize } = useDict()
@@ -340,6 +369,10 @@ const SDKTemplateItem = ({
     return menus
   }, [intl, mutate, sdk])
 
+  useEffect(() => {
+    checkUpdatable(sdk).then(setUpdatable)
+  }, [sdk])
+
   return (
     <div className="bg-white rounded shadow p-4 hover:shadow-lg">
       <div className="flex items-center">
@@ -351,7 +384,22 @@ const SDKTemplateItem = ({
           )}`}
         />
         <div className="flex-1">
-          <div className="text-base t-medium">{sdk.name}</div>
+          <div className="flex items-center">
+            <div className="text-base t-medium">{sdk.name}</div>
+            {updatable && (
+              <a
+                className="ml-4 text-primary italic border border-primary border-solid rounded px-1 py-0.5 leading-2 text-xs"
+                href={`https://github.com/${updatable.repo}/compare/${updatable.localSha.substring(
+                  0,
+                  7
+                )}..${updatable.remoteSha.substring(0, 7)}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                new
+              </a>
+            )}
+          </div>
           <div className="flex mt-1 items-center">
             <div className="rounded-md bg-[#D8D8D8] h-2.5 shadow w-2.5"></div>
             <div className="text-xs ml-1 text-[#5F6269]">{sdk.author}</div>
