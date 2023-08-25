@@ -47,6 +47,9 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
     'license.json',
     getFireboomFileContent
   )
+  const isExpired = dayjs(expireTime).isBefore(dayjs())
+  const leftDays = dayjs(expireTime).diff(dayjs(), 'day')
+  const isAlmostExpired = leftDays <= 7
   return (
     <Popover
       placement="topRight"
@@ -56,16 +59,16 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
           <div className="text-[#333]">
             <div className="flex items-center">
               <FormattedMessage defaultMessage="机器码" />
-              <span className="ml-8 text-[#326d9f]">{userCode}</span>
+              <span className="ml-8">{userCode}</span>
               <CopyOutlined
                 className="ml-3 cursor"
                 onClick={() => {
                   copy(userCode)
-                  message.success('Copied')
+                  message.success(intl.formatMessage({ defaultMessage: '已复制' }))
                 }}
               />
             </div>
-            <div className="mt-6 mb-4 text-[rgba(95,98,105,0.6)] text-xs">
+            <div className="mt-5 mb-4 text-[rgba(95,98,105,0.6)] text-xs">
               <FormattedMessage defaultMessage="权益" />
             </div>
             <div className="flex flex items-center">
@@ -88,13 +91,35 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
           <div
             className="mt-6 mb-5 h-1px"
             style={{ border: 'none', borderTop: '1px dashed #979797' }}
-          ></div>
+          />
           <div className="flex items-center">
             {expireTime && existed && userLimits && (
               <>
                 <FormattedMessage defaultMessage="过期时间" />
-                <div className="ml-2 flex items-center h-8 bg-[#F8F9FD] px-3 w-69">
+                <div
+                  className="ml-2 flex items-center h-8 bg-[#F8F9FD] px-3 w-69"
+                  style={{
+                    color: isExpired || isAlmostExpired ? '#F21212' : undefined
+                  }}
+                >
                   {formatDate(expireTime)}
+                  {isExpired && (
+                    <span className="ml-2 text-[10px] bg-[rgba(241,18,18,0.8)] text-white rounded px-1 py-1 scale-75 transform">
+                      <FormattedMessage defaultMessage="已过期" />
+                    </span>
+                  )}
+                  {isAlmostExpired && (
+                    <span className="ml-2">
+                      (
+                      <FormattedMessage
+                        defaultMessage="剩余{left}天"
+                        values={{
+                          left: leftDays
+                        }}
+                      />
+                      )
+                    </span>
+                  )}
                 </div>
               </>
             )}
@@ -109,6 +134,11 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
                 type="primary"
                 className="ml-4"
                 onClick={() => window.open(licenseConfig?.freeGiftUrl, '_blank')}
+                style={{
+                  backgroundImage: 'linear-gradient(36deg, #FFAE72 0%, #FF5E5E 100%)',
+                  boxShadow: '0px 2px 4px 0px rgba(255,116,99,0.5)',
+                  border: 'none'
+                }}
               >
                 <FormattedMessage defaultMessage="免费获取" />
               </Button>
