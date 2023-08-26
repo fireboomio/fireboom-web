@@ -12,6 +12,9 @@
   "+I5Iiy": {
     "defaultMessage": "Anonymous Query"
   },
+  "+Ma7BJ": {
+    "defaultMessage": "Limit"
+  },
   "+MrBgm": {
     "defaultMessage": "Switch between design/data view in model design page"
   },
@@ -29,6 +32,9 @@
   },
   "+pOhR+": {
     "defaultMessage": "File Type"
+  },
+  "+s2H3p": {
+    "defaultMessage": "Require auth"
   },
   "+scveH": {
     "defaultMessage": "{field} should be string, use lowercase letters or underscores!"
@@ -61,7 +67,6 @@
   "/NBrxg": {
     "defaultMessage": "Input Value"
   },
-
   "/NfUUH": {
     "defaultMessage": "Created On"
   },
@@ -254,6 +259,9 @@
   "5FboZ/": {
     "defaultMessage": "Type"
   },
+  "5PSP/z": {
+    "defaultMessage": "Team"
+  },
   "5euLB8": {
     "defaultMessage": "Path"
   },
@@ -271,6 +279,9 @@
   },
   "6B0EzP": {
     "defaultMessage": "Connection URL"
+  },
+  "6Coego": {
+    "defaultMessage": "Switch between design/data view in model design page"
   },
   "6F6gTV": {
     "defaultMessage": "Script content is not in json format"
@@ -340,6 +351,9 @@
   },
   "8EHsht": {
     "defaultMessage": "No Available Entities!"
+  },
+  "8N6B3R": {
+    "defaultMessage": "Machine code"
   },
   "8gWGMl": {
     "defaultMessage": "Internal variable, mark a field as internal variable for easy use in later query statements"
@@ -508,6 +522,9 @@
   "DAKKuk": {
     "defaultMessage": "Template Market"
   },
+  "DJsFlH": {
+    "defaultMessage": "Rights"
+  },
   "DLG2Yy": {
     "defaultMessage": "Connection Type"
   },
@@ -556,6 +573,9 @@
   "FEb7U2": {
     "defaultMessage": "Confirm"
   },
+  "FH4Em7": {
+    "defaultMessage": "Licensed"
+  },
   "FQQECq": {
     "defaultMessage": "Required"
   },
@@ -575,6 +595,9 @@
   "G5QYm7": {
     "defaultMessage": "Client"
   },
+  "G8MZAS": {
+    "defaultMessage": "Community"
+  },
   "GEfsgi": {
     "defaultMessage": "Add Allowed HOST"
   },
@@ -589,6 +612,9 @@
   },
   "GdhWnp": {
     "defaultMessage": "Upgrading"
+  },
+  "GhA32s": {
+    "defaultMessage": "ER Diagram"
   },
   "GisxFq": {
     "defaultMessage": "Static Value"
@@ -613,6 +639,9 @@
   },
   "HalctF": {
     "defaultMessage": "Start compiling"
+  },
+  "HtIFFg": {
+    "defaultMessage": "Swagger document"
   },
   "Hu2hE9": {
     "defaultMessage": "Already exists, do not import repeatedly"
@@ -647,6 +676,9 @@
   },
   "IsobDW": {
     "defaultMessage": "Specify whether to allow the sending of credentials such as cookies. If set to true, it indicates that sending credentials is allowed. If set to false, sending credentials is not allowed"
+  },
+  "It/5QC": {
+    "defaultMessage": "Buy license"
   },
   "IujQJk": {
     "defaultMessage": "Entity alias"
@@ -824,6 +856,9 @@
   "QarRBC": {
     "defaultMessage": "New API"
   },
+  "QdaK6D": {
+    "defaultMessage": "Invalid license"
+  },
   "QpRtOT": {
     "defaultMessage": "Executing"
   },
@@ -850,6 +885,9 @@
   },
   "RagALW": {
     "defaultMessage": "Name:"
+  },
+  "RclhRU": {
+    "defaultMessage": "Expired"
   },
   "Rj34mG": {
     "defaultMessage": "Host:"
@@ -910,6 +948,9 @@
   },
   "TM6vEk": {
     "defaultMessage": "Open"
+  },
+  "TanXXK": {
+    "defaultMessage": "Please visit"
   },
   "TbflcV": {
     "defaultMessage": "Just now"
@@ -1056,6 +1097,9 @@
   "Xz2JYA": {
     "defaultMessage": "Failed starting"
   },
+  "Y+NWSo": {
+    "defaultMessage": "API count"
+  },
   "YCiD/D": {
     "defaultMessage": "Please save or cancel edit first"
   },
@@ -1119,11 +1163,17 @@
   "Zz7nBV": {
     "defaultMessage": "Compiled"
   },
+  "a4KYcJ": {
+    "defaultMessage": "to buy license"
+  },
   "aE19iu": {
     "defaultMessage": "CORS max age"
   },
   "aI3L5g": {
     "defaultMessage": "Global config"
+  },
+  "aIrpM5": {
+    "defaultMessage": "Copied"
   },
   "aSYY8Y": {
     "defaultMessage": "Failed parsing jwksURL and user endpoint"
@@ -1151,6 +1201,9 @@
   },
   "ayODEw": {
     "defaultMessage": "Data preview"
+  },
+  "b/np9H": {
+    "defaultMessage": "Expire at"
   },
   "b0E99S": {
     "defaultMessage": "Key can be found in Fireboom startup log by keyword"
@@ -1359,6 +1412,9 @@
   "io7fqu": {
     "defaultMessage": "Please input valid domain"
   },
+  "isALfz": {
+    "defaultMessage": "Data source count"
+  },
   "iveGBB": {
     "defaultMessage": "New folder"
   },
@@ -1405,6 +1461,9 @@
   "k7lSDV": {
     "defaultMessage": "Start with {dbProtocol}://, no longer than 128 chars"
   },
+  "kTQukZ": {
+    "defaultMessage": "License expired"
+  },
   "kXy8jI": {
     "defaultMessage": "jwksURL"
   },
@@ -1448,6 +1507,9 @@
   "lroVvd": {
     "defaultMessage": "Network issue~",
     "description": "Status code 50x"
+  },
+  "m20fpm": {
+    "defaultMessage": "New model"
   },
   "m6bUGD": {
     "defaultMessage": "Subscribe",
@@ -1505,6 +1567,9 @@
   "nTlFd6": {
     "defaultMessage": "Create empty database"
   },
+  "naK/qg": {
+    "defaultMessage": "Free"
+  },
   "nc6GYZ": {
     "defaultMessage": "Comment"
   },
@@ -1534,6 +1599,9 @@
   },
   "oDLN4x": {
     "defaultMessage": "Cache this query"
+  },
+  "oEls6O": {
+    "defaultMessage": "Customer support"
   },
   "oGXYof": {
     "defaultMessage": "@Private",
@@ -1662,6 +1730,9 @@
   },
   "rnpMD3": {
     "defaultMessage": "Off"
+  },
+  "s1uqMz": {
+    "defaultMessage": "Left {left} day(s)"
   },
   "s4hJju": {
     "defaultMessage": "Details"
@@ -1848,6 +1919,9 @@
   "xg+tVB": {
     "defaultMessage": "Fireboom version"
   },
+  "xwEc8K": {
+    "defaultMessage": "API"
+  },
   "xzl0Bm": {
     "defaultMessage": "Config login callback"
   },
@@ -1859,6 +1933,9 @@
   },
   "yOMNOj": {
     "defaultMessage": "Yes"
+  },
+  "ydOjls": {
+    "defaultMessage": "{model} model has exceed the limit of {limit}"
   },
   "yy7EDI": {
     "defaultMessage": "Upload"

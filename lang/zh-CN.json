@@ -12,6 +12,9 @@
   "+I5Iiy": {
     "defaultMessage": "匿名查询"
   },
+  "+Ma7BJ": {
+    "defaultMessage": "限时"
+  },
   "+MrBgm": {
     "defaultMessage": "模型设计页切换设计/数据视图"
   },
@@ -29,6 +32,9 @@
   },
   "+pOhR+": {
     "defaultMessage": "文件类型"
+  },
+  "+s2H3p": {
+    "defaultMessage": "需要认证"
   },
   "+scveH": {
     "defaultMessage": "{field}应为字符串，使用大小写字母或者下划线！"
@@ -253,6 +259,9 @@
   "5FboZ/": {
     "defaultMessage": "类型"
   },
+  "5PSP/z": {
+    "defaultMessage": "团队"
+  },
   "5euLB8": {
     "defaultMessage": "路径"
   },
@@ -270,6 +279,9 @@
   },
   "6B0EzP": {
     "defaultMessage": "连接URL"
+  },
+  "6Coego": {
+    "defaultMessage": "切换数据预览和数据建模"
   },
   "6F6gTV": {
     "defaultMessage": "脚本内容不是json格式"
@@ -339,6 +351,9 @@
   },
   "8EHsht": {
     "defaultMessage": "无可用实体！"
+  },
+  "8N6B3R": {
+    "defaultMessage": "机器码"
   },
   "8gWGMl": {
     "defaultMessage": "内部变量，标记某个字段为内部变量，方便后续查询语句中使用"
@@ -507,6 +522,9 @@
   "DAKKuk": {
     "defaultMessage": "模版市场"
   },
+  "DJsFlH": {
+    "defaultMessage": "权益"
+  },
   "DLG2Yy": {
     "defaultMessage": "连接类型"
   },
@@ -555,6 +573,9 @@
   "FEb7U2": {
     "defaultMessage": "确认"
   },
+  "FH4Em7": {
+    "defaultMessage": "商业授权版"
+  },
   "FQQECq": {
     "defaultMessage": "必填"
   },
@@ -574,6 +595,9 @@
   "G5QYm7": {
     "defaultMessage": "客户端"
   },
+  "G8MZAS": {
+    "defaultMessage": "社区版"
+  },
   "GEfsgi": {
     "defaultMessage": "增加允许HOST"
   },
@@ -588,6 +612,9 @@
   },
   "GdhWnp": {
     "defaultMessage": "升级中"
+  },
+  "GhA32s": {
+    "defaultMessage": "ER图"
   },
   "GisxFq": {
     "defaultMessage": "静态值"
@@ -612,6 +639,9 @@
   },
   "HalctF": {
     "defaultMessage": "开始编译"
+  },
+  "HtIFFg": {
+    "defaultMessage": "Swagger文档"
   },
   "Hu2hE9": {
     "defaultMessage": "已存在，请勿重复引入"
@@ -646,6 +676,9 @@
   },
   "IsobDW": {
     "defaultMessage": "指定是否允许发送Cookie等凭证信息。如果设置为true，则表示允许发送凭证信息；如果设置为false，则不允许发送凭证信息"
+  },
+  "It/5QC": {
+    "defaultMessage": "购买授权"
   },
   "IujQJk": {
     "defaultMessage": "实体别名"
@@ -823,6 +856,9 @@
   "QarRBC": {
     "defaultMessage": "新建API"
   },
+  "QdaK6D": {
+    "defaultMessage": "非法授权"
+  },
   "QpRtOT": {
     "defaultMessage": "执行中"
   },
@@ -849,6 +885,9 @@
   },
   "RagALW": {
     "defaultMessage": "名称:"
+  },
+  "RclhRU": {
+    "defaultMessage": "已过期"
   },
   "Rj34mG": {
     "defaultMessage": "主机:"
@@ -909,6 +948,9 @@
   },
   "TM6vEk": {
     "defaultMessage": "打开"
+  },
+  "TanXXK": {
+    "defaultMessage": "请访问"
   },
   "TbflcV": {
     "defaultMessage": "刚刚"
@@ -1055,6 +1097,9 @@
   "Xz2JYA": {
     "defaultMessage": "启动失败"
   },
+  "Y+NWSo": {
+    "defaultMessage": "API数量"
+  },
   "YCiD/D": {
     "defaultMessage": "请先保存或取消编辑"
   },
@@ -1118,11 +1163,17 @@
   "Zz7nBV": {
     "defaultMessage": "已编译"
   },
+  "a4KYcJ": {
+    "defaultMessage": "获取商业授权"
+  },
   "aE19iu": {
     "defaultMessage": "跨域时间"
   },
   "aI3L5g": {
     "defaultMessage": "全局设置"
+  },
+  "aIrpM5": {
+    "defaultMessage": "已复制"
   },
   "aSYY8Y": {
     "defaultMessage": "未解析到jwksURL和用户端点"
@@ -1150,6 +1201,9 @@
   },
   "ayODEw": {
     "defaultMessage": "数据预览"
+  },
+  "b/np9H": {
+    "defaultMessage": "过期时间"
   },
   "b0E99S": {
     "defaultMessage": "密钥可以在 Fireboom 启动日志中查找关键词"
@@ -1358,6 +1412,9 @@
   "io7fqu": {
     "defaultMessage": "请填写规范域名"
   },
+  "isALfz": {
+    "defaultMessage": "数据源数量"
+  },
   "iveGBB": {
     "defaultMessage": "新建文件夹"
   },
@@ -1404,6 +1461,9 @@
   "k7lSDV": {
     "defaultMessage": "以 {dbProtocol}:// 开头，不超过128位"
   },
+  "kTQukZ": {
+    "defaultMessage": "授权已过期"
+  },
   "kXy8jI": {
     "defaultMessage": "jwksURL"
   },
@@ -1447,6 +1507,9 @@
   "lroVvd": {
     "defaultMessage": "网络出现问题～",
     "description": "状态码50x"
+  },
+  "m20fpm": {
+    "defaultMessage": "新建模型"
   },
   "m6bUGD": {
     "defaultMessage": "订阅",
@@ -1504,6 +1567,9 @@
   "nTlFd6": {
     "defaultMessage": "创建空数据库"
   },
+  "naK/qg": {
+    "defaultMessage": "免费获取"
+  },
   "nc6GYZ": {
     "defaultMessage": "注释描述"
   },
@@ -1533,6 +1599,9 @@
   },
   "oDLN4x": {
     "defaultMessage": "对查询进行缓存"
+  },
+  "oEls6O": {
+    "defaultMessage": "客服支持"
   },
   "oGXYof": {
     "defaultMessage": "@私有",
@@ -1661,6 +1730,9 @@
   },
   "rnpMD3": {
     "defaultMessage": "关"
+  },
+  "s1uqMz": {
+    "defaultMessage": "剩余{left}天"
   },
   "s4hJju": {
     "defaultMessage": "详情"
@@ -1847,6 +1919,9 @@
   "xg+tVB": {
     "defaultMessage": "飞布版本"
   },
+  "xwEc8K": {
+    "defaultMessage": "API"
+  },
   "xzl0Bm": {
     "defaultMessage": "配置登录回调"
   },
@@ -1858,6 +1933,9 @@
   },
   "yOMNOj": {
     "defaultMessage": "是"
+  },
+  "ydOjls": {
+    "defaultMessage": "当前{model}超出{limit}的限制"
   },
   "yy7EDI": {
     "defaultMessage": "上传"
