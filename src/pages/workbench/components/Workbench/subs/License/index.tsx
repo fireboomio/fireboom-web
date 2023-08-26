@@ -129,19 +129,25 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
             >
               <FormattedMessage defaultMessage="购买授权" />
             </Button>
-            {licenseConfig?.isLimittedTime && licenseConfig.freeGiftUrl && (
-              <Button
-                type="primary"
-                className="ml-4"
-                onClick={() => window.open(licenseConfig?.freeGiftUrl, '_blank')}
-                style={{
-                  backgroundImage: 'linear-gradient(36deg, #FFAE72 0%, #FF5E5E 100%)',
-                  boxShadow: '0px 2px 4px 0px rgba(255,116,99,0.5)',
-                  border: 'none'
-                }}
-              >
-                <FormattedMessage defaultMessage="免费获取" />
-              </Button>
+            {licenseConfig?.freeGiftUrl && (
+              <div className="relative ml-4">
+                <Button
+                  type="primary"
+                  onClick={() => window.open(licenseConfig?.freeGiftUrl, '_blank')}
+                  style={{
+                    backgroundImage: 'linear-gradient(36deg, #FFAE72 0%, #FF5E5E 100%)',
+                    boxShadow: '0px 2px 4px 0px rgba(255,116,99,0.5)',
+                    border: 'none'
+                  }}
+                >
+                  <FormattedMessage defaultMessage="免费获取" />
+                </Button>
+                {licenseConfig?.isLimittedTime && (
+                  <div className="absolute -right-2 -top-3 z-99 bg-[#F44848] text-white scale-75 transform px-1.5 py-0.5 text-xs rounded border border-solid border-white">
+                    <FormattedMessage defaultMessage="限时" />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
