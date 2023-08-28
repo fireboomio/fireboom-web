@@ -1,14 +1,15 @@
 import { CopyOutlined } from '@ant-design/icons'
-import { Button, Descriptions, message, Popover } from 'antd'
+import { Button, message, Popover, Tooltip } from 'antd'
+import clsx from 'clsx'
 import copy from 'copy-to-clipboard'
 import dayjs from 'dayjs'
-import type { CSSProperties } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import { formatDate } from '@/lib/helpers/utils'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
 
+import styles from './index.module.css'
 export interface LicenseProps {
   existed: boolean
   defaultLimits: {
@@ -28,14 +29,6 @@ export interface LicenseProps {
     incrementBuild: 0 | 1
   }
   expireTime: string
-}
-
-const dotStyle: CSSProperties = {
-  width: '6px',
-  height: '6px',
-  borderRadius: '4px',
-  backgroundColor: '#9FA1A5',
-  marginRight: '6px'
 }
 
 type LicenseConfig = {
@@ -77,24 +70,36 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
             </div>
             <div className="flex flex items-center">
               <div className="flex-1 flex items-center">
-                <div style={dotStyle} />
+                <div className={styles.dot} />
                 <FormattedMessage defaultMessage="API数量" />
                 <span className="ml-5">{userLimits?.operation ?? defaultLimits.operation}</span>
               </div>
               <div className="flex-1 flex items-center">
-                <div style={dotStyle} />
+                <div className={styles.dot} />
                 <FormattedMessage defaultMessage="数据源数量" />
                 <span className="ml-5">{userLimits?.datasource ?? defaultLimits.datasource}</span>
               </div>
-              {userLimits?.incrementBuild === 1 && (
+              {userLimits?.incrementBuild === 1 ? (
                 <div className="flex-1 flex items-center">
-                  <div style={dotStyle} />
+                  <div className={styles.dot} />
                   <FormattedMessage defaultMessage="增量编译" />
-                  <span className="ml-5">{}</span>
                 </div>
+              ) : (
+                <Tooltip title={intl.formatMessage({ defaultMessage: '仅商业授权版支持' })}>
+                  <a
+                    className={clsx('flex-1 flex items-center', styles.notSupport)}
+                    href={licenseConfig?.buyLicenseUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className={styles.dotError}>x</div>
+                    <FormattedMessage defaultMessage="增量编译" />
+                  </a>
+                </Tooltip>
               )}
+
               <div className="flex-1 flex items-center">
-                <div style={dotStyle} />
+                <div className={styles.dot} />
                 <FormattedMessage defaultMessage="客服支持" />
               </div>
             </div>

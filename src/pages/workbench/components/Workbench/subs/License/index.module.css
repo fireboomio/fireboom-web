@@ -1,0 +1,26 @@
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 4px;
+  background-color: #9FA1A5;
+  margin-right: 6px;
+}
+
+.dotError {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  border-radius: 50%;
+  color: #ee0d0d;
+  border: 1px solid #ee0d0d;
+  margin-right: 6px;
+  font-size: 10px;
+  transform: scale(0.75);
+}
+
+.notSupport {
+  color: #ee0d0d;
+}
