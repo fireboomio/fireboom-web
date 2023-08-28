@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Button, Form, Space, Tooltip } from 'antd'
+import { Button, Form, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
-import InputOrFromEnvWithItem, { InputOrFromEnv } from '@/components/InputOrFromEnv'
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -59,9 +59,11 @@ const StatusBar: React.FC<Props> = ({
   const statusMap = useMemo(
     () => ({
       [ServiceStatus.Building]: intl.formatMessage({ defaultMessage: '编译中' }),
+      [ServiceStatus.EngineIncrementBuild]: intl.formatMessage({ defaultMessage: '增量编译中' }),
       [ServiceStatus.Built]: intl.formatMessage({ defaultMessage: '已编译' }),
       [ServiceStatus.BuildFailed]: intl.formatMessage({ defaultMessage: '编译失败' }),
       [ServiceStatus.Starting]: intl.formatMessage({ defaultMessage: '启动中' }),
+      [ServiceStatus.EngineIncrementStart]: intl.formatMessage({ defaultMessage: '增量启动中' }),
       [ServiceStatus.Started]: intl.formatMessage({ defaultMessage: '已启动' }),
       [ServiceStatus.StartFailed]: intl.formatMessage({ defaultMessage: '启动失败' })
     }),

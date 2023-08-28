@@ -13,15 +13,19 @@ export interface LicenseProps {
   existed: boolean
   defaultLimits: {
     datasource: number
-    export: number
-    import: number
+    export: 0 | 1
+    import: 0 | 1
     operation: number
-    teamwork: number
+    teamwork: 0 | 1
+    incrementBuild: 0 | 1
   }
   userCode: string
   userLimits: {
     datasource: number
     operation: number
+    import: 0 | 1
+    teamwork: 0 | 1
+    incrementBuild: 0 | 1
   }
   expireTime: string
 }
@@ -82,6 +86,13 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
                 <FormattedMessage defaultMessage="数据源数量" />
                 <span className="ml-5">{userLimits?.datasource ?? defaultLimits.datasource}</span>
               </div>
+              {userLimits?.incrementBuild === 1 && (
+                <div className="flex-1 flex items-center">
+                  <div style={dotStyle} />
+                  <FormattedMessage defaultMessage="增量编译" />
+                  <span className="ml-5">{}</span>
+                </div>
+              )}
               <div className="flex-1 flex items-center">
                 <div style={dotStyle} />
                 <FormattedMessage defaultMessage="客服支持" />

@@ -28,8 +28,9 @@ export default function SettingMainVersion() {
   async function onFinish(values: any) {
     const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }), 0)
     try {
-      updateGlobalSetting(values)
-      message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+      if (await updateGlobalSetting(values)) {
+        message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
+      }
     } catch (e) {
       //
     }

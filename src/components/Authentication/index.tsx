@@ -1,8 +1,8 @@
 import '@/lib/socket'
 
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import axios from 'axios'
-import { merge } from 'lodash'
+import { isMatch, merge } from 'lodash'
 import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -16,7 +16,6 @@ import type { FBVersion } from '@/lib/context/ConfigContext'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import requests, { setAuthKey, useAuthState } from '@/lib/fetchers'
 import { useAppIntl } from '@/providers/IntlProvider'
-import { services } from '@/services'
 import { setAuthKey as setAuthKey1 } from '@/services/a2s.adapter'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
@@ -62,10 +61,19 @@ const Authentication = (props: AuthenticationProps) => {
   // const [environment, setEnvironment] = useState()
   // const [version, setVersion] = useState()
   const [globalSetting, setGlobalSetting] = useState<ApiDocuments.GlobalSetting & FBVersion>()
-  const updateGlobalSetting = useCallback(async (settings: Partial<ApiDocuments.GlobalSetting>) => {
-    await requests.put(`/globalSetting`, settings)
-    await refreshConfig()
-  }, [])
+  const updateGlobalSetting = useCallback(
+    async (settings: Partial<ApiDocuments.GlobalSetting>): Promise<boolean> => {
+      if (!isMatch(globalSetting!, settings)) {
+        await requests.put(`/globalSetting`, settings)
+        await refreshConfig()
+        return true
+      } else {
+        message.warning(intl.formatMessage({ defaultMessage: '配置未变更' }))
+        return false
+      }
+    },
+    [globalSetting, intl]
+  )
   useEffect(() => {
     axios.get<AppRuntime>('/health', { baseURL: '/' }).then(res => {
       if (res.status < 300) {

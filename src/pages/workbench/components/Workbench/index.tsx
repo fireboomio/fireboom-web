@@ -61,7 +61,12 @@ export default function Index(props: PropsWithChildren) {
   const { setVersion } = useConfigContext()
   const isCompiling = useMemo(
     () =>
-      info.engineStatus === ServiceStatus.Starting || info.engineStatus === ServiceStatus.Building,
+      [
+        ServiceStatus.Starting,
+        ServiceStatus.Building,
+        ServiceStatus.EngineIncrementBuild,
+        ServiceStatus.EngineIncrementStart
+      ].includes(info.engineStatus),
     [info.engineStatus]
   )
   const [showWindow, setShowWindow] = useState(false)

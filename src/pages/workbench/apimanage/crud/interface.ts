@@ -90,9 +90,11 @@ export enum API {
 
 export enum ServiceStatus {
   Building = 'building',
+  EngineIncrementBuild = 'incrementBuild',
   Built = 'buildSucceed',
   BuildFailed = 'buildFailed',
   Starting = 'starting',
+  EngineIncrementStart = 'incrementStart',
   Started = 'startSucceed',
   StartFailed = 'startFailed'
 }

@@ -31,7 +31,7 @@ type SystemConfigContext = {
   appRuntime: AppRuntime
   globalSetting: ApiDocuments.GlobalSetting & FBVersion
   setVersion: (ver: FBVersion) => void
-  updateGlobalSetting: (globalSetting: Partial<ApiDocuments.GlobalSetting>) => Promise<void>
+  updateGlobalSetting: (globalSetting: Partial<ApiDocuments.GlobalSetting>) => Promise<boolean>
   refreshConfig: () => Promise<void>
 }
 
