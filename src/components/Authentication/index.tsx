@@ -81,9 +81,18 @@ const Authentication = (props: AuthenticationProps) => {
         refreshConfig().then(resp => {
           if (resp) {
             setAuthed(true)
-          }
-          if (resp?.appearance?.language) {
-            setLocale(resp.appearance.language.replace(/_/g, '-'))
+            if (resp.allowedReport) {
+              var hm = document.createElement('script')
+              hm.id = 'usage-report'
+              hm.src = 'https://hm.baidu.com/hm.js?a928cb21c5712bcb8257ea65acee4a98'
+              var s = document.getElementsByTagName('script')[0]
+              s.parentNode!.insertBefore(hm, s)
+            } else {
+              document.querySelector('#usage-report')?.remove()
+            }
+            if (resp.appearance?.language) {
+              setLocale(resp.appearance.language.replace(/_/g, '-'))
+            }
           }
         })
       }
