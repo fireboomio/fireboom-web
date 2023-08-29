@@ -81,7 +81,13 @@ export default function SettingMainVersion() {
             <FormattedMessage defaultMessage="查看文档" />
           </Button>
         </Form.Item>
-        <Form.Item label={intl.formatMessage({ defaultMessage: '允许HOST' })}>
+        <Form.Item
+          label={intl.formatMessage({ defaultMessage: '允许HOST' })}
+          tooltip={intl.formatMessage({
+            defaultMessage:
+              '指定允许访问的源（域名、协议、端口），使用通配符 * 表示允许所有源进行访问，也可以指定具体的源'
+          })}
+        >
           <Form.List name={['allowedHostNames']}>
             {(fields, { add, remove }, { errors }) => (
               <>
