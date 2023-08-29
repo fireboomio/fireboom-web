@@ -208,7 +208,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {isDatabase ? (
               <Button
                 className={'btn-test !ml-4'}
-                onClick={() => navigate(`/workbench/modeling/${content?.name}`)}
+                onClick={() => {
+                  if (content.enabled) {
+                    navigate(`/workbench/modeling/${content?.name}`)
+                  } else {
+                    message.warning(intl.formatMessage({ defaultMessage: '请先开启数据源' }))
+                  }
+                }}
               >
                 <FormattedMessage defaultMessage="设计" />
               </Button>

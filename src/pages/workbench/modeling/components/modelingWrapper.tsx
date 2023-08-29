@@ -38,7 +38,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
   const [syncEditorFlag, setSyncEditorFlag] = useImmer<boolean>(false)
   useEffect(() => {
-    setDataSources(data?.filter(ds => isDatabaseKind(ds)) ?? [])
+    setDataSources(data?.filter(ds => isDatabaseKind(ds) && ds.enabled) ?? [])
   }, [data, setDataSources])
 
   const hideRef = useRef<() => void>()
@@ -120,7 +120,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
         return
       }
     }
-    setSearch({'edit': flag ? 'true' : 'false'})
+    setSearch({ edit: flag ? 'true' : 'false' })
     setInEdit(flag)
   }
 
