@@ -1,7 +1,7 @@
+import { sample } from '@stoplight/json-schema-sampler'
 import {
   Breadcrumb,
   Button,
-  Descriptions,
   Form,
   InputNumber,
   message,
@@ -11,13 +11,16 @@ import {
   Tooltip
 } from 'antd'
 import copy from 'copy-to-clipboard'
+// import type { JSONSchema7 } from 'json-schema'
+// import jsf from 'json-schema-faker'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import ReactJson from 'react-json-view'
 import { useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
 import { LinkOutlined } from '@/components/icons'
-import JsonEditor from '@/components/JsonEditor'
+// import JsonEditor from '@/components/JsonEditor'
 import { iconMap } from '@/components/RoleDiagram'
 import { OperationType } from '@/interfaces/operation'
 import { ConfigContext } from '@/lib/context/ConfigContext'
@@ -83,7 +86,41 @@ const CustomAPI = () => {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
     }
-    copy(link)
+    if (isProxy) {
+      copy(link)
+    } else {
+      const sampleJson: object | null = apiConfig?.variablesSchema
+        ? (sample(
+            JSON.parse(apiConfig!.variablesSchema.replace(/\$defs/, 'definitions'))
+          ) as object)
+        : // jsf.generate(JSON.parse(apiConfig!.variablesSchema))
+          null
+      if (apiConfig?.operationType === OperationType.Mutation) {
+        copy(`curl ${link} \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  --data-raw '${JSON.stringify(sampleJson)}' \\
+  --compressed`)
+      } else {
+        const query: string[] = []
+        if (sampleJson) {
+          query.push(`wg_variables=${JSON.stringify(sampleJson)}`)
+        }
+        if (apiConfig?.operationType === OperationType.Subscription) {
+          query.push('wg_sse=true')
+        }
+        if (
+          apiConfig?.liveQueryConfig?.enabled &&
+          apiConfig?.operationType === OperationType.Query
+        ) {
+          query.push('wg_live=true')
+        }
+        if (query.length) {
+          link += '?' + query.join('&')
+        }
+        copy(link)
+      }
+    }
     message.success(intl.formatMessage({ defaultMessage: 'URL 地址已复制' }))
   }
 
@@ -110,12 +147,12 @@ const CustomAPI = () => {
       requests
         .get<any, CustomAPIJsonConfig>(`/vscode/readFile?uri=${data.outputPath}/${path}.json`)
         .then(res => {
-          if (res.variablesSchema) {
-            res.variablesSchema = JSON.parse(res.variablesSchema)
-          }
-          if (res.responseSchema) {
-            res.responseSchema = JSON.parse(res.responseSchema)
-          }
+          // if (res.variablesSchema) {
+          //   res.variablesSchema = JSON.parse(res.variablesSchema)
+          // }
+          // if (res.responseSchema) {
+          //   res.responseSchema = JSON.parse(res.responseSchema)
+          // }
           setApiConfig(res)
           setReady(true)
         })
@@ -157,7 +194,16 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="variablesSchema"
                 >
-                  <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" />
+                  <ReactJson
+                    src={JSON.parse(apiConfig?.variablesSchema ?? '{}')}
+                    iconStyle="triangle"
+                    collapsed
+                    name={false}
+                    style={{
+                      wordBreak: 'break-word'
+                    }}
+                  />
+                  {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>
               )}
               {!isProxy && (
@@ -165,7 +211,16 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="responseSchema"
                 >
-                  <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" />
+                  <ReactJson
+                    src={JSON.parse(apiConfig?.responseSchema ?? '{}')}
+                    iconStyle="triangle"
+                    collapsed
+                    name={false}
+                    style={{
+                      wordBreak: 'break-word'
+                    }}
+                  />
+                  {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>
               )}
               <Form.Item

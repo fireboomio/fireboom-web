@@ -27,6 +27,7 @@
     "@monaco-editor/react": "^4.4.5",
     "@mrleebo/prisma-ast": "npm:fireboom-prisma-ast@0.4.2-1",
     "@stackblitz/sdk": "^1.8.1",
+    "@stoplight/json-schema-sampler": "^0.3.0",
     "@swordjs/monaco-editor": "*",
     "@swordjs/monaco-editor-auto-typings": "0.5.1",
     "@swordjs/monaco-editor-react": "*",
