@@ -32,7 +32,7 @@ import { getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { databaseKindNameMap } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
-import createFile from '@/utils/uploadLocal'
+import writeFile from '@/utils/uploadLocal'
 
 import styles from './DB.module.less'
 import FileList from './FileList'
@@ -126,7 +126,7 @@ export default function DB({ content, type }: Props) {
               const hide = message.loading(intl.formatMessage({ defaultMessage: '上传中' }))
               try {
                 try {
-                  await createFile(`${dict.sqlite}/${dbName}.db`, '', dbName + '.db')
+                  await writeFile(`${dict.sqlite}/${dbName}.db`, '', dbName + '.db')
                 } catch (e: any) {
                   const msgMap: any = {
                     10440011: intl.formatMessage({ defaultMessage: '文件名已存在' })

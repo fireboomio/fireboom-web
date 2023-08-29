@@ -1,6 +1,6 @@
 import requests from '@/lib/fetchers'
 
-export default async function createFile(uri: string, content: string | File, fileName?: string) {
+export default async function writeFile(uri: string, content: string | File, fileName?: string) {
   let param = new FormData() //创建form对象
   if (content instanceof File) {
     param.append('content', content)

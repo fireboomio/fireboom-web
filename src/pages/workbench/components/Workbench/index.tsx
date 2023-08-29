@@ -28,7 +28,7 @@ import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { resolveDefaultCode } from '@/utils/template'
-import createFile from '@/utils/uploadLocal'
+import writeFile from '@/utils/uploadLocal'
 
 import styles from './index.module.less'
 import Header from './subs/Header'
@@ -368,7 +368,7 @@ export default function Index(props: PropsWithChildren) {
         }
         setLoading('钩子模板创建中，请稍候')
         const code = await resolveDefaultCode(filePath, hasParam, language!)
-        await createFile(filePath, code)
+        await writeFile(filePath, code)
         // await saveHookScript(path, code)
         return true
       } else {

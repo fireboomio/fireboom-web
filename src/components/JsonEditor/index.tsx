@@ -26,7 +26,7 @@ const JsonEditor = ({ schema, schemaUrl, value, onChange }: JsonEditorProps) => 
         setEditorValue(value)
       } else {
         try {
-          setEditorValue(JSON.stringify(value))
+          setEditorValue(JSON.stringify(value, null, 2))
         } catch (error) {
           message.warning('输入对象不合法')
         }
@@ -87,7 +87,7 @@ const JsonEditor = ({ schema, schemaUrl, value, onChange }: JsonEditorProps) => 
               formatOnType: true
             }}
             defaultLanguage="json"
-            defaultPath='fb://json/editor.json'
+            defaultPath="fb://json/editor.json"
             onChange={v => _onChange(v)}
             beforeMount={monaco => {
               const schemas: languages.json.DiagnosticsOptions['schemas'] = []

@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 
 import requests, { getAuthKey } from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import createFile from '@/utils/uploadLocal'
+import writeFile from '@/utils/uploadLocal'
 
 import styles from './FileList.module.less'
 
@@ -39,7 +39,7 @@ export default function FileList({
     name: 'content',
     customRequest(opt) {
       const file = opt.file as RcFile
-      createFile(`${dir}/${file.name}`, file)
+      writeFile(`${dir}/${file.name}`, file)
         .then(res => {
           opt.onSuccess?.(res)
         })

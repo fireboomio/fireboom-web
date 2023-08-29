@@ -16,6 +16,7 @@ import ApiSearch from './components/ApiSearch'
 import { useDict } from './providers/dict'
 import { useEnv } from './providers/env'
 import { useAppIntl } from './providers/IntlProvider'
+import { useRole } from './providers/role'
 import { primaryColor } from './styles'
 
 console.log(routes)
@@ -65,9 +66,10 @@ export default function App() {
 function ReadyWrapper(props: { children: ReactElement }) {
   const { initialize: initializeDict } = useDict()
   const { initialize: initializeEnv } = useEnv()
+  const { initialize: initializeRole } = useRole()
   const [ready, setReady] = useState(false)
   useEffect(() => {
-    Promise.all([initializeDict(), initializeEnv()]).then(() => {
+    Promise.all([initializeDict(), initializeEnv(), initializeRole()]).then(() => {
       setReady(true)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
