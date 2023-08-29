@@ -375,7 +375,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   name={[
                     'oidcConfig',
                     'clientSecret',
-                    clientIdKind === VariableKind.Static
+                    clientSecretKind === VariableKind.Static
                       ? 'staticVariableContent'
                       : 'environmentVariableName'
                   ]}
