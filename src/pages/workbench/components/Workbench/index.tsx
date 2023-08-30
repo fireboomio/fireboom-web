@@ -127,13 +127,20 @@ export default function Index(props: PropsWithChildren) {
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('engine', 'hookStatus', data => {
-    // message.success(intl.formatMessage({ defaultMessage: '钩子状态已刷新' }))
-    setInfo({ ...info, hookStatus: data })
+  useWebSocket('hookReport', 'pull', data => {
+    let valid = false
+    if (data) {
+      valid = new Date(data).getFullYear() > 1970
+    }
+    setInfo({ ...info, hookStatus: valid })
   })
-  // useWebSocket('engine', 'pushHookStatus', data => {
-  //   setInfo({ ...info, hookStatus: data.hookStatus })
-  // })
+  useWebSocket('hookReport', 'push', data => {
+    let valid = false
+    if (data) {
+      valid = new Date(data).getFullYear() > 1970
+    }
+    setInfo({ ...info, hookStatus: valid })
+  })
   useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
   })
@@ -187,7 +194,7 @@ export default function Index(props: PropsWithChildren) {
   })
   useEffect(() => {
     sendMessageToSocket({ channel: 'engine', event: 'pull' })
-    sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
+    sendMessageToSocket({ channel: 'hookReport', event: 'pull' })
     sendMessageToSocket({ channel: 'log', event: 'pull' })
     sendMessageToSocket({ channel: 'question', event: 'pull' })
     sendMessageToSocket({ channel: 'license', event: 'pull' })
