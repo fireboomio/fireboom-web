@@ -21,6 +21,7 @@ export interface LicenseProps {
     incrementBuild: 0 | 1
   }
   userCode: string
+  type: string
   userLimits: {
     datasource: number
     operation: number
@@ -38,7 +39,14 @@ type LicenseConfig = {
   freeGiftUrl: string
 }
 
-const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: LicenseProps) => {
+const License = ({
+  existed,
+  defaultLimits,
+  userLimits,
+  userCode,
+  expireTime,
+  type
+}: LicenseProps) => {
   const intl = useIntl()
   const { data: licenseConfig } = useSWRImmutable<LicenseConfig>(
     'license.json',
@@ -47,6 +55,13 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
   const isExpired = dayjs(expireTime).isBefore(dayjs())
   const leftDays = dayjs(expireTime).diff(dayjs(), 'day')
   const isAlmostExpired = leftDays <= 7
+
+  const licenseTypeMap = {
+    community: intl.formatMessage({ defaultMessage: '社区版' }),
+    professional: intl.formatMessage({ defaultMessage: '专业版' }),
+    enterprise: intl.formatMessage({ defaultMessage: '企业版' })
+  }
+
   return (
     <Popover
       placement="topRight"
@@ -171,14 +186,10 @@ const License = ({ existed, defaultLimits, userLimits, userCode, expireTime }: L
       trigger="click"
     >
       <span className="text-[#326d9f] bg-white rounded-sm cursor-pointer text-xs py-0.5 px-1">
-        {!existed ? (
-          <FormattedMessage defaultMessage="社区版" />
-        ) : !userLimits ? (
+        {existed && !userLimits ? (
           <FormattedMessage defaultMessage="非法授权" />
-        ) : dayjs(expireTime).isBefore(dayjs()) ? (
-          <FormattedMessage defaultMessage="授权已过期" />
         ) : (
-          <FormattedMessage defaultMessage="商业授权版" />
+          licenseTypeMap[type as keyof typeof licenseTypeMap]
         )}
       </span>
     </Popover>

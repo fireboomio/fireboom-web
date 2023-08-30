@@ -113,8 +113,9 @@ export default defineConfig({
     ]
   },
   plugins,
+  base: '',
   build: {
-    minify: 'esbuild'
+    minify: 'esbuild',
   },
   experimental: {},
   optimizeDeps: {
