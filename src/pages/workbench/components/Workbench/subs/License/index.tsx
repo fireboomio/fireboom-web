@@ -62,6 +62,11 @@ const License = ({
     enterprise: intl.formatMessage({ defaultMessage: '企业版' })
   }
 
+  const getCount = (count?: number) => {
+    if (count === -1) return <FormattedMessage defaultMessage="不限制" />
+    return count
+  }
+
   return (
     <Popover
       placement="topRight"
@@ -87,12 +92,12 @@ const License = ({
               <div className="flex-1 flex items-center">
                 <div className={styles.dot} />
                 <FormattedMessage defaultMessage="API数量" />
-                <span className="ml-5">{userLimits?.operation ?? defaultLimits.operation}</span>
+                <span className="ml-5">{getCount(userLimits?.operation)}</span>
               </div>
               <div className="flex-1 flex items-center">
                 <div className={styles.dot} />
                 <FormattedMessage defaultMessage="数据源数量" />
-                <span className="ml-5">{userLimits?.datasource ?? defaultLimits.datasource}</span>
+                <span className="ml-5">{getCount(userLimits?.datasource)}</span>
               </div>
               {userLimits?.incrementBuild === 1 ? (
                 <div className="flex-1 flex items-center">
