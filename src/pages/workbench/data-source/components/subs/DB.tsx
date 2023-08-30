@@ -10,10 +10,11 @@ import {
   Modal,
   Radio,
   Select,
+  Switch,
   Upload
 } from 'antd'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -410,6 +411,13 @@ export default function DB({ content, type }: Props) {
     setDisabled(hasErrors)
   }
 
+  // 刷新缓存
+  const refreshCache = () => {
+    requests.post('/datasource/checkConnection', content).then(() => {
+      message.success(intl.formatMessage({ defaultMessage: '已刷新' }))
+    })
+  }
+
   //测试连接 成功与失败提示
   const testLink = async () => {
     if (await form.validateFields()) {
@@ -548,6 +556,24 @@ export default function DB({ content, type }: Props) {
                   )}
                 </>
               )}
+              <Descriptions.Item label={<FormattedMessage defaultMessage="使用缓存" />}>
+                {content.cacheEnabled ? (
+                  <>
+                    <FormattedMessage defaultMessage="是" />
+                    <Button
+                      className="ml-4"
+                      size="small"
+                      type="primary"
+                      ghost
+                      onClick={refreshCache}
+                    >
+                      <FormattedMessage defaultMessage="刷新缓存" />
+                    </Button>
+                  </>
+                ) : (
+                  <FormattedMessage defaultMessage="否" />
+                )}
+              </Descriptions.Item>
             </Descriptions>
           </div>
         </div>
@@ -630,6 +656,16 @@ export default function DB({ content, type }: Props) {
                 </Form.Item>
               )}
               {viewerForm}
+              <Form.Item
+                label={<FormattedMessage defaultMessage="使用缓存" />}
+                valuePropName="checked"
+                name="cacheEnabled"
+                tooltip={
+                  <FormattedMessage defaultMessage="经常使用第三方工具修改数据库结构时建议取消，只使用 Fireboom 管理数据库结构时建议开启，大表建议开启，开启后可以通过详情页手动刷新缓存" />
+                }
+              >
+                <Switch />
+              </Form.Item>
               <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                 <Button
                   className="btn-cancel"

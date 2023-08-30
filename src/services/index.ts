@@ -1517,8 +1517,8 @@ export const services = {
 
 export type ServiceKeys = keyof typeof services
 
-export type ServiceArg<T extends ServiceKeys> = Parameters<(typeof services)[T]>[0]
+export type ServiceArg<T extends ServiceKeys> = Parameters<typeof services[T]>[0]
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
 
-export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<(typeof services)[T]>>['data']
+export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<typeof services[T]>>['data']

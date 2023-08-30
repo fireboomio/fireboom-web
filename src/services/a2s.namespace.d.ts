@@ -63,6 +63,7 @@ export declare namespace ApiDocuments {
     oasFilepath: string
   }
   export interface Datasource extends BasicDto {
+    cacheEnabled: boolean
     createTime: string
     customDatabase: ApiDocuments.CustomDatabase
     customGraphql: ApiDocuments.CustomGraphql
