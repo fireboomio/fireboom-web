@@ -357,6 +357,20 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
+  'datasource@post@/datasource/prisma/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & ApiDocuments.Data
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/datasource/prisma/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
   'datasource@/datasource/rename'(args: ApiDocuments.fileloader_DataMutation) {
     return requestAdapter<any>({
       url: replacePath('/datasource/rename', args),
@@ -644,6 +658,20 @@ export const services = {
       ...extract('GET', args, ['dataNames'], [])
     })
   },
+  'operation@/operation/function/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & ApiDocuments.Data
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/operation/function/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
   'operation@/operation/graphql/{dataName}'(args: {
     /**
      * @description dataName
@@ -662,7 +690,7 @@ export const services = {
        * @description dataName
        */
       dataName: string
-    } & string
+    } & ApiDocuments.Data
   ) {
     return requestAdapter<any>({
       url: replacePath('/operation/graphql/{dataName}', args),
@@ -706,6 +734,20 @@ export const services = {
       url: replacePath('/operation/listPublic', args),
       method: 'GET',
       ...extract('GET', args, [], [])
+    })
+  },
+  'operation@/operation/proxy/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & ApiDocuments.Data
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/operation/proxy/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
     })
   },
   'operation@/operation/rename'(args: ApiDocuments.fileloader_DataMutation) {

@@ -86,6 +86,7 @@ export declare namespace ApiDocuments {
     allowedHostNames: ApiDocuments.ConfigurationVariable[]
     allowedReport: boolean
     appearance: ApiDocuments.Appearance
+    authorizedRedirectUriRegexes: ApiDocuments.ConfigurationVariable[]
     authorizedRedirectUris: ApiDocuments.ConfigurationVariable[]
     buildInfo: ApiDocuments.BuildInfo
     consoleLogger: ApiDocuments.lumberjackLogger
@@ -365,6 +366,7 @@ export declare namespace ApiDocuments {
     description?: string
     enabled?: boolean
     extension?: string
+    generateTime?: string
     gitBranch?: string
     gitCommitHash?: string
     gitUrl?: string

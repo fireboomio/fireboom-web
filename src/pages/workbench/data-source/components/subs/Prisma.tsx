@@ -1,6 +1,8 @@
+import { message } from 'antd'
 import type * as monaco from 'monaco-editor'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import type { ShowType } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -53,7 +55,16 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
   }, [content.customDatabase.databaseUrl.staticVariableContent, dict.prisma])
 
   const save = async () => {
-    return true
+    if (!editorContent) {
+      return message.error(<FormattedMessage defaultMessage="Prisma 数据源文件不能为空" />)
+    }
+    try {
+      await requests.post(`/datasource/prisma/${content.name}`, editorContent)
+      message.success(<FormattedMessage defaultMessage="已保存" />)
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   const introspection = async () => {
@@ -78,7 +89,7 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
       onChange={value => {
         setEditorContent(value)
       }}
-      defaultContent={editorContent ?? ''}
+      defaultContent={''}
     />
   )
 }

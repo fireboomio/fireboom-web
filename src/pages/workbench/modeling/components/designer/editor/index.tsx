@@ -50,7 +50,7 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate, actionRef }: 
     if (editorRef.current) {
       editorRef.current.setValue(defaultContent)
     }
-  }, [defaultContent, onChange])
+  }, [defaultContent])
   const codeLensRef = useRef<any>()
   useEffect(() => {
     return () => {
