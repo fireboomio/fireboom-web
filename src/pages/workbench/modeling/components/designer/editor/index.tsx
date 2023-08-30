@@ -2,6 +2,7 @@ import '@/lib/prisma/client'
 
 import Editor, { loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
+import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
 
 import { setUp } from '@/lib/ai'
@@ -14,11 +15,12 @@ interface Props {
   onChange?: (value: string) => void
   onUpdateValidate?: (flag: boolean) => void
   defaultContent: string
+  actionRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>
 }
 
 loader.config({ monaco })
-const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
-  const editorRef = useRef<any>()
+const ModelEditor = ({ onChange, defaultContent, onUpdateValidate, actionRef }: Props) => {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const { currentEntity } = useCurrentEntity()
   const lastScrollEntity = useRef<string>('')
   // 用于当editor初始化未完成时记录defaultContent
@@ -48,7 +50,7 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
     if (editorRef.current) {
       editorRef.current.setValue(defaultContent)
     }
-  }, [defaultContent])
+  }, [defaultContent, onChange])
   const codeLensRef = useRef<any>()
   useEffect(() => {
     return () => {
@@ -74,6 +76,9 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate }: Props) => {
           init(monaco, editor)
           codeLensRef.current = registerCodeLens(monaco, editor, 'prisma')
           setUp(editor, 'prisma')
+          if (actionRef) {
+            actionRef.current = editor
+          }
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
           makeSuggest(editor)

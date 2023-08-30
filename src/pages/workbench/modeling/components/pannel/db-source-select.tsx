@@ -9,6 +9,7 @@ import { DataSourceKind } from '@/interfaces/datasource'
 import { DATABASE_SOURCE, MANAGE_DATASOURCE_URL } from '@/lib/constants/fireBoomConstants'
 import useDBSource from '@/lib/hooks/useDBSource'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { getDataSourceIcon } from '@/utils/datasource'
 
 import refreshIcon from '../../assets/refresh.svg'
 import styles from './pannel.module.less'
@@ -47,20 +48,7 @@ const DBSourceSelect = ({ sourceOptions, onChangeSource }: Props) => {
         optionLabelProp="label"
         value={name}
         options={sourceOptions.map(x => {
-          let svg = '/assets/icon/db-other.svg'
-          switch (x.kind) {
-            case DataSourceKind.MySQL:
-              svg = '/assets/icon/mysql.svg'
-              break
-            case DataSourceKind.MongoDB:
-              svg = '/assets/icon/mongodb.svg'
-              break
-            case DataSourceKind.PostgreSQL:
-              svg = '/assets/icon/pgsql.svg'
-              break
-            case DataSourceKind.SQLite:
-              svg = '/assets/icon/sqlite.svg'
-          }
+          const svg = getDataSourceIcon(x)
           return {
             label: (
               <div className="flex items-center">

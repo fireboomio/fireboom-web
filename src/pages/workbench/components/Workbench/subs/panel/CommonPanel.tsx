@@ -1,5 +1,4 @@
 import { Dropdown, Image, Input, Menu, message, Popconfirm, Tooltip } from 'antd'
-import clsx from 'clsx'
 import type React from 'react'
 import { useContext, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -18,7 +17,7 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import { isDatabaseKind } from '@/utils/datasource'
+import { getDataSourceIcon, isDatabaseKind } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
 
 import styles from './CommonPanel.module.less'
@@ -55,49 +54,22 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
       if (!dataSourceList) return []
       return dataSourceList.map(row => {
         let icon = 'other'
-        let svg = '/assets/icon/db-other.svg'
+        let svg = getDataSourceIcon(row)
         let tip = ''
-        let readOnly = false
-        let showBadge = false
-        switch (row.kind) {
-          case DataSourceKind.MongoDB:
-            svg = '/assets/icon/mongodb.svg'
-            break
-          case DataSourceKind.MySQL:
-            svg = '/assets/icon/mysql.svg'
-            break
-          case DataSourceKind.PostgreSQL:
-            svg = '/assets/icon/pgsql.svg'
-            break
-          case DataSourceKind.SQLite:
-            svg = '/assets/icon/sqlite.svg'
-            break
-          case DataSourceKind.Graphql:
-            svg = '/assets/icon/graphql.svg'
-            if (row.customGraphql.customized) {
-              showBadge = true
-              readOnly = true
-            }
-            break
-          case DataSourceKind.Restful:
-            svg = '/assets/icon/rest.svg'
-            break
-          default:
-            break
-        }
+        let readOnly = row.kind === DataSourceKind.Graphql && row.customGraphql.customized
+
         if (isDatabaseKind(row)) {
-          if (row.customDatabase.kind === 0) {
+          if (row.customDatabase?.kind === 1) {
+            tip = row.customDatabase.databaseAlone.database
+          } else {
             const url = getConfigurationValue(row.customDatabase.databaseUrl)
             if (url) {
               tip = parseDBUrl(url)?.dbName ?? ''
             }
-          } else {
-            tip = row.customDatabase.databaseAlone.database
           }
         }
         return {
           readonly: readOnly || row.readonly,
-          showBadge,
           name: row.name,
           icon,
           sourceType: row.sourceType,
@@ -388,7 +360,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                 />
               ) : (
                 <>
-                  <div className={clsx(styles.icon, item.showBadge ? styles.iconBadge : '')}>
+                  <div className={styles.icon}>
                     <Image
                       width={12}
                       height={12}

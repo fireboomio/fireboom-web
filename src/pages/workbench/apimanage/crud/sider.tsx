@@ -12,7 +12,7 @@ import requests from '@/lib/fetchers'
 import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findAllRelationInSchema } from '@/lib/helpers/prismaRelation'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import { isDatabaseKind } from '@/utils/datasource'
+import { getDataSourceIcon, isDatabaseKind } from '@/utils/datasource'
 
 import styles from './index.module.less'
 
@@ -119,26 +119,12 @@ export default function CRUDSider(props: CRUDSiderProps) {
           }}
           className="flex-1"
           options={filterDataSourceList.map(x => {
-            let svg = '/assets/icon/db-other.svg'
-            switch (x.kind) {
-              case DataSourceKind.MySQL:
-                svg = '/assets/icon/mysql.svg'
-                break
-              case DataSourceKind.PostgreSQL:
-                svg = '/assets/icon/pgsql.svg'
-                break
-              case DataSourceKind.MongoDB:
-                svg = '/assets/icon/mongodb.svg'
-                break
-              case DataSourceKind.SQLite:
-                svg = '/assets/icon/sqlite.svg'
-                break
-            }
+            const icon = getDataSourceIcon(x)
             return {
               name: x.name,
               label: (
                 <div className="flex items-center">
-                  <img className="h-3 mr-1 w-3" alt={x.name} src={svg} />
+                  <img className="h-3 mr-1 w-3" alt={x.name} src={icon} />
                   {x.name}
                 </div>
               ),

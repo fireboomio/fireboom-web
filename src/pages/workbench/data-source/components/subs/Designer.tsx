@@ -1,10 +1,15 @@
 import { omit } from 'lodash'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 
 import useCustom from '@/hooks/custom'
+import { usePrompt } from '@/hooks/prompt'
+import { mutateDataSource } from '@/hooks/store/dataSource'
+import { useValidate } from '@/hooks/validate'
 import { DataSourceKind } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
+import requests from '@/lib/fetchers'
 // import { restExampleJson } from '@/pages/workbench/data-source/components/subs/exampleFile'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -20,6 +25,7 @@ import iconMongoDB from '../assets/MongoDB.svg'
 import iconMySQL from '../assets/MySQL.svg'
 import iconPlanetscale from '../assets/Planetscale.svg'
 import iconPostgreSQL from '../assets/PostgreSQL.svg'
+import iconPrisma from '../assets/Prisma.svg'
 import iconProxy from '../assets/Proxy.svg'
 import iconRabbitMQ from '../assets/RabbitMQ.svg'
 import iconRESTAPI from '../assets/RESTAPI.svg'
@@ -42,6 +48,38 @@ export default function Designer() {
   const intl = useIntl()
   const dict = useDict()
   const { addScript } = useCustom()
+  const { validateName } = useValidate()
+  const navigate = useNavigate()
+
+  const prompt = usePrompt()
+
+  const addPrisma = async () => {
+    const { confirm, value } = await prompt({
+      title: intl.formatMessage({ defaultMessage: `请输入 {name} 数据源名称` }, { name: 'Prisma' }),
+      validator: (v: string) => {
+        return validateName(v)
+      }
+    })
+    if (!confirm) {
+      return
+    }
+    try {
+      await requests.post<any, Partial<ApiDocuments.Datasource>>('/datasource', {
+        name: value,
+        kind: DataSourceKind.Prisma,
+        enabled: false,
+        customDatabase: {
+          databaseUrl: {
+            staticVariableContent: `${value}.prisma`
+          }
+        }
+      })
+      await mutateDataSource()
+      navigate(`/workbench/data-source/${value}`)
+    } catch (error) {
+      //
+    }
+  }
 
   const initData = [
     {
@@ -64,12 +102,17 @@ export default function Designer() {
           name: 'PostgreSQL',
           icon: iconPostgreSQL,
           kind: DataSourceKind.PostgreSQL
-          // coming: true
         },
         {
           name: 'MongoDB',
           icon: iconMongoDB,
           kind: DataSourceKind.MongoDB
+        },
+        {
+          name: 'Prisma',
+          icon: iconPrisma,
+          kind: DataSourceKind.Prisma,
+          onClick: addPrisma
         },
         {
           name: 'CockroachDB',

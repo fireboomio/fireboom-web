@@ -1,5 +1,5 @@
 import { Button, Image, Input, message, Switch } from 'antd'
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
@@ -14,12 +14,14 @@ import requests from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import { isDatabaseKind } from '@/utils/datasource'
+import { getDataSourceIcon, isDatabaseKind } from '@/utils/datasource'
 
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 // import Designer from './subs/Designer'
 import Graphql from './subs/Graphql'
+import type { PrismaDSAction } from './subs/Prisma'
+import PrismaDS from './subs/Prisma'
 import Rest from './subs/Rest'
 
 interface Props {
@@ -37,6 +39,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const enabledServer = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
   // const { onRefreshMenu } = useContext(WorkbenchContext)
   const [isEditing, setIsEditing] = React.useState(false)
+
+  // prisma
+  const prismaDSRef = useRef<PrismaDSAction>(null)
 
   const navigate = useNavigate()
   const { loading, fun: toggleOpen } = useLock(async () => {
@@ -65,26 +70,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
     return null
   }
 
-  let icon = '/assets/icon/db-other.svg'
-  switch (content?.kind) {
-    case DataSourceKind.Graphql:
-      icon = '/assets/icon/graphql.svg'
-      break
-    case DataSourceKind.Restful:
-      icon = '/assets/icon/rest.svg'
-      break
-    case DataSourceKind.MongoDB:
-      icon = '/assets/icon/mongodb.svg'
-      break
-    case DataSourceKind.MySQL:
-      icon = '/assets/icon/mysql.svg'
-      break
-    case DataSourceKind.PostgreSQL:
-      icon = '/assets/icon/pgsql.svg'
-      break
-    case DataSourceKind.SQLite:
-      icon = '/assets/icon/sqlite.svg'
-  }
+  const icon = getDataSourceIcon(content)
 
   const testLink = () => {
     void requests.post('/datasource/checkConnection', content).then(() => {
@@ -109,7 +95,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
   }
 
   const isDatabase = isDatabaseKind(content)
-  const isCustomDatabase =
+  const isCustomDataSource =
     content.kind === DataSourceKind.Graphql &&
     content.customGraphql &&
     content.customGraphql.customized
@@ -205,7 +191,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 className="!mr-4"
               />
             )}
-            {isDatabase ? (
+            {isDatabase && (
               <Button
                 className={'btn-test !ml-4'}
                 onClick={() => {
@@ -218,22 +204,47 @@ export default function DatasourceContainer({ content, showType }: Props) {
               >
                 <FormattedMessage defaultMessage="设计" />
               </Button>
-            ) : (
-              <></>
             )}
-            {!isCustomDatabase ? (
-              <>
-                <Button className={'btn-save !ml-4'} onClick={testLink} disabled={content.readonly}>
-                  <FormattedMessage defaultMessage="测试" />
-                </Button>
-                <Button
-                  className={'btn-save !ml-4 mr-11'}
-                  onClick={() => handleToggleDesigner('form')}
-                  disabled={content.readonly}
-                >
-                  <FormattedMessage defaultMessage="编辑" />
-                </Button>
-              </>
+            {!isCustomDataSource ? (
+              content.kind === DataSourceKind.Prisma ? (
+                <>
+                  <Button
+                    className={'btn-save !ml-4'}
+                    onClick={testLink}
+                    disabled={content.readonly}
+                  >
+                    <FormattedMessage defaultMessage="测试" />
+                  </Button>
+                  <Button
+                    className="ml-4"
+                    ghost
+                    danger
+                    onClick={prismaDSRef.current?.introspection}
+                  >
+                    <FormattedMessage defaultMessage="重新内省" />
+                  </Button>
+                  <Button className={'btn-save !ml-4 mr-11'} onClick={prismaDSRef.current?.save}>
+                    <FormattedMessage defaultMessage="保存" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    className={'btn-save !ml-4'}
+                    onClick={testLink}
+                    disabled={content.readonly}
+                  >
+                    <FormattedMessage defaultMessage="测试" />
+                  </Button>
+                  <Button
+                    className={'btn-save !ml-4 mr-11'}
+                    onClick={() => handleToggleDesigner('form')}
+                    disabled={content.readonly}
+                  >
+                    <FormattedMessage defaultMessage="编辑" />
+                  </Button>
+                </>
+              )
             ) : content.customGraphql.customized ? (
               <>
                 <Button className={'btn-save !ml-4'} onClick={testLink}>
@@ -263,7 +274,9 @@ export default function DatasourceContainer({ content, showType }: Props) {
           borderRadius: '4px 4px 0 0'
         }}
       >
-        {isDatabase ? (
+        {content.kind === DataSourceKind.Prisma ? (
+          <PrismaDS content={content} type={showType} actionRef={prismaDSRef} />
+        ) : isDatabase ? (
           <DB content={content} type={showType} />
         ) : content.kind === DataSourceKind.Restful ? (
           <Rest content={content} type={showType} />
