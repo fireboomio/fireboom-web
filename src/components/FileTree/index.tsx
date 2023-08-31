@@ -13,6 +13,7 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 
+import { getTreeItemsBetween } from './helper'
 import type { FileTreeNode, InnerNode } from './types'
 
 export interface FileTreeProps {
@@ -186,11 +187,13 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       if (e.node.isInput) return
       // 记录最后点击项目
       setLastClickKey(e.node.key)
+      const _lastPos = lastClickPos.current
       lastClickPos.current = e.node.pos
       if (e.nativeEvent.shiftKey) {
         // shift多选
-        if (lastClickPos.current) {
-          //
+        if (_lastPos) {
+          const keys = getTreeItemsBetween(lastClickPos.current, _lastPos, treeData)
+          setSelectedKeys(keys)
         }
       } else if (e.nativeEvent.ctrlKey || e.nativeEvent.metaKey) {
         // ctrl多选
