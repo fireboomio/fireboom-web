@@ -18,6 +18,7 @@ import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { registerHotkeyHandler } from '@/services/hotkey'
+import { useHookSupport } from '@/utils/datasource'
 
 import styles from './ApiPanel.module.less'
 import type { SidePanelProps } from './SidePanel'
@@ -29,7 +30,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
-  const dict = useDict()
+  const { checkSupport } = useHookSupport()
   const currentUrlPath = params['*']!
 
   const [treeData, setTreeData] = useState<ApiDocuments.fileloader_DataTree[]>()
@@ -542,16 +543,18 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
               _parent = _parent?.parent
             }
             if (_parent?.name === 'function' || _parent?.name === 'proxy') {
-              const resp = await requests.get<null, ApiDocuments.Sdk>('/sdk/enabledServer')
-              if (resp?.extension) {
-                if (
-                  await vscode.show(`${resp.outputPath}/${parent?.path}/${name}${resp.extension}`)
-                ) {
-                  message.info(
-                    intl.formatMessage({
-                      defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务'
-                    })
-                  )
+              if (await checkSupport(_parent.name)) {
+                const resp = await requests.get<null, ApiDocuments.Sdk>('/sdk/enabledServer')
+                if (resp?.extension) {
+                  if (
+                    await vscode.show(`${resp.outputPath}/${parent?.path}/${name}${resp.extension}`)
+                  ) {
+                    message.info(
+                      intl.formatMessage({
+                        defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务'
+                      })
+                    )
+                  }
                 }
               }
               return true

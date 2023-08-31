@@ -188,7 +188,7 @@ const CustomAPI = () => {
                   name="variablesSchema"
                 >
                   <JsonViewer
-                    data={JSON.parse(apiConfig?.variablesSchema ?? '{}')}
+                    data={JSON.parse(apiConfig?.variablesSchema || '{}')}
                     shouldInitiallyExpand={level => level <= 1}
                   />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
@@ -200,7 +200,7 @@ const CustomAPI = () => {
                   name="responseSchema"
                 >
                   <JsonViewer
-                    data={JSON.parse(apiConfig?.responseSchema ?? '{}')}
+                    data={JSON.parse(apiConfig?.responseSchema || '{}')}
                     shouldInitiallyExpand={level => level <= 1}
                   />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}

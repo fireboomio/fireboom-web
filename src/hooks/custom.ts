@@ -9,11 +9,13 @@ import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
+import { useHookSupport } from '@/utils/datasource'
 
 import { useValidate } from './validate'
 
 export default function useCustom() {
   const { validateName } = useValidate()
+  const { checkSupport } = useHookSupport()
   const intl = useIntl()
   const dict = useDict()
   const enabledServer = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
@@ -30,23 +32,26 @@ export default function useCustom() {
         }
       })
     } else {
-      const { confirm, value } = await prompt({
-        title: intl.formatMessage({ defaultMessage: `请输入 {name} 数据源名称` }, { name }),
-        validator: (v: string) => {
-          if (dir !== dict.customize) {
-            // function和proxy支持多级路径
-            return validateName(v.replace(/\//g, ''))
+      // @ts-ignore
+      if (await checkSupport(dir.split('/').pop())) {
+        const { confirm, value } = await prompt({
+          title: intl.formatMessage({ defaultMessage: `请输入 {name} 数据源名称` }, { name }),
+          validator: (v: string) => {
+            if (dir !== dict.customize) {
+              // function和proxy支持多级路径
+              return validateName(v.replace(/\//g, ''))
+            }
+            return validateName(v)
           }
-          return validateName(v)
+        })
+        if (!confirm) {
+          return
         }
-      })
-      if (!confirm) {
-        return
-      }
-      if (await vscode.show(`${dir}/${value}${enabledServer.data?.extension}`)) {
-        message.info(
-          intl.formatMessage({ defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务' })
-        )
+        if (await vscode.show(`${dir}/${value}${enabledServer.data?.extension}`)) {
+          message.info(
+            intl.formatMessage({ defaultMessage: '数据源创建成功，请在编辑完成后重启钩子服务' })
+          )
+        }
       }
     }
   }
