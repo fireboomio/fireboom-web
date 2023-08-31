@@ -16,10 +16,11 @@ interface Props {
   onUpdateValidate?: (flag: boolean) => void
   defaultContent: string
   actionRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>
+  onReady?: () => void
 }
 
 loader.config({ monaco })
-const ModelEditor = ({ onChange, defaultContent, onUpdateValidate, actionRef }: Props) => {
+const ModelEditor = ({ onChange, defaultContent, onUpdateValidate, actionRef, onReady }: Props) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
   const { currentEntity } = useCurrentEntity()
   const lastScrollEntity = useRef<string>('')
@@ -82,6 +83,7 @@ const ModelEditor = ({ onChange, defaultContent, onUpdateValidate, actionRef }: 
           editorRef.current = editor
           editorRef.current.setValue(defaultRef.current)
           makeSuggest(editor)
+          onReady?.()
         }}
         defaultValue={defaultRef.current}
         onChange={value => {

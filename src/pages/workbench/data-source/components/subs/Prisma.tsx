@@ -1,8 +1,8 @@
 import { message } from 'antd'
 import type * as monaco from 'monaco-editor'
 import type { MutableRefObject } from 'react'
-import { useEffect, useRef, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import type { ShowType } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
@@ -23,11 +23,14 @@ interface PrismaDSProps {
 
 const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
   const dict = useDict()
+  const intl = useIntl()
+  const ready = useRef(false)
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
-  const [editorContent, setEditorContent] = useState<string>('')
+  const editorContent = useRef('')
   const [isValid, setIsValid] = useState(true)
 
   const readPrismaContent = () => {
+    ready.current = false
     requests
       .get<any, string>(
         `/vscode/readFile?uri=${dict.prisma}/${content.customDatabase.databaseUrl.staticVariableContent}`,
@@ -37,12 +40,15 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
         }
       )
       .then(res => {
-        setEditorContent(res)
+        editorContent.current = res
         editorRef.current?.setValue(res)
       })
       .catch(() => {
-        setEditorContent('')
+        editorContent.current = ''
         editorRef.current?.setValue('')
+      })
+      .then(() => {
+        ready.current = true
       })
   }
 
@@ -55,12 +61,12 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
   }, [content.customDatabase.databaseUrl.staticVariableContent, dict.prisma])
 
   const save = async () => {
-    if (!editorContent) {
-      return message.error(<FormattedMessage defaultMessage="Prisma 数据源文件不能为空" />)
+    if (!editorContent.current) {
+      return message.error(intl.formatMessage({ defaultMessage: 'Prisma 数据源文件不能为空' }))
     }
     try {
-      await requests.post(`/datasource/prisma/${content.name}`, editorContent)
-      message.success(<FormattedMessage defaultMessage="已保存" />)
+      await requests.post(`/datasource/prisma/${content.name}`, editorContent.current)
+      message.success(intl.formatMessage({ defaultMessage: '已保存' }))
       return true
     } catch (error) {
       return false
@@ -69,29 +75,38 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
 
   const introspection = async () => {
     const resp = await requests.get<any, string>(`/datasource/prisma/${content.name}`)
-    setEditorContent(resp)
+    editorContent.current = resp
     editorRef.current?.setValue(resp)
   }
 
-  useEffect(() => {
-    if (actionRef) {
-      actionRef.current = {
-        save,
-        introspection
-      }
+  if (actionRef) {
+    actionRef.current = {
+      save,
+      introspection
     }
-  }, [actionRef])
+  }
 
-  return (
-    <ModelEditor
-      actionRef={editorRef}
-      onUpdateValidate={setIsValid}
-      onChange={value => {
-        setEditorContent(value)
-      }}
-      defaultContent={''}
-    />
-  )
+  const editor = useMemo(() => {
+    return (
+      <ModelEditor
+        actionRef={editorRef}
+        onUpdateValidate={setIsValid}
+        onChange={value => {
+          if (ready.current) {
+            editorContent.current = value
+          }
+        }}
+        defaultContent=""
+        onReady={() => {
+          if (editorContent.current) {
+            editorRef.current?.setValue(editorContent.current)
+          }
+        }}
+      />
+    )
+  }, [])
+
+  return editor
 }
 
 export default PrismaDS
