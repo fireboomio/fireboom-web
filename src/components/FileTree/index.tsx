@@ -13,19 +13,7 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { ApiDocuments } from '@/services/a2s.namespace'
-
-export interface FileTreeNode extends ApiDocuments.fileloader_DataTree {
-  parent?: FileTreeNode
-  key: string
-  children?: FileTreeNode[]
-}
-
-interface InnerNode extends FileTreeNode {
-  isInput?: boolean
-  isNew?: boolean
-  parent?: InnerNode
-}
+import type { FileTreeNode, InnerNode } from './types'
 
 export interface FileTreeProps {
   // 节点渲染
@@ -72,6 +60,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const [lastClickKey, setLastClickKey] = useState<string>('')
+  const lastClickPos = useRef<string>()
   const [editingKey, setEditingKey] = useState<string>('')
   const isSaving = useRef(false)
   const keyMap = useMemo<Record<string, InnerNode>>(() => {
@@ -104,7 +93,8 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         isDir: tempItem.isDir,
         isInput: true,
         isNew: true,
-        parent: parent
+        parent: parent,
+        pos: ''
       }
       if (parent) {
         parent.children = parent.children ?? []
@@ -196,9 +186,12 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       if (e.node.isInput) return
       // 记录最后点击项目
       setLastClickKey(e.node.key)
+      lastClickPos.current = e.node.pos
       if (e.nativeEvent.shiftKey) {
         // shift多选
-        // TODO
+        if (lastClickPos.current) {
+          //
+        }
       } else if (e.nativeEvent.ctrlKey || e.nativeEvent.metaKey) {
         // ctrl多选
         if (selectedKeys.includes(e.node.key)) {
@@ -282,6 +275,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
         onClick={() => {
           setSelectedKeys([])
           setLastClickKey('')
+          lastClickPos.current = ''
         }}
         className=""
         onContextMenu={e => {

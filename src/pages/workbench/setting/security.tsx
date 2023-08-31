@@ -75,7 +75,7 @@ export default function SettingMainVersion() {
           <Button
             type="link"
             icon={<PaperClipOutlined />}
-            href="https://ansons-organization.gitbook.io/product-manual/kai-fa-wen-dang/security/csrf-token-protection"
+            href="https://docs.fireboom.io/shi-yong-bu-shu-shang-xian/security/csrf-token-protection"
             target="csrf"
           >
             <FormattedMessage defaultMessage="查看文档" />

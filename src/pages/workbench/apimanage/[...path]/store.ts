@@ -12,7 +12,6 @@ import { mutate } from 'swr'
 import create from 'zustand'
 
 import { mutateApi } from '@/hooks/store/api'
-import type { WorkbenchContextType } from '@/lib/context/workbenchContext'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -48,6 +47,7 @@ export interface APIState {
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
   refreshAPI: (keepCurrentQuery?: boolean) => void
   refreshSchema: () => void
+  setSchema: (query: IntrospectionQuery) => void
   appendToAPIRefresh: (fn: () => void) => void
   dispendToAPIRefresh: (fn: () => void) => VoidFunction
   engineStartCallback: () => void
@@ -273,6 +273,17 @@ export const useAPIManager = create<APIState>((set, get) => ({
         //   schemaAST: undefined
         // })
       })
+  },
+  setSchema(query: IntrospectionQuery) {
+    if (!isEqual(get().originSchema, query)) {
+      console.log('schema changed')
+      const newSchema = buildClientSchema(query)
+      set({
+        originSchema: query,
+        schema: newSchema,
+        schemaTypeMap: keyBy(query.__schema.types, 'name')
+      })
+    }
   },
   appendToAPIRefresh: (fn: () => void) => {
     refreshFns.push(fn)

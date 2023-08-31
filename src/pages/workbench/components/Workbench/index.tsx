@@ -102,7 +102,6 @@ export default function Index(props: PropsWithChildren) {
     setEngineState(data)
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
-      mutateDataSource()
       events.emit({ event: 'compileFinish' })
     }
   })

@@ -36,10 +36,7 @@ export default function SettingMainVersion() {
               <div
                 className={styles['check-info']}
                 onClick={() => {
-                  window.open(
-                    'https://ansons-organization.gitbook.io/product-manual/geng-xin-ri-zhi',
-                    '_blank'
-                  )
+                  window.open('https://docs.fireboom.io/geng-xin-ri-zhi', '_blank')
                 }}
               >
                 <FormattedMessage defaultMessage="查看更新日志" />

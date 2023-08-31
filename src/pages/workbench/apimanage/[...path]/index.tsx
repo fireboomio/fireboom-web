@@ -5,6 +5,7 @@
 import 'graphiql/graphiql.css'
 
 import { message } from 'antd'
+import type { IntrospectionQuery } from 'graphql'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -13,8 +14,9 @@ import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
 import { useDragResize } from '@/hooks/resize'
+import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useEventBus } from '@/lib/event/events'
-import requests, { getAuthKey } from '@/lib/fetchers'
+import { getAuthKey } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useEngine } from '@/providers/engine'
 
@@ -70,7 +72,7 @@ async function fetchSubscription(rec: Record<string, unknown>, controller: Abort
   })
 }
 
-async function fetcher(rec: Record<string, unknown>) {
+async function fetcher(rec: Record<string, unknown>, setSchema: (q: IntrospectionQuery) => void) {
   try {
     const res = await fetch('/app/main/graphql', {
       method: 'POST',
@@ -81,6 +83,10 @@ async function fetcher(rec: Record<string, unknown>) {
       },
       body: JSON.stringify(rec)
     }).then(resp => resp.json())
+    // 避免重复请求，初始化后提交schema结果
+    if (rec.operationName === 'IntrospectionQuery') {
+      setSchema(res.data as IntrospectionQuery)
+    }
     return res
   } catch (error) {
     console.error(error)
@@ -96,7 +102,7 @@ export default function APIEditorContainer() {
   const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
   const { engineStatus } = useEngine()
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [dataSourceList, setDataSourceList] = useState<string[]>([])
+  const dataSourceList = useDataSourceList()
   const {
     engineStartCallback,
     query,
@@ -108,6 +114,7 @@ export default function APIEditorContainer() {
     pureUpdateAPI,
     saved,
     autoSave,
+    setSchema,
     saveSubscriptionController
   } = useAPIManager(state => ({
     engineStartCallback: state.engineStartCallback,
@@ -121,6 +128,7 @@ export default function APIEditorContainer() {
     pureUpdateAPI: state.pureUpdateAPI,
     saved: state.computed.saved,
     autoSave: state.autoSave,
+    setSchema: state.setSchema,
     saveSubscriptionController: state.saveSubscriptionController
   }))
   const editingContent = useRef(query)
@@ -171,7 +179,7 @@ export default function APIEditorContainer() {
       saveSubscriptionController(controller)
       return fetchSubscription(rec, controller)
     } else {
-      return fetcher(rec)
+      return fetcher(rec, setSchema)
     }
   }
 
@@ -193,9 +201,9 @@ export default function APIEditorContainer() {
   }, [intl, refreshSchema])
 
   // 进入页面时，立刻请求一次graphql schema
-  useEffect(() => {
-    refreshSchema()
-  }, [refreshSchema])
+  // useEffect(() => {
+  //   refreshSchema()
+  // }, [refreshSchema])
 
   useEventBus('titleChange', ({ data }) => {
     pureUpdateAPI({ path: data.path })
@@ -232,13 +240,6 @@ export default function APIEditorContainer() {
     })
   }, [params, setAPIPath])
 
-  useEffect(() => {
-    requests('/datasource').then(res => {
-      // @ts-ignore
-      setDataSourceList(res.filter(item => item.enabled).map(item => item.name))
-    })
-  }, [])
-
   return (
     <>
       <div className="bg-white flex flex-col h-full relative" id="api-editor-container">
@@ -265,7 +266,7 @@ export default function APIEditorContainer() {
                   query={query}
                   onEdit={setQuery}
                   isLoading={isRefreshing}
-                  dataSourceList={dataSourceList}
+                  dataSourceList={(dataSourceList ?? []).filter(d => d.enabled).map(d => d.name)}
                   explorerIsOpen
                   onRefresh={onRefreshSchema}
                   // onToggleExplorer={this._handleToggleExplorer}
