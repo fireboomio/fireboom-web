@@ -7,12 +7,12 @@ import requests from '@/lib/fetchers'
 
 // 更新全局钩子开关
 export const updateGlobalOperationHookEnabled = (
-  operationName: string,
+  // operationName: string,
   hookName: string,
   value: boolean
 ) => {
   return requests.put('/globalOperation', {
-    path: operationName,
+    // path: operationName,
     globalHttpTransportHooks: {
       [hookName]: value
     }

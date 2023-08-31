@@ -22,14 +22,14 @@ export const databaseKindNameMap = {
 
 export function getDataSourceIcon(ds: {
   kind: DataSourceKind | string
-  customGraph?: {
+  customGraphql?: {
     customized?: boolean
   }
 }) {
   let icon = '/assets/icon/db-other.svg'
   switch (ds?.kind) {
     case DataSourceKind.Graphql:
-      if (ds.customGraph?.customized) {
+      if (ds.customGraphql?.customized) {
         icon = '/assets/icon/graphql-custom.svg'
       } else {
         icon = '/assets/icon/graphql.svg'

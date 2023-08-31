@@ -133,7 +133,7 @@ const CustomAPI = () => {
     }
     const newJson = { ...apiConfig, ...values }
     try {
-      await writeFile(`${data!.outputPath}/${path}.json`, JSON.stringify(newJson, null, 2))
+      await requests.post(`/operation/${path}`, newJson)
       setApiConfig(newJson)
       message.success(intl.formatMessage({ defaultMessage: '保存成功' }))
     } catch (error) {
