@@ -361,7 +361,7 @@ const SDKTemplateItem = ({
         onClick: async () => {
           const authKey = getAuthKey()
           window.open(
-            `/api/sdk/export?dataNames=${sdk.name}${authKey ? `&auth-key=${authKey}` : ''}`
+            `/api/sdk/downloadOutput/${sdk.name}?${authKey ? `&auth-key=${authKey}` : ''}`
           )
         }
       })
