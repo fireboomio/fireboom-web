@@ -6,7 +6,6 @@ import copy from 'copy-to-clipboard'
 import { cloneDeep, debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-// import ReactJson from 'react-json-view'
 import { useNavigate } from 'react-router-dom'
 
 // import useSWRImmutable from 'swr/immutable'

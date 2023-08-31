@@ -23,7 +23,6 @@ export type WorkbenchEvent = TitleChangeEvent | CompileFinishEvent
 export type WorkbenchListener = (event: WorkbenchEvent) => void
 
 export interface WorkbenchContextType {
-  engineStatus?: ServiceStatus
   triggerPageEvent: (event: WorkbenchEvent) => void // 触发事件
   registerPageListener: (fun: WorkbenchListener) => void // 内容页注册监听函数
   refreshMap: RefreshMap // 各目录刷新标记

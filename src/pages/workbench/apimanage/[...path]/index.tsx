@@ -6,17 +6,17 @@ import 'graphiql/graphiql.css'
 
 import { message } from 'antd'
 import { debounce } from 'lodash'
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
 import { useDragResize } from '@/hooks/resize'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useEventBus } from '@/lib/event/events'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { useEngine } from '@/providers/engine'
 
 import APIHeader from './components/APIHeader'
 import { GraphiQL } from './components/GraphiQL'
@@ -94,7 +94,7 @@ export default function APIEditorContainer() {
   const intl = useIntl()
   const params = useParams()
   const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
-  const workbenchCtx = useContext(WorkbenchContext)
+  const { engineStatus } = useEngine()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dataSourceList, setDataSourceList] = useState<string[]>([])
   const {
@@ -106,7 +106,6 @@ export default function APIEditorContainer() {
     refreshSchema,
     setAPIPath,
     pureUpdateAPI,
-    setWorkbenchContext,
     saved,
     autoSave,
     saveSubscriptionController
@@ -120,7 +119,6 @@ export default function APIEditorContainer() {
     refreshSchema: state.refreshSchema,
     setAPIPath: state.setAPIPath,
     pureUpdateAPI: state.pureUpdateAPI,
-    setWorkbenchContext: state.setWorkbenchContext,
     saved: state.computed.saved,
     autoSave: state.autoSave,
     saveSubscriptionController: state.saveSubscriptionController
@@ -209,10 +207,10 @@ export default function APIEditorContainer() {
     }
   })
   useEffect(() => {
-    if (workbenchCtx.engineStatus === ServiceStatus.Started) {
+    if (engineStatus === ServiceStatus.Started) {
       engineStartCallback()
     }
-  }, [workbenchCtx.engineStatus])
+  }, [engineStatus])
 
   useEventBus('compileFinish', () => {
     engineStartCallback()
@@ -233,10 +231,6 @@ export default function APIEditorContainer() {
       explorerRef.current?.manualExpand()
     })
   }, [params, setAPIPath])
-
-  useEffect(() => {
-    setWorkbenchContext(workbenchCtx)
-  }, [setWorkbenchContext, workbenchCtx])
 
   useEffect(() => {
     requests('/datasource').then(res => {

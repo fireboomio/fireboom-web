@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import ReactJson from 'react-json-view'
+
+import JsonViewer from '@/components/JsonViewer'
 
 import { useResponse } from './ResponseContext'
 
@@ -24,13 +25,10 @@ const ResponseViewer = () => {
   }, [json])
 
   return (
-    <ReactJson
-      src={json}
-      iconStyle="triangle"
-      collapsed={collapsedDeepth}
-      name={false}
-      style={{
-        wordBreak: 'break-word'
+    <JsonViewer
+      data={json}
+      shouldInitiallyExpand={(level, value) => {
+        return level < collapsedDeepth
       }}
     />
   )

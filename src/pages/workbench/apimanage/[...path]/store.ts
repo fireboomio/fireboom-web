@@ -34,7 +34,6 @@ export interface APIState {
   setQuery: (v: string, fromEditor?: boolean) => void
   clearHistoryFlag: boolean // 通知编辑器需要清空历史记录，用于切换api时清除旧api的内容
   schemaAST: DocumentNode | undefined
-  _workbenchContext: WorkbenchContextType | undefined
   subscriptionController: AbortController | undefined
   computed: {
     operationType: Readonly<OperationTypeNode | undefined>
@@ -50,8 +49,7 @@ export interface APIState {
   refreshAPI: (keepCurrentQuery?: boolean) => void
   refreshSchema: () => void
   appendToAPIRefresh: (fn: () => void) => void
-  dispendToAPIRefresh: (fn: () => void) => void
-  setWorkbenchContext: (ctx: WorkbenchContextType) => void
+  dispendToAPIRefresh: (fn: () => void) => VoidFunction
   engineStartCallback: () => void
   abortSubscription: () => void
   saveSubscriptionController: (controller: AbortController) => void
@@ -128,7 +126,6 @@ export const useAPIManager = create<APIState>((set, get) => ({
   schema: undefined,
   schemaAST: undefined,
   schemaTypeMap: {},
-  _workbenchContext: undefined,
   subscriptionController: undefined,
   computed: {
     get operationType() {
@@ -285,8 +282,5 @@ export const useAPIManager = create<APIState>((set, get) => ({
     if (index > -1) {
       refreshFns.splice(index, 1)
     }
-  },
-  setWorkbenchContext: (ctx: WorkbenchContextType) => {
-    set({ _workbenchContext: ctx })
   }
 }))

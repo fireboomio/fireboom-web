@@ -15,6 +15,7 @@ import requests from '@/lib/fetchers'
 import useCalcTime from '@/lib/helpers/calcTime'
 import { sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { useEngine } from '@/providers/engine'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
@@ -24,11 +25,6 @@ import styles from './index.module.less'
 
 interface Props {
   className?: string
-  commit?: string
-  version?: string
-  startTime?: string
-  engineStatus?: ServiceStatus
-  hookStatus?: boolean
   menuWidth: number
   license: LicenseProps | null
   toggleWindow: (defaultTa: string) => void
@@ -37,18 +33,9 @@ interface Props {
 const devTipKey = 'dev.tip'
 
 // eslint-disable-next-line react/prop-types
-const StatusBar: React.FC<Props> = ({
-  className,
-  startTime,
-  engineStatus,
-  hookStatus,
-  menuWidth,
-  toggleWindow,
-  commit,
-  version,
-  license
-}) => {
+const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, license }) => {
   const intl = useIntl()
+  const { engineStartTime, fbCommit, fbVersion, engineStatus, hookStatus } = useEngine()
   const [showDevTip, setShowDevTip] = useState(localStorage.getItem(devTipKey) !== 'false')
   const { getConfigurationValue } = useConfigurationVariable()
   const calcTime = useCalcTime()
@@ -77,17 +64,17 @@ const StatusBar: React.FC<Props> = ({
 
   const { data: sdk } = useSWRImmutable<ApiDocuments.Sdk[]>('/sdk', requests.get)
   useEffect(() => {
-    if (!startTime) {
+    if (!engineStartTime) {
       return
     }
-    setCompileTime(calcTime(startTime))
+    setCompileTime(calcTime(engineStartTime))
     const timer = setInterval(() => {
-      setCompileTime(calcTime(startTime))
+      setCompileTime(calcTime(engineStartTime))
     }, 60000)
     return () => {
       clearInterval(timer)
     }
-  }, [startTime, calcTime])
+  }, [engineStartTime, calcTime])
 
   const closeDevTip = () => {
     localStorage.setItem(devTipKey, 'false')
@@ -124,8 +111,8 @@ const StatusBar: React.FC<Props> = ({
           </span>
           <span className={styles['info-version'] + ' mr-2'}>
             <span>FB:</span>
-            <Tooltip title={commit}>
-              <span className="">{version}</span>
+            <Tooltip title={fbCommit}>
+              <span className="">{fbVersion}</span>
             </Tooltip>
           </span>
           <span

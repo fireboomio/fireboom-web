@@ -3,8 +3,9 @@ import { Button } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import ReactJson from 'react-json-view'
+import { allExpanded } from 'react-json-view-lite'
 
+import JsonViewer from '@/components/JsonViewer'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useConfigurationVariable } from '@/providers/variable'
@@ -44,16 +45,7 @@ export default function UserInfo() {
         </Button>
       </div>
       <div className="h-full flex-1 p-4 overflow-auto">
-        {info ? (
-          <ReactJson
-            src={info}
-            iconStyle="triangle"
-            name={false}
-            style={{
-              wordBreak: 'break-word'
-            }}
-          />
-        ) : null}
+        {info ? <JsonViewer data={info} shouldInitiallyExpand={allExpanded} /> : null}
       </div>
     </div>
   )

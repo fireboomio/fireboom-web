@@ -66,7 +66,7 @@
     "react-hotkeys-hook": "^4.3.7",
     "react-intl": "^6.2.5",
     "react-json-editor-ajrm": "^2.5.13",
-    "react-json-view": "^1.21.3",
+    "react-json-view-lite": "^0.9.8",
     "react-router-dom": "^6.4.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rxjs": "^7.8.0",

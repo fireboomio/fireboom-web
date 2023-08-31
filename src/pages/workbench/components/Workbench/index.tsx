@@ -26,6 +26,7 @@ import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { updateGlobalOperationHookEnabled, updateOperationHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
+import { useEngine } from '@/providers/engine'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { resolveDefaultCode } from '@/utils/template'
 import writeFile from '@/utils/uploadLocal'
@@ -48,27 +49,13 @@ const MENU_WIDTH = 230
 export default function Index(props: PropsWithChildren) {
   const intl = useIntl()
   const [messageApi, contextHolder] = message.useMessage()
-  const [info, setInfo] = useState<Info>({
-    errorInfo: { errTotal: 0, warnTotal: 0 },
-    engineStatus: ServiceStatus.Started,
-    hookStatus: false,
-    globalStartTime: '',
-    engineStartTime: '',
-    fbVersion: '--',
-    fbCommit: '--'
-  })
+  const {
+    engineStatus,
+    setEngineState,
+    computed: { isCompiling }
+  } = useEngine()
   const [license, setLicense] = useState<LicenseProps | null>(null)
   const { setVersion } = useConfigContext()
-  const isCompiling = useMemo(
-    () =>
-      [
-        ServiceStatus.Starting,
-        ServiceStatus.Building,
-        ServiceStatus.EngineIncrementBuild,
-        ServiceStatus.EngineIncrementStart
-      ].includes(info.engineStatus),
-    [info.engineStatus]
-  )
   const [showWindow, setShowWindow] = useState(false)
   const [defaultWindowTab, setDefaultWindowTab] = useState<string>()
   const [hideSider, setHideSider] = useState(false)
@@ -112,7 +99,7 @@ export default function Index(props: PropsWithChildren) {
       fbVersion: data.fbVersion ?? '',
       fbCommit: data.fbCommit ?? ''
     })
-    setInfo(data)
+    setEngineState(data)
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       mutateDataSource()
@@ -120,7 +107,7 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'push', (data: Info) => {
-    setInfo({ ...info, engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
+    setEngineState({ engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
     if (data.engineStatus === ServiceStatus.Started) {
       void mutateApi()
       mutateDataSource()
@@ -132,14 +119,14 @@ export default function Index(props: PropsWithChildren) {
     if (data) {
       valid = new Date(data).getFullYear() > 1970
     }
-    setInfo({ ...info, hookStatus: valid })
+    setEngineState({ hookStatus: valid })
   })
   useWebSocket('hookReport', 'push', data => {
     let valid = false
     if (data) {
       valid = new Date(data).getFullYear() > 1970
     }
-    setInfo({ ...info, hookStatus: valid })
+    setEngineState({ hookStatus: valid })
   })
   useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
@@ -311,11 +298,6 @@ export default function Index(props: PropsWithChildren) {
       {!fullScreen && (
         <AFooter className={styles.footer}>
           <StatusBar
-            version={info?.fbVersion}
-            commit={info?.fbCommit}
-            startTime={info?.engineStartTime}
-            engineStatus={info?.engineStatus}
-            hookStatus={info?.hookStatus}
             license={license}
             menuWidth={fullScreen ? 0 : MENU_WIDTH}
             toggleWindow={(defaultTab: string) => {
@@ -390,8 +372,6 @@ export default function Index(props: PropsWithChildren) {
     }
   }
   const globalProviderValue = {
-    info: info,
-    isCompiling,
     vscode: {
       options: vscode,
       isHookServerSelected,
@@ -450,7 +430,7 @@ export default function Index(props: PropsWithChildren) {
         <Spin tip={loading} spinning={!!loading}>
           <WorkbenchContext.Provider
             value={{
-              engineStatus: info?.engineStatus,
+              engineStatus,
               triggerPageEvent: (event: WorkbenchEvent) => {
                 listener.current?.(event)
               },

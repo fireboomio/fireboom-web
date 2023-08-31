@@ -15,11 +15,11 @@ import copy from 'copy-to-clipboard'
 // import jsf from 'json-schema-faker'
 import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import ReactJson from 'react-json-view'
 import { useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
 import { LinkOutlined } from '@/components/icons'
+import JsonViewer from '@/components/JsonViewer'
 // import JsonEditor from '@/components/JsonEditor'
 import { iconMap } from '@/components/RoleDiagram'
 import { OperationType } from '@/interfaces/operation'
@@ -29,7 +29,6 @@ import requests from '@/lib/fetchers'
 import { useRole } from '@/providers/role'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import writeFile from '@/utils/uploadLocal'
 
 type CustomAPIJsonConfig = {
   name: string
@@ -125,12 +124,6 @@ const CustomAPI = () => {
   }
 
   const saveJson = async (values: CustomAPIJsonConfig) => {
-    if (values.variablesSchema) {
-      values.variablesSchema = JSON.stringify(values.variablesSchema)
-    }
-    if (values.responseSchema) {
-      values.responseSchema = JSON.stringify(values.responseSchema)
-    }
     const newJson = { ...apiConfig, ...values }
     try {
       await requests.post(`/operation/${path}`, newJson)
@@ -194,14 +187,9 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="variablesSchema"
                 >
-                  <ReactJson
-                    src={JSON.parse(apiConfig?.variablesSchema ?? '{}')}
-                    iconStyle="triangle"
-                    collapsed
-                    name={false}
-                    style={{
-                      wordBreak: 'break-word'
-                    }}
+                  <JsonViewer
+                    data={JSON.parse(apiConfig?.variablesSchema ?? '{}')}
+                    shouldInitiallyExpand={level => level <= 1}
                   />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>
@@ -211,14 +199,9 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="responseSchema"
                 >
-                  <ReactJson
-                    src={JSON.parse(apiConfig?.responseSchema ?? '{}')}
-                    iconStyle="triangle"
-                    collapsed
-                    name={false}
-                    style={{
-                      wordBreak: 'break-word'
-                    }}
+                  <JsonViewer
+                    data={JSON.parse(apiConfig?.responseSchema ?? '{}')}
+                    shouldInitiallyExpand={level => level <= 1}
                   />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>

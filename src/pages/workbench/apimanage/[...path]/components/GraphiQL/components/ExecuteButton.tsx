@@ -1,8 +1,8 @@
 import { useExecutionContext } from '@graphiql/react'
 import type { ImgHTMLAttributes } from 'react'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 
-import { GlobalContext } from '@/lib/context/globalContext'
+import { useEngine } from '@/providers/engine'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../../store'
@@ -11,7 +11,9 @@ import RunIcon from '../assets/run.svg'
 type ExecuteButtonProps = ImgHTMLAttributes<HTMLImageElement>
 
 const ExecuteButton = ({ className, ...props }: ExecuteButtonProps) => {
-  const { isCompiling } = useContext(GlobalContext)
+  const {
+    computed: { isCompiling }
+  } = useEngine()
   const { apiPath, subscriptionController, abortSubscription } = useAPIManager(state => ({
     apiPath: state.apiPath,
     subscriptionController: state.subscriptionController,

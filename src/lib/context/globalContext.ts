@@ -1,10 +1,6 @@
 import { createContext } from 'react'
 
-import type { Info } from '@/interfaces/common'
-
 export interface GlobalContextType {
-  info: Info
-  isCompiling: boolean
   vscode: {
     options: {
       visible: boolean

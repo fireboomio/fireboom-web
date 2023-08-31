@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import ReactJson from 'react-json-view'
 import { useLocation } from 'react-router-dom'
 import useSWRMutation from 'swr/mutation'
 
+import JsonViewer from '@/components/JsonViewer'
 import { mutateAuth, useAuthList } from '@/hooks/store/auth'
 import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
@@ -59,17 +59,7 @@ export default function LoginPanel() {
               {userInfo.providerId}
             </div>
             <div className={styles.content}>
-              <ReactJson
-                displayDataTypes={false}
-                displayObjectSize={false}
-                enableClipboard={false}
-                src={userInfo}
-                iconStyle="triangle"
-                name={false}
-                style={{
-                  wordBreak: 'break-word'
-                }}
-              />
+              <JsonViewer data={userInfo} />
             </div>
           </div>
         ) : null}
