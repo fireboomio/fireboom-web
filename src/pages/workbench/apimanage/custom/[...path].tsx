@@ -187,10 +187,7 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="variablesSchema"
                 >
-                  <JsonViewer
-                    data={JSON.parse(apiConfig?.variablesSchema || '{}')}
-                    shouldInitiallyExpand={level => level <= 1}
-                  />
+                  <JsonViewer data={JSON.parse(apiConfig?.variablesSchema || '{}')} collapsed={1} />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>
               )}
@@ -199,10 +196,7 @@ const CustomAPI = () => {
                   label={intl.formatMessage({ defaultMessage: '入参定义' })}
                   name="responseSchema"
                 >
-                  <JsonViewer
-                    data={JSON.parse(apiConfig?.responseSchema || '{}')}
-                    shouldInitiallyExpand={level => level <= 1}
-                  />
+                  <JsonViewer data={JSON.parse(apiConfig?.responseSchema || '{}')} collapsed={1} />
                   {/* <JsonEditor schemaUrl="http://json-schema.org/draft-07/schema#" /> */}
                 </Form.Item>
               )}

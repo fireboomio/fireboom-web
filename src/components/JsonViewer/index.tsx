@@ -1,18 +1,23 @@
-import './index.css'
+import type { JsonViewProps } from '@uiw/react-json-view'
+import ReactJsonView from '@uiw/react-json-view'
+import { lightTheme } from '@uiw/react-json-view/light'
+import { TriangleArrow } from '@uiw/react-json-view/triangle-arrow'
 
-import type { Props } from 'react-json-view-lite'
-import { defaultStyles, JsonView } from 'react-json-view-lite'
+// interface JsonViewerProps extends Omit<Props, 'style'> {}
 
-interface JsonViewerProps extends Omit<Props, 'style'> {}
-
-const JsonViewer = ({ ...props }: JsonViewerProps) => {
+const JsonViewer = ({
+  data,
+  collapsed
+}: Pick<JsonViewProps<object>, 'collapsed'> & { data: object }) => {
   return (
-    <JsonView
-      {...props}
-      style={{
-        ...defaultStyles,
-        container: 'json-viewer-container'
+    <ReactJsonView
+      value={data}
+      enableClipboard
+      collapsed={collapsed}
+      components={{
+        arrow: <TriangleArrow />
       }}
+      style={lightTheme}
     />
   )
 }

@@ -24,14 +24,7 @@ const ResponseViewer = () => {
     return 2
   }, [json])
 
-  return (
-    <JsonViewer
-      data={json}
-      shouldInitiallyExpand={(level, value) => {
-        return level < collapsedDeepth
-      }}
-    />
-  )
+  return <JsonViewer data={json} collapsed={collapsedDeepth} />
 }
 
 export default ResponseViewer

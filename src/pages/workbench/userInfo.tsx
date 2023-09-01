@@ -45,7 +45,7 @@ export default function UserInfo() {
         </Button>
       </div>
       <div className="h-full flex-1 p-4 overflow-auto">
-        {info ? <JsonViewer data={info} shouldInitiallyExpand={allExpanded} /> : null}
+        {info ? <JsonViewer data={info} collapsed /> : null}
       </div>
     </div>
   )
