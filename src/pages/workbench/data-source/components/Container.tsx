@@ -216,7 +216,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                     disabled={!content.enabled}
                     onClick={prismaDSRef.current?.introspection}
                   >
-                    <FormattedMessage defaultMessage="重新内省" />
+                    <FormattedMessage defaultMessage="内省" />
                   </Button>
                   <Button className={'btn-save !ml-4 mr-11'} onClick={prismaDSRef.current?.save}>
                     <FormattedMessage defaultMessage="保存" />
