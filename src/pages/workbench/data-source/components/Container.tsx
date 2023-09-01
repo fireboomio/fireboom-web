@@ -1,4 +1,4 @@
-import { Button, Image, Input, message, Switch } from 'antd'
+import { Button, Image, Input, message, Switch, Tooltip } from 'antd'
 import React, { useContext, useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -46,20 +46,8 @@ export default function DatasourceContainer({ content, showType }: Props) {
   const navigate = useNavigate()
   const { loading, fun: toggleOpen } = useLock(async () => {
     if (!content) return
-    if (content) {
-      let tested = true
-      if (!content.enabled) {
-        try {
-          await requests.post('/datasource/checkConnection', content)
-        } catch (error) {
-          tested = false
-        }
-      }
-      if (tested) {
-        await requests.put('/datasource', { name: content.name, enabled: !content.enabled })
-        handleSave({ enabled: !content.enabled })
-      }
-    }
+    await requests.put('/datasource', { name: content.name, enabled: !content.enabled })
+    handleSave({ enabled: !content.enabled })
     // 自定义数据源，需要在开关时同步修改钩子开关
     // if (content.kind === DataSourceKind.Graphql && content.customGraphql) {
     //   updateHookEnabled(`customize/${content.name}`, !!content.enabled)
@@ -99,6 +87,18 @@ export default function DatasourceContainer({ content, showType }: Props) {
     content.kind === DataSourceKind.Graphql &&
     content.customGraphql &&
     content.customGraphql.customized
+
+  const designBtn = (
+    <Button
+      disabled={!content.enabled}
+      className={'btn-test !ml-4'}
+      onClick={() => {
+        navigate(`/workbench/modeling/${content?.name}`)
+      }}
+    >
+      <FormattedMessage defaultMessage="设计" />
+    </Button>
+  )
 
   return (
     <div className="flex flex-col h-full common-form items-stretch justify-items-stretch">
@@ -191,20 +191,14 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 className="!mr-4"
               />
             )}
-            {isDatabase && (
-              <Button
-                className={'btn-test !ml-4'}
-                onClick={() => {
-                  if (content.enabled) {
-                    navigate(`/workbench/modeling/${content?.name}`)
-                  } else {
-                    message.warning(intl.formatMessage({ defaultMessage: '请先开启数据源' }))
-                  }
-                }}
-              >
-                <FormattedMessage defaultMessage="设计" />
-              </Button>
-            )}
+            {isDatabase &&
+              (content.enabled ? (
+                designBtn
+              ) : (
+                <Tooltip title={<FormattedMessage defaultMessage="请先开启数据源" />}>
+                  <span>{designBtn}</span>
+                </Tooltip>
+              ))}
             {!isCustomDataSource ? (
               content.kind === DataSourceKind.Prisma ? (
                 <>
@@ -219,6 +213,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                     className="ml-4"
                     ghost
                     danger
+                    disabled={!content.enabled}
                     onClick={prismaDSRef.current?.introspection}
                   >
                     <FormattedMessage defaultMessage="重新内省" />

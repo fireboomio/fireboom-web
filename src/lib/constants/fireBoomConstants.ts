@@ -4,7 +4,7 @@ export const BASE_URL = '/api'
 export const DATABASE_SOURCE = '/datasource'
 export const MIGRATE_PRISMA_SCHEMA_BY_DB_SOURCE_NAME = '/datasource/migrate/:name'
 export const PRISMA_PREVIEW_GRAPHQL_SCHEMA = '/datasource/dmmf/:name'
-export const PRISMA_PREVIEW_GRAPHQL_URL = '/app/main/graphql'
+export const PRISMA_PREVIEW_GRAPHQL_URL = '/api/datasource/graphqlQuery/{dataSourceName}'
 
 export const UNTITLED_NEW_ENTITY = 'Untitled'
 export const ENTITY_NAME_REGEX = '^[A-Za-z][A-Za-z0-9_]*$'

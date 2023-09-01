@@ -72,7 +72,9 @@ const DynamicTable = ({
   } = useTableSchema()
 
   const { data, loading, refetch } = useQuery<GraphQLResp>(
-    getGraphqlQuery(models, model, namespace),
+    // getGraphqlQuery(models, model, namespace),
+    // 去掉namespace前缀
+    getGraphqlQuery(models, model),
     {
       notifyOnNetworkStatusChange: true,
       variables: {

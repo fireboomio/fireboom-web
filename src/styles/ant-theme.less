@@ -210,6 +210,15 @@ body .ant-message {
     }
   }
 
+  .btn-test[disabled] {
+    border-color: #d9d9d9 !important;
+    background-color: rgba(0, 0, 0, 0.04) !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    &::before {
+      filter: grayscale(1);
+    }
+  }
+
   // collapse
   .ant-collapse > .ant-collapse-item > .ant-collapse-header {
     padding: 0;
