@@ -85,7 +85,8 @@ const DynamicTable = ({
     }
   )
 
-  const [deleteOne] = useMutation(getGraphqlMutation(models, model, 'delete', namespace))
+  // const [deleteOne] = useMutation(getGraphqlMutation(models, model, 'delete', namespace))
+  const [deleteOne] = useMutation(getGraphqlMutation(models, model, 'delete'))
 
   const [filterVisible, setFilterVisible] = useImmer<boolean>(false)
   const [createModalVisible, setCreateModalVisible] = useImmer<boolean>(false)

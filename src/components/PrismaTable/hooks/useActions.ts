@@ -78,17 +78,30 @@ const useActions = (
   } = useTableSchema()
 
   const [updateModel, { loading: updateLoading }] = useMutation(
-    getGraphqlMutation(models, model.id, 'update', namespace)
-  )
-  const [createModel, { loading: createLoading }] = useMutation(
-    getGraphqlMutation(models, model.id, 'create', namespace),
+    // getGraphqlMutation(models, model.id, 'update', namespace)
+    getGraphqlMutation(models, model.id, 'update'),
     {
       onError: err => {
-        throw err instanceof Error
-          ? err
-          : new Error(
-              (err.graphQLErrors[0] as unknown as CustomGraphqlError).user_facing_error.message
-            )
+        if (err.graphQLErrors.length) {
+          throw new Error(
+            (err.graphQLErrors[0] as unknown as CustomGraphqlError).user_facing_error.message
+          )
+        }
+        throw err
+      }
+    }
+  )
+  const [createModel, { loading: createLoading }] = useMutation(
+    getGraphqlMutation(models, model.id, 'create'),
+    // getGraphqlMutation(models, model.id, 'create', namespace),
+    {
+      onError: err => {
+        if (err.graphQLErrors.length) {
+          throw new Error(
+            (err.graphQLErrors[0] as unknown as CustomGraphqlError).user_facing_error.message
+          )
+        }
+        throw err
       }
     }
   )
