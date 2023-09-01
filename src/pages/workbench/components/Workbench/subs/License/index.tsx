@@ -60,7 +60,8 @@ const License = ({
   const licenseTypeMap = {
     community: intl.formatMessage({ defaultMessage: '社区版' }),
     professional: intl.formatMessage({ defaultMessage: '专业版' }),
-    enterprise: intl.formatMessage({ defaultMessage: '企业版' })
+    enterprise: intl.formatMessage({ defaultMessage: '企业版' }),
+    prismaDatasource: intl.formatMessage({ defaultMessage: 'Prisma数据源' })
   }
 
   const getCount = (count?: number) => {

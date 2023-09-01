@@ -41,7 +41,7 @@ export async function resolveDefaultCode(
     }
     code = await getDefaultCode(`global.${name}`)
   } else if (path.match(/custom-\w+\/authentication\//)) {
-    code = await getDefaultCode(`auth.${name}`)
+    code = await getDefaultCode(`authentication.${name}`)
   } else if (path.match(/custom-\w+\/customize\//)) {
     code = replaceFileTemplate(await getDefaultCode('custom.customize'), [
       { variableName: 'CUSTOMIZE_NAME', value: name }
