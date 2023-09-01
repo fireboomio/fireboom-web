@@ -2,7 +2,7 @@ import { App, Button, Layout as ALayout, message, Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
@@ -65,7 +65,8 @@ export default function Index(props: PropsWithChildren) {
   const modelName = {
     datasource: intl.formatMessage({ defaultMessage: '数据源' }),
     operation: intl.formatMessage({ defaultMessage: 'API' }),
-    teamwork: intl.formatMessage({ defaultMessage: '团队' })
+    teamwork: intl.formatMessage({ defaultMessage: '团队' }),
+    prismaDatasource: intl.formatMessage({ defaultMessage: 'Prisma数据源' })
   } as const
   const [vscode, setVscode] = useState<{ visible: boolean; currentPath: string; config: any }>({
     visible: false,
