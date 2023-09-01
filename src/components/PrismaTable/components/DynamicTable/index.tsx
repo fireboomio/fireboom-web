@@ -101,7 +101,9 @@ const DynamicTable = ({
     return <Empty />
   }
 
-  const { tableData, tableDataTotalCount } = getTableDataFromGraphQLResp(model, data, namespace)
+  // const { tableData, tableDataTotalCount } = getTableDataFromGraphQLResp(model, data, namespace)
+  // 去掉namespace
+  const { tableData, tableDataTotalCount } = getTableDataFromGraphQLResp(model, data)
 
   const handlePageChange = (page: number, pageSize: number) => {
     setPageState(pageState => {
