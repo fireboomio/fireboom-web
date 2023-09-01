@@ -28,6 +28,7 @@ export interface LicenseProps {
     import: 0 | 1
     teamwork: 0 | 1
     incrementBuild: 0 | 1
+    prismaDatasource?: 0 | 1
   }
   expireTime: string
 }
@@ -85,29 +86,29 @@ const License = ({
                 }}
               />
             </div>
-            <div className="mt-5 mb-4 text-[rgba(95,98,105,0.6)] text-xs">
+            <div className="mt-5 mb-2 text-[rgba(95,98,105,0.6)] text-xs">
               <FormattedMessage defaultMessage="权益" />
             </div>
-            <div className="flex flex items-center">
-              <div className="flex-1 flex items-center">
+            <div className="flex items-center flex-wrap">
+              <div className="min-w-1/4 leading-10 flex items-center">
                 <div className={styles.dot} />
                 <FormattedMessage defaultMessage="API数量" />
                 <span className="ml-5">{getCount(userLimits?.operation)}</span>
               </div>
-              <div className="flex-1 flex items-center">
+              <div className="min-w-1/4 leading-10 flex items-center">
                 <div className={styles.dot} />
                 <FormattedMessage defaultMessage="数据源数量" />
                 <span className="ml-5">{getCount(userLimits?.datasource)}</span>
               </div>
               {userLimits?.incrementBuild === 1 ? (
-                <div className="flex-1 flex items-center">
+                <div className="min-w-1/4 leading-10 flex items-center">
                   <div className={styles.dot} />
                   <FormattedMessage defaultMessage="增量编译" />
                 </div>
               ) : (
-                <Tooltip title={intl.formatMessage({ defaultMessage: '仅商业授权版支持' })}>
+                <Tooltip title={intl.formatMessage({ defaultMessage: '请购买商业授权' })}>
                   <a
-                    className={clsx('flex-1 flex items-center', styles.notSupport)}
+                    className={clsx('min-w-1/4 leading-10 flex items-center', styles.notSupport)}
                     href={licenseConfig?.buyLicenseUrl}
                     target="_blank"
                     rel="noreferrer"
@@ -117,15 +118,33 @@ const License = ({
                   </a>
                 </Tooltip>
               )}
+              {userLimits?.prismaDatasource === 1 ? (
+                <div className="min-w-1/4 leading-10 flex items-center">
+                  <div className={styles.dot} />
+                  <FormattedMessage defaultMessage="Prisma数据源" />
+                </div>
+              ) : (
+                <Tooltip title={intl.formatMessage({ defaultMessage: '请购买商业授权' })}>
+                  <a
+                    className={clsx('min-w-1/4 leading-10 flex items-center', styles.notSupport)}
+                    href={licenseConfig?.buyLicenseUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className={styles.dotError}>x</div>
+                    <FormattedMessage defaultMessage="Prisma数据源" />
+                  </a>
+                </Tooltip>
+              )}
 
-              <div className="flex-1 flex items-center">
+              <div className="min-w-1/4 leading-10 flex items-center">
                 <div className={styles.dot} />
                 <FormattedMessage defaultMessage="客服支持" />
               </div>
             </div>
           </div>
           <div
-            className="mt-6 mb-5 h-1px"
+            className="mt-4 mb-5 h-1px"
             style={{ border: 'none', borderTop: '1px dashed #979797' }}
           />
           <div className="flex items-center">
