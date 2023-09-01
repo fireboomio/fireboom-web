@@ -1,10 +1,12 @@
 import type { ButtonProps } from 'antd'
+import { uniqueId } from 'lodash'
 import type { ReactNode } from 'react'
 import create from 'zustand'
 
 const SILENT_MODE_KEY = 'notification.silent'
 
 export type NotificationItem = {
+  id: string
   type?: 'success' | 'info' | 'warning' | 'error'
   title: string
   // 消息来源
@@ -44,8 +46,8 @@ export const useNotification = create<NotificationState>((set, get) => ({
     set({ silentMode: !get().silentMode })
     localStorage.setItem(SILENT_MODE_KEY, get().silentMode ? '0' : '1')
   },
-  addNotification: (item: NotificationItem) => {
-    set({ notifications: [...get().notifications, item] })
+  addNotification: (item: Omit<NotificationItem, 'id'>) => {
+    set({ notifications: [{ id: uniqueId(), ...item }, ...get().notifications] })
   },
   removeNotification(item) {
     set({ notifications: get().notifications.filter(n => n !== item) })
