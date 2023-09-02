@@ -43,16 +43,16 @@ export default function Index(props: Props) {
         cacheConfig: {
           ...apiSetting.cacheConfig,
           staleWhileRevalidate:
-            (apiSetting.cacheConfig?.staleWhileRevalidate ||
-              globalSetting?.cacheConfig.staleWhileRevalidate) ??
+            apiSetting.cacheConfig?.staleWhileRevalidate ??
+            globalSetting?.cacheConfig.staleWhileRevalidate ??
             30,
-          maxAge: (apiSetting.cacheConfig?.maxAge || globalSetting?.cacheConfig.maxAge) ?? 120
+          maxAge: apiSetting.cacheConfig?.maxAge ?? globalSetting?.cacheConfig.maxAge ?? 120
         },
         liveQueryConfig: {
           ...apiSetting.liveQueryConfig,
           pollingIntervalSeconds:
-            (apiSetting.liveQueryConfig?.pollingIntervalSeconds ||
-              globalSetting?.liveQueryConfig?.pollingIntervalSeconds) ??
+            apiSetting.liveQueryConfig?.pollingIntervalSeconds ??
+            globalSetting?.liveQueryConfig?.pollingIntervalSeconds ??
             10
         }
       }
