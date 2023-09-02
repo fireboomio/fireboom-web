@@ -2,13 +2,13 @@ import { App, Button, Layout as ALayout, message, Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
-import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import { useGlobal } from '@/hooks/global'
+import { QuestionType, useGlobal } from '@/hooks/global'
 import { mutateApi } from '@/hooks/store/api'
 import { mutateDataSource } from '@/hooks/store/dataSource'
 import type { Info } from '@/interfaces/common'
@@ -27,6 +27,7 @@ import { updateGlobalOperationHookEnabled, updateOperationHookEnabled } from '@/
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useEngine } from '@/providers/engine'
+import { useNotification } from '@/providers/notification'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { resolveDefaultCode } from '@/utils/template'
 import writeFile from '@/utils/uploadLocal'
@@ -62,6 +63,7 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
+  const { addNotification, removeByTag } = useNotification()
   const modelName = {
     datasource: intl.formatMessage({ defaultMessage: '数据源' }),
     operation: intl.formatMessage({ defaultMessage: 'API' }),
@@ -88,6 +90,18 @@ export default function Index(props: PropsWithChildren) {
     questions: state.questions,
     setQuestions: state.setQuestions
   }))
+
+  const modelNameMap = useMemo(() => {
+    return {
+      [QuestionType.Authentication]: intl.formatMessage({ defaultMessage: '身份认证' }),
+      [QuestionType.Configuration]: intl.formatMessage({ defaultMessage: '设置' }),
+      [QuestionType.DataSource]: intl.formatMessage({ defaultMessage: '数据源' }),
+      [QuestionType.Operation]: intl.formatMessage({ defaultMessage: 'API' }),
+      [QuestionType.Role]: intl.formatMessage({ defaultMessage: '角色管理' }),
+      [QuestionType.SDK]: intl.formatMessage({ defaultMessage: '钩子模板' }),
+      [QuestionType.Storage]: intl.formatMessage({ defaultMessage: '文件存储' })
+    }
+  }, [intl])
 
   const authKey = getAuthKey()
   // authkey变化时启动socket
@@ -135,10 +149,27 @@ export default function Index(props: PropsWithChildren) {
     setLogs(logs.concat(parseLogs([data])))
   })
   useWebSocket('question', 'pull', data => {
+    removeByTag('question')
     setQuestions(data || [])
+    if (data?.length) {
+      addNotification({
+        tag: 'question',
+        title: intl.formatMessage(
+          {
+            defaultMessage: '构建中存在{count}条问题， 请检查'
+          },
+          { count: data.length }
+        )
+      })
+    }
   })
   useWebSocket('question', 'push', data => {
     setQuestions([...questions, data])
+    addNotification({
+      tag: 'question',
+      title: `${modelNameMap[data.model as keyof typeof modelNameMap]}[${data.name}]: ${data.msg}`,
+      source: data.model
+    })
   })
   useWebSocket('license', 'pull', data => {
     setLicense(data)

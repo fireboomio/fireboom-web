@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
-import { Button, Form, Tooltip } from 'antd'
+import { MessageOutlined } from '@ant-design/icons'
+import { Button, Form, Popover, Tooltip } from 'antd'
 import type React from 'react'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 
 import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
+import { NotificationButton } from '@/components/Notification'
 import VsCode from '@/components/VsCode'
 import { QuestionType, useGlobal } from '@/hooks/global'
 import { useConfigContext } from '@/lib/context/ConfigContext'
@@ -84,6 +86,23 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
+        <Popover
+          placement="bottomLeft"
+          content={
+            <div className="p-2 bg-white rounded-lg flex flex-col items-center shadow-xl">
+              <img
+                src="https://fireboom.oss-cn-hangzhou.aliyuncs.com/img/qun_qr.png"
+                className="w-45"
+                alt="qun_qrcode"
+              />
+              <p>扫码加入开发者交流群</p>
+            </div>
+          }
+        >
+          <div className={styles.contact}>
+            <MessageOutlined />
+          </div>
+        </Popover>
         <span className={styles['info']}>
           {/*<span className={styles.gitIcon} />*/}
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
@@ -134,13 +153,13 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
             <span className={styles.errLabel}>
               <img height={14} width={14} src="/assets/workbench/footer-error.png" alt="错误" />
               <span className="ml-2">
-                {questions.filter(x => x.model === QuestionType.DatasourceQuestion).length}
+                {questions.filter(x => x.model === QuestionType.DataSource).length}
               </span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
               <img height={14} width={14} src="/assets/workbench/footer-warning.png" alt="警告" />
               <span className="ml-2">
-                {questions.filter(x => x.model !== QuestionType.DatasourceQuestion).length}
+                {questions.filter(x => x.model !== QuestionType.DataSource).length}
               </span>
             </span>
           </span>
@@ -284,13 +303,14 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
         </span>
         <span className="ml-auto">{license && <License {...license} />}</span>
         <span
-          className="bg-white rounded-sm cursor-pointer ml-4 mr-2 text-xs py-0.5 px-1 text-[#326d9f]"
+          className="bg-white rounded-sm cursor-pointer ml-4 text-xs py-0.5 px-1 text-[#326d9f]"
           onClick={() => {
             vscode?.options?.visible ? vscode.hide() : vscode.show()
           }}
         >
           <FormattedMessage defaultMessage="钩子编辑器⇪" />
         </span>
+        <NotificationButton className="bg-white rounded-sm cursor-pointer ml-4 mr-2 text-xs py-0.5 px-1 text-[#326d9f] inline-flex items-center" />
       </div>
       <VsCode
         className="top-9 z-1000 fixed"

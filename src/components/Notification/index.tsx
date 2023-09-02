@@ -5,7 +5,7 @@ import {
   InfoCircleOutlined,
   WarningOutlined
 } from '@ant-design/icons'
-import { Button } from 'antd'
+import { Button, Popover } from 'antd'
 import type { ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
 
@@ -20,7 +20,7 @@ interface NotificationButtonProps {
 
 const notificationTypeIcons: Record<NonNullable<NotificationItem['type']>, ReactNode> = {
   success: <CheckCircleOutlined className="text-[#52c41a]" />,
-  info: <InfoCircleOutlined className="cursor-[#1677ff]" />,
+  info: <InfoCircleOutlined className="text-[#1677ff]" />,
   warning: <WarningOutlined className="text-[#faad14]" />,
   error: <CloseOutlined className="text-[#ff4d4f]" />
 }
@@ -28,13 +28,16 @@ const notificationTypeIcons: Record<NonNullable<NotificationItem['type']>, React
 export const NotificationButton = (props: NotificationButtonProps) => {
   const { silentMode, visible, toggleVisible } = useNotification()
   return (
-    <span {...props} onClick={toggleVisible}>
-      {silentMode ? (
-        <NoNotificationOutlined className="cursor-pointer" />
-      ) : (
-        <NotificationOutlined className="cursor-pointer" />
-      )}
-    </span>
+    <>
+      <span {...props} onClick={toggleVisible}>
+        {silentMode ? (
+          <NoNotificationOutlined className="cursor-pointer" />
+        ) : (
+          <NotificationOutlined className="cursor-pointer" />
+        )}
+      </span>
+      <NotificationWindow />
+    </>
   )
 }
 
@@ -51,8 +54,8 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
   }
 
   return (
-    <div className="shadow-lg rounded">
-      <div className="px-2 py-3 bg-[#e3e3d3] flex">
+    <div className="shadow-lg rounded absolute right-5 bottom-10 z-1000 bg-white min-w-100 overflow-hidden">
+      <div className="px-2 py-3 bg-[#e3e3d3] flex items-center">
         <span className="mr-auto">
           <FormattedMessage defaultMessage="通知" />
         </span>
@@ -70,12 +73,16 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
           key={notification.id}
         >
           <div className="flex items-start">
-            {notificationTypeIcons[notification.type ?? 'info']}
-            <div className="flex-1 ml-1 text-[#333] leading-6">{notification.title}</div>
-            <CloseOutlined
-              className="ml-4 cursor-pointer text-[#333]"
-              onClick={() => removeNotification(notification)}
-            />
+            <span className="flex-shrink-0 leading-6">
+              {notificationTypeIcons[notification.type ?? 'info']}
+            </span>
+            <div className="flex-1 ml-2 text-[#333] leading-6">{notification.title}</div>
+            <span className="ml-4 leading-6">
+              <CloseOutlined
+                className="flex-shrink-0 cursor-pointer text-[#333]"
+                onClick={() => removeNotification(notification)}
+              />
+            </span>
           </div>
           {notification.source ||
             (notification.buttons?.length && (

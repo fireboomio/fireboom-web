@@ -6,13 +6,12 @@ type Log = {
   time: string
 }
 export enum QuestionType {
-  DatasourceQuestion = 'datasource',
-  OperationQuestion = 'operation',
-  // HooksQuestion = 3,
-  AuthQuestion = 'authentication',
-  OssQuestion = 'storage',
-  // OauthQuestion = 6,
-  // InternalQuestion = 7,
+  Authentication = 'authentication',
+  Configuration = 'config',
+  DataSource = 'datasource',
+  Operation = 'operation',
+  Role = 'role',
+  Storage = 'storage',
   SDK = 'sdk'
 }
 export type Question = {

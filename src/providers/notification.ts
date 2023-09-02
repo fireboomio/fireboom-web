@@ -7,6 +7,7 @@ const SILENT_MODE_KEY = 'notification.silent'
 
 export type NotificationItem = {
   id: string
+  tag?: string
   type?: 'success' | 'info' | 'warning' | 'error'
   title: string
   // 消息来源
@@ -27,8 +28,9 @@ interface NotificationState {
   hide: () => void
   toggleVisible: () => void
   toggleSilentMode: () => void
-  addNotification: (item: NotificationItem) => void
+  addNotification: (item: Omit<NotificationItem, 'id'>) => void
   removeNotification: (item: NotificationItem) => void
+  removeByTag: (tag: string) => void
   clear: () => void
 }
 
@@ -51,8 +53,17 @@ export const useNotification = create<NotificationState>((set, get) => ({
   },
   removeNotification(item) {
     set({ notifications: get().notifications.filter(n => n !== item) })
+    if (!get().notifications.length) {
+      set({ visible: false })
+    }
+  },
+  removeByTag(tag) {
+    set({ notifications: get().notifications.filter(n => n.tag !== tag) })
+    if (!get().notifications.length) {
+      set({ visible: false })
+    }
   },
   clear() {
-    set({ notifications: [] })
+    set({ notifications: [], visible: false })
   }
 }))

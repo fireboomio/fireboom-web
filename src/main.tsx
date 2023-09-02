@@ -3,7 +3,6 @@ import 'virtual:windi-components.css'
 import 'virtual:windi-utilities.css'
 import './styles/globals.css'
 import './styles/ant-theme.less'
-import 'react-json-view-lite/dist/index.css'
 
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'

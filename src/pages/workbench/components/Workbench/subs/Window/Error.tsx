@@ -13,6 +13,7 @@ import { mutateStorage } from '@/hooks/store/storage'
 import { DataSourceKind } from '@/interfaces/datasource'
 import events from '@/lib/event/events'
 import requests from '@/lib/fetchers'
+import { getDataSourceIcon } from '@/utils/datasource'
 
 import styles from './error.module.less'
 
@@ -42,29 +43,11 @@ export default function Error() {
     const list: any = Object.keys(groups).map(key => ({
       key,
       list: groups[key].map((x: any) => {
-        if (key === QuestionType.DatasourceQuestion) {
-          switch (x.extra.kind) {
-            case DataSourceKind.MongoDB:
-              x.icon = '/assets/icon/mongodb.svg'
-              break
-            case DataSourceKind.MySQL:
-              x.icon = '/assets/icon/mysql.svg'
-              break
-            case DataSourceKind.Restful:
-              x.icon = '/assets/icon/rest.svg'
-              break
-            case DataSourceKind.SQLite:
-              x.icon = '/assets/icon/sqlite.svg'
-              break
-            case DataSourceKind.Graphql:
-              x.icon = '/assets/icon/graphql.svg'
-              break
-            default:
-              x.icon = '/assets/icon/file.svg'
-          }
-        } else if (key === QuestionType.AuthQuestion) {
+        if (key === QuestionType.DataSource) {
+          x.icon = getDataSourceIcon(x.extra)
+        } else if (key === QuestionType.Authentication) {
           x.icon = '/assets/icon/oidc.svg'
-        } else if (key === QuestionType.OssQuestion) {
+        } else if (key === QuestionType.Storage) {
           x.icon = '/assets/icon/file.svg'
         } else {
           x.icon = '/assets/icon/file.svg'
@@ -115,7 +98,7 @@ export default function Error() {
               <div className={styles.name}>{item.name}</div>
               <div className={styles.desc}>
                 <span>{item.msg}</span>
-                {block.key == QuestionType.DatasourceQuestion && (
+                {block.key == QuestionType.DataSource && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -133,7 +116,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key == QuestionType.OperationQuestion && (
+                {block.key == QuestionType.Operation && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -156,7 +139,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key == QuestionType.AuthQuestion && (
+                {block.key == QuestionType.Authentication && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -179,7 +162,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key == QuestionType.OssQuestion && (
+                {block.key == QuestionType.Storage && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
@@ -202,7 +185,7 @@ export default function Error() {
                     </span>
                   </>
                 )}
-                {block.key === QuestionType.OssQuestion && (
+                {block.key === QuestionType.Storage && (
                   <>
                     <span>
                       , <FormattedMessage defaultMessage="可" />
