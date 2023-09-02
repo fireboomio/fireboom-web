@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { StorageSwitchContext } from '@/lib/context/storage-context'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import fileIcon from '../../components/Workbench/assets/file.svg'
 // import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import StorageDetail from './subs/Detail'
 import StorageForm from './subs/Form'
@@ -25,11 +26,7 @@ export default function StorageContainer({ content, showType, showErr }: Props) 
         className="bg-white flex flex-0 h-54px pl-11 items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <img
-          src={`${import.meta.env.BASE_URL}assets/ant-tree/file.png`}
-          className="h-14px mr-1.5 w-14px"
-          alt="文件"
-        />
+        <img src={fileIcon} className="h-14px mr-1.5 w-14px" alt="文件" />
         {content?.name || intl.formatMessage({ defaultMessage: '创建文件存储' })}
         <div className="flex-1"></div>
         {showType === 'detail' ? (

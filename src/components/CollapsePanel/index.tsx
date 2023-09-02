@@ -40,7 +40,14 @@ CollapsePanel.Block = function CollapsePanelBlock(props: CollapsePanelBlockProps
         className={`${styles.header} ${open ? styles.headerOpen : ''}`}
         onClick={_ => handelOpen(!open)}
       >
-        <div className={styles.arrow} />
+        <div
+          className={styles.arrow}
+          style={{
+            background: `url(${
+              import.meta.env.BASE_URL
+            }assets/workbench/panel-arrow.png) no-repeat center/contain`
+          }}
+        />
         <div className={styles.title}>{props.title}</div>
         <div className={styles.action} onClick={e => e.stopPropagation()}>
           {props.action ? props.action : null}

@@ -16,6 +16,7 @@ import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { getDataSourceIcon, isDatabaseKind } from '@/utils/datasource'
 
+import backImg from '../../components/Workbench/assets/panel-arrow.png'
 import Custom from './subs/Custom'
 import DB from './subs/DB'
 // import Designer from './subs/Designer'
@@ -139,7 +140,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   style={{ transform: 'rotate(90deg)' }}
                   width={12}
                   height={12}
-                  src={`${import.meta.env.BASE_URL}assets/workbench/panel-arrow.png`}
+                  src={backImg}
                   alt="返回"
                   preview={false}
                 />
@@ -148,7 +149,6 @@ export default function DatasourceContainer({ content, showType }: Props) {
               ''
             )}
             <img className="h-14px mr-1.5 w-14px" src={icon} alt="数据源" />
-            {/* <img src={`${import.meta.env.BASE_URL}assets/ant-tree/file.png`} className="h-14px mr-1.5 w-14px" alt="文件" /> */}
             {showType === 'detail' ? (
               isEditing ? (
                 <Input

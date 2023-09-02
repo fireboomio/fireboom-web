@@ -21,6 +21,8 @@ import { useEngine } from '@/providers/engine'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import errorIcon from '../../assets/footer-error.png'
+import warningIcon from '../../assets/footer-warning.png'
 import type { LicenseProps } from '../License'
 import License from '../License'
 import styles from './index.module.less'
@@ -134,23 +136,13 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
             className="cursor-pointer flex items-center"
           >
             <span className={styles.errLabel}>
-              <img
-                height={14}
-                width={14}
-                src={`${import.meta.env.BASE_URL}assets/workbench/footer-error.png`}
-                alt="错误"
-              />
+              <img height={14} width={14} src={errorIcon} alt="错误" />
               <span className="ml-2">
                 {questions.filter(x => x.model === QuestionType.DataSource).length}
               </span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
-              <img
-                height={14}
-                width={14}
-                src={`${import.meta.env.BASE_URL}assets/workbench/footer-warning.png`}
-                alt="警告"
-              />
+              <img height={14} width={14} src={warningIcon} alt="警告" />
               <span className="ml-2">
                 {questions.filter(x => x.model !== QuestionType.DataSource).length}
               </span>

@@ -20,6 +20,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 import { getDataSourceIcon, isDatabaseKind } from '@/utils/datasource'
 import { parseDBUrl } from '@/utils/db'
 
+import roleIcon from '../../assets/panel-role.png'
 import styles from './CommonPanel.module.less'
 import SidePanel from './SidePanel'
 
@@ -179,7 +180,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         newItem: '/workbench/auth/new',
         navAction: [
           {
-            icon: `${import.meta.env.BASE_URL}assets/workbench/panel-role.png`,
+            icon: roleIcon,
             path: '/workbench/auth/role/role',
             tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
           }
