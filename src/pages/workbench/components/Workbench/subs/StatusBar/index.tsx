@@ -209,7 +209,7 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {
-                  sendMessageToSocket({ channel: 'engine', event: 'hookStatus' })
+                  sendMessageToSocket({ channel: 'hookReport', event: 'pull' })
                   e.stopPropagation()
                 }}
               >
