@@ -54,7 +54,7 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
   }
 
   return (
-    <div className="shadow-lg rounded absolute right-5 bottom-10 z-1000 bg-white min-w-100 overflow-hidden">
+    <div className="shadow-lg rounded absolute right-5 bottom-10 z-1000 bg-white min-w-100 max-w-120 overflow-hidden">
       <div className="px-2 py-3 bg-[#e3e3d3] flex items-center">
         <span className="mr-auto">
           <FormattedMessage defaultMessage="通知" />
