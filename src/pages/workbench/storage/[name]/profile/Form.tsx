@@ -18,7 +18,7 @@ import { useDict } from '@/providers/dict'
 
 import styles from './[profile].module.less'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 interface Props {
   storageName: string

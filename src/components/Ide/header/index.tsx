@@ -142,7 +142,11 @@ const IdeHeaderContainer: FC<Props> = props => {
         icon: null,
         content: (
           <>
-            <img src="/gifs/stackblitz-local-debug.gif" className="w-164" />
+            <img
+              src={`${import.meta.env.BASE_URL}gifs/stackblitz-local-debug.gif`}
+              className="w-164"
+              alt=""
+            />
             <div className="mt-2">
               <Checkbox
                 onChange={e => {

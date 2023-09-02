@@ -63,7 +63,11 @@ export default function AuthConfigContainer() {
         className="bg-white flex flex-0 h-54px pl-11 items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        <img src="/assets/icon/oidc.svg" className="h-14px mr-1.5 w-14px" alt="文件" />
+        <img
+          src={`${import.meta.env.BASE_URL}assets/icon/oidc.svg`}
+          className="h-14px mr-1.5 w-14px"
+          alt="文件"
+        />
         {content?.name || <FormattedMessage defaultMessage="创建身份认证器" />}
         <div className="flex-1"></div>
         {!editFlag && (

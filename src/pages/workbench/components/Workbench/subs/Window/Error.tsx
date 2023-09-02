@@ -46,11 +46,11 @@ export default function Error() {
         if (key === QuestionType.DataSource) {
           x.icon = getDataSourceIcon(x.extra)
         } else if (key === QuestionType.Authentication) {
-          x.icon = '/assets/icon/oidc.svg'
+          x.icon = `${import.meta.env.BASE_URL}assets/icon/oidc.svg`
         } else if (key === QuestionType.Storage) {
-          x.icon = '/assets/icon/file.svg'
+          x.icon = `${import.meta.env.BASE_URL}assets/icon/file.svg`
         } else {
-          x.icon = '/assets/icon/file.svg'
+          x.icon = `${import.meta.env.BASE_URL}assets/icon/file.svg`
         }
         return x
       })

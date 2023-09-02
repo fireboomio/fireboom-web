@@ -113,7 +113,13 @@ export default function DatasourceContainer({ content, showType }: Props) {
               className="cursor-pointer flex bg-[#F9F9F9FF] mr-6 py-0.5 px-2 items-center justify-evenly"
               onClick={() => handleToggleDesigner('detail')}
             >
-              <Image width={12} height={7} src="/assets/back.svg" alt="返回" preview={false} />
+              <Image
+                width={12}
+                height={7}
+                src={`${import.meta.env.BASE_URL}assets/back.svg`}
+                alt="返回"
+                preview={false}
+              />
               <span className="ml-1">
                 <FormattedMessage defaultMessage="返回" />
               </span>
@@ -133,7 +139,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                   style={{ transform: 'rotate(90deg)' }}
                   width={12}
                   height={12}
-                  src="/assets/workbench/panel-arrow.png"
+                  src={`${import.meta.env.BASE_URL}assets/workbench/panel-arrow.png`}
                   alt="返回"
                   preview={false}
                 />
@@ -142,7 +148,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
               ''
             )}
             <img className="h-14px mr-1.5 w-14px" src={icon} alt="数据源" />
-            {/* <img src="/assets/ant-tree/file.png" className="h-14px mr-1.5 w-14px" alt="文件" /> */}
+            {/* <img src={`${import.meta.env.BASE_URL}assets/ant-tree/file.png`} className="h-14px mr-1.5 w-14px" alt="文件" /> */}
             {showType === 'detail' ? (
               isEditing ? (
                 <Input

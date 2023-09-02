@@ -136,7 +136,12 @@ export default function CRUDSider(props: CRUDSiderProps) {
           className="cursor-pointer flex bg-[#f7f7f7] h-28px ml-1 w-28px items-center justify-center"
           onClick={loadModelList}
         >
-          <img width={18} height={18} src="/assets/refresh.svg" alt="刷新" />
+          <img
+            width={18}
+            height={18}
+            src={`${import.meta.env.BASE_URL}assets/refresh.svg`}
+            alt="刷新"
+          />
         </div>
       </div>
       <div className="py-5px overflow-y-auto pa">
@@ -149,7 +154,7 @@ export default function CRUDSider(props: CRUDSiderProps) {
             key={item.name}
             onClick={() => setCurrentModel(item)}
           >
-            <img className="mr-3" src="/assets/model.svg" alt="刷新" />
+            <img className="mr-3" src={`${import.meta.env.BASE_URL}assets/model.svg`} alt="刷新" />
             {item.name}
           </div>
         ))}

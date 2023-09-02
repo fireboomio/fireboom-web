@@ -91,7 +91,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           tip,
           enabled: row.oidcConfigEnabled || row.jwksProviderEnabled,
           _row: row,
-          svg: '/assets/icon/oidc.svg'
+          svg: `${import.meta.env.BASE_URL}assets/icon/oidc.svg`
         }
       })
     } else if (props.type === 'storage') {
@@ -106,7 +106,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
           tip,
           enabled: row.enabled,
           _row: row,
-          svg: '/assets/icon/file.svg'
+          svg: `${import.meta.env.BASE_URL}assets/icon/file.svg`
         }
       })
     }
@@ -179,7 +179,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
         newItem: '/workbench/auth/new',
         navAction: [
           {
-            icon: '/assets/workbench/panel-role.png',
+            icon: `${import.meta.env.BASE_URL}assets/workbench/panel-role.png`,
             path: '/workbench/auth/role/role',
             tooltip: intl.formatMessage({ defaultMessage: '权限管理' })
           }
@@ -366,7 +366,7 @@ export default function CommonPanel(props: { type: MenuName; defaultOpen: boolea
                       height={12}
                       preview={false}
                       alt={item.name}
-                      src={item.svg ?? `/assets/icon/github-fill.svg`}
+                      src={item.svg ?? `${import.meta.env.BASE_URL}assets/icon/github-fill.svg`}
                     />
                   </div>
                   <div className={styles.title}>{item.name}</div>

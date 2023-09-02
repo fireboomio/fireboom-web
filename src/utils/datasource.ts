@@ -33,32 +33,32 @@ export function getDataSourceIcon(ds: {
     customized?: boolean
   }
 }) {
-  let icon = '/assets/icon/db-other.svg'
+  let icon = `${import.meta.env.BASE_URL}assets/icon/db-other.svg`
   switch (ds?.kind) {
     case DataSourceKind.Graphql:
       if (ds.customGraphql?.customized) {
-        icon = '/assets/icon/graphql-custom.svg'
+        icon = `${import.meta.env.BASE_URL}assets/icon/graphql-custom.svg`
       } else {
-        icon = '/assets/icon/graphql.svg'
+        icon = `${import.meta.env.BASE_URL}assets/icon/graphql.svg`
       }
       break
     case DataSourceKind.Restful:
-      icon = '/assets/icon/rest.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/rest.svg`
       break
     case DataSourceKind.MongoDB:
-      icon = '/assets/icon/mongodb.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/mongodb.svg`
       break
     case DataSourceKind.MySQL:
-      icon = '/assets/icon/mysql.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/mysql.svg`
       break
     case DataSourceKind.PostgreSQL:
-      icon = '/assets/icon/pgsql.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/pgsql.svg`
       break
     case DataSourceKind.SQLite:
-      icon = '/assets/icon/sqlite.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/sqlite.svg`
       break
     case DataSourceKind.Prisma:
-      icon = '/assets/icon/prisma.svg'
+      icon = `${import.meta.env.BASE_URL}assets/icon/prisma.svg`
       break
   }
   return icon

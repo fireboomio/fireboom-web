@@ -615,7 +615,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                   )
                 }}
               >
-                <img alt="" src="/assets/icon/graphql2.svg" />
+                <img alt="" src={`${import.meta.env.BASE_URL}assets/icon/graphql2.svg`} />
               </div>
             </Tooltip>
           </div>

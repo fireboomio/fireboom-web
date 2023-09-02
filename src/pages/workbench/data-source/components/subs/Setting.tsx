@@ -15,7 +15,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './Setting.module.less'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 interface OptionT {
   label: string

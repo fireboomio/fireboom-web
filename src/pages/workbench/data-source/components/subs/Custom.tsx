@@ -10,7 +10,7 @@ import requests from '@/lib/fetchers'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 export interface Config {
   apiNamespace: string

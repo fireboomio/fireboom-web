@@ -55,7 +55,13 @@ export function Notice({ handleToggleDesigner }: Props) {
           <div className="text-[#ADADAD] text-11px">
             <FormattedMessage defaultMessage="更多" />
           </div>
-          <Image alt="更多" width={12} height={12} preview={false} src="/assets/icon-more.png" />
+          <Image
+            alt="更多"
+            width={12}
+            height={12}
+            preview={false}
+            src={`${import.meta.env.BASE_URL}assets/icon-more.png`}
+          />
         </a>
       </div>
       <div className={styles.rowList}>

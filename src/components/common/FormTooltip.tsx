@@ -29,7 +29,13 @@ const FormToolTip = (props: Props) => {
             maxWidth: 'initial'
           }}
         >
-          <Image width={10} height={10} alt="提示" preview={false} src="/assets/warning.png" />
+          <Image
+            width={10}
+            height={10}
+            alt="提示"
+            preview={false}
+            src={`${import.meta.env.BASE_URL}assets/warning.png`}
+          />
         </div>
       </Tooltip>
     </div>

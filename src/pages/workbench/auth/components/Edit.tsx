@@ -33,7 +33,7 @@ import imgOpenID from '../assets/OpenID.png'
 import { defaultAuth } from '../defaults'
 import styles from './subs.module.less'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 interface Props {
   content: ApiDocuments.Authentication

@@ -14,7 +14,13 @@ export default function CRUDIndex() {
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.back} onClick={() => history.go(-1)}>
-            <img className="mr-1" width={12} height={7} src="/assets/back.svg" alt="返回" />
+            <img
+              className="mr-1"
+              width={12}
+              height={7}
+              src={`${import.meta.env.BASE_URL}assets/back.svg`}
+              alt="返回"
+            />
             <FormattedMessage defaultMessage="返回" />
           </div>
           <FormattedMessage defaultMessage="CRUD生成器" />

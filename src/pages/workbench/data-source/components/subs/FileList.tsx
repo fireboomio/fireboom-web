@@ -73,11 +73,13 @@ export default function FileList({
     e: React.MouseEvent<HTMLElement, MouseEvent> | undefined
   ) => {
     e?.stopPropagation()
-    requests.delete('/vscode/delete', {
-      data: { uri: `${dir}/${rcd.name}` }
-    }).then(() => {
-      setRefreshFlag(!refreshFlag)
-    })
+    requests
+      .delete('/vscode/delete', {
+        data: { uri: `${dir}/${rcd.name}` }
+      })
+      .then(() => {
+        setRefreshFlag(!refreshFlag)
+      })
   }
 
   const cancel = (e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
@@ -175,7 +177,13 @@ export default function FileList({
           style={{ height: 26 }}
           className="h-26px max-w-328px"
           addonBefore={
-            <Image height={14} width={14} src="/assets/folder.svg" alt="目录" preview={false} />
+            <Image
+              height={14}
+              width={14}
+              src={`${import.meta.env.BASE_URL}assets/folder.svg`}
+              alt="目录"
+              preview={false}
+            />
           }
           value={`${dir}`}
           readOnly
@@ -186,7 +194,7 @@ export default function FileList({
               rootClassName="mr-1"
               height={16}
               width={16}
-              src="/assets/upload.svg"
+              src={`${import.meta.env.BASE_URL}assets/upload.svg`}
               alt="上传"
               preview={false}
             />

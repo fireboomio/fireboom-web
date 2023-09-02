@@ -583,7 +583,7 @@ export default function StorageExplorer({ bucketName }: Props) {
                 className="cursor-pointer mr-4 inline-flex items-center justify-center"
                 onClick={changeSerachState}
               >
-                <img alt="" src="/assets/search.svg" />
+                <img alt="" src={`${import.meta.env.BASE_URL}assets/search.svg`} />
               </div>
             </Tooltip>
           ) : (
@@ -593,7 +593,7 @@ export default function StorageExplorer({ bucketName }: Props) {
               status="error"
               prefix={
                 <div className="cursor-pointer text-[0px]" onClick={changeSerachState}>
-                  <img alt="" src="/assets/search.svg" />
+                  <img alt="" src={`${import.meta.env.BASE_URL}assets/search.svg`} />
                 </div>
               }
               className="mr-4"

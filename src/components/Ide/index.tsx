@@ -29,7 +29,7 @@ import IdeDependList from './depend-list/index'
 import IdeHeaderContainer from './header/index'
 import ideStyles from './ide.module.less'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 export const hookPath = {
   OperationPreResolve: (api: string) => `operations/${api}/preResolve`,

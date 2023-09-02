@@ -396,7 +396,7 @@ export default function Designer() {
                 {/* <Image
                     height={28}
                     width={28}
-                    src={`/assets/${x.logo}`}
+                    src={`${import.meta.env.BASE_URL}assets/${x.logo}`}
                     alt={x.name}
                     preview={false}
                   /> */}

@@ -727,7 +727,7 @@ export default function CRUDBody({ bodyData: props }: { bodyData: CRUDBodyProps 
                 alt=""
                 className="w-5"
                 style={{ transform: openMoreField ? '' : 'rotate(-90deg)' }}
-                src="/assets/shape-down.svg"
+                src={`${import.meta.env.BASE_URL}assets/shape-down.svg`}
               />
               {intl.formatMessage({ defaultMessage: '更多设置' })}
             </div>

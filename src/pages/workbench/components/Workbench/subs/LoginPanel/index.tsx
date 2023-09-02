@@ -46,7 +46,11 @@ export default function LoginPanel() {
   const filterAuthList = authList?.filter(x => x.name !== userInfo?.providerId)
   return (
     <div className={styles.entry}>
-      <img src="/assets/icon/oidc.svg" className="h-3 mr-2 w-3" alt="" />
+      <img
+        src={`${import.meta.env.BASE_URL}assets/icon/oidc.svg`}
+        className="h-3 mr-2 w-3"
+        alt=""
+      />
       <span>
         {userInfo ? userInfo.providerId : intl.formatMessage({ defaultMessage: '未登录' })}
       </span>
@@ -55,7 +59,11 @@ export default function LoginPanel() {
           <div className={styles.userInfo}>
             <img src={fireBg} alt="" className={styles.fireBg} />
             <div className={styles.head}>
-              <img src="/assets/icon/oidc.svg" className="h-6 mr-2 w-6" alt="" />
+              <img
+                src={`${import.meta.env.BASE_URL}assets/icon/oidc.svg`}
+                className="h-6 mr-2 w-6"
+                alt=""
+              />
               {userInfo.providerId}
             </div>
             <div className={styles.content}>
@@ -71,7 +79,11 @@ export default function LoginPanel() {
         )}
         {filterAuthList.map(auth => (
           <div className={styles.itemLine} key={auth.name} onClick={() => toggleLogin(auth)}>
-            <img src="/assets/icon/oidc.svg" className="h-4 mr-2.5 w-4" alt="" />
+            <img
+              src={`${import.meta.env.BASE_URL}assets/icon/oidc.svg`}
+              className="h-4 mr-2.5 w-4"
+              alt=""
+            />
             {auth.name}
           </div>
         ))}

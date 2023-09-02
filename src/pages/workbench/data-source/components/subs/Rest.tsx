@@ -56,9 +56,9 @@ export const renderIcon = (kind: number) => (
     className="mr-2"
     src={
       {
-        0: '/assets/header-value.png',
-        1: '/assets/header-env.png',
-        2: '/assets/header-relay.png'
+        0: `${import.meta.env.BASE_URL}assets/header-value.png`,
+        1: `${import.meta.env.BASE_URL}assets/header-env.png`,
+        2: `${import.meta.env.BASE_URL}assets/header-relay.png`
       }[kind]
     }
   />
@@ -327,7 +327,7 @@ export default function Rest({ content, type }: Props) {
                   }
                 >
                   <Image
-                    src="/assets/upload-file.png"
+                    src={`${import.meta.env.BASE_URL}assets/upload-file.png`}
                     width={14}
                     height={14}
                     alt="文件"

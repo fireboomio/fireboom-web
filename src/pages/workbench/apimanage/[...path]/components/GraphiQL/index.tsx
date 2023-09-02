@@ -69,7 +69,8 @@ export type GraphiQLToolbarConfig = {
  *
  * https://graphiql-test.netlify.app/typedoc/modules/graphiql.html#graphiqlprops
  */
-export type GraphiQLProps = Omit<GraphiQLProviderProps, 'children' | 'schema' | 'query'> & GraphiQLInterfaceProps
+export type GraphiQLProps = Omit<GraphiQLProviderProps, 'children' | 'schema' | 'query'> &
+  GraphiQLInterfaceProps
 
 /**
  * The top-level React component for GraphiQL, intended to encompass the entire
@@ -382,7 +383,9 @@ const GraphiInputAndResponse = ({
           >
             <img
               src={
-                variableMode === 'form' ? '/assets/view-list-active.svg' : '/assets/view-list.svg'
+                variableMode === 'form'
+                  ? `${import.meta.env.BASE_URL}assets/view-list-active.svg`
+                  : `${import.meta.env.BASE_URL}assets/view-list.svg`
               }
               alt=""
             />
@@ -397,8 +400,8 @@ const GraphiInputAndResponse = ({
             <img
               src={
                 variableMode === 'json'
-                  ? '/assets/view-editor-active.svg'
-                  : '/assets/view-editor.svg'
+                  ? `${import.meta.env.BASE_URL}assets/view-editor-active.svg`
+                  : `${import.meta.env.BASE_URL}assets/view-editor.svg`
               }
               alt=""
             />

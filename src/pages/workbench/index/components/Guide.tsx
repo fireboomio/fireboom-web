@@ -177,7 +177,7 @@ export default function Guide({ handleToggleDesigner }: Props) {
             height={15}
             preview={false}
             alt="close"
-            src="/assets/guide/icon-close.png"
+            src={`${import.meta.env.BASE_URL}assets/guide/icon-close.png`}
             onClick={handleClose}
           />
         </div>

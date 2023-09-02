@@ -70,7 +70,7 @@ export default function Home() {
                         <Image
                           width={54}
                           height={54}
-                          src="/assets/api-db.png"
+                          src={`${import.meta.env.BASE_URL}assets/api-db.png`}
                           alt="数据库"
                           preview={false}
                         />
@@ -87,7 +87,7 @@ export default function Home() {
                         <Image
                           width={54}
                           height={54}
-                          src="/assets/api-rest.png"
+                          src={`${import.meta.env.BASE_URL}assets/api-rest.png`}
                           alt="REST API"
                           preview={false}
                         />
@@ -104,7 +104,7 @@ export default function Home() {
                         <Image
                           width={54}
                           height={54}
-                          src="/assets/api-graphql.png"
+                          src={`${import.meta.env.BASE_URL}assets/api-graphql.png`}
                           alt="GRAPHQL API"
                           preview={false}
                         />
@@ -123,7 +123,7 @@ export default function Home() {
                         <Image
                           width={54}
                           height={54}
-                          src="/assets/api-custom.png"
+                          src={`${import.meta.env.BASE_URL}assets/api-custom.png`}
                           alt="自定义服务"
                           preview={false}
                         />
@@ -151,7 +151,7 @@ export default function Home() {
                       <Image
                         width={54}
                         height={54}
-                        src="/assets/api-query.png"
+                        src={`${import.meta.env.BASE_URL}assets/api-query.png`}
                         alt="查询"
                         preview={false}
                       />
@@ -168,7 +168,7 @@ export default function Home() {
                       <Image
                         width={54}
                         height={54}
-                        src="/assets/api-live-query.png"
+                        src={`${import.meta.env.BASE_URL}assets/api-live-query.png`}
                         alt="实时查询"
                         preview={false}
                       />
@@ -185,7 +185,7 @@ export default function Home() {
                       <Image
                         width={54}
                         height={54}
-                        src="/assets/api-mutation.png"
+                        src={`${import.meta.env.BASE_URL}assets/api-mutation.png`}
                         alt="变更"
                         preview={false}
                       />
@@ -202,7 +202,7 @@ export default function Home() {
                       <Image
                         width={54}
                         height={54}
-                        src="/assets/api-subscription.png"
+                        src={`${import.meta.env.BASE_URL}assets/api-subscription.png`}
                         alt="订阅"
                         preview={false}
                       />

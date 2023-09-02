@@ -247,7 +247,7 @@ export default function Graphql({ content, type }: Props) {
                   className="justify-start"
                 >
                   <img
-                    className='mr-1'
+                    className="mr-1"
                     alt="wenjian1"
                     src="assets/iconfont/wenjian1.svg"
                     style={{ height: '1em', width: '1em' }}
@@ -314,7 +314,7 @@ export default function Graphql({ content, type }: Props) {
                 alt=""
                 className="w-5"
                 style={{ transform: isActive ? '' : 'rotate(-90deg)' }}
-                src="/assets/shape-down.svg"
+                src={`${import.meta.env.BASE_URL}assets/shape-down.svg`}
               />
             )}
             className={`${styles['collapse-box']} site-collapse-custom-collapse bg-light-50`}

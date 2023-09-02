@@ -8,7 +8,7 @@ import { makeSuggest } from '@/lib/helpers/utils'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 // import testData from './testdata'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 const NOT_EDITABLE_DIRECTIVES = [
   'fromClaim',
   'injectGeneratedUUID',

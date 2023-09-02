@@ -99,7 +99,7 @@ export default function VsCode({
         ref={vscodeWebIframe}
         data-settings='{"productConfiguration": {"nameShort": "fb-editor1","nameLong": "fb-editor2"}}'
         className={`border-0 h-full top-0 left-0 w-full ${className}`}
-        src={`/vscode/index.html?baseDir=${data?.outputPath}`}
+        src={`${import.meta.env.BASE_URL}vscode/index.html?baseDir=${data?.outputPath}`}
         title="vscode"
         style={style}
       />

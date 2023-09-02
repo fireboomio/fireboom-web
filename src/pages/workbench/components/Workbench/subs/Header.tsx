@@ -182,7 +182,7 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
                 window.open(`/api/engine/swagger?auth-key=${getAuthKey()}`, '_blank')
               }}
             >
-              <img src="/assets/download.svg" alt="" />
+              <img src={`${import.meta.env.BASE_URL}assets/download.svg`} alt="" />
             </div>
           </>
         ) : (
@@ -194,7 +194,11 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
                     {!props.isCompiling ? (
                       <img src={iconRefresh} className="h-5 w-5.25" alt="编译" />
                     ) : (
-                      <img src="/assets/compile.gif" className={styles.compiling} alt="编译" />
+                      <img
+                        src={`${import.meta.env.BASE_URL}assets/compile.gif`}
+                        className={styles.compiling}
+                        alt="编译"
+                      />
                     )}
                   </span>
                 </Tooltip>
@@ -268,7 +272,7 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
           <img src={iconSetting} alt="" />
         </div>
         {/*<div className={styles.avatar}>*/}
-        {/*  <img className="h-5 w-5" alt="avatar" src="/assets/total-user.png" />*/}
+        {/*  <img className="h-5 w-5" alt="avatar" src={`${import.meta.env.BASE_URL}assets/total-user.png`} />*/}
         {/*</div>*/}
       </div>
     </>

@@ -8,7 +8,7 @@ interface IntlProviderProps {
 }
 
 function loadLangs(lang: string) {
-  return window.fetch(`/lang/${lang}.json`).then(resp => resp.json())
+  return window.fetch(`${import.meta.env.BASE_URL}lang/${lang}.json`).then(resp => resp.json())
 }
 
 const browserLanguage = window.navigator.language

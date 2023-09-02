@@ -10,7 +10,7 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { useConfigurationVariable } from '@/providers/variable'
 
-loader.config({ paths: { vs: '/modules/monaco-editor/min/vs' } })
+loader.config({ paths: { vs: import.meta.env.BASE_URL + 'modules/monaco-editor/min/vs' } })
 
 export default function UserInfo() {
   const [info, setInfo] = useState()
