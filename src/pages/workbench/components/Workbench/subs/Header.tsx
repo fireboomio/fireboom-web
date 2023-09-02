@@ -7,6 +7,7 @@ import { useConfigContext } from '@/lib/context/ConfigContext'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests, { getAuthKey } from '@/lib/fetchers'
 import LoginPanel from '@/pages/workbench/components/Workbench/subs/LoginPanel'
+import { useNotification } from '@/providers/notification'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import iconGithub from '../assets/github.svg'
@@ -76,6 +77,7 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
     ],
     [intl]
   )
+  const { clear } = useNotification()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { isHideSide } = useContext(WorkbenchContext)
@@ -88,6 +90,8 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
     if (props.isCompiling) {
       return
     }
+    // 清空所有问题
+    clear()
     void requests
       .get('/engine/restart')
       .then(() => void message.success(intl.formatMessage({ defaultMessage: '开始编译' })))

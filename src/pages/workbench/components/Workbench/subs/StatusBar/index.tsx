@@ -310,7 +310,7 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
         >
           <FormattedMessage defaultMessage="钩子编辑器⇪" />
         </span>
-        <NotificationButton className="bg-white rounded-sm cursor-pointer ml-4 mr-2 text-xs py-0.5 px-1 text-[#326d9f] inline-flex items-center" />
+        <NotificationButton className="bg-white rounded-sm cursor-pointer ml-4 text-xs py-0.5 px-1 text-[#326d9f] inline-flex items-center" />
       </div>
       <VsCode
         className="top-9 z-1000 fixed"

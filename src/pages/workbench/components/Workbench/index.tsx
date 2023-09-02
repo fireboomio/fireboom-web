@@ -63,7 +63,7 @@ export default function Index(props: PropsWithChildren) {
   const [fullScreen, setFullScreen] = useState(false)
   const [refreshState, setRefreshState] = useState(false)
   const listener = useRef<WorkbenchListener>()
-  const { addNotification, removeByTag } = useNotification()
+  const { addNotification, removeByTag, clear } = useNotification()
   const modelName = {
     datasource: intl.formatMessage({ defaultMessage: '数据源' }),
     operation: intl.formatMessage({ defaultMessage: 'API' }),
@@ -102,6 +102,17 @@ export default function Index(props: PropsWithChildren) {
       [QuestionType.Storage]: intl.formatMessage({ defaultMessage: '文件存储' })
     }
   }, [intl])
+  const modelRouteMap = useMemo(() => {
+    return {
+      [QuestionType.Authentication]: '/auth/{name}',
+      [QuestionType.Configuration]: '/setting',
+      [QuestionType.DataSource]: '/data-source/{name}',
+      [QuestionType.Operation]: '/apimanage/{name}',
+      [QuestionType.Role]: '/auth/role/role',
+      [QuestionType.SDK]: '/sdk-template',
+      [QuestionType.Storage]: '/storage/{name}'
+    }
+  }, [])
 
   const authKey = getAuthKey()
   // authkey变化时启动socket
@@ -123,6 +134,8 @@ export default function Index(props: PropsWithChildren) {
   useWebSocket('engine', 'push', (data: Info) => {
     setEngineState({ engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
     if (data.engineStatus === ServiceStatus.Started) {
+      // 重启后拉下question
+      sendMessageToSocket({ channel: 'question', event: 'pull' })
       void mutateApi()
       mutateDataSource()
       events.emit({ event: 'compileFinish' })
@@ -159,16 +172,41 @@ export default function Index(props: PropsWithChildren) {
             defaultMessage: '构建中存在{count}条问题， 请检查'
           },
           { count: data.length }
-        )
+        ),
+        buttons: [
+          {
+            label: <FormattedMessage defaultMessage="查看" />,
+            handler: () => {
+              setShowWindow(true)
+              setDefaultWindowTab('1')
+            },
+            type: 'primary'
+          }
+        ]
       })
     }
   })
   useWebSocket('question', 'push', data => {
     setQuestions([...questions, data])
     addNotification({
-      tag: 'question',
-      title: `${modelNameMap[data.model as keyof typeof modelNameMap]}[${data.name}]: ${data.msg}`,
-      source: data.model
+      tag: 'question-detail',
+      title: data.msg,
+      source: `${modelNameMap[data.model as keyof typeof modelNameMap]}[${data.name}]`,
+      type: data.model === QuestionType.DataSource ? 'error' : 'warning',
+      buttons: [
+        {
+          label: <FormattedMessage defaultMessage="前往查看" />,
+          handler: () => {
+            navigate(
+              `/workbench${modelRouteMap[data.model as keyof typeof modelRouteMap].replace(
+                '{name}',
+                data.name
+              )}`
+            )
+          },
+          type: 'primary'
+        }
+      ]
     })
   })
   useWebSocket('license', 'pull', data => {

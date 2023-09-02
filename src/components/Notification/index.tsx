@@ -1,11 +1,13 @@
 import {
   CheckCircleOutlined,
+  CloseCircleOutlined,
   CloseOutlined,
   DownOutlined,
   InfoCircleOutlined,
   WarningOutlined
 } from '@ant-design/icons'
-import { Button, Popover } from 'antd'
+import { Button } from 'antd'
+import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
 
@@ -22,7 +24,7 @@ const notificationTypeIcons: Record<NonNullable<NotificationItem['type']>, React
   success: <CheckCircleOutlined className="text-[#52c41a]" />,
   info: <InfoCircleOutlined className="text-[#1677ff]" />,
   warning: <WarningOutlined className="text-[#faad14]" />,
-  error: <CloseOutlined className="text-[#ff4d4f]" />
+  error: <CloseCircleOutlined className="text-[#ff4d4f]" />
 }
 
 export const NotificationButton = (props: NotificationButtonProps) => {
@@ -54,8 +56,8 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
   }
 
   return (
-    <div className="shadow-lg rounded absolute right-5 bottom-10 z-1000 bg-white min-w-100 max-w-120 overflow-hidden">
-      <div className="px-2 py-3 bg-[#e3e3d3] flex items-center">
+    <div className="shadow-lg rounded absolute right-2 bottom-9 z-1000 bg-white min-w-100 max-w-200 overflow-hidden">
+      <div className="px-2 py-2 bg-[#e3e3d3] flex items-center text-xs">
         <span className="mr-auto">
           <FormattedMessage defaultMessage="通知" />
         </span>
@@ -69,39 +71,55 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
       </div>
       {notifications.map(notification => (
         <div
-          className="px-3 py-4 focus:border focus:border-solid focus:border-[#e92e5e]"
+          className="p-3 border border-solid border-[transparent] focus:border-[#e92e5e] text-xs"
           key={notification.id}
+          tabIndex={0}
+          style={{
+            boxShadow: `0 1px 0 0 rgba(0,0,0,0.05)`
+          }}
         >
           <div className="flex items-start">
-            <span className="flex-shrink-0 leading-6">
+            <span className="flex-shrink-0 leading-5">
               {notificationTypeIcons[notification.type ?? 'info']}
             </span>
-            <div className="flex-1 ml-2 text-[#333] leading-6">{notification.title}</div>
-            <span className="ml-4 leading-6">
+            <div className="flex-1 ml-2 text-[#333] leading-5">{notification.title}</div>
+            <span className="ml-4 leading-5">
               <CloseOutlined
                 className="flex-shrink-0 cursor-pointer text-[#333]"
                 onClick={() => removeNotification(notification)}
               />
             </span>
           </div>
-          {notification.source ||
-            (notification.buttons?.length && (
-              <div className="mt-3 flex">
-                {notification.source ?? (
-                  <span className="text-[#999] mr-auto">{notification.source}</span>
-                )}
-                {notification.buttons?.map((btn, index) => (
-                  <Button
-                    key={index}
-                    className={index === notification.buttons!.length - 1 ? '' : 'mr-1.5'}
-                    type={btn.type}
-                    onClick={btn.handler}
-                  >
-                    {btn.label}
-                  </Button>
-                ))}
-              </div>
-            ))}
+          {(notification.source || notification.buttons?.length) && (
+            <div className="mt-2 flex">
+              {notification.source && (
+                <span className="text-[#999] mr-auto">
+                  <FormattedMessage defaultMessage="来源:" />
+                  &nbsp;&nbsp;{notification.source}
+                </span>
+              )}
+              {notification.buttons?.map((btn, index) => (
+                <Button
+                  key={index}
+                  className={clsx([
+                    index === notification.buttons!.length - 1 ? '' : 'mr-1.5',
+                    index === 0 ? 'ml-auto' : '',
+                    '!text-xs'
+                  ])}
+                  type={btn.type}
+                  size="small"
+                  onClick={async () => {
+                    await btn.handler()
+                    if (btn.closeAfterHandler !== false) {
+                      removeNotification(notification)
+                    }
+                  }}
+                >
+                  {btn.label}
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       ))}
     </div>

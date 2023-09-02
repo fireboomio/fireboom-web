@@ -16,7 +16,8 @@ export type NotificationItem = {
   buttons?: {
     type?: ButtonProps['type']
     label: ReactNode
-    handler: () => void
+    handler: () => void | Promise<void>
+    closeAfterHandler?: boolean
   }[]
   closeable?: boolean
 }
@@ -46,10 +47,16 @@ export const useNotification = create<NotificationState>((set, get) => ({
   },
   toggleSilentMode() {
     set({ silentMode: !get().silentMode })
-    localStorage.setItem(SILENT_MODE_KEY, get().silentMode ? '0' : '1')
+    localStorage.setItem(SILENT_MODE_KEY, get().silentMode ? '1' : '0')
   },
   addNotification: (item: Omit<NotificationItem, 'id'>) => {
+    if (get().notifications.some(n => n.title === item.title)) {
+      return
+    }
     set({ notifications: [{ id: uniqueId(), ...item }, ...get().notifications] })
+    if (!get().silentMode) {
+      set({ visible: true })
+    }
   },
   removeNotification(item) {
     set({ notifications: get().notifications.filter(n => n !== item) })
