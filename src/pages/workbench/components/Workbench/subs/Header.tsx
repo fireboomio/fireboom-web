@@ -1,4 +1,5 @@
-import { App, message, Modal, Tooltip } from 'antd'
+import { MessageOutlined } from '@ant-design/icons'
+import { App, message, Modal, Popover, Tooltip } from 'antd'
 import { useCallback, useContext, useEffect, useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -228,6 +229,7 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
             ></path>
           </svg>
         </Tooltip> */}
+
         <div
           className="cursor-pointer flex-0 h-5 mb-1px text-0px w-4"
           onClick={() => window.open('https://github.com/fireboomio', '_blank')}
@@ -240,6 +242,23 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
         >
           <img src={iconQuestion} alt="" />
         </div>
+        <Popover
+          placement="bottomRight"
+          content={
+            <div className="p-2 bg-white rounded-lg flex flex-col items-center shadow-xl">
+              <img
+                src="https://fireboom.oss-cn-hangzhou.aliyuncs.com/img/qun_qr.png"
+                className="w-45"
+                alt="qun_qrcode"
+              />
+              <p>扫码加入开发者交流群</p>
+            </div>
+          }
+        >
+          <div className="cursor-pointer flex h-5 ml-4 items-center">
+            <MessageOutlined className="text-[#787D8B] text-base" />
+          </div>
+        </Popover>
         <Tooltip title={intl.formatMessage({ defaultMessage: '快捷键' })}>
           <div className="cursor-pointer flex h-5 ml-4 items-center" onClick={showHotkey}>
             <img src={iconKeyboard} alt="" />

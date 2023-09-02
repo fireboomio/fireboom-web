@@ -86,23 +86,6 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
-        <Popover
-          placement="bottomLeft"
-          content={
-            <div className="p-2 bg-white rounded-lg flex flex-col items-center shadow-xl">
-              <img
-                src="https://fireboom.oss-cn-hangzhou.aliyuncs.com/img/qun_qr.png"
-                className="w-45"
-                alt="qun_qrcode"
-              />
-              <p>扫码加入开发者交流群</p>
-            </div>
-          }
-        >
-          <div className={styles.contact}>
-            <MessageOutlined />
-          </div>
-        </Popover>
         <span className={styles['info']}>
           {/*<span className={styles.gitIcon} />*/}
           {/*<span className="mr-12">CONNECT GIT (BETA)</span>*/}
