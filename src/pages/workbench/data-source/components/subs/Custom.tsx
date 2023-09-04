@@ -79,7 +79,7 @@ export default function Custom({ content }: Props) {
             <img
               className="mr-1"
               alt="wenjian1"
-              src="assets/iconfont/wenjian1.svg"
+              src={`${import.meta.env.BASE_URL}assets/iconfont/wenjian1.svg`}
               style={{ height: '1em', width: '1em' }}
             />
             customize/{content.name}.json

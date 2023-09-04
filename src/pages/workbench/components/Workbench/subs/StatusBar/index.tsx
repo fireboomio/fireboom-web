@@ -198,7 +198,7 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
                   e.stopPropagation()
                 }}
               >
-                <img alt="" src="assets/refresh.svg" />
+                <img alt="" src={`${import.meta.env.BASE_URL}assets/refresh.svg`} />
               </div>
             </div>
             <div className={styles.split} />

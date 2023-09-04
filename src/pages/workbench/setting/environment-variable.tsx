@@ -73,7 +73,7 @@ export default function SettingMainEnvironmentVariable() {
         <div>
           <img
             alt="zhongmingming"
-            src="assets/iconfont/zhongmingming.svg"
+            src={`${import.meta.env.BASE_URL}assets/iconfont/zhongmingming.svg`}
             style={{ height: '1em', width: '1em' }}
             onClick={() => {
               setEditingEnv(row)
@@ -97,7 +97,7 @@ export default function SettingMainEnvironmentVariable() {
           >
             <img
               alt="shanchu"
-              src="assets/iconfont/shanchu.svg"
+              src={`${import.meta.env.BASE_URL}assets/iconfont/shanchu.svg`}
               style={{ height: '1em', width: '1em' }}
               onClick={e => e.stopPropagation()}
             />

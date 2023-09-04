@@ -28,6 +28,7 @@ import { intl } from '@/providers/IntlProvider'
 import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import moreIcon from '../components/Workbench/assets/icon-menu.png'
 import styles from './index.module.less'
 
 const SDKTemplate = () => {
@@ -412,11 +413,7 @@ const SDKTemplateItem = ({
           }}
           trigger={['hover']}
         >
-          <img
-            alt=""
-            className="cursor-pointer h-3 ml-2 w-3"
-            src="assets/workbench/icon-menu.png"
-          />
+          <img alt="" className="cursor-pointer h-3 ml-2 w-3" src={moreIcon} />
         </Dropdown>
       </div>
       <div className="bg-[rgba(95,98,105,0.1)] h-0.5 mt-2 mb-3"></div>

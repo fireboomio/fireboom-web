@@ -18,7 +18,11 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       name: intl.formatMessage({ defaultMessage: '外观' }),
       type: 'appearance',
       icon: (
-        <img alt="xxx" src="assets/iconfont/waiguan.svg" style={{ width: '1em', height: '1em' }} />
+        <img
+          alt="xxx"
+          src={`${import.meta.env.BASE_URL}assets/iconfont/waiguan.svg`}
+          style={{ width: '1em', height: '1em' }}
+        />
       )
     },
     {
@@ -27,7 +31,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       icon: (
         <img
           alt="xitong"
-          src="assets/iconfont/xitong.svg"
+          src={`${import.meta.env.BASE_URL}assets/iconfont/xitong.svg`}
           style={{ height: '1em', width: '1em' }}
         />
       )
@@ -38,7 +42,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       icon: (
         <img
           alt="anquan"
-          src="assets/iconfont/anquan.svg"
+          src={`${import.meta.env.BASE_URL}assets/iconfont/anquan.svg`}
           style={{ height: '1em', width: '1em' }}
         />
       )
@@ -72,7 +76,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       icon: (
         <img
           alt="huanjingbianliang"
-          src="assets/iconfont/huanjingbianliang.svg"
+          src={`${import.meta.env.BASE_URL}assets/iconfont/huanjingbianliang.svg`}
           style={{ height: '1em', width: '1em' }}
         />
       )
@@ -83,7 +87,7 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       icon: (
         <img
           alt="banben"
-          src="assets/iconfont/banben.svg"
+          src={`${import.meta.env.BASE_URL}assets/iconfont/banben.svg`}
           style={{ height: '1em', width: '1em' }}
         />
       )

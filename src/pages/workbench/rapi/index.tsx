@@ -18,7 +18,7 @@ export default function Rapi() {
     <iframe
       key={search}
       title="rapi"
-      src="/#/rapi-frame?url=/api/engine/swagger"
+      src={`${import.meta.env.BASE_URL}#/rapi-frame?url=/api/engine/swagger`}
       width={'100%'}
       height={'100%'}
       className="border-none"

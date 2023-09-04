@@ -208,7 +208,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
           >
             <img
               alt="baocun"
-              src="assets/iconfont/baocun.svg"
+              src={`${import.meta.env.BASE_URL}assets/iconfont/baocun.svg`}
               style={{ height: '1em', width: '1em', color: '#5F6269' }}
             />
             <span className="text-sm">{intl.formatMessage({ defaultMessage: '保存' })}</span>
@@ -293,7 +293,7 @@ const Setting: React.FC<Props> = ({ replaceJSON, initSchema, content, onSave }) 
                   <td>
                     <img
                       alt="shanchu"
-                      src="assets/iconfont/shanchu.svg"
+                      src={`${import.meta.env.BASE_URL}assets/iconfont/shanchu.svg`}
                       style={{ height: '1em', width: '1em' }}
                       onClick={() => handleDelete(x)}
                     />

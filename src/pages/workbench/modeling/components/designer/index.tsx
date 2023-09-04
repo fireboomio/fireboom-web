@@ -386,7 +386,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               >
                 <img
                   alt="zhongmingming"
-                  src="assets/iconfont/zhongmingming.svg"
+                  src={`${import.meta.env.BASE_URL}assets/iconfont/zhongmingming.svg`}
                   style={{ height: '1em', width: '1em' }}
                 />
               </span>

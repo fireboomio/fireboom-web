@@ -719,7 +719,7 @@ export default function Rest({ content, type }: Props) {
                                   {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
                                   <img
                                     alt="guanbi"
-                                    src="assets/iconfont/guanbi.svg"
+                                    src={`${import.meta.env.BASE_URL}assets/iconfont/guanbi.svg`}
                                     style={{ height: '1em', width: '1em' }}
                                     onClick={() => remove(index)}
                                   />

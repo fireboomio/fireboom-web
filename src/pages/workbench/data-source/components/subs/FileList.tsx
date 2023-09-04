@@ -146,7 +146,7 @@ export default function FileList({
           >
             <img
               alt="shanchu"
-              src="assets/iconfont/shanchu.svg"
+              src={`${import.meta.env.BASE_URL}assets/iconfont/shanchu.svg`}
               style={{ height: '1em', width: '1em', fontSize: '16px', color: '#f6595b' }}
               className="cursor-pointer"
             />
@@ -160,7 +160,7 @@ export default function FileList({
           >
             <img
               alt="xiazai"
-              src="assets/iconfont/xiazai.svg"
+              src={`${import.meta.env.BASE_URL}assets/iconfont/xiazai.svg`}
               style={{ height: '1em', width: '1em', fontSize: '22px' }}
               className="cursor-pointer"
             />
