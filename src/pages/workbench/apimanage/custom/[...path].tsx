@@ -42,10 +42,10 @@ type CustomAPIJsonConfig = {
   authorizationConfig: {
     claims: string[] | []
     roleConfig: {
-      requireMatchAll: string[] | null
-      requireMatchAny: string[] | null
-      denyMatchAll: string[] | null
-      denyMatchAny: string[] | null
+      requireMatchAll?: string[] | null
+      requireMatchAny?: string[] | null
+      denyMatchAll?: string[] | null
+      denyMatchAny?: string[] | null
     } | null
   } | null
   hooksConfiguration: null
@@ -146,6 +146,21 @@ const CustomAPI = () => {
           // if (res.responseSchema) {
           //   res.responseSchema = JSON.parse(res.responseSchema)
           // }
+          const roleConfig = res.authorizationConfig?.roleConfig
+          if (roleConfig) {
+            if (!roleConfig.denyMatchAll) {
+              roleConfig.denyMatchAll = undefined
+            }
+            if (!roleConfig.denyMatchAny) {
+              roleConfig.denyMatchAny = undefined
+            }
+            if (!roleConfig.requireMatchAll) {
+              roleConfig.requireMatchAll = undefined
+            }
+            if (!roleConfig.requireMatchAny) {
+              roleConfig.requireMatchAny = undefined
+            }
+          }
           setApiConfig(res)
           setReady(true)
         })
