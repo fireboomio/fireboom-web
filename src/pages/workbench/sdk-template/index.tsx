@@ -344,7 +344,8 @@ const SDKTemplateItem = ({
           const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
           try {
             await requests.put(`/sdk`, {
-              name: sdk.name
+              name: sdk.name,
+              gitCommitHash: 'latest'
               // gitpull: true
             })
             message.success(intl.formatMessage({ defaultMessage: '升级成功' }))
