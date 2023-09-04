@@ -29,6 +29,7 @@ type ApiEnableChangeEvent = {
 }
 type CompileFinishEvent = {
   event: 'compileFinish'
+  value?: { first?: boolean }
 }
 type CompileFailEvent = {
   event: 'compileFail'

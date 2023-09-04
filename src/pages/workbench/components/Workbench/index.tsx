@@ -127,7 +127,7 @@ export default function Index(props: PropsWithChildren) {
     })
     setEngineState(data)
     if (data.engineStatus === ServiceStatus.Started) {
-      events.emit({ event: 'compileFinish' })
+      events.emit({ event: 'compileFinish', value: { first: true } })
     }
   })
   useWebSocket('engine', 'push', (data: Info) => {

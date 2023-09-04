@@ -220,9 +220,11 @@ export default function APIEditorContainer() {
     }
   }, [engineStatus])
 
-  useEventBus('compileFinish', () => {
+  useEventBus('compileFinish', e => {
     engineStartCallback()
-    refreshSchema()
+    if (!e?.value?.first) {
+      refreshSchema()
+    }
   })
 
   useEffect(() => {
