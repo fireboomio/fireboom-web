@@ -66,10 +66,10 @@
   }
 
   Object.keys(self.webPackagePaths).map(function (key, index) {
-    self.webPackagePaths[key] = `${window.location.origin}/vscode/vscode-web/dist/node_modules/${key}/${self.webPackagePaths[key]}`;
+    self.webPackagePaths[key] = `${window.location.href.split('/vscode')[0]}/vscode/vscode-web/dist/node_modules/${key}/${self.webPackagePaths[key]}`;
   });
   require.config({
-    baseUrl: `${window.location.origin}/vscode/vscode-web/dist/out`,
+    baseUrl: `${window.location.href.split('/vscode')[0]}/vscode/vscode-web/dist/out`,
     recordStats: true,
     trustedTypesPolicy: window.trustedTypes?.createPolicy('amdLoader', {
       createScriptURL(value) {

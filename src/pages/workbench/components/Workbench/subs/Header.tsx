@@ -206,7 +206,12 @@ export default function Header(props: { onToggleSider: () => void; isCompiling: 
             ) : null}
             <div
               className={styles.headBtn}
-              onClick={() => window.open('/#/workbench/rapi?t=' + Date.now(), 'fb_rapi')}
+              onClick={() =>
+                window.open(
+                  import.meta.env.BASE_URL + '#/workbench/rapi?t=' + Date.now(),
+                  'fb_rapi'
+                )
+              }
             >
               <Tooltip title={<FormattedMessage defaultMessage="Swagger文档" />}>
                 <img src={iconPreview} className="h-5 w-5" alt="预览" />
