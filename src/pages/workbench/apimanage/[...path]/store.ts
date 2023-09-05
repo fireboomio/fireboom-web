@@ -172,12 +172,12 @@ export const useAPIManager = create<APIState>((set, get) => ({
       .post(`/operation/rename`, { src: get().apiPath, dst: path, overload: false })
       .then(() => {
         get().pureUpdateAPI({
-          path,
-          restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
+          path
+          // restUrl: get().apiDesc!.restUrl.replace(/(\/app\/main\/operations)\/.*$/, `$1${path}`)
         })
-        // 刷新api列表
-        void mutateApi()
         void mutate(`/operation/${get().apiPath}`)
+        // 刷新api列表
+        return mutateApi()
       })
   },
   updateContent: (content: string, showMessage = true) => {

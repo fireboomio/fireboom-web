@@ -5,6 +5,7 @@ import type { OperationDefinitionNode } from 'graphql'
 import { Kind, OperationTypeNode } from 'graphql'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 
 import { CopyOutlined, FlashFilled, LinkOutlined, SaveFilled } from '@/components/icons'
 import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
@@ -19,6 +20,7 @@ import styles from './index.module.less'
 
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const intl = useIntl()
+  const navigate = useNavigate()
   const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiPath } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
@@ -35,7 +37,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const { getConfigurationValue } = useConfigurationVariable()
 
   const [isEditingName, setIsEditingName] = useState(false)
-  const apiPathList = apiDesc?.path?.split('/').slice(1) ?? []
+  const apiPathList = apiDesc?.path?.split('/') ?? []
   const [name, setName] = useState('')
   const { data: globalOperationSetting } = useApiGlobalSetting()
 
@@ -50,12 +52,13 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement> | { key: string }) => {
     if (e.key === 'Enter') {
-      const targetPath = `/${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
+      const targetPath = `${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
         try {
           if (apiDesc?.path) {
             await updateAPIName(targetPath)
           }
+          navigate(`/workbench/apimanage/${targetPath}`)
           setIsEditingName(false)
         } catch (error) {
           //
