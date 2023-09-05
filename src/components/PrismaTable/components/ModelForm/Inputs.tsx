@@ -41,7 +41,7 @@ interface Props {
   field: SchemaField
   disabled: boolean
   initialValues: Record<string, any>
-  namespace: string
+  // namespace: string
 }
 
 const String = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
@@ -151,7 +151,7 @@ const Enum = ({ field: { name, required, title, type }, disabled, initialValues 
   )
 }
 
-const Object = ({ field, namespace, disabled, initialValues }: Props) => {
+const Object = ({ field, disabled, initialValues }: Props) => {
   const { name, title, type } = field
   const required = field.list ? false : field.required
   const intl = useIntl()
@@ -226,7 +226,7 @@ const Object = ({ field, namespace, disabled, initialValues }: Props) => {
       >
         <DynamicTable
           model={type}
-          namespace={namespace}
+          // namespace={namespace}
           usage="connection"
           handleConnect={handleConnect}
           initialFilters={filters}

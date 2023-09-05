@@ -70,8 +70,8 @@ const useActions = (
   model: SchemaModel,
   originalData: any,
   action: 'update' | 'view' | 'create',
-  onSave: () => Promise<void>,
-  namespace?: string
+  onSave: () => Promise<void>
+  // namespace?: string
 ) => {
   const {
     schema: { models }

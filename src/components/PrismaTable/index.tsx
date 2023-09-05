@@ -4,14 +4,14 @@ import DynamicTable from './components/DynamicTable'
 
 interface Props {
   model: string
-  namespace: string
+  // namespace: string
   initialFilters: FilterState[]
   updateInitialFilters: (newFilters: FilterState[]) => void
   redirectToEntityWithFilters: (entityName: string, filters: FilterState[]) => void
 }
 
 const PrismaTable = ({
-  namespace,
+  // namespace,
   model,
   initialFilters,
   updateInitialFilters,
@@ -19,7 +19,7 @@ const PrismaTable = ({
 }: Props) => (
   <DynamicTable
     model={model}
-    namespace={namespace}
+    // namespace={namespace}
     usage="dataPreview"
     initialFilters={initialFilters}
     updateInitialFilters={updateInitialFilters}

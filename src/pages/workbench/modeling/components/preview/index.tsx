@@ -46,7 +46,7 @@ const PreviewContainer = () => {
       <ApolloProvider client={graphqlClient}>
         <PrismaTable
           model={currentModel.name}
-          namespace={name!}
+          // namespace={name!}
           redirectToEntityWithFilters={redirectToEntityWithFilters}
           updateInitialFilters={updatePreviewFilters}
           initialFilters={initialFilters}

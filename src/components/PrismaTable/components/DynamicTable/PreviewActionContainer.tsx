@@ -11,10 +11,10 @@ interface Props {
   currentModel: SchemaModel
   refetch: () => Promise<any>
   deleteOne: (options: any) => Promise<any>
-  namespace: string
+  // namespace: string
 }
 
-const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, namespace }: Props) => {
+const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne }: Props) => {
   const intl = useIntl()
   const [updateModalVisible, setUpdateModalVisible] = useImmer<boolean>(false)
   const [deleteModalVisible, setDeleteModalVisible] = useImmer<boolean>(false)
@@ -75,7 +75,7 @@ const PreviewActionContainer = ({ record, currentModel, refetch, deleteOne, name
         initialValues={record}
         modalVisible={updateModalVisible}
         refetch={refetch}
-        namespace={namespace}
+        // namespace={namespace}
         setModalVisible={setUpdateModalVisible}
       />
     </div>

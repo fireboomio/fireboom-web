@@ -23,7 +23,7 @@ import styles from './index.module.less'
 
 interface Props {
   model: string
-  namespace: string
+  // namespace: string
   usage: 'dataPreview' | 'connection'
   initialFilters: FilterState[]
   updateInitialFilters: (newFilters: FilterState[]) => void
@@ -50,7 +50,7 @@ function getTableColumnsFrom(fields: SchemaField[]) {
 
 const DynamicTable = ({
   model,
-  namespace,
+  // namespace,
   usage,
   initialFilters,
   updateInitialFilters,
@@ -65,7 +65,7 @@ const DynamicTable = ({
   useEffect(() => {
     setPageState({ skip: 0, take: DEFAULT_PAGE_SIZE })
     setOrderByState({ orderBy: [] })
-  }, [model, namespace, setOrderByState, setPageState, usage])
+  }, [model, setOrderByState, setPageState, usage])
 
   const {
     schema: { models, enums }
@@ -148,7 +148,7 @@ const DynamicTable = ({
         refetch={refetch}
         deleteOne={deleteOne}
         currentModel={currentModel}
-        namespace={namespace}
+        // namespace={namespace}
       />
     )
   }
@@ -266,7 +266,7 @@ const DynamicTable = ({
         action="create"
         modalVisible={createModalVisible}
         refetch={refetch}
-        namespace={namespace}
+        // namespace={namespace}
         setModalVisible={setCreateModalVisible}
       />
     </>

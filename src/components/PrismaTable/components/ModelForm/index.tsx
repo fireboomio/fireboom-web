@@ -23,7 +23,7 @@ const canBeUpdatedOrViewed = (action: 'update' | 'view' | 'create', field: Schem
 
 interface Props {
   model: SchemaModel
-  namespace: string
+  // namespace: string
   action: 'update' | 'view' | 'create'
   modalVisible: boolean
   setModalVisible: Updater<boolean>
@@ -33,7 +33,7 @@ interface Props {
 
 const ModelFormContainer = ({
   model,
-  namespace,
+  // namespace,
   action,
   modalVisible,
   setModalVisible,
@@ -54,7 +54,8 @@ const ModelFormContainer = ({
       .catch(() => message.error(intl.formatMessage({ defaultMessage: '操作失败！' })))
   }
 
-  const { onSubmit, loading } = useActions(model, initialValues, action, onSave, namespace)
+  // const { onSubmit, loading } = useActions(model, initialValues, action, onSave, namespace)
+  const { onSubmit, loading } = useActions(model, initialValues, action, onSave)
 
   const handleFormSubmit = (values: Record<string, any>) =>
     void onSubmit(values).catch((error: Error) => message.error(`${error.message}`))
@@ -117,7 +118,7 @@ const ModelFormContainer = ({
             .sort((a, b) => (a.isId ? -1 : b.isId ? 1 : a.order - b.order))
             .map(field => {
               const options = {
-                namespace,
+                // namespace,
                 initialValues: initialValues ?? {},
                 field: field,
                 disabled: (action === 'update' && !field.update) || action === 'view'
