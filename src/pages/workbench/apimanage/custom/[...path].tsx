@@ -208,7 +208,7 @@ const CustomAPI = () => {
               )}
               {!isProxy && (
                 <Form.Item
-                  label={intl.formatMessage({ defaultMessage: '入参定义' })}
+                  label={intl.formatMessage({ defaultMessage: '出参定义' })}
                   name="responseSchema"
                 >
                   <JsonViewer data={JSON.parse(apiConfig?.responseSchema || '{}')} collapsed={1} />
