@@ -13,6 +13,8 @@ import type { FilterState } from '@/components/PrismaTable/libs/types'
 import { getDisplayName } from '@/components/PrismaTable/libs/utils'
 import useTableSchema from '@/lib/hooks/useTableSchema'
 
+import MultiModalInput from '../MultiModalInput'
+
 interface SelfFormItemProps {
   children: JSX.Element
 }
@@ -48,7 +50,11 @@ const String = ({ field: { name, required, title }, disabled, initialValues }: P
   const intl = useIntl()
   return (
     <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
-      <Input disabled={disabled} placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
+      <MultiModalInput
+        disabled={disabled}
+        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+      />
+      {/* <Input disabled={disabled} placeholder={intl.formatMessage({ defaultMessage: '请输入' })} /> */}
     </FormItem>
   )
 }

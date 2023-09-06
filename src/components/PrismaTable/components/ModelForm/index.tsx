@@ -76,7 +76,7 @@ const ModelFormContainer = ({
   return (
     <Modal
       className="common-form"
-      width={550}
+      width={800}
       open={modalVisible}
       destroyOnClose
       title={
@@ -106,8 +106,8 @@ const ModelFormContainer = ({
     >
       <div className="flex pt-5 pr-5 justify-center">
         <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
           preserve={false}
           className={`${styles['prisma-table-form-item']} flex flex-col items-end w-full`}
           name={model.id}

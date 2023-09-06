@@ -7,6 +7,10 @@ body {
   font-family: PingFangSC-Regular, 'PingFang SC';
 }
 
+:root {
+  --ck-z-default: 9999999 !important;
+}
+
 a {
   color: inherit;
   text-decoration: none;
