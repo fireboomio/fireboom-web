@@ -1,15 +1,10 @@
-import '@ckeditor/ckeditor5-build-classic/build/translations/zh-cn'
-
 import { SettingOutlined } from '@ant-design/icons'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { ImageInsert } from '@ckeditor/ckeditor5-image'
-import { CKEditor } from '@ckeditor/ckeditor5-react'
-import { Base64UploadAdapter } from '@ckeditor/ckeditor5-upload'
 import type { InputProps } from 'antd'
 import { Dropdown, Input } from 'antd'
 import { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 
+import RichTextInput from '@/components/RichTextInput'
 import { useAppIntl } from '@/providers/IntlProvider'
 
 interface MultiModalInputProps
@@ -33,21 +28,21 @@ const MultiModalInput = (props: MultiModalInputProps) => {
       {modal === Modal.Simple ? (
         <Input {...props} onChange={e => props.onChange?.(e.target.value)} />
       ) : modal === Modal.TextArea ? (
-        <Input.TextArea {...props} onChange={e => props.onChange?.(e.target.value)} />
+        <Input.TextArea
+          {...props}
+          onChange={e => props.onChange?.(e.target.value)}
+          autoSize={{
+            minRows: 3,
+            maxRows: 10
+          }}
+        />
       ) : (
         <div className="min-w-0 w-full">
-          <CKEditor
+          <RichTextInput
             disabled={props.disabled}
-            disableWatchdog
-            config={{
-              plugins: [Base64UploadAdapter, ImageInsert],
-              language: locale === 'zh-CN' ? 'zh-cn' : undefined
-            }}
-            editor={ClassicEditor}
-            data={props.value}
-            onChange={(event, editor) => {
-              props.onChange?.(editor.data.get())
-            }}
+            language={locale === 'zh-CN' ? 'zh-cn' : undefined}
+            value={props.value}
+            onChange={props.onChange}
           />
         </div>
       )}
