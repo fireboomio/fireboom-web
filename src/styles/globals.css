@@ -11,6 +11,10 @@ body {
   --ck-z-default: 9999999 !important;
 }
 
+.ck-content {
+  max-height: 80vh;
+}
+
 a {
   color: inherit;
   text-decoration: none;
