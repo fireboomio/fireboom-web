@@ -20,7 +20,19 @@ enum Modal {
 }
 
 const MultiModalInput = (props: MultiModalInputProps) => {
-  const [modal, setModal] = useState(Modal.Simple)
+  const [modal, setModal] = useState(() => {
+    const value = props.value
+    if (!value) {
+      return Modal.Simple
+    }
+    if (/<[^>]+>/g.test(value)) {
+      return Modal.RichText
+    }
+    if (/\n/g.test(value)) {
+      return Modal.TextArea
+    }
+    return Modal.Simple
+  })
   const [isFullScreen, setIsFullScreen] = useState(false)
   const { locale } = useAppIntl()
 
