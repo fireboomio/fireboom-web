@@ -178,12 +178,9 @@ export default function Index(props: Props) {
                 >
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '匿名' })}
                   />
                 </Form.Item>
-                <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="匿名查询" />
-                </span>
               </>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '变更授权' })}>
@@ -199,12 +196,9 @@ export default function Index(props: Props) {
                 >
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                    unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                    unCheckedChildren={intl.formatMessage({ defaultMessage: '匿名' })}
                   />
                 </Form.Item>
-                <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="匿名变更" />
-                </span>
               </>
             </Form.Item>
             <Form.Item label={intl.formatMessage({ defaultMessage: '订阅授权' })}>
@@ -221,18 +215,15 @@ export default function Index(props: Props) {
                   <Switch
                     checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
                     unCheckedChildren={intl.formatMessage({
-                      defaultMessage: '关闭'
+                      defaultMessage: '匿名'
                     })}
                   />
                 </Form.Item>
-                <span className={styles.tip} style={{ marginLeft: 12 }}>
-                  <FormattedMessage defaultMessage="匿名订阅" />
-                </span>
               </>
             </Form.Item>
           </>
         ) : (
-          <Form.Item label={intl.formatMessage({ defaultMessage: '开启授权' })}>
+          <Form.Item label={intl.formatMessage({ defaultMessage: '接口授权' })}>
             <>
               <Form.Item
                 noStyle
@@ -242,12 +233,9 @@ export default function Index(props: Props) {
                 <Switch
                   disabled={disabled}
                   checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
-                  unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+                  unCheckedChildren={intl.formatMessage({ defaultMessage: '匿名' })}
                 />
               </Form.Item>
-              <span className={styles.tip} style={{ marginLeft: 12 }}>
-                <FormattedMessage defaultMessage="匿名访问" />
-              </span>
             </>
           </Form.Item>
         )}

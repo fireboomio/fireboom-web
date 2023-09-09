@@ -9,9 +9,6 @@
   "+Hw5bq": {
     "defaultMessage": "Copyright"
   },
-  "+I5Iiy": {
-    "defaultMessage": "Anonymous Query"
-  },
   "+Ma7BJ": {
     "defaultMessage": "Limit"
   },
@@ -100,9 +97,6 @@
   "0DLw3A": {
     "defaultMessage": "Can Be Null"
   },
-  "0LhZAq": {
-    "defaultMessage": "Anonymous Access"
-  },
   "0bBO2n": {
     "defaultMessage": "Version"
   },
@@ -112,6 +106,9 @@
   "0o/d0Y": {
     "defaultMessage": "Please enter letters, numbers or underscores"
   },
+  "0pf8N0": {
+    "defaultMessage": "Select bind roles"
+  },
   "0uAOrg": {
     "defaultMessage": "Compile"
   },
@@ -120,9 +117,6 @@
   },
   "0zyVbu": {
     "defaultMessage": "Vendor Name"
-  },
-  "17LOYz": {
-    "defaultMessage": "Manual Setup"
   },
   "1GUffX": {
     "defaultMessage": "Please upload OAS file"
@@ -151,6 +145,9 @@
   "1pv3Jk": {
     "defaultMessage": "Max Duration"
   },
+  "1t+raV": {
+    "defaultMessage": "Prisma data-source"
+  },
   "2+X2n8": {
     "defaultMessage": "Batch Delete"
   },
@@ -159,6 +156,9 @@
   },
   "27XOM4": {
     "defaultMessage": "Flow Chart"
+  },
+  "28CgNL": {
+    "defaultMessage": "Introspection"
   },
   "2DHz6I": {
     "defaultMessage": "Realtime Query"
@@ -303,6 +303,9 @@
   },
   "6tkLn7": {
     "defaultMessage": "Must start with uppercase letter"
+  },
+  "6tytzw": {
+    "defaultMessage": "RichText"
   },
   "73X0pe": {
     "defaultMessage": "Hook script does not exist, create now?"
@@ -458,6 +461,9 @@
   "Axkg9x": {
     "defaultMessage": "Configuration"
   },
+  "B/j4Mh": {
+    "defaultMessage": "{count} errors occurred in building"
+  },
   "B5JYOd": {
     "defaultMessage": "Unique Index"
   },
@@ -473,6 +479,9 @@
   "BLWx5q": {
     "defaultMessage": "Return Response",
     "description": "In flow chart"
+  },
+  "BWZSk1": {
+    "defaultMessage": "Please buy business license"
   },
   "BX00L6": {
     "defaultMessage": "Please input non-empty value no longer than 128 chars"
@@ -521,6 +530,9 @@
   },
   "DAKKuk": {
     "defaultMessage": "Template Market"
+  },
+  "DIzLeh": {
+    "defaultMessage": "Authentication"
   },
   "DJsFlH": {
     "defaultMessage": "Rights"
@@ -573,9 +585,6 @@
   "FEb7U2": {
     "defaultMessage": "Confirm"
   },
-  "FH4Em7": {
-    "defaultMessage": "Licensed"
-  },
   "FQQECq": {
     "defaultMessage": "Required"
   },
@@ -588,6 +597,9 @@
   },
   "FpWcg2": {
     "defaultMessage": "Bucket Name"
+  },
+  "FpnbA9": {
+    "defaultMessage": "Refresh cache"
   },
   "G1Nhzp": {
     "defaultMessage": "Already Exists"
@@ -621,6 +633,9 @@
   },
   "GpfOWR": {
     "defaultMessage": "Under development..."
+  },
+  "Gr3zcm": {
+    "defaultMessage": "Current hook server not support"
   },
   "GuD3c8": {
     "defaultMessage": "Sort"
@@ -667,6 +682,9 @@
   "IQIvYd": {
     "defaultMessage": "Refresh list"
   },
+  "Io9vWO": {
+    "defaultMessage": "Open the data-source first"
+  },
   "IoROAi": {
     "defaultMessage": "Note: 3 → 4 repeat",
     "description": "In flowchart"
@@ -686,6 +704,9 @@
   "IyVzrX": {
     "defaultMessage": "Saving"
   },
+  "J01UX5": {
+    "defaultMessage": "Use cache"
+  },
   "J9jPRL": {
     "defaultMessage": "Copied successfully"
   },
@@ -704,6 +725,9 @@
   },
   "K27Y7X": {
     "defaultMessage": "Exclude headers"
+  },
+  "K0wvJU": {
+    "defaultMessage": "Scripts"
   },
   "K2DWpV": {
     "defaultMessage": "Invalid input!"
@@ -789,6 +813,9 @@
   "NSax9B": {
     "defaultMessage": "App Secret"
   },
+  "NaeJNm": {
+    "defaultMessage": "Increment start"
+  },
   "NyeMXU": {
     "defaultMessage": "App ID"
   },
@@ -798,11 +825,11 @@
   "O1HTOa": {
     "defaultMessage": "Management"
   },
-  "O8A9zp": {
-    "defaultMessage": "Enable auth"
-  },
   "OF2wA3": {
     "defaultMessage": "Associate {type} table data"
+  },
+  "OJbZDt": {
+    "defaultMessage": "Authentication"
   },
   "Oww89Y": {
     "defaultMessage": "Uploading"
@@ -862,6 +889,9 @@
   "QpRtOT": {
     "defaultMessage": "Executing"
   },
+  "QyStY8": {
+    "defaultMessage": "Increment building"
+  },
   "R2D5Dv": {
     "defaultMessage": "Created time"
   },
@@ -870,6 +900,9 @@
   },
   "R8Yt/D": {
     "defaultMessage": "Upload failed"
+  },
+  "R90PFa": {
+    "defaultMessage": "Anonymous"
   },
   "RKEnyl": {
     "defaultMessage": "(Only one hook can be enabled at a time, toggle mode)"
@@ -965,9 +998,6 @@
   "U1eYS0": {
     "defaultMessage": "Batch create APIs"
   },
-  "UDMolH": {
-    "defaultMessage": "Anonymous subscribe"
-  },
   "UEiMSy": {
     "defaultMessage": "Authentication"
   },
@@ -1045,6 +1075,9 @@
   },
   "WJWR3q": {
     "defaultMessage": "Downloaded successfully"
+  },
+  "WMHDz5": {
+    "defaultMessage": "Prisma content required"
   },
   "WWNrrS": {
     "defaultMessage": "Privilege management"
@@ -1255,6 +1288,9 @@
   "cLvrI5": {
     "defaultMessage": "Filter"
   },
+  "cjjAzK": {
+    "defaultMessage": "Enterprise edition"
+  },
   "clv90W": {
     "defaultMessage": "Instruction already exists"
   },
@@ -1313,6 +1349,9 @@
   "f7n43q": {
     "defaultMessage": "Reset succeeded!"
   },
+  "fDOkY1": {
+    "defaultMessage": "No limited"
+  },
   "fFqCvL": {
     "defaultMessage": "No hook language selected, go create?"
   },
@@ -1331,6 +1370,9 @@
   },
   "g1YGD6": {
     "defaultMessage": "View"
+  },
+  "gHh5tj": {
+    "defaultMessage": "Origin:"
   },
   "gRnd+f": {
     "defaultMessage": "New enum type"
@@ -1387,6 +1429,9 @@
   "hovbOX": {
     "defaultMessage": "Cannot find associated table entity type!"
   },
+  "hsGKir": {
+    "defaultMessage": "Simple"
+  },
   "hv0Nju": {
     "defaultMessage": "Parameter validation?",
     "description": "In flowchart"
@@ -1402,6 +1447,9 @@
   },
   "iCvPMa": {
     "defaultMessage": "Upgrade"
+  },
+  "iHRgCO": {
+    "defaultMessage": "Suggest to disable when you are using 3-rd tools to update db model, enable it when you use Fireboom to manage db model, enable it for big-size db, you can manually refresh cache in detail page"
   },
   "iW9zfZ": {
     "defaultMessage": "Abnormal address, please check API domain in system config"
@@ -1460,9 +1508,6 @@
   },
   "k7lSDV": {
     "defaultMessage": "Start with {dbProtocol}://, no longer than 128 chars"
-  },
-  "kTQukZ": {
-    "defaultMessage": "License expired"
   },
   "kXy8jI": {
     "defaultMessage": "jwksURL"
@@ -1628,9 +1673,6 @@
   "p/NHCA": {
     "defaultMessage": "Validating"
   },
-  "p4kuIw": {
-    "defaultMessage": "Response"
-  },
   "p5GCek": {
     "defaultMessage": "Hook template"
   },
@@ -1639,6 +1681,9 @@
   },
   "p7ywbO": {
     "defaultMessage": "Config error, cannot connect, please modify and try again"
+  },
+  "pCG/0m": {
+    "defaultMessage": "Hook templates"
   },
   "pR5Kts": {
     "defaultMessage": "Retry"
@@ -1845,6 +1890,12 @@
   "vHOsVf": {
     "defaultMessage": "Input"
   },
+  "vR0fTF": {
+    "defaultMessage": "View it"
+  },
+  "vVk87K": {
+    "defaultMessage": "Request arguments"
+  },
   "vY7XCa": {
     "defaultMessage": "Authenticator"
   },
@@ -1885,14 +1936,14 @@
   "wyRshi": {
     "defaultMessage": "Filter options"
   },
-  "x/f0gm": {
-    "defaultMessage": "Anonymous change"
-  },
   "x4mNBF": {
     "defaultMessage": "{seconds} secs ago"
   },
   "x7Gsiw": {
     "defaultMessage": "Specify the response headers that are allowed to be accessed by the client."
+  },
+  "x7YUWW": {
+    "defaultMessage": "Professional edition"
   },
   "xE1H+X": {
     "defaultMessage": "Settings"
@@ -1903,6 +1954,9 @@
   "xKCJNb": {
     "defaultMessage": "Fireboom Console",
     "description": "Title"
+  },
+  "xRlpvk": {
+    "defaultMessage": "Value not changed"
   },
   "xVTk70": {
     "defaultMessage": "Loading"
@@ -1957,6 +2011,9 @@
   },
   "zQEdCX": {
     "defaultMessage": "API Management"
+  },
+  "zVrDoA": {
+    "defaultMessage": "Increment build"
   },
   "zbqD5q": {
     "defaultMessage": "Value"
