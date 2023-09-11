@@ -105,10 +105,10 @@ const SingleArgumentInput = ({
     default:
       if (/Decimal$/.test(type)) {
         return (
-          <InputNumber
+          <Input
             className="text-xs w-full"
-            value={value as number}
-            onChange={e => onChange?.(e)}
+            value={value as string}
+            onChange={e => onChange?.(e.target.value)}
           />
         )
       }

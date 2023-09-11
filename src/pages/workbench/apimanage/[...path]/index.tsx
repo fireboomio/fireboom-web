@@ -6,7 +6,7 @@ import 'graphiql/graphiql.css'
 
 import { message } from 'antd'
 import type { IntrospectionQuery } from 'graphql'
-import { debounce } from 'lodash'
+// import { debounce } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
@@ -106,14 +106,13 @@ export default function APIEditorContainer() {
   const {
     engineStartCallback,
     query,
-    editorQuery,
     schema,
     setQuery,
     refreshSchema,
     setAPIPath,
     pureUpdateAPI,
-    saved,
-    autoSave,
+    // saved,
+    // autoSave,
     setSchema,
     saveSubscriptionController
   } = useAPIManager(state => ({
@@ -126,8 +125,8 @@ export default function APIEditorContainer() {
     refreshSchema: state.refreshSchema,
     setAPIPath: state.setAPIPath,
     pureUpdateAPI: state.pureUpdateAPI,
-    saved: state.computed.saved,
-    autoSave: state.autoSave,
+    // saved: state.computed.saved,
+    // autoSave: state.autoSave,
     setSchema: state.setSchema,
     saveSubscriptionController: state.saveSubscriptionController
   }))
@@ -227,14 +226,14 @@ export default function APIEditorContainer() {
     }
   })
 
-  useEffect(() => {
-    // 3秒后自动保存
-    const save = debounce(autoSave, 3000)
-    if (!saved) {
-      console.log('auto saved')
-      save()
-    }
-  }, [autoSave, saved])
+  // useEffect(() => {
+  //   // 3秒后自动保存
+  //   const save = debounce(autoSave, 3000)
+  //   if (!saved) {
+  //     console.log('auto saved')
+  //     save()
+  //   }
+  // }, [autoSave, saved])
 
   useEffect(() => {
     setAPIPath(params['*']!).then(() => {

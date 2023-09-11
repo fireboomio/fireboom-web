@@ -102,7 +102,11 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
           if (item.isList) {
             if (val) {
               val = (val as SingleInputValueType[]).map(vItem => {
-                if (!['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type)) {
+                if (
+                  !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime'].includes(
+                    item.type
+                  )
+                ) {
                   if (item.enums) {
                     return vItem
                   }
@@ -122,7 +126,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             }
           } else {
             if (
-              !['ID', 'Int', 'Float', 'String', 'Boolean', 'DateTime'].includes(item.type) &&
+              !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime'].includes(
+                item.type
+              ) &&
               !item.enums
             ) {
               if (val && typeof val === 'string') {
