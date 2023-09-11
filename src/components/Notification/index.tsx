@@ -69,59 +69,61 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
         )}
         <DownOutlined className="ml-3 cursor-pointer" onClick={hide} />
       </div>
-      {notifications.map(notification => (
-        <div
-          className="p-3 border border-solid border-[transparent] focus:border-[#e92e5e] text-xs"
-          key={notification.id}
-          tabIndex={0}
-          style={{
-            boxShadow: `0 1px 0 0 rgba(0,0,0,0.05)`
-          }}
-        >
-          <div className="flex items-start">
-            <span className="flex-shrink-0 leading-5">
-              {notificationTypeIcons[notification.type ?? 'info']}
-            </span>
-            <div className="flex-1 ml-2 text-[#333] leading-5">{notification.title}</div>
-            <span className="ml-4 leading-5">
-              <CloseOutlined
-                className="flex-shrink-0 cursor-pointer text-[#333]"
-                onClick={() => removeNotification(notification)}
-              />
-            </span>
-          </div>
-          {(notification.source || notification.buttons?.length) && (
-            <div className="mt-2 flex">
-              {notification.source && (
-                <span className="text-[#999] mr-auto">
-                  <FormattedMessage defaultMessage="来源:" />
-                  &nbsp;&nbsp;{notification.source}
-                </span>
-              )}
-              {notification.buttons?.map((btn, index) => (
-                <Button
-                  key={index}
-                  className={clsx([
-                    index === notification.buttons!.length - 1 ? '' : 'mr-1.5',
-                    index === 0 ? 'ml-auto' : '',
-                    '!text-xs'
-                  ])}
-                  type={btn.type}
-                  size="small"
-                  onClick={async () => {
-                    await btn.handler()
-                    if (btn.closeAfterHandler !== false) {
-                      removeNotification(notification)
-                    }
-                  }}
-                >
-                  {btn.label}
-                </Button>
-              ))}
+      <div className="max-h-100 overflow-y-auto">
+        {notifications.map(notification => (
+          <div
+            className="p-3 border border-solid border-[transparent] focus:border-[#e92e5e] text-xs"
+            key={notification.id}
+            tabIndex={0}
+            style={{
+              boxShadow: `0 1px 0 0 rgba(0,0,0,0.05)`
+            }}
+          >
+            <div className="flex items-start">
+              <span className="flex-shrink-0 leading-5">
+                {notificationTypeIcons[notification.type ?? 'info']}
+              </span>
+              <div className="flex-1 ml-2 text-[#333] leading-5">{notification.title}</div>
+              <span className="ml-4 leading-5">
+                <CloseOutlined
+                  className="flex-shrink-0 cursor-pointer text-[#333]"
+                  onClick={() => removeNotification(notification)}
+                />
+              </span>
             </div>
-          )}
-        </div>
-      ))}
+            {(notification.source || notification.buttons?.length) && (
+              <div className="mt-2 flex">
+                {notification.source && (
+                  <span className="text-[#999] mr-auto">
+                    <FormattedMessage defaultMessage="来源:" />
+                    &nbsp;&nbsp;{notification.source}
+                  </span>
+                )}
+                {notification.buttons?.map((btn, index) => (
+                  <Button
+                    key={index}
+                    className={clsx([
+                      index === notification.buttons!.length - 1 ? '' : 'mr-1.5',
+                      index === 0 ? 'ml-auto' : '',
+                      '!text-xs'
+                    ])}
+                    type={btn.type}
+                    size="small"
+                    onClick={async () => {
+                      await btn.handler()
+                      if (btn.closeAfterHandler !== false) {
+                        removeNotification(notification)
+                      }
+                    }}
+                  >
+                    {btn.label}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

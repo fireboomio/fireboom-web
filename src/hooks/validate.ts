@@ -38,6 +38,7 @@ export function useValidate() {
     () => ({
       api: [
         // caseMap.startWithUpperCase,
+        caseMap.startWithAlphabet,
         caseMap.baseChar,
         caseMap.endWithAlphabetOrNumber,
         caseMap.notDoubleUnderscore
