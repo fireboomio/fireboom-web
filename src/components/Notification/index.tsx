@@ -69,7 +69,7 @@ export const NotificationWindow = (props: NotificationWindowProps) => {
         )}
         <DownOutlined className="ml-3 cursor-pointer" onClick={hide} />
       </div>
-      <div className="max-h-100 overflow-y-auto">
+      <div className="max-h-[80vh] overflow-y-auto">
         {notifications.map(notification => (
           <div
             className="p-3 border border-solid border-[transparent] focus:border-[#e92e5e] text-xs"
