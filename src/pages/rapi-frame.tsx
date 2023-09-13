@@ -68,6 +68,8 @@ export default function RapiFrame() {
       allow-api-list-style-selection="false"
       render-style="focused"
       fetch-credentials="include"
+      persist-auth="true"
+      schema-expand-level="9"
     />
   )
 }
