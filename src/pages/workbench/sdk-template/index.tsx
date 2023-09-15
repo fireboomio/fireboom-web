@@ -381,9 +381,13 @@ const SDKTemplateItem = ({
         <img
           alt=""
           className="w-10 h-10 mr-2.5"
-          src={`data:image/svg+xml;base64,${base64.fromByteArray(
-            new TextEncoder().encode(`${sdk.icon}`)
-          )}`}
+          src={
+            sdk.icon.startsWith('http')
+              ? sdk.icon
+              : `data:image/svg+xml;base64,${base64.fromByteArray(
+                  new TextEncoder().encode(`${sdk.icon}`)
+                )}`
+          }
         />
         <div className="flex-1">
           <div className="flex items-center">
@@ -457,9 +461,13 @@ const RemoteSDKCard = ({
           <img
             alt=""
             className={styles.icon}
-            src={`data:image/svg+xml;base64,${base64.fromByteArray(
-              new TextEncoder().encode(`${sdk.icon}`)
-            )}`}
+            src={
+              sdk.icon.startsWith('http')
+                ? sdk.icon
+                : `data:image/svg+xml;base64,${base64.fromByteArray(
+                    new TextEncoder().encode(`${sdk.icon}`)
+                  )}`
+            }
           />
           {sdk.title}
         </div>
