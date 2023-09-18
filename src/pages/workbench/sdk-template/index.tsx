@@ -56,7 +56,7 @@ const SDKTemplate = () => {
     //     })
     //   )
     // },
-    showRemote ? 'sdk.cloud.template.json' : null,
+    showRemote ? 'sdks.json' : null,
     getFireboomFileContent,
     {
       revalidateOnMount: true

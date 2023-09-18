@@ -77,6 +77,9 @@ dependencies:
   echarts-for-react:
     specifier: ^3.0.2
     version: registry.npmmirror.com/echarts-for-react@3.0.2(echarts@5.4.0)(react@18.2.0)
+  eta:
+    specifier: ^3.1.1
+    version: registry.npmmirror.com/eta@3.1.1
   graphiql:
     specifier: ^1.11.5
     version: registry.npmmirror.com/graphiql@1.11.5(@codemirror/language@0.20.2)(@types/node@17.0.42)(graphql-ws@5.10.2)(graphql@16.6.0)(react-dom@18.2.0)(react@18.2.0)
@@ -5044,6 +5047,13 @@ packages:
     version: 1.14.2
     engines: {node: '>=6.0.0'}
     dev: true
+
+  registry.npmmirror.com/eta@3.1.1:
+    resolution: {integrity: sha512-GVKq8BhYjvGiwKAnvPOnTwAHach3uHglvW0nG9gjEmo8ZIe8HR1aCLdQ97jlxXPcCWhB6E3rDWOk2fahFKG5Cw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eta/-/eta-3.1.1.tgz}
+    name: eta
+    version: 3.1.1
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   registry.npmmirror.com/events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/events/-/events-3.3.0.tgz}

@@ -1,20 +1,34 @@
 import { Descriptions, message, Modal } from 'antd'
 import copy from 'copy-to-clipboard'
+import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { Copy } from '@/components/icons'
 import { useConfigContext } from '@/lib/context/ConfigContext'
+import { proxy } from '@/lib/fetchers'
+import { useEngine } from '@/providers/engine'
 
 import styles from './components/subs/subs.module.less'
 
 export default function SettingMainVersion() {
   const intl = useIntl()
   const { globalSetting } = useConfigContext()
+  const { fbVersion } = useEngine()
+  const [hasNewVersion, setHasNewVersion] = useState(false)
 
   const copyUpdateLink = () => {
     copy('curl -fsSL https://www.fireboom.io/update | bash')
     message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
   }
+
+  useEffect(() => {
+    if (fbVersion !== 'dev' && fbVersion !== 'test') {
+      proxy('https://fb-bin.oss-cn-hangzhou.aliyuncs.com/prod/version').then(text => {
+        setHasNewVersion((text as string).trim() !== fbVersion)
+      })
+    }
+  }, [fbVersion])
+
   if (!globalSetting) {
     return null
   }
@@ -33,6 +47,11 @@ export default function SettingMainVersion() {
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '飞布版本' })}>
             <div className="flex items-center">
               {globalSetting.fbVersion}
+              {hasNewVersion && (
+                <div className={styles['new-version']}>
+                  <FormattedMessage defaultMessage="有新版本发布" />
+                </div>
+              )}
               <div
                 className={styles['check-info']}
                 onClick={() => {
