@@ -8,8 +8,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWRImmutable from 'swr/immutable'
 import { useImmer } from 'use-immer'
 
-import { getDefaultCode } from '@/components/Ide/getDefaultCode'
-import type { HookName } from '@/interfaces/auth'
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -32,9 +30,6 @@ export default function AuthRole() {
   const [editingRole, setEditingRole] = useState<ApiDocuments.Role | undefined>()
   const [roleData, setRoleData] = useImmer([] as Array<ApiDocuments.Role>)
   const [roleFlag, setRoleFlag] = useState<boolean>()
-  const [activeKey, setActiveKey] = useState<HookName>('postAuthentication')
-  // const [defaultCode, setDefaultCode] = useState<string>('')
-  const [defaultCodeMap, setDefaultCodeMap] = useState<Record<string, string>>({})
 
   const { data: hookState, mutate: refreshHookState } =
     useSWRImmutable<ApiDocuments.models_HookOptions>(
@@ -125,13 +120,6 @@ export default function AuthRole() {
       )
     }
   ]
-
-  // const currHook = useMemo(() => hooks?.find(x => x.hookName === activeKey), [activeKey, hooks])
-  useEffect(() => {
-    getDefaultCode(`auth.${activeKey}`).then(res => {
-      setDefaultCodeMap({ ...defaultCodeMap, [activeKey]: res })
-    })
-  }, [activeKey])
 
   const { vscode } = useContext(GlobalContext)
   const [tab, setTab] = useState<string>('role')

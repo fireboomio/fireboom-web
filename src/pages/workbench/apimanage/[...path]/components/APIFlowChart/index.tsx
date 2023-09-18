@@ -11,7 +11,6 @@ import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import { useAPIManager } from '../../store'
-import EditPanel from './EditPanel'
 import type { FlowChartProps } from './FlowChart'
 import type {
   CommonChartProps,
@@ -52,7 +51,6 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
   const dict = useDict()
   const [globalState, setGlobalState] = useState<GlobalState>()
   const [hookState, setHookState] = useState<HookState>()
-  const [editingHook, setEditingHook] = useState<{ name: string; path: string } | null>(null)
 
   const directiveState = useDebounceMemo(
     () => {
@@ -163,10 +161,6 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
     }
   }, [appendToAPIRefresh, loadHook, dispendToAPIRefresh])
 
-  // 监听路由变化，当路由变化时自动关闭钩子编辑器
-  useEffect(() => {
-    setEditingHook(null)
-  }, [apiPath])
   const hasParam = !!(query ?? '').match(/\(\$\w+/)
   const onEditHook = useCallback(
     (hook: { name: string; path: string }) => {
@@ -196,17 +190,6 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
           operationType={operationType}
           onEditHook={onEditHook}
           onToggleHook={onToggleHook}
-        />
-      )}
-      {editingHook && (
-        <EditPanel
-          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={hasParam}
-          hook={editingHook}
-          onClose={() => {
-            void refreshAPI()
-            setEditingHook(null)
-          }}
         />
       )}
     </>

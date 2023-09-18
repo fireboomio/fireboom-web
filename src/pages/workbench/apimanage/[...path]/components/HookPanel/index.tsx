@@ -1,11 +1,9 @@
 import type { OperationDefinitionNode } from 'graphql/index'
-import React, { useContext, useEffect, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useContext, useMemo } from 'react'
 import useImmutableSWR from 'swr/immutable'
 
 import { GlobalContext } from '@/lib/context/globalContext'
 import requests from '@/lib/fetchers'
-import EditPanel from '@/pages/workbench/apimanage/[...path]/components/APIFlowChart/EditPanel'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
@@ -13,9 +11,6 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 import StatusDirective from '../APIFlowChart/StatusDirective'
 
 export default function HookPanel({ apiPath }: { apiPath?: string }) {
-  const location = useLocation()
-  const [editingHook, setEditingHook] = React.useState<{ name: string; path: string } | null>(null)
-
   const { vscode } = useContext(GlobalContext)
   const dict = useDict()
   const { apiDesc, schemaAST, operationType, refreshAPI } = useAPIManager(state => ({
@@ -122,10 +117,6 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
     })
   }, [apiDesc, operationType, schemaAST, defs, dict, globalHooksState])
 
-  useEffect(() => {
-    setEditingHook(null)
-  }, [location])
-
   if (!apiPath) {
     return null
   }
@@ -140,7 +131,6 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
             label={hook.name}
             onClick={() => {
               vscode.show(hook.path, { hasParam: defs.length > 0 })
-              // setEditingHook(hook)
             }}
             onToggleEnabled={async flag => {
               await vscode.toggleOperationHook(flag, hook.path, apiPath, defs.length > 0)
@@ -150,17 +140,6 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
           />
         ))}
       </div>
-      {editingHook && (
-        <EditPanel
-          apiName={(apiDesc?.path ?? '').split('/').pop() || ''}
-          hasParams={defs.length > 0}
-          hook={editingHook}
-          onClose={() => {
-            void refreshAPI()
-            setEditingHook(null)
-          }}
-        />
-      )}
     </>
   )
 }

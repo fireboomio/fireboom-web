@@ -1,77 +1,83 @@
-import { getGoTemplate, getTsTemplate } from '@/components/Ide/getDefaultCode'
+import { Eta } from 'eta'
+import { upperFirst } from 'lodash'
+
+import { proxy } from '@/lib/fetchers'
+
+const eta = new Eta()
+
+export function getRawUrl(isGithub: boolean, pathList: string[], ext: string) {
+  // TODO，后续修改为mirror策略
+  const _ext = ext.replace(/^\./, '')
+  if (isGithub) {
+    return `https://raw.githubusercontent.com/fireboomio/files/main/templates/${pathList.join(
+      '/'
+    )}.${_ext}`
+  }
+  return `https://code.100ai.com.cn/fireboomio/files/raw/branch/main/templates/${pathList.join(
+    '/'
+  )}.${_ext}`
+}
+
+export async function getHookTemplate(
+  lang: string,
+  ext: string,
+  hookFilePath: string[]
+): Promise<string> {
+  const ret = await proxy(getRawUrl(false, [lang === 'go' ? 'golang' : lang, ...hookFilePath], ext))
+  return ret
+}
 
 export function replaceFileTemplate(
   templateStr: string,
-  variables: { variableName: string; value: string }[]
+  variables?: Record<string, string | number | boolean>
 ): string {
-  let ret = templateStr
-  variables.forEach(item => {
-    ret = ret
-      // 首字母大写
-      .replaceAll(`^$${item.variableName}$`, item.value[0].toUpperCase() + item.value.slice(1))
-      // 变量替换
-      .replaceAll(`$${item.variableName}$`, item.value)
-  })
-  return ret
+  // @ts-ignore
+  return eta.renderString(templateStr, { ...variables, upperFirst })
+}
+
+export async function getDefaultCode(
+  lang: string,
+  ext: string,
+  hookFilePath: string[],
+  variables?: Record<string, string | number | boolean>
+) {
+  const templateStr = await getHookTemplate(lang, ext, hookFilePath)
+  return replaceFileTemplate(templateStr, variables)
 }
 
 export async function resolveDefaultCode(
   path: string,
-  hasParam: boolean,
-  language: string
+  language: string,
+  ext: string
 ): Promise<string> {
-  let getDefaultCode
-  if (language === 'go') {
-    getDefaultCode = getGoTemplate
-  } else {
-    getDefaultCode = getTsTemplate
-  }
   const list = path.split('/')
   let name = list.pop()!.split('.')[0]
   const packageName = list[list.length - 1]
   let code = ''
+  const variables = {
+    packageName,
+    name
+  }
   if (path.match(/custom-\w+\/global\//)) {
-    // 兼容
-    if (name === 'beforeOriginRequest') {
-      name = 'beforeRequest'
-    } else if (name === 'onOriginRequest') {
-      name = 'onRequest'
-    } else if (name === 'onOriginResponse') {
-      name = 'onResponse'
-    }
-    code = await getDefaultCode(`global.${name}`)
+    code = await getDefaultCode(language, ext, ['global', name], variables)
   } else if (path.match(/custom-\w+\/authentication\//)) {
-    code = await getDefaultCode(`authentication.${name}`)
+    code = await getDefaultCode(language, ext, ['authentication', name], variables)
   } else if (path.match(/custom-\w+\/customize\//)) {
-    code = replaceFileTemplate(await getDefaultCode('custom.customize'), [
-      { variableName: 'CUSTOMIZE_NAME', value: name }
-    ])
+    code = await getDefaultCode(language, ext, ['custom', 'customize'], variables)
   } else if (path.match(/custom-\w+\/function\//)) {
-    code = replaceFileTemplate(await getDefaultCode('custom.function'), [
-      { variableName: 'FUNCTION_NAME', value: name },
-      { variableName: 'PACKAGE_NAME', value: packageName }
-    ])
+    code = await getDefaultCode(language, ext, ['custom', 'function'], variables)
   } else if (path.match(/custom-\w+\/proxy\//)) {
-    code = replaceFileTemplate(await getDefaultCode('custom.proxy'), [
-      { variableName: 'PROXY_NAME', value: name },
-      { variableName: 'PACKAGE_NAME', value: packageName }
-    ])
+    code = await getDefaultCode(language, ext, ['custom', 'proxy'], variables)
   } else if (path.match(/custom-\w+\/storage/)) {
     const profileName = list.pop() as string
-    const storageName = list.pop() as string
-    code = replaceFileTemplate(await getDefaultCode(`upload.${name}`), [
-      { variableName: 'STORAGE_NAME', value: storageName },
-      { variableName: 'PROFILE_NAME', value: profileName }
-    ])
+    const providerName = list.pop() as string
+    code = await getDefaultCode(language, ext, ['upload', name], {
+      ...variables,
+      providerName,
+      profileName
+    })
   } else {
-    const pathList = list.slice(2)
-    const tmplPath = `hook.${hasParam ? 'WithInput' : 'WithoutInput'}.${name}`
-    code = replaceFileTemplate(await getDefaultCode(tmplPath), [
-      {
-        variableName: 'HOOK_NAME',
-        value: pathList.join('__')
-      }
-    ])
+    code = await getDefaultCode(language, ext, ['operation', name], variables)
   }
-  return code.replaceAll('$HOOK_PACKAGE$', packageName!)
+  return code
 }

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import IdeContainer from '@/components/Ide'
 import FbTabs from '@/components/Tabs'
 import { mutateStorage, useStorageList } from '@/hooks/store/storage'
 import requests from '@/lib/fetchers'
@@ -20,7 +19,6 @@ export default function StorageProfile() {
   const currentName = useRef<string>() // 当前storageId，用于在切换storage时清空tabs
   const [tabs, setTabs] = useState<{ key: string; label: string }[]>([])
   const storageList = useStorageList()
-  const [activeTab, setActiveTab] = useState('base')
   useEffect(() => {
     if (currentName.current !== name) {
       currentName.current = name
@@ -86,42 +84,8 @@ export default function StorageProfile() {
         }}
       />
       <div className={styles.content}>
-        {/*<Tabs*/}
-        {/*  animated={false}*/}
-        {/*  activeKey={activeTab}*/}
-        {/*  onChange={key => setActiveTab(key)}*/}
-        {/*  items={[*/}
-        {/*    {*/}
-        {/*      key: 'base',*/}
-        {/*      label: '基本设置'*/}
-        {/*    },*/}
-        {/*    {*/}
-        {/*      key: 'pre',*/}
-        {/*      label: '前置钩子'*/}
-        {/*    },*/}
-        {/*    { key: 'post', label: '后置钩子' }*/}
-        {/*  ]}*/}
-        {/*/>*/}
         <div className={styles.title}>{intl.formatMessage({ defaultMessage: '基本设置' })}</div>
-        {activeTab === 'base' && (
-          <Form storageName={currentStorage!.name} onSave={saveProfile} profile={currentProfile} />
-        )}
-        {activeTab === 'pre' && (
-          <IdeContainer
-            key={profile + 'preUpload'}
-            onChangeEnable={void 0}
-            hookPath={`uploads/${currentStorage?.name}/${profile}/preUpload`}
-            defaultLanguage="typescript"
-          />
-        )}
-        {activeTab === 'post' && (
-          <IdeContainer
-            key={profile + 'postUpload'}
-            onChangeEnable={void 0}
-            hookPath={`uploads/${currentStorage?.name}/${profile}/postUpload`}
-            defaultLanguage="typescript"
-          />
-        )}
+        <Form storageName={currentStorage!.name} onSave={saveProfile} profile={currentProfile} />
       </div>
     </div>
   )

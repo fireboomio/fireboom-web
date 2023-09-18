@@ -424,7 +424,7 @@ export default function Index(props: PropsWithChildren) {
           }
         }
         setLoading('钩子模板创建中，请稍候')
-        const code = await resolveDefaultCode(filePath, hasParam, language!)
+        const code = await resolveDefaultCode(filePath, language!, data!.extension!)
         await writeFile(filePath, code)
         // await saveHookScript(path, code)
         return true
