@@ -78,7 +78,12 @@ export async function resolveDefaultCode(
     })
   } else {
     const operationPath = list.slice(-2).join('/')
-    code = await getDefaultCode(language, ext, ['operation', name], { ...variables, operationPath })
+    const operationName = list.slice(-2).join('__')
+    code = await getDefaultCode(language, ext, ['operation', name], {
+      ...variables,
+      operationPath,
+      operationName
+    })
   }
   return code
 }
