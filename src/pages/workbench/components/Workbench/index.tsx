@@ -394,10 +394,19 @@ export default function Index(props: PropsWithChildren) {
         return false
       }
       // 去除开头 /
-      const filePath =
+      let filePath =
         data?.extension && path.includes(data!.extension)
           ? path
           : `${path}.${data?.extension.replace(/^\./, '')}`.replace(/^\//, '')
+      // java 钩子需要文件首字母大写
+      if (data?.upperFirst) {
+        // 按路径分割，并将最后一个文件名首字母大写
+        const splited = filePath.split('/')
+        const last = splited[splited.length - 1]
+        filePath = `${splited
+          .slice(0, splited.length - 1)
+          .join('/')}/${last[0].toUpperCase()}${last.slice(1)}`
+      }
       let hookExisted = false
       try {
         await requests.get(`/vscode/state?uri=${filePath}`, {

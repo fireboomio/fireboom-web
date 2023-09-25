@@ -218,6 +218,7 @@ export declare namespace ApiDocuments {
     type: string
     updateTime: string
     version: string
+    upperFirst?: boolean
   }
   export interface ServerLogging extends BasicDto {
     level: ApiDocuments.ConfigurationVariable
