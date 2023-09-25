@@ -1,39 +1,44 @@
-import { message } from 'antd'
+import { useMemo } from 'react'
+import type { SWRConfiguration } from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import { proxy } from '@/lib/fetchers'
 
-export const FB_SERVICE_DISCOVERY_URL =
-  'https://fireboom.oss-cn-hangzhou.aliyuncs.com/fb-service-discovery.json'
+import { useEnv } from './env'
 
-export type fbRepositoryUrlTemplate = {
-  fbFilesUrlTemplate: string
-  fbRepositoryUrlTemplate: string
-}
+const FB_REPO_URL_MIRROR = 'FB_REPO_URL_MIRROR'
+const FB_RAW_URL_MIRROR = 'FB_RAW_URL_MIRROR'
 
-let _discoveryJson: fbRepositoryUrlTemplate
-let _promise: Promise<fbRepositoryUrlTemplate>
+const DEFAULT_ORG_NAME = 'fireboomio'
 
-async function _ensureJson() {
-  if (!_discoveryJson) {
-    if (!_promise) {
-      _promise = proxy(FB_SERVICE_DISCOVERY_URL)
+export function useFireboomFileContent<T = any>(filePath: string, options?: SWRConfiguration) {
+  const { envs } = useEnv()
+
+  const url = useMemo(() => {
+    if (filePath && envs[FB_RAW_URL_MIRROR]) {
+      return envs[FB_RAW_URL_MIRROR].replace('{orgName}', DEFAULT_ORG_NAME)
+        .replace('{repoName}', 'files')
+        .replace('{branchName}', 'main')
+        .replace('{filePath}', filePath)
     }
-    _discoveryJson = await _promise
-  }
-  return !!_discoveryJson
+    return null
+  }, [envs, filePath])
+
+  return useSWRImmutable<T>(url, proxy, options)
 }
 
-export async function getFireboomFileContent(filename: string) {
-  if (await _ensureJson()) {
-    const url = _discoveryJson.fbFilesUrlTemplate.replace('{filePath}', filename)
-    return await proxy(url)
-  }
-  message.error('获取地址失败')
-}
+export function useFireboomRepositoryUrl() {
+  const { envs } = useEnv()
 
-export async function getFireboomRepositoryUrl(repositoryName: string) {
-  if (await _ensureJson()) {
-    return _discoveryJson.fbRepositoryUrlTemplate.replace('{repositoryName}', repositoryName)
+  return {
+    getRepositoryUrl: (repositoryName: string) => {
+      if (repositoryName && envs[FB_REPO_URL_MIRROR]) {
+        return envs[FB_REPO_URL_MIRROR].replace('{orgName}', DEFAULT_ORG_NAME).replace(
+          '{repoName}',
+          repositoryName
+        )
+      }
+      return null
+    }
   }
-  message.error('获取地址失败')
 }

@@ -4,10 +4,9 @@ import clsx from 'clsx'
 import copy from 'copy-to-clipboard'
 import dayjs from 'dayjs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import useSWRImmutable from 'swr/immutable'
 
 import { formatDate } from '@/lib/helpers/utils'
-import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
+import { useFireboomFileContent } from '@/providers/ServiceDiscovery'
 
 import styles from './index.module.css'
 export interface LicenseProps {
@@ -49,10 +48,7 @@ const License = ({
   type
 }: LicenseProps) => {
   const intl = useIntl()
-  const { data: licenseConfig } = useSWRImmutable<LicenseConfig>(
-    'license.json',
-    getFireboomFileContent
-  )
+  const { data: licenseConfig } = useFireboomFileContent<LicenseConfig>('license.json')
   const isExpired = dayjs(expireTime).isBefore(dayjs())
   const leftDays = dayjs(expireTime).diff(dayjs(), 'day')
   const isAlmostExpired = leftDays <= 7

@@ -1,11 +1,11 @@
 import { message } from 'antd'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import useSWRImmutable from 'swr/immutable'
 
 import { DataSourceKind } from '@/interfaces/datasource'
 import requests from '@/lib/fetchers'
-import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
+import { useFireboomFileContent } from '@/providers/ServiceDiscovery'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export function isDatabaseKind(ds: ApiDocuments.Datasource) {
@@ -81,10 +81,7 @@ let readyPromise = new Promise<boolean>(resolve => {
 export function useHookSupport() {
   const intl = useIntl()
   const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
-  const { data: hookState, isLoading } = useSWRImmutable<HookState>(
-    'hook.state.json',
-    getFireboomFileContent
-  )
+  const { data: hookState, isLoading } = useFireboomFileContent('hook.state.json')
 
   useEffect(() => {
     if (!isLoading) {

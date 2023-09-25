@@ -25,43 +25,29 @@ import requests, { getAuthKey, proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import { useDict } from '@/providers/dict'
 import { intl } from '@/providers/IntlProvider'
-import { getFireboomFileContent } from '@/providers/ServiceDiscovery'
+import { useFireboomFileContent, useFireboomRepositoryUrl } from '@/providers/ServiceDiscovery'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import moreIcon from '../components/Workbench/assets/icon-menu.png'
 import styles from './index.module.less'
 
 const SDKTemplate = () => {
+  const { getRepositoryUrl } = useFireboomRepositoryUrl()
   const { data, mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
   const [showRemote, setShowRemote] = useState(false)
   const { initialize } = useDict()
-  // const cancelToken = useRef<any>()
+
   const {
     data: remoteSdk,
     isValidating,
     error,
     mutate: mutateRemote
-  } = useSWR<{
+  } = useFireboomFileContent<{
     official: ApiDocuments.Sdk[]
     community: ApiDocuments.Sdk[]
-  }>(
-    // showRemote
-    //   ? 'https://raw.githubusercontent.com/fireboomio/files/main/sdk.templates.json'
-    //   : null,
-    // key => {
-    //   return proxy(
-    //     key,
-    //     new axios.CancelToken(c => {
-    //       cancelToken.current = c
-    //     })
-    //   )
-    // },
-    showRemote ? 'sdks.json' : null,
-    getFireboomFileContent,
-    {
-      revalidateOnMount: true
-    }
-  )
+  }>(showRemote ? 'sdks.json' : '', {
+    revalidateOnMount: true
+  })
 
   const { server, client } = useMemo(() => {
     let server: ApiDocuments.Sdk[] = []
@@ -101,9 +87,10 @@ const SDKTemplate = () => {
   }
   const { loading, fun: downloadSdk } = useLock(
     async sdk => {
+      const gitUrl = getRepositoryUrl(sdk.gitUrl)
       const hide = message.loading(intl.formatMessage({ defaultMessage: '下载' }), -1)
       try {
-        await requests.post('/sdk', sdk)
+        await requests.post('/sdk', { ...sdk, gitUrl })
         await mutate()
         initialize()
         _mutate('/sdk/enabledServer')
@@ -250,6 +237,7 @@ async function checkUpdatable(
   const matched = sdk.gitUrl.match(/^https?:\/\/(.+)\/(.+\/.+)\.git/)
   if (matched) {
     try {
+      // TODO 待优化
       const ret = await proxy(
         `https://api.github.com/repos/${matched[2]}/git/refs/heads/${sdk.gitBranch}`
       )
