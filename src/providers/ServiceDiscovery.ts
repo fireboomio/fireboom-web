@@ -33,7 +33,16 @@ export function useFireboomRepositoryUrl() {
   return {
     getRepositoryUrl: (repositoryName: string) => {
       if (repositoryName && envs[FB_REPO_URL_MIRROR]) {
-        return envs[FB_REPO_URL_MIRROR].replace('{orgName}', DEFAULT_ORG_NAME).replace(
+        if (repositoryName.match(/^https?:\/\//)) {
+          return repositoryName
+        }
+        let orgName = DEFAULT_ORG_NAME
+        if (repositoryName.includes('/')) {
+          const [_orgName, _repositoryName] = repositoryName.split('/')
+          orgName = _orgName
+          repositoryName = _repositoryName
+        }
+        return envs[FB_REPO_URL_MIRROR].replace('{orgName}', orgName).replace(
           '{repoName}',
           repositoryName
         )
