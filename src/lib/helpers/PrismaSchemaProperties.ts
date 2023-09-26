@@ -30,6 +30,7 @@ type PrismaSchemaAttributePropertiesType = Record<
 
 export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType {
   const intl = useIntl()
+  // Refer to https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#model-field-scalar-types
   const CommonFieldAttributes: AttributeType[] = [
     { name: 'id', hasArgs: false, comment: intl.formatMessage({ defaultMessage: '主键' }) },
     {
@@ -401,6 +402,103 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
             ...CommonFieldAttributes,
             { name: 'db.BinData', hasArgs: false },
             { name: 'db.ObjectId', hasArgs: false }
+          ]
+        },
+        Model: {
+          attributes: [
+            ...CommonFieldAttributes.filter(a => ['map', 'ignore'].includes(a.name)),
+            { name: 'relation', hasArgs: true }
+          ]
+        },
+        Enum: {
+          attributes: [...CommonFieldAttributes]
+        },
+        Unsupported: {
+          attributes: [
+            {
+              name: 'map',
+              hasArgs: true,
+              comment: intl.formatMessage({ defaultMessage: '字段别名' })
+            },
+            {
+              name: 'ignore',
+              hasArgs: false,
+              comment: intl.formatMessage({ defaultMessage: '忽略该字段' })
+            }
+          ]
+        }
+      },
+      model: {
+        attributes: [...CommonModelAttributes]
+      }
+    },
+    [DataSourceKind.SQLServer]: {
+      fieldType: {
+        String: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Char', hasArgs: true },
+            { name: 'db.NChar', hasArgs: true },
+            { name: 'db.VarChar', hasArgs: true },
+            { name: 'db.NVarChar', hasArgs: true },
+            { name: 'db.Text', hasArgs: false },
+            { name: 'db.NText', hasArgs: false },
+            { name: 'db.Xml', hasArgs: false },
+            { name: 'db.UniqueIdentifier', hasArgs: false }
+          ]
+        },
+        Boolean: {
+          attributes: [...CommonFieldAttributes]
+        },
+        Int: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Int', hasArgs: false },
+            { name: 'db.SmallInt', hasArgs: false },
+            { name: 'db.TinyInt', hasArgs: false },
+            { name: 'db.Bit', hasArgs: false }
+          ]
+        },
+        BigInt: {
+          attributes: [...CommonFieldAttributes, { name: 'db.BigInt', hasArgs: false }]
+        },
+        Float: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Float', hasArgs: false },
+            { name: 'db.Money', hasArgs: false },
+            { name: 'db.SmallMoney', hasArgs: false },
+            { name: 'db.Real', hasArgs: false }
+          ]
+        },
+        Decimal: {
+          attributes: [...CommonFieldAttributes, { name: 'db.Decimal', hasArgs: true }]
+        },
+        DateTime: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Date', hasArgs: false },
+            { name: 'db.Time', hasArgs: false },
+            { name: 'db.DateTime', hasArgs: false },
+            { name: 'db.DateTime2', hasArgs: false },
+            { name: 'db.SmallDateTime', hasArgs: false },
+            { name: 'db.DateTimeOffset', hasArgs: false },
+            {
+              name: 'updatedAt',
+              hasArgs: false,
+              comment: intl.formatMessage({ defaultMessage: '更新时间' })
+            }
+          ]
+        },
+        Json: {
+          attributes: [...CommonFieldAttributes, { name: 'db.NVarChar', hasArgs: false }]
+        },
+        Bytes: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Binary', hasArgs: false },
+            { name: 'db.VarBinary', hasArgs: false },
+            { name: 'db.Image', hasArgs: false }
           ]
         },
         Model: {

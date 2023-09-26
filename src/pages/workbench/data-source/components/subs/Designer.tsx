@@ -104,6 +104,11 @@ export default function Designer() {
           kind: DataSourceKind.PostgreSQL
         },
         {
+          name: 'SQL Server',
+          icon: iconSQLServer,
+          kind: DataSourceKind.SQLServer
+        },
+        {
           name: 'MongoDB',
           icon: iconMongoDB,
           kind: DataSourceKind.MongoDB
@@ -117,12 +122,6 @@ export default function Designer() {
         {
           name: 'CockroachDB',
           icon: iconCockroachDB,
-          kind: DataSourceKind.Unsupported,
-          coming: true
-        },
-        {
-          name: 'SQL Server',
-          icon: iconSQLServer,
           kind: DataSourceKind.Unsupported,
           coming: true
         },
