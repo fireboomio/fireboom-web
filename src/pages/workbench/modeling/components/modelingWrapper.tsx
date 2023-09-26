@@ -38,7 +38,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
   const [currentEntity, setCurrentEntity] = useImmer<Entity | null>(null)
   const [syncEditorFlag, setSyncEditorFlag] = useImmer<boolean>(false)
   useEffect(() => {
-    setDataSources(data?.filter(ds => isDatabaseKind(ds) && ds.enabled) ?? [])
+    setDataSources(data?.filter(ds => isDatabaseKind(ds)) ?? [])
   }, [data, setDataSources])
 
   const hideRef = useRef<() => void>()

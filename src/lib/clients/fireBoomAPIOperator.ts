@@ -23,9 +23,10 @@ export const migratePrismaSchema = (blocks: Block[], dbSourceName: string) => {
   return requests.post(migratePrismaUrl, prismaSchema, { timeout: 30e3 })
 }
 
-export const fetchPrismaDMF = (dbSourceName: string) => {
+export const fetchPrismaDMF = (dbSourceName: string, query?: Record<string, any>) => {
   return requests
     .get<any, DMMF.Document>(PRISMA_PREVIEW_GRAPHQL_SCHEMA.replace(':name', dbSourceName), {
+      params: query,
       timeout: 15e3
     })
     .then(res => {
@@ -89,8 +90,9 @@ export const fetchPrismaDMF = (dbSourceName: string) => {
     })
 }
 
-export const fetchPrismaSDL = (dbSourceName: string) => {
+export const fetchPrismaSDL = (dbSourceName: string, query?: Record<string, any>) => {
   return requests.get<any, string>(`datasource/prisma/${dbSourceName}`, {
+    params: query,
     timeout: 15e3
   })
 }

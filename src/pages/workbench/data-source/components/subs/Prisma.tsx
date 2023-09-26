@@ -12,6 +12,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 
 export type PrismaDSAction = {
   save: () => Promise<boolean>
+  test: () => Promise<void>
   introspection: () => Promise<void>
 }
 
@@ -79,9 +80,18 @@ const PrismaDS = ({ content, type, actionRef }: PrismaDSProps) => {
     editorRef.current?.setValue(resp)
   }
 
+  const test = async () => {
+    requests
+      .post('/datasource/checkConnection', { ...content, prismaSchema: editorContent.current })
+      .then(() => {
+        message.success(intl.formatMessage({ defaultMessage: '连接成功' }))
+      })
+  }
+
   if (actionRef) {
     actionRef.current = {
       save,
+      test,
       introspection
     }
   }

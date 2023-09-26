@@ -210,7 +210,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
                 <>
                   <Button
                     className={'btn-save !ml-4'}
-                    onClick={testLink}
+                    onClick={prismaDSRef.current?.test}
                     disabled={content.readonly}
                   >
                     <FormattedMessage defaultMessage="测试" />

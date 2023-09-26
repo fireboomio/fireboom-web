@@ -41,7 +41,9 @@ export default function CRUDSider(props: CRUDSiderProps) {
   const currentName = useRef<string>()
 
   const filterDataSourceList = useMemo(() => {
-    return dataSourceList ? dataSourceList.filter(item => isDatabaseKind(item)) : dataSourceList
+    return dataSourceList
+      ? dataSourceList.filter(item => isDatabaseKind(item) && item.enabled)
+      : dataSourceList
   }, [dataSourceList])
 
   useEffect(() => {
@@ -72,8 +74,8 @@ export default function CRUDSider(props: CRUDSiderProps) {
         }
       )
       const [dmmf, sdl] = await Promise.all([
-        fetchPrismaDMF(currentDataSourceName),
-        fetchPrismaSDL(currentDataSourceName).catch(() => '')
+        fetchPrismaDMF(currentDataSourceName, { crud: true }),
+        fetchPrismaSDL(currentDataSourceName, { crud: true }).catch(() => '')
       ])
 
       if (currentName.current === currentDataSourceName) {
