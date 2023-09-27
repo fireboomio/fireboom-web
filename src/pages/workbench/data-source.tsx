@@ -72,12 +72,12 @@ export default function DataSource() {
               // @ts-ignore
               setContent(_content)
               setShowType('detail')
-              navigate(`/workbench/data-source/${_content.name}`, { replace: true })
+              navigate(`/workbench/data-source/${_content.name}`)
             },
             handleCreate: content => {
               setShowType('form')
               setContent(content)
-              navigate('/workbench/data-source/create', { replace: true })
+              navigate('/workbench/data-source/create')
             }
           }}
         >

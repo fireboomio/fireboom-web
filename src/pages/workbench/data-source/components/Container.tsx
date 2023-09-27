@@ -134,7 +134,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
             {!content.name ? (
               <div
                 className="cursor-pointer flex h-5 mr-1 w-5 items-center justify-center"
-                onClick={() => history.back()}
+                onClick={() => navigate(-1)}
               >
                 <Image
                   style={{ transform: 'rotate(90deg)' }}
