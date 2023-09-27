@@ -85,6 +85,7 @@ async function fetcher(rec: Record<string, unknown>, setSchema: (q: Introspectio
     }).then(resp => resp.json())
     // 避免重复请求，初始化后提交schema结果
     if (rec.operationName === 'IntrospectionQuery') {
+      window.schema = res.data
       setSchema(res.data as IntrospectionQuery)
     }
     return res
