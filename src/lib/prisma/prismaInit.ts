@@ -6,8 +6,8 @@ let firstInit = true
 
 export default async function init(monaco: any, editor: any) {
   if (firstInit) {
-    await loadWASM(import.meta.env.BASE_URL + 'modules/prisma/onigasm.wasm') // See https://www.npmjs.com/package/onigasm#light-it-up
     firstInit = false
+    await loadWASM(import.meta.env.BASE_URL + 'modules/prisma/onigasm.wasm') // See https://www.npmjs.com/package/onigasm#light-it-up
   }
 
   const registry = new Registry({
