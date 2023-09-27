@@ -152,17 +152,17 @@ export default function Designer() {
         {
           name: 'GraphQL',
           icon: iconCustomGraphQL,
-          onClick: () => addScript('GraphQL', dict.customize)
+          onClick: () => addScript('GraphQL 数据源', dict.customize)
         },
         {
           name: 'Function',
           icon: iconFunction,
-          onClick: () => addScript('Function', dict.function)
+          onClick: () => addScript('Function 接口', dict.function)
         },
         {
           name: 'Proxy',
           icon: iconProxy,
-          onClick: () => addScript('Proxy', dict.proxy)
+          onClick: () => addScript('Proxy 接口', dict.proxy)
         }
       ]
     }

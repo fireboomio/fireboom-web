@@ -35,7 +35,7 @@ export default function useCustom() {
       // @ts-ignore
       if (await checkSupport(dir.split('/').pop())) {
         const { confirm, value } = await prompt({
-          title: intl.formatMessage({ defaultMessage: `请输入 {name} 数据源名称` }, { name }),
+          title: intl.formatMessage({ defaultMessage: `请输入 {name}名称` }, { name }),
           validator: (v: string) => {
             if (dir !== dict.customize) {
               // function和proxy支持多级路径
