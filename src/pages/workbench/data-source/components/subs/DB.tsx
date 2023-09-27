@@ -32,7 +32,7 @@ import { useDict } from '@/providers/dict'
 import { getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { databaseKindNameMap } from '@/utils/datasource'
-import { parseDBUrl } from '@/utils/db'
+import { getDBUrl, parseDBUrl } from '@/utils/db'
 import writeFile from '@/utils/uploadLocal'
 
 import styles from './DB.module.less'
@@ -186,10 +186,18 @@ export default function DB({ content, type }: Props) {
           name: ['customDatabase', 'databaseUrl']
         }}
         inputProps={{
-          placeholder: intl.formatMessage(
-            { defaultMessage: '示例: {dbProtocol}://user:password@localhost:3306/db-name' },
-            { dbProtocol: dbProtocol }
-          )
+          placeholder:
+            content.kind === DataSourceKind.SQLServer
+              ? intl.formatMessage({
+                  defaultMessage:
+                    '示例: sqlserver://ip:port;database=db;user={user};password={password};trustServerCertificate=true'
+                })
+              : intl.formatMessage(
+                  {
+                    defaultMessage: '示例: {dbProtocol}://user:password@localhost:3306/db-name'
+                  },
+                  { dbProtocol: dbProtocol }
+                )
         }}
         envProps={{
           placeholder: intl.formatMessage({ defaultMessage: '请选择一个环境变量或者手动输入' })
@@ -399,9 +407,14 @@ export default function DB({ content, type }: Props) {
           form.setFieldValue(['customDatabase', 'databaseUrl', 'kind'], 0)
           form.setFieldValue(
             ['customDatabase', 'databaseUrl', 'staticVariableContent'],
-            `${dbProtocol}://${encodeURIComponent(username)}${
-              password ? `:${encodeURIComponent(password)}` : ''
-            }@${host}:${port}/${encodeURIComponent(database)}`
+            getDBUrl(content.kind as DataSourceKind, {
+              schema: dbProtocol,
+              host,
+              port,
+              dbName: database,
+              username,
+              password
+            })
           )
         }
       }
