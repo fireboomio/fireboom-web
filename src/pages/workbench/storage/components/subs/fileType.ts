@@ -21,6 +21,7 @@ export default {
     'eps',
     'ps'
   ]),
+  audio: new Set(['mp3', 'wav', 'wma', 'aac', 'ogg', 'flac', 'm4a', 'm4b', 'm4r', 'm4p', 'm4u']),
   video: new Set([
     'mp4',
     'avi',

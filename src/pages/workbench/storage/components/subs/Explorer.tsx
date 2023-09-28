@@ -32,8 +32,9 @@ import type { FileT } from '@/interfaces/storage'
 import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { formatBytes } from '@/lib/utils'
 import type { ApiDocuments } from '@/services/a2s.namespace'
-import { downloadOSSFile } from '@/utils/download'
 
+import iconAudio from '../assets/icon-audio.svg'
+// import { downloadOSSFile } from '@/utils/download'
 import iconCompress from '../assets/icon-compress.svg'
 import iconDoc from '../assets/icon-doc.svg'
 import iconFold from '../assets/icon-fold.svg'
@@ -62,8 +63,17 @@ function sortFile(a: FileT, b: FileT) {
   return (a.name.endsWith('/') ? 1 : 2) - (b.name.endsWith('/') ? 1 : 2)
 }
 
+const FILE_ICON = {
+  pic: iconPic,
+  video: iconVideo,
+  audio: iconAudio,
+  doc: iconDoc,
+  compress: iconCompress,
+  other: iconOther
+} as const
+
 type FileType = keyof typeof FileTypeMap
-function fileType(fileName: string): 'pic' | 'video' | 'doc' | 'compress' | 'other' {
+function fileType(fileName: string): keyof typeof FILE_ICON {
   const fileType = fileName.split('.')?.pop()?.toLowerCase() || ''
   const keys = Object.keys(FileTypeMap) as FileType[]
   return (
@@ -73,13 +83,6 @@ function fileType(fileName: string): 'pic' | 'video' | 'doc' | 'compress' | 'oth
       }
     }) ?? 'other'
   )
-}
-const FILE_ICON = {
-  pic: iconPic,
-  video: iconVideo,
-  doc: iconDoc,
-  compress: iconCompress,
-  other: iconOther
 }
 
 export default function StorageExplorer({ bucketName }: Props) {
@@ -549,6 +552,8 @@ export default function StorageExplorer({ bucketName }: Props) {
       return <img width={100} height={100} src={iconFold} alt="文件夹" />
     } else if (type === 'pic') {
       return <Image width={100} height={100} src={target?.signedUrl ?? ''} alt={target?.value} />
+    } else if (type === 'audio') {
+      return <audio controls className="w-full" src={target?.signedUrl ?? ''} />
     } else if (type === 'video') {
       return <video controls width={100} height={100} src={target?.signedUrl ?? ''} />
     } else {
