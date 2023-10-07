@@ -1,4 +1,4 @@
-import { EditFilled } from '@ant-design/icons'
+import { CopyFilled, CopyOutlined, EditFilled } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -30,6 +30,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import moreIcon from '../components/Workbench/assets/icon-menu.png'
 import styles from './index.module.less'
+import copy from 'copy-to-clipboard'
 
 const SDKTemplate = () => {
   const { getRepositoryUrl } = useFireboomRepositoryUrl()
@@ -144,6 +145,21 @@ const SDKTemplate = () => {
       <div className="flex mb-4 items-center mt-8">
         <div className="text-xs text-[#666]">
           <FormattedMessage defaultMessage="客户端模版" />
+          {client.length && <span className="text-xs ml-3 text-[#787D8B]">
+            （<code className="px-1 text-primary">generated-sdk</code>
+            <FormattedMessage defaultMessage="目录下生成的文件可以使用" />
+            <span
+              className="mx-1 text-primary cursor-pointer"
+              onClick={() => {
+                copy(`${window.location.origin}/generated-sdk`)
+                message.success(`已复制`)
+              }}
+            >
+              {window.location.origin}/generated-sdk
+              <CopyOutlined className="ml-0.5 mr-1" />
+            </span>
+            <FormattedMessage defaultMessage="加上文件路径访问" />）
+          </span>}
         </div>
       </div>
       <Row className="" gutter={[32, 32]}>
