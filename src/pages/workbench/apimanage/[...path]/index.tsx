@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom'
 import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
+import GraphqlExplorer from '@/components/GraphqlExplorer'
 import { useDragResize } from '@/hooks/resize'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useEventBus } from '@/lib/event/events'
@@ -25,7 +26,7 @@ import { GraphiQL } from './components/GraphiQL'
 // @ts-ignore
 // import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'
-import GraphiqlExplorer from './components/GraphQLExplorer/origin'
+// import GraphiqlExplorer from './components/GraphQLExplorer/origin'
 import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiqlExplorer'
 import { useAPIManager } from './store'
@@ -248,7 +249,7 @@ export default function APIEditorContainer() {
         <APIHeader onGetQuery={() => editingContent.current} />
         <div className="flex flex-nowrap flex-1 min-h-0 items-stretch">
           <div className="flex h-full flex-1 min-w-0 items-stretch overflow-hidden ">
-            <div className="h-full relative" ref={elRef}>
+            <div className="h-full relative min-w-40" ref={elRef}>
               <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
               <div className="h-full w-full relative overflow-x-auto">
                 {/* <GraphiqlExplorer
@@ -261,7 +262,7 @@ export default function APIEditorContainer() {
                 onChange={setQuery}
                 onRefresh={onRefreshSchema}
               /> */}
-                <GraphiqlExplorer
+                {/* <GraphiqlExplorer
                   ref={explorerRef}
                   schema={schema}
                   filtersMap={filtersMap}
@@ -275,6 +276,13 @@ export default function APIEditorContainer() {
                   // getDefaultScalarArgValue={getDefaultScalarArgValue}
                   // makeDefaultArg={makeDefaultArg}
                   notifyError={msg => message.error(msg)}
+                /> */}
+                <GraphqlExplorer
+                  schema={schema}
+                  query={query}
+                  loading={isRefreshing}
+                  onChange={setQuery}
+                  onRefresh={onRefreshSchema}
                 />
               </div>
             </div>
