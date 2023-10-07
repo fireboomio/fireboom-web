@@ -1,5 +1,5 @@
 import type { SchemaField } from '@paljs/types'
-import type { FormItemProps } from 'antd'
+import { ConfigProvider, FormItemProps } from 'antd'
 import { DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd'
 import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
@@ -217,6 +217,7 @@ const Object = ({ field, disabled, initialValues }: Props) => {
             allowClear
             placeholder={intl.formatMessage({ defaultMessage: '搜索并关联记录' })}
             value={displayValue}
+            onClick={() => setConnectModalVisible(true)}
             enterButton
             onSearch={() => setConnectModalVisible(true)}
           />
