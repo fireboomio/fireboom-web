@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import type { ParameterT } from '@/interfaces/apimanage'
 import { makeSuggest } from '@/lib/helpers/utils'
 
-export type SingleInputValueType = string | number | boolean | object | undefined
+export type SingleInputValueType = string | number | boolean | object | undefined | null
 export type InputValueType = SingleInputValueType | SingleInputValueType[]
 
 interface ArgumentInputProps {

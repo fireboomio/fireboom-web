@@ -138,13 +138,13 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
             <span className={styles.errLabel}>
               <img height={14} width={14} src={errorIcon} alt="错误" />
               <span className="ml-2">
-                {questions.filter(x => x.model === QuestionType.DataSource).length}
+                {questions.filter(x => x.level === 'error').length}
               </span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
               <img height={14} width={14} src={warningIcon} alt="警告" />
               <span className="ml-2">
-                {questions.filter(x => x.model !== QuestionType.DataSource).length}
+                {questions.filter(x => x.level === 'warn').length}
               </span>
             </span>
           </span>

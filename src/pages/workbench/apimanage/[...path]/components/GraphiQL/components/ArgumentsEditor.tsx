@@ -67,6 +67,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   }, [parsed, props.arguments])
 
   useEffect(() => {
+    // @ts-ignore
     editorContext!.setVariableEditor({
       options: {
         lint: { variableToType: '' },
@@ -125,7 +126,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
               })
             }
           } else {
-            if (
+            if (item.type === 'BigInt') {
+              val = `${val}`
+            } else if (
               !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime'].includes(
                 item.type
               ) &&

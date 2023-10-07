@@ -1,3 +1,4 @@
+import { EngineStatus } from '@/interfaces/common'
 import create from 'zustand'
 
 type Log = {
@@ -15,14 +16,19 @@ export enum QuestionType {
   SDK = 'sdk'
 }
 export type Question = {
-  id: number
-  sourceType: string
-  dbType: string
+  // id: number
+  // sourceType: string
+  // dbType: string
   name: string
-  icon: string
+  // icon: string
   msg: string
   enabled: boolean
   model: QuestionType
+  level: 'warn' | 'error'
+  extra?: {
+    enabled?: boolean
+    engine?: 0 | 1 | 2
+  }
 }
 
 export interface State {
