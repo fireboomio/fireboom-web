@@ -196,7 +196,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
 
   return (
     <div className="arguments-editor max-h-50vh overflow-y-scroll">
-      <table className="min-w-120">
+      <table className="min-w-120 min-h-17">
         <thead>
           <tr>
             <th style={{ width: '15%', maxWidth: '80px' }}>

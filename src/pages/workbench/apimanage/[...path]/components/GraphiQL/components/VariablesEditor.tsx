@@ -37,6 +37,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
     valuesRef.current = v
   }
   useEffect(() => {
+    // @ts-ignore
     editorContext!.setVariableEditor({
       options: {
         lint: { variableToType: '' },
@@ -100,7 +101,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
           fixedOverflowWidgets: true,
           minimap: { enabled: false }
         }}
-        className="h-full"
+        className="h-full min-h-17"
         defaultLanguage="json"
         defaultPath="operation.json"
         onChange={v => updateValue(v ?? '')}
