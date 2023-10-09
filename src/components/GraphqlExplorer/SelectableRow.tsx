@@ -25,7 +25,7 @@ const SelectableRow = ({
         className="w-7 h-7 flex-shrink-0 flex items-center justify-center cursor-pointer rounded hover:bg-white"
         onClick={onSelect}
       >
-        {selected ? <CheckedFilled className="w-4 h-4" /> : <AddOutlined className="w-4 h-4" />}
+        {selected ? <CheckedFilled className="w-4 h-4 text-primary" /> : <AddOutlined className="w-4 h-4" />}
       </div>
       <div
         className="flex items-center px-2 h-7 group flex-1 overflow-x-hidden cursor-pointer rounded hover:bg-white"

@@ -10,7 +10,7 @@ const Breadcrumb = ({ items, onClick }: BreadcrumbProps) => {
   return (
     <AntBreadcrumb
       separator="/"
-      className='select-none'
+      className='my-3 select-none'
       items={[
         { title: 'Root', key: 0, href: '', onClick: () => onClick(0) },
         ...items.map((item, index) => ({

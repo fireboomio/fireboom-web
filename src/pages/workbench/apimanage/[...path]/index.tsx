@@ -249,7 +249,7 @@ export default function APIEditorContainer() {
         <APIHeader onGetQuery={() => editingContent.current} />
         <div className="flex flex-nowrap flex-1 min-h-0 items-stretch">
           <div className="flex h-full flex-1 min-w-0 items-stretch overflow-hidden ">
-            <div className="h-full relative min-w-40" ref={elRef}>
+            <div className="h-full relative min-w-40" ref={elRef} style={{ width: '220px' }}>
               <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
               <div className="h-full w-full relative overflow-x-auto">
                 {/* <GraphiqlExplorer

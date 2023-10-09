@@ -79,7 +79,7 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
       {schema && (
         <>
           {graphqlObjectStack.length ? (
-            <GraphQLObjectPanel />
+            <GraphQLObjectPanel obj={graphqlObjectStack[graphqlObjectStack.length - 1]} />
           ) : (
             <RootPanel
               query={query}
