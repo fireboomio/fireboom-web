@@ -1,5 +1,6 @@
 import { GraphQLFieldMap } from 'graphql'
 import SelectableRow from './SelectableRow'
+import { getTypeName } from './utils'
 
 interface FieldsProps {
   fields: GraphQLFieldMap<any, any>
@@ -15,7 +16,7 @@ const Fields = ({ fields }: FieldsProps) => {
             key={field.name}
             selected
             name={key}
-            type="{field.type}"
+            type={getTypeName(field.type)}
             onSelect={() => {}}
             onClick={() => {}}
           />
