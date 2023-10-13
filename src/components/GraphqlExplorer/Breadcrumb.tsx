@@ -1,22 +1,40 @@
 import { Breadcrumb as AntBreadcrumb } from 'antd'
-import type { GraphQLObjectType } from 'graphql'
+import { useGraphQLExplorer } from './provider'
 
 interface BreadcrumbProps {
-  items: GraphQLObjectType<any, any>[]
-  onClick: (i: number) => void
+  //
 }
 
-const Breadcrumb = ({ items, onClick }: BreadcrumbProps) => {
+const Breadcrumb = (props: BreadcrumbProps) => {
+  const { graphqlObjectStack, setGraphqlObjectStack } = useGraphQLExplorer()
+  const navigateTo = (i: number) => {
+    const arr = graphqlObjectStack.slice(0, i)
+    setGraphqlObjectStack(arr)
+  }
   return (
     <AntBreadcrumb
       separator="/"
-      className='my-3 select-none'
+      className="my-3 select-none"
       items={[
-        { title: 'Root', key: 0, href: '', onClick: () => onClick(0) },
-        ...items.map((item, index) => ({
+        {
+          title: 'Root',
+          key: 0,
+          href: '',
+          onClick: e => {
+            e.stopPropagation()
+            e.preventDefault()
+            navigateTo(0)
+          }
+        },
+        ...graphqlObjectStack.map((item, index) => ({
           title: item.name,
           key: item.name,
-          onClick: () => onClick(index + 1)
+          href: index === graphqlObjectStack.length - 1 ? undefined : '',
+          onClick: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement, MouseEvent>) => {
+            e.stopPropagation()
+            e.preventDefault()
+            navigateTo(index + 1)
+          }
         }))
       ]}
     />

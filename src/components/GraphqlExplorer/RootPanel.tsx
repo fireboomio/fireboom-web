@@ -1,6 +1,7 @@
 import type { GraphQLObjectType } from 'graphql'
 import type { Maybe } from 'graphql/jsutils/Maybe'
 import { FormattedMessage } from 'react-intl'
+import { useGraphQLExplorer } from './provider'
 
 import SelectableRow from './SelectableRow'
 import Title from './Title'
@@ -9,13 +10,13 @@ interface RootPanelProps {
   query: Maybe<GraphQLObjectType<any, any>>
   mutation: Maybe<GraphQLObjectType<any, any>>
   subscription: Maybe<GraphQLObjectType<any, any>>
-  onClick: (type: GraphQLObjectType<any, any>) => void
 }
 
-const RootPanel = ({ query, mutation, subscription, onClick }: RootPanelProps) => {
+const RootPanel = ({ query, mutation, subscription }: RootPanelProps) => {
+  const { setGraphqlObjectStack } = useGraphQLExplorer()
   function onSelect() {}
   function onEnterGraphQLObject(type: GraphQLObjectType<any, any>) {
-    onClick(type)
+    setGraphqlObjectStack([type])
   }
   return (
     <div>

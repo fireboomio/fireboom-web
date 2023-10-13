@@ -1,4 +1,5 @@
 import { GraphQLFieldMap } from 'graphql'
+import { useGraphQLExplorer } from './provider'
 import SelectableRow from './SelectableRow'
 import { getTypeName } from './utils'
 
@@ -7,6 +8,7 @@ interface FieldsProps {
 }
 
 const Fields = ({ fields }: FieldsProps) => {
+  const { graphqlObjectStack, setGraphqlObjectStack } = useGraphQLExplorer()
   return (
     <div className="flex-1 overflow-y-auto">
       {Object.keys(fields).map(key => {
@@ -18,7 +20,9 @@ const Fields = ({ fields }: FieldsProps) => {
             name={key}
             type={getTypeName(field.type)}
             onSelect={() => {}}
-            onClick={() => {}}
+            onClick={() => {
+              setGraphqlObjectStack([...graphqlObjectStack, field])
+            }}
           />
         )
       })}

@@ -1,10 +1,12 @@
+import clsx from 'clsx'
+
 export const AddOutlined = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       viewBox="0 0 24 24"
       role="checkbox"
       aria-checked="false"
-      className={`icon ${className}`}
+      className={clsx('icon', className)}
       {...props}
     >
       <g
@@ -26,7 +28,7 @@ export const CheckedFilled = ({ className, ...props }: React.SVGProps<SVGSVGElem
       viewBox="0 0 24 24"
       role="checkbox"
       aria-checked="true"
-      className={`icon ${className}`}
+      className={clsx('icon', className)}
       {...props}
     >
       <path
@@ -44,7 +46,7 @@ export const CheckedFilled = ({ className, ...props }: React.SVGProps<SVGSVGElem
 
 export const ArrowFilled = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
-    <svg viewBox="0 0 24 24" className={`icon ${className}`} {...props}>
+    <svg viewBox="0 0 24 24" className={clsx('icon', className)} {...props}>
       <g
         fill="none"
         fillRule="evenodd"
@@ -61,7 +63,7 @@ export const ArrowFilled = ({ className, ...props }: React.SVGProps<SVGSVGElemen
 
 export const SortableOutlined = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
-    <svg viewBox="0 0 24 24" className={`icon ${className}`} {...props}>
+    <svg viewBox="0 0 24 24" className={clsx('icon', className)} {...props}>
       <g
         fill="none"
         stroke="currentColor"
@@ -71,6 +73,21 @@ export const SortableOutlined = ({ className, ...props }: React.SVGProps<SVGSVGE
       >
         <path d="M3.75 15l7.72 7.72a.75.75 0 0 0 1.06 0L20.25 15M3.75 9l7.72-7.72a.749.749 0 0 1 1.059-.001l.001.001L20.25 9"></path>
       </g>
+    </svg>
+  )
+}
+
+export const DropdownArrowOutlined = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg viewBox="0 0 24 24" className={clsx('icon', className)} {...props}>
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1"
+        d="M23.25 7.311L12.53 18.03a.749.749 0 0 1-1.059.001l-.001-.001L.75 7.311"
+      />
     </svg>
   )
 }

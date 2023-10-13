@@ -1,11 +1,11 @@
 import clsx from 'clsx'
-import type { GraphQLObjectType } from 'graphql'
 import { type GraphQLSchema, type IntrospectionQuery, buildClientSchema } from 'graphql'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import Breadcrumb from './Breadcrumb'
-import GraphQLObjectPanel from './GraphQLObjectPanel'
-import RootPanel from './RootPanel'
+import GraphQLExplorerProvider from './provider'
+import SchemaPanel from './SchemaPanel'
+import './index.css'
 
 export interface GraphqlExplorerProps {
   className?: string
@@ -32,7 +32,6 @@ export interface GraphqlExplorerProps {
 }
 
 const GraphqlExplorer = (props: GraphqlExplorerProps) => {
-  const [graphqlObjectStack, setGraphqlObjectStack] = useState<GraphQLObjectType<any, any>[]>([])
   const schema = useMemo(() => {
     if (!props.schema) {
       return null
@@ -63,34 +62,18 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
   console.log(schema)
   window.schema = schema
 
-  const navigateTo = (i: number) => {
-    const arr = graphqlObjectStack.slice().splice(graphqlObjectStack.length - i, i)
-    setGraphqlObjectStack(arr)
-  }
-
   return (
-    <div
-      className={clsx(
-        'graphql-explorer pt-2 flex flex-col px-3 h-full bg-[#f7f7f7] text-dark-800 font-mono select-none',
-        props.className
-      )}
-    >
-      <Breadcrumb items={graphqlObjectStack} onClick={navigateTo} />
-      {schema && (
-        <>
-          {graphqlObjectStack.length ? (
-            <GraphQLObjectPanel obj={graphqlObjectStack[graphqlObjectStack.length - 1]} />
-          ) : (
-            <RootPanel
-              query={query}
-              mutation={mutation}
-              subscription={subscription}
-              onClick={obj => setGraphqlObjectStack([obj])}
-            />
-          )}
-        </>
-      )}
-    </div>
+    <GraphQLExplorerProvider>
+      <div
+        className={clsx(
+          'graphql-explorer pt-2 flex flex-col px-3 h-full bg-[#f7f7f7] text-dark-800 font-mono select-none overflow-y-auto',
+          props.className
+        )}
+      >
+        <Breadcrumb />
+        {schema && <SchemaPanel query={query} mutation={mutation} subscription={subscription} />}
+      </div>
+    </GraphQLExplorerProvider>
   )
 }
 
