@@ -1,9 +1,12 @@
 import { GraphQLObjectType } from 'graphql'
 import { ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
+import Arguments from './Arguments'
+import Description from './Description'
 import Fields from './Fields'
 import FieldsTitle from './FieldsTitle'
 import FieldTitle from './FieldTitle'
+import GraphQlOutputPanel from './GraphQLOutputPanel'
 import { GraphQLObject } from './provider'
 
 interface GraphQLObjectPanelProps {
@@ -14,13 +17,14 @@ const GraphQLObjectPanel = ({ obj }: GraphQLObjectPanelProps) => {
   return (
     <div className="flex flex-1 flex-col">
       <FieldTitle title={obj.name} selected />
+      {'args' in obj && <Arguments args={obj.args} />}
       {obj.description && (
-        <div className="mb-4 mt-2 text-sm text-dark-400">
+        <Description>
           <FieldDescription description={obj.description} />
-        </div>
+        </Description>
       )}
       <FieldsTitle />
-      {'getFields' in obj ? <Fields fields={obj.getFields()} /> : <Fields fields={{}} />}
+      {'getFields' in obj ? <Fields fields={obj.getFields()} /> : <GraphQlOutputPanel type={obj.type} />}
     </div>
   )
 }
