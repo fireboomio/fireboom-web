@@ -1,5 +1,6 @@
-import { GraphQLObjectType } from 'graphql'
-import { Maybe } from 'graphql/jsutils/Maybe'
+import type { GraphQLObjectType } from 'graphql'
+import type { Maybe } from 'graphql/jsutils/Maybe'
+
 import GraphQLObjectPanel from './GraphQLObjectPanel'
 import { useGraphQLExplorer } from './provider'
 import RootPanel from './RootPanel'
@@ -12,6 +13,7 @@ interface SchemaPanelProps {
 
 const SchemaPanel = ({ query, mutation, subscription }: SchemaPanelProps) => {
   const { graphqlObjectStack } = useGraphQLExplorer()
+
   return (
     <>
       {graphqlObjectStack.length ? (

@@ -1,3 +1,5 @@
+import './index.css'
+
 import clsx from 'clsx'
 import { type GraphQLSchema, type IntrospectionQuery, buildClientSchema } from 'graphql'
 import { useMemo } from 'react'
@@ -5,16 +7,20 @@ import { useMemo } from 'react'
 import Breadcrumb from './Breadcrumb'
 import GraphQLExplorerProvider from './provider'
 import SchemaPanel from './SchemaPanel'
-import './index.css'
+import { parseQuery } from './utils'
 
 export interface GraphqlExplorerProps {
   className?: string
+  /**
+   * Operation name
+   */
+  operationName?: string
   /**
    * The GraphQL schema
    */
   schema?: GraphQLSchema | IntrospectionQuery
   /**
-   * The query
+   * The query string
    */
   query?: string
   /**
@@ -59,11 +65,15 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
     }
     return null
   }, [schema])
-  console.log(schema)
+  console.log(schema, props.query, parseQuery(props.query ?? ''))
   window.schema = schema
 
   return (
-    <GraphQLExplorerProvider>
+    <GraphQLExplorerProvider
+      operationName={props.operationName}
+      query={props.query}
+      onChange={props.onChange}
+    >
       <div
         className={clsx(
           'graphql-explorer pt-2 flex flex-col px-3 h-full bg-[#f7f7f7] text-dark-800 font-mono select-none overflow-y-auto',
@@ -71,7 +81,14 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
         )}
       >
         <Breadcrumb />
-        {schema && <SchemaPanel query={query} mutation={mutation} subscription={subscription} />}
+        {schema && (
+          <SchemaPanel
+            // value={props.value}
+            query={query}
+            mutation={mutation}
+            subscription={subscription}
+          />
+        )}
       </div>
     </GraphQLExplorerProvider>
   )

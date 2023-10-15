@@ -67,9 +67,9 @@ export const SortableOutlined = ({ className, ...props }: React.SVGProps<SVGSVGE
       <g
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
       >
         <path d="M3.75 15l7.72 7.72a.75.75 0 0 0 1.06 0L20.25 15M3.75 9l7.72-7.72a.749.749 0 0 1 1.059-.001l.001.001L20.25 9"></path>
       </g>
@@ -83,9 +83,9 @@ export const DropdownArrowOutlined = ({ className, ...props }: React.SVGProps<SV
       <path
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
         d="M23.25 7.311L12.53 18.03a.749.749 0 0 1-1.059.001l-.001-.001L.75 7.311"
       />
     </svg>

@@ -1,5 +1,7 @@
 import { isNonNullObject } from '@apollo/client/utilities'
-import { GraphQLOutputType, isNonNullType, isScalarType } from 'graphql'
+import type { GraphQLOutputType } from 'graphql'
+import { isNonNullType, isScalarType } from 'graphql'
+
 import Description from './Description'
 import FieldTitle from './FieldTitle'
 

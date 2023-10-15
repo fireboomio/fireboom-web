@@ -1,6 +1,7 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
+
 import IconButton, { IconButtonMore } from './IconButton'
 import { AddOutlined, CheckedFilled, SortableOutlined } from './Icons'
 

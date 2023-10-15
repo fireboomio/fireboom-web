@@ -1,6 +1,7 @@
 import { Dropdown } from 'antd'
 import clsx from 'clsx'
-import { MouseEventHandler, ReactNode } from 'react'
+import type { MouseEventHandler, ReactNode } from 'react'
+
 import { DropdownArrowOutlined } from './Icons'
 
 interface IconButtonProps {
@@ -25,18 +26,24 @@ const IconButton = ({ className, children, onClick }: IconButtonProps) => {
 
 export default IconButton
 
-export const IconButtonMore = ({ className, items }: IconButtonProps & {
+export const IconButtonMore = ({
+  className,
+  items
+}: IconButtonProps & {
   items: string[]
 }) => {
   return (
-    <Dropdown trigger={['click']} menu={{ items: items.map((i, index) => ({ key: index, label: i }))}}>
+    <Dropdown
+      trigger={['click']}
+      menu={{ items: items.map((i, index) => ({ key: index, label: i })) }}
+    >
       <button
         className={clsx(
           'group relative flex items-center flex-shrink-0 justify-center h-7 w-4 hover:bg-true-gray-300 focus:bg-true-gray-300 border-none bg-transparent p-0 cursor-pointer rounded-tr rounded-br text-dark-800',
           className
         )}
       >
-        <DropdownArrowOutlined className='w-1.5' />
+        <DropdownArrowOutlined className="w-1.5" />
       </button>
     </Dropdown>
   )

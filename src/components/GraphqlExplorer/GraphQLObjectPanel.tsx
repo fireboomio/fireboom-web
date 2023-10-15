@@ -1,13 +1,14 @@
 import { GraphQLObjectType } from 'graphql'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
+
 import Arguments from './Arguments'
 import Description from './Description'
 import Fields from './Fields'
 import FieldsTitle from './FieldsTitle'
 import FieldTitle from './FieldTitle'
 import GraphQlOutputPanel from './GraphQLOutputPanel'
-import { GraphQLObject } from './provider'
+import type { GraphQLObject } from './provider'
 
 interface GraphQLObjectPanelProps {
   obj: GraphQLObject
@@ -24,7 +25,11 @@ const GraphQLObjectPanel = ({ obj }: GraphQLObjectPanelProps) => {
         </Description>
       )}
       <FieldsTitle />
-      {'getFields' in obj ? <Fields fields={obj.getFields()} /> : <GraphQlOutputPanel type={obj.type} />}
+      {'getFields' in obj ? (
+        <Fields fields={obj.getFields()} />
+      ) : (
+        <GraphQlOutputPanel type={obj.type} />
+      )}
     </div>
   )
 }

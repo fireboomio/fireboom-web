@@ -1,5 +1,6 @@
-import { GraphQLArgument } from 'graphql'
+import type { GraphQLArgument } from 'graphql'
 import { FormattedMessage } from 'react-intl'
+
 import SelectableRow from './SelectableRow'
 import { getTypeName } from './utils'
 

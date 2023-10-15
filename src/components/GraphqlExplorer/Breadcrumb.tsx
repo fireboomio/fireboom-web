@@ -1,4 +1,5 @@
 import { Breadcrumb as AntBreadcrumb } from 'antd'
+
 import { useGraphQLExplorer } from './provider'
 
 interface BreadcrumbProps {
@@ -6,7 +7,7 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb = (props: BreadcrumbProps) => {
-  const { graphqlObjectStack, setGraphqlObjectStack } = useGraphQLExplorer()
+  const { graphqlObjectStack, setGraphQLObjectStack: setGraphqlObjectStack } = useGraphQLExplorer()
   const navigateTo = (i: number) => {
     const arr = graphqlObjectStack.slice(0, i)
     setGraphqlObjectStack(arr)

@@ -1,4 +1,5 @@
 import { LeftOutlined } from '@ant-design/icons'
+
 import { AddOutlined, CheckedFilled } from './Icons'
 import { useGraphQLExplorer } from './provider'
 
@@ -10,7 +11,7 @@ interface FieldTitleProps {
 }
 
 const FieldTitle = ({ title, type, isArray, selected }: FieldTitleProps) => {
-  const { graphqlObjectStack, setGraphqlObjectStack } = useGraphQLExplorer()
+  const { graphqlObjectStack, setGraphQLObjectStack: setGraphqlObjectStack } = useGraphQLExplorer()
   function navigateBack() {
     const clone = graphqlObjectStack.slice()
     clone.pop()
