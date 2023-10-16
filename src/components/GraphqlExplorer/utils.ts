@@ -9,9 +9,12 @@ import type {
   GraphQLOutputType,
   GraphQLScalarType,
   GraphQLUnionType,
+  OperationDefinitionNode,
   OperationTypeNode
 } from 'graphql'
 import { isListType, isNonNullType, Kind, parse } from 'graphql'
+
+import type { GraphQLObject } from './provider'
 
 function getSimpleTypeName(
   type:
@@ -39,6 +42,9 @@ export function getTypeName(type: GraphQLInputType | GraphQLOutputType): string 
   return getSimpleTypeName(type)
 }
 
+/**
+ * 解析查询文本
+ */
 export function parseQuery(text: string): DocumentNode | null {
   try {
     text = text.replace(/^#.*$/gm, '')
@@ -73,4 +79,11 @@ export function parseQuery(text: string): DocumentNode | null {
     }
     return null
   }
+}
+
+/**
+ * 从历史堆栈中查询对应的查询结构体
+ */
+export function getQueryAstFromStack(stack: GraphQLObject[], def: OperationDefinitionNode | null) {
+  //
 }
