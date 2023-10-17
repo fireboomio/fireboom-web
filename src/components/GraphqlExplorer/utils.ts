@@ -1,3 +1,4 @@
+import { isField } from '@apollo/client/utilities'
 import type {
   DocumentNode,
   GraphQLEnumType,
@@ -10,7 +11,8 @@ import type {
   GraphQLScalarType,
   GraphQLUnionType,
   OperationDefinitionNode,
-  OperationTypeNode
+  OperationTypeNode,
+  SelectionNode
 } from 'graphql'
 import { isListType, isNonNullType, Kind, parse } from 'graphql'
 
@@ -82,8 +84,39 @@ export function parseQuery(text: string): DocumentNode | null {
 }
 
 /**
+ * 根据stack生成查询ast路径
+ */
+export function generateQueryAstPath(stack: GraphQLObject[]) {
+  const arr: (string | ((node: SelectionNode) => boolean))[] = []
+  for (const item of stack) {
+    if ('getFields' in item) {
+      //
+    } else {
+      arr.push(
+        'selectionSet',
+        'selections',
+        (node: SelectionNode) => node.kind === Kind.FIELD && node.name.value === item.name
+      )
+    }
+  }
+  return arr
+}
+
+/**
  * 从历史堆栈中查询对应的查询结构体
  */
 export function getQueryAstFromStack(stack: GraphQLObject[], def: OperationDefinitionNode | null) {
-  //
+  let cur: OperationDefinitionNode | SelectionNode | undefined | null = def
+  for (const item of stack) {
+    if ('getFields' in item) {
+      continue
+    }
+    cur = cur?.selectionSet?.selections.find(
+      sel => sel.kind === Kind.FIELD && sel.name.value === item.name
+    )
+    if (!cur || !isField(cur!)) {
+      return null
+    }
+  }
+  return cur
 }
