@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import type { ReactNode } from 'react'
 
 import { AddOutlined, ArrowFilled, CheckedFilled } from './Icons'
@@ -20,7 +21,7 @@ const SelectableRow = ({
   onSelect
 }: SelectableRowProps) => {
   return (
-    <div className="flex items-stretch w-full font-400">
+    <div className={clsx("flex items-stretch w-full font-400 selectable-row", selected ? 'selected-row' : '')}>
       <div
         className="w-7 h-7 flex-shrink-0 flex items-center justify-center cursor-pointer rounded hover:bg-white"
         onClick={onSelect}

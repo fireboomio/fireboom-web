@@ -1,7 +1,8 @@
 import { isField } from '@apollo/client/utilities'
-import type {
+import {
   DocumentNode,
   GraphQLEnumType,
+  GraphQLFieldMap,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLInterfaceType,
@@ -12,7 +13,14 @@ import type {
   GraphQLUnionType,
   OperationDefinitionNode,
   OperationTypeNode,
-  SelectionNode
+  SelectionNode,
+  getNamedType,
+  getNullableType,
+  GraphQLNamedOutputType,
+  isScalarType,
+  GraphQLArgument,
+  isObjectType,
+  FieldNode
 } from 'graphql'
 import { isListType, isNonNullType, Kind, parse } from 'graphql'
 
@@ -116,6 +124,42 @@ export function getQueryAstFromStack(stack: GraphQLObject[], def: OperationDefin
     )
     if (!cur || !isField(cur!)) {
       return null
+    }
+  }
+  return cur
+}
+
+export function getSelectionNodesString(stack: GraphQLObject[], def: OperationDefinitionNode | null): string[] | null {
+  let cur: OperationDefinitionNode | SelectionNode | undefined | null = def
+  for (const item of stack) {
+    if ('getFields' in item) {
+      continue
+    }
+    cur = cur?.selectionSet?.selections.find(
+      sel => sel.kind === Kind.FIELD && sel.name.value === item.name
+    )
+    if (!cur || !isField(cur!)) {
+      return null
+    }
+  }
+  return cur?.selectionSet?.selections.map(sel => (sel as FieldNode).name.value) ?? null
+}
+
+export function getCurrentFieldsFromStack(stack: GraphQLObject[]): GraphQLNamedOutputType | GraphQLFieldMap<any, any> | null {
+  let cur: GraphQLFieldMap<any, any> | GraphQLNamedOutputType | null = null
+  for (const item of stack) {
+    if ('getFields' in item) {
+      cur = item.getFields()
+    } else {
+      const type: GraphQLOutputType = (cur! as GraphQLFieldMap<any, any>)[item.name].type
+      cur = getNamedType(type)
+      console.log(getNullableType(type))
+      if (isObjectType(cur)) {
+        cur = cur.getFields()
+      } else if (isScalarType(cur)) {
+        cur = cur
+      }
+      // TODO 追加更多类型支持
     }
   }
   return cur

@@ -1,6 +1,9 @@
 import type {
   DocumentNode,
+  GraphQLArgument,
   GraphQLField,
+  GraphQLFieldMap,
+  GraphQLNamedOutputType,
   GraphQLObjectType,
   OperationDefinitionNode
 } from 'graphql'
@@ -8,17 +11,28 @@ import { Kind, print } from 'graphql'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo, useState } from 'react'
 
-import { parseQuery } from './utils'
+import { getCurrentFieldsFromStack, parseQuery } from './utils'
 
 export type GraphQLObject = GraphQLObjectType<any, any> | GraphQLField<any, any, any>
 
 export type GraphQLExplorerState = {
   fieldSort: Sort
+  // 自动滚动
+  autoScroll: boolean
   operationName?: string
+  // operation 定义
   operationDefs: OperationDefinitionNode | null
+  // 查询的 operation/field 栈
   graphqlObjectStack: GraphQLObject[]
   setGraphQLObjectStack: (v: GraphQLObject[]) => void
+  // 根据 stack 查询当前展示的 fields
+  currentFields: GraphQLNamedOutputType | GraphQLFieldMap<any, any> | null
+  // 查询的参数栈
+  argumentStack: GraphQLArgument[]
+  setArgumentStack: (v: GraphQLArgument[]) => void
+  // 更新 query
   updateGraphQLQuery: (def: OperationDefinitionNode | null) => void
+  // 切换 fields 排序
   toggleFieldSort: () => void
 }
 
@@ -34,6 +48,7 @@ type Sort = 'asc' | 'desc' | undefined | null
 interface GraphQLExplorerProviderProps {
   operationName?: string
   query?: string
+  autoScroll?: boolean
   children?: ReactNode
   onChange?: (query: string) => void
 }
@@ -41,10 +56,12 @@ interface GraphQLExplorerProviderProps {
 const GraphQLExplorerProvider = ({
   operationName,
   query,
+  autoScroll,
   children,
   onChange
 }: GraphQLExplorerProviderProps) => {
   const [graphqlObjectStack, setGraphQLObjectStack] = useState<GraphQLObject[]>([])
+  const [argumentStack, setArgumentStack] = useState<GraphQLArgument[]>([])
 
   const [sort, setSort] = useState<Sort>(localStorage.getItem(sortStoreKey) as Sort)
 
@@ -93,10 +110,14 @@ const GraphQLExplorerProvider = ({
     <GraphQLExplorerContext.Provider
       value={{
         fieldSort: sort,
+        autoScroll: autoScroll ?? true,
         operationName,
         operationDefs,
         graphqlObjectStack,
         setGraphQLObjectStack,
+        currentFields: getCurrentFieldsFromStack(graphqlObjectStack),
+        argumentStack,
+        setArgumentStack,
         updateGraphQLQuery,
         toggleFieldSort
       }}

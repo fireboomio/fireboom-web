@@ -28,14 +28,18 @@ export default IconButton
 
 export const IconButtonMore = ({
   className,
-  items
-}: IconButtonProps & {
+  items,
+  onClick
+}: Omit<IconButtonProps, 'onClick'> & {
   items: string[]
+  onClick?: (index: number) => void
 }) => {
   return (
     <Dropdown
       trigger={['click']}
-      menu={{ items: items.map((i, index) => ({ key: index, label: i })) }}
+      menu={{
+        items: items.map((i, index) => ({ key: index, label: i, onClick: () => onClick?.(index) }))
+      }}
     >
       <button
         className={clsx(

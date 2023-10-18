@@ -2,6 +2,7 @@ import { LeftOutlined } from '@ant-design/icons'
 
 import { AddOutlined, CheckedFilled } from './Icons'
 import { useGraphQLExplorer } from './provider'
+import SelectableIcon from './SelectableIcon'
 
 interface FieldTitleProps {
   title: string
@@ -10,6 +11,7 @@ interface FieldTitleProps {
   selected: boolean
 }
 
+// TODO 递归选择所有未选择的 Field
 const FieldTitle = ({ title, type, isArray, selected }: FieldTitleProps) => {
   const { graphqlObjectStack, setGraphQLObjectStack: setGraphqlObjectStack } = useGraphQLExplorer()
   function navigateBack() {
@@ -28,16 +30,7 @@ const FieldTitle = ({ title, type, isArray, selected }: FieldTitleProps) => {
           </>
         )}
       </span>
-      <div
-        className="w-7 h-7 flex-shrink-0 flex items-center justify-center cursor-pointer rounded hover:bg-white"
-        // onClick={onSelect}
-      >
-        {selected ? (
-          <CheckedFilled className="w-4 h-4 text-primary" />
-        ) : (
-          <AddOutlined className="w-4 h-4" />
-        )}
-      </div>
+      <SelectableIcon className='ml-2'/>
     </div>
   )
 }

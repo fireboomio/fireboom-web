@@ -1,5 +1,6 @@
 import type { GraphQLField, GraphQLFieldMap, OperationDefinitionNode } from 'graphql'
 import { Kind } from 'graphql'
+import { useEffect, useRef } from 'react'
 
 import { useGraphQLExplorer } from './provider'
 import SelectableRow from './SelectableRow'
@@ -11,12 +12,14 @@ interface FieldsProps {
 
 const Fields = ({ fields }: FieldsProps) => {
   const {
+    autoScroll,
     fieldSort,
     operationDefs,
     graphqlObjectStack,
     setGraphQLObjectStack,
     updateGraphQLQuery
   } = useGraphQLExplorer()
+  const containerRef = useRef<HTMLDivElement>(null)
   const a = getQueryAstFromStack(graphqlObjectStack, operationDefs)
   const selectedKeys =
     a?.selectionSet?.selections?.map(sel => sel.kind === Kind.FIELD && sel.name.value) ?? []
@@ -51,8 +54,19 @@ const Fields = ({ fields }: FieldsProps) => {
       ? Object.keys(fields).sort()
       : Object.keys(fields)
 
+  useEffect(() => {
+    // 自动滚动到第一个选中的字段
+    if (autoScroll) {
+      requestIdleCallback(() => {
+        containerRef.current?.querySelector('.selectable-row.selected-row')?.scrollIntoView({ behavior: 'smooth' })
+      })
+    }
+  }, [
+    fields, autoScroll
+  ])
+
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto" ref={containerRef}>
       {sortedFields.map(key => {
         const field = fields[key]
         return (

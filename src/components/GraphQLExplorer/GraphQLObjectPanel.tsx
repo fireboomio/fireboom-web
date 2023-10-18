@@ -1,35 +1,40 @@
-import { GraphQLObjectType } from 'graphql'
+import { getNamedType, GraphQLFieldMap, GraphQLObjectType, isEnumType, isObjectType, isScalarType } from 'graphql'
 import type { ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
 
 import Arguments from './Arguments'
 import Description from './Description'
+import EnumTypeOutput from './EnumTypeOutput'
 import Fields from './Fields'
 import FieldsTitle from './FieldsTitle'
 import FieldTitle from './FieldTitle'
 import GraphQlOutputPanel from './GraphQLOutputPanel'
-import type { GraphQLObject } from './provider'
+import { GraphQLObject, useGraphQLExplorer } from './provider'
+import ScalarTypeOutput from './ScalarTypeOutput'
 
-interface GraphQLObjectPanelProps {
-  obj: GraphQLObject
-}
-
-const GraphQLObjectPanel = ({ obj }: GraphQLObjectPanelProps) => {
+const GraphQLObjectPanel = () => {
+  const { graphqlObjectStack, currentFields } = useGraphQLExplorer()
+  const obj = graphqlObjectStack[graphqlObjectStack.length - 1]
+  
   return (
     <div className="flex flex-1 flex-col">
       <FieldTitle title={obj.name} selected />
-      {'args' in obj && <Arguments args={obj.args} />}
+      {'args' in obj && !!obj.args.length && <Arguments args={obj.args} />}
       {obj.description && (
         <Description>
           <FieldDescription description={obj.description} />
         </Description>
       )}
-      <FieldsTitle />
-      {'getFields' in obj ? (
-        <Fields fields={obj.getFields()} />
-      ) : (
-        <GraphQlOutputPanel type={obj.type} />
-      )}
+      {(('getFields' in obj) || isObjectType(getNamedType(obj.type))) && <FieldsTitle />}
+      {(() => {
+        if (isScalarType(currentFields)) {
+          return <ScalarTypeOutput type={currentFields} name={obj.name} />
+        }
+        if (isEnumType(currentFields)) {
+          return <EnumTypeOutput type={currentFields} name={obj.name} />
+        }
+        return <Fields fields={currentFields as GraphQLFieldMap<any, any>} />
+      })()}
     </div>
   )
 }

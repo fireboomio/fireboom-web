@@ -12,12 +12,13 @@ interface SchemaPanelProps {
 }
 
 const SchemaPanel = ({ query, mutation, subscription }: SchemaPanelProps) => {
-  const { graphqlObjectStack } = useGraphQLExplorer()
+  const { graphqlObjectStack, argumentStack } = useGraphQLExplorer()
 
   return (
     <>
-      {graphqlObjectStack.length ? (
-        <GraphQLObjectPanel obj={graphqlObjectStack[graphqlObjectStack.length - 1]} />
+      {argumentStack.length ? (<></>) :
+        graphqlObjectStack.length ? (
+        <GraphQLObjectPanel />
       ) : (
         <RootPanel query={query} mutation={mutation} subscription={subscription} />
       )}

@@ -28,6 +28,10 @@ export interface GraphqlExplorerProps {
    */
   loading?: boolean
   /**
+   * 自动滚动到 fields 位置
+   */
+  autoScroll?: boolean
+  /**
    * Editor content changed event
    */
   onChange?: (query: string) => void
