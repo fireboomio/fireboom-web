@@ -90,7 +90,7 @@ const MultiModalInput = (props: MultiModalInputProps) => {
           )}
         </div>
       )}
-      <div className="mt-2 5 ml-2 no-shrink">
+      <div className="ml-2 h-8 flex items-center no-shrink">
         <Dropdown
           menu={{
             items: [
@@ -118,7 +118,7 @@ const MultiModalInput = (props: MultiModalInputProps) => {
           <SettingOutlined />
         </Dropdown>
         {modal === Modal.RichText && (
-          <FullscreenOutlined className="mt-3 cursor-pointer" onClick={enterFullScreen} />
+          <FullscreenOutlined className="ml-2 cursor-pointer" onClick={enterFullScreen} />
         )}
       </div>
     </div>

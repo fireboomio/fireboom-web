@@ -22,31 +22,31 @@ export const getValueByType = ({ value, field, useSet = true }: GetValueOptions)
   if (!field) {
     return value
   }
+  let result
   if (field.type === 'Json') {
-    return value ? JSON.parse(value) : field.list ? [] : {}
-  }
-  if (field.list) {
+    result = value ? JSON.parse(value) : field.list ? [] : {}
+  } else if (field.list) {
     if (!value) return []
-    const result: any[] = value.split(',')
-    switch (field.type) {
-      case 'Int':
-        result.forEach((v: string, index) => {
-          result[index] = parseInt(v)
-        })
-        break
-      case 'Float':
-        result.forEach((v: string, index) => {
-          result[index] = parseFloat(v)
-        })
-        break
-      case 'Boolean':
-        result.forEach((v: string, index) => (result[index] = v))
-        break
-    }
+    result = useSet ? { set: value } : value
+    // const result: any[] = value.split(',')
+    // switch (field.type) {
+    //   case 'Int':
+    //     result.forEach((v: string, index) => {
+    //       result[index] = parseInt(v)
+    //     })
+    //     break
+    //   case 'Float':
+    //     result.forEach((v: string, index) => {
+    //       result[index] = parseFloat(v)
+    //     })
+    //     break
+    //   case 'Boolean':
+    //     result.forEach((v: string, index) => (result[index] = v))
+    //     break
+    // }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return result
+    // return result
   } else {
-    let result = null
     switch (field.type) {
       case 'BigInt':
       case 'Int':
@@ -62,8 +62,8 @@ export const getValueByType = ({ value, field, useSet = true }: GetValueOptions)
       default:
         result = value
     }
-    return useSet ? { set: result } : result
   }
+  return useSet ? { set: result } : result
 }
 
 const useActions = (

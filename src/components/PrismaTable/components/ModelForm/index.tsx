@@ -13,6 +13,8 @@ import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 
 import styles from './index.module.less'
 import { Inputs } from './Inputs'
+import { DownOutlined, MinusCircleOutlined, UpOutlined } from '@ant-design/icons'
+import clsx from 'clsx'
 
 const canBeUpdatedOrCreated = (action: 'update' | 'view' | 'create', field: SchemaField) => {
   return action !== 'view' && field[action]
@@ -73,6 +75,29 @@ const ModelFormContainer = ({
   )
   // console.log(relationMap)
 
+  function buildScalarField(field: any, options: any) {
+    switch (field.type) {
+      case 'String':
+        return <Inputs.String key={field.name} {...options} />
+      case 'Boolean':
+        return <Inputs.Boolean key={field.name} {...options} />
+      case 'Int':
+      case 'BigInt':
+        return <Inputs.Int key={field.name} {...options} />
+      case 'Float':
+      case 'Decimal':
+        return <Inputs.Float key={field.name} {...options} />
+      case 'DateTime':
+        return <Inputs.Datetime key={field.name} {...options} />
+      case 'Json':
+        return <Inputs.Json key={field.name} {...options} />
+      case 'Bytes':
+        return <Inputs.Bytes key={field.name} {...options} />
+      default:
+        return <Inputs.Unsupported key={field.name} {...options} />
+    }
+  }
+
   return (
     <Modal
       className="common-form"
@@ -111,47 +136,92 @@ const ModelFormContainer = ({
           preserve={false}
           className={`${styles['prisma-table-form-item']} flex flex-col items-end w-full`}
           name={model.id}
+          // initialValues={initialValues}
+          initialValues={showFields.reduce<Record<string, any>>((obj, field: any) => {
+            if (field.isList) {
+              obj[field.name] = initialValues?.[field.name]
+            }
+            return obj
+          }, {})}
           onFinish={handleFormSubmit}
         >
           {showFields
             .slice()
+            // @ts-ignore
             .sort((a, b) => (a.isId ? -1 : b.isId ? 1 : a.order - b.order))
-            .map(field => {
-              const options = {
-                // namespace,
-                initialValues: initialValues ?? {},
-                field: field,
-                disabled: (action === 'update' && !field.update) || action === 'view'
+            .map((field: any) => {
+              function buildNonListField(field: any) {
+                const options = {
+                  // namespace,
+                  initialValues: initialValues ?? {},
+                  field: field,
+                  disabled: (action === 'update' && !field.update) || action === 'view'
+                }
+                switch (field.kind) {
+                  case 'object':
+                    return <Inputs.Object key={field.name} {...options} />
+                  case 'enum':
+                    return <Inputs.Enum key={field.name} {...options} />
+                  case 'scalar':
+                    return buildScalarField(field, options)
+                  default:
+                    return <Inputs.Unsupported key={field.name} {...options} />
+                }
               }
-              switch (field.kind) {
-                case 'object':
-                  return <Inputs.Object key={field.name} {...options} />
-                case 'enum':
-                  return <Inputs.Enum key={field.name} {...options} />
-
-                case 'scalar':
-                  switch (field.type) {
-                    case 'String':
-                      return <Inputs.String key={field.name} {...options} />
-                    case 'Boolean':
-                      return <Inputs.Boolean key={field.name} {...options} />
-                    case 'Int':
-                    case 'BigInt':
-                      return <Inputs.Int key={field.name} {...options} />
-                    case 'Float':
-                    case 'Decimal':
-                      return <Inputs.Float key={field.name} {...options} />
-                    case 'DateTime':
-                      return <Inputs.Datetime key={field.name} {...options} />
-                    case 'Json':
-                      return <Inputs.Json key={field.name} {...options} />
-                    case 'Bytes':
-                      return <Inputs.Bytes key={field.name} {...options} />
-                    default:
-                      return <Inputs.Unsupported key={field.name} {...options} />
-                  }
-                default:
-                  return <Inputs.Unsupported key={field.name} {...options} />
+              if (field.isList) {
+                return (
+                  <Form.Item className="w-full" label={field.title}>
+                    <Form.List name={field.name}>
+                      {(fields, { add, remove, move }) => {
+                        return (
+                          <div className="w-full">
+                            {fields.map((_field, index) => {
+                              const upEnabled = index !== 0
+                              const downEnabled = index !== fields.length - 1
+                              return (
+                                <div key={_field.name} className="w-full flex items-start">
+                                  <div className="flex-1 min-w-0">
+                                    {buildNonListField({
+                                      ...field,
+                                      title: undefined,
+                                      name: _field.name
+                                    })}
+                                  </div>
+                                  <div className="ml-2 h-8 flex items-center">
+                                    <UpOutlined
+                                      className={clsx(
+                                        upEnabled ? 'cursor-pointer' : 'text-gray-200'
+                                      )}
+                                      onClick={upEnabled ? () => move(index, index - 1) : undefined}
+                                    />
+                                    <DownOutlined
+                                      className={clsx(
+                                        'ml-2',
+                                        downEnabled
+                                          ? 'cursor-pointer'
+                                          : 'text-gray-200'
+                                      )}
+                                      onClick={downEnabled ? () => move(index, index + 1) : undefined}
+                                    />
+                                    <MinusCircleOutlined
+                                      className="ml-2 cursor-pointer"
+                                      onClick={() => remove(_field.name)}
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
+                            <Button type="dashed" className="w-full mt-4" onClick={() => add()}>
+                              <FormattedMessage defaultMessage="+ 添加" />
+                            </Button>
+                          </div>
+                        )
+                      }}
+                    </Form.List>
+                  </Form.Item>
+                )
+              } else {
+                return buildNonListField(field)
               }
             })}
         </Form>
