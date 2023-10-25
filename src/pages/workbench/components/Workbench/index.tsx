@@ -267,11 +267,11 @@ export default function Index(props: PropsWithChildren) {
 
   useEffect(() => {
     // 重新编译时触发重置
-    if (isCompiling) {
+    if (engineStatus === ServiceStatus.Building) {
       setQuestions([])
       setLogs([])
     }
-  }, [isCompiling, setLogs, setQuestions])
+  }, [engineStatus, setLogs, setQuestions])
 
   const handleRefreshMenu = (listName: MenuName) => {
     setRefreshMap(refreshMap => {
