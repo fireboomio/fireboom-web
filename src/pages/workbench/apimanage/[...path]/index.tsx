@@ -106,6 +106,7 @@ export default function APIEditorContainer() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const dataSourceList = useDataSourceList()
   const {
+    apiPath,
     engineStartCallback,
     operationName,
     query,
@@ -119,6 +120,7 @@ export default function APIEditorContainer() {
     setSchema,
     saveSubscriptionController
   } = useAPIManager(state => ({
+    apiPath: state.apiPath,
     engineStartCallback: state.engineStartCallback,
     operationName: state.apiPath.split('/').pop(),
     query: state.query,
@@ -280,6 +282,7 @@ export default function APIEditorContainer() {
                   notifyError={msg => message.error(msg)}
                 /> */}
                 <GraphqlExplorer
+                  key={apiPath}
                   operationName={operationName}
                   schema={schema}
                   query={query}
