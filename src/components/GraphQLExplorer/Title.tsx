@@ -23,3 +23,7 @@ const Title = ({ children, size, prefix, suffix }: TitleProps) => {
 }
 
 export default Title
+
+export const SimpleTitle = ({ children }: { children: ReactNode }) => {
+  return <p className="mt-4 mb-2 font-semibold text-md">{children}</p>
+}

@@ -7,7 +7,6 @@ import { useMemo } from 'react'
 import Breadcrumb from './Breadcrumb'
 import GraphQLExplorerProvider from './provider'
 import SchemaPanel from './SchemaPanel'
-import { parseQuery } from './utils'
 
 export interface GraphqlExplorerProps {
   className?: string
@@ -69,8 +68,6 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
     }
     return null
   }, [schema])
-  console.log(schema, props.query, parseQuery(props.query ?? ''))
-  window.schema = schema
 
   return (
     <GraphQLExplorerProvider

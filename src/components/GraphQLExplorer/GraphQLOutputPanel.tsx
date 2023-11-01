@@ -1,26 +1,36 @@
-import { isNonNullObject } from '@apollo/client/utilities'
-import type { GraphQLOutputType } from 'graphql'
-import { isNonNullType, isScalarType } from 'graphql'
+import type { GraphQLFieldMap } from 'graphql'
+import { getNamedType, isEnumType, isObjectType, isScalarType } from 'graphql'
 
+import Arguments from './Arguments'
 import Description from './Description'
+import EnumTypeOutput from './EnumTypeOutput'
+import Fields from './Fields'
+import FieldsTitle from './FieldsTitle'
 import FieldTitle from './FieldTitle'
+import { useGraphQLExplorer } from './provider'
+import ScalarTypeOutput from './ScalarTypeOutput'
 
-interface GraphQlOutputPanelProps {
-  type: GraphQLOutputType
-}
+const GraphQlOutputPanel = () => {
+  const { graphqlObjectStack, currentFields } = useGraphQLExplorer()
+  const obj = graphqlObjectStack[graphqlObjectStack.length - 1]
 
-const GraphQlOutputPanel = ({ type }: GraphQlOutputPanelProps) => {
-  // var _type = isNonNullType(type) ? type.ofType : type
-  if (isScalarType(type)) {
-    const title = <FieldTitle title={type.name} type={type.name} selected />
-    return (
-      <>
-        {title}
-        <Description>{type.description}</Description>
-      </>
-    )
-  }
-  return <div></div>
+  return (
+    <div className="flex flex-1 flex-col">
+      <FieldTitle title={obj.name} selected />
+      {obj.description && <Description description={obj.description} />}
+      {'args' in obj && !!obj.args.length && <Arguments args={obj.args} />}
+      {('getFields' in obj || isObjectType(getNamedType(obj.type))) && <FieldsTitle />}
+      {(() => {
+        if (isScalarType(currentFields)) {
+          return <ScalarTypeOutput type={currentFields} name={obj.name} />
+        }
+        if (isEnumType(currentFields)) {
+          return <EnumTypeOutput type={currentFields} name={obj.name} />
+        }
+        return <Fields fields={currentFields as GraphQLFieldMap<any, any>} />
+      })()}
+    </div>
+  )
 }
 
 export default GraphQlOutputPanel

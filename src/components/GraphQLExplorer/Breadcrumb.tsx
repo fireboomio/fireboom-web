@@ -1,4 +1,5 @@
 import { Breadcrumb as AntBreadcrumb } from 'antd'
+import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb'
 
 import { useGraphQLExplorer } from './provider'
 
@@ -7,39 +8,66 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb = (props: BreadcrumbProps) => {
-  const { graphqlObjectStack, setGraphQLObjectStack: setGraphqlObjectStack } = useGraphQLExplorer()
-  const navigateTo = (i: number) => {
+  const { argumentStack, setArgumentStack, graphqlObjectStack, setGraphQLObjectStack } =
+    useGraphQLExplorer()
+  const navigateToField = (i: number) => {
     const arr = graphqlObjectStack.slice(0, i)
-    setGraphqlObjectStack(arr)
+    setGraphQLObjectStack(arr)
+    setArgumentStack([])
   }
-  return (
-    <AntBreadcrumb
-      separator="/"
-      className="my-3 select-none"
-      items={[
-        {
-          title: 'Root',
-          key: 0,
-          href: '',
-          onClick: e => {
-            e.stopPropagation()
-            e.preventDefault()
-            navigateTo(0)
+  const navigateToArgument = (i: number) => {
+    const arr = argumentStack.slice(0, i)
+    setArgumentStack(arr)
+  }
+
+  const items: ItemType[] = [
+    {
+      title: <><span className='italic text-gray pr-1'>(Beta)</span><span>Root</span></>,
+      key: 0,
+      href: '',
+      onClick: e => {
+        e.stopPropagation()
+        e.preventDefault()
+        navigateToField(0)
+      }
+    },
+    ...graphqlObjectStack.map<ItemType>((item, index) => ({
+      title: item.name,
+      key: item.name,
+      href: argumentStack.length ? '' : index === graphqlObjectStack.length - 1 ? undefined : '',
+      onClick: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement, MouseEvent>) => {
+        e.stopPropagation()
+        e.preventDefault()
+        navigateToField(index + 1)
+      }
+    }))
+  ]
+  if (argumentStack.length) {
+    items.push(
+      ...argumentStack.map<ItemType>((item, index) => ({
+        title: (() => {
+          const arr = [item.name]
+          if (index === 0) {
+            arr.unshift('(')
           }
-        },
-        ...graphqlObjectStack.map((item, index) => ({
-          title: item.name,
-          key: item.name,
-          href: index === graphqlObjectStack.length - 1 ? undefined : '',
-          onClick: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement, MouseEvent>) => {
-            e.stopPropagation()
-            e.preventDefault()
-            navigateTo(index + 1)
+          if (index === argumentStack.length - 1) {
+            arr.push(')')
           }
-        }))
-      ]}
-    />
-  )
+          return arr.join('')
+        })(),
+        key: item.name,
+        className: 'italic text-xs',
+        href: index === argumentStack.length - 1 ? undefined : '',
+        onClick: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement, MouseEvent>) => {
+          e.stopPropagation()
+          e.preventDefault()
+          navigateToArgument(index + 1)
+        }
+      }))
+    )
+  }
+
+  return <AntBreadcrumb separator="/" className="my-3 select-none" items={items} />
 }
 
 export default Breadcrumb

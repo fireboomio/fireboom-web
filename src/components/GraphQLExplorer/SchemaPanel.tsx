@@ -1,7 +1,8 @@
 import type { GraphQLObjectType } from 'graphql'
 import type { Maybe } from 'graphql/jsutils/Maybe'
 
-import GraphQLObjectPanel from './GraphQLObjectPanel'
+import GraphQLInputPanel from './GraphQLInputPanel'
+import GraphQLOutputPanel from './GraphQLOutputPanel'
 import { useGraphQLExplorer } from './provider'
 import RootPanel from './RootPanel'
 
@@ -16,9 +17,10 @@ const SchemaPanel = ({ query, mutation, subscription }: SchemaPanelProps) => {
 
   return (
     <>
-      {argumentStack.length ? (<></>) :
-        graphqlObjectStack.length ? (
-        <GraphQLObjectPanel />
+      {argumentStack.length ? (
+        <GraphQLInputPanel />
+      ) : graphqlObjectStack.length ? (
+        <GraphQLOutputPanel />
       ) : (
         <RootPanel query={query} mutation={mutation} subscription={subscription} />
       )}

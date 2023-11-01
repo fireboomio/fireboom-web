@@ -1,8 +1,10 @@
 import { LeftOutlined } from '@ant-design/icons'
+import type { FieldNode } from 'graphql'
+import { Kind } from 'graphql'
 
-import { AddOutlined, CheckedFilled } from './Icons'
 import { useGraphQLExplorer } from './provider'
 import SelectableIcon from './SelectableIcon'
+import { getQueryNodeFromStack, useEnsureOperationBeforeClick } from './utils'
 
 interface FieldTitleProps {
   title: string
@@ -11,14 +13,50 @@ interface FieldTitleProps {
   selected: boolean
 }
 
-// TODO 递归选择所有未选择的 Field
-const FieldTitle = ({ title, type, isArray, selected }: FieldTitleProps) => {
-  const { graphqlObjectStack, setGraphQLObjectStack: setGraphqlObjectStack } = useGraphQLExplorer()
+const FieldTitle = ({ title, type, isArray }: FieldTitleProps) => {
+  const {
+    argumentStack,
+    setArgumentStack,
+    graphqlObjectStack,
+    currentQueryNode,
+    setGraphQLObjectStack,
+    operationDefs,
+    updateGraphQLQuery
+  } = useGraphQLExplorer()
+  const ensureOperation = useEnsureOperationBeforeClick()
+
   function navigateBack() {
     const clone = graphqlObjectStack.slice()
     clone.pop()
-    setGraphqlObjectStack(clone)
+    setGraphQLObjectStack(clone)
   }
+
+  function onSelect(selected: boolean) {
+    if (!selected) {
+      // 取消选中，从上级stack中查找对应的selection并移除
+      if (graphqlObjectStack.length === 1) {
+        updateGraphQLQuery(null)
+      } else {
+        const doc = getQueryNodeFromStack(
+          graphqlObjectStack.slice(0, graphqlObjectStack.length - 1),
+          operationDefs
+        )
+        if (doc) {
+          const index = doc.selectionSet?.selections.findIndex(
+            sel => sel.kind === Kind.FIELD && sel.name.value === title
+          )
+          if (index !== undefined && index > -1) {
+            ;(doc.selectionSet!.selections as FieldNode[]).splice(index, 1)
+          }
+          updateGraphQLQuery(operationDefs)
+        }
+      }
+    } else {
+      const def = ensureOperation({ objectStack: graphqlObjectStack })
+      updateGraphQLQuery(def)
+    }
+  }
+
   return (
     <div className="flex items-center">
       <LeftOutlined className="h-6 mr-2" onClick={navigateBack} />
@@ -30,7 +68,7 @@ const FieldTitle = ({ title, type, isArray, selected }: FieldTitleProps) => {
           </>
         )}
       </span>
-      <SelectableIcon className='ml-2'/>
+      <SelectableIcon className="ml-2" onChange={onSelect} checked={!!currentQueryNode} />
     </div>
   )
 }

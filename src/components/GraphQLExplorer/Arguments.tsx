@@ -1,36 +1,100 @@
-import type { GraphQLArgument } from 'graphql'
+import {
+  ArgumentNode,
+  FieldNode,
+  GraphQLArgument,
+  GraphQLInputField,
+  GraphQLInputFieldMap,
+  GraphQLInputType,
+  Kind,
+  ObjectFieldNode,
+  ValueNode,
+  VariableDefinitionNode,
+  VariableNode
+} from 'graphql'
 import { FormattedMessage } from 'react-intl'
-import { useGraphQLExplorer } from './provider'
 
+import { useGraphQLExplorer } from './provider'
 import SelectableRow from './SelectableRow'
-import { getTypeName } from './utils'
+import { getQueryArgumentsFromStack, getQueryNodeFromStack, getTypeName, isVariableDefinitionUsed, removeUnnecessaryArgumentInField, useEnsureOperationBeforeClick } from './utils'
 
 interface ArgumentsProps {
-  args: ReadonlyArray<GraphQLArgument>
+  args: GraphQLInputFieldMap
 }
 
 const Arguments = ({ args }: ArgumentsProps) => {
-  const { argumentStack, setArgumentStack } = useGraphQLExplorer()
+  const {
+    graphqlObjectStack,
+    argumentStack,
+    setArgumentStack,
+    operationDefs,
+    currentQueryNode,
+    currentQueryArguments,
+    updateGraphQLQuery
+  } = useGraphQLExplorer()
+  const ensureOperation = useEnsureOperationBeforeClick()
 
-  const onClick = (arg: GraphQLArgument) => {
+  const _args: ReadonlyArray<GraphQLArgument> | GraphQLInputType[] = Object.keys(args).map(
+    key => (args as GraphQLInputFieldMap)[key]
+  )
+
+  function onSelect(arg: GraphQLArgument | GraphQLInputField, selected: boolean, index: number) {
+    if (selected) {
+      const curArg = ((currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])[index].value as VariableNode).name.value
+      if (Array.isArray(currentQueryArguments)) {
+        (currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])!.splice(index, 1)
+      } else {
+        // 从上一层开始删除
+        const prevArgs = getQueryArgumentsFromStack(argumentStack.slice(0, argumentStack.length - 1), currentQueryNode) as (ObjectFieldNode | ArgumentNode)[]
+        prevArgs.splice(prevArgs.findIndex(_arg => _arg.name.value === arg.name), 1)
+      }
+      removeUnnecessaryArgumentInField(getQueryNodeFromStack(graphqlObjectStack, operationDefs)! as FieldNode)
+      // 如果删除后该变量未使用，则从变量定义中移除
+      const variableUsedIndex = isVariableDefinitionUsed(curArg, operationDefs!)
+      if (variableUsedIndex > -1) {
+        (operationDefs!.variableDefinitions as VariableDefinitionNode[]).splice(variableUsedIndex, 1)
+      }
+      updateGraphQLQuery(operationDefs)
+    } else {
+      const def = ensureOperation({ objectStack: graphqlObjectStack, argumentStack: [...argumentStack, arg] })
+      updateGraphQLQuery(def)
+    }
+  }
+
+  const onClick = (arg: GraphQLArgument | GraphQLInputType) => {
     setArgumentStack([...argumentStack, arg])
   }
 
   return (
-    <div className="">
+    <>
       <div className="mt-4 mb-2 font-semibold text-md">
         <FormattedMessage defaultMessage="参数列表" />
       </div>
-      {args.map(arg => (
-        <SelectableRow
-          key={arg.name}
-          name={arg.name}
-          type={getTypeName(arg.type)}
-          onSelect={() => {}}
-          onClick={() => onClick(arg)}
-        />
-      ))}
-    </div>
+      {_args.map((arg) => {
+        let selected = false
+        let index: number
+        if (Array.isArray(currentQueryArguments)) {
+          index = (currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])?.findIndex(
+            a => a.name.value === arg.name
+          )
+          selected = index > -1
+        } else if (currentQueryArguments) {
+          const valueNode = currentQueryArguments as Exclude<ValueNode, 'ListValueNode' | 'ObjectValueNode'>
+          if (valueNode.kind === Kind.VARIABLE) {
+            selected = valueNode.name.value === arg.name
+          }
+        }
+        return (
+          <SelectableRow
+            key={arg.name}
+            name={arg.name}
+            selected={selected}
+            type={getTypeName(arg.type)}
+            onSelect={() => onSelect(arg, selected, index)}
+            onClick={() => onClick(arg)}
+          />
+        )
+      })}
+    </>
   )
 }
 

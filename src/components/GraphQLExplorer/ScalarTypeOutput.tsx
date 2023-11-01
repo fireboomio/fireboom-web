@@ -1,4 +1,5 @@
-import { GraphQLScalarType } from "graphql"
+import type { GraphQLScalarType } from 'graphql'
+import { FormattedMessage } from 'react-intl'
 
 interface ScalarTypeOutputProps {
   type: GraphQLScalarType
@@ -6,9 +7,13 @@ interface ScalarTypeOutputProps {
 }
 
 const ScalarTypeOutput = ({ type, name }: ScalarTypeOutputProps) => {
-
   return (
-    <div className="text-xs">{type.description || name}</div>
+    <div>
+      <p className="mt-4 mb-2 font-semibold text-md">
+        <FormattedMessage defaultMessage="描述" />
+      </p>
+      <div className="text-xs">{type.description || name}</div>
+    </div>
   )
 }
 

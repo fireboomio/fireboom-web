@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl'
 import { useGraphQLExplorer } from './provider'
 import SelectableRow from './SelectableRow'
 import Title from './Title'
+import { generateEmptyObjectField } from './utils'
 
 interface RootPanelProps {
   query: Maybe<GraphQLObjectType<any, any>>
@@ -26,10 +27,7 @@ const RootPanel = ({ query, mutation, subscription }: RootPanelProps) => {
         kind: Kind.OPERATION_DEFINITION,
         operation: optType,
         name: { kind: Kind.NAME, value: operationName ?? `my${optType.toString()}` },
-        selectionSet: {
-          kind: Kind.SELECTION_SET,
-          selections: [{ kind: Kind.FIELD, name: { kind: Kind.NAME, value: ' ' } }]
-        }
+        selectionSet: generateEmptyObjectField()
       }
       updateGraphQLQuery(def)
     }

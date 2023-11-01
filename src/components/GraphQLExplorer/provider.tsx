@@ -1,17 +1,27 @@
 import type {
+  ArgumentNode,
   DocumentNode,
   GraphQLArgument,
   GraphQLField,
   GraphQLFieldMap,
+  GraphQLInputType,
   GraphQLNamedOutputType,
   GraphQLObjectType,
-  OperationDefinitionNode
+  ObjectFieldNode,
+  OperationDefinitionNode,
+  SelectionNode,
+  ValueNode
 } from 'graphql'
 import { Kind, print } from 'graphql'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo, useState } from 'react'
 
-import { getCurrentFieldsFromStack, parseQuery } from './utils'
+import {
+  getCurrentFieldsFromStack,
+  getQueryArgumentsFromStack,
+  getQueryNodeFromStack,
+  parseQuery
+} from './utils'
 
 export type GraphQLObject = GraphQLObjectType<any, any> | GraphQLField<any, any, any>
 
@@ -28,8 +38,15 @@ export type GraphQLExplorerState = {
   // 根据 stack 查询当前展示的 fields
   currentFields: GraphQLNamedOutputType | GraphQLFieldMap<any, any> | null
   // 查询的参数栈
-  argumentStack: GraphQLArgument[]
-  setArgumentStack: (v: GraphQLArgument[]) => void
+  argumentStack: (GraphQLArgument | GraphQLInputType)[]
+  setArgumentStack: (v: (GraphQLArgument | GraphQLInputType)[]) => void
+  // 从 field stack 上查询 query 的 ast 所在的 node
+  currentQueryNode: OperationDefinitionNode | SelectionNode | undefined | null
+  // 从 argument stack 上查询 query 的 ast 所在的 argument
+  currentQueryArguments:
+    | readonly (ObjectFieldNode | ArgumentNode)[]
+    | Exclude<ValueNode, 'ListValueNode' | 'ObjectValueNode'>
+    | null
   // 更新 query
   updateGraphQLQuery: (def: OperationDefinitionNode | null) => void
   // 切换 fields 排序
@@ -61,7 +78,7 @@ const GraphQLExplorerProvider = ({
   onChange
 }: GraphQLExplorerProviderProps) => {
   const [graphqlObjectStack, setGraphQLObjectStack] = useState<GraphQLObject[]>([])
-  const [argumentStack, setArgumentStack] = useState<GraphQLArgument[]>([])
+  const [argumentStack, setArgumentStack] = useState<(GraphQLArgument | GraphQLInputType)[]>([])
 
   const [sort, setSort] = useState<Sort>(localStorage.getItem(sortStoreKey) as Sort)
 
@@ -98,14 +115,16 @@ const GraphQLExplorerProvider = ({
   function updateGraphQLQuery(def: OperationDefinitionNode | null) {
     if (!def) {
       onChange?.('')
+    } else {
+      const ast: DocumentNode = {
+        kind: Kind.DOCUMENT,
+        definitions: [def!]
+      }
+      onChange?.(print(ast))
     }
-    const ast: DocumentNode = {
-      kind: Kind.DOCUMENT,
-      definitions: [def!]
-    }
-    onChange?.(print(ast))
   }
 
+  const currentQueryNode = getQueryNodeFromStack(graphqlObjectStack, operationDefs)
   return (
     <GraphQLExplorerContext.Provider
       value={{
@@ -118,6 +137,8 @@ const GraphQLExplorerProvider = ({
         currentFields: getCurrentFieldsFromStack(graphqlObjectStack),
         argumentStack,
         setArgumentStack,
+        currentQueryNode,
+        currentQueryArguments: getQueryArgumentsFromStack(argumentStack, currentQueryNode),
         updateGraphQLQuery,
         toggleFieldSort
       }}
