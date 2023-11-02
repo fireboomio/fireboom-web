@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom'
 import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
-import GraphqlExplorer from '@/components/GraphqlExplorer'
+import GraphQLExplorer from '@/components/GraphQLExplorer'
 import { useDragResize } from '@/hooks/resize'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useEventBus } from '@/lib/event/events'
@@ -281,7 +281,7 @@ export default function APIEditorContainer() {
                   // makeDefaultArg={makeDefaultArg}
                   notifyError={msg => message.error(msg)}
                 /> */}
-                <GraphqlExplorer
+                <GraphQLExplorer
                   key={apiPath}
                   operationName={operationName}
                   schema={schema}

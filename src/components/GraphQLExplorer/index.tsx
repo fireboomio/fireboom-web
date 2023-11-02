@@ -8,7 +8,7 @@ import Breadcrumb from './Breadcrumb'
 import GraphQLExplorerProvider from './provider'
 import SchemaPanel from './SchemaPanel'
 
-export interface GraphqlExplorerProps {
+export interface GraphQLExplorerProps {
   className?: string
   /**
    * Operation name
@@ -40,7 +40,7 @@ export interface GraphqlExplorerProps {
   onRefresh?: () => void
 }
 
-const GraphqlExplorer = (props: GraphqlExplorerProps) => {
+const GraphQLExplorer = (props: GraphQLExplorerProps) => {
   const schema = useMemo(() => {
     if (!props.schema) {
       return null
@@ -95,4 +95,4 @@ const GraphqlExplorer = (props: GraphqlExplorerProps) => {
   )
 }
 
-export default GraphqlExplorer
+export default GraphQLExplorer
