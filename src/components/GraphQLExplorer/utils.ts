@@ -224,7 +224,12 @@ export function getQueryNodeFromStack(stack: GraphQLObject[], def: OperationDefi
   let cur: OperationDefinitionNode | SelectionNode | undefined | null = def
   for (const item of stack) {
     if ('getFields' in item) {
-      continue
+      // operation type 要一致
+      if (item.name.toLowerCase() === def?.operation) {
+        continue
+      } else {
+        return null
+      }
     }
     cur = cur?.selectionSet?.selections.find(
       sel => sel.kind === Kind.FIELD && sel.name.value === item.name

@@ -15,8 +15,6 @@ interface FieldTitleProps {
 
 const FieldTitle = ({ title, type, isArray }: FieldTitleProps) => {
   const {
-    argumentStack,
-    setArgumentStack,
     graphqlObjectStack,
     currentQueryNode,
     setGraphQLObjectStack,
