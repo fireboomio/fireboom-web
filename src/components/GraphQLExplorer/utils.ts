@@ -353,12 +353,24 @@ function generateDocumentFromFieldStack(
     }
   }
   if (argumentStack.length) {
+    const args = (prevSelections[0].arguments as ArgumentNode[])
     // @ts-ignore
     let valueNode: ValueNode = {}
-    const rootArgument: ArgumentNode = {
-      kind: Kind.ARGUMENT,
-      name: { kind: Kind.NAME, value: (argumentStack[0] as GraphQLArgument).name },
-      value: valueNode
+    
+    // 查找 prev selections 上是否有同名 rootArgument
+    // 标记是否包含
+    let containRootArgument = false
+    let rootArgument: ArgumentNode | undefined = args?.find(_arg => _arg.name.value === (argumentStack[0] as GraphQLArgument).name)
+    if (rootArgument) {
+      containRootArgument = true
+      valueNode = rootArgument.value
+    }
+    if (!rootArgument) {
+      rootArgument = {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: (argumentStack[0] as GraphQLArgument).name },
+        value: valueNode
+      }
     }
     let argField: ObjectFieldNode | null = null
     for (const [index, arg] of argumentStack.entries()) {
@@ -382,13 +394,13 @@ function generateDocumentFromFieldStack(
         }
         // 防止重名
         const targetVariableName = getVariableName(type.name, operationDefs)
-        ; (defs.variableDefinitions! as VariableDefinitionNode[])!.push({
-          kind: Kind.VARIABLE_DEFINITION,
-          type: typeNode,
-          variable: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: targetVariableName } },
-          // directives: [],
-          defaultValue: getArgumentDefaultValue(type)
-        })
+          ; (defs.variableDefinitions! as VariableDefinitionNode[])!.push({
+            kind: Kind.VARIABLE_DEFINITION,
+            type: typeNode,
+            variable: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: targetVariableName } },
+            // directives: [],
+            defaultValue: getArgumentDefaultValue(type)
+          })
         if (argField) {
           Object.assign(argField, {
             name: { kind: Kind.NAME, value: type.name },
@@ -426,22 +438,29 @@ function generateDocumentFromFieldStack(
           } as ObjectFieldNode)
           argField = _argField
         } else {
-          // @ts-ignore
-          argField = {
-            kind: Kind.OBJECT_FIELD,
+          const fields = (valueNode as ObjectValueNode).fields ?? []
+          // 是否存在，存在只需引用
+          argField = fields.find(field => field.name.value === type.name) ?? null
+          if (!argField) {
+            // @ts-ignore
+            argField = {
+              kind: Kind.OBJECT_FIELD,
+            }
+            // 合并 fields
+            Object.assign(valueNode, {
+              kind: Kind.OBJECT,
+              fields: fields.length ? [...fields, argField] : [argField]
+            } as ObjectValueNode)
           }
-          Object.assign(valueNode, {
-            kind: Kind.OBJECT,
-            fields: [argField]
-          } as ObjectValueNode)
         }
       }
     }
-    const args = (prevSelections[0].arguments as ArgumentNode[])
-    if (args && args.length) {
-      args.push(rootArgument!)
-    } else {
-      (prevSelections[0].arguments as ArgumentNode[]) = [rootArgument!]
+    if (!containRootArgument) {
+      if (args && args.length) {
+        args.push(rootArgument!)
+      } else {
+        (prevSelections[0].arguments as ArgumentNode[]) = [rootArgument!]
+      }
     }
   }
   return doc.definitions[0] as OperationDefinitionNode

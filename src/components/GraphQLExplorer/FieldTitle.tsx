@@ -58,7 +58,7 @@ const FieldTitle = ({ title, type, isArray }: FieldTitleProps) => {
   return (
     <div className="flex items-center">
       <LeftOutlined className="h-6 mr-2" onClick={navigateBack} />
-      <span className="font-bold break-all">
+      <span className="font-bold break-all select-text">
         {title}
         {type && (
           <>

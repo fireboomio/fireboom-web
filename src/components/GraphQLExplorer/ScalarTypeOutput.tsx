@@ -12,7 +12,7 @@ const ScalarTypeOutput = ({ type, name }: ScalarTypeOutputProps) => {
       <p className="mt-4 mb-2 font-semibold text-md">
         <FormattedMessage defaultMessage="描述" />
       </p>
-      <div className="text-xs">{type.description || name}</div>
+      <div className="text-xs select-text">{type.description || name}</div>
     </div>
   )
 }

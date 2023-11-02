@@ -11,7 +11,7 @@ const Description = ({ description }: DescriptionProps) => {
   return (
     <div className="flex flex-col mt-2 text-sm text-dark-400">
       {datasource && (
-        <span>
+        <span className='select-text'>
           <FormattedMessage key="ds" defaultMessage="数据源: {ds}" values={{ ds: datasource }} />
         </span>
       )}

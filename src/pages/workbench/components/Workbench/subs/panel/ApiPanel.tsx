@@ -1,4 +1,4 @@
-import { App, Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
+import { Dropdown, message, Modal, Popconfirm, Tooltip } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import clsx from 'clsx'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -26,7 +26,6 @@ import SidePanel from './SidePanel'
 
 export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const intl = useIntl()
-  const { modal } = App.useApp()
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
@@ -38,13 +37,14 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const [panelOpened, setPanelOpened] = useState(false) // 面板是否展开
   const [selectedKey, setSelectedKey] = useState<string>('')
   const { vscode } = useContext(GlobalContext)
+  const [modal, contextHolder] = Modal.useModal()
   const fileTree = useRef<FileTreeRef>({
     addItem: () => {},
     editItem: () => {}
   })
   const {
     computed: { saved },
-    autoSave
+    autoSave,
   } = useAPIManager()
   const { operation: operationStorePath } = useDict()
 
@@ -525,9 +525,17 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         onSelectFile={async nodeData => {
           if (!nodeData.isDir) {
             if (!saved) {
-              message.info(intl.formatMessage({ defaultMessage: '自动保存中...' }))
-              await autoSave()
-              message.destroy()
+              const confirmed = await modal.confirm({
+                content: intl.formatMessage({ defaultMessage: '当前 API 未保存，是否保存' }),
+                okText: intl.formatMessage({ defaultMessage: '保存' }),
+                cancelText: intl.formatMessage({ defaultMessage: '不保存' }),
+                cancelButtonProps: { danger: true }
+              })
+              if (confirmed) {
+                message.open({ type: 'loading', content: intl.formatMessage({ defaultMessage: '自动保存中' }) })
+                await autoSave()
+                message.destroy()
+              }
             }
             if (nodeData.extra?.engine === OperationEngine.GraphQL) {
               navigate(`/workbench/apimanage/${nodeData.path}`)
@@ -621,6 +629,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
           </div>
         }
       />
+      {contextHolder}
       <Modal
         title={intl.formatMessage({ defaultMessage: 'API全局设置' })}
         open={isModalVisible}
