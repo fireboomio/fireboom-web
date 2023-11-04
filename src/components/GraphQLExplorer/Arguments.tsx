@@ -8,14 +8,13 @@ import {
   Kind,
   ObjectFieldNode,
   ValueNode,
-  VariableDefinitionNode,
   VariableNode
 } from 'graphql'
 import { FormattedMessage } from 'react-intl'
 
 import { useGraphQLExplorer } from './provider'
 import SelectableRow from './SelectableRow'
-import { getQueryArgumentsFromStack, getQueryNodeFromStack, getTypeName, isVariableDefinitionUsed, removeUnnecessaryArgumentInField, useEnsureOperationBeforeClick } from './utils'
+import { removeUnusedVariablesInDefs, getQueryArgumentsFromStack, getQueryNodeFromStack, getTypeName, isVariableDefinitionUsed, removeUnnecessaryArgumentInField, useEnsureOperationBeforeClick } from './utils'
 
 interface ArgumentsProps {
   args: GraphQLInputFieldMap
@@ -39,7 +38,15 @@ const Arguments = ({ args }: ArgumentsProps) => {
 
   function onSelect(arg: GraphQLArgument | GraphQLInputField, selected: boolean, index: number) {
     if (selected) {
-      const curArg = ((currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])[index].value as VariableNode).name.value
+      const valueNode = (currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])[index].value
+      let curArg: string
+      if (valueNode.kind === Kind.LIST) {
+        curArg = arg.name
+      } else if (valueNode.kind === Kind.OBJECT) {
+        curArg = arg.name
+      } else {
+        curArg = (valueNode as VariableNode).name.value
+      }
       if (Array.isArray(currentQueryArguments)) {
         (currentQueryArguments as (ObjectFieldNode | ArgumentNode)[])!.splice(index, 1)
       } else {
@@ -48,11 +55,15 @@ const Arguments = ({ args }: ArgumentsProps) => {
         prevArgs.splice(prevArgs.findIndex(_arg => _arg.name.value === arg.name), 1)
       }
       removeUnnecessaryArgumentInField(getQueryNodeFromStack(graphqlObjectStack, operationDefs)! as FieldNode)
-      // 如果删除后该变量未使用，则从变量定义中移除
-      const variableUsedIndex = isVariableDefinitionUsed(curArg, operationDefs!)
-      if (variableUsedIndex > -1) {
-        (operationDefs!.variableDefinitions as VariableDefinitionNode[]).splice(variableUsedIndex, 1)
-      }
+
+      // 删除所有未使用的定义
+      removeUnusedVariablesInDefs(operationDefs!)
+
+      // // 如果删除后该变量未使用，则从变量定义中移除
+      // const variableUsedIndex = isVariableDefinitionUsed(curArg, operationDefs!)
+      // if (variableUsedIndex > -1) {
+      //   (operationDefs!.variableDefinitions as VariableDefinitionNode[]).splice(variableUsedIndex, 1)
+      // }
       updateGraphQLQuery(operationDefs)
     } else {
       const def = ensureOperation({ objectStack: graphqlObjectStack, argumentStack: [...argumentStack, arg] })

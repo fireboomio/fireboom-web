@@ -4,7 +4,7 @@ import { Kind } from 'graphql'
 
 import { useGraphQLExplorer } from './provider'
 import SelectableIcon from './SelectableIcon'
-import { getQueryArgumentsFromStack, getQueryNodeFromStack, isVariableDefinitionUsed, useEnsureOperationBeforeClick } from './utils'
+import { getQueryArgumentsFromStack, getQueryNodeFromStack, isVariableDefinitionUsed, removeUnusedVariablesInDefs, useEnsureOperationBeforeClick } from './utils'
 
 interface ArgumentTitleProps {
   title: string
@@ -50,6 +50,7 @@ const ArgumentTitle = ({ title, type, isArray }: ArgumentTitleProps) => {
       if (variableUsedIndex > -1) {
         (operationDefs!.variableDefinitions as VariableDefinitionNode[]).splice(variableUsedIndex, 1)
       }
+      removeUnusedVariablesInDefs(operationDefs)
       updateGraphQLQuery(operationDefs)
       // const prevIndex = prevArguments.findIndex(arg => arg.name.value === (currentQueryArguments as FieldNode).name.value)
       // if (prevIndex > -1) {

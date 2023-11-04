@@ -353,34 +353,65 @@ function generateDocumentFromFieldStack(
     }
   }
   if (argumentStack.length) {
+    ; (prevSelections[0].arguments as ArgumentNode[]) = (prevSelections[0].arguments as ArgumentNode[]) || []
     const args = (prevSelections[0].arguments as ArgumentNode[])
-    // @ts-ignore
-    let valueNode: ValueNode = {}
-    
-    // 查找 prev selections 上是否有同名 rootArgument
-    // 标记是否包含
-    let containRootArgument = false
-    let rootArgument: ArgumentNode | undefined = args?.find(_arg => _arg.name.value === (argumentStack[0] as GraphQLArgument).name)
-    if (rootArgument) {
-      containRootArgument = true
-      valueNode = rootArgument.value
-    }
-    if (!rootArgument) {
-      rootArgument = {
-        kind: Kind.ARGUMENT,
-        name: { kind: Kind.NAME, value: (argumentStack[0] as GraphQLArgument).name },
-        value: valueNode
+
+    let valueNode = {} as ValueNode
+
+    for (const [index, _arg] of argumentStack.entries()) {
+      if (index === 0) {
+        const arg = _arg as GraphQLArgument
+        // 判断是否存在
+        const existedNode = args?.find(_arg => _arg.name.value === arg.name)
+        if (existedNode) {
+          valueNode = existedNode.value
+        } else {
+          // 挂载新增根节点
+          const rootArgument: ArgumentNode = {
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: arg.name },
+            value: valueNode
+          }
+          args.push(rootArgument)
+        }
+      } else {
+        // 后续子节点
+        const arg = _arg as GraphQLInputType
+        const type = getNamedType(arg)
+        // 填补之前的 object 定义
+        // 或 前一个节点已经是变量，此时销毁前一个节点定义，使用object覆盖
+        if (!valueNode.kind || valueNode.kind === Kind.VARIABLE) {
+          Object.assign(valueNode, {
+            kind: Kind.OBJECT,
+            fields: []
+          })
+          // @ts-ignore
+          delete valueNode.name
+        }
+        if (valueNode.kind === Kind.OBJECT) {
+          // 判断是否存在
+          const existedField = valueNode.fields.find(field => field.name.value === type.name)
+          if (existedField) {
+            valueNode = existedField.value
+          } else {
+            const fields = valueNode.fields as ObjectFieldNode[]
+            const baseValueNode = {} as ValueNode
+            fields.push({
+              kind: Kind.OBJECT_FIELD,
+              name: { kind: Kind.NAME, value: type.name },
+              value: isListType(arg) ? {
+                kind: Kind.LIST,
+                values: [baseValueNode]
+              } : baseValueNode
+            })
+            valueNode = fields[fields.length - 1].value
+          }
+        }
       }
-    }
-    let argField: ObjectFieldNode | null = null
-    for (const [index, arg] of argumentStack.entries()) {
-      const isFirst = index === 0
-      const isLast = index === argumentStack.length - 1
-      // 最后一个参数栈上的认为是 operation 参数
-      if (isLast) {
-        const type = isFirst ? (arg as GraphQLArgument) : unwrapInputType(arg as GraphQLInputType)
+      // 最后一位
+      if (index === argumentStack.length - 1) {
+        const type = index === 0 ? (_arg as GraphQLArgument) : unwrapInputType(_arg as GraphQLInputType)
         const inputType = 'type' in type ? type.type : type
-        // const inputType = 'type' in type ? unwrapInputType(type.type) : type
         const defs = doc.definitions[0] as Writeable<OperationDefinitionNode, 'variableDefinitions'>
         // 追加参数
         defs.variableDefinitions = defs.variableDefinitions ?? [];
@@ -401,67 +432,119 @@ function generateDocumentFromFieldStack(
             // directives: [],
             defaultValue: getArgumentDefaultValue(type)
           })
-        if (argField) {
-          Object.assign(argField, {
-            name: { kind: Kind.NAME, value: type.name },
-            value: {
-              kind: Kind.VARIABLE,
-              name: { kind: Kind.NAME, value: targetVariableName }
-            }
-          } as ObjectFieldNode)
-          argField = null
-        } else {
-          Object.assign(valueNode, {
-            kind: Kind.VARIABLE,
-            name: { kind: Kind.NAME, value: type.name }
-          } as ValueNode)
-        }
-      } else {
-        const argument = arg as GraphQLInputType
-        const type = getNamedType(argument)
-        if (argField) {
-          // @ts-ignore
-          const _argField: ObjectFieldNode = {
-            kind: Kind.OBJECT_FIELD,
-          }
-          const baseValueNode: ValueNode = {
-            kind: Kind.OBJECT,
-            fields: [_argField]
-          }
-          Object.assign(argField, {
-            kind: Kind.OBJECT_FIELD,
-            name: { kind: Kind.NAME, value: type.name },
-            value: isListType(argument) ? {
-              kind: Kind.LIST_TYPE,
-              values: [baseValueNode]
-            } : baseValueNode
-          } as ObjectFieldNode)
-          argField = _argField
-        } else {
-          const fields = (valueNode as ObjectValueNode).fields ?? []
-          // 是否存在，存在只需引用
-          argField = fields.find(field => field.name.value === type.name) ?? null
-          if (!argField) {
-            // @ts-ignore
-            argField = {
-              kind: Kind.OBJECT_FIELD,
-            }
-            // 合并 fields
-            Object.assign(valueNode, {
-              kind: Kind.OBJECT,
-              fields: fields.length ? [...fields, argField] : [argField]
-            } as ObjectValueNode)
-          }
-        }
+        Object.assign(valueNode, {
+          kind: Kind.VARIABLE,
+          name: { kind: Kind.NAME, value: targetVariableName }
+        } as ValueNode)
       }
     }
-    if (!containRootArgument) {
-      if (args && args.length) {
-        args.push(rootArgument!)
-      } else {
-        (prevSelections[0].arguments as ArgumentNode[]) = [rootArgument!]
-      }
-    }
+
+
+    // 查找 prev selections 上是否有同名 rootArgument
+    // 标记是否包含
+    // let containRootArgument = false
+    // let rootArgument: ArgumentNode | undefined = args?.find(_arg => _arg.name.value === (argumentStack[0] as GraphQLArgument).name)
+    // if (rootArgument) {
+    //   containRootArgument = true
+    //   valueNode = rootArgument.value
+    // }
+    // if (!rootArgument) {
+    //   rootArgument = {
+    //     kind: Kind.ARGUMENT,
+    //     name: { kind: Kind.NAME, value: (argumentStack[0] as GraphQLArgument).name },
+    //     value: valueNode
+    //   }
+    // }
+    // let argField: ObjectFieldNode | null = null
+    // for (const [index, arg] of argumentStack.entries()) {
+    //   const isFirst = index === 0
+    //   const isLast = index === argumentStack.length - 1
+    //   // 最后一个参数栈上的认为是 operation 参数
+    //   if (isLast) {
+    //     const type = isFirst ? (arg as GraphQLArgument) : unwrapInputType(arg as GraphQLInputType)
+    //     const inputType = 'type' in type ? type.type : type
+    //     // const inputType = 'type' in type ? unwrapInputType(type.type) : type
+    //     const defs = doc.definitions[0] as Writeable<OperationDefinitionNode, 'variableDefinitions'>
+    //     // 追加参数
+    //     defs.variableDefinitions = defs.variableDefinitions ?? [];
+    //     let typeNode: TypeNode = { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: getArgumentNamedType(type) } }
+    //     const isNonNull = isNonNullType(inputType)
+    //     if (isListType(isNonNull ? inputType.ofType : inputType)) {
+    //       typeNode = { kind: Kind.LIST_TYPE, type: typeNode }
+    //     }
+    //     if (isNonNull) {
+    //       typeNode = { kind: Kind.NON_NULL_TYPE, type: typeNode }
+    //     }
+    //     // 防止重名
+    //     const targetVariableName = getVariableName(type.name, operationDefs)
+    //       ; (defs.variableDefinitions! as VariableDefinitionNode[])!.push({
+    //         kind: Kind.VARIABLE_DEFINITION,
+    //         type: typeNode,
+    //         variable: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: targetVariableName } },
+    //         // directives: [],
+    //         defaultValue: getArgumentDefaultValue(type)
+    //       })
+    //     if (argField) {
+    //       Object.assign(argField, {
+    //         name: { kind: Kind.NAME, value: type.name },
+    //         value: {
+    //           kind: Kind.VARIABLE,
+    //           name: { kind: Kind.NAME, value: targetVariableName }
+    //         }
+    //       } as ObjectFieldNode)
+    //       argField = null
+    //     } else {
+    //       Object.assign(valueNode, {
+    //         kind: Kind.VARIABLE,
+    //         name: { kind: Kind.NAME, value: type.name }
+    //       } as ValueNode)
+    //     }
+    //   } else {
+    //     const argument = arg as GraphQLInputType
+    //     const type = getNamedType(argument)
+    //     if (argField) {
+    //       // @ts-ignore
+    //       const _argField: ObjectFieldNode = {
+    //         kind: Kind.OBJECT_FIELD,
+    //       }
+    //       const baseValueNode: ValueNode = {
+    //         kind: Kind.OBJECT,
+    //         fields: [_argField]
+    //       }
+    //       Object.assign(argField, {
+    //         kind: Kind.OBJECT_FIELD,
+    //         name: { kind: Kind.NAME, value: type.name },
+    //         value: isListType(argument) ? {
+    //           kind: Kind.LIST_TYPE,
+    //           values: [baseValueNode]
+    //         } : baseValueNode
+    //       } as ObjectFieldNode)
+    //       argField = _argField
+    //     } else {
+    //       const fields = (valueNode as ObjectValueNode).fields ?? []
+    //       // 是否存在，存在只需引用
+    //       argField = fields.find(field => field.name.value === type.name) ?? null
+    //       if (!argField) {
+    //         // @ts-ignore
+    //         argField = {
+    //           kind: Kind.OBJECT_FIELD,
+    //         }
+    //         // 合并 fields
+    //         Object.assign(valueNode, {
+    //           kind: Kind.OBJECT,
+    //           fields: fields.length ? [...fields, argField] : [argField]
+    //         } as ObjectValueNode)
+    //       }
+    //     }
+    //   }
+    // }
+    // if (!containRootArgument) {
+    //   if (args && args.length) {
+    //     args.push(rootArgument!)
+    //   } else {
+    //     (prevSelections[0].arguments as ArgumentNode[]) = [rootArgument!]
+    //   }
+    // }
   }
   return doc.definitions[0] as OperationDefinitionNode
 }
@@ -541,6 +624,42 @@ export function isVariableDefinitionUsed(variableName: string, def: OperationDef
     return def.variableDefinitions.findIndex(def => def.variable.name.value === variableName)
   }
   return -1
+}
+
+export function removeUnusedVariablesInDefs(def: OperationDefinitionNode) {
+  const variables: string[] = []
+  function loopArguments(args: readonly (ArgumentNode | ValueNode)[]) {
+    for (const _arg of args) {
+      const arg = _arg.kind === Kind.ARGUMENT ? _arg.value : _arg
+      if (arg.kind === Kind.VARIABLE) {
+        variables.push(arg.name.value)
+      } else if (arg.kind === Kind.LIST) {
+        loopArguments(arg.values)
+      } else if (arg.kind === Kind.OBJECT) {
+        loopArguments(arg.fields.map(f => f.value))
+      }
+    }
+  }
+  function loopSelections(selections: readonly SelectionNode[]) {
+    for (const selection of selections) {
+      if (selection.kind === Kind.FIELD) {
+        if (selection.arguments) {
+          loopArguments(selection.arguments)
+        }
+        if (selection.selectionSet?.selections) {
+          loopSelections(selection.selectionSet!.selections)
+        }
+      }
+    }
+  }
+  loopSelections(def.selectionSet.selections)
+
+  const defs = def.variableDefinitions as VariableDefinitionNode[]
+  for (let i = defs.length - 1; i >= 0; i--) {
+    if (!variables.includes(defs[i].variable.name.value)) {
+      defs.splice(i, 1)
+    }
+  }
 }
 
 /**
