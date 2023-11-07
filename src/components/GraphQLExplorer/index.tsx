@@ -77,7 +77,7 @@ const GraphQLExplorer = (props: GraphQLExplorerProps) => {
     >
       <div
         className={clsx(
-          'graphql-explorer pt-2 flex flex-col px-3 h-full bg-[#f7f7f7] text-dark-800 font-mono select-none overflow-y-auto',
+          'graphql-explorer pt-2 flex flex-col px-3 h-full bg-[#f7f7f7] text-dark-800 select-none overflow-y-auto',
           props.className
         )}
       >

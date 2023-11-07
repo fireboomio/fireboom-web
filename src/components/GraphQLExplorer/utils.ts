@@ -430,7 +430,7 @@ function generateDocumentFromFieldStack(
             type: typeNode,
             variable: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: targetVariableName } },
             // directives: [],
-            defaultValue: getArgumentDefaultValue(type)
+            defaultValue: isNonNull ? undefined : getArgumentDefaultValue(type)
           })
         Object.assign(valueNode, {
           kind: Kind.VARIABLE,
