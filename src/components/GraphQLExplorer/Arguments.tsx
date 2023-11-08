@@ -5,6 +5,7 @@ import {
   GraphQLInputField,
   GraphQLInputFieldMap,
   GraphQLInputType,
+  isScalarType,
   Kind,
   ObjectFieldNode,
   ValueNode,
@@ -13,6 +14,7 @@ import {
 import { FormattedMessage } from 'react-intl'
 
 import { useGraphQLExplorer } from './provider'
+import { VariableSelectIcon } from './SelectableIcon'
 import SelectableRow from './SelectableRow'
 import { removeUnusedVariablesInDefs, getQueryArgumentsFromStack, getQueryNodeFromStack, getTypeName, isVariableDefinitionUsed, removeUnnecessaryArgumentInField, useEnsureOperationBeforeClick } from './utils'
 
@@ -93,6 +95,10 @@ const Arguments = ({ args }: ArgumentsProps) => {
           if (valueNode.kind === Kind.VARIABLE) {
             selected = valueNode.name.value === arg.name
           }
+        }
+        if (isScalarType(arg.type)) {
+          return <VariableSelectIcon key={arg.name}
+          checked={false}/>
         }
         return (
           <SelectableRow
