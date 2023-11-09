@@ -96,16 +96,14 @@ const Arguments = ({ args }: ArgumentsProps) => {
             selected = valueNode.name.value === arg.name
           }
         }
-        if (isScalarType(arg.type)) {
-          return <VariableSelectIcon key={arg.name}
-          checked={false}/>
-        }
         return (
           <SelectableRow
             key={arg.name}
             name={arg.name}
             selected={selected}
-            type={getTypeName(arg.type)}
+            selectType={isScalarType(arg.type) ? 'variable' : undefined}
+            type={arg.type}
+            typeName={getTypeName(arg.type)}
             onSelect={() => onSelect(arg, selected, index)}
             onClick={() => onClick(arg)}
           />

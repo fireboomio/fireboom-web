@@ -43,7 +43,7 @@ const RootPanel = ({ query, mutation, subscription }: RootPanelProps) => {
       {query && (
         <SelectableRow
           name="query"
-          type={query.name}
+          typeName={query.name}
           selected={operationDefs?.operation === OperationTypeNode.QUERY}
           onSelect={() => onSelect(OperationTypeNode.QUERY)}
           onClick={() => {
@@ -54,7 +54,7 @@ const RootPanel = ({ query, mutation, subscription }: RootPanelProps) => {
       {mutation && (
         <SelectableRow
           name="mutation"
-          type={mutation.name}
+          typeName={mutation.name}
           selected={operationDefs?.operation === OperationTypeNode.MUTATION}
           onSelect={() => onSelect(OperationTypeNode.MUTATION)}
           onClick={() => {
@@ -65,7 +65,7 @@ const RootPanel = ({ query, mutation, subscription }: RootPanelProps) => {
       {subscription && (
         <SelectableRow
           name="subscription"
-          type={subscription.name}
+          typeName={subscription.name}
           selected={operationDefs?.operation === OperationTypeNode.SUBSCRIPTION}
           onSelect={() => onSelect(OperationTypeNode.SUBSCRIPTION)}
           onClick={() => {

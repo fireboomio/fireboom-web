@@ -87,7 +87,7 @@ const Fields = ({ fields }: FieldsProps) => {
             key={field.name}
             selected={selectedKeys?.includes(field.name)}
             name={key}
-            type={getTypeName(field.type)}
+            typeName={getTypeName(field.type)}
             onSelect={() => onSelect(field, selectedKeys?.indexOf(field.name) ?? -1)}
             onClick={() => {
               setGraphQLObjectStack([...graphqlObjectStack, field])
