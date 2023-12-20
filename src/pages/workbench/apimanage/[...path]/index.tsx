@@ -13,7 +13,6 @@ import { useParams } from 'react-router-dom'
 import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
-import GraphQLExplorer from '@/components/GraphQLExplorer'
 import { useDragResize } from '@/hooks/resize'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useEventBus } from '@/lib/event/events'
@@ -26,9 +25,9 @@ import { GraphiQL } from './components/GraphiQL'
 // @ts-ignore
 // import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'
-// import GraphiqlExplorer from './components/GraphQLExplorer/origin'
+import GraphiqlExplorer from './components/GraphQLExplorer/origin'
 import RightSider from './components/RightSider'
-// import GraphiQLExplorer from './components/GraphiqlExplorer'
+// import GraphiQLExplorer from './components/GraphiQLExplorer'
 import { useAPIManager } from './store'
 
 async function fetchSubscription(rec: Record<string, unknown>, controller: AbortController) {
@@ -266,7 +265,7 @@ export default function APIEditorContainer() {
                 onChange={setQuery}
                 onRefresh={onRefreshSchema}
               /> */}
-                {/* <GraphiqlExplorer
+                <GraphiqlExplorer
                   ref={explorerRef}
                   schema={schema}
                   filtersMap={filtersMap}
@@ -280,8 +279,8 @@ export default function APIEditorContainer() {
                   // getDefaultScalarArgValue={getDefaultScalarArgValue}
                   // makeDefaultArg={makeDefaultArg}
                   notifyError={msg => message.error(msg)}
-                /> */}
-                <GraphQLExplorer
+                />
+                {/* <GraphQLExplorer
                   key={apiPath}
                   operationName={operationName}
                   schema={schema}
@@ -289,7 +288,7 @@ export default function APIEditorContainer() {
                   loading={isRefreshing}
                   onChange={setQuery}
                   onRefresh={onRefreshSchema}
-                />
+                /> */}
               </div>
             </div>
             {editor}
