@@ -105,25 +105,6 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     }
   }, [schemaAST])
 
-  const copyAPI = useCallback(async () => {
-    if (apiDesc?.path) {
-      const destPath = `${apiDesc!.path}Copy${Math.random().toString(36).substring(2, 5)}`
-      try {
-        await requests.post('/operation/copy', {
-          dst: destPath,
-          src: apiDesc!.path,
-          overload: false
-        })
-        message.success(
-          intl.formatMessage({ defaultMessage: '已复制接口 {path}' }, { path: destPath })
-        )
-        void mutateApi()
-      } catch (error) {
-        //
-      }
-    }
-  }, [apiDesc, intl])
-
   const copyLink = useCallback(async () => {
     let link = `${
       getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl) ?? ''
@@ -205,19 +186,12 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
 
   // 快捷键
   useEffect(() => {
-    const unbind1 = registerHotkeyHandler('alt+shift+d,^+shift+d', e => {
-      e.preventDefault()
-      copyAPI()
-    })
-    const unbind2 = registerHotkeyHandler('alt+shift+c,^+shift+c', e => {
+    const unbind = registerHotkeyHandler('alt+shift+c,^+shift+c', e => {
       e.preventDefault()
       copyLink()
     })
-    return () => {
-      unbind1()
-      unbind2()
-    }
-  }, [copyAPI, copyLink])
+    return unbind
+  }, [copyLink])
 
   return (
     <div
@@ -274,9 +248,6 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
             <FlashFilled className="h-1.5 top-0.5 -right-1 text-[#3AE375] w-1.5 absolute" />
           )}
         </div>
-        <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口' })}>
-          <CopyOutlined className="cursor-pointer ml-3 text-[#6F6F6F]" onClick={copyAPI} />
-        </Tooltip>
         <Tooltip title={intl.formatMessage({ defaultMessage: '复制接口URL地址，上线API方可测试' })}>
           <LinkOutlined className="cursor-pointer ml-2 text-[#6F6F6F]" onClick={copyLink} />
         </Tooltip>
