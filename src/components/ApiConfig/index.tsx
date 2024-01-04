@@ -1,16 +1,17 @@
-import { Button, Checkbox, Form, InputNumber, message, Switch } from 'antd'
+import { Button, Checkbox, Form, Input, InputNumber, message, Space, Switch } from 'antd'
 import { OperationTypeNode } from 'graphql/index'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { mutateApi, useApiGlobalSetting } from '@/hooks/store/api'
 import { OperationType } from '@/interfaces/operation'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
+// import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import requests from '@/lib/fetchers'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
 import styles from './index.module.less'
+import { debounce } from 'lodash'
 
 interface Props {
   operationType?: OperationTypeNode
@@ -21,7 +22,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const intl = useIntl()
-  const { onRefreshMenu } = useContext(WorkbenchContext)
+  // const { onRefreshMenu } = useContext(WorkbenchContext)
   const [apiSetting, setApiSetting] = useState<ApiDocuments.Operation>()
   const [form] = Form.useForm()
   const { data: globalSetting, mutate: refreshGlobalSetting } = useApiGlobalSetting()
@@ -68,7 +69,7 @@ export default function Index(props: Props) {
   }, [apiSetting, globalSetting])
 
   const { refreshAPI } = useAPIManager()
-  const onChange = (changedValues: ApiDocuments.Operation, allValues: ApiDocuments.Operation) => {
+  const onChange = debounce((changedValues: ApiDocuments.Operation, allValues: ApiDocuments.Operation) => {
     // 全局配置需要手动保存
     if (props.type !== 'panel') {
       return
@@ -113,7 +114,7 @@ export default function Index(props: Props) {
     //   message.success('保存成功')
     //   props.onClose?.()
     // })
-  }
+  }, 500)
 
   // let setting = globalSetting
   // if (apiSetting?.enabled) {
@@ -132,7 +133,10 @@ export default function Index(props: Props) {
   }
 
   const disabled = !apiSetting?.configCustomized && props.type !== 'global'
-
+  const isGlobal = props.type === 'global'
+  // 限流字段
+  const rateLimitField = 'rateLimit'
+  const rateLimitEnabled = Form.useWatch([rateLimitField, 'enabled'], form)
   return (
     <div className={styles[props.type]}>
       <Form
@@ -144,7 +148,7 @@ export default function Index(props: Props) {
         labelAlign="left"
         onValuesChange={onChange}
       >
-        {props.type !== 'global' ? (
+        {!isGlobal && (
           <>
             <Form.Item
               // noStyle
@@ -158,8 +162,8 @@ export default function Index(props: Props) {
 
             <div className={styles.splitLine} />
           </>
-        ) : null}
-        {props.type === 'global' ? (
+        )}
+        {isGlobal ? (
           <>
             <div className={styles.tip}>
               <FormattedMessage defaultMessage="授权配置" description="API授权配置" />
@@ -319,7 +323,75 @@ export default function Index(props: Props) {
             </>
           ) : null}
         </>
-        {props.type === 'global' ? (
+        {!isGlobal && (
+          <>
+            <div className={styles.splitLine} />
+            {/* 限流配置 */}
+            <div className={styles.tip}>
+              <FormattedMessage defaultMessage="限流配置" />
+            </div>
+            <Space className="w-full" align="center">
+              <Form.Item
+                wrapperCol={{ span: 24 }}
+                name={[rateLimitField, 'enabled']}
+                valuePropName="checked"
+              >
+                <Checkbox>
+                  <FormattedMessage defaultMessage="启用" />
+                </Checkbox>
+              </Form.Item>
+              {rateLimitEnabled && (
+                <>
+                  <Form.Item
+                    className="w-28"
+                    name={[rateLimitField, 'perSecond']}
+                    wrapperCol={{ span: 24 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: intl.formatMessage({ defaultMessage: '不能为空' })
+                      },
+                      {
+                        min: 1
+                      }
+                    ]}
+                  >
+                    <InputNumber
+                      min={1}
+                      precision={0}
+                      defaultValue={60}
+                      placeholder={intl.formatMessage({ defaultMessage: '60' })}
+                      suffix={intl.formatMessage({ defaultMessage: '秒' })}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    className="w-28"
+                    name={[rateLimitField, 'requests']}
+                    wrapperCol={{ span: 24 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: intl.formatMessage({ defaultMessage: '不能为空' })
+                      },
+                      {
+                        min: 0
+                      }
+                    ]}
+                  >
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      defaultValue={120}
+                      placeholder={intl.formatMessage({ defaultMessage: '100' })}
+                      suffix={intl.formatMessage({ defaultMessage: '次' })}
+                    />
+                  </Form.Item>
+                </>
+              )}
+            </Space>
+          </>
+        )}
+        {isGlobal ? (
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button
               className={'btn-save'}

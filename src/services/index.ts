@@ -102,22 +102,17 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/authentication/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'authentication@/authentication/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'authentication@/authentication/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/authentication/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'authentication@/authentication/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -301,7 +296,7 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/datasource/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
@@ -319,16 +314,25 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'datasource@/datasource/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'datasource@/datasource/graphqlQuery/{dataName}'(
+    args: {
+      /**
+       * @description dataName
+       */
+      dataName: string
+    } & string
+  ) {
+    return requestAdapter<any>({
+      url: replacePath('/datasource/graphqlQuery/{dataName}', args),
+      method: 'POST',
+      ...extract('POST', args, [], ['dataName'])
+    })
+  },
+  'datasource@/datasource/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/datasource/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'datasource@/datasource/migrate/{dataName}'(
@@ -436,7 +440,7 @@ export const services = {
     })
   },
   'engine@/engine/swagger'(args?: any) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/engine/swagger', args),
       method: 'GET',
       ...extract('GET', args, [], [])
@@ -541,7 +545,7 @@ export const services = {
     })
   },
   'home@/home'(args?: any) {
-    return requestAdapter<ApiDocuments.handler_homeStatistics>({
+    return requestAdapter<ApiDocuments.api_homeStatistics>({
       url: replacePath('/home', args),
       method: 'GET',
       ...extract('GET', args, [], [])
@@ -620,7 +624,7 @@ export const services = {
       ...extract('PUT', args, ['watchAction'], [])
     })
   },
-  'operation@/operation/bindRoles'(args: ApiDocuments.handler_paramBindRole) {
+  'operation@/operation/bindRoles'(args: ApiDocuments.api_paramBindRole) {
     return requestAdapter<string[]>({
       url: replacePath('/operation/bindRoles', args),
       method: 'POST',
@@ -652,7 +656,7 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/operation/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
@@ -710,19 +714,14 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'operation@/operation/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'operation@/operation/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/operation/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
-  'operation@/operation/listByRole'(args: ApiDocuments.handler_paramQueryRole) {
+  'operation@/operation/listByRole'(args: ApiDocuments.api_paramQueryRole) {
     return requestAdapter<ApiDocuments.Operation[]>({
       url: replacePath('/operation/listByRole', args),
       method: 'POST',
@@ -905,22 +904,17 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/role/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'role@/role/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'role@/role/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/role/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'role@/role/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -1072,6 +1066,18 @@ export const services = {
       ...extract('DELETE', args, [], ['dataName'])
     })
   },
+  'default@/sdk/downloadOutput/{dataName}'(args: {
+    /**
+     * @description dataName
+     */
+    dataName: string
+  }) {
+    return requestAdapter<any>({
+      url: replacePath('/sdk/downloadOutput/{dataName}', args),
+      method: 'GET',
+      ...extract('GET', args, [], ['dataName'])
+    })
+  },
   'sdk@/sdk/enabledServer'(args?: any) {
     return requestAdapter<ApiDocuments.models_Sdk>({
       url: replacePath('/sdk/enabledServer', args),
@@ -1085,22 +1091,17 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/sdk/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
     })
   },
-  'sdk@/sdk/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'sdk@/sdk/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/sdk/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'sdk@/sdk/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -1258,7 +1259,7 @@ export const services = {
      */
     dataNames?: string[]
   }) {
-    return requestAdapter<File>({
+    return requestAdapter<any>({
       url: replacePath('/storage/export', args),
       method: 'GET',
       ...extract('GET', args, ['dataNames'], [])
@@ -1276,16 +1277,11 @@ export const services = {
       ...extract('GET', args, [], ['dataName'])
     })
   },
-  'storage@/storage/import'(args: {
-    /**
-     * @description 文件
-     */
-    file: number[]
-  }) {
+  'storage@/storage/import'(args: ApiDocuments.postAuthenticationImport) {
     return requestAdapter<any>({
       url: replacePath('/storage/import', args),
       method: 'POST',
-      ...extract('POST', args, ['file'], [])
+      ...extract('POST', args, [], [])
     })
   },
   'storage@/storage/rename'(args: ApiDocuments.fileloader_DataMutation) {
@@ -1559,8 +1555,8 @@ export const services = {
 
 export type ServiceKeys = keyof typeof services
 
-export type ServiceArg<T extends ServiceKeys> = Parameters<typeof services[T]>[0]
+export type ServiceArg<T extends ServiceKeys> = Parameters<(typeof services)[T]>[0]
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
 
-export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<typeof services[T]>>['data']
+export type ServiceReturn<T extends ServiceKeys> = Awaited<ReturnType<(typeof services)[T]>>['data']

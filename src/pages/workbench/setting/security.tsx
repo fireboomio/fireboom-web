@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PaperClipOutlined } from '@ant-design/icons'
-import { Button, Form, message, Switch } from 'antd'
+import { Button, Checkbox, Form, InputNumber, message, Space, Switch } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
@@ -20,6 +20,10 @@ export default function SettingMainVersion() {
   // const { getConfigurationValue } = useConfigurationVariable()
   const { globalSetting, updateGlobalSetting } = useConfigContext()
   const [form] = Form.useForm<Security>()
+
+  // 限流字段
+  const rateLimitField = 'globalRateLimit'
+  const rateLimitEnabled = Form.useWatch([rateLimitField, 'enabled'], form)
 
   if (!globalSetting) {
     return null
@@ -146,6 +150,67 @@ export default function SettingMainVersion() {
               </>
             )}
           </Form.List>
+        </Form.Item>
+        <Form.Item label={intl.formatMessage({ defaultMessage: '全局 API 限流' })}>
+          <Space className="w-full" align="center">
+            <Form.Item
+              wrapperCol={{ span: 24 }}
+              name={[rateLimitField, 'enabled']}
+              valuePropName="checked"
+            >
+              <Checkbox>
+                <FormattedMessage defaultMessage="启用" />
+              </Checkbox>
+            </Form.Item>
+            {rateLimitEnabled && (
+              <>
+                <Form.Item
+                  className="w-28"
+                  name={[rateLimitField, 'perSecond']}
+                  wrapperCol={{ span: 24 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: intl.formatMessage({ defaultMessage: '不能为空' })
+                    },
+                    {
+                      min: 1
+                    }
+                  ]}
+                >
+                  <InputNumber
+                    min={1}
+                    precision={0}
+                    defaultValue={60}
+                    placeholder={intl.formatMessage({ defaultMessage: '60' })}
+                    suffix={intl.formatMessage({ defaultMessage: '秒' })}
+                  />
+                </Form.Item>
+                <Form.Item
+                  className="w-28"
+                  name={[rateLimitField, 'requests']}
+                  wrapperCol={{ span: 24 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: intl.formatMessage({ defaultMessage: '不能为空' })
+                    },
+                    {
+                      min: 0
+                    }
+                  ]}
+                >
+                  <InputNumber
+                    min={0}
+                    precision={0}
+                    defaultValue={120}
+                    placeholder={intl.formatMessage({ defaultMessage: '100' })}
+                    suffix={intl.formatMessage({ defaultMessage: '次' })}
+                  />
+                </Form.Item>
+              </>
+            )}
+          </Space>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 5, span: 12 }}>
           <Button className={'btn-cancel mr-4'} onClick={() => form.resetFields()}>

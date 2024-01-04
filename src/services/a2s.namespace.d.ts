@@ -27,7 +27,7 @@ export declare namespace ApiDocuments {
   export interface ConfigurationVariable extends BasicDto {
     environmentVariableDefaultValue?: string
     environmentVariableName?: string
-    kind: string | number
+    kind: number
     placeholderVariableName?: string
     staticVariableContent?: string
   }
@@ -70,7 +70,7 @@ export declare namespace ApiDocuments {
     customRest: ApiDocuments.CustomRest
     deleteTime: string
     enabled: boolean
-    kind: string | number
+    kind: number
     name: string
     updateTime: string
   }
@@ -95,7 +95,7 @@ export declare namespace ApiDocuments {
     forceHttpsRedirects: boolean
     globalRateLimit?: {
       enabled: boolean
-      perDuration: number
+      perSecond: number
       requests: number
     }
     nodeOptions: ApiDocuments.NodeOptions
@@ -145,10 +145,11 @@ export declare namespace ApiDocuments {
     createTime: string
     deleteTime: string
     enabled: boolean
-    engine: string | number
+    engine: number
     hooksConfiguration: ApiDocuments.OperationHooksConfiguration
     liveQueryConfig: ApiDocuments.OperationLiveQueryConfig
     path: string
+    rateLimit: ApiDocuments.OperationRateLimit
     remark: string
     title: string
     updateTime: string
@@ -164,6 +165,7 @@ export declare namespace ApiDocuments {
   }
   export interface OperationHooksConfiguration extends BasicDto {
     customResolve: boolean
+    httpTransportAfterResponse: boolean
     httpTransportBeforeRequest: boolean
     httpTransportOnRequest: boolean
     httpTransportOnResponse: boolean
@@ -173,11 +175,15 @@ export declare namespace ApiDocuments {
     onConnectionInit: boolean
     postResolve: boolean
     preResolve: boolean
-    tsPathMap?: {}
   }
   export interface OperationLiveQueryConfig extends BasicDto {
     enabled: boolean
     pollingIntervalSeconds: number
+  }
+  export interface OperationRateLimit extends BasicDto {
+    enabled: boolean
+    perSecond: number
+    requests: number
   }
   export interface Role extends BasicDto {
     code: string
@@ -201,12 +207,12 @@ export declare namespace ApiDocuments {
   }
   export interface Sdk extends BasicDto {
     author: string
+    codePackage: string
     createTime: string
     deleteTime: string
     description: string
     enabled: boolean
     extension: string
-    generateTime: string
     gitBranch: string
     gitCommitHash: string
     gitUrl: string
@@ -217,8 +223,8 @@ export declare namespace ApiDocuments {
     title: string
     type: string
     updateTime: string
+    upperFirst: boolean
     version: string
-    upperFirst?: boolean
   }
   export interface ServerLogging extends BasicDto {
     level: ApiDocuments.ConfigurationVariable
@@ -241,6 +247,43 @@ export declare namespace ApiDocuments {
     updateTime: string
     uploadProfiles: {}
     useSSL: boolean
+  }
+  export interface api_authenticationStatistics extends BasicDto {
+    authenticationTotal?: number
+    userTodayAdd?: number
+    userTotal?: number
+  }
+  export interface api_datasourceStatistics extends BasicDto {
+    customizeTotal?: number
+    databaseTotal?: number
+    graphqlTotal?: number
+    restTotal?: number
+  }
+  export interface api_homeStatistics extends BasicDto {
+    authentication?: ApiDocuments.api_authenticationStatistics
+    dataSource?: ApiDocuments.api_datasourceStatistics
+    operation?: ApiDocuments.api_operationStatistics
+    storage?: ApiDocuments.api_storageStatistics
+  }
+  export interface api_operationStatistics extends BasicDto {
+    liveQueryTotal?: number
+    mutationTotal?: number
+    queryTotal?: number
+    subscriptionTotal?: number
+  }
+  export interface api_paramBindRole extends BasicDto {
+    operationPaths?: string[]
+    rbacType?: string
+    roleCodes?: string[]
+  }
+  export interface api_paramQueryRole extends BasicDto {
+    rbacType?: string
+    roleCode?: string
+  }
+  export interface api_storageStatistics extends BasicDto {
+    memoryTotal?: number
+    memoryUsed?: number
+    storageTotal?: number
   }
   export interface fileloader_DataBatchResult extends BasicDto {
     dataName?: string
@@ -299,43 +342,6 @@ export declare namespace ApiDocuments {
     data?: any
     user?: string
   }
-  export interface handler_authenticationStatistics extends BasicDto {
-    authenticationTotal?: number
-    userTodayAdd?: number
-    userTotal?: number
-  }
-  export interface handler_datasourceStatistics extends BasicDto {
-    customizeTotal?: number
-    databaseTotal?: number
-    graphqlTotal?: number
-    restTotal?: number
-  }
-  export interface handler_homeStatistics extends BasicDto {
-    authentication?: ApiDocuments.handler_authenticationStatistics
-    dataSource?: ApiDocuments.handler_datasourceStatistics
-    operation?: ApiDocuments.handler_operationStatistics
-    storage?: ApiDocuments.handler_storageStatistics
-  }
-  export interface handler_operationStatistics extends BasicDto {
-    liveQueryTotal?: number
-    mutationTotal?: number
-    queryTotal?: number
-    subscriptionTotal?: number
-  }
-  export interface handler_paramBindRole extends BasicDto {
-    operationPaths?: string[]
-    rbacType?: string
-    roleCodes?: string[]
-  }
-  export interface handler_paramQueryRole extends BasicDto {
-    rbacType?: string
-    roleCode?: string
-  }
-  export interface handler_storageStatistics extends BasicDto {
-    memoryTotal?: number
-    memoryUsed?: number
-    storageTotal?: number
-  }
   export interface i18n_CustomError extends BasicDto {
     /**
      * @description 错误码
@@ -362,12 +368,12 @@ export declare namespace ApiDocuments {
   export interface models_HookOptions extends BasicDto {}
   export interface models_Sdk extends BasicDto {
     author?: string
+    codePackage?: string
     createTime?: string
     deleteTime?: string
     description?: string
     enabled?: boolean
     extension?: string
-    generateTime?: string
     gitBranch?: string
     gitCommitHash?: string
     gitUrl?: string
@@ -378,9 +384,23 @@ export declare namespace ApiDocuments {
     title?: string
     type?: ApiDocuments.models_sdkType
     updateTime?: string
+    upperFirst?: boolean
     version?: string
   }
-  export interface models_Storage extends BasicDto {}
+  export interface models_Storage extends BasicDto {
+    accessKeyID?: ApiDocuments.wgpb_ConfigurationVariable
+    bucketLocation?: ApiDocuments.wgpb_ConfigurationVariable
+    bucketName?: ApiDocuments.wgpb_ConfigurationVariable
+    createTime?: string
+    deleteTime?: string
+    enabled?: boolean
+    endpoint?: ApiDocuments.wgpb_ConfigurationVariable
+    name?: string
+    secretAccessKey?: ApiDocuments.wgpb_ConfigurationVariable
+    updateTime?: string
+    uploadProfiles?: {}
+    useSSL?: boolean
+  }
   export interface models_StorageFile extends BasicDto {
     /**
      * @description A standard MIME type describing the format of the object data.
@@ -415,4 +435,37 @@ export declare namespace ApiDocuments {
     type?: ApiDocuments.vscode_FileType
   }
   export interface vscode_FileType extends BasicDto {}
+  export interface wgpb_ConfigurationVariable extends BasicDto {
+    /**
+     * @description [omitempty]
+     */
+    environmentVariableDefaultValue?: string
+    /**
+     * @description [omitempty]
+     */
+    environmentVariableName?: string
+    kind?: ApiDocuments.wgpb_ConfigurationVariableKind
+    /**
+     * @description [omitempty]
+     */
+    placeholderVariableName?: string
+    /**
+     * @description [omitempty]
+     */
+    staticVariableContent?: string
+  }
+  export interface wgpb_ConfigurationVariableKind extends BasicDto {}
+  export interface wgpb_S3UploadProfile extends BasicDto {
+    allowedFileExtensions?: string[]
+    allowedMimeTypes?: string[]
+    hooks?: ApiDocuments.wgpb_S3UploadProfileHooksConfiguration
+    maxAllowedFiles?: number
+    maxAllowedUploadSizeBytes?: number
+    metadataJSONSchema?: string
+    requireAuthentication?: boolean
+  }
+  export interface wgpb_S3UploadProfileHooksConfiguration extends BasicDto {
+    postUpload?: boolean
+    preUpload?: boolean
+  }
 }
