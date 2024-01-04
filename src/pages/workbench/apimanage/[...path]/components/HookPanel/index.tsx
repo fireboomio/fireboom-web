@@ -89,7 +89,12 @@ export default function HookPanel({ apiPath }: { apiPath?: string }) {
         name: 'mutatingPostResolve',
         enabled: apiDesc?.hooksConfiguration?.mutatingPostResolve ?? false,
         path: `${dict.mutatingPostResolve}/${apiDesc?.path}/mutatingPostResolve`
-      }
+      },
+      {
+        name: 'afterResponse',
+        enabled: globalHooksState?.afterOriginResponse?.enabled ?? false,
+        path: globalHooksState?.afterOriginResponse?.path?.replace(/\.\w+/, '')
+      },
     ]
     return hooks.filter(hook => {
       // 无参数的请求不显示 mutatingPreResolve

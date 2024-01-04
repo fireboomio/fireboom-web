@@ -114,6 +114,11 @@ const APIFlowChart = ({ apiPath }: { apiPath: string }) => {
         name: 'onConnectionInit',
         enabled: globalHooksState?.onConnectionInit?.enabled ?? false,
         path: globalHooksState?.onConnectionInit?.path?.replace(/\.\w+/, '')
+      },
+      afterResponse: {
+        name: 'afterResponse',
+        enabled: globalHooksState?.afterOriginResponse?.enabled ?? false,
+        path: globalHooksState?.afterOriginResponse?.path?.replace(/\.\w+/, '')
       }
     })
     const defs =

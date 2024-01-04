@@ -10,6 +10,7 @@ export type NormalGlobalHookState = {
   beforeRequest: HookState
   onRequest: HookState
   onResponse: HookState
+  afterResponse: HookState
 }
 
 export type SubscriptionGlobalHookState = {

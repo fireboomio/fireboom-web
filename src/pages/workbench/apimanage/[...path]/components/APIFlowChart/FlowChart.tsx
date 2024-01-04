@@ -718,7 +718,7 @@ const FlowChart = ({
     const routerIndex = arrowNodes.push(routerSwitch) - 1
     y += 12 + 30
 
-    // custom
+    // customResolve
     const customDirective = new ActionGroup(
       {
         shape: 'hook',
@@ -772,7 +772,7 @@ const FlowChart = ({
       )
     })
 
-    // onOriginRequest
+    // onRequest
     if (globalHookState.onRequest) {
       const globalPreHookMetadata: Node.Metadata = {
         shape: 'globalHook',
@@ -925,7 +925,7 @@ const FlowChart = ({
       ],
       'arrow'
     ).addToGraph(graph)
-    y += 14 + HOOK_HEIGHT
+    y += 18 + HOOK_HEIGHT
 
     const loopEndPoint = y - 6
 
@@ -1063,6 +1063,36 @@ const FlowChart = ({
         }
       })
     }
+
+    // 如果有轮询，在轮询结束后才走afterResponse钩子
+    // 全局指令
+    const afterResponseDirective = new ActionGroup(
+      {
+        shape: 'globalHook',
+        x: HOOK_X,
+        y
+      },
+      [
+        {
+          shape: 'react-shape',
+          width: 114,
+          height: 20,
+          component: (
+            <StatusDirective
+              enabled={globalHookState.afterResponse.enabled}
+              label="afterResponse"
+              onClick={() => onEditHook?.(globalHookState.afterResponse)}
+              onToggleEnabled={flag => onToggleHook?.(globalHookState.afterResponse, flag)}
+            />
+          ),
+          x: 290,
+          y
+        }
+      ],
+      'arrow'
+    )
+    directiveNodes.push(afterResponseDirective)
+    y += 16 + HOOK_HEIGHT
 
     // 发送响应到客户端
     const sendResponse = graph.createNode({
