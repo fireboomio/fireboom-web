@@ -3122,7 +3122,7 @@ class ExplorerWrapper extends React.PureComponent<
     return (
       <div
         // Updated
-        className="h-full min-w-64 w-full docExplorerWrap"
+        className="h-full w-full docExplorerWrap"
         key={this.state.k}
         style={{
           zIndex: 7,

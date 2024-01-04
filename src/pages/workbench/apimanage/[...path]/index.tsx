@@ -7,7 +7,7 @@ import 'graphiql/graphiql.css'
 import { message } from 'antd'
 import type { IntrospectionQuery } from 'graphql'
 // import { debounce } from 'lodash'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { Observable } from 'rxjs'
@@ -29,6 +29,7 @@ import GraphiqlExplorer from './components/GraphQLExplorer/origin'
 import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiQLExplorer'
 import { useAPIManager } from './store'
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 
 async function fetchSubscription(rec: Record<string, unknown>, controller: AbortController) {
   return new Observable(observer => {
@@ -100,7 +101,8 @@ async function fetcher(rec: Record<string, unknown>, setSchema: (q: Introspectio
 export default function APIEditorContainer() {
   const intl = useIntl()
   const params = useParams()
-  const { dragRef, elRef } = useDragResize({ direction: 'horizontal' })
+  const workbenchCtx = useContext(WorkbenchContext)
+  const { dragRef, elRef } = useDragResize({ direction: 'horizontal', minSize: 220 })
   const { engineStatus } = useEngine()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const dataSourceList = useDataSourceList()
@@ -252,7 +254,7 @@ export default function APIEditorContainer() {
         <APIHeader onGetQuery={() => editingContent.current} />
         <div className="flex flex-nowrap flex-1 min-h-0 items-stretch">
           <div className="flex h-full flex-1 min-w-0 items-stretch overflow-hidden ">
-            <div className="h-full relative min-w-40" ref={elRef} style={{ width: '220px' }}>
+            {!workbenchCtx.isFullscreen && <div className="h-full relative min-w-40" ref={elRef} style={{ width: '220px' }}>
               <div className="top-0 right-0 bottom-0 w-1 z-2 absolute" ref={dragRef}></div>
               <div className="h-full w-full relative overflow-x-auto">
                 {/* <GraphiqlExplorer
@@ -290,7 +292,7 @@ export default function APIEditorContainer() {
                   onRefresh={onRefreshSchema}
                 /> */}
               </div>
-            </div>
+            </div>}
             {editor}
           </div>
           <RightSider />
