@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import requests from '@/lib/fetchers'
 import type { ApiDocuments } from '@/services/a2s.namespace'

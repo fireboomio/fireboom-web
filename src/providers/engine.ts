@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 

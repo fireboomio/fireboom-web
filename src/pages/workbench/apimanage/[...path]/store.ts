@@ -9,7 +9,7 @@ import type {
 import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
 import { isEqual, keyBy } from 'lodash'
 import { mutate } from 'swr'
-import create from 'zustand'
+import { create } from 'zustand'
 
 import { mutateApi } from '@/hooks/store/api'
 import requests, { getAuthKey } from '@/lib/fetchers'

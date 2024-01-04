@@ -1,7 +1,7 @@
 import type { ButtonProps } from 'antd'
 import { uniqueId } from 'lodash'
 import type { ReactNode } from 'react'
-import create from 'zustand'
+import { create } from 'zustand'
 
 const SILENT_MODE_KEY = 'notification.silent'
 

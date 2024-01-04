@@ -1,5 +1,5 @@
 import { EngineStatus } from '@/interfaces/common'
-import create from 'zustand'
+import { create } from 'zustand'
 
 type Log = {
   level: string
