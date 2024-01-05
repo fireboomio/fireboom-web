@@ -77,8 +77,8 @@ export async function resolveDefaultCode(
       profileName
     })
   } else {
-    const operationPath = list.slice(-2).join('/')
-    const operationName = list.slice(-2).join('__')
+    const operationPath = list.slice(2).join('/')
+    const operationName = list.slice(2).join('__')
     code = await getDefaultCode(language, ext, ['operation', name], {
       ...variables,
       operationPath,
