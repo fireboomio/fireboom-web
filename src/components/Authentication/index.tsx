@@ -75,7 +75,7 @@ const Authentication = (props: AuthenticationProps) => {
     [globalSetting, intl]
   )
   useEffect(() => {
-    axios.get<AppRuntime>('/health', { baseURL: '/' }).then(res => {
+    axios.get<AppRuntime>('/fb_health', { baseURL: '/' }).then(res => {
       if (res.status < 300) {
         setAppRuntime(res.data)
         refreshConfig().then(resp => {
