@@ -27,25 +27,7 @@ export const getValueByType = ({ value, field, useSet = true }: GetValueOptions)
     result = value ? JSON.parse(value) : field.list ? [] : {}
   } else if (field.list) {
     if (!value) return []
-    result = useSet ? { set: value } : value
-    // const result: any[] = value.split(',')
-    // switch (field.type) {
-    //   case 'Int':
-    //     result.forEach((v: string, index) => {
-    //       result[index] = parseInt(v)
-    //     })
-    //     break
-    //   case 'Float':
-    //     result.forEach((v: string, index) => {
-    //       result[index] = parseFloat(v)
-    //     })
-    //     break
-    //   case 'Boolean':
-    //     result.forEach((v: string, index) => (result[index] = v))
-    //     break
-    // }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    // return result
+    result = value
   } else {
     switch (field.type) {
       case 'BigInt':

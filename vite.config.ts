@@ -57,7 +57,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '^/health': backendUrl,
+      '^/fb_health': backendUrl,
       '^/app': backendUrl,
       '^/api': {
         target: backendUrl,
