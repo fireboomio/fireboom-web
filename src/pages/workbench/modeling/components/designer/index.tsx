@@ -45,6 +45,7 @@ const ModeKey = 'modeling_edit_mode'
 
 const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const intl = useIntl()
+  const [isMigrating, setIsMigrating] = useState(false)
   const { newMap } = useEntities()
   const { currentEntity, changeToEntityById } = useCurrentEntity()
   const editType = newMap[currentEntity?.name] ? 'add' : 'edit'
@@ -233,6 +234,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             <Button
               disabled={!editorValidate || isMongo}
               className={styles.saveBtn}
+              loading={isMigrating}
               onClick={onSave}
             >
               {intl.formatMessage({ defaultMessage: '迁移' })}
@@ -276,28 +278,19 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   }
   async function onSave() {
     try {
-      if (mode === 'editor') {
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
-        await requests.post<unknown, DMFResp>(
-          `/datasource/migrate/${name ?? ''}`,
-          currentEditorValue,
-          { timeout: 30e3 }
-        )
-        await refreshBlocks()
-        hide()
-      } else {
-        const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
-        await requests.post<unknown, DMFResp>(
-          `/datasource/migrate/${name ?? ''}`,
-          transferToEditor(),
-          { timeout: 30e3 }
-        )
-        await refreshBlocks()
-        hide()
-      }
+      setIsMigrating(true)
+      const hide = message.loading(intl.formatMessage({ defaultMessage: '保存中' }))
+      await requests.post<unknown, DMFResp>(
+        `/datasource/migrate/${name ?? ''}`,
+        mode === 'editor' ? currentEditorValue : transferToEditor(),
+        { timeout: 30e3 }
+      )
+      await refreshBlocks()
+      hide()
     } catch (e) {
       console.error(e)
     }
+    setIsMigrating(false)
   }
 
   const onDelete = () => {
@@ -452,7 +445,12 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
             isMongo ? intl.formatMessage({ defaultMessage: 'MongoDB 暂不支持迁移' }) : undefined
           }
         >
-          <Button disabled={!editorValidate || isMongo} className={styles.saveBtn} onClick={onSave}>
+          <Button
+            disabled={!editorValidate || isMongo}
+            loading={isMigrating}
+            className={styles.saveBtn}
+            onClick={onSave}
+          >
             {intl.formatMessage({ defaultMessage: '迁移' })}
           </Button>
         </Tooltip>
