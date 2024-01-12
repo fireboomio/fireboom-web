@@ -55,6 +55,10 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     addItem,
     editItem
   }))
+  const treeContainerRef = useRef<HTMLDivElement>(null)
+  const [treeContainerHeight, setTreeContainerHeight] = useState(500)
+
+  const [dropDownItems, setDropDownItems] = useState<ItemType[]>([])
   const intl = useIntl()
   const [treeData, setTreeData] = useState<InnerNode[]>([]) // 文件树
   const [tempItem, setTempItem] = useState<{ isDir: boolean; parentKey: string } | null>(null)
@@ -261,7 +265,21 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
     setDropDownItems(props.onContextMenu?.(targets, flattenTree(targets)) ?? [])
   }
 
-  const [dropDownItems, setDropDownItems] = useState<ItemType[]>([])
+  // 监听tree容器高度，用来做虚拟滚动
+  useEffect(() => {
+    function getH () {
+      setTreeContainerHeight(treeContainerRef.current?.clientHeight ?? 0)
+    }
+    getH()
+    // 使用 Observe 监听 div 尺寸变化
+    const resizeObserver = new ResizeObserver(getH)
+    resizeObserver.observe(treeContainerRef.current!)
+    return () => {
+      resizeObserver.disconnect()
+    }
+
+  }, [])
+
   return (
     <Dropdown
       className={props.rootClassName}
@@ -280,7 +298,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
           setLastClickKey('')
           lastClickPos.current = ''
         }}
-        className=""
+        ref={treeContainerRef}
         onContextMenu={e => {
           if (!get(e, 'isFromChild')) {
             setDropDownItems([
@@ -302,6 +320,7 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
       >
         <Tree
           onClick={e => e.stopPropagation()}
+          height={treeContainerHeight}
           rootClassName={props.treeClassName}
           draggable={props.draggable ? { icon: false } : false}
           onDrop={({ node, dragNode, dropToGap }) => {
