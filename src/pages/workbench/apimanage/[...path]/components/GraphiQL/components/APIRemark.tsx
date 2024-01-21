@@ -1,8 +1,9 @@
 import { intl } from "@/providers/IntlProvider"
 import { EditFilled } from "@ant-design/icons"
 import { Input, Button } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
+import { useLocation } from "react-router-dom"
 import { useAPIManager } from "../../../store"
 
 const APIRemark = () => {
@@ -10,7 +11,7 @@ const APIRemark = () => {
   const [isEditingRemark, setIsEditingRemark] = useState(false)
   const [editingRemarkContent, setEditingRemarkContent] = useState('')
   const [isSavingRemark, setIsSavingRemark] = useState(false)
-
+  const location = useLocation()
 
   const startEditRemark = () => {
     setIsEditingRemark(true)
@@ -35,6 +36,12 @@ const APIRemark = () => {
       setIsSavingRemark(false)
     }
   }
+
+  useEffect(() => {
+    if (isEditingRemark) {
+      setIsEditingRemark(false)
+    }
+  }, [location.pathname])
 
   return (
     <div className='pt-2 !pl-10 graphiql-toolbar !items-start'>
