@@ -1,6 +1,6 @@
 import { useEditorContext } from '@graphiql/react'
 import type { CodeMirrorEditorWithOperationFacts } from '@graphiql/react/types/editor/context'
-import { Dropdown, message } from 'antd'
+import { Button, Dropdown, Input, message } from 'antd'
 import type {
   ArgumentNode,
   ConstArgumentNode,
@@ -41,6 +41,7 @@ import CrossOriginPopup from './CrossOriginPopup'
 import DirectivePopup from './DirectivePopup'
 import ExecuteButton from './ExecuteButton'
 import RBACPopup from './RBACPopup'
+import APIRemark from './APIRemark'
 
 function containLocation(
   locations: ReadonlyArray<DirectiveLocation> | undefined,
@@ -54,6 +55,7 @@ const GraphiQLToolbar = () => {
   const [argOpen, setArgOpen] = useState(false)
   const { query, schema, operationType, schemaAST, setQuery } = useAPIManager(state => ({
     query: state.query,
+    apiDesc: state.apiDesc,
     schema: state.schema,
     schemaAST: state.schemaAST,
     setQuery: state.setQuery,
@@ -233,7 +235,7 @@ const GraphiQLToolbar = () => {
       if (varDef.directives.some(dir => dir.name.value === directive.name)) {
         message.warning(intl.formatMessage({ defaultMessage: '指令已存在' }))
       } else {
-        ;(varDef.directives as ConstDirectiveNode[]).push({
+        ; (varDef.directives as ConstDirectiveNode[]).push({
           kind: Kind.DIRECTIVE,
           name: { kind: Kind.NAME, value: `${directive.name}` },
           arguments: directive.args
@@ -273,7 +275,7 @@ const GraphiQLToolbar = () => {
         dir => dir.kind === Kind.DIRECTIVE && dir.name.value === directive.name
       )
     ) {
-      ;(node.directives as DirectiveNode[]).push({
+      ; (node.directives as DirectiveNode[]).push({
         kind: Kind.DIRECTIVE,
         name: { kind: Kind.NAME, value: directive.name },
         arguments: directive.args
@@ -382,7 +384,7 @@ const GraphiQLToolbar = () => {
                 dir => dir.kind === Kind.DIRECTIVE && dir.name.value === 'transform'
               )
             ) {
-              ;(node.directives as DirectiveNode[]).push({
+              ; (node.directives as DirectiveNode[]).push({
                 kind: Kind.DIRECTIVE,
                 name: { kind: Kind.NAME, value: 'transform' },
                 arguments: [
@@ -472,6 +474,7 @@ const GraphiQLToolbar = () => {
     )
   }, [schema])
 
+
   // 快捷键
   useEffect(() => {
     const unbind1 = registerHotkeyHandler('alt-shift-+,⌃-shift-+', { splitKey: '-' }, e => {
@@ -489,72 +492,75 @@ const GraphiQLToolbar = () => {
   }, [])
 
   return (
-    <div className="graphiql-toolbar">
-      <ExecuteButton className="cursor-pointer mr-4" />
-      <Dropdown
-        dropdownRender={() => <RBACPopup value={selectedRole} onChange={injectRole} />}
-        trigger={['click']}
-      >
-        <button className="graphiql-toolbar-btn">
-          <FormattedMessage defaultMessage="@角色" description="插入指令处" />
+    <div>
+      <div className="graphiql-toolbar">
+        <ExecuteButton className="cursor-pointer mr-4" />
+        <Dropdown
+          dropdownRender={() => <RBACPopup value={selectedRole} onChange={injectRole} />}
+          trigger={['click']}
+        >
+          <button className="graphiql-toolbar-btn">
+            <FormattedMessage defaultMessage="@角色" description="插入指令处" />
+          </button>
+        </Dropdown>
+        <Dropdown
+          open={apiDirectiveOpen}
+          onOpenChange={onApiDirectiveOpenChange}
+          dropdownRender={() => (
+            <DirectivePopup directives={apiDirectives ?? []} onInject={injectAPIDirective} />
+          )}
+          trigger={['click']}
+        >
+          <button className="graphiql-toolbar-btn">
+            <FormattedMessage defaultMessage="API指令" description="插入指令处" />
+          </button>
+        </Dropdown>
+        <div className="graphiql-toolbar-divider" />
+        <Dropdown
+          open={argOpen}
+          onOpenChange={onArgOpenChange}
+          dropdownRender={() => (
+            <DirectivePopup directives={fieldDirectives ?? []} onInject={injectFieldDirective} />
+          )}
+          trigger={['click']}
+        >
+          <button className="graphiql-toolbar-btn">
+            <FormattedMessage defaultMessage="入参指令" description="插入指令处" />
+          </button>
+        </Dropdown>
+        <button className="graphiql-toolbar-btn" onClick={injectTransform}>
+          <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
         </button>
-      </Dropdown>
-      <Dropdown
-        open={apiDirectiveOpen}
-        onOpenChange={onApiDirectiveOpenChange}
-        dropdownRender={() => (
-          <DirectivePopup directives={apiDirectives ?? []} onInject={injectAPIDirective} />
-        )}
-        trigger={['click']}
-      >
-        <button className="graphiql-toolbar-btn">
-          <FormattedMessage defaultMessage="API指令" description="插入指令处" />
+        <Dropdown dropdownRender={() => <CrossOriginPopup />} trigger={['click']}>
+          <button className="graphiql-toolbar-btn">
+            <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
+          </button>
+        </Dropdown>
+        <button
+          className="graphiql-toolbar-btn"
+          onClick={() =>
+            window.open('https://docs.fireboom.io/he-xin-gai-nian/qing-qiu-shi-xu-tu', '_blank')
+          }
+        >
+          <FormattedMessage defaultMessage="了解更多" description="插入指令处" />
         </button>
-      </Dropdown>
-      <div className="graphiql-toolbar-divider" />
-      <Dropdown
-        open={argOpen}
-        onOpenChange={onArgOpenChange}
-        dropdownRender={() => (
-          <DirectivePopup directives={fieldDirectives ?? []} onInject={injectFieldDirective} />
-        )}
-        trigger={['click']}
-      >
-        <button className="graphiql-toolbar-btn">
-          <FormattedMessage defaultMessage="入参指令" description="插入指令处" />
-        </button>
-      </Dropdown>
-      <button className="graphiql-toolbar-btn" onClick={injectTransform}>
-        <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
-      </button>
-      <Dropdown dropdownRender={() => <CrossOriginPopup />} trigger={['click']}>
-        <button className="graphiql-toolbar-btn">
-          <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
-        </button>
-      </Dropdown>
-      <button
-        className="graphiql-toolbar-btn"
-        onClick={() =>
-          window.open('https://docs.fireboom.io/he-xin-gai-nian/qing-qiu-shi-xu-tu', '_blank')
-        }
-      >
-        <FormattedMessage defaultMessage="了解更多" description="插入指令处" />
-      </button>
-      {/* <Dropdown
-        open={seqOpen}
-        overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
-        trigger={['click']}
-        placement="bottomRight"
-        onOpenChange={onSeqOpenChange}
-      >
-        <span className="graphiql-toolbar-sequence-chart">
-          <FormattedMessage defaultMessage="时序图" description="插入指令处" />
-        </span>
-      </Dropdown> */}
+        {/* <Dropdown
+          open={seqOpen}
+          overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
+          trigger={['click']}
+          placement="bottomRight"
+          onOpenChange={onSeqOpenChange}
+        >
+          <span className="graphiql-toolbar-sequence-chart">
+            <FormattedMessage defaultMessage="时序图" description="插入指令处" />
+          </span>
+        </Dropdown> */}
 
-      <span className="ml-auto graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
-        {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}
-      </span>
+        <span className="ml-auto graphiql-toolbar-fullscreen" onClick={toggleFullscreen}>
+          {workbenchCtx.isFullscreen ? <ExitFullscreenOutlined /> : <FullscreenOutlined />}
+        </span>
+      </div>
+      <APIRemark />
     </div>
   )
 }

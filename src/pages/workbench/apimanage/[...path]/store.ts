@@ -45,6 +45,7 @@ export interface APIState {
   updateAPI: (newAPI: Partial<ApiDocuments.Operation>) => Promise<void>
   updateAPIName: (path: string) => Promise<void>
   updateContent: (content: string, showMessage?: boolean) => boolean | Promise<boolean>
+  updateRemark: (remark: string) => Promise<boolean>
   refreshAPI: (keepCurrentQuery?: boolean) => void
   refreshSchema: () => void
   setSchema: (query: IntrospectionQuery) => void
@@ -212,6 +213,12 @@ export const useAPIManager = create<APIState>((set, get) => ({
         return true
       })
       .catch(() => false)
+  },
+  async updateRemark(remark) {
+    return requests.put(`/operation`, { path: get().apiPath, remark }).then(() => {
+      get().pureUpdateAPI({ remark })
+      return true
+    }).catch(() => false)
   },
   autoSave() {
     /**
