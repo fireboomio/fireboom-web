@@ -49,12 +49,29 @@ requests.interceptors.response.use(
     }
     // @ts-ignore
     if (!error.config.ignoreError) {
-      errToast(
-        errMag ??
+      let code
+      try {
+        // @ts-ignore
+        code = error.response.data.code
+      } catch (error) {
+        //
+      }
+      // 20203 数据未发生变化
+      // @ts-ignore
+      if (!error.config.ignoreError) {
+        if (code !== 20203) {
+          errToast(
+            errMag ??
+              // @ts-ignore
+              error?.response?.data?.message ??
+              intl.formatMessage({ defaultMessage: '网络请求错误！' })
+          )
+        } else {
           // @ts-ignore
-          error?.response?.data?.message ??
-          intl.formatMessage({ defaultMessage: '网络请求错误！' })
-      )
+          message.warning(error.response.data.message)
+        }
+      }
+      
     }
     return Promise.reject(error)
   }
