@@ -172,9 +172,6 @@ export default function SettingMainVersion() {
                     {
                       required: true,
                       message: intl.formatMessage({ defaultMessage: '不能为空' })
-                    },
-                    {
-                      min: 1
                     }
                   ]}
                 >
@@ -194,9 +191,6 @@ export default function SettingMainVersion() {
                     {
                       required: true,
                       message: intl.formatMessage({ defaultMessage: '不能为空' })
-                    },
-                    {
-                      min: 0
                     }
                   ]}
                 >
