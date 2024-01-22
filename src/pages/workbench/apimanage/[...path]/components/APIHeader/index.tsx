@@ -3,7 +3,7 @@ import { Breadcrumb, Input, message, Switch, Tooltip } from 'antd'
 import copy from 'copy-to-clipboard'
 import type { OperationDefinitionNode } from 'graphql'
 import { Kind, OperationTypeNode } from 'graphql'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,6 +21,7 @@ import styles from './index.module.less'
 const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   const intl = useIntl()
   const navigate = useNavigate()
+  const renameLock = useRef(false)
   const { apiDesc, schemaAST, changeEnable, updateAPIName, updateContent, saved, query, apiPath } =
     useAPIManager(state => ({
       apiDesc: state.apiDesc,
@@ -51,9 +52,16 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [apiDesc?.path])
 
   const onInputKey = async (e: React.KeyboardEvent<HTMLInputElement> | { key: string }) => {
+    if (renameLock.current) {
+      return
+    }
+    if (e.key === 'Escape') {
+      setIsEditingName(false)
+    }
     if (e.key === 'Enter') {
       const targetPath = `${[...apiPathList.slice(0, apiPathList.length - 1), name].join('/')}`
       if (targetPath !== apiDesc?.path) {
+        renameLock.current = true
         try {
           if (apiDesc?.path) {
             await updateAPIName(targetPath)
@@ -63,6 +71,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
         } catch (error) {
           //
         }
+        renameLock.current = false
       } else {
         setIsEditingName(false)
       }
@@ -106,9 +115,8 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
   }, [schemaAST])
 
   const copyLink = useCallback(async () => {
-    let link = `${
-      getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl) ?? ''
-    }/operations/${apiDesc?.path}`
+    let link = `${getConfigurationValue(globalSetting.nodeOptions.publicNodeUrl) ?? ''
+      }/operations/${apiDesc?.path}`
     if (!link) {
       message.error(intl.formatMessage({ defaultMessage: '接口异常' }))
       return
