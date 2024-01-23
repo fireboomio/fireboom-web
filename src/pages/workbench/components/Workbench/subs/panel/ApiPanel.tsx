@@ -39,8 +39,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
   const { vscode } = useContext(GlobalContext)
   const [modal, contextHolder] = Modal.useModal()
   const fileTree = useRef<FileTreeRef>({
-    addItem: () => {},
-    editItem: () => {}
+    addItem: () => { },
+    editItem: () => { }
   })
   const {
     computed: { saved },
@@ -208,7 +208,7 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
       confirm = false
     ) => {
       const oldPath = dragNode.path
-      const newPath = `${dropNode?.path ?? ''}/${dragNode.path?.split('/').pop()}`
+      const newPath = `${dropNode?.path ? `${dropNode.path}/` : ''}${dragNode.path?.split('/').pop()}`
       // 判断移动目标是否包含当前已打开的api， 如果有，则需要更新api信息
       const hasCurrent = !!getNodeByPath(currentUrlPath, [dragNode])
       if (dragNode.isDir) {
@@ -296,8 +296,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
             nodeData.name === 'proxy'
               ? styles.proxyIcon
               : nodeData.name === 'function'
-              ? styles.functionIcon
-              : ''
+                ? styles.functionIcon
+                : ''
           ])}
         >
           {nodeData.extra?.liveQueryEnabled ? <div className={styles.lighting}></div> : null}
@@ -305,9 +305,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
         <>
           {nodeData.extra?.method && (
             <div
-              className={`${styles.method} ${
-                styles[`method_${nodeData.extra.method?.toLowerCase()}`]
-              }`}
+              className={`${styles.method} ${styles[`method_${nodeData.extra.method?.toLowerCase()}`]
+                }`}
             >
               {nodeData.extra.method?.toUpperCase()}
             </div>
@@ -616,9 +615,8 @@ export default function ApiPanel(props: Omit<SidePanelProps, 'title'>) {
                 onContextMenu={e => e.stopPropagation()}
                 className={styles.graphqlEntry}
                 onClick={() => {
-                  const current = new URL(window.location.href)
                   window.open(
-                    `${current.protocol}//localhost:${current.port}/app/main/graphql`,
+                    `${window.location.origin}/app/main/graphql`,
                     '_blank'
                   )
                 }}
