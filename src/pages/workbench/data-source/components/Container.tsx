@@ -91,7 +91,7 @@ export default function DatasourceContainer({ content, showType }: Props) {
 
   const designBtn = (
     <Button
-      disabled={!content.enabled}
+      // disabled={!content.enabled}
       className={'btn-test !ml-4'}
       onClick={() => {
         navigate(`/workbench/modeling/${content?.name}`)
