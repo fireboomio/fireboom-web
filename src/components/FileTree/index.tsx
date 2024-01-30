@@ -51,6 +51,7 @@ export interface FileTreeRef {
 }
 
 const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, ref) => {
+  const dragInTimeoutRef = useRef<Record<string, number>>({})
   useImperativeHandle(ref, () => ({
     addItem,
     editItem
@@ -334,7 +335,16 @@ const FileTree = forwardRef<FileTreeRef, FileTreeProps>((props: FileTreeProps, r
             return !(!dropNode.isDir && dropPosition === 0)
           }}
           onDragEnter={e => {
-            setExpandedKeys([...expandedKeys, e.node.key])
+            for (const key of Object.keys(dragInTimeoutRef.current)) {
+              clearTimeout(dragInTimeoutRef.current[key])
+            }
+            dragInTimeoutRef.current[e.node.key] = window.setTimeout(() => {
+              if (!expandedKeys.includes(e.node.key)) {
+                console.log('expand', e.node.key)
+                setExpandedKeys([...expandedKeys, e.node.key])
+              }
+              delete dragInTimeoutRef.current[e.node.key]
+            }, 800)
           }}
           titleRender={node => {
             if (node.isInput) {
