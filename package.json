@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bunx --bun vite --host",
-    "build": "bunx --bun vite build",
+    "dev": "vite --host",
+    "build": "vite build",
     "buildPrismaWorker": "npm run build --workspace src/lib/prisma",
     "buildSocketWorker": "npm run build --workspace src/lib/socket",
     "serve": "vite preview",
