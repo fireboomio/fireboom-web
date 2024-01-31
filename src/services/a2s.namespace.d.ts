@@ -58,7 +58,7 @@ export declare namespace ApiDocuments {
     schemaFilepath: string
   }
   export interface CustomRest extends BasicDto {
-    baseUrl: string
+    baseUrl: ApiDocuments.ConfigurationVariable
     headers: {}
     oasFilepath: string
   }
@@ -89,15 +89,11 @@ export declare namespace ApiDocuments {
     authorizedRedirectUriRegexes: ApiDocuments.ConfigurationVariable[]
     authorizedRedirectUris: ApiDocuments.ConfigurationVariable[]
     buildInfo: ApiDocuments.BuildInfo
-    consoleLogger: ApiDocuments.lumberjackLogger
+    consoleLogger: ApiDocuments.LumberjackLogger
     corsConfiguration: ApiDocuments.CorsConfiguration
     enableCSRFProtect: boolean
     forceHttpsRedirects: boolean
-    globalRateLimit?: {
-      enabled: boolean
-      perSecond: number
-      requests: number
-    }
+    globalRateLimit: ApiDocuments.OperationRateLimit
     nodeOptions: ApiDocuments.NodeOptions
     serverOptions: ApiDocuments.ServerOptions
   }
@@ -113,6 +109,14 @@ export declare namespace ApiDocuments {
   export interface ListenerOptions extends BasicDto {
     host: ApiDocuments.ConfigurationVariable
     port: ApiDocuments.ConfigurationVariable
+  }
+  export interface LumberjackLogger extends BasicDto {
+    compress: boolean
+    filename: string
+    localtime: boolean
+    maxage: number
+    maxbackups: number
+    maxsize: number
   }
   export interface MockResolveHookConfiguration extends BasicDto {
     enabled: boolean
@@ -357,14 +361,6 @@ export declare namespace ApiDocuments {
     mode?: string
   }
   export interface i18n_Errcode extends BasicDto {}
-  export interface lumberjackLogger extends BasicDto {
-    compress: boolean
-    filename: string
-    localtime: boolean
-    maxage: number
-    maxbackups: number
-    maxsize: number
-  }
   export interface models_HookOptions extends BasicDto {}
   export interface models_Sdk extends BasicDto {
     author?: string
@@ -387,20 +383,7 @@ export declare namespace ApiDocuments {
     upperFirst?: boolean
     version?: string
   }
-  export interface models_Storage extends BasicDto {
-    accessKeyID?: ApiDocuments.wgpb_ConfigurationVariable
-    bucketLocation?: ApiDocuments.wgpb_ConfigurationVariable
-    bucketName?: ApiDocuments.wgpb_ConfigurationVariable
-    createTime?: string
-    deleteTime?: string
-    enabled?: boolean
-    endpoint?: ApiDocuments.wgpb_ConfigurationVariable
-    name?: string
-    secretAccessKey?: ApiDocuments.wgpb_ConfigurationVariable
-    updateTime?: string
-    uploadProfiles?: {}
-    useSSL?: boolean
-  }
+  export interface models_Storage extends BasicDto {}
   export interface models_StorageFile extends BasicDto {
     /**
      * @description A standard MIME type describing the format of the object data.
@@ -435,37 +418,4 @@ export declare namespace ApiDocuments {
     type?: ApiDocuments.vscode_FileType
   }
   export interface vscode_FileType extends BasicDto {}
-  export interface wgpb_ConfigurationVariable extends BasicDto {
-    /**
-     * @description [omitempty]
-     */
-    environmentVariableDefaultValue?: string
-    /**
-     * @description [omitempty]
-     */
-    environmentVariableName?: string
-    kind?: ApiDocuments.wgpb_ConfigurationVariableKind
-    /**
-     * @description [omitempty]
-     */
-    placeholderVariableName?: string
-    /**
-     * @description [omitempty]
-     */
-    staticVariableContent?: string
-  }
-  export interface wgpb_ConfigurationVariableKind extends BasicDto {}
-  export interface wgpb_S3UploadProfile extends BasicDto {
-    allowedFileExtensions?: string[]
-    allowedMimeTypes?: string[]
-    hooks?: ApiDocuments.wgpb_S3UploadProfileHooksConfiguration
-    maxAllowedFiles?: number
-    maxAllowedUploadSizeBytes?: number
-    metadataJSONSchema?: string
-    requireAuthentication?: boolean
-  }
-  export interface wgpb_S3UploadProfileHooksConfiguration extends BasicDto {
-    postUpload?: boolean
-    preUpload?: boolean
-  }
 }

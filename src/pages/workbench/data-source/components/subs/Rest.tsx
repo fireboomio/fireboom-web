@@ -6,12 +6,12 @@ import {
   Form,
   Image,
   Input,
-  message,
   Modal,
   Select,
   Space,
   Tabs,
-  Upload
+  Upload,
+  message
 } from 'antd'
 import axios from 'axios'
 import { get } from 'lodash'
@@ -20,8 +20,8 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
-import FormToolTip from '@/components/common/FormTooltip'
 import Error50x from '@/components/ErrorPage/50x'
+import FormToolTip from '@/components/common/FormTooltip'
 import { useValidate } from '@/hooks/validate'
 import type { ShowType } from '@/interfaces/datasource'
 import { DatasourceToggleContext } from '@/lib/context/datasource-context'
@@ -32,6 +32,7 @@ import { useDict } from '@/providers/dict'
 import { getConfigurationVariableField, getConfigurationVariableRender } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import InputOrFromEnvWithItem, { InputOrFromEnv } from '@/components/InputOrFromEnv'
 import FileList from './FileList'
 import styles from './Rest.module.less'
 
@@ -349,7 +350,7 @@ export default function Rest({ content, type }: Props) {
                 }
                 className="justify-start"
               >
-                {content.customRest.baseUrl}
+                {getConfigurationVariableRender(content.customRest.baseUrl)}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -591,7 +592,7 @@ export default function Rest({ content, type }: Props) {
                 name={['customRest', 'oasFilepath']}
                 // valuePropName="filePath"
                 style={{ marginBottom: '20px' }}
-                // getValueFromEvent={normFile}
+              // getValueFromEvent={normFile}
               >
                 <Input
                   placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
@@ -603,35 +604,32 @@ export default function Rest({ content, type }: Props) {
                     </a>
                   }
                   readOnly
-                  // value={uploadPath}
+                // value={uploadPath}
                 />
               </Form.Item>
-              <Form.Item
-                label={
-                  <>
-                    <span>{intl.formatMessage({ defaultMessage: 'Rest 端点' })}</span>
-                    <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
-                  </>
-                }
-                rules={[
-                  {
-                    required: true,
-                    type: 'url',
-                    message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
-                  }
-                ]}
-                name={['customRest', 'baseUrl']}
-                colon={false}
-                style={{ marginBottom: '20px' }}
-              >
-                <AutoComplete
-                  options={baseURLOptions}
-                  filterOption={(inputValue, option) => {
-                    return true
-                  }}
-                  placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
-                />
-              </Form.Item>
+              <InputOrFromEnvWithItem
+                formItemProps={{
+                  label:
+                    <>
+                      <span>{intl.formatMessage({ defaultMessage: 'Rest 端点' })}</span>
+                      <FormToolTip title={intl.formatMessage({ defaultMessage: 'Rest 端点' })} />
+                    </>,
+                  name: ['customRest', 'baseUrl'],
+                  colon: false,
+                  style: { marginBottom: '20px' }
+                }}
+                required
+                inputRender={props => (
+                  <AutoComplete
+                    {...props}
+                    options={baseURLOptions}
+                    filterOption={(inputValue, option) => {
+                      return true
+                    }}
+                    placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+                  />
+                )}
+              />
 
               <div className="tabs-form">
                 <Tabs defaultActiveKey="1" className="ml-3" onChange={onTabChange}>
@@ -686,18 +684,18 @@ export default function Rest({ content, type }: Props) {
                                     className="w-135"
                                     wrapperCol={{ span: 24 }}
                                     name={[field.name, getConfigurationVariableField(kind)]}
-                                    // rules={
-                                    //   kind !== 1
-                                    //     ? [
-                                    //         {
-                                    //           pattern: /^.{1,128}$/g,
-                                    //           message: intl.formatMessage({
-                                    //             defaultMessage: '请输入长度不大于128的非空值'
-                                    //           })
-                                    //         }
-                                    //       ]
-                                    //     : []
-                                    // }
+                                  // rules={
+                                  //   kind !== 1
+                                  //     ? [
+                                  //         {
+                                  //           pattern: /^.{1,128}$/g,
+                                  //           message: intl.formatMessage({
+                                  //             defaultMessage: '请输入长度不大于128的非空值'
+                                  //           })
+                                  //         }
+                                  //       ]
+                                  //     : []
+                                  // }
                                   >
                                     {kind !== 1 ? (
                                       <Input
