@@ -388,7 +388,7 @@ export default function Rest({ content, type }: Props) {
                             <div className="flex items-center">
                               <div className="text-0px">{renderIcon(item.values[0].kind)}</div>
                               <div className="flex-1 ml-2 min-w-0">
-                                1111{getConfigurationVariableRender(item.values[0])}
+                                {getConfigurationVariableRender(item.values[0])}
                               </div>
                             </div>
                           </Descriptions.Item>
