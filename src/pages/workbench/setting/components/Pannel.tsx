@@ -54,6 +54,13 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
         <img alt="kuayu" src="assets/iconfont/kuayu.svg" style={{ height: '1em', width: '1em' }} />
       )
     },
+    {
+      name: intl.formatMessage({ defaultMessage: 'API全局设置' }),
+      type: 'global-api-setting',
+      icon: (
+        <img alt="kuayu" src="assets/iconfont/a-APItoken.svg" style={{ height: '1em', width: '1em' }} />
+      )
+    },
     // {
     //   name: 'API Token',
     //   type: 'API Token',
@@ -93,10 +100,6 @@ export default function SettingPannel({ handleToggleDesigner, showType }: Props)
       )
     }
   ]
-  useEffect(() => {
-    handleToggleDesigner(settingTypeList[0])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <div className="h-full bg-[#f8f8f8] px-4 pt-5.5">

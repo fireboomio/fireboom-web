@@ -2,21 +2,20 @@ import { Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import ApiConfig from '@/components/ApiConfig'
 import { useAPIManager } from '@/pages/workbench/apimanage/[...path]/store'
-import { intl } from '@/providers/IntlProvider'
+import ApiConfig from '../ApiConfig'
 
 import APIFlowChart from '../APIFlowChart'
 import HookPanel from '../HookPanel'
-import iconAI from './assets/ai.svg'
 import iconAIActive from './assets/ai-active.svg'
+import iconAI from './assets/ai.svg'
 import iconClose from './assets/close.svg'
-import iconConfig from './assets/config.svg'
 import iconConfigActive from './assets/config-active.svg'
-import iconFlow from './assets/flow.svg'
+import iconConfig from './assets/config.svg'
 import iconFlowActive from './assets/flow-active.svg'
-import iconHook from './assets/hook.svg'
+import iconFlow from './assets/flow.svg'
 import iconHookActive from './assets/hook-active.svg'
+import iconHook from './assets/hook.svg'
 import styles from './index.module.less'
 
 export default function RightSider() {
@@ -71,7 +70,7 @@ export default function RightSider() {
       iconActive: iconConfigActive,
       content: (
         <div className="w-80 h-full">
-          <ApiConfig operationType={operationType} type="panel" operationName={apiPath} />
+          <ApiConfig operationType={operationType} operationName={apiPath} />
         </div>
       )
     }

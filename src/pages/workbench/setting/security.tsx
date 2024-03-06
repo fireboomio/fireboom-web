@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PaperClipOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Form, InputNumber, message, Space, Switch } from 'antd'
+import { Button, Checkbox, Form, InputNumber, Space, Switch, message } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
