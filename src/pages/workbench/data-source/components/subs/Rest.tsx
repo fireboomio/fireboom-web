@@ -16,7 +16,7 @@ import {
 import axios from 'axios'
 import { get } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { useImmer } from 'use-immer'
 
@@ -496,6 +496,23 @@ export default function Rest({ content, type }: Props) {
               </Descriptions>
             </Panel>
           </Collapse> */}
+          {content.customRest.responseExtractor && <>
+            <div className='font-bold my-2'>
+              <FormattedMessage defaultMessage="响应转换" />
+            </div>
+            <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
+              <Descriptions.Item
+                label={<FormattedMessage defaultMessage="状态码转换字段" />}
+              >
+                {content.customRest.responseExtractor?.statusCodeJsonpath}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={<FormattedMessage defaultMessage="错误消息转换字段" />}
+              >
+                {content.customRest.responseExtractor?.errorMessageJsonpath}
+              </Descriptions.Item>
+            </Descriptions>
+          </>}
           {/* 测试功能 */}
           {/* <Modal
             centered
@@ -906,7 +923,19 @@ export default function Rest({ content, type }: Props) {
                   </Form.Item>
                 </Panel>
               </Collapse> */}
-
+              <Form.Item label={<span className='font-bold'><FormattedMessage defaultMessage="响应转换" /></span>} tooltip={intl.formatMessage({ defaultMessage: '将Restful响应结果转换成Graphql通用结构' })} />
+              <Form.Item
+                label={<FormattedMessage defaultMessage="状态码转换字段" />}
+                name={['customRest', 'responseExtractor', 'statusCodeJsonpath']}
+              >
+                <Input placeholder="eg: code" />
+              </Form.Item>
+              <Form.Item
+                label={<FormattedMessage defaultMessage="错误消息转换字段" />}
+                name={['customRest', 'responseExtractor', 'errorMessageJsonpath']}
+              >
+                <Input placeholder="eg: msg" />
+              </Form.Item>
               <Form.Item wrapperCol={{ offset: 3, span: 16 }}>
                 <div className="flex mt-10 w-160px justify-center items-center">
                   <Button
@@ -943,7 +972,8 @@ export default function Rest({ content, type }: Props) {
             </Form>
           </div>
         </>
-      )}
+      )
+      }
     </>
   )
 }
