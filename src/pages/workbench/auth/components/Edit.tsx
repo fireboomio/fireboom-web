@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import type { JSONValue } from '@antv/x6'
 import { loader } from '@monaco-editor/react'
-import { Button, Form, Input, message, Radio, Select, Switch } from 'antd'
+import { Button, Form, Input, Radio, Select, Switch, message } from 'antd'
 import copy from 'copy-to-clipboard'
 import { cloneDeep, debounce } from 'lodash'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -10,26 +10,28 @@ import { useNavigate } from 'react-router-dom'
 
 // import useSWRImmutable from 'swr/immutable'
 import Error50x from '@/components/ErrorPage/50x'
-import { CopyOutlined } from '@/components/icons'
 import JsonEditor from '@/components/JsonEditor'
 import UrlInput from '@/components/UrlInput'
+import { CopyOutlined } from '@/components/icons'
 import { useValidate } from '@/hooks/validate'
 import { VariableKind } from '@/interfaces/common'
-import { AuthToggleContext } from '@/lib/context/auth-context'
 import { ConfigContext } from '@/lib/context/ConfigContext'
+import { AuthToggleContext } from '@/lib/context/auth-context'
 import requests, { proxy } from '@/lib/fetchers'
 import { useLock } from '@/lib/helpers/lock'
 import useEnvOptions from '@/lib/hooks/useEnvOptions'
 import { useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import InputOrFromEnvWithItem from '@/components/InputOrFromEnv'
+import { useEnv } from '@/providers/env'
 import imgAuth0 from '../assets/Auth0.png'
 import imgAuthing from '../assets/Authing.png'
 import imgGithub from '../assets/Github.png'
-import imgGoogle from '../assets/google.png'
 import imgKeycloak from '../assets/Keycloak.png'
-import imgOkta from '../assets/okta.png'
 import imgOpenID from '../assets/OpenID.png'
+import imgGoogle from '../assets/google.png'
+import imgOkta from '../assets/okta.png'
 import { defaultAuth } from '../defaults'
 import styles from './subs.module.less'
 
@@ -81,7 +83,8 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
   // const dispatch = useContext(AuthDispatchContext)
   const [form] = Form.useForm<ApiDocuments.Authentication>()
   const name = Form.useWatch('name', form)
-  const issuer = Form.useWatch(['issuer', 'staticVariableContent'], form)
+  const issuerValue = Form.useWatch(['issuer'], form)
+  const issuer = issuerValue ? getConfigurationValue(issuerValue) : null
   const clientIdKind = Form.useWatch(['oidcConfig', 'clientId', 'kind'], form)
   const clientSecretKind = Form.useWatch(['oidcConfig', 'clientSecret', 'kind'], form)
   const tokenBased = Form.useWatch('jwksProviderEnabled', form)
@@ -251,23 +254,22 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                 disabled={!!content.name}
               />
             </Form.Item>
-            <Form.Item
-              label="Issuer"
-              name={['issuer', 'staticVariableContent']}
+            <InputOrFromEnvWithItem
+              formItemProps={{
+                label: 'Issuer',
+                name: 'issuer',
+              }}
               rules={[
                 {
                   required: true,
                   message: intl.formatMessage({ defaultMessage: 'Issuer不能为空' })
-                },
-                {
-                  // pattern: /^https?:\/\/[:.\w\d/]+$/,
-                  type: 'url',
-                  message: intl.formatMessage({ defaultMessage: '只允许输入链接' })
                 }
               ]}
-            >
-              <UrlInput placeholder={intl.formatMessage({ defaultMessage: '请输入' })} />
-            </Form.Item>
+              inputRender={props => (
+                // @ts-ignore
+                <UrlInput {...props} />
+              )}
+            />
             <Form.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
               <Input
                 value={
@@ -283,7 +285,7 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
               name={['jwksProvider', 'userInfoEndpoint', 'staticVariableContent']}
             >
               <Input
-                placeholder={intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
+                placeholder={issuer ? intl.formatMessage({ defaultMessage: '请输入正确的 Issuer 地址' }) : intl.formatMessage({ defaultMessage: '请先输入 Issuer 地址' })}
                 disabled
               />
             </Form.Item>
@@ -335,11 +337,11 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   rules={
                     cookieBased
                       ? [
-                          {
-                            required: true,
-                            message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
-                          }
-                        ]
+                        {
+                          required: true,
+                          message: intl.formatMessage({ defaultMessage: 'App ID不能为空' })
+                        }
+                      ]
                       : []
                   }
                 >
@@ -382,11 +384,11 @@ export default function AuthMainEdit({ content, onChange, onTest }: Props) {
                   rules={
                     cookieBased
                       ? [
-                          {
-                            required: true,
-                            message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
-                          }
-                        ]
+                        {
+                          required: true,
+                          message: intl.formatMessage({ defaultMessage: 'App Secret不能为空' })
+                        }
+                      ]
                       : []
                   }
                 >

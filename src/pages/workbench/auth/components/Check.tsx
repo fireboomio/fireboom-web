@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
 
 import { CopyOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
-import { Descriptions, message, Tag } from 'antd'
+import { Descriptions, Tag, message } from 'antd'
 import clsx from 'clsx'
-import copy from 'copy-to-clipboard'
-import { useContext } from 'react'
+import _copy from 'copy-to-clipboard'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useImmer } from 'use-immer'
 
@@ -13,6 +13,7 @@ import { ConfigContext } from '@/lib/context/ConfigContext'
 import { getConfigurationVariableRender, useConfigurationVariable } from '@/providers/variable'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
+import { proxy } from '@/lib/fetchers'
 import styles from './detail.module.less'
 // import { AuthToggleContext } from '@/lib/context/auth-context'
 
@@ -25,10 +26,28 @@ export default function AuthMainCheck({ content }: Props) {
   const { globalSetting } = useContext(ConfigContext)
   const { getConfigurationValue } = useConfigurationVariable()
   const [isShowSecret, setIsShowSecret] = useImmer(false)
+  const [openConfig, setOpenConfig] = useState<{ userinfo_endpoint: string; jwks_uri: string }>({})
 
   const handleToggleSecret = () => {
     setIsShowSecret(!isShowSecret)
   }
+
+  const copy = (text: string) => {
+    _copy(text)
+    message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
+  }
+
+  useEffect(() => {
+    if (content.issuer) {
+      const url = getConfigurationValue(content.issuer)
+      if (url) {
+        proxy(`${url}/.well-known/openid-configuration`).then(res => {
+          setOpenConfig(res)
+        })
+
+      }
+    }
+  }, [content.issuer, getConfigurationValue])
 
   // const switchState =
   //   content.switchState?.length == 0
@@ -51,13 +70,35 @@ export default function AuthMainCheck({ content }: Props) {
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'Issuer' })}>
             {getConfigurationVariableRender(content.issuer)}
+            <CopyOutlined
+              className="cursor-pointer ml-4"
+              onClick={() => {
+                copy(
+                  `${getConfigurationValue(content.issuer)}`
+                )
+              }}
+            />
           </Descriptions.Item>
           <Descriptions.Item label={intl.formatMessage({ defaultMessage: '服务发现地址' })}>
             {`${getConfigurationVariableRender(content.issuer)}/.well-known/openid-configuration`}
+            <CopyOutlined
+              className="cursor-pointer ml-4"
+              onClick={() => {
+                copy(
+                  `${getConfigurationValue(content.issuer)}/.well-known/openid-configuration`
+                )
+              }}
+            />
           </Descriptions.Item>
-          {content.jwksProvider?.userInfoEndpoint && (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点' })}>
-              {getConfigurationVariableRender(content.jwksProvider.userInfoEndpoint)}
+          {openConfig.userinfo_endpoint && (
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: '用户端点(自动解析)' })}>
+              {openConfig.userinfo_endpoint}
+              <CopyOutlined
+              className="cursor-pointer ml-4"
+              onClick={() => {
+                copy(openConfig.userinfo_endpoint)
+              }}
+            />
             </Descriptions.Item>
           )}
         </Descriptions>
@@ -106,7 +147,6 @@ export default function AuthMainCheck({ content }: Props) {
                       globalSetting.nodeOptions.publicNodeUrl
                     )}/auth/cookie/callback/${content.name}`
                   )
-                  message.success(intl.formatMessage({ defaultMessage: '复制成功' }))
                 }}
               />
             </div>
@@ -137,8 +177,14 @@ export default function AuthMainCheck({ content }: Props) {
               </pre>
             </Descriptions.Item>
           ) : (
-            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL' })}>
-              {getConfigurationVariableRender(content.jwksProvider?.jwksUrl)}
+            <Descriptions.Item label={intl.formatMessage({ defaultMessage: 'jwksURL(自动解析)' })}>
+              {openConfig.jwks_uri}
+              <CopyOutlined
+              className="cursor-pointer ml-4"
+              onClick={() => {
+                copy(openConfig.jwks_uri)
+              }}
+            />
             </Descriptions.Item>
           )}
         </Descriptions>

@@ -70,7 +70,7 @@ const _InputOrFromEnv = ({
 	);
 	const onValueChange = useCallback(
 		(e: ChangeEvent<HTMLInputElement> | string) => {
-			var value: string = typeof e === "string" ? e : e.target.value;
+			const value: string = typeof e === "string" ? e : e.target.value;
 			onChange?.(
 				kind === VariableKind.Env
 					? { kind: kind, environmentVariableName: value }
@@ -161,21 +161,21 @@ const InputOrFromEnvWithItem = ({
 					kind === VariableKind.Env
 						? required
 							? [
-									{
-										required: true,
-										message: "请选择一个环境变量或者手动输入",
-									},
-							  ]
+								{
+									required: true,
+									message: "请选择一个环境变量或者手动输入",
+								},
+							]
 							: undefined
 						: required
-						  ? [
-									...(rules ?? []),
-									{
-										required: true,
-										message: "请输入",
-									},
-							  ]
-						  : rules
+							? [
+								...(rules ?? []),
+								{
+									required: true,
+									message: "请输入",
+								},
+							]
+							: rules
 				}
 			>
 				<_InputOrFromEnv {...rest} />

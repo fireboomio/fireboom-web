@@ -52,14 +52,10 @@ export function parseDBUrl(url: string): DBConnectionConfig | undefined {
 export function getDBUrl(kind: DataSourceKind, config: DBConnectionConfig): string {
   if (kind === DataSourceKind.SQLServer) {
     // sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWORD;encrypt=true
-    return `sqlserver://${config.host}:${config.port ?? 1443};database=${config.dbName};user=${
-      config.username ?? 'sa'
-    };password=${config.password};${config.args ?? ''}`
-  } else {
-    return `${config.schema}://${encodeURIComponent(config.username)}${
-      config.password ? `:${encodeURIComponent(config.password)}` : ''
-    }@${config.host}:${config.port}/${encodeURIComponent(config.dbName)}${
-      config.args ? `?${config.args}` : ''
-    }`
+    return `sqlserver://${config.host}:${config.port ?? 1443};database=${config.dbName};user=${config.username ?? 'sa'
+      };password=${config.password};${config.args ?? ''}`
   }
+  return `${config.schema}://${encodeURIComponent(config.username)}${config.password ? `:${encodeURIComponent(config.password)}` : ''
+    }@${config.host}:${config.port}/${encodeURIComponent(config.dbName)}${config.args ? `?${config.args}` : ''
+    }`
 }
