@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons'
+import { CloseOutlined, PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import {
   AutoComplete,
   Button,
@@ -11,7 +11,10 @@ import {
   Space,
   Tabs,
   Upload,
-  message
+  message,
+  InputNumber,
+  Tag,
+  Tooltip
 } from 'antd'
 import axios from 'axios'
 import { get } from 'lodash'
@@ -35,6 +38,7 @@ import type { ApiDocuments } from '@/services/a2s.namespace'
 import InputOrFromEnvWithItem, { InputOrFromEnv } from '@/components/InputOrFromEnv'
 import FileList from './FileList'
 import styles from './Rest.module.less'
+import TooltipHelp from '@/components/TooltipHelp'
 
 interface Props {
   content: ApiDocuments.Datasource
@@ -104,6 +108,7 @@ export default function Rest({ content, type }: Props) {
   const [envVal, setEnvVal] = useImmer('')
 
   const [visible, setVisible] = useImmer(false)
+  const statusCodeJsonpath = Form.useWatch(['customRest', 'responseExtractor', 'statusCodeJsonpath'], form)
 
   // const [uploadPath, setUploadPath] = useState(BASEPATH)
 
@@ -499,15 +504,34 @@ export default function Rest({ content, type }: Props) {
           {content.customRest.responseExtractor && <>
             <div className='font-bold my-2'>
               <FormattedMessage defaultMessage="响应转换" />
+              <TooltipHelp overlay={<FormattedMessage defaultMessage="将Restful响应结果转换成Graphql通用结构" />} />
             </div>
             <Descriptions bordered column={1} size="small" className={styles['descriptions-box']}>
               <Descriptions.Item
-                label={<FormattedMessage defaultMessage="状态码转换字段" />}
+                label={<>
+                  <FormattedMessage defaultMessage="状态码转换字段" />
+                  <TooltipHelp overlay={<FormattedMessage defaultMessage="根据Restful响应结果中的状态码字段的值判断该响应是否成功" />} />
+                </>}
               >
                 {content.customRest.responseExtractor?.statusCodeJsonpath}
               </Descriptions.Item>
               <Descriptions.Item
-                label={<FormattedMessage defaultMessage="错误消息转换字段" />}
+                label={<>
+                  <FormattedMessage defaultMessage="正确状态码范围" />
+                  <TooltipHelp overlay={<FormattedMessage defaultMessage="左闭右闭的状态码范围，如200~299，不设置默认200" />} />
+                </>}
+              >
+                {!content.customRest.responseExtractor?.statusCodeScopes ? 200 : <div className='flex items-center space-x-4'>
+                  {content.customRest.responseExtractor?.statusCodeScopes?.map((item, index) => <Tag color="green" key={index}>{item.min} ~ {item.max}</Tag>)}
+                </div>}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <>
+                    <FormattedMessage defaultMessage="错误消息转换字段" />
+                    <TooltipHelp overlay={<FormattedMessage defaultMessage="根据Restful响应结果中的错误消息字段显示错误信息" />} />
+                  </>
+                }
               >
                 {content.customRest.responseExtractor?.errorMessageJsonpath}
               </Descriptions.Item>
@@ -543,7 +567,7 @@ export default function Rest({ content, type }: Props) {
             <Form
               form={form}
               name="basic"
-              labelCol={{ span: 3 }}
+              labelCol={{ span: 5 }}
               wrapperCol={{ span: 11 }}
               onFinish={values => onFinish(values)}
               onFinishFailed={onFinishFailed}
@@ -926,12 +950,44 @@ export default function Rest({ content, type }: Props) {
               <Form.Item label={<span className='font-bold'><FormattedMessage defaultMessage="响应转换" /></span>} tooltip={intl.formatMessage({ defaultMessage: '将Restful响应结果转换成Graphql通用结构' })} />
               <Form.Item
                 label={<FormattedMessage defaultMessage="状态码转换字段" />}
+                tooltip={intl.formatMessage({ defaultMessage: '根据Restful响应结果中的状态码字段的值判断该响应是否成功' })}
                 name={['customRest', 'responseExtractor', 'statusCodeJsonpath']}
               >
                 <Input placeholder="eg: code" />
               </Form.Item>
+              {statusCodeJsonpath && (
+                <Form.Item
+                  label={<FormattedMessage defaultMessage="正确状态码范围" />}
+                  tooltip={intl.formatMessage({ defaultMessage: '左闭右闭的状态码范围，如200~299，不设置默认200' })}
+                >
+                  <Form.List name={['customRest', 'responseExtractor', 'statusCodeScopes']}>
+                    {(fields, { add, remove }) =>
+                      <>
+                        {
+                          fields.map((field) => (
+                            <Space key={field.key}>
+                              <Form.Item {...field} name={[field.name, 'min']} rules={[{ required: true, message: '请输入状态码最小值' }]}>
+                                <InputNumber className='!w-32' placeholder='200' />
+                              </Form.Item>
+                              <div className='mb-5'>~</div>
+                              <Form.Item {...field} name={[field.name, 'max']} rules={[{ required: true, message: '请输入状态码最大值' }]}>
+                                <InputNumber className='!w-32' placeholder='299' />
+                              </Form.Item>
+                              <CloseOutlined className='mb-5' onClick={() => remove(field.name)} />
+                            </Space>
+                          ))
+                        }
+                        <div>
+                          <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />}>Add</Button>
+                        </div>
+                      </>
+                    }
+                  </Form.List>
+                </Form.Item>
+              )}
               <Form.Item
                 label={<FormattedMessage defaultMessage="错误消息转换字段" />}
+                tooltip={intl.formatMessage({ defaultMessage: '根据Restful响应结果中的错误消息字段显示错误信息' })}
                 name={['customRest', 'responseExtractor', 'errorMessageJsonpath']}
               >
                 <Input placeholder="eg: msg" />
