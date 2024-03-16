@@ -129,8 +129,6 @@ export const getFetcher = <T>(
   })
 }
 
-export const NPM_RESOLVE_HOSE = 'http://8.142.115.204:9801'
-
 export default requests
 
 export const proxy = (url: string, cancelToken?: CancelToken) => {
@@ -141,3 +139,5 @@ export const proxy = (url: string, cancelToken?: CancelToken) => {
     })
     .then(x => x.data)
 }
+
+export const simpleFetcher = (url: string) => fetch(url).then((res) => res.json())

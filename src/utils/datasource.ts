@@ -74,14 +74,16 @@ type HookState = Record<
 >
 
 let resolveFunc: (value: boolean) => void
-let readyPromise = new Promise<boolean>(resolve => {
+const readyPromise = new Promise<boolean>(resolve => {
   resolveFunc = resolve
 })
 
 export function useHookSupport() {
   const intl = useIntl()
   const { data } = useSWRImmutable<ApiDocuments.Sdk>('/sdk/enabledServer', requests)
-  const { data: hookState, isLoading } = useFireboomFileContent('hook.state.json')
+  const { data: sdks, isLoading } = useFireboomFileContent<{
+    official: ApiDocuments.Sdk[]
+  }>('sdks.json')
 
   useEffect(() => {
     if (!isLoading) {
@@ -91,7 +93,8 @@ export function useHookSupport() {
 
   async function checkSupport(funcName: keyof HookState['string']) {
     await readyPromise
-    const support = data?.name ? !!hookState?.[data.name]?.[funcName] : false
+    const sdk = sdks?.official.find(sdk => sdk.name === data?.name)
+    const support = data?.name ? sdk?.functions?.[funcName] : false
     if (!support) {
       message.warning(intl.formatMessage({ defaultMessage: '当前钩子语言暂不支持该功能' }))
     }

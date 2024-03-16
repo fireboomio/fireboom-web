@@ -1,13 +1,12 @@
+import { simpleFetcher } from '@/lib/fetchers'
 import { useMemo } from 'react'
 import type { SWRConfiguration } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
-import { proxy } from '@/lib/fetchers'
-
 import { useEnv } from './env'
 
 const FB_REPO_URL_MIRROR = 'FB_REPO_URL_MIRROR'
-const FB_RAW_URL_MIRROR = 'FB_RAW_URL_MIRROR'
+const FB_FILES_URL = 'FB_FILES_URL' 
 
 const DEFAULT_ORG_NAME = 'fireboomio'
 
@@ -15,16 +14,13 @@ export function useFireboomFileContent<T = any>(filePath: string, options?: SWRC
   const { envs } = useEnv()
 
   const url = useMemo(() => {
-    if (filePath && envs[FB_RAW_URL_MIRROR]) {
-      return envs[FB_RAW_URL_MIRROR].replace('{orgName}', DEFAULT_ORG_NAME)
-        .replace('{repoName}', 'files')
-        .replace('{branchName}', 'main')
-        .replace('{filePath}', filePath)
+    if (filePath) {
+      return `${(envs[FB_FILES_URL] || 'https://files.fireboom.io').replace(/\/$/, '')}/${filePath}`
     }
     return null
-  }, [envs, filePath])
+  }, [envs[FB_FILES_URL]])
 
-  return useSWRImmutable<T>(url, proxy, options)
+  return useSWRImmutable<T>(url, simpleFetcher, options)
 }
 
 export function useFireboomRepositoryUrl() {

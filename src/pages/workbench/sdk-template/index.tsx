@@ -1,60 +1,40 @@
-import { CopyFilled, CopyOutlined, EditFilled } from '@ant-design/icons'
+import { CopyOutlined, EditFilled } from '@ant-design/icons'
 import {
   Button,
   Card,
   Col,
-  Descriptions,
   Dropdown,
   Empty,
-  message,
-  Modal,
   Popconfirm,
   Row,
-  Spin,
-  Switch
+  Switch,
+  message
 } from 'antd'
 import type { ItemType } from 'antd/es/menu/hooks/useItems'
 import base64 from 'base64-js'
-import type { KeyboardEventHandler } from 'react'
+import { KeyboardEventHandler, useRef } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import useSWR, { mutate as _mutate } from 'swr'
 
-import Error50x from '@/components/ErrorPage/50x'
 import requests, { getAuthKey, proxy } from '@/lib/fetchers'
-import { useLock } from '@/lib/helpers/lock'
-import { useDict } from '@/providers/dict'
 import { intl } from '@/providers/IntlProvider'
-import { useFireboomFileContent, useFireboomRepositoryUrl } from '@/providers/ServiceDiscovery'
+import { useDict } from '@/providers/dict'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 
-import moreIcon from '../components/Workbench/assets/icon-menu.png'
-import styles from './index.module.less'
 import copy from 'copy-to-clipboard'
+import moreIcon from '../components/Workbench/assets/icon-menu.png'
+import RemoteSDK, { RemoteSDKActions } from './components/RemoteSDK'
 
 const SDKTemplate = () => {
-  const { getRepositoryUrl } = useFireboomRepositoryUrl()
-  const { data, mutate } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
-  const [showRemote, setShowRemote] = useState(false)
-  const { initialize } = useDict()
-
-  const {
-    data: remoteSdk,
-    isValidating,
-    error,
-    mutate: mutateRemote
-  } = useFireboomFileContent<{
-    official: ApiDocuments.Sdk[]
-    community: ApiDocuments.Sdk[]
-  }>(showRemote ? 'sdks.json' : '', {
-    revalidateOnMount: true
-  })
-
+  const { data: sdks, mutate: mutateSDKs } = useSWR<ApiDocuments.Sdk[]>('/sdk', requests.get)
+  const remoteRef = useRef<RemoteSDKActions>()
   const { server, client } = useMemo(() => {
-    let server: ApiDocuments.Sdk[] = []
-    let client: ApiDocuments.Sdk[] = []
-    if (data) {
-      data.forEach(x => {
+    const server: ApiDocuments.Sdk[] = []
+    const client: ApiDocuments.Sdk[] = []
+    if (sdks) {
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      sdks.forEach(x => {
         if (x.type === 'server') {
           server.push(x)
         } else {
@@ -63,46 +43,11 @@ const SDKTemplate = () => {
       })
     }
     return { server, client }
-  }, [data])
-  const { remoteServer, remoteClient } = useMemo(() => {
-    let server: ApiDocuments.Sdk[] = []
-    let client: ApiDocuments.Sdk[] = []
-    if (remoteSdk?.official) {
-      remoteSdk.official.forEach(x => {
-        if (x.type === 'server') {
-          server.push(x)
-        } else {
-          client.push(x)
-        }
-      })
-    }
-    return { remoteServer: server, remoteClient: client }
-  }, [remoteSdk])
-
-  const existSdkMap = useMemo(() => {
-    return new Set(data?.map(x => x.dirName) ?? [])
-  }, [data])
+  }, [sdks])
 
   const onUpdate = (index: number, sdk: ApiDocuments.Sdk) => {
-    mutate([...data!.slice(0, index - 2), sdk, ...data!.slice(index - 1)])
+    mutateSDKs([...sdks!.slice(0, index - 2), sdk, ...sdks!.slice(index - 1)])
   }
-  const { loading, fun: downloadSdk } = useLock(
-    async sdk => {
-      const gitUrl = getRepositoryUrl(sdk.gitUrl)
-      const hide = message.loading(intl.formatMessage({ defaultMessage: '下载' }), -1)
-      try {
-        await requests.post('/sdk', { ...sdk, gitUrl })
-        await mutate()
-        initialize()
-        _mutate('/sdk/enabledServer')
-        message.success(intl.formatMessage({ defaultMessage: '下载成功' }))
-      } catch (e) {
-        message.error(intl.formatMessage({ defaultMessage: '下载失败' }))
-      }
-      hide()
-    },
-    [mutate]
-  )
 
   return (
     <Card>
@@ -113,9 +58,7 @@ const SDKTemplate = () => {
         <div className="flex-1" />
         <Button
           onClick={() => {
-            // cancelToken.current?.()
-            setShowRemote(true)
-            mutateRemote()
+            remoteRef.current?.show()
           }}
         >
           {intl.formatMessage({ defaultMessage: '浏览模版市场' })}
@@ -145,21 +88,23 @@ const SDKTemplate = () => {
       <div className="flex mb-4 items-center mt-8">
         <div className="text-xs text-[#666]">
           <FormattedMessage defaultMessage="客户端模版" />
-          {client.length && <span className="text-xs ml-3 text-[#787D8B]">
-            （<code className="px-1 text-primary">generated-sdk</code>
-            <FormattedMessage defaultMessage="目录下生成的文件可以使用" />
-            <span
-              className="mx-1 text-primary cursor-pointer"
-              onClick={() => {
-                copy(`${window.location.origin}/generated-sdk`)
-                message.success(`已复制`)
-              }}
-            >
-              {window.location.origin}/generated-sdk
-              <CopyOutlined className="ml-0.5 mr-1" />
+          {client.length && (
+            <span className="text-xs ml-3 text-[#787D8B]">
+              （<code className="px-1 text-primary">generated-sdk</code>
+              <FormattedMessage defaultMessage="目录下生成的文件可以使用" />
+              <span
+                className="mx-1 text-primary cursor-pointer"
+                onClick={() => {
+                  copy(`${window.location.origin}/generated-sdk`)
+                  message.success(`已复制`)
+                }}
+              >
+                {window.location.origin}/generated-sdk
+                <CopyOutlined className="ml-0.5 mr-1" />
+              </span>
+              <FormattedMessage defaultMessage="加上文件路径访问" />）
             </span>
-            <FormattedMessage defaultMessage="加上文件路径访问" />）
-          </span>}
+          )}
         </div>
       </div>
       <Row className="" gutter={[32, 32]}>
@@ -175,72 +120,7 @@ const SDKTemplate = () => {
           />
         )}
       </Row>
-      <Modal
-        width="80vw"
-        bodyStyle={{ minHeight: '60vh' }}
-        footer={null}
-        open={showRemote}
-        onCancel={() => setShowRemote(false)}
-        title={
-          <div className="text-center">{intl.formatMessage({ defaultMessage: '模版市场' })}</div>
-        }
-      >
-        {isValidating ? (
-          <div className="flex h-40vh w-full items-center justify-center">
-            <Spin tip="Loading" size="large" />
-          </div>
-        ) : null}
-        {!isValidating && error ? (
-          <div className="flex flex-col h-40vh w-full items-center justify-center">
-            <Error50x />
-            <Button
-              onClick={() => {
-                void mutateRemote()
-              }}
-            >
-              {intl.formatMessage({ defaultMessage: '重试' })}
-            </Button>
-          </div>
-        ) : null}
-
-        {!isValidating && !error && (
-          <div>
-            <div className="text-xs  mb-4 text-[#666]">
-              <FormattedMessage defaultMessage="钩子模版" />
-            </div>
-            <Row className="" gutter={[32, 32]}>
-              {remoteServer?.map((sdk, index) => (
-                <Col key={index} xl={8} xxl={6} md={12}>
-                  <RemoteSDKCard
-                    exist={existSdkMap.has(sdk.name)}
-                    sdk={sdk}
-                    onSelect={() => {
-                      downloadSdk(sdk)
-                    }}
-                  />
-                </Col>
-              ))}
-            </Row>
-
-            <div className="text-xs  mb-4 mt-8 text-[#666]">
-              <FormattedMessage defaultMessage="客户端模版" />
-            </div>
-            <Row className="" gutter={[32, 32]}>
-              {remoteClient?.map((sdk, index) => (
-                <Col key={index} xl={8} xxl={6} md={12}>
-                  <RemoteSDKCard
-                    exist={existSdkMap.has(sdk.name)}
-                    sdk={sdk}
-                    onSelect={() => {
-                      downloadSdk(sdk)
-                    }}
-                  />
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )}
-      </Modal>
+      <RemoteSDK sdks={sdks ?? []} onUpdate={mutateSDKs} actionRef={remoteRef} />
     </Card>
   )
 }
@@ -297,7 +177,7 @@ const SDKTemplateItem = ({
         setEditingValue(sdk.outputPath)
         setEditing(false)
       } else if (e.key === 'Enter') {
-        requests.put(`/sdk`, { name: sdk.name, outputPath: value }).then(res => {
+        requests.put("/sdk", { name: sdk.name, outputPath: value }).then(res => {
           console.log('res', res)
           onChange({
             ...sdk,
@@ -312,7 +192,7 @@ const SDKTemplateItem = ({
 
   const onSwitch = useCallback(
     (checked: boolean) => {
-      requests.put(`/sdk`, { name: sdk.name, enabled: checked }).then(res => {
+      requests.put("/sdk", { name: sdk.name, enabled: checked }).then(res => {
         mutate()
         initialize()
         _mutate('/sdk/enabledServer')
@@ -347,7 +227,7 @@ const SDKTemplateItem = ({
         onClick: async () => {
           const hide = message.loading(intl.formatMessage({ defaultMessage: '升级中' }))
           try {
-            await requests.put(`/sdk`, {
+            await requests.put("/sdk", {
               name: sdk.name,
               gitCommitHash: 'latest'
               // gitpull: true
@@ -389,8 +269,8 @@ const SDKTemplateItem = ({
             sdk.icon.startsWith('http')
               ? sdk.icon
               : `data:image/svg+xml;base64,${base64.fromByteArray(
-                  new TextEncoder().encode(`${sdk.icon}`)
-                )}`
+                new TextEncoder().encode(`${sdk.icon}`)
+              )}`
           }
         />
         <div className="flex-1">
@@ -411,7 +291,7 @@ const SDKTemplateItem = ({
             )}
           </div>
           <div className="flex mt-1 items-center">
-            <div className="rounded-md bg-[#D8D8D8] h-2.5 shadow w-2.5"></div>
+            <div className="rounded-md bg-[#D8D8D8] h-2.5 shadow w-2.5" />
             <div className="text-xs ml-1 text-[#5F6269]">{sdk.author}</div>
           </div>
         </div>
@@ -425,7 +305,7 @@ const SDKTemplateItem = ({
           <img alt="" className="cursor-pointer h-3 ml-2 w-3" src={moreIcon} />
         </Dropdown>
       </div>
-      <div className="bg-[rgba(95,98,105,0.1)] h-0.5 mt-2 mb-3"></div>
+      <div className="bg-[rgba(95,98,105,0.1)] h-0.5 mt-2 mb-3" />
       <div className="text-xs text-[#787D8B] line-clamp-2">
         {intl.formatMessage({ defaultMessage: '功能描述' })}：{sdk.description || '-'}
       </div>
@@ -445,63 +325,5 @@ const SDKTemplateItem = ({
         <EditFilled className="cursor-pointer top-2 right-3 absolute" size={8} />
       </div>
     </div>
-  )
-}
-
-const RemoteSDKCard = ({
-  onSelect,
-  sdk,
-  exist
-}: {
-  sdk: ApiDocuments.Sdk
-  onSelect: () => void
-  exist: boolean
-}) => {
-  const intl = useIntl()
-  return (
-    <Card
-      title={
-        <div className="flex items-center">
-          <img
-            alt=""
-            className={styles.icon}
-            src={
-              sdk.icon.startsWith('http')
-                ? sdk.icon
-                : `data:image/svg+xml;base64,${base64.fromByteArray(
-                    new TextEncoder().encode(`${sdk.icon}`)
-                  )}`
-            }
-          />
-          {sdk.title}
-        </div>
-      }
-      className={styles.remoteCard}
-      extra={exist ? <div className="text-[#787D8B]">已下载</div> : null}
-    >
-      <Descriptions
-        size="small"
-        column={1}
-        labelStyle={{ width: 100 }}
-        contentStyle={{ color: '#787D8B' }}
-      >
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '模板ID' })}>
-          {sdk.name}
-        </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '功能描述' })}>
-          <div className={styles.descLine}>{sdk.description}</div>
-        </Descriptions.Item>
-        <Descriptions.Item label={intl.formatMessage({ defaultMessage: '生成路径' })}>
-          {sdk.outputPath}
-        </Descriptions.Item>
-      </Descriptions>
-      {exist ? null : (
-        <div className={styles.download}>
-          <div className={styles.btn} onClick={onSelect}>
-            点击下载
-          </div>
-        </div>
-      )}
-    </Card>
   )
 }
