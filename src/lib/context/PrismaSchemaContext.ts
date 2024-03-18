@@ -49,6 +49,7 @@ export type PrismaSchemaContextContainer = BasicContextContainer & {
   panel: any
   syncEditorFlag: boolean
   triggerSyncEditor: () => void
+  loadDataSource: () => Promise<void>
 }
 
 export const PrismaSchemaContext = createContext<PrismaSchemaContextContainer>(

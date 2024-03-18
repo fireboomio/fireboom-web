@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import type { ReactNode } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { useEffect, useReducer, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useSearchParams } from 'react-router-dom'
@@ -14,13 +14,14 @@ import {
 import { fetchDBSources } from '@/lib/clients/fireBoomAPIOperator'
 import { DATABASE_SOURCE } from '@/lib/constants/fireBoomConstants'
 import {
-  emptyPrismaSchemaContextState,
-  PrismaSchemaContext
+  PrismaSchemaContext,
+  emptyPrismaSchemaContextState
 } from '@/lib/context/PrismaSchemaContext'
 import { fetchAndSaveToPrismaSchemaContext } from '@/lib/helpers/ModelingHelpers'
 import modelingReducer from '@/lib/reducers/ModelingReducers'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { isDatabaseKind } from '@/utils/datasource'
+import { set } from 'lodash'
 
 const ModelingWrapper = (props: { children: ReactNode }) => {
   const intl = useIntl()
@@ -41,25 +42,24 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
     setDataSources(data?.filter(ds => isDatabaseKind(ds)) ?? [])
   }, [data, setDataSources])
 
-  const hideRef = useRef<() => void>()
-  useEffect(() => {
+  const loadDataSource = useCallback(async () => {
     paramNameRef.current = paramName
     if (dataSources.length > 0 && paramName) {
-      hideRef.current?.()
+      message.destroy()
       const hide = message.loading(intl.formatMessage({ defaultMessage: '加载中' }), 0)
-      hideRef.current = hide
-      fetchAndSaveToPrismaSchemaContext(paramName, dispatch, dataSources, paramNameRef)?.finally(
+      await fetchAndSaveToPrismaSchemaContext(paramName, dispatch, dataSources, paramNameRef)?.finally(
         () => {
           hide()
           // 更新数据源后强制刷新编辑器
-          setSyncEditorFlag(!syncEditorFlag)
+          setSyncEditorFlag((v) => !v)
         }
       )
     }
-    return () => {
-      hideRef.current?.()
-    }
   }, [dataSources, paramName])
+
+  useEffect(() => {
+    loadDataSource()
+  }, [loadDataSource])
   useEffect(() => {
     // 如果当前blocks有内容(表示数据源已经加载完成)，且blocks中没有model或enum，则自动切换到编辑模式
     if (state.blocks.length && !state.blocks.find(b => ['model', 'enum'].includes(b.type))) {
@@ -131,6 +131,7 @@ const ModelingWrapper = (props: { children: ReactNode }) => {
         syncEditorFlag,
         triggerSyncEditor: () => setSyncEditorFlag(!syncEditorFlag),
         dispatch,
+        loadDataSource,
         panel: {
           inEdit: inEdit,
           handleSetInEdit,

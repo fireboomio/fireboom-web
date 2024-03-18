@@ -1,5 +1,5 @@
 import type { MenuProps } from 'antd'
-import { Dropdown, Input, Menu, message, Popconfirm } from 'antd'
+import { Dropdown, Input, Menu, Popconfirm, message } from 'antd'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import type { Updater } from 'use-immer'
@@ -14,10 +14,10 @@ import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 import useEntities from '@/lib/hooks/useEntities'
 
 import iconDel from '../../assets/del.svg'
-import iconEntity from '../../assets/entity.svg'
 import iconEntityActive from '../../assets/entity-active.svg'
-import iconEnum from '../../assets/enum.svg'
+import iconEntity from '../../assets/entity.svg'
 import iconEnumActive from '../../assets/enum-active.svg'
+import iconEnum from '../../assets/enum.svg'
 import iconMore from '../../assets/more.svg'
 import iconRename from '../../assets/rename.svg'
 import styles from './pannel.module.less'
@@ -46,8 +46,7 @@ const ModelEntityItem = ({
   const [isEditing, setIsEditing] = useImmer(entity.name === '')
   const [visible, setVisible] = useImmer(false)
   const { getFirstEntity } = useEntities()
-  const { panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
-  // const ctx = useContext(PrismaSchemaContext)
+  const { panel, triggerSyncEditor, loadDataSource } = useContext(PrismaSchemaContext)
   const { inEdit } = panel || {}
 
   const isCurrent = currentEntityId === entity.id
@@ -78,6 +77,7 @@ const ModelEntityItem = ({
       void updateAndSaveBlock(PrismaSchemaBlockOperator(blocks).deleteEntity(entity.id))
         .then(() => {
           message.success(intl.formatMessage({ defaultMessage: '删除成功' }))
+          loadDataSource()
         })
         .finally(() => {
           hide()
