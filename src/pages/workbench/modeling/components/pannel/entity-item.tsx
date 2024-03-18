@@ -144,9 +144,18 @@ const ModelEntityItem = ({
       items={[
         {
           key: 1,
-          label: <span>{intl.formatMessage({ defaultMessage: '重命名' })}</span>,
-          icon: <img src={iconRename} alt="重命名" />,
-          onClick: () => setIsEditing(!isEditing)
+          label: (
+            <Popconfirm
+              placement='right'
+              title={intl.formatMessage({ defaultMessage: '重命名会导致表中数据全部丢失，请谨慎操作！' })}
+              onConfirm={() => setIsEditing(!isEditing)}
+              okType='danger'
+              okText={intl.formatMessage({ defaultMessage: '重命名' })}
+            >
+              <span>{intl.formatMessage({ defaultMessage: '重命名' })}</span>
+            </Popconfirm>
+          ),
+          icon: <img src={iconRename} alt="重命名" />
         },
         {
           key: 4,
