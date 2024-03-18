@@ -56,7 +56,7 @@ const SingleArgumentInput = ({
 
   switch (type) {
     case 'binary':
-      return <span><FormattedMessage defaultMessage="暂不支持" /></span>
+      return <span><FormattedMessage defaultMessage="暂不支持，请使用API接口测试" /></span>
     case 'Int':
     case 'BigInt':
       return (
