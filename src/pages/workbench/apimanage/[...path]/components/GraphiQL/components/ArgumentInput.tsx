@@ -4,7 +4,7 @@ import { Checkbox, DatePicker, Input, InputNumber, Modal } from 'antd'
 import dayjs from 'dayjs'
 import type { IntrospectionEnumValue } from 'graphql'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import type { ParameterT } from '@/interfaces/apimanage'
 import { makeSuggest } from '@/lib/helpers/utils'
@@ -55,6 +55,8 @@ const SingleArgumentInput = ({
   }
 
   switch (type) {
+    case 'binary':
+      return <span><FormattedMessage defaultMessage="暂不支持" /></span>
     case 'Int':
     case 'BigInt':
       return (

@@ -8,11 +8,11 @@ import { useConfigurationVariable } from '@/providers/variable'
 if (window && document) {
   const script = document.createElement('script')
   const body = document.getElementsByTagName('body')[0]
-  script.src = import.meta.env.BASE_URL + 'js/rapidoc-min.js'
+  script.src = `${import.meta.env.BASE_URL}js/rapidoc-min.js`
   body.appendChild(script)
 }
 
-const id = `rapi-frame`
+const id = "rapi-frame"
 
 export default function RapiFrame() {
   const [params] = useSearchParams()
@@ -34,16 +34,17 @@ export default function RapiFrame() {
           on TRY, it then modifies the POST requests by adding a custom header
         */
       const rapidocEl = document.getElementById(id)
-      rapidocEl!.addEventListener('spec-loaded', () => {
+      if (!rapidocEl) return
+      rapidocEl.addEventListener('spec-loaded', () => {
         fetch(`${customServerUrl}/auth/cookie/csrf`, {
           credentials: 'include'
         })
           .then(resp => resp.text())
           .then(text => {
-            csrfToken.current = text!
+            csrfToken.current = text
           })
       })
-      rapidocEl!.addEventListener('before-try', (e: any) => {
+      rapidocEl.addEventListener('before-try', (e: any) => {
         if (e.detail.request.method === 'POST' && csrfToken.current) {
           e.detail.request.headers.append('X-CSRF-Token', csrfToken.current)
         }
@@ -58,7 +59,7 @@ export default function RapiFrame() {
       id={id}
       key={search}
       theme={params.get('theme') || 'light'}
-      spec-url={params.get('url') + (getAuthKey() ? '?auth-key=' + getAuthKey() : '')}
+      spec-url={params.get('url') + (getAuthKey() ? `?auth-key=${getAuthKey()}` : '')}
       server-url={customServerUrl}
       default-api-server={customServerUrl}
       show-header="false"
