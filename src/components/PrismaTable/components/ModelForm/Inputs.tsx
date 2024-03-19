@@ -1,6 +1,6 @@
 import type { SchemaField } from '@paljs/types'
-import { ConfigProvider, FormItemProps } from 'antd'
-import { DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd'
+import { Button, ConfigProvider, FormItemProps, Upload } from 'antd'
+import { DatePicker, Form, Input, InputNumber, Modal, Radio, Select, message } from 'antd'
 import Search from 'antd/lib/input/Search'
 import TextArea from 'antd/lib/input/TextArea'
 import dayjs from 'dayjs'
@@ -13,6 +13,7 @@ import type { FilterState } from '@/components/PrismaTable/libs/types'
 import { getDisplayName } from '@/components/PrismaTable/libs/utils'
 import useTableSchema from '@/lib/hooks/useTableSchema'
 
+import { UploadOutlined } from '@ant-design/icons'
 import MultiModalInput from '../MultiModalInput'
 
 interface SelfFormItemProps {
@@ -262,24 +263,48 @@ const Bytes = ({ field: { name, required, title }, disabled, initialValues }: Pr
 //   value,
 //   onChange
 // }: {
-//   value?: ArrayBuffer
-//   onChange?: (value: ArrayBuffer) => void
+//   value?: string
+//   onChange?: (value: string) => void
 // }) => {
+//   let url = ''
+//   if (value) {
+//     url = URL.createObjectURL(new Blob([atob(value)], { type: 'application/octet-stream' }))
+//   }
 //   return (
-//     <input
-//       type="file"
-//       onChange={e => {
-//         const file = e.target.files && e.target.files[0]
-//         if (file) {
-//           const reader = new FileReader()
-//           // 读取文件内容为 uintArrayBuffer
-//           reader.readAsArrayBuffer(file)
-//           reader.onload = () => {
-//             onChange && onChange(reader.result as ArrayBuffer)
-//           }
+//     <Upload defaultFileList={value ? [
+//       {
+//         name: '点击下载查看',
+//         url,
+//         uid: '1'
+//       }
+//     ] : []} beforeUpload={() => false} onChange={info => {
+//       if (info.file) {
+//         const reader = new FileReader()
+//         // 读取文件内容为 uintArrayBuffer
+//         reader.readAsArrayBuffer(info.file as File)
+//         reader.onload = () => {
+//           const str = btoa(window.String.fromCharCode(...new Uint8Array(reader.result as ArrayBuffer)))
+//           onChange?.(str)
 //         }
-//       }}
-//     />
+//       }
+//     }}>
+//       <Button icon={<UploadOutlined />}>Upload</Button>
+//     </Upload>
+//     // <input
+//     //   type="file"
+//     //   onChange={e => {
+//     //     const file = e.target.files?.[0]
+//     //     if (file) {
+//     //       const reader = new FileReader()
+//     //       // 读取文件内容为 uintArrayBuffer
+//     //       reader.readAsArrayBuffer(file)
+//     //       reader.onload = () => {
+//     //         const str = btoa(window.String.fromCharCode(...new Uint8Array(reader.result as ArrayBuffer)))
+//     //         onChange?.(str)
+//     //       }
+//     //     }
+//     //   }}
+//     // />
 //   )
 // }
 
