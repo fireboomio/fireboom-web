@@ -1,4 +1,4 @@
-import { App, Button, Layout as ALayout, message, Spin } from 'antd'
+import { Layout as ALayout, App, Button, Spin, message } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import type { PropsWithChildren } from 'react'
@@ -70,7 +70,11 @@ export default function Index(props: PropsWithChildren) {
     teamwork: intl.formatMessage({ defaultMessage: '团队' }),
     prismaDatasource: intl.formatMessage({ defaultMessage: 'Prisma数据源' })
   } as const
-  const [vscode, setVscode] = useState<{ visible: boolean; currentPath: string; config: any }>({
+  const [vscode, setVscode] = useState<{
+    visible: boolean
+    currentPath: string
+    config: any
+  }>({
     visible: false,
     currentPath: '',
     config: {}
@@ -93,13 +97,21 @@ export default function Index(props: PropsWithChildren) {
 
   const modelNameMap = useMemo(() => {
     return {
-      [QuestionType.Authentication]: intl.formatMessage({ defaultMessage: '身份认证' }),
-      [QuestionType.Configuration]: intl.formatMessage({ defaultMessage: '设置' }),
-      [QuestionType.DataSource]: intl.formatMessage({ defaultMessage: '数据源' }),
+      [QuestionType.Authentication]: intl.formatMessage({
+        defaultMessage: '身份认证'
+      }),
+      [QuestionType.Configuration]: intl.formatMessage({
+        defaultMessage: '设置'
+      }),
+      [QuestionType.DataSource]: intl.formatMessage({
+        defaultMessage: '数据源'
+      }),
       [QuestionType.Operation]: intl.formatMessage({ defaultMessage: 'API' }),
       [QuestionType.Role]: intl.formatMessage({ defaultMessage: '角色管理' }),
       [QuestionType.SDK]: intl.formatMessage({ defaultMessage: '钩子模板' }),
-      [QuestionType.Storage]: intl.formatMessage({ defaultMessage: '文件存储' })
+      [QuestionType.Storage]: intl.formatMessage({
+        defaultMessage: '文件存储'
+      })
     }
   }, [intl])
   const modelRouteMap = useMemo(() => {
@@ -131,7 +143,10 @@ export default function Index(props: PropsWithChildren) {
     }
   })
   useWebSocket('engine', 'push', (data: Info) => {
-    setEngineState({ engineStatus: data.engineStatus, engineStartTime: data.engineStartTime })
+    setEngineState({
+      engineStatus: data.engineStatus,
+      engineStartTime: data.engineStartTime
+    })
     if (data.engineStatus === ServiceStatus.Started) {
       // 重启后拉下question
       sendMessageToSocket({ channel: 'question', event: 'pull' })
@@ -310,7 +325,9 @@ export default function Index(props: PropsWithChildren) {
     ) => {
       const res = await axios.get(`${apiPublicAddr}/auth/cookie/user/logout`, {
         headers: getHeader(),
-        params: { logout_openid_connect_provider: opts?.logoutProvider ?? true },
+        params: {
+          logout_openid_connect_provider: opts?.logoutProvider ?? true
+        },
         withCredentials: true
       })
       const redirect = res.data?.redirect
@@ -422,7 +439,9 @@ export default function Index(props: PropsWithChildren) {
         if (!skipConfirm) {
           const confirm = await new Promise(resolve => {
             modal.confirm({
-              title: intl.formatMessage({ defaultMessage: '钩子脚本不存在，是否创建？' }),
+              title: intl.formatMessage({
+                defaultMessage: '钩子脚本不存在，是否创建？'
+              }),
               onOk: () => resolve(true),
               onCancel: () => resolve(false),
               zIndex: 99999
@@ -433,13 +452,12 @@ export default function Index(props: PropsWithChildren) {
           }
         }
         setLoading('钩子模板创建中，请稍候')
-        const code = await resolveDefaultCode(filePath, language!, data!.extension!)
+        const code = await resolveDefaultCode(filePath, data!)
         await writeFile(filePath, code)
         // await saveHookScript(path, code)
         return true
-      } else {
-        return true
       }
+      return true
     } catch (e) {
       setLoading('')
       console.error(e)
