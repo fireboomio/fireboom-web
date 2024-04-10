@@ -6,6 +6,7 @@ export const PRISMA_BASE_TYPES = [
   'Float',
   'Decimal',
   'DateTime',
+  'Geometry',
   'Json',
   'Bytes'
 ]

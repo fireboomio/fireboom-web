@@ -615,6 +615,16 @@ function getDefaultValues({
         },
       })
       break
+    case 'Geometry':
+      suggestions.push({
+        label: '@db.Geography(Point, 4326)',
+        kind: CompletionItemKind.Function,
+        documentation: {
+          kind: MarkupKind.Markdown,
+          value: 'Set a default value for a geometry field with the given type and SRID.',
+        },
+      })
+      break
     case 'String':
       suggestions.push(
         {

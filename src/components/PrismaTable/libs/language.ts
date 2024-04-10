@@ -44,4 +44,7 @@ export default {
   view: 'View',
   isRequired: ' is required',
   show: 'SHOW',
+  geoWithin: 'geoWithin',
+  geoIntersects: 'geoIntersects',
+  geoDWithin: 'geoDWithin',
 };

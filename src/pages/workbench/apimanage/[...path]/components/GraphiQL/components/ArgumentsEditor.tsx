@@ -104,7 +104,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             if (val) {
               val = (val as SingleInputValueType[]).map(vItem => {
                 if (
-                  !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime'].includes(
+                  !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime', 'Geometry'].includes(
                     item.type
                   )
                 ) {
@@ -129,7 +129,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             if (item.type === 'BigInt') {
               val = `${val}`
             } else if (
-              !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime'].includes(
+              !['ID', 'Int', 'Decimal', 'Float', 'String', 'Boolean', 'DateTime', 'Geometry'].includes(
                 item.type
               ) &&
               !item.enums

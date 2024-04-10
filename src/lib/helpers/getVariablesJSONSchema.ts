@@ -97,7 +97,8 @@ const scalarTypesMap: Record<string, JSONSchema6TypeName> = {
   ID: 'string',
   Boolean: 'boolean',
   // { "type": "string", "format": "date" } is not compatible with proposed DateTime GraphQL-Scalars.com spec
-  DateTime: 'string'
+  DateTime: 'string',
+  Geometry: 'string'
 }
 
 class Marker {

@@ -78,6 +78,7 @@ const ModelFormContainer = ({
   function buildScalarField(field: any, options: any) {
     switch (field.type) {
       case 'String':
+      case 'Geometry':
         return <Inputs.String key={field.name} {...options} />
       case 'Boolean':
         return <Inputs.Boolean key={field.name} {...options} />

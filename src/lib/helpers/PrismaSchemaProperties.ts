@@ -140,6 +140,13 @@ export function usePrismaSchemaProperties(): PrismaSchemaAttributePropertiesType
             { name: 'updatedAt', hasArgs: false, comment: '更新时间' }
           ]
         },
+        // 地理坐标
+        Geometry: {
+          attributes: [
+            ...CommonFieldAttributes,
+            { name: 'db.Geography', hasArgs: true }
+          ]
+        },
         Json: {
           attributes: [
             ...CommonFieldAttributes,

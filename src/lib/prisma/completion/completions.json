@@ -21,6 +21,10 @@
       "documentation": "Timestamp"
     },
     {
+      "label": "Geometry",
+      "documentation": "GEO spatial data"
+    },
+    {
       "label": "Json",
       "documentation": "A JSON object"
     },

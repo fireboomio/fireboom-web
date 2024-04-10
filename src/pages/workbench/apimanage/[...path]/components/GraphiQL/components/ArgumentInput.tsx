@@ -77,6 +77,7 @@ const SingleArgumentInput = ({
       )
     case 'String':
     case 'ID':
+    case 'Geometry':
       return (
         <Input
           className="text-xs w-full"

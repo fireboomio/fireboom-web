@@ -7,6 +7,7 @@ export type FieldType =
   | 'Decimal'
   | 'Float'
   | 'DateTime'
+  | 'Geometry'
   | 'String'
   | 'Boolean'
   | 'Enum'
@@ -14,6 +15,7 @@ export type FieldType =
 
 type filterOperatorsMapType = {
   notExistsInType: FieldType[]
+  onlyInType?: FieldType[]
   display: string
 }
 export const filterOperators: Record<string, filterOperatorsMapType> = {
@@ -22,27 +24,27 @@ export const filterOperators: Record<string, filterOperatorsMapType> = {
     display: language.equals
   },
   in: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.in
   },
   notIn: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.notIn
   },
   lt: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.lt
   },
   lte: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.lte
   },
   gt: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.gt
   },
   gte: {
-    notExistsInType: ['Boolean', 'Enum'],
+    notExistsInType: ['Boolean', 'Enum', 'Geometry'],
     display: language.gte
   },
   not: {
@@ -50,17 +52,33 @@ export const filterOperators: Record<string, filterOperatorsMapType> = {
     display: language.not
   },
   contains: {
-    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime'],
+    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime', 'Geometry'],
     display: language.contains
   },
   startsWith: {
-    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime'],
+    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime', 'Geometry'],
     display: language.startsWith
   },
   endsWith: {
-    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime'],
+    notExistsInType: ['Boolean', 'Enum', 'Int', 'BigInt', 'Decimal', 'Float', 'DateTime', 'Geometry'],
     display: language.endsWith
-  }
+  },
+  geoWithin: {
+    onlyInType: ['Geometry'],
+    display: language.geoWithin,
+    notExistsInType: []
+  },
+  geoIntersects: {
+    onlyInType: ['Geometry'],
+    display: language.geoIntersects,
+    notExistsInType: []
+  },
+  // 暂不支持
+  // geoDWithin: {
+  //   onlyInType: ['Geometry'],
+  //   display: language.geoDWithin,
+  //   notExistsInType: []
+  // }
 }
 
 export const buildFilterVariableFrom = (filterStates: FilterState[]): FilterVariableType => {

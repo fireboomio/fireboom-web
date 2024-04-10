@@ -17,7 +17,7 @@ const { Option } = Select
 
 const getFilterOperators = (type: FieldType) => {
   return Object.keys(filterOperators).filter(
-    o => !filterOperators[o].notExistsInType.includes(type)
+    o => Array.isArray(filterOperators[o].onlyInType) ? filterOperators[o].onlyInType!.includes(type) : !filterOperators[o].notExistsInType.includes(type)
   )
 }
 

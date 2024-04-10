@@ -105,6 +105,10 @@ export function handleDiagnosticsRequest(
       message: diag.text,
       source: ''
     }
+    // Hack! 通过过滤掉Geometry错误来忽略掉Prisma的错误提示
+    if (diagnostic.message === `Type "Geometry" is neither a built-in type, nor refers to another model, custom type, or enum.`) {
+      continue
+    }
     if (diag.is_warning) {
       diagnostic.severity = DiagnosticSeverity.Warning
     } else {

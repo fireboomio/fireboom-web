@@ -72,7 +72,7 @@ export declare namespace DMMF {
     isUpdatedAt?: boolean
     /**
      * Describes the data type in the same the way is is defined in the Prisma schema:
-     * BigInt, Boolean, Bytes, DateTime, Decimal, Float, Int, JSON, String, $ModelName
+     * BigInt, Boolean, Bytes, DateTime, Decimal, Float, Int, JSON, String, Geometry, $ModelName
      */
     type: string
     dbNames?: string[] | null

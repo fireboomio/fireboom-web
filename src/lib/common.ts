@@ -7,7 +7,8 @@ export const PRISMA_BASE_TYPES = [
   'Decimal',
   'DateTime',
   'Json',
-  'Bytes'
+  'Bytes',
+  'Geometry'
 ]
 
-export const GQL_BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID']
+export const GQL_BASE_SCALAR = ['Int', 'FLoat', 'String', 'Boolean', 'ID', 'Geometry']

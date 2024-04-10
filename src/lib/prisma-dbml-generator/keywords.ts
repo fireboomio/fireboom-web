@@ -19,4 +19,5 @@ export enum PrismaScalars {
   BigInt = 'BigInt',
   Decimal = 'Decimal',
   Bytes = 'Bytes',
+  Geometry = 'Geometry'
 }
