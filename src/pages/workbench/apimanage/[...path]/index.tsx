@@ -10,13 +10,11 @@ import type { IntrospectionQuery } from 'graphql'
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
-import { Observable } from 'rxjs'
 import { mutate } from 'swr'
 
 import { useDragResize } from '@/hooks/resize'
 import { useDataSourceList } from '@/hooks/store/dataSource'
 import { useEventBus } from '@/lib/event/events'
-import { getAuthKey } from '@/lib/fetchers'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useEngine } from '@/providers/engine'
 
@@ -30,73 +28,7 @@ import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiQLExplorer'
 import { useAPIManager } from './store'
 import { WorkbenchContext } from '@/lib/context/workbenchContext'
-
-async function fetchSubscription(rec: Record<string, unknown>, controller: AbortController) {
-  return new Observable(observer => {
-    fetch('/app/main/graphql', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-FB-Authentication': getAuthKey() || ''
-      },
-      body: JSON.stringify(rec),
-      signal: controller.signal
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      // 处理响应流
-      const reader = response.body!.getReader()
-      const decoder = new TextDecoder()
-
-      // 递归处理数据
-      function readData() {
-        reader.read().then(({ done, value }) => {
-          console.log('read', value)
-          if (done) {
-            console.log('Stream is complete')
-            return
-          }
-
-          // 处理数据
-          const messages = decoder.decode(value)
-          observer.next({ data: JSON.parse(messages) })
-          // 继续读取
-          readData()
-        })
-      }
-
-      readData()
-    })
-  })
-}
-
-async function fetcher(rec: Record<string, unknown>, setSchema: (q: IntrospectionQuery) => void) {
-  try {
-    const res = await fetch('/app/main/graphql', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-FB-Authentication': getAuthKey() || ''
-      },
-      body: JSON.stringify(rec)
-    }).then(resp => resp.json())
-    // 避免重复请求，初始化后提交schema结果
-    if (rec.operationName === 'IntrospectionQuery') {
-      window.schema = res.data
-      setSchema(res.data as IntrospectionQuery)
-    }
-    return res
-  } catch (error) {
-    console.error(error)
-    return {
-      error: (error as { message: string; stack: string })?.message || error
-    }
-  }
-}
+import { fetcher, fetchSubscription } from './utils'
 
 export default function APIEditorContainer() {
   const intl = useIntl()

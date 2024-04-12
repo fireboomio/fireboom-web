@@ -1,5 +1,4 @@
 import { useEditorContext } from '@graphiql/react'
-import type { CodeMirrorEditorWithOperationFacts } from '@graphiql/react/types/editor/context'
 import { Button, Dropdown, Input, message } from 'antd'
 import type {
   ArgumentNode,
@@ -42,6 +41,7 @@ import DirectivePopup from './DirectivePopup'
 import ExecuteButton from './ExecuteButton'
 import RBACPopup from './RBACPopup'
 import APIRemark from './APIRemark'
+import { fetcher } from '../../../utils'
 
 function containLocation(
   locations: ReadonlyArray<DirectiveLocation> | undefined,
@@ -491,6 +491,28 @@ const GraphiQLToolbar = () => {
     }
   }, [])
 
+  // query是否包含queryRaw或者executeRaw
+  const isRawQuery = query?.includes('queryRaw') || query?.includes('executeRaw')
+  // 自动补全
+  const autoCompleteRaw = async () => {
+    const val = editorContext.variableEditor?.getValue()
+    let value: Record<string, any> = {}
+    if (val) {
+      value = JSON.parse(val)
+    }
+    const ret = await fetcher({
+      operationName: 'MyQuery',
+      query,
+      variables: value
+    }, () => {}, true)
+    if (ret && !ret.error) {
+      setQuery(ret)
+      message.success(intl.formatMessage({ defaultMessage: '已自动补全' }))
+    } else {
+      message.warning(ret.error)
+    }
+  }
+
   return (
     <div>
       <div className="graphiql-toolbar">
@@ -544,6 +566,10 @@ const GraphiQLToolbar = () => {
         >
           <FormattedMessage defaultMessage="了解更多" description="插入指令处" />
         </button>
+        {isRawQuery && <button className="graphiql-toolbar-btn"
+          onClick={autoCompleteRaw}>
+          <FormattedMessage defaultMessage="自动补全" />
+        </button>}
         {/* <Dropdown
           open={seqOpen}
           overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
