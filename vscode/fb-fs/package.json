@@ -1,0 +1,23 @@
+{
+  "name": "fb-fs",
+  "displayName": "fb-fs",
+  "description": "",
+  "version": "0.0.1",
+  "browser": "./extension",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "private": true,
+  "publisher": "fireboom",
+  "activationEvents": ["onFileSystem:fbfs"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [{
+      "command": "fb-fs.helloWorld",
+      "title": "Hello World"
+    }]
+  }
+}

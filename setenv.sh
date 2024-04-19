@@ -1,1 +1,0 @@
-export RELEASE_DIST='https://devops.aliyuncs.com/ossproxy/download?ns=execution-component&bucketName=execution-component-rdc&fileId=aone2/2159501/1675844058628/Artifacts_2029447.tgz&fileName=Artifacts_2029447.tgz&md5Sign=dfe71ad9ab25513d29bcd650baa4f532'

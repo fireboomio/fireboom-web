@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>prisma</title>
+    <defs>
+        <circle id="path-1" cx="14" cy="14" r="14"></circle>
+        <filter x="-25.0%" y="-17.9%" width="150.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.37254902   0 0 0 0 0.384313725   0 0 0 0 0.411764706  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="prisma" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="椭圆形">
+            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+        </g>
+        <path d="M19.6064952,19.4843118 L12.0149313,21.7421298 C11.7830068,21.8111924 11.5607239,21.6094498 11.6094597,21.3742383 L14.3214967,8.31342546 C14.3722136,8.0693155 14.7079494,8.03053416 14.8138739,8.25671439 L19.8353819,18.9794903 C19.93008,19.1817642 19.8220423,19.420296 19.6064952,19.4843118 Z M20.9083628,18.9517324 L15.094138,6.5361243 L15.094138,6.53585867 C14.9469571,6.22438042 14.6416693,6.0192429 14.2991759,6.00168551 C13.9453458,5.98096671 13.6283648,6.15256087 13.4495347,6.44461626 L7.14372508,16.7150317 C6.94815491,17.0317555 6.95247963,17.4336635 7.15481941,17.7460576 L10.2371959,22.5475067 C10.4209128,22.8341168 10.7392146,23 11.0700636,23 C11.1638372,23 11.258139,22.9867187 11.350856,22.9590937 L20.2981743,20.298056 C20.5706884,20.2177664 20.7952038,20.0226169 20.9136458,19.7630859 C21.0306039,19.5049627 21.0286717,19.2081609 20.9083628,18.9515996 L20.9083628,18.9517324 Z" id="形状" fill="#0C344B" fill-rule="nonzero"></path>
+    </g>
+</svg>

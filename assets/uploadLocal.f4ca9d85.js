@@ -1,1 +1,0 @@
-import{b9 as i,ba as n}from"./index.e5e6c754.js";async function l(e,t,p){let a=new FormData;a.append("file",new File([t],p)),a.append("type",e);let o={headers:{"Content-Type":"multipart/form-data",...n()}};return await i.post("/api/v1/file/uploadFile",a,o)}export{l as u};

@@ -23,6 +23,7 @@ function openSocket() {
   if (socket) {
     try {
       socket.close()
+      socket = null
     } catch (e) {
       console.error(e)
     }
@@ -48,7 +49,12 @@ function openSocket() {
   })
   _socket.addEventListener('close', () => {
     clearInterval(heartbeatTimer)
-    setTimeout(openSocket, 5000)
+    setTimeout(()=>{
+      // 如果正在关闭的是当前socket，则尝试重启，否则不重启
+      if(socket === _socket){
+        openSocket()
+      }
+    }, 5000)
   })
 
 // Send data from socket to all open tabs.
@@ -59,6 +65,7 @@ function openSocket() {
       return
     }
     const payload = JSON.parse(data)
+    payload.type = 'ws'
     connectedPorts.forEach(port => port.postMessage(payload))
   })
 }
@@ -97,9 +104,10 @@ self.addEventListener('connect', ({ ports }) => {
    * actions it should take based on the received data.
    */
   port.addEventListener('message', ({ data }) => {
-
-    connectedPorts.forEach(port => port.postMessage(data))
     const { action, value } = data
+    if (action === 'broadcast') {
+      connectedPorts.forEach(port => port.postMessage({ ...value, type: 'broadcast' }))
+    }
 
     // Send message to socket.
     if (action === 'send') {

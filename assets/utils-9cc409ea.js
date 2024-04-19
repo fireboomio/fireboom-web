@@ -1,0 +1,1 @@
+const B=t=>[Object,Array].includes((t||{}).constructor)&&!Object.entries(t||{}).length,c=(t,o=2)=>{if(t===0||!t)return"0 Bytes";const s=1024,n=o<0?0:o,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],r=Math.floor(Math.log(t)/Math.log(s));return`${parseFloat((t/Math.pow(s,r)).toFixed(n))} ${e[r]}`};export{c as f,B as i};
