@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: https://git.fireboom.io/actions/checkout@v2
       - run: |
-        git config --global user.name "bot"
-        git config --global user.email bot@fireboom.io
-        git set remote origin https://${{ secrets.GIT_HUB_USERNAME }}:${{ secrets.GIT_HUB_TOKEN }}@github.com/fireboomio/fireboom-web.git
+        git config --global user.name "bot" \
+        git config --global user.email bot@fireboom.io \
+        git set remote origin https://${{ secrets.GIT_HUB_USERNAME }}:${{ secrets.GIT_HUB_TOKEN }}@github.com/fireboomio/fireboom-web.git \
         git push origin release
