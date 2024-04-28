@@ -86,6 +86,17 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
     setShowDevTip(false)
   }
 
+  const hookEngineStatus = (
+    <span className={`ml-1 ${hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]'}`}>
+      {hookStatus === 'not_started'
+        ? intl.formatMessage({ defaultMessage: '未启动' })
+        : hookStatus === 'running'
+        ? intl.formatMessage({ defaultMessage: '已启动' })
+        : intl.formatMessage({ defaultMessage: '已停止' })}
+    </span>
+  )
+  const hookEngineStartTimeFmt = hookStartTime ? new Date(hookStartTime).toLocaleString() : '-'
+
   return (
     <div className={className}>
       <div className={styles['status-bar']}>
@@ -183,22 +194,26 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
                   'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
                 }
               />
-              <Tooltip
-                title={
-                  <FormattedMessage
-                    defaultMessage="启动时间: {time}"
-                    values={{ time: hookStartTime ? new Date(hookStartTime).toLocaleString() : '-' }}
-                  />
-                }
-              >
-                <span className={'ml-1 ' + (hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]')}>
-                  {hookStatus === 'not_started'
-                    ? intl.formatMessage({ defaultMessage: '未启动' })
-                    : hookStatus === 'running'
-                    ? intl.formatMessage({ defaultMessage: '已启动' })
-                    : intl.formatMessage({ defaultMessage: '已停止' })}
-                </span>
-              </Tooltip>
+              {hookStatus !== 'not_started' ? (
+                <Tooltip
+                  title={
+                    hookStatus === 'running' ? (
+                      <FormattedMessage
+                        defaultMessage="启动时间: {time}"
+                        values={{ time: hookEngineStartTimeFmt }}
+                      />
+                    ) : (
+                      <FormattedMessage
+                        defaultMessage="停止时间: {time}"
+                        values={{ time: hookEngineStartTimeFmt }}
+                      />
+                    )
+                  }
+                >{hookEngineStatus}</Tooltip>
+              ) : (
+                hookEngineStatus
+              )}
+
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {
