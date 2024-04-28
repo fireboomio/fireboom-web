@@ -1,1 +1,0 @@
-import{r as e,j as t}from"./index-85bb8031.js";import{i as a,m as s}from"./prismaInit-36547b40.js";import{F as u,l as f}from"./index-555b5ba4.js";f.config({monaco:s});function l(){const n=e.useRef(null),r=e.useRef(null);return t.jsx(u,{defaultLanguage:"prisma",beforeMount:o=>{r.current=o},onMount:o=>{a(r.current,o),n.current=o},onChange:o=>{}})}export{l as default};
