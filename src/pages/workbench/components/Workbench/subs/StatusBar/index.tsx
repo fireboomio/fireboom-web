@@ -87,7 +87,7 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
   }
 
   const hookEngineStatus = (
-    <span className={`ml-1 ${hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]'}`}>
+    <span className={`ml-1 ${hookStatus === 'running' ? 'text-[#50C772]' : 'text-[#f0b763]'}`}>
       {hookStatus === 'not_started'
         ? intl.formatMessage({ defaultMessage: '未启动' })
         : hookStatus === 'running'
@@ -191,7 +191,7 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
             <div className="flex h-full items-center">
               <div
                 className={
-                  'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
+                  'rounded-3px h-3px w-3px' + (hookStatus === 'running' ? ' bg-[#50C772]' : ' bg-[#f0b763]')
                 }
               />
               {hookStatus !== 'not_started' ? (
