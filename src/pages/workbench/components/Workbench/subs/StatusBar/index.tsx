@@ -39,7 +39,8 @@ const devTipKey = 'dev.tip'
 // eslint-disable-next-line react/prop-types
 const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, license }) => {
   const intl = useIntl()
-  const { engineStartTime, fbCommit, fbVersion, engineStatus, hookStatus } = useEngine()
+  const { engineStartTime, fbCommit, fbVersion, engineStatus, hookStatus, hookStartTime } =
+    useEngine()
   const [showDevTip, setShowDevTip] = useState(localStorage.getItem(devTipKey) !== 'false')
   const { getConfigurationValue } = useConfigurationVariable()
   const calcTime = useCalcTime()
@@ -137,15 +138,11 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
           >
             <span className={styles.errLabel}>
               <img height={14} width={14} src={errorIcon} alt="错误" />
-              <span className="ml-2">
-                {questions.filter(x => x.level === 'error').length}
-              </span>
+              <span className="ml-2">{questions.filter(x => x.level === 'error').length}</span>
             </span>
             <span className={styles.errLabel} style={{ marginLeft: 8 }}>
               <img height={14} width={14} src={warningIcon} alt="警告" />
-              <span className="ml-2">
-                {questions.filter(x => x.level === 'warn').length}
-              </span>
+              <span className="ml-2">{questions.filter(x => x.level === 'warn').length}</span>
             </span>
           </span>
           <span className="ml-3">
@@ -186,11 +183,22 @@ const StatusBar: React.FC<Props> = ({ className, menuWidth, toggleWindow, licens
                   'rounded-3px h-3px w-3px' + (hookStatus ? ' bg-[#50C772]' : ' bg-[#f0b763]')
                 }
               />
-              <span className={'ml-1 ' + (hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]')}>
-                {hookStatus
-                  ? intl.formatMessage({ defaultMessage: '已启动' })
-                  : intl.formatMessage({ defaultMessage: '未启动' })}
-              </span>
+              <Tooltip
+                title={
+                  <FormattedMessage
+                    defaultMessage="启动时间: {time}"
+                    values={{ time: hookStartTime ? new Date(hookStartTime).toLocaleString() : '-' }}
+                  />
+                }
+              >
+                <span className={'ml-1 ' + (hookStatus ? 'text-[#50C772]' : 'text-[#f0b763]')}>
+                  {hookStatus === 'not_started'
+                    ? intl.formatMessage({ defaultMessage: '未启动' })
+                    : hookStatus === 'running'
+                    ? intl.formatMessage({ defaultMessage: '已启动' })
+                    : intl.formatMessage({ defaultMessage: '已停止' })}
+                </span>
+              </Tooltip>
               <div
                 className="flex h-full pl-1 items-center"
                 onClick={e => {

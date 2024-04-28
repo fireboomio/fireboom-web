@@ -26,7 +26,7 @@ import requests, { getAuthKey, getHeader } from '@/lib/fetchers'
 import { updateGlobalOperationHookEnabled, updateOperationHookEnabled } from '@/lib/service/hook'
 import { initWebSocket, sendMessageToSocket } from '@/lib/socket'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
-import { useEngine } from '@/providers/engine'
+import { type EngineState, useEngine } from '@/providers/engine'
 import { useNotification } from '@/providers/notification'
 import type { ApiDocuments } from '@/services/a2s.namespace'
 import { resolveDefaultCode } from '@/utils/template'
@@ -127,6 +127,15 @@ export default function Index(props: PropsWithChildren) {
   }, [])
 
   const authKey = getAuthKey()
+  function onHookReport({ time, status }: { time: string; status: number }) {
+    let _status: EngineState['hookStatus'] = 'not_started'
+    if (status === 200) {
+      _status = 'running'
+    } else if (status === 500) {
+      _status = 'stopped'
+    }
+    setEngineState({ hookStatus: _status, hookStartTime: time })
+  }
   // authkey变化时启动socket
   // FIXME 这段代码运行会导致vite直接报错退出
   useEffect(() => {
@@ -155,20 +164,8 @@ export default function Index(props: PropsWithChildren) {
       events.emit({ event: 'compileFinish' })
     }
   })
-  useWebSocket('hookReport', 'pull', data => {
-    let valid = false
-    if (data) {
-      valid = new Date(data).getFullYear() > 1970
-    }
-    setEngineState({ hookStatus: valid })
-  })
-  useWebSocket('hookReport', 'push', data => {
-    let valid = false
-    if (data) {
-      valid = new Date(data).getFullYear() > 1970
-    }
-    setEngineState({ hookStatus: valid })
-  })
+  useWebSocket('hookReport', 'pull', onHookReport)
+  useWebSocket('hookReport', 'push', onHookReport)
   useWebSocket('log', 'pull', data => {
     setLogs(parseLogs(data))
   })

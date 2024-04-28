@@ -2,12 +2,13 @@ import { create } from 'zustand'
 
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 
-interface EngineState {
+export interface EngineState {
   errorInfo: { errTotal: number; warnTotal: number }
   engineStartTime: string
   engineStatus: ServiceStatus
   globalStartTime: string
-  hookStatus: boolean
+  hookStatus: 'not_started' | 'running' | 'stopped'
+  hookStartTime: string
   fbVersion: string
   fbCommit: string
   computed: {
@@ -19,7 +20,8 @@ interface EngineState {
 export const useEngine = create<EngineState>((set, get) => ({
   errorInfo: { errTotal: 0, warnTotal: 0 },
   engineStatus: ServiceStatus.Started,
-  hookStatus: false,
+  hookStatus: 'not_started',
+  hookStartTime: '',
   globalStartTime: '',
   engineStartTime: '',
   fbVersion: '--',
