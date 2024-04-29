@@ -19,13 +19,13 @@ import type {
 } from 'graphql'
 import {
   DirectiveLocation,
+  Kind,
+  OperationTypeNode,
   isEnumType,
   isInputObjectType,
   isListType,
   isNonNullType,
-  isScalarType,
-  Kind,
-  OperationTypeNode
+  isScalarType
 } from 'graphql'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -35,13 +35,13 @@ import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import { registerHotkeyHandler } from '@/services/hotkey'
 
 import { useAPIManager } from '../../../store'
+import { fetcher } from '../../../utils'
 import { printSchemaAST } from '../utils'
+import APIRemark from './APIRemark'
 import CrossOriginPopup from './CrossOriginPopup'
 import DirectivePopup from './DirectivePopup'
 import ExecuteButton from './ExecuteButton'
 import RBACPopup from './RBACPopup'
-import APIRemark from './APIRemark'
-import { fetcher } from '../../../utils'
 
 function containLocation(
   locations: ReadonlyArray<DirectiveLocation> | undefined,
@@ -53,6 +53,7 @@ function containLocation(
 const GraphiQLToolbar = () => {
   const intl = useIntl()
   const [argOpen, setArgOpen] = useState(false)
+  const [transformOpen, setTransformOpen] = useState(false)
   const { query, schema, operationType, schemaAST, setQuery } = useAPIManager(state => ({
     query: state.query,
     apiDesc: state.apiDesc,
@@ -89,7 +90,7 @@ const GraphiQLToolbar = () => {
           directives.splice(index, 1)
         }
       } else {
-        let target: DirectiveNode = {
+        const target: DirectiveNode = {
           kind: Kind.DIRECTIVE,
           name: { kind: Kind.NAME, value: 'rbac' },
           arguments: [
@@ -235,7 +236,7 @@ const GraphiQLToolbar = () => {
       if (varDef.directives.some(dir => dir.name.value === directive.name)) {
         message.warning(intl.formatMessage({ defaultMessage: '指令已存在' }))
       } else {
-        ; (varDef.directives as ConstDirectiveNode[]).push({
+        ;(varDef.directives as ConstDirectiveNode[]).push({
           kind: Kind.DIRECTIVE,
           name: { kind: Kind.NAME, value: `${directive.name}` },
           arguments: directive.args
@@ -261,7 +262,7 @@ const GraphiQLToolbar = () => {
     const state = getEditState()
     const _node = lookupNode(state, definitionNode)
     // TODO 还要判断是否是标量
-    if (_node && _node.kind === Kind.FIELD) {
+    if (_node && (_node.kind === Kind.FIELD) || (_node.kind === Kind.SELECTION_SET)) {
       return _node as FieldNode
     }
   }
@@ -275,7 +276,7 @@ const GraphiQLToolbar = () => {
         dir => dir.kind === Kind.DIRECTIVE && dir.name.value === directive.name
       )
     ) {
-      ; (node.directives as DirectiveNode[]).push({
+      ;(node.directives as DirectiveNode[]).push({
         kind: Kind.DIRECTIVE,
         name: { kind: Kind.NAME, value: directive.name },
         arguments: directive.args
@@ -294,7 +295,7 @@ const GraphiQLToolbar = () => {
     setQuery(printSchemaAST(schemaAST!))
   }
 
-  const injectFieldDirective = (directive: GraphQLDirective) => {
+  const injectArgumentDirective = (directive: GraphQLDirective) => {
     checkInject((directives, definitionNode) => {
       if (editorContext.queryEditor) {
         const editor = editorContext.queryEditor
@@ -307,31 +308,14 @@ const GraphiQLToolbar = () => {
         if (loc === DirectiveLocation.VARIABLE_DEFINITION) {
           if (_isVariableDirectiveLegal(line, variable)) {
             return _injectVariableDirective(variable!, directive, definitionNode)
-          } else {
-            return message.warning(
-              intl.formatMessage({
-                defaultMessage: '请选择正确的参数节点',
-                description: '插入指令时'
-              })
-            )
           }
-        } else if (loc === DirectiveLocation.FIELD) {
-          // 先判断
-          const state = getEditState()
-          const _node = lookupNode(state, definitionNode)
-          // TODO 还要判断是否是标量
-          if (_node && _node.kind === Kind.FIELD) {
-            if (_isFieldDirectiveLegal(definitionNode)) {
-              return _injectFieldDirective(_node, directive)
-            }
-          }
+          return message.warning(
+            intl.formatMessage({
+              defaultMessage: '请选择正确的参数节点',
+              description: '插入指令时'
+            })
+          )
         }
-        message.warning(
-          intl.formatMessage({
-            defaultMessage: '请选择合适的插入节点',
-            description: '插入指令时'
-          })
-        )
       }
     })
   }
@@ -368,50 +352,24 @@ const GraphiQLToolbar = () => {
     return node
   }
 
-  const injectTransform = () => {
+  const injectTransformDirective = (directive: GraphQLDirective) => {
     checkInject((directives, definitionNode) => {
       const state = getEditState()
-      if (state) {
-        if (state.kind === Kind.SELECTION_SET || state.kind === Kind.FIELD) {
-          const _node = lookupNode(state, definitionNode)
-          // TODO 还要判断是否是标量
-          if (_node && _node.kind === Kind.FIELD) {
-            const node = _node as FieldNode
-            // @ts-ignore
-            node.directives = node.directives ?? []
-            if (
-              !node.directives!.find(
-                dir => dir.kind === Kind.DIRECTIVE && dir.name.value === 'transform'
-              )
-            ) {
-              ; (node.directives as DirectiveNode[]).push({
-                kind: Kind.DIRECTIVE,
-                name: { kind: Kind.NAME, value: 'transform' },
-                arguments: [
-                  {
-                    kind: Kind.ARGUMENT,
-                    name: { kind: Kind.NAME, value: 'get' },
-                    value: { kind: Kind.STRING, value: 'REPLACE_ME', block: false }
-                  }
-                ]
-              })
-            }
-            return setQuery(printSchemaAST(schemaAST!))
-          }
-        }
+      const _node = lookupNode(state, definitionNode)
+      if (_isFieldDirectiveLegal(definitionNode)) {
+        return _injectFieldDirective(_node, directive)
       }
       message.warning(
-        intl.formatMessage({ defaultMessage: '请选择合适的插入节点', description: '插入指令时' })
+        intl.formatMessage({
+          defaultMessage: '请选择合适的插入节点',
+          description: '插入指令时'
+        })
       )
     })
   }
 
   const toggleFullscreen = () => {
     workbenchCtx.setFullscreen(!workbenchCtx.isFullscreen)
-  }
-
-  const onArgOpenChange = (e: boolean) => {
-    setArgOpen(e)
   }
 
   const onApiDirectiveOpenChange = (v: boolean) => {
@@ -458,13 +416,13 @@ const GraphiQLToolbar = () => {
     return []
   }, [operationType, schema])
 
-  const fieldDirectives = useMemo(() => {
+  const argumentDirectives = useMemo(() => {
     const directives = schema?.getDirectives()
     return directives?.filter(
       dir =>
         containLocation(
           dir.locations,
-          DirectiveLocation.FIELD,
+          // DirectiveLocation.FIELD,
           DirectiveLocation.VARIABLE_DEFINITION,
           DirectiveLocation.FRAGMENT_SPREAD,
           DirectiveLocation.INLINE_FRAGMENT,
@@ -474,6 +432,14 @@ const GraphiQLToolbar = () => {
     )
   }, [schema])
 
+  const transformDirectives = useMemo(() => {
+    const directives = schema?.getDirectives()
+    return directives?.filter(
+      dir =>
+        containLocation(dir.locations, DirectiveLocation.FIELD) &&
+        !['include', 'skip', 'deprecated'].includes(dir.name)
+    )
+  }, [schema])
 
   // 快捷键
   useEffect(() => {
@@ -483,7 +449,7 @@ const GraphiQLToolbar = () => {
     })
     const unbind2 = registerHotkeyHandler('alt+shift+-,⌃+shift+-', e => {
       e.preventDefault()
-      injectTransform()
+      setTransformOpen(true)
     })
     return () => {
       unbind1()
@@ -500,11 +466,15 @@ const GraphiQLToolbar = () => {
     if (val) {
       value = JSON.parse(val)
     }
-    const ret = await fetcher({
-      operationName: 'MyQuery',
-      query,
-      variables: value
-    }, () => {}, true)
+    const ret = await fetcher(
+      {
+        operationName: 'MyQuery',
+        query,
+        variables: value
+      },
+      () => {},
+      true
+    )
     if (ret && !ret.error) {
       setQuery(ret)
       message.success(intl.formatMessage({ defaultMessage: '已自动补全' }))
@@ -540,9 +510,12 @@ const GraphiQLToolbar = () => {
         <div className="graphiql-toolbar-divider" />
         <Dropdown
           open={argOpen}
-          onOpenChange={onArgOpenChange}
+          onOpenChange={setArgOpen}
           dropdownRender={() => (
-            <DirectivePopup directives={fieldDirectives ?? []} onInject={injectFieldDirective} />
+            <DirectivePopup
+              directives={argumentDirectives ?? []}
+              onInject={injectArgumentDirective}
+            />
           )}
           trigger={['click']}
         >
@@ -550,9 +523,21 @@ const GraphiQLToolbar = () => {
             <FormattedMessage defaultMessage="入参指令" description="插入指令处" />
           </button>
         </Dropdown>
-        <button className="graphiql-toolbar-btn" onClick={injectTransform}>
-          <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
-        </button>
+        <Dropdown
+          open={transformOpen}
+          onOpenChange={setTransformOpen}
+          dropdownRender={() => (
+            <DirectivePopup
+              directives={transformDirectives ?? []}
+              onInject={injectTransformDirective}
+            />
+          )}
+          trigger={['click']}
+        >
+          <button className="graphiql-toolbar-btn">
+            <FormattedMessage defaultMessage="响应转换" description="插入指令处" />
+          </button>
+        </Dropdown>
         <Dropdown dropdownRender={() => <CrossOriginPopup />} trigger={['click']}>
           <button className="graphiql-toolbar-btn">
             <FormattedMessage defaultMessage="跨源关联" description="插入指令处" />
@@ -566,10 +551,11 @@ const GraphiQLToolbar = () => {
         >
           <FormattedMessage defaultMessage="了解更多" description="插入指令处" />
         </button>
-        {isRawQuery && <button className="graphiql-toolbar-btn"
-          onClick={autoCompleteRaw}>
-          <FormattedMessage defaultMessage="自动补全" />
-        </button>}
+        {isRawQuery && (
+          <button className="graphiql-toolbar-btn" onClick={autoCompleteRaw}>
+            <FormattedMessage defaultMessage="自动补全" />
+          </button>
+        )}
         {/* <Dropdown
           open={seqOpen}
           overlay={seqOpen ? <Suspense><SequenceDiagram /></Suspense> : <></>}
