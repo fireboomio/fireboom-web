@@ -1,6 +1,8 @@
 name: Push release branch to Github
 on:
-  branch: release
+  push:
+    branches:
+      - main
 
 jobs:
   build:
