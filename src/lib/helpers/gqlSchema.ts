@@ -84,7 +84,7 @@ class MySchemaFetcher {
         },
         body: JSON.stringify(
           {
-            query: getIntrospectionQuery(),
+            query: getIntrospectionQuery({ directiveIsRepeatable: true }),
             operationName: 'IntrospectionQuery'
           },
           null,

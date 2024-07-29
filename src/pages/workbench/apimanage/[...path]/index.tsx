@@ -18,17 +18,17 @@ import { useEventBus } from '@/lib/event/events'
 import { ServiceStatus } from '@/pages/workbench/apimanage/crud/interface'
 import { useEngine } from '@/providers/engine'
 
+import { WorkbenchContext } from '@/lib/context/workbenchContext'
 import APIHeader from './components/APIHeader'
-import { GraphiQL } from './components/GraphiQL'
 // @ts-ignore
 // import type { GraphiqlExplorerAction } from '@/components/GraphQLExplorer'
 // import GraphiqlExplorer from '@/components/GraphQLExplorer'
 import GraphiqlExplorer from './components/GraphQLExplorer/origin'
+import { GraphiQL } from './components/GraphiQL'
 import RightSider from './components/RightSider'
 // import GraphiQLExplorer from './components/GraphiQLExplorer'
 import { useAPIManager } from './store'
-import { WorkbenchContext } from '@/lib/context/workbenchContext'
-import { fetcher, fetchSubscription } from './utils'
+import { fetchSubscription, fetcher } from './utils'
 
 export default function APIEditorContainer() {
   const intl = useIntl()
@@ -116,9 +116,11 @@ export default function APIEditorContainer() {
       const controller = new AbortController()
       saveSubscriptionController(controller)
       return fetchSubscription(rec, controller)
-    } else {
-      return fetcher(rec, setSchema)
     }
+    if (rec.query && typeof rec.query === 'string' && rec.query.includes('IntrospectionQuery')) {
+      rec.query = rec.query.replace('description\n          \n', 'description\n          isRepeatable\n')
+    }
+    return fetcher(rec, setSchema)
   }
 
   const editor = useMemo(() => {

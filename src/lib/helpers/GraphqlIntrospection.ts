@@ -6,7 +6,9 @@ import { keyBy } from 'lodash'
 export default async function (): Promise<Record<string, IntrospectionType>> {
   const result = await axios.post('/app/main/graphql', {
     operationName: 'IntrospectionQuery',
-    query: getIntrospectionQuery()
+    query: getIntrospectionQuery({
+      directiveIsRepeatable: true,
+    })
   })
   return keyBy(result.data.data.__schema.types, 'name')
 }

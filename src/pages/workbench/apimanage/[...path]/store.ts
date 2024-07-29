@@ -6,7 +6,7 @@ import type {
   IntrospectionType,
   OperationTypeNode
 } from 'graphql'
-import { buildClientSchema, getIntrospectionQuery, Kind } from 'graphql'
+import { Kind, buildClientSchema, getIntrospectionQuery } from 'graphql'
 import { isEqual, keyBy } from 'lodash'
 import { mutate } from 'swr'
 import { create } from 'zustand'
@@ -258,7 +258,7 @@ export const useAPIManager = create<APIState>((set, get) => ({
         'Content-Type': 'application/json',
         'X-FB-Authentication': getAuthKey() || ''
       },
-      body: JSON.stringify({ query: getIntrospectionQuery() })
+      body: JSON.stringify({ query: getIntrospectionQuery({ directiveIsRepeatable: true }) })
     })
       .then(resp => resp.json())
       .then(res => {
