@@ -10,6 +10,7 @@ import { Button, Card, Col, Descriptions, Modal, Row, Spin, message } from 'antd
 import { useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { mutate } from 'swr'
+import base64 from 'base64-js'
 
 import styles from './index.module.less'
 
