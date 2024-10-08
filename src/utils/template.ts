@@ -69,29 +69,29 @@ export async function resolveDefaultCode(
 		packageName,
 		name,
 	};
-	if (path.match(/custom-\w+\/global\//)) {
+	if (path.match(/custom[-_]\w+\/global\//)) {
 		code = await getDefaultCode(sdk, ["global", name], variables);
-	} else if (path.match(/custom-\w+\/authentication\//)) {
+	} else if (path.match(/custom[-_]\w+\/authentication\//)) {
 		code = await getDefaultCode(
 			sdk,
 			["authentication", name],
 			variables,
 		);
-	} else if (path.match(/custom-\w+\/customize\//)) {
+	} else if (path.match(/custom[-_]\w+\/customize\//)) {
 		code = await getDefaultCode(
 			sdk,
 			["custom", "customize"],
 			variables,
 		);
-	} else if (path.match(/custom-\w+\/function\//)) {
+	} else if (path.match(/custom[-_]\w+\/function\//)) {
 		code = await getDefaultCode(
 			sdk,
 			["custom", "function"],
 			variables,
 		);
-	} else if (path.match(/custom-\w+\/proxy\//)) {
+	} else if (path.match(/custom[-_]\w+\/proxy\//)) {
 		code = await getDefaultCode(sdk, ["custom", "proxy"], variables);
-	} else if (path.match(/custom-\w+\/storage/)) {
+	} else if (path.match(/custom[-_]\w+\/storage/)) {
 		const profileName = list.pop() as string;
 		const providerName = list.pop() as string;
 		code = await getDefaultCode(sdk, ["upload", name], {
