@@ -1,1 +1,0 @@
-import{r as t}from"./index-0c7e8d7d.js";import{W as o}from"./workbenchContext-bf63acf0.js";function i(){const{setHideSide:e}=t.useContext(o);return t.useEffect(()=>{window.open("/#/workbench/rapi?t="+Date.now(),"fb_rapi"),e(!0),window.close()},[e])," "}export{i as default};
