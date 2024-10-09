@@ -15,7 +15,7 @@ import base64 from 'base64-js'
 import { KeyboardEventHandler, useRef } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import useSWR, { mutate as _mutate } from 'swr'
+import useSWR, { useSWRConfig } from 'swr'
 
 import requests, { getAuthKey, proxy } from '@/lib/fetchers'
 import { intl } from '@/providers/IntlProvider'
@@ -162,6 +162,8 @@ const SDKTemplateItem = ({
   onChange: (newSDK: ApiDocuments.Sdk) => void
 }) => {
   const intl = useIntl()
+
+  const { mutate: globalMutate } = useSWRConfig()
   const [updatable, setUpdatable] = useState<
     false | { repo: string; localSha: string; remoteSha: string }
   >(false)
@@ -195,7 +197,8 @@ const SDKTemplateItem = ({
       requests.put("/sdk", { name: sdk.name, enabled: checked }).then(res => {
         mutate()
         initialize()
-        _mutate('/sdk/enabledServer')
+        globalMutate('/globalOperation/httpTransportHookOptions', undefined, { revalidate: true })
+        globalMutate('/sdk/enabledServer')
       })
     },
     [initialize, mutate, sdk.name]
