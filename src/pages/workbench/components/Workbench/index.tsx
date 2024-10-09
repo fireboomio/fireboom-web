@@ -478,7 +478,7 @@ export default function Index(props: PropsWithChildren) {
         if (flag && !(await checkHookExist(hookPath, hasParam))) {
           return
         }
-        if (hookPath.match(/custom-\w+\/global\//)) {
+        if (hookPath.match(/custom[-_]\w+\/global\//)) {
           await updateGlobalOperationHookEnabled(hookPath.split('/').pop()!, flag)
         } else {
           await updateOperationHookEnabled(operationName, hookPath.split('/').pop()!, flag)

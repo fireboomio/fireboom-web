@@ -63,7 +63,7 @@ export default function VsCode({
     if (!forceShowPath && vscode?.options?.visible) {
       path = vscode?.options?.currentPath
     }
-    path = path.replace(/^(\.\/)?custom-\w+\//, './')
+    path = path.replace(/^(\.\/)?custom[-_]\w+\//, './')
     if (path) {
       openDatabase().then(db => {
         addMessage(db, {
