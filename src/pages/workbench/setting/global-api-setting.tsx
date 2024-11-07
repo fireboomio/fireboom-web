@@ -37,6 +37,20 @@ export default function APIGlobalSetting() {
         labelAlign="right"
         initialValues={globalSetting}
       >
+        <Form.Item className={styles.tip} label={<FormattedMessage defaultMessage="性能设置" description="API性能设置" />} />
+        <Form.Item
+          label={intl.formatMessage({
+            defaultMessage: '在 GraphQL 内转换',
+            description: '在 GraphQL 内转换'
+          })}
+          name="graphqlTransformEnabled"
+          valuePropName="checked"
+        >
+          <Switch
+            checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+            unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
+          />
+        </Form.Item>
         <Form.Item className={styles.tip} label={<FormattedMessage defaultMessage="授权配置" description="API授权配置" />} />
         <Form.Item
           label={intl.formatMessage({

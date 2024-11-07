@@ -135,7 +135,7 @@ export default function Index(props: Props) {
           </Checkbox>
         </Form.Item>
         <div className={styles.splitLine} />
-        <Form.Item label={intl.formatMessage({ defaultMessage: '接口授权' })}>
+        <Form.Item label={intl.formatMessage({ defaultMessage: '接口授权' })} labelCol={{ span: 12 }}>
           <Form.Item
             noStyle
             name={['authenticationConfig', 'authRequired']}
@@ -145,6 +145,19 @@ export default function Index(props: Props) {
               disabled={disabled}
               checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
               unCheckedChildren={intl.formatMessage({ defaultMessage: '匿名' })}
+            />
+          </Form.Item>
+        </Form.Item>
+        <Form.Item label={intl.formatMessage({ defaultMessage: '在 GraphQL 内转换' })} labelCol={{ span: 12 }}>
+          <Form.Item
+            noStyle
+            name="graphqlTransformEnabled"
+            valuePropName="checked"
+          >
+            <Switch
+              disabled={disabled}
+              checkedChildren={intl.formatMessage({ defaultMessage: '开启' })}
+              unCheckedChildren={intl.formatMessage({ defaultMessage: '关闭' })}
             />
           </Form.Item>
         </Form.Item>

@@ -1,10 +1,12 @@
 import { intl } from "@/providers/IntlProvider"
 import { EditFilled } from "@ant-design/icons"
-import { Input, Button } from "antd"
+import { Input, Button, Switch, Tooltip } from "antd"
 import { useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { useLocation } from "react-router-dom"
 import { useAPIManager } from "../../../store"
+
+const TRANSFORM_IN_GRAPHQL = 'config.transformInGraphql'
 
 const APIRemark = () => {
   const { apiDesc, updateRemark } = useAPIManager()
@@ -12,6 +14,7 @@ const APIRemark = () => {
   const [editingRemarkContent, setEditingRemarkContent] = useState('')
   const [isSavingRemark, setIsSavingRemark] = useState(false)
   const location = useLocation()
+  const [transformInGraphql, setTransformInGraphql] = useState(localStorage.getItem(TRANSFORM_IN_GRAPHQL) === '1')
 
   const startEditRemark = () => {
     setIsEditingRemark(true)
@@ -45,10 +48,10 @@ const APIRemark = () => {
 
   return (
     <div className='pt-2 !pl-10 graphiql-toolbar !items-start'>
-      {!isEditingRemark ? (<>
+      {!isEditingRemark ? (<div className="flex items-start pr-4">
         <span className='inline-block text-gray-400 break-all whitespace-pre-wrap leading-4 max-h-12 hover:max-h-none'>{
             apiDesc?.remark || intl.formatMessage({ defaultMessage: '暂无描述' })
-          }</span><EditFilled className='ml-2 text-gray-400 cursor-pointer hover:text-gray-600' onClick={startEditRemark} /></>) : (
+          }</span><EditFilled className='ml-2 text-gray-400 cursor-pointer hover:text-gray-600' onClick={startEditRemark} /></div>) : (
         <>
           <Input.TextArea
             autoSize={{ minRows: 4, maxRows: 10 }}
@@ -66,6 +69,20 @@ const APIRemark = () => {
           </div>
         </>
       )}
+      <div className="flex-shrink-0 ml-auto flex items-center">
+        <Switch
+          checked={transformInGraphql}
+          size="small"
+          className="mr-1"
+          onChange={(checked) => {
+            setTransformInGraphql(checked)
+            localStorage.setItem(TRANSFORM_IN_GRAPHQL, checked ? '1' : '0')
+          }}
+        />
+        <Tooltip title={intl.formatMessage({ defaultMessage: '只影响控制台结果，不影响API调用' })}>
+          <FormattedMessage defaultMessage="在 GraphQL 内转换" />
+        </Tooltip>
+      </div>
     </div>
   )
 }
