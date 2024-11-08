@@ -1,3 +1,4 @@
+import { useConfig } from "@/providers/config"
 import { intl } from "@/providers/IntlProvider"
 import { EditFilled } from "@ant-design/icons"
 import { Input, Button, Switch, Tooltip } from "antd"
@@ -6,7 +7,6 @@ import { FormattedMessage } from "react-intl"
 import { useLocation } from "react-router-dom"
 import { useAPIManager } from "../../../store"
 
-const TRANSFORM_IN_GRAPHQL = 'config.transformInGraphql'
 
 const APIRemark = () => {
   const { apiDesc, updateRemark } = useAPIManager()
@@ -14,7 +14,7 @@ const APIRemark = () => {
   const [editingRemarkContent, setEditingRemarkContent] = useState('')
   const [isSavingRemark, setIsSavingRemark] = useState(false)
   const location = useLocation()
-  const [transformInGraphql, setTransformInGraphql] = useState(localStorage.getItem(TRANSFORM_IN_GRAPHQL) === '1')
+  const { graphqlTransformEnabled, toggleTransformInGraphql } = useConfig()
 
   const startEditRemark = () => {
     setIsEditingRemark(true)
@@ -71,12 +71,11 @@ const APIRemark = () => {
       )}
       <div className="flex-shrink-0 ml-auto flex items-center">
         <Switch
-          checked={transformInGraphql}
+          checked={graphqlTransformEnabled}
           size="small"
           className="mr-1"
           onChange={(checked) => {
-            setTransformInGraphql(checked)
-            localStorage.setItem(TRANSFORM_IN_GRAPHQL, checked ? '1' : '0')
+            toggleTransformInGraphql(checked)
           }}
         />
         <Tooltip title={intl.formatMessage({ defaultMessage: '只影响控制台结果，不影响API调用' })}>

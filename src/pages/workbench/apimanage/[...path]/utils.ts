@@ -2,6 +2,7 @@
 import { Observable } from 'rxjs'
 import { getAuthKey } from '@/lib/fetchers'
 import { IntrospectionQuery } from 'graphql'
+import { useConfig } from '@/providers/config'
 
 export async function fetchSubscription(rec: Record<string, unknown>, controller: AbortController) {
   return new Observable(observer => {
@@ -46,14 +47,19 @@ export async function fetchSubscription(rec: Record<string, unknown>, controller
 }
 
 export async function fetcher(rec: Record<string, unknown>, setSchema: (q: IntrospectionQuery) => void, autoComplete?: boolean) {
+  const { graphqlTransformEnabled } = useConfig.getState()
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-FB-Authentication': getAuthKey() || ''
+  }
+  if (graphqlTransformEnabled) {
+    headers['X-FB-Mock-Switch'] = 'true'
+  }
   try {
     const resp = await fetch(`/app/main/graphql${autoComplete? '?autoComplete' : ''}`, {
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-FB-Authentication': getAuthKey() || ''
-      },
+      headers,
       body: JSON.stringify(rec)
     })
     if (autoComplete) {
