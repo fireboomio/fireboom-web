@@ -17,8 +17,31 @@ const useEntities = (): EntitiesContext => {
     state: { blocks, delMap, editMap, newMap }
   } = useContext(PrismaSchemaContext)
   const getNextId = () => Math.max(...blocks.map(b => b.id)) + 1
+  let entities = []
+  let cur_entity, cur_entity_comment
+  for (const block of blocks) {
+    switch (block.type) {
+      case "enum":
+      case "model":
+        cur_entity = block
+        break
+      case "comment":
+        cur_entity_comment = block.text.replace(/^\/{3}\s*/, '')
+        break
+      case "break":
+        if (cur_entity) {
+          entities.push({
+            ...cur_entity,
+            comment: cur_entity_comment
+          })
+        }
+        cur_entity = undefined
+        cur_entity_comment = undefined
+        break
+    }
+  }
   return {
-    entities: blocks.filter(b => ['enum', 'model'].includes(b.type)).map(e => e as Entity),
+    entities: entities,
     delMap,
     editMap,
     newMap,

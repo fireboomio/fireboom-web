@@ -181,7 +181,6 @@ const ModelEntityItem = ({
       ]}
     />
   )
-
   const itemContent = isEditing ? (
     <Input
       onBlur={e => renameEntity(e.target.value)}
@@ -193,7 +192,10 @@ const ModelEntityItem = ({
       placeholder={intl.formatMessage({ defaultMessage: '请输入实体名' })}
     />
   ) : (
-    <div className={'text-sm font-normal leading-4 ' + styles.name}>{entity.name}</div>
+    <div className={'text-sm font-normal leading-4 ' + styles.name} title={entity.comment}>
+      {entity.name}
+      {entity.comment && <label className='text-[rgba(153,153,153,0.6)] text-xs'> {entity.comment}</label>}
+    </div>
   )
 
   return (
