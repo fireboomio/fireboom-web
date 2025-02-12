@@ -160,12 +160,14 @@ const getRenderFuncMap = (
 
 const renderTableColumn = (field: SchemaField) => {
   return (
-    <span
+    <div
       className="whitespace-nowrap w-full block"
       style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+      title={field.documentation}
     >
-      {field.title}
-    </span>
+      <div>{field.title}</div>
+      {field.documentation && <div className='text-[rgba(153,153,153,0.6)] text-xs'>{field.documentation}</div>}
+    </div>
   )
 }
 

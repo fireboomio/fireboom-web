@@ -1,6 +1,6 @@
 import type { ApolloQueryResult } from '@apollo/client/core/types'
 import type { SchemaField, SchemaModel } from '@paljs/types'
-import { Button, Form, message, Modal } from 'antd'
+import { Button, Form, Modal, message } from 'antd'
 import ButtonGroup from 'antd/lib/button/button-group'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -11,10 +11,10 @@ import type { RelationMap } from '@/lib/helpers/prismaRelation'
 import { findRelations } from '@/lib/helpers/prismaRelation'
 import useCurrentEntity from '@/lib/hooks/useCurrentEntity'
 
-import styles from './index.module.less'
-import { Inputs } from './Inputs'
 import { DownOutlined, MinusCircleOutlined, UpOutlined } from '@ant-design/icons'
 import clsx from 'clsx'
+import { Inputs } from './Inputs'
+import styles from './index.module.less'
 
 const canBeUpdatedOrCreated = (action: 'update' | 'view' | 'create', field: SchemaField) => {
   return action !== 'view' && field[action]
@@ -171,7 +171,10 @@ const ModelFormContainer = ({
               }
               if (field.isList) {
                 return (
-                  <Form.Item className="w-full" label={field.title}>
+                  <Form.Item className="w-full" label={<div>
+                    <div>{field.title}</div>
+                    <div className='text-[rgba(153,153,153,0.6)] text-xs'>{field.documentation}</div>
+                  </div>}>
                     <Form.List name={field.name}>
                       {(fields, { add, remove, move }) => {
                         return (
@@ -221,9 +224,8 @@ const ModelFormContainer = ({
                     </Form.List>
                   </Form.Item>
                 )
-              } else {
-                return buildNonListField(field)
               }
+              return buildNonListField(field)
             })}
         </Form>
       </div>

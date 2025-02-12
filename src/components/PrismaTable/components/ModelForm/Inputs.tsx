@@ -1,23 +1,32 @@
-import type { SchemaField } from '@paljs/types'
-import { Button, ConfigProvider, FormItemProps, Upload } from 'antd'
-import { DatePicker, Form, Input, InputNumber, Modal, Radio, Select, message } from 'antd'
-import Search from 'antd/lib/input/Search'
-import TextArea from 'antd/lib/input/TextArea'
-import dayjs from 'dayjs'
-import { useEffect } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { useImmer } from 'use-immer'
+import type { SchemaField } from "@paljs/types";
+import { Button, ConfigProvider, type FormItemProps, Upload } from "antd";
+import {
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Radio,
+  Select,
+  message,
+} from "antd";
+import Search from "antd/lib/input/Search";
+import TextArea from "antd/lib/input/TextArea";
+import dayjs from "dayjs";
+import { useEffect } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { useImmer } from "use-immer";
 
-import DynamicTable from '@/components/PrismaTable/components/DynamicTable'
-import type { FilterState } from '@/components/PrismaTable/libs/types'
-import { getDisplayName } from '@/components/PrismaTable/libs/utils'
-import useTableSchema from '@/lib/hooks/useTableSchema'
+import DynamicTable from "@/components/PrismaTable/components/DynamicTable";
+import type { FilterState } from "@/components/PrismaTable/libs/types";
+import { getDisplayName } from "@/components/PrismaTable/libs/utils";
+import useTableSchema from "@/lib/hooks/useTableSchema";
 
-import { UploadOutlined } from '@ant-design/icons'
-import MultiModalInput from '../MultiModalInput'
+import { UploadOutlined } from "@ant-design/icons";
+import MultiModalInput from "../MultiModalInput";
 
 interface SelfFormItemProps {
-  children: JSX.Element
+  children: JSX.Element;
 }
 
 export const FormItem = ({
@@ -25,7 +34,7 @@ export const FormItem = ({
   children,
   name,
   required,
-  initialValue
+  initialValue,
 }: SelfFormItemProps & FormItemProps) => {
   return (
     <Form.Item
@@ -37,116 +46,200 @@ export const FormItem = ({
     >
       {children}
     </Form.Item>
-  )
-}
+  );
+};
 
 interface Props {
-  field: SchemaField
-  disabled: boolean
-  initialValues: Record<string, any>
+  field: SchemaField;
+  disabled: boolean;
+  initialValues: Record<string, any>;
   // namespace: string
 }
 
-const String = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
+const String = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <MultiModalInput
         disabled={disabled}
-        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请输入" })}
       />
       {/* <Input disabled={disabled} placeholder={intl.formatMessage({ defaultMessage: '请输入' })} /> */}
     </FormItem>
-  )
-}
+  );
+};
 
-const Json = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
+const Json = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <TextArea
         disabled={disabled}
         autoSize={{ minRows: 1 }}
-        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请输入" })}
       />
     </FormItem>
-  )
-}
+  );
+};
 
-const Datetime = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
-  const form = Form.useFormInstance()
+const Datetime = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
+  const form = Form.useFormInstance();
 
   const handleDateChange = (dateString: string) => {
-    if (!form) return
-    form.setFieldValue(name, dateString ? dayjs(dateString) : null)
-  }
-  const initialValue = initialValues[name]
-  const initialDatetime = initialValue ? dayjs(initialValue as string) : null
+    if (!form) return;
+    form.setFieldValue(name, dateString ? dayjs(dateString) : null);
+  };
+  const initialValue = initialValues[name];
+  const initialDatetime = initialValue ? dayjs(initialValue as string) : null;
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialDatetime}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialDatetime}
+    >
       <DatePicker
-        placeholder={intl.formatMessage({ defaultMessage: '请选择日期时间' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请选择日期时间" })}
         disabled={disabled}
         className="w-full"
         showTime
         onChange={(_, dateString) => handleDateChange(dateString)}
       />
     </FormItem>
-  )
-}
+  );
+};
 
-const Boolean = ({ field: { name, required, title }, disabled, initialValues }: Props) => (
-  <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+const Boolean = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => (
+  <FormItem
+    label={<div>
+      <div>{title}</div>
+      <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+    </div>}
+    name={name}
+    required={required}
+    initialValue={initialValues[name]}
+  >
     <Radio.Group name={name} disabled={disabled}>
       <Radio value={true}>true</Radio>
       <Radio value={false}>false</Radio>
     </Radio.Group>
   </FormItem>
-)
+);
 
-const Int = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
+const Int = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <InputNumber
         className="w-full"
         disabled={disabled}
         controls
         precision={0}
-        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请输入" })}
       />
     </FormItem>
-  )
-}
+  );
+};
 
-const Float = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
+const Float = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <InputNumber
         className="w-full"
         disabled={disabled}
         controls
-        placeholder={intl.formatMessage({ defaultMessage: '请输入' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请输入" })}
       />
     </FormItem>
-  )
-}
+  );
+};
 
-const Enum = ({ field: { name, required, title, type }, disabled, initialValues }: Props) => {
-  const intl = useIntl()
+const Enum = ({
+  field: { name, required, title, type, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
+  const intl = useIntl();
   const {
-    schema: { enums }
-  } = useTableSchema()
-  const enumType = enums.find(e => type === e.name)
-  const options = enumType?.fields ?? []
+    schema: { enums },
+  } = useTableSchema();
+  const enumType = enums.find((e) => type === e.name);
+  const options = enumType?.fields ?? [];
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <Select
         allowClear
         disabled={disabled}
-        placeholder={intl.formatMessage({ defaultMessage: '请选择' })}
+        placeholder={intl.formatMessage({ defaultMessage: "请选择" })}
       >
         {options.map((enumValue, idx) => (
           <Select.Option key={idx} value={enumValue}>
@@ -155,59 +248,80 @@ const Enum = ({ field: { name, required, title, type }, disabled, initialValues 
         ))}
       </Select>
     </FormItem>
-  )
-}
+  );
+};
 
 const Object = ({ field, disabled, initialValues }: Props) => {
-  const { name, title, type } = field
-  const required = field.list ? false : field.required
-  const intl = useIntl()
-  const form = Form.useFormInstance()
-  const initialObjectValue = initialValues[name] as Record<string, any>
+  const { name, title, type, documentation } = field;
+  const required = field.list ? false : field.required;
+  const intl = useIntl();
+  const form = Form.useFormInstance();
+  const initialObjectValue = initialValues[name] as Record<string, any>;
 
-  const [displayValue, setDisplayValue] = useImmer<string | undefined>(undefined)
-  const [connectModalVisible, setConnectModalVisible] = useImmer<boolean>(false)
-  const [filters, setFilters] = useImmer<FilterState[]>([])
+  const [displayValue, setDisplayValue] = useImmer<string | undefined>(
+    undefined,
+  );
+  const [connectModalVisible, setConnectModalVisible] =
+    useImmer<boolean>(false);
+  const [filters, setFilters] = useImmer<FilterState[]>([]);
   const {
-    schema: { models }
-  } = useTableSchema()
-  const relationModel = models.find(m => m.id === type)
-  const relationModelIdField = relationModel?.fields.find(f => f.isId)
-  initialObjectValue && form.setFieldValue(name, initialObjectValue[relationModelIdField!.name])
+    schema: { models },
+  } = useTableSchema();
+  const relationModel = models.find((m) => m.id === type);
+  const relationModelIdField = relationModel?.fields.find((f) => f.isId);
+  initialObjectValue &&
+    form.setFieldValue(name, initialObjectValue[relationModelIdField!.name]);
   if (name !== type) {
-    initialObjectValue && form.setFieldValue(type, displayValue)
+    initialObjectValue && form.setFieldValue(type, displayValue);
   }
 
   useEffect(() => {
-    initialObjectValue && setDisplayValue(getDisplayName(initialObjectValue, relationModel!))
-  }, [initialObjectValue, relationModel, setDisplayValue])
+    initialObjectValue &&
+      setDisplayValue(getDisplayName(initialObjectValue, relationModel!));
+  }, [initialObjectValue, relationModel, setDisplayValue]);
 
   const handleConnect = (record: Record<string, any>) => {
-    const connectedValue = record[relationModelIdField!.name]
-    setTimeout(() => form.setFieldValue(name, connectedValue), 50)
-    setDisplayValue(connectedValue ? getDisplayName(record, relationModel!) : undefined)
-    setConnectModalVisible(false)
-  }
+    const connectedValue = record[relationModelIdField!.name];
+    setTimeout(() => form.setFieldValue(name, connectedValue), 50);
+    setDisplayValue(
+      connectedValue ? getDisplayName(record, relationModel!) : undefined,
+    );
+    setConnectModalVisible(false);
+  };
 
-  const handleValidateObject = (_: unknown, value: unknown, callback: (error?: string) => void) => {
+  const handleValidateObject = (
+    _: unknown,
+    value: unknown,
+    callback: (error?: string) => void,
+  ) => {
     if (!required || value) {
-      callback()
+      callback();
     } else {
-      const msg = intl.formatMessage({ defaultMessage: `请选择 {type} 表关联数据` }, { type: type })
-      message.error(msg)
-      callback(msg)
+      const msg = intl.formatMessage(
+        { defaultMessage: `请选择 {type} 表关联数据` },
+        { type: type },
+      );
+      message.error(msg);
+      callback(msg);
     }
-  }
+  };
 
   return (
     <>
       <Form.Item
-        label={title}
+        label={
+          <div>
+            <div>{title}</div>
+            <div className="text-[rgba(153,153,153,0.6)] text-xs">
+              {documentation}
+            </div>
+          </div>
+        }
         name={name}
         // style={{ display: 'none' }}
         rules={[{ required, validator: handleValidateObject }]}
         className="w-full"
-        // noStyle
+      // noStyle
       >
         <FormItem noStyle>
           <Search
@@ -216,7 +330,9 @@ const Object = ({ field, disabled, initialValues }: Props) => {
             onPressEnter={undefined}
             readOnly
             allowClear
-            placeholder={intl.formatMessage({ defaultMessage: '搜索并关联记录' })}
+            placeholder={intl.formatMessage({
+              defaultMessage: "搜索并关联记录",
+            })}
             value={displayValue}
             onClick={() => setConnectModalVisible(true)}
             enterButton
@@ -226,7 +342,10 @@ const Object = ({ field, disabled, initialValues }: Props) => {
       </Form.Item>
       <Modal
         width={1200}
-        title={intl.formatMessage({ defaultMessage: `关联 {type} 表数据` }, { type })}
+        title={intl.formatMessage(
+          { defaultMessage: `关联 {type} 表数据` },
+          { type },
+        )}
         open={connectModalVisible}
         footer={false}
         destroyOnClose
@@ -241,23 +360,37 @@ const Object = ({ field, disabled, initialValues }: Props) => {
           updateInitialFilters={setFilters}
           connectedRecord={initialObjectValue}
           redirectToEntityWithFilters={() =>
-            void message.warning(intl.formatMessage({ defaultMessage: '此处不支持跳转！' }))
+            void message.warning(
+              intl.formatMessage({ defaultMessage: "此处不支持跳转！" }),
+            )
           }
         />
       </Modal>
     </>
-  )
-}
+  );
+};
 
-const Bytes = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+const Bytes = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       {/* TODO */}
       <FormattedMessage defaultMessage="暂不支持 Blob 类型直接修改" />
       {/* <BlobFile /> */}
     </FormItem>
-  )
-}
+  );
+};
 
 // const BlobFile = ({
 //   value,
@@ -308,13 +441,25 @@ const Bytes = ({ field: { name, required, title }, disabled, initialValues }: Pr
 //   )
 // }
 
-const Unsupported = ({ field: { name, required, title }, disabled, initialValues }: Props) => {
+const Unsupported = ({
+  field: { name, required, title, documentation },
+  disabled,
+  initialValues,
+}: Props) => {
   return (
-    <FormItem label={title} name={name} required={required} initialValue={initialValues[name]}>
+    <FormItem
+      label={<div>
+        <div>{title}</div>
+        <div className='text-[rgba(153,153,153,0.6)] text-xs'>{documentation}</div>
+      </div>}
+      name={name}
+      required={required}
+      initialValue={initialValues[name]}
+    >
       <FormattedMessage defaultMessage="暂不支持的类型" />
     </FormItem>
-  )
-}
+  );
+};
 
 export const Inputs = {
   String,
@@ -326,5 +471,5 @@ export const Inputs = {
   Float,
   Json,
   Bytes,
-  Unsupported
-}
+  Unsupported,
+};
