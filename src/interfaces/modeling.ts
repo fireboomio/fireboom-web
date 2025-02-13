@@ -22,7 +22,7 @@ export interface Id {
   id: number
 }
 
-export type Entity = Model | Enum
+export type Entity = (Model | Enum) & {comment?: string}
 export type Block = BlockT & Id
 export type Model = ModelT & Id
 export type Enum = EnumT & Id

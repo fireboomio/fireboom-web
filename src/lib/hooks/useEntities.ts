@@ -18,7 +18,7 @@ const useEntities = (): EntitiesContext => {
   } = useContext(PrismaSchemaContext)
   const getNextId = () => Math.max(...blocks.map(b => b.id)) + 1
   let entities = []
-  let cur_entity, cur_entity_comment
+  let cur_entity, cur_entity_comment = undefined
   for (const block of blocks) {
     switch (block.type) {
       case "enum":
