@@ -53,7 +53,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const { getNextId } = useEntities()
   const { blocks, updateAndSaveBlock, applyLocalSchema, applyLocalBlocks, refreshBlocks } =
     useBlocks()
-  const { name, kind } = useDBSource()
+  const { name, realKind } = useDBSource()
   const { syncEditorFlag, panel, triggerSyncEditor } = useContext(PrismaSchemaContext)
   const newEntityLocalStorageKey = `${showType}__for_db_source_${name}`
   const newEntityId = getNextId()
@@ -77,7 +77,7 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
   const [editorValidate, setEditorValidate] = useState<boolean>(true) // 当前编辑器内容是否合法
   const [titleValue, setTitleValue] = useState<string>('')
 
-  var isMongo = kind === DataSourceKind.MongoDB
+  var isMongo = realKind === DataSourceKind.MongoDB
 
   // 编辑模式 变更时存入本地存储中
   useEffect(() => {

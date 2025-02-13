@@ -17,7 +17,7 @@ const useEntities = (): EntitiesContext => {
     state: { blocks, delMap, editMap, newMap }
   } = useContext(PrismaSchemaContext)
   const getNextId = () => Math.max(...blocks.map(b => b.id)) + 1
-  let entities = []
+  let entities: Entity[] = []
   let cur_entity, cur_entity_comment = undefined
   for (const block of blocks) {
     switch (block.type) {
@@ -34,9 +34,9 @@ const useEntities = (): EntitiesContext => {
             ...cur_entity,
             comment: cur_entity_comment
           })
+          cur_entity = undefined
+          cur_entity_comment = undefined
         }
-        cur_entity = undefined
-        cur_entity_comment = undefined
         break
     }
   }

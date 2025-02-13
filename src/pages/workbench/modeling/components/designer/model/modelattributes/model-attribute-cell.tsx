@@ -51,18 +51,18 @@ const ModelAttributeCell = ({
 }: Props) => {
   const intl = useIntl()
   const PrismaSchemaProperties = usePrismaSchemaProperties()
-  const { kind } = useDBSource()
+  const { realKind } = useDBSource()
   const { name: currentAttrName, args: currentAttrArgs } = modelAttribute
   const { properties } = currentModel
   const currentModelFields = properties.filter(p => p.type === 'field').map(f => f as Field)
 
   const modelAttributesMap: Record<string, AttributeType> = {}
-  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[kind as number]
+  const prismaSchemaPropertyForDBType = PrismaSchemaProperties[realKind as number]
   if (!prismaSchemaPropertyForDBType) {
     void message.error(
       intl.formatMessage(
         { defaultMessage: '暂不支持数据库类型为[{dbType}]的数据源！' },
-        { dbType: databaseKindNameMap[kind as keyof typeof databaseKindNameMap] }
+        { dbType: databaseKindNameMap[realKind as keyof typeof databaseKindNameMap] }
       )
     )
     return <>N/A</>

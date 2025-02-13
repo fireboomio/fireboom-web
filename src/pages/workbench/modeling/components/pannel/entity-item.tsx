@@ -192,10 +192,7 @@ const ModelEntityItem = ({
       placeholder={intl.formatMessage({ defaultMessage: '请输入实体名' })}
     />
   ) : (
-    <div className={'text-sm font-normal leading-4 ' + styles.name} title={entity.comment}>
-      {entity.name}
-      {entity.comment && <label className='text-[rgba(153,153,153,0.6)] text-xs'> {entity.comment}</label>}
-    </div>
+    <div className={'text-sm font-normal leading-4 ' + styles.name} title={entity.name}>{entity.name}</div>
   )
 
   return (
@@ -218,6 +215,7 @@ const ModelEntityItem = ({
       {itemContent}
       {editFlag ? <div className={styles.editMark}></div> : null}
       {newFlag ? <div className={styles.addMark}></div> : null}
+      {entity.comment ? <div className={'text-[rgba(153,153,153,0.6)] text-xs ' + styles.name} title={entity.comment}>{entity.comment}</div> : null}
       <Dropdown
         dropdownRender={MenuContainer}
         trigger={['click']}
