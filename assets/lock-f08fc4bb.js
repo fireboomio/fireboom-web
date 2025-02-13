@@ -1,0 +1,1 @@
+import{r as e}from"./index-d217b560.js";function x(u,c){const n=e.useRef(u);let r=e.useRef(!1);const[o,s]=e.useState(!1);e.useEffect(()=>{n.current=u,r.current=!1},c);const f=e.useCallback(async function(...l){if(r.current)return;let a,t;s(!0),r.current=!0;try{a=await n.current(...l)}catch(i){t=i}if(s(!1),r.current=!1,t)throw t;return a},c);return{loading:o,fun:f}}export{x as u};
