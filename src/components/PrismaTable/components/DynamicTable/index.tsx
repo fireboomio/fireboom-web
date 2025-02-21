@@ -198,6 +198,7 @@ const DynamicTable = ({
     <>
       <div className="bg-white flex flex-shrink-0 h-54px px-11 justify-start items-center">
         <span className="font-medium text-16px">{currentModel.name}</span>
+        {currentModel.documentation && <span className='ml-1 text-[rgba(153,153,153,0.6)] font-medium text-14px'> {currentModel.documentation}</span>}
         <span className="mr-auto ml-3 text-14px text-[#118aD1]">model</span>
         <Tooltip title={intl.formatMessage({ defaultMessage: '刷新' })} placement="bottom">
           <SyncOutlined spin={loading} onClick={() => refetch()} className="mr-4 text-lg" />

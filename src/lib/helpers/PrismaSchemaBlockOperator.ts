@@ -1,4 +1,4 @@
-import type { Attribute, Field, KeyValue, RelationArray } from '@mrleebo/prisma-ast'
+import type { Attribute, Field, KeyValue, RelationArray, Comment } from '@mrleebo/prisma-ast'
 
 import AttributeArgHelper from '@/components/PrismaDesign/components/AttributeArg/AttributeArgHelper'
 import type { Block, Entity, Enum, Model } from '@/interfaces/modeling'
@@ -25,6 +25,40 @@ const checkIfRelationIsUnique = (field: Field, model: Model): boolean => {
 
 const checkAndUpdateRelationField = (updatedModel: Model, blocks: Block[]): Block[] => {
   const newBlocks = [...blocks]
+  if (updatedModel.comment) {
+    const updateModelIndex = blocks.findIndex(b => b.id === updatedModel.id)
+    let existModelCommentIndex = undefined
+    for (let i = updateModelIndex-1; i >=0 ; i--) {
+      const block = blocks[i]
+      switch (block.type) {
+        case "datasource":
+        case "enum":
+        case "model":
+        case "generator":
+          existModelCommentIndex = -1
+          break;
+        case "comment":
+          existModelCommentIndex = i
+          break
+      }
+      if (existModelCommentIndex) {
+        if (existModelCommentIndex == -1) {
+          newBlocks.splice(updateModelIndex-1, 0, {
+            id: -1,
+            type: "break"
+          }, {
+            id: -1,
+            type: 'comment',
+            text: updatedModel.comment
+          })
+        } else {
+          const comment = newBlocks[existModelCommentIndex] as Comment
+          comment.text = updatedModel.comment
+        }
+        break
+      }
+    }
+  }
   updatedModel.properties = updatedModel.properties ?? []
   // 当前表的关联字段
   const relationFields = updatedModel.properties

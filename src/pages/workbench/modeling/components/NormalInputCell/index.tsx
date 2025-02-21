@@ -83,7 +83,7 @@ const NormalInputCell = ({
   )
 
   return (
-    <div className="h-7">
+    <div className={`h-7 ${className ?? ''}`}>
       {isEditing ? (
         <Input
           className={className}

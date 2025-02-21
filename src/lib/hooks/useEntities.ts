@@ -19,11 +19,18 @@ const useEntities = (): EntitiesContext => {
   const getNextId = () => Math.max(...blocks.map(b => b.id)) + 1
   let entities: Entity[] = []
   let cur_entity, cur_entity_comment = undefined
-  for (const block of blocks) {
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i]
     switch (block.type) {
       case "enum":
       case "model":
         cur_entity = block
+        if (i === blocks.length - 1) {
+          entities.push({
+            ...cur_entity,
+            comment: cur_entity_comment
+          })
+        }
         break
       case "comment":
         cur_entity_comment = block.text.replace(/^\/{3}\s*/, '')

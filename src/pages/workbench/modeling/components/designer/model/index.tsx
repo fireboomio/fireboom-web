@@ -176,7 +176,21 @@ const ModelDesigner = forwardRef(
     }
 
     const { properties, name: currentModelName } = currentModel
-    const fields = (properties?.filter(p => p.type === 'field') as Field[]) || []
+    const fields: Field[] = []
+    if (properties) {
+      let comment = undefined
+      for (const prop of properties) {
+        switch (prop.type) {
+          case "field":
+            fields.push({...prop, comment})
+            comment = undefined
+            break
+          case "comment":
+            comment = prop.text.replace(/^\/{3}\s*/, '')
+            break
+        }
+      }
+    }
     const attributes = (properties?.filter(p => p.type === 'attribute') as ModelAttribute[]) || []
 
     const handlePropertyUpdate = (originalProperty: Property, newProperty: Property) => {
@@ -255,8 +269,8 @@ const ModelDesigner = forwardRef(
 
     const handleFieldCommentChange = (field: Field) => (comment: string) => {
       let commentValue = comment
-      if (commentValue && !commentValue.startsWith('//')) {
-        commentValue = `// ${commentValue}`
+      if (commentValue && !commentValue.startsWith('///')) {
+        commentValue = `/// ${commentValue}`
       }
       const newField = {
         ...field,
@@ -390,7 +404,7 @@ const ModelDesigner = forwardRef(
                   <NormalInputCell
                     placeholder={intl.formatMessage({ defaultMessage: '注释描述' })}
                     className="text-[#AFB0B4]"
-                    data={field.comment?.replace(/^\/\/\s+/, '') ?? ''}
+                    data={field.comment?.replace(/^\/\/\/\s+/, '') ?? ''}
                     onBlur={handleFieldCommentChange(field)}
                   />
                 </div>

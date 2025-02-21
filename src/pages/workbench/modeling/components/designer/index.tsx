@@ -30,6 +30,7 @@ import ModelEditor from './editor'
 import EnumDesigner from './enum'
 import styles from './index.module.less'
 import ModelDesigner from './model'
+import NormalInputCell from "@/pages/workbench/modeling/components/NormalInputCell";
 
 type EditType = 'add' | 'edit'
 type EntityType = 'enum' | 'model'
@@ -344,19 +345,30 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
     setEditorContent(printSchema({ type: 'schema', list: localBlocks }))
   }
 
+  const handleModelCommentChange = (comment: string) => {
+    let commentValue = comment
+    if (commentValue && !commentValue.startsWith('///')) {
+      commentValue = `/// ${commentValue}`
+    }
+    const edited = { ...currentEntity, comment: commentValue }
+    const localBlocks = PrismaSchemaBlockOperator(blocks).updateModel(edited as Model)
+    applyLocalBlocks(localBlocks)
+    setEditorContent(printSchema({ type: 'schema', list: localBlocks }))
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div
         className="bg-white flex h-10 pr-4 pl-7 justify-start items-center"
         style={{ borderBottom: '1px solid rgba(95,98,105,0.1)' }}
       >
-        {currentEntity ? (
+        {currentEntity && ['model', 'enum'].includes(currentEntity.type) ? (
           <>
             <span className="font-medium text-lg text-16px common-form">
               {/*{editType === 'edit' ? currentEntity.name : '新增'}*/}
               {editTitle ? (
                 <Input
-                  className="!w-20"
+                  className="!w-32"
                   onPressEnter={e => {
                     handelEditTitle(e.currentTarget.value)
                     setEditTitle(false)
@@ -385,6 +397,12 @@ const DesignerContainer = ({ type, setShowType, showType }: Props) => {
               </span>
               {/*{isEditing && '(未保存)'}*/}
             </span>
+            <NormalInputCell
+                placeholder={intl.formatMessage({ defaultMessage: '注释描述' })}
+                className="!h-6 text-[#AFB0B4]"
+                data={currentEntity.comment?.replace(/^\/\/\/\s+/, '') ?? ''}
+                onBlur={handleModelCommentChange}
+            />
             <span className="mr-auto font-400 text-lg ml-12px text-[#118AD1] text-14px">
               {type}
             </span>

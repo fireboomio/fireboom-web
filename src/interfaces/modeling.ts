@@ -22,10 +22,10 @@ export interface Id {
   id: number
 }
 
-export type Entity = (Model | Enum) & {comment?: string}
+export type Entity = Model | Enum
 export type Block = BlockT & Id
-export type Model = ModelT & Id
-export type Enum = EnumT & Id
+export type Model = ModelT & Id & { comment?: string }
+export type Enum = EnumT & Id & { comment?: string }
 
 export type ModelingShowTypeT =
   | 'editModel'
