@@ -257,3 +257,12 @@
 .graphiql-editor-tool-tabs .ant-tabs-content {
   height: 100% !important;
 }
+
+.graphiql-container span.CodeMirror-matchingbracket {
+  background-color: lightgreen;
+}
+
+.graphiql-container .CodeMirror-lint-mark-error,
+.graphiql-container span.CodeMirror-nonmatchingbracket {
+  background-color: rgba(255, 0, 0, 0.25);
+}

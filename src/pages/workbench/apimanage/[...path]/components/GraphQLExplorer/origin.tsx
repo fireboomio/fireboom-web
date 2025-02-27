@@ -43,6 +43,7 @@ import {
   isScalarType,
   isUnionType,
   isWrappingType,
+  Kind,
   parse,
   parseType,
   print,
@@ -1042,7 +1043,8 @@ class AbstractArgView extends React.PureComponent<
          * we may have caused their variable definitions to become unused.
          * Keep track and remove any variable definitions with 1 or fewer usages.
          * */
-        const cleanedDefaultValue = visit(argValue, {
+        let cleanedDefaultValue: ValueNode | undefined
+        cleanedDefaultValue = visit(argValue, {
           Variable(node) {
             const varName = node.name.value
             const varDef = variableDefinitionByName(varName)
@@ -1055,9 +1057,13 @@ class AbstractArgView extends React.PureComponent<
             return varDef.defaultValue
           }
         })
+        arg.__defaultValue = { ...cleanedDefaultValue }
+        if (Kind.NULL === cleanedDefaultValue.kind || [Kind.INT, Kind.FLOAT, Kind.STRING, Kind.ENUM].includes(cleanedDefaultValue.kind) && cleanedDefaultValue.value == "") {
+          cleanedDefaultValue = undefined
+        }
         const isNonNullable = base.type.kind === 'NonNullType'
         // We're going to give the variable definition a default value, so we must make its type nullable
-        const unwrappedBase = isNonNullable ? { ...base, type: base.type.type } : base
+        const unwrappedBase = isNonNullable && cleanedDefaultValue ? { ...base, type: base.type.type } : base
         variable = { ...unwrappedBase, defaultValue: cleanedDefaultValue }
       } else {
         variable = base
@@ -1124,7 +1130,7 @@ class AbstractArgView extends React.PureComponent<
         return
       }
 
-      const defaultValue = variableDefinition.defaultValue
+      const defaultValue = variableDefinition.defaultValue || arg.__defaultValue
       const newDoc: DocumentNode | null | undefined = this.props.setArgValue(defaultValue, {
         commit: false
       })
