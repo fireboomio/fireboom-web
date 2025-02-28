@@ -1,0 +1,1 @@
+import{r as e}from"./index-f5367804.js";const t={panel:void 0,syncEditorFlag:!1,triggerSyncEditor:()=>{},state:{currentEntityId:0,blocks:[],originBlocks:[],delMap:{},editMap:{},newMap:{},currentDBSource:{},previewFilters:[],schema:{models:[],enums:[]}},dispatch:()=>{}},a=e.createContext(t);export{a as P,t as e};

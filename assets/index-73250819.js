@@ -1,1 +1,0 @@
-import{r as e,b as s,j as a}from"./index-fd8424bf.js";import{W as o}from"./workbenchContext-8bfb2659.js";function c(){const{setHideSide:t}=e.useContext(o),{search:r}=s();return e.useEffect(()=>{t(!0)},[]),a.jsx("iframe",{title:"rapi",src:"./#/rapi-frame?url=/api/engine/swagger",width:"100%",height:"100%",className:"border-none"},r)}export{c as default};
