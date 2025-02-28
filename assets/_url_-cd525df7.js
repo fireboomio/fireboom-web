@@ -1,0 +1,1 @@
+import{r as e,X as s,j as o}from"./index-8780653b.js";import{W as a}from"./workbenchContext-e7b3db2b.js";function m(){const{setHideSide:t}=e.useContext(a),{url:r=""}=s();return e.useEffect(()=>{t(!0)},[]),o.jsx("iframe",{title:"rapi",src:`/#/rapi-frame?url=${encodeURIComponent(r)}`,width:"100%",height:"100%",className:"border-none"})}export{m as default};
