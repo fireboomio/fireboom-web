@@ -95,6 +95,7 @@ const scalarTypesMap: Record<string, JSONSchema6TypeName> = {
   String: 'string',
   Float: 'number',
   ID: 'string',
+  UUID: 'string',
   Boolean: 'boolean',
   // { "type": "string", "format": "date" } is not compatible with proposed DateTime GraphQL-Scalars.com spec
   DateTime: 'string',
