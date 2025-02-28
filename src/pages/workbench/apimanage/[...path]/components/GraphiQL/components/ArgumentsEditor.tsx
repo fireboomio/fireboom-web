@@ -51,7 +51,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     if (Object.keys(values).length === parsed.length) {
       newValues = {}
     } else {
-      newValues = filterValues(allValuesRef.current)
+      newValues = filterValues(allValuesRef.current, true)
     }
     setValues(newValues)
     valuesRef.current = newValues
@@ -73,10 +73,11 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   }
 
   const updateValue = (v: InputValueType, key: string) => {
+    const firstAdd = typeof (allValuesRef.current[key] ?? undefined) === 'undefined'
     const newAllValues = { ...allValues, [key]: v }
     setAllValues(newAllValues)
     allValuesRef.current = newAllValues
-    if (valuesRef.current.hasOwnProperty(key)) {
+    if (valuesRef.current.hasOwnProperty(key) || firstAdd) {
       const newValues = { ...values, [key]: v }
       setValues(newValues)
       valuesRef.current = newValues
@@ -85,10 +86,10 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
 
   useEffect(() => {
     // 参数改变时要变更输入框的值
-    const newValues = filterValues(valuesRef.current, true)
+    const newValues = filterValues(valuesRef.current)
     setValues(newValues)
     valuesRef.current = newValues
-    const newAllValues = filterValues(allValuesRef.current)
+    const newAllValues = filterValues(allValuesRef.current, true)
     setAllValues(newAllValues)
     allValuesRef.current = newAllValues
   }, [parsed, props.arguments])
@@ -211,10 +212,10 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
     100
   )
 
-  const filterValues = (values: any, ignoreUndefined = false) => {
+  const filterValues = (values: any, saveUndefined = false) => {
     return props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
       const name = arg.variable?.name.value
-      if (name && (values.hasOwnProperty(name) || !ignoreUndefined))
+      if (name && (values.hasOwnProperty(name) || saveUndefined))
       if (name) {
         obj[name] = values[name] ?? undefined
       }
@@ -229,12 +230,12 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
       try {
         const savedStr = localStorage.getItem(storeKey)
         if (savedStr) {
-          const savedValues = filterValues(JSON.parse(savedStr), true)
+          const savedValues = filterValues(JSON.parse(savedStr))
           setValues(savedValues)
           valuesRef.current = savedValues
         }
         const savedAllStr = localStorage.getItem(storeAllKey)
-        const savedAllValues = savedAllStr ? filterValues(JSON.parse(savedAllStr)) : {}
+        const savedAllValues = savedAllStr ? filterValues(JSON.parse(savedAllStr), true) : {}
         const mergedAllValues = { ...savedAllValues, ...valuesRef.current }
         setAllValues(mergedAllValues)
         allValuesRef.current = mergedAllValues

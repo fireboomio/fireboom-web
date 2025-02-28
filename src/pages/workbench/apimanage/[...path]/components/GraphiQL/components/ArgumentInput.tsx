@@ -170,8 +170,12 @@ const SingleArgumentInput = ({
                   const uri = monaco.Uri.parse(`operation_${name}.json`)
                   // 如果已经有重名model则释放
                   monaco.editor.getModel(uri)?.dispose()
-                  // 创建model
-                  monaco.editor.createModel(editorValue, 'json', uri)
+                  try {
+                    // 创建model
+                    monaco.editor.createModel(editorValue, 'json', uri)
+                  } catch (e) {
+                    //
+                  }
                 }}
                 onMount={editor => {
                   makeSuggest(editor)
