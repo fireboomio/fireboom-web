@@ -71,7 +71,7 @@ const VariablesEditor = (props: VariablesEditorProps) => {
       }
     },
     [values],
-    1000
+    100
   )
 
   useEffect(() => {
@@ -80,9 +80,8 @@ const VariablesEditor = (props: VariablesEditorProps) => {
       try {
         const savedStr = localStorage.getItem(storeKey)
         if (savedStr) {
-          const saved = savedStr
           try {
-            valuesRef.current = JSON.stringify(JSON.parse(saved), null, 2)
+            valuesRef.current = JSON.stringify(JSON.parse(savedStr), null, 2)
             editorRef.current?.setValue(valuesRef.current)
           } catch (e) {
             console.error(e)

@@ -138,11 +138,13 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     const operationType = def?.operation ?? 'query'
     if (operationType === 'query' || operationType === 'subscription') {
       argNames.forEach((name, index) => {
-        let value = argValueMap[name] ?? ''
-        if (typeof value !== 'string') {
-          value = JSON.stringify(value)
+        if (argValueMap.hasOwnProperty(name)) {
+          let value = argValueMap[name] ?? ''
+          if (typeof value !== 'string') {
+            value = JSON.stringify(value)
+          }
+          query.push(`${name}=${value}`)
         }
-        query.push(`${name}=${value}`)
       })
 
       // 对于订阅接口，增加wg_sse
@@ -160,7 +162,7 @@ const APIHeader = ({ onGetQuery }: { onGetQuery: () => string }) => {
     } else if (operationType === 'mutation') {
       const data: Record<string, any> = {}
       argNames.forEach((name, index) => {
-        data[name] = argValueMap[name] || null
+        data[name] = argValueMap[name] ?? undefined
       })
       const curl = `curl '${link}' \\
   -X POST  \\
