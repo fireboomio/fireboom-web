@@ -77,6 +77,7 @@ const SingleArgumentInput = ({
       )
     case 'String':
     case 'ID':
+    case 'UUID':
     case 'Geometry':
       return (
         <Input
