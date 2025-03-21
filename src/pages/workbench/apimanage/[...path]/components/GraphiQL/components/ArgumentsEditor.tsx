@@ -26,6 +26,7 @@ const NOT_EDITABLE_DIRECTIVES: string[] = [
 interface ArgumentsEditorProps {
   apiPath: string
   arguments: ReadonlyArray<VariableDefinitionNode>
+  exportAsValues: ReadonlyArray<string>
   onRemoveDirective: (argumentIndex: number, directiveIndex: number) => void
 }
 
@@ -48,7 +49,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
 
   const switchKeys = () => {
     let newValues: Record<string, InputValueType>
-    if (Object.keys(values).length === parsed.length) {
+    if (Object.keys(values).length === (parsed.length - props.exportAsValues?.length)) {
       newValues = {}
     } else {
       newValues = filterValues(allValuesRef.current, true)
@@ -213,14 +214,15 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
   )
 
   const filterValues = (values: any, saveUndefined = false) => {
-    return props.arguments.reduce<Record<string, InputValueType>>((obj, arg) => {
-      const name = arg.variable?.name.value
-      if (name && (values.hasOwnProperty(name) || saveUndefined))
-      if (name) {
-        obj[name] = values[name] ?? undefined
-      }
-      return obj
-    }, {})
+    return props.arguments.filter(x => !props.exportAsValues?.includes(x.variable?.name.value))
+                          .reduce<Record<string, InputValueType>>((obj, arg) => {
+                            const name = arg.variable?.name.value
+                            if (name && (values.hasOwnProperty(name) || saveUndefined))
+                            if (name) {
+                              obj[name] = values[name] ?? undefined
+                            }
+                            return obj
+                          }, {})
   }
 
   useEffect(() => {
@@ -251,9 +253,9 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
         <tr>
           <th style={{ width: '45px' }}>
             <Checkbox
-              disabled={parsed.length == 0}
-              indeterminate={Object.keys(values).length > 0 && Object.keys(values).length < parsed.length}
-              checked={parsed.length > 0 && Object.keys(values).length === parsed.length}
+              disabled={parsed.length == 0 || parsed.length === props.exportAsValues?.length}
+              indeterminate={Object.keys(values).length > 0 && Object.keys(values).length < (parsed.length - props.exportAsValues?.length)}
+              checked={(parsed.length - props.exportAsValues?.length) > 0 && Object.keys(values).length === (parsed.length - props.exportAsValues?.length)}
               className="text-xs w-full"
               onChange={switchKeys}
             />
@@ -281,6 +283,7 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             <td>
               <Checkbox
                 className="text-xs w-full"
+                disabled={props.exportAsValues?.includes(arg.name)}
                 checked={values.hasOwnProperty(arg.name)}
                 onChange={v => updateKey(v.target.checked, arg.name)}
               />
@@ -313,12 +316,15 @@ const ArgumentsEditor = (props: ArgumentsEditorProps) => {
             </td>
             <td>
               {!arg.directives?.find(dir => NOT_EDITABLE_DIRECTIVES.includes(dir.name)) && (
+                props.exportAsValues?.includes(arg.name) ? (
+                  <span><FormattedMessage defaultMessage="@export参数输入无效" /></span>
+                ) : (
                 <ArgumentInput
                   argument={arg}
                   enums={arg.enums}
                   value={allValues[arg.name]}
                   onChange={v => updateValue(v, arg.name)}
-                />
+                />)
               )}
             </td>
           </tr>

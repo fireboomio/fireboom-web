@@ -24,7 +24,7 @@ import {
 } from '@graphiql/react'
 import { useMonaco } from '@monaco-editor/react'
 import { Tabs } from 'antd'
-import type { OperationDefinitionNode, VariableDefinitionNode } from 'graphql'
+import type { OperationDefinitionNode, VariableDefinitionNode, SelectionNode } from 'graphql'
 import { collectVariables } from 'graphql-language-service'
 import type { MutableRefObject, ReactNode } from 'react'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -207,6 +207,38 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
     return def?.variableDefinitions || []
   }, [schemaAST])
 
+  const exportAsValues = useMemo(() => {
+    const exportAsValues: string[] = []
+    const def = schemaAST?.definitions[0] as OperationDefinitionNode | undefined
+    if (def?.selectionSet) {
+      const fields = def.selectionSet.selections;
+      const traverseFields = (fields: readonly SelectionNode[]) => {
+        fields.forEach((field) => {
+          if (field.kind === 'Field') {
+            if (field.directives) {
+              field.directives.forEach((directive) => {
+                if (directive.name.value === 'export' && directive.arguments) {
+                  directive.arguments.forEach((arg) => {
+                    if (arg.name.value === 'as' && arg.value.kind === 'StringValue' && !exportAsValues.includes(arg.value.value)) {
+                      exportAsValues.push(arg.value.value);
+                    }
+                  });
+                }
+              });
+            }
+
+            if (field.selectionSet && field.selectionSet.selections) {
+              traverseFields(field.selectionSet.selections);
+            }
+          }
+        });
+      };
+
+      traverseFields(fields);
+    }
+    return exportAsValues
+  }, [schemaAST])
+
   // 用于变量编辑器的json校验
   // const jsonSchema = useMemo(() => {
   //   if (!schema || !schemaAST) return
@@ -220,6 +252,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
       return
     }
     const variablesToType = collectVariables(schema!, schemaAST!)
+    exportAsValues.forEach(v => delete variablesToType[v])
     const jsonSchema = getVariablesJSONSchema(variablesToType)
     delete jsonSchema?.$schema
 
@@ -305,6 +338,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
             apiPath={apiPath}
             actionRef={responseRef}
             argumentList={argumentList}
+            exportAsValues={exportAsValues}
             onTabChange={() => {
               if (isHidden) {
                 resetSize(180)
@@ -320,6 +354,7 @@ export function GraphiQLInterface(props: GraphiQLInterfaceProps) {
 interface GraphiInputAndResponseProps {
   apiPath: string
   argumentList: ReadonlyArray<VariableDefinitionNode>
+  exportAsValues: ReadonlyArray<string>
   actionRef?: MutableRefObject<
     | {
         setActiveKey?: (v: string) => void
@@ -332,6 +367,7 @@ interface GraphiInputAndResponseProps {
 const GraphiInputAndResponse = ({
   apiPath,
   argumentList,
+  exportAsValues,
   actionRef,
   onTabChange
 }: GraphiInputAndResponseProps) => {
@@ -424,6 +460,7 @@ const GraphiInputAndResponse = ({
                   <ArgumentsEditor
                     apiPath={apiPath}
                     arguments={argumentList}
+                    exportAsValues={exportAsValues}
                     onRemoveDirective={onRemoveDirective}
                   />
                 ) : (
