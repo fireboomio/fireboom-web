@@ -105,7 +105,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   )
   const handleDelete = executeWrapper(async (node: FileTreeNode) => {
     if (!node.isDir) {
-      await requests.put(`/storage`, {
+      await requests.put(`/storage?watchAction=remove`, {
         name: node.parent!.data.name,
         uploadProfiles: {
           [node.name]: null
@@ -125,7 +125,7 @@ export default function StoragePanel(props: Omit<SidePanelProps, 'title'>) {
   }
   const handleRenameNode = executeWrapper(async (node: FileTreeNode, newName: string) => {
     if (!node.isDir) {
-      await requests.put(`/storage`, {
+      await requests.put(`/storage?watchAction=rename`, {
         name: node.parent!.data.name,
         uploadProfiles: {
           [node.name]: null,

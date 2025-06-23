@@ -91,7 +91,7 @@ export async function resolveDefaultCode(
 		);
 	} else if (path.match(/custom[-_]\w+\/proxy\//)) {
 		code = await getDefaultCode(sdk, ["custom", "proxy"], variables);
-	} else if (path.match(/custom[-_]\w+\/storage/)) {
+	} else if (path.match(/custom[-_]\w+\/(storage|upload)/)) {
 		const profileName = list.pop() as string;
 		const providerName = list.pop() as string;
 		code = await getDefaultCode(sdk, ["upload", name], {
